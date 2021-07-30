@@ -1,0 +1,24 @@
+kind: pipeline
+name: default
+
+steps:
+    - name: install
+      image: node
+      commands:
+          - npm ci
+
+    - name: lint
+      image: node
+      depends_on: [install]
+      commands:
+          - npm run lint
+
+    - name: test
+      image: node
+      depends_on: [install]
+      commands:
+          - npm run test
+
+trigger:
+    event:
+        - pull_request
