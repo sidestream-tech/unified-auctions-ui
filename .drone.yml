@@ -5,18 +5,21 @@ steps:
     - name: install
       image: node
       commands:
+          - cd frontend
           - npm ci
 
     - name: lint
       image: node
       depends_on: [install]
       commands:
+          - cd frontend
           - npm run lint
 
     - name: test
       image: node
       depends_on: [install]
       commands:
+          - cd frontend
           - npm run test
 
 trigger:
