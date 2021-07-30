@@ -1,4 +1,4 @@
-# vue-nuxt-ts-scaffold
+# Auction UI Frontend
 
 ## Setup
 
@@ -22,7 +22,3 @@ $ npm run storybook
 # to run jest tests
 $ npm run test
 ```
-
-## Development Setup
-
-Please see [this centralized guide](https://github.com/sidestream-tech/guides/blob/master/DEVELOPMENT_SETUP_GUIDE.md).
