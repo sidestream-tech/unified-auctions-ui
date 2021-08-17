@@ -7,9 +7,20 @@
 module.exports = {
     important: 'body',
     theme: {
+        colors: {
+            primary: {
+                light: '#1dc4b3',
+                DEFAULT: '#1AAB9B',
+                dark: '#169184',
+            },
+        },
         extend: {},
     },
-    variants: {},
+    variants: {
+        extend: {
+            backgroundColor: ['active'],
+        },
+    },
     plugins: [],
     purge: {
         // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
