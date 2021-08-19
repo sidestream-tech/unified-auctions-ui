@@ -9,3 +9,12 @@ declare module '*.png' {
     const content: string;
     export default content;
 }
+ 
+declare interface Auction {
+    id: string;
+    collateralType: string;
+    amountRAW: string;
+    amountDAI: string;
+    till: string;
+    moreData?: string;
+}

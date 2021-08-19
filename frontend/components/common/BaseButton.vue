@@ -6,6 +6,7 @@
                 type == 'primary',
         }"
         :type="type"
+        @click="$emit('click')"
         ><slot
     /></Button>
 </template>

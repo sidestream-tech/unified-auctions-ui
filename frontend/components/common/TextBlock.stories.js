@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import TextBlock from './TextBlock';
 
-storiesOf('common/TextBlock', module)
+storiesOf('Common/TextBlock', module)
     .add('Default', () => ({
         components: { TextBlock },
         data() {

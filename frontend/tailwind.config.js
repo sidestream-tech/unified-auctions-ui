@@ -7,14 +7,15 @@
 module.exports = {
     important: 'body',
     theme: {
-        colors: {
-            primary: {
-                light: '#1dc4b3',
-                DEFAULT: '#1AAB9B',
-                dark: '#169184',
+        extend: {
+            colors: {
+                primary: {
+                    light: '#1dc4b3',
+                    DEFAULT: '#1AAB9B',
+                    dark: '#169184',
+                },
             },
         },
-        extend: {},
     },
     variants: {
         extend: {
