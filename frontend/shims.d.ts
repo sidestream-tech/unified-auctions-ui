@@ -18,3 +18,8 @@ declare interface Auction {
     till: string;
     moreData?: string;
 }
+
+declare interface SelectOption {
+    label: string;
+    value: string;
+}
