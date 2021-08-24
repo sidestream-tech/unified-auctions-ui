@@ -9,7 +9,7 @@ declare module '*.png' {
     const content: string;
     export default content;
 }
- 
+
 declare interface Auction {
     id: string;
     collateralType: string;
@@ -17,6 +17,10 @@ declare interface Auction {
     amountDAI: string;
     till: string;
     moreData?: string;
+}
+
+declare interface Indexable {
+    [key: string]: any;
 }
 
 declare interface SelectOption {

@@ -2,15 +2,15 @@
     <div class="relative">
         <slot class="opacity-20" />
         <div
-            class="absolute inset-0 flex flex-wrap justify-center content-center"
+            class="absolute inset-0 flex flex-wrap justify-center content-center z-50"
             :class="{
                 'bg-white': isLoading,
                 'bg-gray-400': !isLoading && error,
-                'bg-opacity-60': isLoading || error,
+                'bg-opacity-90': isLoading || error,
             }"
         >
             <Spin v-if="isLoading" size="large" />
-            <div v-else-if="error" class="text-red-500 font-bold">error</div>
+            <div v-else-if="error" class="text-red-500 font-bold">{{ error }}</div>
         </div>
     </div>
 </template>

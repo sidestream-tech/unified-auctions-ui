@@ -61,9 +61,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import TextBlock from './common/TextBlock.vue';
-import TimeTill from './common/TimeTill.vue';
-import Button from './common/BaseButton.vue';
+import TextBlock from '~/components/common/TextBlock.vue';
+import TimeTill from '~/components/common/TimeTill.vue';
+import Button from '~/components/common/BaseButton.vue';
 
 export default Vue.extend({
     name: 'Auction',

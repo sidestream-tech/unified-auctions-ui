@@ -1,26 +1,26 @@
 import { storiesOf } from '@storybook/vue';
-import faker from 'faker';
 import { random } from 'lodash';
-import MainText from './MainText';
+import faker from 'faker';
+import AuctionsTable from './AuctionsTable';
 import { generateFakeAuctions } from '~/helpers/generateFakeAuction';
 
 const fakeAuctions = generateFakeAuctions(random(0, 15));
 const randomSelectedAuction = faker.random.arrayElement(fakeAuctions);
 
 const common = {
-    components: { MainText },
+    components: { AuctionsTable },
     data: () => ({
         auctions: fakeAuctions,
         selectedAuctionId: randomSelectedAuction.id,
     }),
 };
 
-storiesOf('MainText', module)
+storiesOf('AuctionsTable', module)
     .add('Plain', () => ({
         ...common,
-        template: '<MainText :auctions="auctions" :selectedAuctionId="selectedAuctionId" />',
+        template: '<AuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" />',
     }))
-    .add('No props', () => ({
+    .add('Empty auctions', () => ({
         ...common,
-        template: '<MainText />',
+        template: '<AuctionsTable />',
     }));

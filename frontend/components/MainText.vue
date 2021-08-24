@@ -11,10 +11,13 @@
             </a>
         </TextBlock>
         <TextBlock title="Current liquidation auctions" class="TextBlock my-5">
-            Currently, there are {{ numberOfOpenAuctions }} open auctions with the total value of
+            Currently, there are {{ openAuctionsValues.length }} open auctions with the total value of
             {{ openAuctionsTotalValue }} DAI/USD. Smallest available vault is only
             {{ smallestAvailableVault }} DAI/USD.
         </TextBlock>
+        <Loading class="max-w-screen-md w-full self-center mb-6 mt-1 Loading">
+            <AuctionsTable :auctions="auctions" :selected-auction-id="selectedAuctionId" />
+        </Loading>
         <TextBlock title="How to participate" class="TextBlock">
             <!-- ToDo: insert the real text -->
             Rerum at expedita sed aut odit quis doloremque est. Aut dolores qui aperiam quaerat commodi et. Tempora
@@ -27,36 +30,53 @@
         </TextBlock>
     </div>
 </template>
-<script>
-import TextBlock from '~/components/common/TextBlock';
-export default {
+<script lang="ts">
+import Vue, { PropType } from 'vue';
+import TextBlock from '~/components/common/TextBlock.vue';
+import AuctionsTable from '~/components/AuctionsTable.vue';
+import Loading from '~/components/common/Loading.vue';
+
+export default Vue.extend({
     components: {
         TextBlock,
+        AuctionsTable,
+        Loading,
     },
     props: {
-        // ToDo: the first 3 props will be removed and replaced by computed properties
-        numberOfOpenAuctions: {
-            type: Number,
-            default: 0,
-        },
-        openAuctionsTotalValue: {
-            type: Number,
-            default: 0,
-        },
-        smallestAvailableVault: {
-            type: Number,
-            default: 0,
-        },
-        liquidationAuctions: {
-            type: Array,
+        auctions: {
+            type: Array as PropType<Auction[]>,
             default: () => [],
         },
+        selectedAuctionId: {
+            type: String,
+            default: null,
+        },
     },
-};
+    computed: {
+        openAuctionsValues(): Array<number> {
+            return this.auctions
+                .filter((auction: Auction) => new Date(auction.till).getTime() > new Date().getTime())
+                .map((auction: Auction) => Number(auction.amountDAI));
+        },
+        openAuctionsTotalValue(): number {
+            return this.openAuctionsValues.reduce((a, b) => a + b, 0);
+        },
+        smallestAvailableVault(): number {
+            if (this.openAuctionsValues.length === 0) {
+                return 0;
+            }
+            return Math.min(...this.openAuctionsValues);
+        },
+    },
+});
 </script>
 
 <style scoped>
 .TextBlock {
     @apply max-w-screen-sm self-center;
+}
+
+.Loading {
+    min-height: 300px;
 }
 </style>

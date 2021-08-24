@@ -2,7 +2,7 @@
     <span :title="parsedDate">
         <span v-if="timeTill">{{ timeTill }}</span>
         <span v-else-if="date">{{ date }}</span>
-        <span v-else>unknown</span>
+        <span v-else></span>
     </span>
 </template>
 
@@ -21,8 +21,11 @@ export default Vue.extend({
         timeTill: '',
     }),
     computed: {
-        parsedDate(): Date {
+        parsedDate(): Date | null {
             const date: Date = new Date(this.date);
+            if (isNaN(date.getTime())) {
+                return null;
+            }
             return date;
         },
     },
@@ -33,7 +36,7 @@ export default Vue.extend({
     methods: {
         calculateTime(): void {
             if (this.parsedDate) {
-                this.timeTill = formatInterval(this.parsedDate, new Date());
+                this.timeTill = formatInterval(new Date(), this.parsedDate);
             } else {
                 this.timeTill = '';
             }

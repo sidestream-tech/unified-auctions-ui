@@ -17,5 +17,10 @@ export const formatInterval = function (startDate: Date, endDate: Date): string 
         start: startDate,
         end: endDate,
     });
+    const formatDurationString = formatDuration(duration);
+
+    if (startDate > endDate) {
+        return `${formatDurationString} ago`;
+    }
     return formatDuration(duration);
 };

@@ -1,8 +1,9 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import Auction from './Auction.vue';
-import { fakeAuction } from '~/helpers/generateFakeAuction';
+import { generateFakeAuction } from '~/helpers/generateFakeAuction';
 
+const fakeAuction = generateFakeAuction();
 const basicStory = {
     components: { Auction },
     computed: {
