@@ -25,4 +25,10 @@ storiesOf('common/BaseButton', module)
             BaseButton,
         },
         template: '<BaseButton disabled type="danger">I am a button!</BaseButton>',
+    }))
+    .add('Loading', () => ({
+        components: {
+            BaseButton,
+        },
+        template: '<BaseButton loading type="danger">I am a button!</BaseButton>',
     }));
