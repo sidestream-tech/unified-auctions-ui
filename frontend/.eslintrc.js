@@ -30,5 +30,13 @@ module.exports = {
         curly: 'warn',
         'no-undef': 'off',
         'eol-last': ['error', 'always'],
+        'vue/block-lang': [
+            'error',
+            {
+                script: {
+                    lang: 'ts',
+                },
+            },
+        ],
     },
 };

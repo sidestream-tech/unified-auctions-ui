@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import NetworkSelector from '~/components/utils/NetworkSelector';
+import NetworkSelector from '~/components/utils/NetworkSelector.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
 
 export default Vue.extend({
