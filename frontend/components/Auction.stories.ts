@@ -10,7 +10,6 @@ const basicStory = {
         auctionParams(): Auction {
             return {
                 ...fakeAuction,
-                moreData: '123',
             };
         },
     },

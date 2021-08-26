@@ -7,16 +7,28 @@
             :row-class-name="record => (record.id === selectedAuctionId ? 'selected-row' : '')"
             :row-key="record => record.id"
         >
+            <div slot="collateralType" slot-scope="collateralType" class="CustomCell">
+                <format-currency :currency="collateralType" />
+            </div>
             <div slot="amountRAW" slot-scope="amountRAW, record" class="CustomCell">
-                {{ amountRAW }} {{ record.collateralType }}
+                <format-currency :value="amountRAW" :currency="record.collateralType" />
+            </div>
+            <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record" class="CustomCell">
+                <format-currency :value="amountPerCollateral" currency="DAI" />
+                &nbsp;per&nbsp;
+                <format-currency :currency="record.collateralType" />
+            </div>
+            <div slot="marketValue" slot-scope="marketValue" class="CustomCell">
+                <format-market-value :value="marketValue" />
             </div>
             <div slot="till" slot-scope="till" class="CustomCell"><time-till :date="till" /></div>
-            <div slot="action" slot-scope="record" class="CustomCell">
+            <div slot="action" slot-scope="record, index" class="CustomCell">
                 <nuxt-link
                     :to="`/?auction=${record.id}`"
-                    class="flex w-full h-full bg-green-500 items-center justify-center text-white"
+                    :class="hoveredRowIndex === index && 'bg-green-400'"
+                    class="flex w-full h-full text-gray-500 items-center justify-center font-normal"
                 >
-                    Select
+                    See details
                 </nuxt-link>
             </div>
         </Table>
@@ -28,6 +40,8 @@ import Vue from 'vue';
 import { Table } from 'ant-design-vue';
 import { compareAsc } from 'date-fns';
 import TimeTill from '~/components/common/TimeTill.vue';
+import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
+import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 const compareBy = function (field: string, cmp: Function = (a: number, b: number): number => a - b): Function {
     return (firstElement: Indexable, secondElement: Indexable, sortOrder: string) => {
@@ -48,6 +62,8 @@ export default Vue.extend({
     components: {
         Table,
         TimeTill,
+        FormatMarketValue,
+        FormatCurrency,
     },
     props: {
         auctions: {
@@ -63,23 +79,36 @@ export default Vue.extend({
         return {
             columns: [
                 {
-                    title: 'Collateral type',
-                    dataIndex: 'collateralType',
+                    title: 'ID',
+                    dataIndex: 'id',
                     sorter: compareBy('collateralType', (a: string, b: string) => a.localeCompare(b)),
                 },
                 {
-                    title: 'Amount',
+                    title: 'Currency',
+                    dataIndex: 'collateralType',
+                    scopedSlots: { customRender: 'collateralType' },
+                    sorter: compareBy('collateralType', (a: string, b: string) => a.localeCompare(b)),
+                },
+                {
+                    title: 'Auction Amount',
                     dataIndex: 'amountRAW',
                     scopedSlots: { customRender: 'amountRAW' },
                     sorter: compareBy('amountRAW'),
                 },
                 {
-                    title: 'DAI',
-                    dataIndex: 'amountDAI',
-                    sorter: compareBy('amountDAI'),
+                    title: 'Auction Price',
+                    dataIndex: 'amountPerCollateral',
+                    scopedSlots: { customRender: 'amountPerCollateral' },
+                    sorter: compareBy('amountPerCollateral'),
                 },
                 {
-                    title: 'Time till the end',
+                    title: 'Market Value*',
+                    dataIndex: 'marketValue',
+                    scopedSlots: { customRender: 'marketValue' },
+                    sorter: compareBy('marketValue'),
+                },
+                {
+                    title: 'Next price drop',
                     dataIndex: 'till',
                     scopedSlots: { customRender: 'till' },
                     sorter: compareBy('till', (a: Date, b: Date) => compareAsc(new Date(a), new Date(b))),
@@ -91,6 +120,7 @@ export default Vue.extend({
                 },
             ],
             rowsPerPage: 7,
+            hoveredRowIndex: null,
         };
     },
 });
@@ -108,10 +138,10 @@ export default Vue.extend({
 }
 .AuctionsTable >>> .ant-table-tbody td,
 .AuctionsTable >>> .ant-table-thead th {
-    @apply border-b-2 border-r-2 border-gray-600;
+    @apply border-b-2 border-r-2 border-gray-300;
 }
 .AuctionsTable >>> .selected-row {
-    @apply bg-gray-500;
+    @apply bg-gray-200;
 }
 .AuctionsTable >>> .selected-row td {
     @apply text-gray-700;

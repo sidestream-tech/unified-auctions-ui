@@ -13,10 +13,12 @@ declare module '*.png' {
 declare interface Auction {
     id: string;
     collateralType: string;
-    amountRAW: string;
-    amountDAI: string;
+    amountRAW: number;
+    amountDAI: number;
     till: string;
-    moreData?: string;
+    marketValue: number;
+    vaultOwner: string;
+    amountPerCollateral: number;
 }
 
 declare interface Indexable {

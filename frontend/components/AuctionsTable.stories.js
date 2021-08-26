@@ -4,7 +4,7 @@ import faker from 'faker';
 import AuctionsTable from './AuctionsTable';
 import { generateFakeAuctions } from '~/helpers/generateFakeAuction';
 
-const fakeAuctions = generateFakeAuctions(random(0, 15));
+const fakeAuctions = generateFakeAuctions(random(2, 15));
 const randomSelectedAuction = faker.random.arrayElement(fakeAuctions);
 
 const common = {

@@ -2,12 +2,18 @@ import faker from 'faker';
 import { map } from 'lodash';
 
 export const generateFakeAuction = function () {
+    const amountRAW = parseFloat(faker.finance.amount());
+    const amountDAI = parseFloat(faker.finance.amount());
+
     return {
         id: faker.datatype.number().toString(),
         collateralType: faker.lorem.word(),
-        amountRAW: faker.finance.amount(),
-        amountDAI: faker.finance.amount(),
+        amountRAW,
+        amountDAI,
         till: faker.date.future(),
+        marketValue: faker.datatype.number({ min: -1, max: 1, precision: 0.001 }),
+        vaultOwner: faker.finance.ethereumAddress(),
+        amountPerCollateral: amountDAI / amountRAW,
     };
 };
 
