@@ -4,12 +4,11 @@ import { map } from 'lodash';
 export const generateFakeAuction = function () {
     const amountRAW = parseFloat(faker.finance.amount());
     const amountDAI = parseFloat(faker.finance.amount());
-
     return {
         id: faker.datatype.number().toString(),
-        collateralType: faker.lorem.word(),
-        amountRAW,
-        amountDAI,
+        collateralType: faker.finance.currencyCode(),
+        amountRAW: parseFloat(faker.finance.amount()),
+        amountDAI: parseFloat(faker.finance.amount()),
         till: faker.date.future(),
         marketValue: faker.datatype.number({ min: -1, max: 1, precision: 0.001 }),
         vaultOwner: faker.finance.ethereumAddress(),
@@ -17,6 +16,20 @@ export const generateFakeAuction = function () {
     };
 };
 
+export const generateFakeAuctionTransaction = function () {
+    const fakeAuction = generateFakeAuction();
+    const transactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
+    const transactionProfit = fakeAuction.marketValue * fakeAuction.amountDAI;
+    const transactionFeeDAI = transactionFeeETH * 1000;
+    const transactionOutcome = transactionProfit - transactionFeeDAI;
+    return {
+        ...fakeAuction,
+        transactionFeeETH,
+        transactionProfit,
+        transactionFeeDAI,
+        transactionOutcome,
+    };
+};
 export const generateFakeAuctions = function (number = 1) {
     const auctions = map(Array(number), () => generateFakeAuction());
     return auctions;

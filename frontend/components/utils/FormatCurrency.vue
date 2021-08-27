@@ -1,6 +1,6 @@
 <template>
     <span>
-        {{ fixedNumber }}<span class="uppercase"> {{ currency }} </span>
+        {{ sign }}{{ fixedNumber }}<span class="uppercase"> {{ currency }} </span>
     </span>
 </template>
 
@@ -18,13 +18,24 @@ export default Vue.extend({
             type: String,
             default: '',
         },
+        showSign: {
+            type: Boolean,
+            default: false,
+        },
+        decimals: {
+            type: Number,
+            default: 2,
+        },
     },
     computed: {
         fixedNumber(): string {
             if (this.value) {
-                return this.value.toFixed(2);
+                return this.value.toFixed(this.decimals);
             }
             return '';
+        },
+        sign(): string {
+            return this.value > 0 ? '+' : '';
         },
     },
 });

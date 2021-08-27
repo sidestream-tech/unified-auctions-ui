@@ -20,6 +20,12 @@ declare interface Auction {
     vaultOwner: string;
     amountPerCollateral: number;
 }
+declare interface AuctionTransaction extends Auction {
+    transactionProfit: number;
+    transactionFeeETH: number;
+    transactionFeeDAI: number;
+    transactionOutcome: number;
+}
 
 declare interface Indexable {
     [key: string]: any;
