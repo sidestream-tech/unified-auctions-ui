@@ -35,6 +35,9 @@ export default Vue.extend({
             return '';
         },
         sign(): string {
+            if (!this.showSign) {
+                return '';
+            }
             return this.value > 0 ? '+' : '';
         },
     },

@@ -1,5 +1,5 @@
 <template>
-    <div class="w-1/2">
+    <div>
         <TextBlock title="Connect a wallet">
             <div v-if="walletAddress" class="text-gray-800">
                 The operation will be carried over the connected wallet <format-address :value="walletAddress" />
@@ -11,12 +11,16 @@
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
-            <base-button v-if="state === 'notConnected'" type="primary" @click="$emit('connectWallet')">
+            <base-button v-if="state === 'notConnected'" class="w-56" type="primary" @click="$emit('connectWallet')">
                 Connect a wallet
             </base-button>
-            <base-button v-if="state === 'connecting'" type="primary" is-loading> Connecting... </base-button>
-            <base-button v-if="state === 'connected'" @click="$emit('disconnectWallet')"> Disconnect </base-button>
-            <base-button v-if="state === 'disconnecting'" is-loading> Disconnecting... </base-button>
+            <base-button v-if="state === 'connecting'" class="w-56" type="primary" is-loading>
+                Connecting...
+            </base-button>
+            <base-button v-if="state === 'connected'" class="w-56" @click="$emit('disconnectWallet')">
+                Disconnect
+            </base-button>
+            <base-button v-if="state === 'disconnecting'" class="w-56" is-loading> Disconnecting... </base-button>
         </div>
     </div>
 </template>

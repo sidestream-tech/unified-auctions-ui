@@ -1,10 +1,10 @@
 import { storiesOf } from '@storybook/vue';
 import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction.js';
-import SwapTransactionTable from '~/components/SwapTransactionTable.vue';
+import SwapTransactionTable from '~/components/transaction/SwapTransactionTable.vue';
 
 const fakeAuctionTransaction = generateFakeAuctionTransaction();
 
-storiesOf('SwapTransaction Table', module).add('Default', () => ({
+storiesOf('Transaction/SwapTransaction Table', module).add('Default', () => ({
     components: {
         SwapTransactionTable,
     },

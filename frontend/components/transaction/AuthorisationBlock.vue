@@ -1,10 +1,10 @@
 <template>
-    <div class="w-1/2">
+    <div>
         <TextBlock title="Authorize transaction">
             <div v-if="isAuthorized" class="text-gray-800">
                 Different types of transactions have to be authorized once per type before participating in auction.
-                The transaction type for <span class="uppercase">{{ currencyType }}</span> has already been authorized
-                by you.
+                The transaction type for <span class="uppercase">{{ collateralType }}</span> has already been
+                authorized by you.
             </div>
             <div v-else class="text-gray-800">
                 To participate in auctions you need to sign the approval transactions below and move DAI that will be
@@ -12,11 +12,13 @@
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
-            <base-button v-if="state === 'notAuthorized'" type="primary" @click="$emit('authorize')">
+            <base-button v-if="state === 'notAuthorized'" type="primary" class="w-56" @click="$emit('authorize')">
                 Authorize
             </base-button>
-            <base-button v-if="state === 'disabled'" type="primary" disabled> Authorize </base-button>
-            <base-button v-if="state === 'authorizing'" type="primary" is-loading> Authorizing... </base-button>
+            <base-button v-if="state === 'disabled'" type="primary" class="w-56" disabled> Authorize </base-button>
+            <base-button v-if="state === 'authorizing'" type="primary" class="w-56" is-loading>
+                Authorizing...
+            </base-button>
         </div>
     </div>
 </template>
@@ -45,7 +47,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        currencyType: {
+        collateralType: {
             type: String,
             required: true,
         },

@@ -13,7 +13,7 @@
         <div class="flex w-full justify-between">
             <div>Auction Price</div>
             <div>
-                <FormatCurrency show-sign :value="auctionTransaction.amountDAI" currency="DAI" /> per
+                <FormatCurrency :value="auctionTransaction.amountDAI" currency="DAI" /> per
                 <span class="uppercase">{{ auctionTransaction.collateralType }}</span>
             </div>
         </div>
@@ -52,7 +52,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import TimeTill from './common/TimeTill.vue';
+import TimeTill from '~/components/common/TimeTill.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
 

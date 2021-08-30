@@ -1,5 +1,5 @@
 <template>
-    <div class="w-1/2">
+    <div>
         <TextBlock title="Make a bid">
             <div v-if="state === 'executed'" class="text-gray-800">
                 Transaction <format-address :value="transactionAddress" /> was successfully executed.
@@ -12,11 +12,11 @@
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
-            <base-button v-if="state === 'notExecuted'" type="primary" @click="$emit('execute')">
+            <base-button v-if="state === 'notExecuted'" type="primary" class="w-56" @click="$emit('execute')">
                 Execute
             </base-button>
-            <base-button v-if="state === 'disabled'" type="primary" disabled> Execute </base-button>
-            <base-button v-if="state === 'loading'" type="primary" is-loading> Executing...</base-button>
+            <base-button v-if="state === 'disabled'" type="primary" class="w-56" disabled> Execute </base-button>
+            <base-button v-if="state === 'loading'" type="primary" class="w-56" is-loading> Executing... </base-button>
         </div>
     </div>
 </template>

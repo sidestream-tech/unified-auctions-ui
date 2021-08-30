@@ -7,7 +7,6 @@ const common = {
     data() {
         return {
             isLoading: false,
-            isExecuted: false,
             transactionAddress: null,
             demoTransactionAddress: faker.finance.ethereumAddress(),
         };
@@ -27,7 +26,7 @@ storiesOf('Transaction/ExecutionBlock', module)
     .add('Default', () => ({
         ...common,
         template:
-            '<ExecutionBlock :isLoading="isLoading" :isExecuted="isExecuted" @execute="execute" :transactionAddress="transactionAddress" />',
+            '<ExecutionBlock :isLoading="isLoading" @execute="execute" :transactionAddress="transactionAddress" />',
     }))
     .add('Disabled', () => ({
         ...common,

@@ -26,21 +26,21 @@ storiesOf('Transaction/AuthorisationBlock', module)
     .add('Default', () => ({
         ...common,
         template:
-            '<AuthorisationBlock :isLoading="isLoading" :isAuthorized="isAuthorized" @authorize="authorize" :currencyType="currencyType"/>',
+            '<AuthorisationBlock :isLoading="isLoading" :isAuthorized="isAuthorized" @authorize="authorize" :collateralType="currencyType"/>',
     }))
     .add('Disabled', () => ({
         ...common,
-        template: '<AuthorisationBlock :disabled="true" :currencyType="currencyType" />',
+        template: '<AuthorisationBlock :disabled="true" :collateralType="currencyType" />',
     }))
     .add('Not Authorized', () => ({
         ...common,
-        template: '<AuthorisationBlock :currencyType="currencyType" />',
+        template: '<AuthorisationBlock :collateralType="currencyType" />',
     }))
     .add('Authorizing', () => ({
         ...common,
-        template: '<AuthorisationBlock :isLoading="true" :currencyType="currencyType" />',
+        template: '<AuthorisationBlock :isLoading="true" :collateralType="currencyType" />',
     }))
     .add('Authorized', () => ({
         ...common,
-        template: '<AuthorisationBlock :isAuthorized="true" :currencyType="currencyType"/>',
+        template: '<AuthorisationBlock :isAuthorized="true" :collateralType="currencyType"/>',
     }));
