@@ -1,28 +1,40 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import SplitLayout from './SplitLayout.vue';
+import Button from '~/components/common/BaseButton.vue';
 
-const fakeContent = faker.lorem.paragraphs(5);
+const fakeContent = faker.lorem.paragraphs(150);
 
 const common = {
-    template: `<SplitLayout :isShown.sync="isShown" class="h-screen w-full">
-        <div>{{ fakeContent }}</div>
-        <button class="bg-green-200" @click="isShown = true">Open side panel</button>
-        <template #side>
-            <div class="mt-5 ml-10 mr-16">{{ fakeContent }}</div>
+    template: `<div class="h-screen w-full"><SplitLayout :step.sync="step">
+        <template #step0>
+            <Button type="primary" @click="step = 1">Open side panel</Button>
+            <div>Step0: {{ fakeContent }}</div>
+        </template>
+        <template #step1>
+            <Button class="mx-2" type="primary" @click='step = 2'>Go to step 2</Button>
+            <div class="mx-2">Step1: {{ fakeContent }}</div>
         </template> 
-    </SplitLayout>`,
+        <template #step2>
+            <div class="mx-2">Step2: {{ fakeContent }}</div>
+        </template> 
+    </SplitLayout></div>`,
     components: {
         SplitLayout,
+        Button,
     },
 };
 
 storiesOf('Layout/SplitLayout', module)
     .add('Default', () => ({
         ...common,
-        data: () => ({ isShown: false, fakeContent }),
+        data: () => ({ step: 0, fakeContent }),
     }))
-    .add('Opened', () => ({
+    .add('First Panel Opened', () => ({
         ...common,
-        data: () => ({ isShown: true, fakeContent }),
+        data: () => ({ step: 1, fakeContent }),
+    }))
+    .add('Second Panel Opened', () => ({
+        ...common,
+        data: () => ({ step: 2, fakeContent }),
     }));
