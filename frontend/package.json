@@ -2,6 +2,10 @@
   "name": "auction-ui",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  },
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
