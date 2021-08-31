@@ -2,6 +2,7 @@
     <div class="relative">
         <slot class="opacity-20" />
         <div
+            v-if="isLoading || error"
             class="absolute inset-0 flex flex-wrap justify-center content-center z-50"
             :class="{
                 'bg-white': isLoading,

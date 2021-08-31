@@ -19,20 +19,26 @@ const basicStory = {
         };
     },
     methods: {
-        vat: action('vat'),
-        flashLoan: action('flashLoan'),
+        swap: action('swap'),
     },
 };
 
 storiesOf('Auction', module)
     .add('Default', () => ({
         ...basicStory,
-        template: `<Auction :auction="auctionParams" @vat="vat" @flash-loan="flashLoan" />`,
+        template: `<Auction :auction="auctionParams" @swap="swap" />`,
     }))
     .add('Max Width', () => ({
         ...basicStory,
         template: `
         <div class="flex items-center w-3/5">    
-            <Auction :auction="auctionParams" @vat="vat" @flash-loan="flashLoan" />
+            <Auction :auction="auctionParams" @swap="swap" />
+        </div>`,
+    }))
+    .add('Finished', () => ({
+        ...basicStory,
+        template: `
+        <div class="flex items-center w-3/5">    
+            <Auction :auction="auctionParams" error="This auction is finished"/>
         </div>`,
     }));

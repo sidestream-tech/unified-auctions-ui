@@ -16,7 +16,7 @@
             {{ smallestAvailableVault }} DAI/USD.
         </TextBlock>
         <Loading class="max-w-screen-md w-full self-center mb-6 mt-1 Loading">
-            <AuctionsTable :auctions="auctions" :selected-auction-id="selectedAuctionId" />
+            <AuctionsTable :auctions="auctions" :selected-auction-id.sync="selectedAuctionId" />
         </Loading>
         <TextBlock title="How to participate" class="TextBlock">
             <!-- ToDo: insert the real text -->

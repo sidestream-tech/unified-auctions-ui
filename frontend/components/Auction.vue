@@ -1,53 +1,57 @@
 <template>
     <TextBlock :title="`Auction #${auction.id}`">
-        <table class="w-full mt-4 table-fixed border-collapse border">
-            <tbody>
-                <tr>
-                    <td class="w-1/2">Currency</td>
-                    <td class="w-1/2 uppercase">{{ auction.collateralType }}</td>
-                </tr>
-                <tr>
-                    <td>Auction Amount</td>
-                    <td>
-                        <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Auction Price</td>
-                    <td>
-                        <format-currency :value="auction.amountPerCollateral" currency="DAI" />
-                        per
-                        <format-currency :currency="auction.collateralType" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Market Value*</td>
-                    <td><format-market-value :value="auction.marketValue" /></td>
-                </tr>
-                <tr>
-                    <td>Next price drop</td>
-                    <td>
-                        <time-till :date="auction.till" />
-                    </td>
-                </tr>
-                <template v-if="isTableExpanded">
-                    <tr class="bg-gray-200">
-                        <td>Auction price total</td>
+        <Alert v-if="error" :message="error" type="error" />
+        <div class="relative mt-4">
+            <table class="w-full table-fixed border-collapse border">
+                <tbody>
+                    <tr>
+                        <td class="w-1/2">Currency</td>
+                        <td class="w-1/2 uppercase">{{ auction.collateralType }}</td>
+                    </tr>
+                    <tr>
+                        <td>Auction Amount</td>
                         <td>
-                            <format-currency :value="auction.amountDAI" currency="DAI" />
+                            <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />
                         </td>
                     </tr>
-                    <tr class="bg-gray-200">
-                        <td>Vault owner</td>
-                        <td><format-address :value="auction.vaultOwner" /></td>
+                    <tr>
+                        <td>Auction Price</td>
+                        <td>
+                            <format-currency :value="auction.amountPerCollateral" currency="DAI" />
+                            per
+                            <format-currency :currency="auction.collateralType" />
+                        </td>
                     </tr>
-                    <tr class="bg-gray-200">
-                        <td>Auction ends at</td>
-                        <td>{{ auction.till.toUTCString() }}</td>
+                    <tr>
+                        <td>Market Value*</td>
+                        <td><format-market-value :value="auction.marketValue" /></td>
                     </tr>
-                </template>
-            </tbody>
-        </table>
+                    <tr>
+                        <td>Next price drop</td>
+                        <td>
+                            <time-till :date="auction.till" />
+                        </td>
+                    </tr>
+                    <template v-if="isTableExpanded">
+                        <tr class="bg-gray-200">
+                            <td>Auction price total</td>
+                            <td>
+                                <format-currency :value="auction.amountDAI" currency="DAI" />
+                            </td>
+                        </tr>
+                        <tr class="bg-gray-200">
+                            <td>Vault owner</td>
+                            <td><format-address :value="auction.vaultOwner" /></td>
+                        </tr>
+                        <tr class="bg-gray-200">
+                            <td>Auction ends at</td>
+                            <td>{{ auction.till.toUTCString() }}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+            <div v-if="error" class="Disable" />
+        </div>
         <button
             class="w-full border-2 border-gray-300 p-1 border-t-0 text-center text-gray-400"
             @click="toggleExpandable"
@@ -63,13 +67,10 @@
                 eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
                 deserunt mollit anim id est laborum.
             </div>
-            <div class="flex mt-4">
-                <div class="flex-grow" />
-                <Button type="primary" @click="$emit('vat')"> Connect wallet & Deposit to VAT & Bid </Button>
-            </div>
         </TextBlock>
 
         <TextBlock class="mt-4">
+            <div class="font-extrabold text-xl">Lorem ipsum dolor</div>
             <div class="font-medium">
                 Flash Loans explainations. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
                 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
@@ -77,7 +78,9 @@
             </div>
             <div class="flex mt-4">
                 <div class="flex-grow" />
-                <Button type="primary" @click="$emit('flash-loan')"> Connect wallet & Bid with Flash Loan </Button>
+                <Button :disabled="error !== ''" type="primary" @click="$emit('swap')">
+                    Directly swap into profit
+                </Button>
             </div>
         </TextBlock>
     </TextBlock>
@@ -85,6 +88,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Alert } from 'ant-design-vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import Button from '~/components/common/BaseButton.vue';
@@ -101,11 +105,16 @@ export default Vue.extend({
         Button,
         FormatMarketValue,
         FormatAddress,
+        Alert,
     },
     props: {
         auction: {
             type: Object as Vue.PropType<Auction>,
             required: true,
+        },
+        error: {
+            type: String,
+            default: '',
         },
     },
     data() {
@@ -125,5 +134,8 @@ export default Vue.extend({
 th,
 td {
     @apply p-2 border-2 border-collapse border-gray-300;
+}
+.Disable {
+    @apply absolute inset-0 bg-gray-700 opacity-70;
 }
 </style>
