@@ -12,8 +12,10 @@
                 </li>
             </ul>
         </div>
-        <button>
+        <button class="flex items-center">
+            <slot name="text-prefix" />
             {{ selectedLabel }}
+            <slot name="text-suffix" />
         </button>
     </popover>
 </template>

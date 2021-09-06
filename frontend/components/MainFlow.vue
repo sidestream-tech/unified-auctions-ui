@@ -24,7 +24,7 @@ import { Alert } from 'ant-design-vue';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import MainText from '~/components/MainText.vue';
 import Auction from '~/components/Auction.vue';
-import SwapTransaction from '~/components/transaction/SwapTransaction';
+import SwapTransaction from '~/components/transaction/SwapTransaction.vue';
 
 export default Vue.extend({
     components: { SplitLayout, MainText, Auction, SwapTransaction, Alert },
