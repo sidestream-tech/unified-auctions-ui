@@ -1,6 +1,5 @@
 <template>
     <div class="Container" :class="{ Step1: step === 1, Step2: step === 2 }">
-        <CloseIcon class="CloseIcon" @click="closeSidePanel" />
         <div class="Slot0">
             <slot name="step0" :step="step" />
             <div class="Overlay" @click="closeSidePanel" />
@@ -9,14 +8,16 @@
         <div class="Slot1">
             <div class="MobileSpace" @click="closeSidePanel" />
             <div class="SlotContainer">
+                <CloseIcon class="CloseIcon" @click="closeSidePanel" />
                 <slot name="step1" />
-                <div class="Overlay" @click="closeSidePanel" />
             </div>
+            <div class="Overlay" @click="closeSidePanel" />
         </div>
 
         <div class="Slot2">
             <div class="MobileSpace" @click="closeSidePanel" />
             <div class="SlotContainer">
+                <CloseIcon class="CloseIcon" @click="closeSidePanel" />
                 <slot name="step2" />
             </div>
         </div>
@@ -49,32 +50,32 @@ export default Vue.extend({
 /* DEFAULT STATE  */
 
 .Container {
-    @apply relative w-full h-full overflow-hidden overscroll-none;
+    @apply relative w-full h-full overflow-hidden;
 }
 .CloseIcon {
-    @apply absolute hidden cursor-pointer top-0 right-0 w-5 h-5 mr-2 mt-2 z-50;
+    @apply absolute hidden cursor-pointer top-0 right-0 w-5 h-5 my-10 mx-9 z-40;
 }
 .Slot0 {
-    @apply w-full h-full transition-all overflow-y-scroll duration-500;
+    @apply w-full h-full transition-all overflow-scroll duration-500;
 }
 .Slot1 {
-    @apply absolute h-full md:w-1/2 w-full right-0 top-0 overflow-hidden transform translate-x-full transition-all duration-500;
+    @apply absolute md:w-1/2 w-full h-full right-0 top-0 overflow-hidden transform translate-x-full transition-all duration-500 overscroll-none;
 }
 .Slot2 {
     @apply absolute hidden md:w-1/2 w-full h-full right-0 top-0 overflow-hidden  transition-all duration-500;
 }
 
 .SlotContainer {
-    @apply w-full h-full bg-white overflow-scroll;
+    @apply relative w-full h-full bg-white overflow-scroll;
 }
 
 .Step1 .CloseIcon,
-.Step2 .CloseIcon {
+.Step2 .Slot2 .CloseIcon {
     @apply block;
 }
 
 .Overlay {
-    @apply absolute inset-0 bg-gray-500 opacity-0 transition-all duration-500 hidden;
+    @apply absolute w-full h-full inset-0 bg-gray-500 opacity-0 transition-all duration-500 hidden;
 }
 
 /* STATE STEP 1 */
@@ -92,7 +93,6 @@ export default Vue.extend({
 .Step1 .Slot1 .CloseIcon {
     @apply block;
 }
-
 .Step1 .Slot0 .Overlay,
 .Step2 .Slot0 .Overlay {
     @apply opacity-70 block;
@@ -103,7 +103,7 @@ export default Vue.extend({
 
 /* STATE STEP 2 */
 .Step2 .Slot0 {
-    @apply w-1/2 transform -translate-x-full;
+    @apply w-1/2 relative transform -translate-x-full;
 }
 .Step2 .Slot1 {
     @apply transform md:-translate-x-full;

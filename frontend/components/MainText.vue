@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col">
+    <div class="flex flex-col my-10 space-y-10">
         <TextBlock title="Maker DAO Liquidation" class="TextBlock">
             Dai (or DAI) is a stablecoin cryptocurrency which aims to keep its value as close to one United States
             dollar (USD) as possible through an automated system of smart contracts on the Ethereum blockchain . Dai is
@@ -10,12 +10,12 @@
                 source: Wikipedia
             </a>
         </TextBlock>
-        <TextBlock title="Current liquidation auctions" class="TextBlock my-5">
+        <TextBlock title="Current liquidation auctions" class="TextBlock">
             Currently, there are {{ openAuctionsValues.length }} open auctions with the total value of
             {{ openAuctionsTotalValue }} DAI/USD. Smallest available vault is only
             {{ smallestAvailableVault }} DAI/USD.
         </TextBlock>
-        <Loading class="max-w-screen-md w-full self-center mb-6 mt-1 Loading">
+        <Loading class="max-w-4xl w-full self-center mb-6 mt-1 Loading">
             <AuctionsTable :auctions="auctions" :selected-auction-id.sync="selectedAuctionId" />
         </Loading>
         <TextBlock title="How to participate" class="TextBlock">

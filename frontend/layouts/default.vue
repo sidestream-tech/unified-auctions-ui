@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Header />
+        <Header class="sticky top-0 z-50 w-full h-16" />
         <Nuxt />
     </div>
 </template>

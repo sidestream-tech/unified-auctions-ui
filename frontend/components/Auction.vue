@@ -45,7 +45,7 @@
                         </tr>
                         <tr class="bg-gray-200">
                             <td>Auction ends at</td>
-                            <td>{{ auction.till.toUTCString() }}</td>
+                            <td>{{ new Date(auction.till).toUTCString() }}</td>
                         </tr>
                     </template>
                 </tbody>

@@ -1,5 +1,5 @@
 <template>
-    <div class="h-screen w-full">
+    <div class="SplitLayoutContainer">
         <SplitLayout :step.sync="step">
             <template #step0>
                 <MainText
@@ -9,11 +9,24 @@
                 />
             </template>
             <template #step1
-                ><Auction v-if="selectedAuction" class="p-8" :auction="selectedAuction" @swap="step = 2" />
-                <Alert v-else class="mx-10" message="This Auction was not found" type="error" />
+                ><Auction v-if="selectedAuction" class="m-10" :auction="selectedAuction" @swap="step = 2" />
+                <Alert v-else-if="step === 1" class="m-8" message="This Auction was not found" type="error" />
             </template>
             <template #step2
-                ><SwapTransaction v-if="selectedAuction" class="p-8" :auction-transaction="selectedAuction"
+                ><SwapTransaction
+                    v-if="selectedAuction"
+                    class="m-10"
+                    :auction-transaction="selectedAuction"
+                    :is-connecting="isConnecting"
+                    :is-authorizing="isAuthorizing"
+                    :is-authorised="isAuthorised"
+                    :is-executing="isExecuting"
+                    :wallet-address="walletAddress"
+                    :transaction-address="transactionAddress"
+                    @connect="$emit('connect')"
+                    @disconnect="$emit('disconnect')"
+                    @authorize="$emit('authorize')"
+                    @execute="$emit('execute')"
             /></template>
         </SplitLayout>
     </div>
@@ -34,6 +47,30 @@ export default Vue.extend({
             default: () => [],
         },
         selectedAuctionId: {
+            type: String,
+            default: null,
+        },
+        isConnecting: {
+            type: Boolean,
+            default: false,
+        },
+        isAuthorizing: {
+            type: Boolean,
+            default: false,
+        },
+        isExecuting: {
+            type: Boolean,
+            default: false,
+        },
+        isAuthorised: {
+            type: Boolean,
+            default: false,
+        },
+        walletAddress: {
+            type: String,
+            default: null,
+        },
+        transactionAddress: {
             type: String,
             default: null,
         },
@@ -68,3 +105,9 @@ export default Vue.extend({
     },
 });
 </script>
+
+<style scoped>
+.SplitLayoutContainer {
+    height: calc(100vh - 4rem);
+}
+</style>

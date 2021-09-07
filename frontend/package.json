@@ -44,6 +44,7 @@
     "@storybook/addon-essentials": "^6.3.6",
     "@storybook/addon-links": "^6.3.6",
     "@storybook/vue": "^6.3.6",
+    "@types/faker": "^5.5.8",
     "@types/lodash": "^4.14.171",
     "@types/number-to-words": "^1.2.0",
     "@typescript-eslint/eslint-plugin": "^4.28.5",

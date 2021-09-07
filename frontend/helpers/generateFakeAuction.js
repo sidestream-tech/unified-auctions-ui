@@ -8,7 +8,7 @@ export const generateFakeAuction = function () {
         collateralType: faker.finance.currencyCode(),
         amountRAW: parseFloat(faker.finance.amount()),
         amountDAI: parseFloat(faker.finance.amount()),
-        till: faker.date.future(),
+        till: faker.date.future().toString(),
         marketValue: faker.datatype.number({ min: -1, max: 1, precision: 0.001 }),
         vaultOwner: faker.finance.ethereumAddress(),
         amountPerCollateral: amountDAI / amountRAW,
