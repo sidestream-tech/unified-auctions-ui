@@ -6,7 +6,15 @@
                 <span class="ml-2 mb-0 hidden md:block"> Maker liquidations </span>
             </nuxt-link>
 
-            <div class="flex-1 flex justify-end space-x-4">
+            <div class="flex-1 flex justify-end space-x-4 items-end">
+                <label class="flex items-center space-x-2 cursor-pointer select-none">
+                    <BaseSwitch
+                        :is-checked.sync="hasExplanation"
+                        class="mt-px"
+                        @update:isChecked="$emit('explanations', $event)"
+                    />
+                    <span class="text-gray-700">Explanations</span>
+                </label>
                 <network-selector @select="$emit('selectNetwork', $event)" />
 
                 <div class="flex items-center space-x-2 cursor-pointer">
@@ -24,13 +32,20 @@ import { Icon } from 'ant-design-vue';
 import Vue from 'vue';
 import NetworkSelector from '~/components/utils/NetworkSelector.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
+import BaseSwitch from '~/components/common/BaseSwitch.vue';
 
 export default Vue.extend({
     name: 'Header',
     components: {
         BrandingIcon,
         Icon,
+        BaseSwitch,
         NetworkSelector,
+    },
+    data() {
+        return {
+            hasExplanation: false,
+        };
     },
 });
 </script>
