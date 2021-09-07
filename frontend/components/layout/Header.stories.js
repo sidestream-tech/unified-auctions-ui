@@ -8,9 +8,10 @@ const common = {
         selectNetwork: action('selectNetwork'),
         explanations: action('explanations'),
     },
+    data: () => ({ isExplanationsShown: false }),
 };
 
 storiesOf('Layout/Header', module).add('Default', () => ({
     ...common,
-    template: '<Header @selectNetwork="selectNetwork" @explanations="explanations" />',
+    template: '<Header @selectNetwork="selectNetwork" :isExplanationsShown.sync="isExplanationsShown" />',
 }));

@@ -9,9 +9,9 @@
             <div class="flex-1 flex justify-end space-x-4 items-end">
                 <label class="flex items-center space-x-2 cursor-pointer select-none">
                     <BaseSwitch
-                        :is-checked.sync="hasExplanation"
+                        :is-checked="isExplanationsShown"
                         class="mt-px"
-                        @update:isChecked="$emit('explanations', $event)"
+                        @update:isChecked="$emit('update:isExplanationsShown', $event)"
                     />
                     <span class="text-gray-700">Explanations</span>
                 </label>
@@ -28,7 +28,6 @@
 
 <script lang="ts">
 import { Icon } from 'ant-design-vue';
-
 import Vue from 'vue';
 import NetworkSelector from '~/components/utils/NetworkSelector.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
@@ -42,10 +41,11 @@ export default Vue.extend({
         BaseSwitch,
         NetworkSelector,
     },
-    data() {
-        return {
-            hasExplanation: false,
-        };
+    props: {
+        isExplanationsShown: {
+            type: Boolean,
+            default: false,
+        },
     },
 });
 </script>
