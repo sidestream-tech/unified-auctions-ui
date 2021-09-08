@@ -12,6 +12,7 @@ export const generateFakeAuction = function () {
         marketValue: faker.datatype.number({ min: -1, max: 1, precision: 0.001 }),
         vaultOwner: faker.finance.ethereumAddress(),
         amountPerCollateral: amountDAI / amountRAW,
+        isActive: faker.datatype.boolean(),
     };
 };
 

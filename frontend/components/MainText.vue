@@ -1,33 +1,46 @@
 <template>
-    <div class="flex flex-col my-10 space-y-10">
-        <TextBlock title="Maker DAO Liquidation" class="TextBlock">
-            Dai (or DAI) is a stablecoin cryptocurrency which aims to keep its value as close to one United States
-            dollar (USD) as possible through an automated system of smart contracts on the Ethereum blockchain . Dai is
-            maintained and regulated by MakerDAO, a decentralized autonomous organization (DAO) composed of the owners
-            of its governance token, MKR, who may vote on changes to certain parameters in its smart contracts in order
-            to ensure the stability of Dai.
-            <a class="text-gray-400" target="_blank" href="https://en.wikipedia.org/wiki/Dai_(cryptocurrency)">
-                source: Wikipedia
-            </a>
+    <div class="flex flex-col space-y-10 my-10">
+        <TextBlock title="What is the Maker Protocol?" class="TextBlock">
+            The Maker Protocol is a set of rules that defines how a cryptocurrency called DAI is kept approximately
+            equal to USD by incentivizing market players. People who help to keep DAI stable, benefit from their
+            actions by acquiring cryptocurrency at a discount. The main promise of the protocol is to provide a
+            decentralized stable currency, which can be used to borrow money over a longer period without being
+            affected by unpredictable exchange rates.
         </TextBlock>
-        <TextBlock title="Current liquidation auctions" class="TextBlock">
-            Currently, there are {{ openAuctionsValues.length }} open auctions with the total value of
-            {{ openAuctionsTotalValue }} DAI/USD. Smallest available vault is only
-            {{ smallestAvailableVault }} DAI/USD.
+        <TextBlock class="TextBlock">
+            <h1 class="text-xl font-extrabold mb-4 text-gray-700">
+                What are the
+                <a
+                    href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#resetting-an-auction"
+                    target="_blank"
+                    >Liquidations</a
+                >?
+            </h1>
+            To get DAI, people need to lock up some other cryptocurrency (e.g., ETH) in a vault. With time, if the
+            price of the cryptocurrency in the vault drops below the predefined ratio (e.g. 150% for ETH), owners of
+            the vault have to add more collateral or return their DAI. If they fail to do so, their vault can be
+            liquidated by the Maker protocol and other people can buy it at a discount.
+        </TextBlock>
+        <TextBlock title="How to profit?" class="TextBlock">
+            Similar to a Dutch-style auction system, the liquidation auction price starts 30% above the market and
+            drops by <format-percentage :value="params.cut" /> every {{ params.step }} seconds. The first person who
+            bids on the auction wins it. During normal market conditions, auction price rarely drops
+            <format-percentage :value="params.drop" /> beyond usual exchange rates on other platforms, so make sure to
+            act quickly. If no one bids on the auction for for a certain amount of time or if price drops below a
+            certain threshold, the auction will not accept any further bids and will require a reset.
+        </TextBlock>
+        <TextBlock v-if="auctions.length > 0" title="Active auctions" class="TextBlock w-full">
+            There are {{ openAuctionsValues.length }} active auctions for
+            {{ openAuctionCurrencyTypes.length }} different types of collateral, {{ openAuctionNotActive }} of them
+            need<span v-if="openAuctionNotActive === 1">s</span> to be restarted.
+        </TextBlock>
+        <TextBlock v-else title="No active auctions" class="TextBlock">
+            Currently, there are no active auctions. Times of steep price drops in cryptocurrencies bear the highest
+            probability for auctions to be triggered.
         </TextBlock>
         <Loading class="max-w-4xl w-full self-center mb-6 mt-1 Loading">
             <AuctionsTable :auctions="auctions" :selected-auction-id.sync="selectedAuctionId" />
         </Loading>
-        <TextBlock title="How to participate" class="TextBlock">
-            <!-- ToDo: insert the real text -->
-            Rerum at expedita sed aut odit quis doloremque est. Aut dolores qui aperiam quaerat commodi et. Tempora
-            veritatis occaecati nihil doloribus veritatis voluptatibus. Beatae vel voluptates blanditiis quasi qui
-            delectus necessitatibus sapiente repellat. Iste quis tempore sit quaerat. Ducimus earum numquam quo vel
-            nisi. Dolor et error. Suscipit perferendis nisi. Quas porro recusandae molestiae omnis consequatur
-            explicabo omnis quos animi. Ut fugiat cum facilis rerum nam nesciunt. Doloribus sed temporibus facilis
-            rerum nisi est molestiae et quia. Corrupti iure aliquam eveniet dolores temporibus. Expedita maiores quos
-            voluptas nihil vero recusandae voluptatem consequatur dolorem.
-        </TextBlock>
     </div>
 </template>
 <script lang="ts">
@@ -35,9 +48,12 @@ import Vue, { PropType } from 'vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import AuctionsTable from '~/components/AuctionsTable.vue';
 import Loading from '~/components/common/Loading.vue';
+import { getParams } from '~/libs/getParams';
+import FormatPercentage from '~/components/utils/FormatPercentage.vue';
 
 export default Vue.extend({
     components: {
+        FormatPercentage,
         TextBlock,
         AuctionsTable,
         Loading,
@@ -58,14 +74,26 @@ export default Vue.extend({
                 .filter((auction: Auction) => new Date(auction.till).getTime() > new Date().getTime())
                 .map((auction: Auction) => Number(auction.amountDAI));
         },
-        openAuctionsTotalValue(): number {
-            return this.openAuctionsValues.reduce((a, b) => a + b, 0);
+        openAuctionCurrencyTypes(): Array<string> {
+            const currencyTypes: string[] = [];
+            this.auctions.forEach(auction => {
+                if (!currencyTypes.includes(auction.collateralType)) {
+                    currencyTypes.push(auction.collateralType);
+                }
+            });
+            return currencyTypes;
         },
-        smallestAvailableVault(): number {
-            if (this.openAuctionsValues.length === 0) {
-                return 0;
-            }
-            return Math.min(...this.openAuctionsValues);
+        openAuctionNotActive(): number {
+            let nonActiveAuctions = 0;
+            this.auctions.forEach(auction => {
+                if (!auction.isActive) {
+                    nonActiveAuctions++;
+                }
+            });
+            return nonActiveAuctions;
+        },
+        params(): MakerParams {
+            return getParams;
         },
     },
 });

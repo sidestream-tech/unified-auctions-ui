@@ -59,26 +59,48 @@
             {{ isTableExpanded ? 'Hide additional numbers' : 'Show additional numbers' }}
         </button>
 
-        <TextBlock class="mt-4">
-            <div class="font-medium">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrudexercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
-                eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim id est laborum.
-            </div>
+        <TextBlock v-if="!error" class="TextBlock mt-10">
+            The auctioned vault <format-address :value="auction.vaultOwner" /> contains
+            <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />. Currently, it is sold
+            for <format-currency :value="auction.amountDAI" currency="DAI" />. This equals
+            <format-currency :value="auction.amountPerCollateral" currency="DAI" /> per
+            <format-currency :currency="auction.collateralType" />, or approximately
+            <format-market-value :value="auction.marketValue" /> than if you buy
+            <format-currency :currency="auction.collateralType" /> on another exchange platform such as Uniswap.
+        </TextBlock>
+        <TextBlock v-else class="mt-10">
+            This auction was finished at {{ new Date(auction.till).toUTCString() }} at a closing auction price of
+            <format-currency :value="auction.amountPerCollateral" currency="DAI" /> (meaning
+            <format-currency :value="auction.amountPerCollateral" currency="DAI" />
+            per <format-currency :currency="auction.collateralType" /> on average) after
+            <time-till :date="auction.till" />.
         </TextBlock>
 
-        <TextBlock class="mt-4">
-            <div class="font-extrabold text-xl">Lorem ipsum dolor</div>
-            <div class="font-medium">
-                Flash Loans explainations. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </div>
+        <TextBlock title="Different ways to bid" class="TextBlock mt-10">
+            There are two ways to participate in an auction:
+            <ul class="list-disc list-outside pl-5">
+                <li>
+                    Purchase with DAI: This allows the participant to manually bid DAI on the auctioned collateral and
+                    redeem the auctioned collateral. Partial bids are also allowed.
+                </li>
+                <li>
+                    Directly swap into profit: The auctioned collateral is bought and sold on an available marketplace
+                    in exchange for DAI in a single transaction. You will receive the resulting profit. In the Maker
+                    community this is known as a
+                    <a
+                        target="_blank"
+                        href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#flash-lending-of-collateral"
+                    >
+                        flash loan</a
+                    >.
+                </li>
+            </ul>
             <div class="flex mt-4">
                 <div class="flex-grow" />
-                <Button :disabled="error !== ''" type="primary" @click="$emit('swap')">
+                <Button disabled type="secondary" class="mr-3 w-56" @click="$emit('purchase')">
+                    Purchase with DAI
+                </Button>
+                <Button :disabled="error !== ''" type="primary" class="w-56" @click="$emit('swap')">
                     Directly swap into profit
                 </Button>
             </div>

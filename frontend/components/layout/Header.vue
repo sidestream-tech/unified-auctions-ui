@@ -1,7 +1,7 @@
 <template>
     <header class="bg-primary">
         <nav class="flex items-center py-2 px-10">
-            <nuxt-link to="/" class="flex items-center text-gray-700">
+            <nuxt-link to="/" class="flex items-center text-gray-700 hover:text-gray-600 no-underline">
                 <branding-icon class="h-12 w-12" />
                 <span class="ml-2 mb-0 hidden md:block"> Maker liquidations </span>
             </nuxt-link>

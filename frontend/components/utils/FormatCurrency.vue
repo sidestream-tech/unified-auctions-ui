@@ -1,7 +1,7 @@
 <template>
-    <span>
-        {{ sign }}{{ fixedNumber }}<span class="uppercase"> {{ currency }} </span>
-    </span>
+    <span
+        >{{ sign }}{{ fixedNumber }}<span class="uppercase"> {{ currency }}</span></span
+    >
 </template>
 
 <script lang="ts">

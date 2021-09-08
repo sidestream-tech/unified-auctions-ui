@@ -1,14 +1,19 @@
 <template>
     <div>
-        <TextBlock title="Make a bid">
+        <TextBlock title="Make a bid" class="TextBlock">
             <div v-if="state === 'executed'" class="text-gray-800">
                 Transaction <format-address :value="transactionAddress" /> was successfully executed.
                 <a :href="transactionURL" target="_blank" class="text-green-500">View on Etherscan</a>.
             </div>
             <div v-else class="text-gray-800">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrudexercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat.
+                Auction participation incurs transaction fees (<FormatCurrency
+                    :value="transactionFee"
+                    :decimals="6"
+                    currency="ETH"
+                />). Hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is
+                a recommended value and based on the
+                <a target="_blank" href="https://ethgasstation.info/">average transaction fee</a>. The amount can be
+                edited by the participant to influence the speed of the transaction.
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
@@ -26,6 +31,7 @@ import Vue from 'vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
+import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 export default Vue.extend({
     name: 'WalletBlock',
@@ -33,6 +39,7 @@ export default Vue.extend({
         FormatAddress,
         TextBlock,
         BaseButton,
+        FormatCurrency,
     },
     props: {
         disabled: {
@@ -46,6 +53,14 @@ export default Vue.extend({
         transactionAddress: {
             type: String,
             default: null,
+        },
+        transactionFee: {
+            type: Number,
+            default: null,
+        },
+        collateralType: {
+            type: String,
+            required: true,
         },
     },
     computed: {

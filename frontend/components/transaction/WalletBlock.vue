@@ -1,13 +1,13 @@
 <template>
     <div>
-        <TextBlock title="Connect a wallet">
+        <TextBlock title="Connect a wallet" class="TextBlock">
             <div v-if="walletAddress" class="text-gray-800">
                 The operation will be carried over the connected wallet <format-address :value="walletAddress" />
             </div>
             <div v-else class="text-gray-800">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrudexercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat.
+                To participate in the auction, you need to connect a wallet. If you don’t have a wallet yet, you can
+                simply sign up for it on a service like
+                <a href="https://metamask.io/" target="_blank">MetaMask</a>.
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">

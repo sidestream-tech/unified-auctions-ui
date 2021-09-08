@@ -1,14 +1,15 @@
 <template>
     <div>
-        <TextBlock title="Authorize transaction">
+        <TextBlock title="Authorize transaction" class="TextBlock">
             <div v-if="isAuthorized" class="text-gray-800">
                 Different types of transactions have to be authorized once per type before participating in auction.
                 The transaction type for <span class="uppercase">{{ collateralType }}</span> has already been
                 authorized by you.
             </div>
             <div v-else class="text-gray-800">
-                To participate in auctions you need to sign the approval transactions below and move DAI that will be
-                used for bidding to the VAT.
+                Auction participation requires a preliminary one-time per user authorization that incurs transaction
+                fees. It is essential for every new user that wants to interact with the auction process because an
+                automated mechanism changes the balance of the user's wallet.
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">

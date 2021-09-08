@@ -19,6 +19,7 @@ declare interface Auction {
     marketValue: number;
     vaultOwner: string;
     amountPerCollateral: number;
+    isActive: boolean;
 }
 declare interface AuctionTransaction extends Auction {
     transactionProfit: number;
@@ -34,4 +35,10 @@ declare interface Indexable {
 declare interface SelectOption {
     label: string;
     value: string;
+}
+
+declare interface MakerParams {
+    step: number;
+    cut: number;
+    drop: number;
 }
