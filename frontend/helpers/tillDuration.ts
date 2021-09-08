@@ -1,8 +1,8 @@
-import { intervalToDuration, Duration } from 'date-fns';
+import { intervalToDuration, formatDistance, Duration } from 'date-fns';
 
 const formatDuration = function (duration: Duration): string {
+    // formats duration into `1y 2m 3d 4h 5m 6s` format
     const periodNames: Array<keyof Duration> = ['years', 'months', 'days', 'hours', 'minutes', 'seconds'];
-
     const output = periodNames.map(periodName => {
         if (duration[periodName] === 0 && !['hours', 'minutes', 'seconds'].includes(periodName)) {
             return undefined;
@@ -13,14 +13,15 @@ const formatDuration = function (duration: Duration): string {
 };
 
 export const formatInterval = function (startDate: Date, endDate: Date): string {
-    const duration = intervalToDuration({
-        start: startDate,
-        end: endDate,
-    });
-    const formatDurationString = formatDuration(duration);
-
-    if (startDate > endDate) {
-        return `${formatDurationString} ago`;
+    if (startDate < endDate) {
+        const duration = intervalToDuration({
+            start: startDate,
+            end: endDate,
+        });
+        return formatDuration(duration);
+    } else {
+        return formatDistance(endDate, startDate, {
+            addSuffix: true,
+        });
     }
-    return formatDuration(duration);
 };

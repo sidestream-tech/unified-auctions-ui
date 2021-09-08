@@ -13,7 +13,7 @@
         <div class="flex w-full justify-between">
             <div>Auction Price</div>
             <div>
-                <FormatCurrency :value="auctionTransaction.amountDAI" currency="DAI" /> per
+                <FormatCurrency :value="auctionTransaction.amountPerCollateral" currency="DAI" /> per
                 <span class="uppercase">{{ auctionTransaction.collateralType }}</span>
             </div>
         </div>

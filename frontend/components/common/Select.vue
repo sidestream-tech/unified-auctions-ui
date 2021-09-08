@@ -1,5 +1,5 @@
 <template>
-    <popover v-model="visible" trigger="hover" placement="bottomLeft">
+    <popover v-model="visible" trigger="hover" placement="bottomLeft" overlay-class-name="Select">
         <div slot="content" class="p-0">
             <ul>
                 <li
@@ -57,3 +57,9 @@ export default Vue.extend({
     },
 });
 </script>
+
+<style>
+.Select .ant-popover-inner-content {
+    padding: 0;
+}
+</style>

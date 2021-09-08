@@ -10,11 +10,17 @@ declare module '*.png' {
     export default content;
 }
 
+// stub modules that unfortunetely doesn't have any types
+declare module '@makerdao/*' {
+    const content: any;
+    export default content;
+}
+
 declare interface Auction {
     id: string;
     collateralType: string;
-    amountRAW: number;
-    amountDAI: number;
+    amountRAW: BigNumber | number;
+    amountDAI: BigNumber | number;
     till: string;
     marketValue: number;
     vaultOwner: string;
@@ -26,6 +32,18 @@ declare interface AuctionTransaction extends Auction {
     transactionFeeETH: number;
     transactionFeeDAI: number;
     transactionOutcome: number;
+}
+
+declare interface CollateralConfig {
+    title: string;
+    ilk: string;
+    symbol: string;
+    decimals: number;
+}
+
+declare interface NetworkConfig {
+    title: string;
+    url: string;
 }
 
 declare interface Indexable {

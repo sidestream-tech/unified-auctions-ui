@@ -5,13 +5,21 @@ import Header from '~/components/layout/Header';
 const common = {
     components: { Header },
     methods: {
-        selectNetwork: action('selectNetwork'),
-        explanations: action('explanations'),
+        updateNetwork: action('updateNetwork'),
+        updateIsExplanationsShown: action('updateIsExplanationsShown'),
     },
-    data: () => ({ isExplanationsShown: false }),
+    data: () => ({
+        network: null,
+        isExplanationsShown: false,
+    }),
 };
 
 storiesOf('Layout/Header', module).add('Default', () => ({
     ...common,
-    template: '<Header @selectNetwork="selectNetwork" :isExplanationsShown.sync="isExplanationsShown" />',
+    template: `<Header
+        :network.sync="network"
+        :isExplanationsShown.sync="isExplanationsShown"
+        @update:network="updateNetwork"
+        @update:isExplanationsShown="updateIsExplanationsShown"
+    />`,
 }));

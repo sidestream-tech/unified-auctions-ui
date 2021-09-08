@@ -15,7 +15,8 @@
                     />
                     <span class="text-gray-700">Explanations</span>
                 </label>
-                <network-selector @select="$emit('selectNetwork', $event)" />
+
+                <NetworkSelector :network="network" @update:network="$emit('update:network', $event)" />
 
                 <div class="flex items-center space-x-2 cursor-pointer">
                     <icon type="wallet" />
@@ -44,7 +45,11 @@ export default Vue.extend({
     props: {
         isExplanationsShown: {
             type: Boolean,
-            default: false,
+            required: true,
+        },
+        network: {
+            type: String,
+            default: null,
         },
     },
 });

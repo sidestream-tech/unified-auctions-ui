@@ -4,13 +4,17 @@
             <template #step0>
                 <MainText
                     :auctions="auctions"
+                    :auctions-error="auctionsError"
+                    :is-auctions-loading="isAuctionsLoading"
                     :selected-auction-id="selectedAuctionId"
                     @selectedAuctionId:update="$emit('selectedAuctionId:update', $event)"
                 />
             </template>
-            <template #step1
-                ><Auction v-if="selectedAuction" class="m-10" :auction="selectedAuction" @swap="step = 2" />
-                <Alert v-else-if="step === 1" class="m-8" message="This Auction was not found" type="error" />
+            <template #step1>
+                <div>
+                    <Auction v-if="selectedAuction" class="m-10" :auction="selectedAuction" @swap="step = 2" />
+                    <Alert v-else-if="step === 1" class="m-8" message="This Auction was not found" type="error" />
+                </div>
             </template>
             <template #step2
                 ><SwapTransaction
@@ -45,6 +49,14 @@ export default Vue.extend({
         auctions: {
             type: Array as Vue.PropType<AuctionTransaction[]>,
             default: () => [],
+        },
+        isAuctionsLoading: {
+            type: Boolean,
+            default: false,
+        },
+        auctionsError: {
+            type: String,
+            default: null,
         },
         selectedAuctionId: {
             type: String,

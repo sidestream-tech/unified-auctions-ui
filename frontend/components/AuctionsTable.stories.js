@@ -1,10 +1,9 @@
 import { storiesOf } from '@storybook/vue';
-import { random } from 'lodash';
 import faker from 'faker';
 import AuctionsTable from './AuctionsTable';
 import { generateFakeAuctions } from '~/helpers/generateFakeAuction';
 
-const fakeAuctions = generateFakeAuctions(random(2, 15));
+const fakeAuctions = generateFakeAuctions();
 const randomSelectedAuction = faker.random.arrayElement(fakeAuctions);
 
 const common = {

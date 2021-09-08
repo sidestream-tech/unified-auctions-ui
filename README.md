@@ -1,13 +1,18 @@
 # Auction UI
 
-## Maker Dao DAI
+The tool to enable easy and straightforward participation in [MakerDAO](https://makerdao.com/) liquidations for users both completely unfamiliar with Maker protocol but also experts.
 
-Dai (or DAI) is a stablecoin cryptocurrency which aims to keep its value as close to one United States dollar (USD) as possible through an automated system of smart contracts on the Ethereum blockchain. Dai is maintained and regulated by MakerDAO, a decentralized autonomous organization (DAO) composed of the owners of its governance token, MKR, who may vote on changes to certain parameters in its smart contracts in order to ensure the stability of Dai.
+### Development
 
-## Liquidation
+#### Environment variables
 
-In the context of the Maker protocol, a liquidation is the automatic transfer of collateral from an insufficiently collateralized Vault, along with the transfer of that Vault’s debt to the protocol. In the liquidation contract (the Dog), an auction is started promptly to sell the transferred collateral for DAI in an attempt to cancel out the debt now assigned to the protocol.
+-   `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> etherium -> create new project -> settings -> keys)
 
-## Liquidation Portal
+NOTE: Environment variables are accessible/available via the `secret` command. Please refer to the [secrets and configuration management guide](https://github.com/sidestream-tech/guides/tree/main/secrets) for more information:
 
-An interface for viewing and interacting with MakerDAO collateral liquidations.
+#### Running
+
+```sh
+secret export auction-ui/dev --format dotenv > ./frontend/.env
+cd ./frontend && npm ci && npm run dev
+```

@@ -38,7 +38,11 @@
             Currently, there are no active auctions. Times of steep price drops in cryptocurrencies bear the highest
             probability for auctions to be triggered.
         </TextBlock>
-        <Loading class="max-w-4xl w-full self-center mb-6 mt-1 Loading">
+        <Loading
+            :is-loading="isAuctionsLoading"
+            :error="auctionsError"
+            class="max-w-4xl w-full self-center mb-6 mt-1 Loading"
+        >
             <AuctionsTable :auctions="auctions" :selected-auction-id.sync="selectedAuctionId" />
         </Loading>
     </div>
@@ -62,6 +66,14 @@ export default Vue.extend({
         auctions: {
             type: Array as PropType<Auction[]>,
             default: () => [],
+        },
+        isAuctionsLoading: {
+            type: Boolean,
+            default: false,
+        },
+        auctionsError: {
+            type: String,
+            default: null,
         },
         selectedAuctionId: {
             type: String,
@@ -105,6 +117,6 @@ export default Vue.extend({
 }
 
 .Loading {
-    min-height: 300px;
+    min-height: 100px;
 }
 </style>

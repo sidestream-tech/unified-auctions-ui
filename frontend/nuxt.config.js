@@ -6,7 +6,7 @@ export default {
     target: 'static',
 
     env: {
-        SERVER_ORIGIN: process.env.SERVER_ORIGIN || 'http://localhost:8000',
+        INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID,
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head
@@ -34,6 +34,8 @@ export default {
 
     // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
     buildModules: [
+        // https://github.com/nuxt-community/dotenv-module
+        '@nuxtjs/dotenv',
         // https://go.nuxtjs.dev/typescript
         '@nuxt/typescript-build',
         // https://go.nuxtjs.dev/stylelint

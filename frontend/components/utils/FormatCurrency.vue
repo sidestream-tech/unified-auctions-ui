@@ -1,17 +1,18 @@
 <template>
     <span
-        >{{ sign }}{{ fixedNumber }}<span class="uppercase"> {{ currency }}</span></span
+        >{{ sign }}{{ formattedNumber }}<span class="uppercase"> {{ currency }}</span></span
     >
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 
 export default Vue.extend({
     name: 'FormatCurrency',
     props: {
         value: {
-            type: Number,
+            type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
             default: null,
         },
         currency: {
@@ -28,14 +29,17 @@ export default Vue.extend({
         },
     },
     computed: {
-        fixedNumber(): string {
-            if (this.value) {
-                return this.value.toFixed(this.decimals);
+        formattedNumber(): string {
+            if (this.value === null) {
+                return '';
             }
-            return '';
+            return this.value.toFixed(this.decimals);
         },
         sign(): string {
             if (!this.showSign) {
+                return '';
+            }
+            if (this.value === null) {
                 return '';
             }
             return this.value > 0 ? '+' : '';

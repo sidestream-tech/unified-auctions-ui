@@ -7,22 +7,22 @@
             :row-class-name="record => (record.id === selectedAuctionId ? 'selected-row' : '')"
             :row-key="record => record.id"
         >
-            <div slot="collateralType" slot-scope="collateralType" class="CustomCell">
+            <div slot="collateralType" slot-scope="collateralType">
                 <format-currency :currency="collateralType" />
             </div>
-            <div slot="amountRAW" slot-scope="amountRAW, record" class="CustomCell">
+            <div slot="amountRAW" slot-scope="amountRAW, record">
                 <format-currency :value="amountRAW" :currency="record.collateralType" />
             </div>
-            <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record" class="CustomCell">
+            <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record">
                 <format-currency :value="amountPerCollateral" currency="DAI" />
                 &nbsp;per&nbsp;
                 <format-currency :currency="record.collateralType" />
             </div>
-            <div slot="marketValue" slot-scope="marketValue" class="CustomCell">
+            <div slot="marketValue" slot-scope="marketValue">
                 <format-market-value :value="marketValue" />
             </div>
-            <div slot="till" slot-scope="till" class="CustomCell"><time-till :date="till" /></div>
-            <div slot="action" slot-scope="record, index" class="CustomCell">
+            <div slot="till" slot-scope="till"><time-till :date="till" /></div>
+            <div slot="action" slot-scope="record, index">
                 <nuxt-link
                     :to="`/?auction=${record.id}`"
                     :class="hoveredRowIndex === index && 'bg-green-400'"
@@ -149,8 +149,5 @@ export default Vue.extend({
 .AuctionsTable >>> .ant-table-tbody td:first-child,
 .AuctionsTable >>> .ant-table-thead th:first-child {
     @apply border-l-2;
-}
-.CustomCell {
-    @apply w-full h-full flex items-center;
 }
 </style>

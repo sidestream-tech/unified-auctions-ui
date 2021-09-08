@@ -1,4 +1,5 @@
 import faker from 'faker';
+import { random } from 'lodash';
 
 export const generateFakeAuction = function () {
     const amountRAW = parseFloat(faker.finance.amount());
@@ -31,12 +32,12 @@ export const generateFakeAuctionTransaction = function () {
     };
 };
 
-export const generateFakeAuctionTransactions = function (number = 1) {
+export const generateFakeAuctionTransactions = function (number = random(1, 15)) {
     const auctionTransactions = Array(number).fill(null).map(generateFakeAuctionTransaction);
     return auctionTransactions;
 };
 
-export const generateFakeAuctions = function (number = 1) {
+export const generateFakeAuctions = function (number = random(1, 15)) {
     const auctions = Array(number).fill(null).map(generateFakeAuction);
     return auctions;
 };
