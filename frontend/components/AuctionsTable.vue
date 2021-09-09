@@ -6,6 +6,7 @@
             :pagination="{ pageSize: rowsPerPage, hideOnSinglePage: true }"
             :row-class-name="record => (record.id === selectedAuctionId ? 'selected-row' : '')"
             :row-key="record => record.id"
+            :custom-row="customRowEvents"
         >
             <div slot="collateralType" slot-scope="collateralType">
                 <format-currency :currency="collateralType" />
@@ -22,10 +23,13 @@
                 <format-market-value :value="marketValue" />
             </div>
             <div slot="till" slot-scope="till"><time-till :date="till" /></div>
-            <div slot="action" slot-scope="record, index">
+            <div
+                slot="action"
+                slot-scope="text, record, index"
+                :class="hoveredRowIndex === index && 'bg-green-400 h-full'"
+            >
                 <nuxt-link
                     :to="`/?auction=${record.id}`"
-                    :class="hoveredRowIndex === index && 'bg-green-400'"
                     class="flex w-full h-full text-gray-500 items-center justify-center font-normal"
                 >
                     See details
@@ -106,6 +110,7 @@ export default Vue.extend({
                     dataIndex: 'marketValue',
                     scopedSlots: { customRender: 'marketValue' },
                     sorter: compareBy('marketValue'),
+                    defaultSortOrder: 'descend',
                 },
                 {
                     title: 'Next price drop',
@@ -120,8 +125,22 @@ export default Vue.extend({
                 },
             ],
             rowsPerPage: 7,
-            hoveredRowIndex: null,
+            hoveredRowIndex: 0,
         };
+    },
+    methods: {
+        customRowEvents(record: Record<string, number>, rowIndex: number): Object {
+            return {
+                on: {
+                    click: () => {
+                        this.$router.push(`/?auction=${record.id}`);
+                    },
+                    mouseenter: () => {
+                        this.hoveredRowIndex = rowIndex;
+                    },
+                },
+            };
+        },
     },
 });
 </script>
