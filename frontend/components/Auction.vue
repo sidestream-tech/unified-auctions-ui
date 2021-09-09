@@ -58,49 +58,51 @@
         >
             {{ isTableExpanded ? 'Hide additional numbers' : 'Show additional numbers' }}
         </button>
+        <template v-if="isExplanationsShown">
+            <TextBlock v-if="!error" class="mt-4">
+                The auctioned vault <format-address :value="auction.vaultOwner" /> contains
+                <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />. Currently, it is
+                sold for <format-currency :value="auction.amountDAI" currency="DAI" />. This equals
+                <format-currency :value="auction.amountPerCollateral" currency="DAI" /> per
+                <format-currency :currency="auction.collateralType" />, or approximately
+                <format-market-value :value="auction.marketValue" /> than if you buy
+                <format-currency :currency="auction.collateralType" /> on another exchange platform such as Uniswap.
+            </TextBlock>
+            <TextBlock v-else class="mt-10">
+                This auction was finished at {{ new Date(auction.till).toUTCString() }} at a closing auction price of
+                <format-currency :value="auction.amountPerCollateral" currency="DAI" /> (meaning
+                <format-currency :value="auction.amountPerCollateral" currency="DAI" />
+                per <format-currency :currency="auction.collateralType" /> on average) after
+                <time-till :date="auction.till" />.
+            </TextBlock>
 
-        <TextBlock v-if="!error" class="TextBlock mt-10">
-            The auctioned vault <format-address :value="auction.vaultOwner" /> contains
-            <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />. Currently, it is sold
-            for <format-currency :value="auction.amountDAI" currency="DAI" />. This equals
-            <format-currency :value="auction.amountPerCollateral" currency="DAI" /> per
-            <format-currency :currency="auction.collateralType" />, or approximately
-            <format-market-value :value="auction.marketValue" /> than if you buy
-            <format-currency :currency="auction.collateralType" /> on another exchange platform such as Uniswap.
-        </TextBlock>
-        <TextBlock v-else class="mt-10">
-            This auction was finished at {{ new Date(auction.till).toUTCString() }} at a closing auction price of
-            <format-currency :value="auction.amountPerCollateral" currency="DAI" /> (meaning
-            <format-currency :value="auction.amountPerCollateral" currency="DAI" />
-            per <format-currency :currency="auction.collateralType" /> on average) after
-            <time-till :date="auction.till" />.
-        </TextBlock>
-
-        <TextBlock title="Different ways to bid" class="TextBlock mt-10">
-            There are two ways to participate in an auction:
-            <ul class="list-disc list-outside pl-5">
-                <li>
-                    Purchase with DAI: This allows the participant to manually bid DAI on the auctioned collateral and
-                    redeem the auctioned collateral. Partial bids are also allowed.
-                </li>
-                <li>
-                    Directly swap into profit: The auctioned collateral is bought and sold on an available marketplace
-                    in exchange for DAI in a single transaction. You will receive the resulting profit. In the Maker
-                    community this is known as a
-                    <a
-                        target="_blank"
-                        href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#flash-lending-of-collateral"
-                    >
-                        flash loan</a
-                    >.
-                </li>
-            </ul>
-            <div class="flex mt-4">
-                <div class="flex-grow" />
-                <Button disabled type="secondary" class="mr-3 w-56" @click="$emit('purchase')">
+            <TextBlock title="Different ways to bid" class="TextBlock mt-10">
+                There are two ways to participate in an auction:
+                <ul class="list-disc list-outside pl-5">
+                    <li>
+                        Purchase with DAI: This allows the participant to manually bid DAI on the auctioned collateral
+                        and redeem the auctioned collateral. Partial bids are also allowed.
+                    </li>
+                    <li>
+                        Directly swap into profit: The auctioned collateral is bought and sold on an available
+                        marketplace in exchange for DAI in a single transaction. You will receive the resulting profit.
+                        In the Maker community this is known as a
+                        <a
+                            target="_blank"
+                            href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#flash-lending-of-collateral"
+                        >
+                            flash loan</a
+                        >.
+                    </li>
+                </ul>
+            </TextBlock>
+        </template>
+        <TextBlock>
+            <div class="flex mt-4 justify-between">
+                <Button disabled type="secondary" class="mr-3 w-60" @click="$emit('purchase')">
                     Purchase with DAI
                 </Button>
-                <Button :disabled="error !== ''" type="primary" class="w-56" @click="$emit('swap')">
+                <Button :disabled="error !== ''" type="primary" class="w-60" @click="$emit('swap')">
                     Directly swap into profit
                 </Button>
             </div>
@@ -138,11 +140,25 @@ export default Vue.extend({
             type: String,
             default: '',
         },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
+        },
     },
     data() {
         return {
             isTableExpanded: false,
         };
+    },
+    watch: {
+        isExplanationsShown: {
+            immediate: true,
+            handler(newIsExplanationsShown) {
+                if (!newIsExplanationsShown) {
+                    this.isTableExpanded = true;
+                }
+            },
+        },
     },
     methods: {
         toggleExpandable(): void {

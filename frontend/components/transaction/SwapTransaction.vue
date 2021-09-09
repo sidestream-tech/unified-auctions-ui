@@ -16,6 +16,7 @@
         <WalletBlock
             :is-loading="isConnecting"
             :wallet-address="walletAddress"
+            :is-explanations-shown="isExplanationsShown"
             @connectWallet="$emit('connect')"
             @disconnectWallet="$emit('disconnect')"
         />
@@ -24,12 +25,14 @@
             :collateral-type="auctionTransaction.collateralType"
             :is-loading="isAuthorizing"
             :is-authorized="isAuthorised"
+            :is-explanations-shown="isExplanationsShown"
             @authorize="$emit('authorize')"
         />
         <ExecutionBlock
             :disabled="!isAuthorised"
             :is-loading="isExecuting"
             :transaction-address="transactionAddress"
+            :is-explanations-shown="isExplanationsShown"
             :collateral-type="auctionTransaction.collateralType"
             :transaction-fee="auctionTransaction.transactionFeeETH"
             @execute="$emit('execute')"
@@ -82,6 +85,10 @@ export default Vue.extend({
         transactionAddress: {
             type: String,
             default: null,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
     },
     computed: {

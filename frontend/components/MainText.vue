@@ -1,13 +1,13 @@
 <template>
-    <div class="flex flex-col space-y-10 my-10">
-        <TextBlock title="What is the Maker Protocol?" class="TextBlock">
+    <div class="flex flex-col space-y-10 mb-10">
+        <TextBlock v-if="isExplanationsShown" title="What is the Maker Protocol?" class="TextBlock mt-10">
             The Maker Protocol is a set of rules that defines how a cryptocurrency called DAI is kept approximately
             equal to USD by incentivizing market players. People who help to keep DAI stable, benefit from their
             actions by acquiring cryptocurrency at a discount. The main promise of the protocol is to provide a
             decentralized stable currency, which can be used to borrow money over a longer period without being
             affected by unpredictable exchange rates.
         </TextBlock>
-        <TextBlock class="TextBlock">
+        <TextBlock v-if="isExplanationsShown" class="TextBlock">
             <h1 class="text-xl font-extrabold mb-4 text-gray-700">
                 What are the
                 <a
@@ -21,29 +21,36 @@
             the vault have to add more collateral or return their DAI. If they fail to do so, their vault can be
             liquidated by the Maker protocol and other people can buy it at a discount.
         </TextBlock>
-        <TextBlock title="How to profit?" class="TextBlock">
-            Similar to a Dutch-style auction system, the liquidation auction price starts 30% above the market and
-            drops by <format-percentage :value="params.cut" /> every {{ params.step }} seconds. The first person who
-            bids on the auction wins it. During normal market conditions, auction price rarely drops
-            <format-percentage :value="params.drop" /> beyond usual exchange rates on other platforms, so make sure to
-            act quickly. If no one bids on the auction for for a certain amount of time or if price drops below a
-            certain threshold, the auction will not accept any further bids and will require a reset.
-        </TextBlock>
-        <TextBlock v-if="auctions.length > 0" title="Active auctions" class="TextBlock w-full">
-            There are {{ openAuctionsValues.length }} active auctions for
-            {{ openAuctionCurrencyTypes.length }} different types of collateral, {{ openAuctionNotActive }} of them
-            need<span v-if="openAuctionNotActive === 1">s</span> to be restarted.
-        </TextBlock>
-        <TextBlock v-else title="No active auctions" class="TextBlock">
-            Currently, there are no active auctions. Times of steep price drops in cryptocurrencies bear the highest
-            probability for auctions to be triggered.
-        </TextBlock>
+        <template v-if="isExplanationsShown">
+            <TextBlock title="How to profit?" class="TextBlock">
+                Similar to a Dutch-style auction system, the liquidation auction price starts 30% above the market and
+                drops by <format-percentage :value="params.cut" /> every {{ params.step }} seconds. The first person
+                who bids on the auction wins it. During normal market conditions, auction price rarely drops
+                <format-percentage :value="params.drop" /> beyond usual exchange rates on other platforms, so make sure
+                to act quickly. If no one bids on the auction for for a certain amount of time or if price drops below
+                a certain threshold, the auction will not accept any further bids and will require a reset.
+            </TextBlock>
+            <TextBlock v-if="auctions.length > 0" title="Active auctions" class="TextBlock w-full">
+                There are {{ openAuctionsValues.length }} active auctions for
+                {{ openAuctionCurrencyTypes.length }} different types of collateral, {{ openAuctionNotActive }} of them
+                need<span v-if="openAuctionNotActive === 1">s</span> to be restarted.
+            </TextBlock>
+            <TextBlock v-else title="No active auctions" class="TextBlock">
+                Currently, there are no active auctions. Times of steep price drops in cryptocurrencies bear the
+                highest probability for auctions to be triggered.
+            </TextBlock>
+        </template>
         <Loading
             :is-loading="isAuctionsLoading"
             :error="auctionsError"
-            class="max-w-4xl w-full self-center mb-6 mt-1 Loading"
+            class="w-full self-center mb-6 mt-10 Loading"
+            :class="{ 'max-w-4xl mt-1': isExplanationsShown }"
         >
-            <AuctionsTable :auctions="auctions" :selected-auction-id.sync="selectedAuctionId" />
+            <AuctionsTable
+                :class="{ 'mx-10': !isExplanationsShown }"
+                :auctions="auctions"
+                :selected-auction-id.sync="selectedAuctionId"
+            />
         </Loading>
     </div>
 </template>
@@ -78,6 +85,10 @@ export default Vue.extend({
         selectedAuctionId: {
             type: String,
             default: null,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
     },
     computed: {

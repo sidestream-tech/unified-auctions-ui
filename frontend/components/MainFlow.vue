@@ -2,17 +2,28 @@
     <div class="SplitLayoutContainer">
         <SplitLayout :step.sync="step">
             <template #step0>
+                <div v-if="isExplanationsShown" class="h-1/2">
+                    <LandingBlock @explanations="explanationsTrigger" />
+                </div>
                 <MainText
+                    ref="mainText"
                     :auctions="auctions"
                     :auctions-error="auctionsError"
                     :is-auctions-loading="isAuctionsLoading"
                     :selected-auction-id="selectedAuctionId"
+                    :is-explanations-shown="isExplanationsShown"
                     @selectedAuctionId:update="$emit('selectedAuctionId:update', $event)"
                 />
             </template>
             <template #step1>
                 <div>
-                    <Auction v-if="selectedAuction" class="m-10" :auction="selectedAuction" @swap="step = 2" />
+                    <Auction
+                        v-if="selectedAuction"
+                        :is-explanations-shown="isExplanationsShown"
+                        class="m-10"
+                        :auction="selectedAuction"
+                        @swap="step = 2"
+                    />
                     <Alert v-else-if="step === 1" class="m-8" message="This Auction was not found" type="error" />
                 </div>
             </template>
@@ -27,6 +38,7 @@
                     :is-executing="isExecuting"
                     :wallet-address="walletAddress"
                     :transaction-address="transactionAddress"
+                    :is-explanations-shown="isExplanationsShown"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
                     @authorize="$emit('authorize')"
@@ -40,11 +52,12 @@ import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import MainText from '~/components/MainText.vue';
+import LandingBlock from '~/components/layout/LandingBlock.vue';
 import Auction from '~/components/Auction.vue';
 import SwapTransaction from '~/components/transaction/SwapTransaction.vue';
 
 export default Vue.extend({
-    components: { SplitLayout, MainText, Auction, SwapTransaction, Alert },
+    components: { SplitLayout, MainText, Auction, SwapTransaction, Alert, LandingBlock },
     props: {
         auctions: {
             type: Array as Vue.PropType<AuctionTransaction[]>,
@@ -86,6 +99,10 @@ export default Vue.extend({
             type: String,
             default: null,
         },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
+        },
     },
     data: () => ({
         step: 0,
@@ -113,6 +130,14 @@ export default Vue.extend({
                     this.$emit('update:selectedAuctionId', null);
                 }
             },
+        },
+    },
+    methods: {
+        explanationsTrigger(event: boolean): void {
+            if (event === true && this.$refs.mainText) {
+                (this.$refs.mainText as Vue).$el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+            }
+            this.$emit('update:isExplanationsShown', event);
         },
     },
 });

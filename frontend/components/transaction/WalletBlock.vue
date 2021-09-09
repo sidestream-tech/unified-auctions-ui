@@ -1,6 +1,6 @@
 <template>
     <div>
-        <TextBlock title="Connect a wallet" class="TextBlock">
+        <TextBlock v-if="isExplanationsShown" title="Connect a wallet">
             <div v-if="walletAddress" class="text-gray-800">
                 The operation will be carried over the connected wallet <format-address :value="walletAddress" />
             </div>
@@ -11,16 +11,16 @@
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
-            <base-button v-if="state === 'notConnected'" class="w-56" type="primary" @click="$emit('connectWallet')">
+            <base-button v-if="state === 'notConnected'" class="w-60" type="primary" @click="$emit('connectWallet')">
                 Connect a wallet
             </base-button>
-            <base-button v-if="state === 'connecting'" class="w-56" type="primary" is-loading>
+            <base-button v-if="state === 'connecting'" class="w-60" type="primary" is-loading>
                 Connecting...
             </base-button>
-            <base-button v-if="state === 'connected'" class="w-56" @click="$emit('disconnectWallet')">
-                Disconnect
+            <base-button v-if="state === 'connected'" class="w-60" @click="$emit('disconnectWallet')">
+                <div>Disconnect wallet <format-address :value="walletAddress" /></div>
             </base-button>
-            <base-button v-if="state === 'disconnecting'" class="w-56" is-loading> Disconnecting... </base-button>
+            <base-button v-if="state === 'disconnecting'" class="w-60" is-loading> Disconnecting... </base-button>
         </div>
     </div>
 </template>
@@ -46,6 +46,10 @@ export default Vue.extend({
         isLoading: {
             type: Boolean,
             default: false,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
     },
     computed: {

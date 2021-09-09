@@ -1,11 +1,11 @@
 <template>
     <div>
-        <TextBlock title="Make a bid" class="TextBlock">
+        <TextBlock :title="isExplanationsShown ? 'Make a bid' : ''">
             <div v-if="state === 'executed'" class="text-gray-800">
                 Transaction <format-address :value="transactionAddress" /> was successfully executed.
                 <a :href="transactionURL" target="_blank" class="text-green-500">View on Etherscan</a>.
             </div>
-            <div v-else class="text-gray-800">
+            <div v-else-if="isExplanationsShown" class="text-gray-800">
                 Auction participation incurs transaction fees (<FormatCurrency
                     :value="transactionFee"
                     :decimals="6"
@@ -17,11 +17,11 @@
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
-            <base-button v-if="state === 'notExecuted'" type="primary" class="w-56" @click="$emit('execute')">
+            <base-button v-if="state === 'notExecuted'" type="primary" class="w-60" @click="$emit('execute')">
                 Execute
             </base-button>
-            <base-button v-if="state === 'disabled'" type="primary" class="w-56" disabled> Execute </base-button>
-            <base-button v-if="state === 'loading'" type="primary" class="w-56" is-loading> Executing... </base-button>
+            <base-button v-if="state === 'disabled'" type="primary" class="w-60" disabled> Execute </base-button>
+            <base-button v-if="state === 'loading'" type="primary" class="w-60" is-loading> Executing... </base-button>
         </div>
     </div>
 </template>
@@ -53,6 +53,10 @@ export default Vue.extend({
         transactionAddress: {
             type: String,
             default: null,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
         transactionFee: {
             type: Number,

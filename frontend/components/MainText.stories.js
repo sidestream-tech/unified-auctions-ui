@@ -19,6 +19,11 @@ storiesOf('MainText', module)
         ...common,
         template: '<MainText :auctions="auctions" :selectedAuctionId="selectedAuctionId" />',
     }))
+    .add('Expert Mode', () => ({
+        ...common,
+        template:
+            '<MainText :auctions="auctions" :selectedAuctionId="selectedAuctionId" :isExplanationsShown="false" />',
+    }))
     .add('No props', () => ({
         ...common,
         template: '<MainText />',

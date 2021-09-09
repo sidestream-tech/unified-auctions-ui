@@ -10,7 +10,7 @@ const common = {
     },
     data: () => ({
         network: null,
-        isExplanationsShown: false,
+        isExplanationsShown: true,
     }),
 };
 

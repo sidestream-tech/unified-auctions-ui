@@ -14,12 +14,26 @@ storiesOf('Main Flow', module)
         data: () => ({ fakeAuctions, randomSelectedAuctionId }),
         template: `<MainFlow :auctions="fakeAuctions" />`,
     }))
+    .add('Default Expert', () => ({
+        components: {
+            MainFlow,
+        },
+        data: () => ({ fakeAuctions, randomSelectedAuctionId }),
+        template: `<MainFlow :isExplanationsShown="false" :auctions="fakeAuctions" />`,
+    }))
     .add('Selected Auction', () => ({
         components: {
             MainFlow,
         },
         data: () => ({ fakeAuctions, randomSelectedAuctionId }),
         template: `<MainFlow :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
+    }))
+    .add('Selected Auction Expert', () => ({
+        components: {
+            MainFlow,
+        },
+        data: () => ({ fakeAuctions, randomSelectedAuctionId }),
+        template: `<MainFlow :isExplanationsShown="false" :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
     }))
     .add('AuctionId Not Found', () => ({
         components: {
@@ -28,10 +42,24 @@ storiesOf('Main Flow', module)
         data: () => ({ fakeAuctions, randomSelectedAuctionId: 'none' }),
         template: `<MainFlow :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
     }))
+    .add('AuctionId Not Found Expert', () => ({
+        components: {
+            MainFlow,
+        },
+        data: () => ({ fakeAuctions, randomSelectedAuctionId: 'none' }),
+        template: `<MainFlow :isExplanationsShown="false" :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
+    }))
     .add('Empty Auctions', () => ({
         components: {
             MainFlow,
         },
         data: () => ({ fakeAuctions: [], randomSelectedAuctionId }),
         template: `<MainFlow />`,
+    }))
+    .add('Empty Auctions Expert', () => ({
+        components: {
+            MainFlow,
+        },
+        data: () => ({ fakeAuctions: [], randomSelectedAuctionId }),
+        template: `<MainFlow :isExplanationsShown="false" />`,
     }));

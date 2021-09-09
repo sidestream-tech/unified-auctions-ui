@@ -4,6 +4,7 @@
         :is-auctions-loading="isAuctionsLoading"
         :auctions-error="auctionsError"
         :selected-auction-id.sync="selectedAuctionId"
+        :is-explanations-shown.sync="isExplanationsShown"
     />
 </template>
 
@@ -37,7 +38,16 @@ export default Vue.extend({
                 }
             },
         },
+        isExplanationsShown: {
+            get() {
+                return this.$store.getters['preferences/getIsExplanationsShown'];
+            },
+            set(newIsExplanationsShown) {
+                this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
+            },
+        },
     },
+
     created() {
         this.$store.dispatch('auctions/fetch');
     },

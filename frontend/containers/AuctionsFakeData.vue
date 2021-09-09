@@ -8,6 +8,7 @@
         :is-executing="isExecuting"
         :wallet-address="walletAddress"
         :transaction-address="transactionAddress"
+        :is-explanations-shown.sync="isExplanationsShown"
         @connect="connect"
         @disconnect="disconnect"
         @authorize="authorize"
@@ -36,6 +37,16 @@ export default Vue.extend({
             walletAddress: null as string | null,
             transactionAddress: null as string | null,
         };
+    },
+    computed: {
+        isExplanationsShown: {
+            get() {
+                return this.$store.getters['preferences/getIsExplanationsShown'];
+            },
+            set(newIsExplanationsShown) {
+                this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
+            },
+        },
     },
     watch: {
         selectedAuctionId: {
