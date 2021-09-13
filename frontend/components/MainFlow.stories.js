@@ -28,6 +28,13 @@ storiesOf('Main Flow', module)
         data: () => ({ fakeAuctions, randomSelectedAuctionId }),
         template: `<MainFlow :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
     }))
+    .add('Selected Auction Loading', () => ({
+        components: {
+            MainFlow,
+        },
+        data: () => ({ fakeAuctions, randomSelectedAuctionId }),
+        template: `<MainFlow :auctions="[]" is-auctions-loading :selectedAuctionId.sync="randomSelectedAuctionId" />`,
+    }))
     .add('Selected Auction Expert', () => ({
         components: {
             MainFlow,

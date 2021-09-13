@@ -59,7 +59,7 @@ export default Vue.extend({
     @apply w-full h-full transition-all overflow-scroll duration-500;
 }
 .Slot1 {
-    @apply absolute md:w-1/2 w-full h-full right-0 top-0 overflow-hidden transform translate-x-full transition-all duration-500 overscroll-none;
+    @apply absolute md:w-1/2 w-full h-full right-0 top-0 overflow-hidden transform translate-x-full transition-all duration-500 overscroll-none z-20;
 }
 .Slot2 {
     @apply absolute hidden md:w-1/2 w-full h-full right-0 top-0 overflow-hidden  transition-all duration-500;
@@ -75,7 +75,7 @@ export default Vue.extend({
 }
 
 .Overlay {
-    @apply absolute w-full h-full inset-0 bg-gray-500 opacity-0 transition-all duration-500 hidden;
+    @apply absolute w-full h-full inset-0 bg-gray-500 opacity-0 transition-all duration-500 hidden z-10;
 }
 
 /* STATE STEP 1 */

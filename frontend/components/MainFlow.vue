@@ -18,13 +18,14 @@
             <template #step1>
                 <div>
                     <Auction
-                        v-if="selectedAuction"
+                        v-if="selectedAuctionId"
                         :is-explanations-shown="isExplanationsShown"
                         class="m-10"
                         :auction="selectedAuction"
+                        :auction-id="selectedAuctionId"
+                        :is-auctions-loading="isAuctionsLoading"
                         @swap="step = 2"
                     />
-                    <Alert v-else-if="step === 1" class="m-8" message="This Auction was not found" type="error" />
                 </div>
             </template>
             <template #step2
@@ -49,7 +50,6 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import { Alert } from 'ant-design-vue';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import MainText from '~/components/MainText.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
@@ -57,7 +57,7 @@ import Auction from '~/components/Auction.vue';
 import SwapTransaction from '~/components/transaction/SwapTransaction.vue';
 
 export default Vue.extend({
-    components: { SplitLayout, MainText, Auction, SwapTransaction, Alert, LandingBlock },
+    components: { SplitLayout, MainText, Auction, SwapTransaction, LandingBlock },
     props: {
         auctions: {
             type: Array as Vue.PropType<AuctionTransaction[]>,
