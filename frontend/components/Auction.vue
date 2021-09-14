@@ -34,17 +34,17 @@
                             </td>
                         </tr>
                         <template v-if="isTableExpanded">
-                            <tr class="bg-gray-200">
+                            <tr class="bg-gray-100">
                                 <td>Auction price total</td>
                                 <td>
                                     <format-currency :value="auction.amountDAI" currency="DAI" />
                                 </td>
                             </tr>
-                            <tr class="bg-gray-200">
+                            <tr class="bg-gray-100">
                                 <td>Vault owner</td>
                                 <td><format-address :value="auction.vaultOwner" /></td>
                             </tr>
-                            <tr class="bg-gray-200">
+                            <tr class="bg-gray-100">
                                 <td>Auction ends at</td>
                                 <td>{{ new Date(auction.till).toUTCString() }}</td>
                             </tr>
@@ -103,9 +103,13 @@
             </template>
             <TextBlock>
                 <div class="flex mt-4 justify-between">
-                    <Button disabled type="secondary" class="mr-3 w-60" @click="$emit('purchase')">
-                        Purchase with DAI
-                    </Button>
+                    <Tooltip title="This transaction type is not supported yet" placement="bottom">
+                        <div>
+                            <Button disabled type="secondary" class="mr-3 w-60" @click="$emit('purchase')">
+                                Purchase with DAI
+                            </Button>
+                        </div>
+                    </Tooltip>
                     <Button :disabled="error !== ''" type="primary" class="w-60" @click="$emit('swap')">
                         Directly swap into profit
                     </Button>
@@ -118,7 +122,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Alert } from 'ant-design-vue';
+import { Alert, Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import Button from '~/components/common/BaseButton.vue';
@@ -138,6 +142,7 @@ export default Vue.extend({
         FormatMarketValue,
         FormatAddress,
         Alert,
+        Tooltip,
     },
     props: {
         auction: {
