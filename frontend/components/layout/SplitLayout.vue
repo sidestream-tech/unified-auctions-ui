@@ -62,7 +62,7 @@ export default Vue.extend({
     @apply absolute md:w-1/2 w-full h-full right-0 top-0 overflow-hidden transform translate-x-full transition-all duration-500 overscroll-none z-20;
 }
 .Slot2 {
-    @apply absolute hidden md:w-1/2 w-full h-full right-0 top-0 overflow-hidden  transition-all duration-500;
+    @apply absolute hidden md:w-1/2 w-full h-full right-0 top-0 overflow-hidden  transition-all duration-500 z-30;
 }
 
 .SlotContainer {
