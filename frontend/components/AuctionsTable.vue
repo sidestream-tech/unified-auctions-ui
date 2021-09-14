@@ -15,22 +15,18 @@
                 <format-currency :value="amountRAW" :currency="record.collateralType" />
             </div>
             <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record">
-                <format-currency :value="amountPerCollateral" currency="DAI" />
-                &nbsp;per&nbsp;
+                <format-currency :value="amountPerCollateral" currency="DAI" /> per
                 <format-currency :currency="record.collateralType" />
             </div>
             <div slot="marketValue" slot-scope="marketValue">
                 <format-market-value :value="marketValue" />
             </div>
             <div slot="till" slot-scope="till"><time-till :date="till" /></div>
-            <div
-                slot="action"
-                slot-scope="text, record, index"
-                :class="hoveredRowIndex === index && 'bg-green-400 h-full'"
-            >
+            <div slot="action" slot-scope="text, record, index" class="w-full h-full">
                 <nuxt-link
                     :to="`/?auction=${record.id}`"
-                    class="flex w-full h-full text-gray-500 items-center justify-center font-normal"
+                    :class="(hoveredRowIndex === index && 'bg-primary text-white') || 'text-primary'"
+                    class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
                 >
                     See details
                 </nuxt-link>
@@ -150,7 +146,7 @@ export default Vue.extend({
     @apply py-1 px-2 h-8 bg-transparent text-gray-700 font-bold border-0 border-t-2;
 }
 .AuctionsTable >>> .ant-table-tbody td {
-    @apply py-1 px-2 h-8 font-semibold text-gray-500 border-0;
+    @apply py-1 px-2 h-8 text-gray-500 border-0;
 }
 .AuctionsTable >>> .ant-table-tbody tr > *:last-child {
     @apply p-0;

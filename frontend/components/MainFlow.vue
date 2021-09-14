@@ -20,7 +20,7 @@
                     <Auction
                         v-if="selectedAuctionId"
                         :is-explanations-shown="isExplanationsShown"
-                        class="m-10"
+                        class="mt-6 mx-8"
                         :auction="selectedAuction"
                         :auction-id="selectedAuctionId"
                         :is-auctions-loading="isAuctionsLoading"
@@ -28,10 +28,10 @@
                     />
                 </div>
             </template>
-            <template #step2
-                ><SwapTransaction
+            <template #step2>
+                <SwapTransaction
                     v-if="selectedAuction"
-                    class="m-10"
+                    class="mt-6 mx-8"
                     :auction-transaction="selectedAuction"
                     :is-connecting="isConnecting"
                     :is-authorizing="isAuthorizing"
@@ -44,7 +44,8 @@
                     @disconnect="$emit('disconnect')"
                     @authorize="$emit('authorize')"
                     @execute="$emit('execute')"
-            /></template>
+                />
+            </template>
         </SplitLayout>
     </div>
 </template>

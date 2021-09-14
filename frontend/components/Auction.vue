@@ -60,25 +60,27 @@
                 {{ isTableExpanded ? 'Hide additional numbers' : 'Show additional numbers' }}
             </button>
             <template v-if="isExplanationsShown">
-                <TextBlock v-if="!error" class="mt-4">
-                    The auctioned vault <format-address :value="auction.vaultOwner" /> contains
-                    <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />. Currently, it is
-                    sold for <format-currency :value="auction.amountDAI" currency="DAI" />. This equals
-                    <format-currency :value="auction.amountPerCollateral" currency="DAI" /> per
-                    <format-currency :currency="auction.collateralType" />, or approximately
-                    <format-market-value :value="auction.marketValue" /> than if you buy
-                    <format-currency :currency="auction.collateralType" /> on another exchange platform such as
-                    Uniswap.
-                </TextBlock>
-                <TextBlock v-else class="mt-10">
-                    This auction was finished at {{ new Date(auction.till).toUTCString() }} at a closing auction price
-                    of <format-currency :value="auction.amountPerCollateral" currency="DAI" /> (meaning
-                    <format-currency :value="auction.amountPerCollateral" currency="DAI" />
-                    per <format-currency :currency="auction.collateralType" /> on average) after
-                    <time-till :date="auction.till" />.
+                <TextBlock class="mt-4">
+                    <template v-if="!error">
+                        The auctioned vault <format-address :value="auction.vaultOwner" /> contains
+                        <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />. Currently,
+                        it is sold for <format-currency :value="auction.amountDAI" currency="DAI" />. This equals
+                        <format-currency :value="auction.amountPerCollateral" currency="DAI" /> per
+                        <format-currency :currency="auction.collateralType" />, or approximately
+                        <format-market-value :value="auction.marketValue" /> than if you buy
+                        <format-currency :currency="auction.collateralType" /> on another exchange platform such as
+                        Uniswap.
+                    </template>
+                    <template v-else>
+                        This auction was finished at {{ new Date(auction.till).toUTCString() }} at a closing auction
+                        price of <format-currency :value="auction.amountPerCollateral" currency="DAI" /> (meaning
+                        <format-currency :value="auction.amountPerCollateral" currency="DAI" />
+                        per <format-currency :currency="auction.collateralType" /> on average) after
+                        <time-till :date="auction.till" />.
+                    </template>
                 </TextBlock>
 
-                <TextBlock title="Different ways to bid" class="TextBlock mt-10">
+                <TextBlock title="Different ways to bid" class="TextBlock mt-8">
                     There are two ways to participate in an auction:
                     <ul class="list-disc list-outside pl-5">
                         <li>

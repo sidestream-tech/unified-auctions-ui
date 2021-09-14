@@ -53,7 +53,7 @@ export default Vue.extend({
     @apply relative w-full h-full overflow-hidden;
 }
 .CloseIcon {
-    @apply absolute hidden cursor-pointer top-0 right-0 w-5 h-5 my-10 mx-9 z-40;
+    @apply absolute hidden cursor-pointer top-0 right-0 w-10 h-10 p-2 mr-5 mt-5 z-40;
 }
 .Slot0 {
     @apply w-full h-full transition-all overflow-scroll duration-500;

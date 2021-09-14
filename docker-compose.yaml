@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+    frontend:
+        restart: unless-stopped
+        expose:
+            - 3000
+        env_file:
+            - ./frontend/.env
+        environment:
+            - INFURA_PROJECT_ID=${INFURA_PROJECT_ID}
+        build:
+            context: ./frontend
+            args:
+                - INFURA_PROJECT_ID=${INFURA_PROJECT_ID}
+    reverse-proxy:
+        image: nginx:stable-alpine
+        ports:
+            - '80:80'
+        volumes:
+            - ./reverse-proxy/production.conf:/etc/nginx/nginx.conf
+        depends_on:
+            - frontend

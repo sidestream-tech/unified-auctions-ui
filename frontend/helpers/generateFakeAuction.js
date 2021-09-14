@@ -1,12 +1,13 @@
 import faker from 'faker';
 import { random } from 'lodash';
+import COLLATERALS from '~/lib/constants/COLLATERALS';
 
 export const generateFakeAuction = function () {
     const amountRAW = parseFloat(faker.finance.amount());
     const amountDAI = parseFloat(faker.finance.amount());
     return {
         id: faker.datatype.number().toString(),
-        collateralType: faker.finance.currencyCode(),
+        collateralType: faker.helpers.randomize(Object.values(COLLATERALS).map(c => c.title)),
         amountRAW: parseFloat(faker.finance.amount()),
         amountDAI: parseFloat(faker.finance.amount()),
         till: faker.date.future().toString(),
@@ -32,12 +33,12 @@ export const generateFakeAuctionTransaction = function () {
     };
 };
 
-export const generateFakeAuctionTransactions = function (number = random(1, 15)) {
+export const generateFakeAuctionTransactions = function (number = random(5, 15)) {
     const auctionTransactions = Array(number).fill(null).map(generateFakeAuctionTransaction);
     return auctionTransactions;
 };
 
-export const generateFakeAuctions = function (number = random(1, 15)) {
+export const generateFakeAuctions = function (number = random(5, 15)) {
     const auctions = Array(number).fill(null).map(generateFakeAuction);
     return auctions;
 };

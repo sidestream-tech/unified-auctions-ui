@@ -1,6 +1,8 @@
 <template>
     <div class="TextBlock">
-        <div v-if="title" class="text-xl font-extrabold mb-4 text-gray-700">{{ title }}</div>
+        <h3 v-if="title || $slots.title" class="text-xl font-extrabold mb-1 text-gray-700">
+            {{ title }}<slot name="title" />
+        </h3>
         <slot />
     </div>
 </template>

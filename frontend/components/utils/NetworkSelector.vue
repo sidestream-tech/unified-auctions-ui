@@ -30,7 +30,7 @@ export default Vue.extend({
                 ...Object.entries(NETWORKS).map(([name, propeties]) => {
                     return { label: propeties.title, value: name as string | null };
                 }),
-                { label: 'Fake data', value: null },
+                { label: 'Stub data', value: null },
             ],
         };
     },

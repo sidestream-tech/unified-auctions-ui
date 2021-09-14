@@ -1,5 +1,5 @@
 <template>
-    <span :class="isBelowZero && 'text-green-500'"> {{ percentage }}% {{ isBelowZero ? 'below' : 'above' }} </span>
+    <span :class="isBelowZero && 'text-primary'"> {{ percentage }}% {{ isBelowZero ? 'below' : 'above' }} </span>
 </template>
 
 <script lang="ts">

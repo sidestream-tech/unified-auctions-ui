@@ -1,6 +1,6 @@
 <template>
-    <div class="flex flex-col space-y-10 mb-10">
-        <TextBlock v-if="isExplanationsShown" title="What is the Maker Protocol?" class="TextBlock mt-10">
+    <div class="flex flex-col space-y-8 py-8">
+        <TextBlock v-if="isExplanationsShown" title="What is the Maker Protocol?" class="TextBlock">
             The Maker Protocol is a set of rules that defines how a cryptocurrency called DAI is kept approximately
             equal to USD by incentivizing market players. People who help to keep DAI stable, benefit from their
             actions by acquiring cryptocurrency at a discount. The main promise of the protocol is to provide a
@@ -8,14 +8,14 @@
             affected by unpredictable exchange rates.
         </TextBlock>
         <TextBlock v-if="isExplanationsShown" class="TextBlock">
-            <h1 class="text-xl font-extrabold mb-4 text-gray-700">
+            <template #title>
                 What are the
                 <a
                     href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#resetting-an-auction"
                     target="_blank"
                     >Liquidations</a
                 >?
-            </h1>
+            </template>
             To get DAI, people need to lock up some other cryptocurrency (e.g., ETH) in a vault. With time, if the
             price of the cryptocurrency in the vault drops below the predefined ratio (e.g. 150% for ETH), owners of
             the vault have to add more collateral or return their DAI. If they fail to do so, their vault can be
@@ -43,8 +43,8 @@
         <Loading
             :is-loading="isAuctionsLoading"
             :error="auctionsError"
-            class="w-full self-center mb-6 mt-10 Loading"
-            :class="{ 'max-w-4xl mt-1': isExplanationsShown }"
+            class="w-full self-center Loading"
+            :class="{ 'max-w-4xl': isExplanationsShown }"
         >
             <AuctionsTable
                 :class="{ 'mx-10': !isExplanationsShown }"
