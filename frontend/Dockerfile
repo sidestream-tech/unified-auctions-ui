@@ -1,4 +1,4 @@
-FROM node:latest AS dependency-base
+FROM node:16.9.1 AS dependency-base
 
 # create destination directory
 RUN mkdir -p /app
