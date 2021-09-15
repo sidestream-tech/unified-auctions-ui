@@ -45,7 +45,7 @@ const common = {
         execute() {
             this.isExecuting = true;
             setTimeout(() => {
-                this.transactionAddress = faker.finance.ethereumAddress();
+                this.auctionTransaction.transactionAddress = faker.finance.ethereumAddress();
                 this.isExecuting = false;
             }, 1000);
         },
@@ -55,5 +55,5 @@ const common = {
 storiesOf('Transaction/SwapTransaction', module).add('Default', () => ({
     ...common,
     template:
-        '<SwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isAuthorised="isAuthorised" :isExecuting="isExecuting" :walletAddress="walletAddress" :transactionAddress="transactionAddress" @connect="connect" @disconnect="disconnect" @authorize="authorize" @execute="execute" />',
+        '<SwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isAuthorised="isAuthorised" :isExecuting="isExecuting" :walletAddress="walletAddress" @connect="connect" @disconnect="disconnect" @authorize="authorize" @execute="execute" />',
 }));

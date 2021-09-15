@@ -35,7 +35,6 @@ export default Vue.extend({
             isExecuting: false,
             isAuthorised: false,
             walletAddress: null as string | null,
-            transactionAddress: null as string | null,
         };
     },
     computed: {
@@ -46,6 +45,9 @@ export default Vue.extend({
             set(newIsExplanationsShown) {
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
+        },
+        selectedAuction(): AuctionTransaction | null {
+            return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
         },
     },
     watch: {
@@ -84,7 +86,9 @@ export default Vue.extend({
             setTimeout(() => {
                 this.walletAddress = null;
                 this.isAuthorised = false;
-                this.transactionAddress = null;
+                if (this.selectedAuction) {
+                    this.selectedAuction.transactionAddress = undefined;
+                }
                 this.isConnecting = false;
             }, 1000);
         },
@@ -98,7 +102,9 @@ export default Vue.extend({
         execute() {
             this.isExecuting = true;
             setTimeout(() => {
-                this.transactionAddress = faker.finance.ethereumAddress();
+                if (this.selectedAuction) {
+                    this.selectedAuction.transactionAddress = faker.finance.ethereumAddress();
+                }
                 this.isExecuting = false;
             }, 1000);
         },

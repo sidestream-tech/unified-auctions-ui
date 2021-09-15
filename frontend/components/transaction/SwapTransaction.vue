@@ -31,7 +31,7 @@
         <ExecutionBlock
             :disabled="!isAuthorised"
             :is-loading="isExecuting"
-            :transaction-address="transactionAddress"
+            :transaction-address="auctionTransaction.transactionAddress"
             :is-explanations-shown="isExplanationsShown"
             :collateral-type="auctionTransaction.collateralType"
             :transaction-fee="auctionTransaction.transactionFeeETH"
@@ -79,10 +79,6 @@ export default Vue.extend({
             default: false,
         },
         walletAddress: {
-            type: String,
-            default: null,
-        },
-        transactionAddress: {
             type: String,
             default: null,
         },

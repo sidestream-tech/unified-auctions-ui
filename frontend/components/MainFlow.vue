@@ -38,7 +38,6 @@
                     :is-authorised="isAuthorised"
                     :is-executing="isExecuting"
                     :wallet-address="walletAddress"
-                    :transaction-address="transactionAddress"
                     :is-explanations-shown="isExplanationsShown"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
@@ -93,10 +92,6 @@ export default Vue.extend({
             default: false,
         },
         walletAddress: {
-            type: String,
-            default: null,
-        },
-        transactionAddress: {
             type: String,
             default: null,
         },

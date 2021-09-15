@@ -110,9 +110,18 @@
                             </Button>
                         </div>
                     </Tooltip>
-                    <Button :disabled="error !== ''" type="primary" class="w-60" @click="$emit('swap')">
-                        Directly swap into profit
-                    </Button>
+                    <Tooltip :title="errorText" placement="bottom">
+                        <div>
+                            <Button
+                                :disabled="error !== '' || !auction.isActive || auction.transactionAddress"
+                                type="primary"
+                                class="w-60"
+                                @click="$emit('swap')"
+                            >
+                                Directly swap into profit
+                            </Button>
+                        </div>
+                    </Tooltip>
                 </div>
             </TextBlock>
         </div>
@@ -174,9 +183,13 @@ export default Vue.extend({
     computed: {
         errorText(): string | null {
             if (!this.isAuctionsLoading && !this.auction) {
-                return 'This Auction was not found';
+                return 'This auction was not found';
             } else if (this.error) {
                 return this.error;
+            } else if (!this.auction?.isActive && !this.isAuctionsLoading) {
+                return 'This auction is inactive and must be restarted';
+            } else if (this.auction?.transactionAddress) {
+                return 'This auction is finished';
             }
             return null;
         },

@@ -26,7 +26,9 @@ declare interface Auction {
     vaultOwner: string;
     amountPerCollateral: number;
     isActive: boolean;
+    transactionAddress?: string;
 }
+
 declare interface AuctionTransaction extends Auction {
     transactionProfit: number;
     transactionFeeETH: number;

@@ -4,7 +4,7 @@
             :data-source="auctions"
             :columns="columns"
             :pagination="{ pageSize: rowsPerPage, hideOnSinglePage: true }"
-            :row-class-name="record => (record.id === selectedAuctionId ? 'selected-row' : '')"
+            :row-class-name="getRowClassNames"
             :row-key="record => record.id"
             :custom-row="customRowEvents"
         >
@@ -21,7 +21,11 @@
             <div slot="marketValue" slot-scope="marketValue">
                 <format-market-value :value="marketValue" />
             </div>
-            <div slot="till" slot-scope="till"><time-till :date="till" /></div>
+            <div slot="till" slot-scope="till, record" class="text-center">
+                <span v-if="record.transactionAddress">Finished</span>
+                <span v-else-if="!record.isActive">Inactive</span>
+                <time-till v-else :date="till" />
+            </div>
             <div slot="action" slot-scope="text, record, index" class="w-full h-full">
                 <nuxt-link
                     :to="`/?auction=${record.id}`"
@@ -136,6 +140,16 @@ export default Vue.extend({
                     },
                 },
             };
+        },
+        getRowClassNames(auction: Auction) {
+            const classes = [];
+            if (auction.id === this.selectedAuctionId) {
+                classes.push('selected-row');
+            }
+            if (!auction.isActive || auction.transactionAddress) {
+                classes.push('bg-gray-100');
+            }
+            return classes.join(' ');
         },
     },
 });

@@ -15,6 +15,7 @@ export const generateFakeAuction = function () {
         vaultOwner: faker.finance.ethereumAddress(),
         amountPerCollateral: amountDAI / amountRAW,
         isActive: faker.datatype.boolean(),
+        transactionAddress: undefined,
     };
 };
 
