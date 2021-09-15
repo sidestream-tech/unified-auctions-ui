@@ -1,5 +1,5 @@
 <template>
-    <ASwitch class="BaseSwitch" :checked="isChecked" size="small" @click="$emit('update:isChecked', !isChecked)" />
+    <ASwitch class="BaseSwitch" :checked="isChecked" @click="$emit('update:isChecked', !isChecked)" />
 </template>
 
 <script lang="ts">
@@ -19,14 +19,13 @@ export default Vue.extend({
 });
 </script>
 <style scoped>
-.BaseSwitch.ant-switch {
-    @apply h-3 w-5;
-}
-.BaseSwitch.ant-switch-small {
+.BaseSwitch {
+    @apply w-10 md:h-3 md:w-5;
+
     min-width: 1px;
 }
-.BaseSwitch.ant-switch::after {
-    @apply h-2 w-2;
+.BaseSwitch::after {
+    @apply md:h-2 md:w-2;
 }
 .BaseSwitch.ant-switch-checked {
     @apply bg-primary-light;

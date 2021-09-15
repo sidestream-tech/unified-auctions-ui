@@ -23,5 +23,6 @@ const common = {
 
 storiesOf('Common/Select', module).add('Default', () => ({
     ...common,
-    template: '<Select v-model="selectedOption" :options="options" @input="select" />',
+    template:
+        '<Select v-model="selectedOption" :options="options" @input="select"><template #text-prefix>[PREFIX]</template></Select>',
 }));

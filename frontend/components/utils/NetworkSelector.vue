@@ -1,7 +1,7 @@
 <template>
-    <Select :value="network" :options="options" @input="$emit('update:network', $event)">
+    <Select :value="network" :options="options" title="Select Network" @input="$emit('update:network', $event)">
         <template #text-prefix>
-            <icon type="share-alt" class="pr-2" />
+            <icon type="share-alt" class="pr-2 text-3xl md:text-sm" />
         </template>
     </Select>
 </template>

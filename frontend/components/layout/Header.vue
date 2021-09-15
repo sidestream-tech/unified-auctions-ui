@@ -1,13 +1,13 @@
 <template>
     <header class="bg-primary">
-        <nav class="flex items-center py-2 px-10">
+        <nav class="flex items-center py-2 px-4 md:px-10">
             <nuxt-link to="/" class="flex items-center text-gray-700 hover:text-gray-600 no-underline">
                 <branding-icon class="h-12 w-12" />
                 <span class="ml-2 mb-0 hidden md:block"> Maker liquidations </span>
             </nuxt-link>
 
-            <div class="flex-1 flex justify-end space-x-4 items-end">
-                <label class="flex items-center space-x-2 cursor-pointer select-none">
+            <div class="flex-1 flex justify-end space-x-4 items-center">
+                <label class="flex items-center space-x-2 cursor-pointer select-none pt-1 md:pt-0">
                     <BaseSwitch
                         :is-checked="isExplanationsShown"
                         class="mt-px"
@@ -19,8 +19,8 @@
                 <NetworkSelector :network="network" @update:network="$emit('update:network', $event)" />
 
                 <div class="flex items-center space-x-2 cursor-pointer">
-                    <icon type="wallet" />
-                    <span class="text-gray-700">Connect Wallet</span>
+                    <icon type="wallet" class="text-3xl md:text-sm" />
+                    <span class="hidden md:block text-gray-700">Connect Wallet</span>
                 </div>
             </div>
         </nav>
