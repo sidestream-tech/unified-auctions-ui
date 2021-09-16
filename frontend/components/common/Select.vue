@@ -25,13 +25,18 @@
                 <slot name="text-suffix" />
             </button>
         </popover>
-
         <div class="md:hidden">
             <button class="flex items-center" @click="toggleModal">
                 <slot name="text-prefix" />
                 <slot name="text-suffix" />
             </button>
-            <modal v-model="visible" :title="title" :footer="null" class="Select" :dialog-style="{ top: '60px' }">
+            <modal
+                v-model="visible"
+                :title="title"
+                :footer="null"
+                class="Select md:hidden"
+                :dialog-style="{ top: '60px' }"
+            >
                 <ul>
                     <li
                         v-for="option in options"
