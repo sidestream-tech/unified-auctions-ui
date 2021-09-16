@@ -7,6 +7,7 @@
             :row-class-name="getRowClassNames"
             :row-key="record => record.id"
             :custom-row="customRowEvents"
+            :get-popup-container="() => $el"
         >
             <div slot="collateralType" slot-scope="collateralType">
                 <format-currency :currency="collateralType" />
@@ -40,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
 import { compareAsc } from 'date-fns';
 import TimeTill from '~/components/common/TimeTill.vue';
@@ -71,7 +72,7 @@ export default Vue.extend({
     },
     props: {
         auctions: {
-            type: Array,
+            type: Array as PropType<Auction[]>,
             default: () => [],
         },
         selectedAuctionId: {
@@ -81,7 +82,20 @@ export default Vue.extend({
     },
     data() {
         return {
-            columns: [
+            rowsPerPage: 7,
+            hoveredRowIndex: 0,
+        };
+    },
+    computed: {
+        columns(): Object[] {
+            const currencies = this.auctions.map(auction => auction.collateralType);
+            const uniqueCurrencies = Array.from(new Set(currencies));
+            const currenciesFilters = uniqueCurrencies.map(currency => ({
+                text: currency.toUpperCase(),
+                value: currency,
+            }));
+
+            return [
                 {
                     title: 'ID',
                     dataIndex: 'id',
@@ -92,6 +106,9 @@ export default Vue.extend({
                     dataIndex: 'collateralType',
                     scopedSlots: { customRender: 'collateralType' },
                     sorter: compareBy('collateralType', (a: string, b: string) => a.localeCompare(b)),
+                    filters: currenciesFilters,
+                    onFilter: (selectedCurrency: string, auction: Auction) =>
+                        auction.collateralType.includes(selectedCurrency),
                 },
                 {
                     title: 'Auction Amount',
@@ -123,10 +140,8 @@ export default Vue.extend({
                     scopedSlots: { customRender: 'action' },
                     width: '20%',
                 },
-            ],
-            rowsPerPage: 7,
-            hoveredRowIndex: 0,
-        };
+            ];
+        },
     },
     methods: {
         customRowEvents(record: Record<string, number>, rowIndex: number): Object {
