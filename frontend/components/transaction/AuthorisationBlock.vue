@@ -13,11 +13,18 @@
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
-            <base-button v-if="state === 'notAuthorized'" type="primary" class="w-60" @click="$emit('authorize')">
+            <base-button
+                v-if="state === 'notAuthorized'"
+                type="primary"
+                class="w-full md:w-60"
+                @click="$emit('authorize')"
+            >
                 Authorize
             </base-button>
-            <base-button v-if="state === 'disabled'" type="primary" class="w-60" disabled> Authorize </base-button>
-            <base-button v-if="state === 'authorizing'" type="primary" class="w-60" is-loading>
+            <base-button v-if="state === 'disabled'" type="primary" class="w-full md:w-60" disabled>
+                Authorize
+            </base-button>
+            <base-button v-if="state === 'authorizing'" type="primary" class="w-full md:w-60" is-loading>
                 Authorizing...
             </base-button>
         </div>

@@ -11,16 +11,23 @@
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
-            <base-button v-if="state === 'notConnected'" class="w-60" type="primary" @click="$emit('connectWallet')">
+            <base-button
+                v-if="state === 'notConnected'"
+                class="w-full md:w-60"
+                type="primary"
+                @click="$emit('connectWallet')"
+            >
                 Connect a wallet
             </base-button>
-            <base-button v-if="state === 'connecting'" class="w-60" type="primary" is-loading>
+            <base-button v-if="state === 'connecting'" class="w-full md:w-60" type="primary" is-loading>
                 Connecting...
             </base-button>
-            <base-button v-if="state === 'connected'" class="w-60" @click="$emit('disconnectWallet')">
+            <base-button v-if="state === 'connected'" class="w-full md:w-60" @click="$emit('disconnectWallet')">
                 <div>Disconnect wallet <format-address :value="walletAddress" /></div>
             </base-button>
-            <base-button v-if="state === 'disconnecting'" class="w-60" is-loading> Disconnecting... </base-button>
+            <base-button v-if="state === 'disconnecting'" class="w-full md:w-60" is-loading>
+                Disconnecting...
+            </base-button>
         </div>
     </div>
 </template>

@@ -14,6 +14,7 @@
             >
         </TextBlock>
         <WalletBlock
+            class="mb-6 lg:mb-0"
             :is-loading="isConnecting"
             :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
@@ -21,6 +22,7 @@
             @disconnectWallet="$emit('disconnect')"
         />
         <AuthorisationBlock
+            class="mb-6 lg:mb-0"
             :disabled="!isConnected"
             :collateral-type="auctionTransaction.collateralType"
             :is-loading="isAuthorizing"

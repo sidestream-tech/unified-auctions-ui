@@ -16,12 +16,21 @@
                 edited by the participant to influence the speed of the transaction.
             </div>
         </TextBlock>
-        <div class="flex flex-row-reverse mt-3">
-            <base-button v-if="state === 'notExecuted'" type="primary" class="w-60" @click="$emit('execute')">
+        <div class="flex flex-row-reverse my-3 md:mb-0">
+            <base-button
+                v-if="state === 'notExecuted'"
+                type="primary"
+                class="w-full md:w-60"
+                @click="$emit('execute')"
+            >
                 Execute
             </base-button>
-            <base-button v-if="state === 'disabled'" type="primary" class="w-60" disabled> Execute </base-button>
-            <base-button v-if="state === 'loading'" type="primary" class="w-60" is-loading> Executing... </base-button>
+            <base-button v-if="state === 'disabled'" type="primary" class="w-full md:w-60" disabled>
+                Execute
+            </base-button>
+            <base-button v-if="state === 'loading'" type="primary" class="w-full md:w-60" is-loading>
+                Executing...
+            </base-button>
         </div>
     </div>
 </template>

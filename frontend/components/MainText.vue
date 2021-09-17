@@ -47,7 +47,8 @@
             :class="{ 'max-w-4xl': isExplanationsShown }"
         >
             <AuctionsTable
-                :class="{ 'mx-10': !isExplanationsShown }"
+                :class="{ 'md:mx-10': !isExplanationsShown }"
+                class="block overflow-x-scroll"
                 :auctions="auctions"
                 :selected-auction-id.sync="selectedAuctionId"
             />

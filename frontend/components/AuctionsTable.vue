@@ -148,7 +148,7 @@ export default Vue.extend({
             return {
                 on: {
                     click: () => {
-                        this.$router.push(`/?auction=${record.id}`);
+                        this.$router?.push(`/?auction=${record.id}`);
                     },
                     mouseenter: () => {
                         this.hoveredRowIndex = rowIndex;

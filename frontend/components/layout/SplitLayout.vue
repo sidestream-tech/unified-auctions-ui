@@ -66,7 +66,7 @@ export default Vue.extend({
 }
 
 .SlotContainer {
-    @apply relative w-full h-full bg-white overflow-scroll;
+    @apply relative w-full h-full bg-white overflow-scroll shadow-2xl md:shadow-none;
 }
 
 .Step1 .CloseIcon,
@@ -81,13 +81,13 @@ export default Vue.extend({
 /* STATE STEP 1 */
 
 .Step1 .Slot0 {
-    @apply md:w-1/2;
+    @apply md:w-1/2 px-4;
 }
 .Step1 .Slot1 {
-    @apply flex transform-none shadow-2xl;
+    @apply flex transform-none md:shadow-2xl;
 }
 .Step1 .Slot2 {
-    @apply block transform translate-x-full;
+    @apply flex transform translate-x-full;
 }
 
 .Step1 .Slot1 .CloseIcon {
@@ -95,7 +95,9 @@ export default Vue.extend({
 }
 .Step1 .Slot0 .Overlay,
 .Step2 .Slot0 .Overlay {
-    @apply opacity-70 block;
+    @apply opacity-70 block transition-none;
+
+    height: 300%;
 }
 .MobileSpace {
     @apply h-full w-10 md:hidden;
@@ -103,18 +105,20 @@ export default Vue.extend({
 
 /* STATE STEP 2 */
 .Step2 .Slot0 {
-    @apply w-1/2 relative transform -translate-x-full;
+    @apply md:w-1/2 md:relative md:transform md:-translate-x-full;
+}
+.Step2 .Slot0 .Overlay {
+    @apply transition-none;
+
+    height: 300%;
 }
 .Step2 .Slot1 {
-    @apply transform md:-translate-x-full;
+    @apply flex transform md:-translate-x-full;
 }
 .Step2 .Slot2 {
-    @apply flex transform-none shadow-2xl;
+    @apply flex transform-none md:shadow-2xl;
 }
 .Step2 .Slot1 .Overlay {
-    @apply opacity-70 block;
-}
-.Step2 .Slot1 .MobileSpace {
-    @apply hidden;
+    @apply opacity-70 md:block;
 }
 </style>

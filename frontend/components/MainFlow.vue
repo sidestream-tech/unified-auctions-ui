@@ -5,15 +5,17 @@
                 <div v-if="isExplanationsShown" class="h-1/2">
                     <LandingBlock @explanations="explanationsTrigger" />
                 </div>
-                <MainText
-                    ref="mainText"
-                    :auctions="auctions"
-                    :auctions-error="auctionsError"
-                    :is-auctions-loading="isAuctionsLoading"
-                    :selected-auction-id="selectedAuctionId"
-                    :is-explanations-shown="isExplanationsShown"
-                    @selectedAuctionId:update="$emit('selectedAuctionId:update', $event)"
-                />
+                <div class="mx-4 md:mx-0">
+                    <MainText
+                        ref="mainText"
+                        :auctions="auctions"
+                        :auctions-error="auctionsError"
+                        :is-auctions-loading="isAuctionsLoading"
+                        :selected-auction-id="selectedAuctionId"
+                        :is-explanations-shown="isExplanationsShown"
+                        @selectedAuctionId:update="$emit('selectedAuctionId:update', $event)"
+                    />
+                </div>
             </template>
             <template #step1>
                 <div>
@@ -31,7 +33,7 @@
             <template #step2>
                 <SwapTransaction
                     v-if="selectedAuction"
-                    class="mt-6 mx-8"
+                    class="my-6 mx-8"
                     :auction-transaction="selectedAuction"
                     :is-connecting="isConnecting"
                     :is-authorizing="isAuthorizing"

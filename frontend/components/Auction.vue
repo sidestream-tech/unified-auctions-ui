@@ -102,10 +102,10 @@
                 </TextBlock>
             </template>
             <TextBlock>
-                <div class="flex mt-4 justify-between">
+                <div class="flex w-full justify-end flex-wrap my-4">
                     <Tooltip title="This transaction type is not supported yet" placement="bottom">
                         <div>
-                            <Button disabled type="secondary" class="mr-3 w-60" @click="$emit('purchase')">
+                            <Button disabled type="secondary" class="w-60 mb-2 ml-2" @click="$emit('purchase')">
                                 Purchase with DAI
                             </Button>
                         </div>
@@ -115,7 +115,7 @@
                             <Button
                                 :disabled="error !== '' || !auction.isActive || auction.transactionAddress"
                                 type="primary"
-                                class="w-60"
+                                class="w-60 ml-2"
                                 @click="$emit('swap')"
                             >
                                 Directly swap into profit
