@@ -20,12 +20,12 @@ export default Vue.extend({
 </script>
 <style scoped>
 .BaseSwitch {
-    @apply w-10 md:h-3 md:w-5;
+    @apply w-10 md:h-4 md:w-5;
 
-    min-width: 1px;
+    min-width: 28px;
 }
 .BaseSwitch::after {
-    @apply md:h-2 md:w-2;
+    @apply md:h-3 md:w-3;
 }
 .BaseSwitch.ant-switch-checked {
     @apply bg-primary-light;
