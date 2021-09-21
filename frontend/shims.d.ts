@@ -46,6 +46,7 @@ declare interface CollateralConfig {
 declare interface NetworkConfig {
     title: string;
     url: string;
+    etherscanUrl: string;
 }
 
 declare interface Indexable {

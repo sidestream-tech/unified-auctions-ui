@@ -42,7 +42,10 @@
                             </tr>
                             <tr class="bg-gray-100">
                                 <td>Vault owner</td>
-                                <td><format-address :value="auction.vaultOwner" /></td>
+                                <td>
+                                    <format-address :value="auction.vaultOwner" />
+                                    <format-address explicit :value="auction.vaultOwner" />
+                                </td>
                             </tr>
                             <tr class="bg-gray-100">
                                 <td>Auction ends at</td>
@@ -62,7 +65,7 @@
             <template v-if="isExplanationsShown">
                 <TextBlock class="mt-4">
                     <template v-if="!error">
-                        The auctioned vault <format-address :value="auction.vaultOwner" /> contains
+                        The auctioned vault <format-address shorten :value="auction.vaultOwner" /> contains
                         <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />. Currently,
                         it is sold for <format-currency :value="auction.amountDAI" currency="DAI" />. This equals
                         <format-currency :value="auction.amountPerCollateral" currency="DAI" /> per

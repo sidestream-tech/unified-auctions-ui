@@ -2,8 +2,8 @@
     <div>
         <TextBlock :title="isExplanationsShown ? 'Make a bid' : ''">
             <div v-if="state === 'executed'" class="text-gray-800">
-                Transaction <format-address :value="transactionAddress" /> was successfully executed.
-                <a :href="transactionURL" target="_blank" class="text-green-500">View on Etherscan</a>.
+                Transaction <format-address shorten :value="transactionAddress" /> was successfully executed.
+                <format-address explicit :value="transactionAddress" />
             </div>
             <div v-else-if="isExplanationsShown" class="text-gray-800">
                 Auction participation incurs transaction fees (<FormatCurrency

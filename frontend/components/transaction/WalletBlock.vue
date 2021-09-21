@@ -2,7 +2,8 @@
     <div>
         <TextBlock v-if="isExplanationsShown" title="Connect a wallet">
             <div v-if="walletAddress" class="text-gray-800">
-                The operation will be carried over the connected wallet <format-address :value="walletAddress" />
+                The operation will be carried over the connected wallet
+                <format-address shorten :value="walletAddress" />
             </div>
             <div v-else class="text-gray-800">
                 To participate in the auction, you need to connect a wallet. If you don’t have a wallet yet, you can
@@ -23,7 +24,7 @@
                 Connecting...
             </base-button>
             <base-button v-if="state === 'connected'" class="w-full md:w-60" @click="$emit('disconnectWallet')">
-                <div>Disconnect wallet <format-address :value="walletAddress" /></div>
+                <div>Disconnect wallet <format-address disable shorten :value="walletAddress" /></div>
             </base-button>
             <base-button v-if="state === 'disconnecting'" class="w-full md:w-60" is-loading>
                 Disconnecting...

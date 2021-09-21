@@ -11,7 +11,20 @@ const common = {
     },
 };
 
-storiesOf('Utils/FormatAddress', module).add('Default', () => ({
-    ...common,
-    template: '<FormatAddress :value="walletAddress" />',
-}));
+storiesOf('Utils/FormatAddress', module)
+    .add('Default', () => ({
+        ...common,
+        template: '<FormatAddress :value="walletAddress" />',
+    }))
+    .add('Shorten', () => ({
+        ...common,
+        template: '<FormatAddress shorten :value="walletAddress" />',
+    }))
+    .add('No Link', () => ({
+        ...common,
+        template: '<FormatAddress disable :value="walletAddress" />',
+    }))
+    .add('Explicit', () => ({
+        ...common,
+        template: '<FormatAddress explicit :value="walletAddress" />',
+    }));
