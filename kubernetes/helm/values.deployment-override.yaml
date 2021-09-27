@@ -1,0 +1,3 @@
+# values.development-override.yaml
+ingress:
+  class: nginx

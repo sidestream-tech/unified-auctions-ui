@@ -12,10 +12,9 @@ RUN npm ci
 FROM dependency-base AS production-base
 
 # Set server origin
-ARG SERVER_ORIGIN
-ENV SERVER_ORIGIN=${SERVER_ORIGIN}
 ARG INFURA_PROJECT_ID
 ENV INFURA_PROJECT_ID=${INFURA_PROJECT_ID}
+
 
 # generate will also take care of building
 # if necessary

@@ -1,0 +1,24 @@
+# See `traefik` ingress docs here: https://doc.traefik.io/traefik/v1.7/user-guide/kubernetes
+#
+# In order to use regex, one must use `go` like regex expressions, see comment in docs below table
+# here: https://doc.traefik.io/traefik/v1.7/basics/#matchers
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}-ingress
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    traefik.frontend.rule.type: PathPrefixStrip
+spec:
+  rules:
+    - host: {{ .Values.host }}
+      http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Values.frontend.name }}-service
+              port:
+                number: 80
+

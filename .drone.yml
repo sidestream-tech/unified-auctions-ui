@@ -32,3 +32,79 @@ steps:
 trigger:
     event:
         - pull_request
+
+---
+kind: pipeline
+name: build-publish-deploy
+
+trigger:
+  event:
+    - push
+  branch:
+    - main
+
+steps:
+  - name: verify-tags
+    image: alpine
+    commands:
+    - |
+      minimumsize=6
+      actualsize=$(wc -c < .tags)
+      if [ $actualsize -ge $minimumsize ]; then
+        echo "Deploying with tag:"
+        cat .tags
+      else
+        echo "Must provide the version inside the `.tags` file" 1>&2
+        exit 1
+      fi
+
+  - name: frontend-build-publish
+    image: plugins/docker
+    environment:
+      INFURA_PROJECT_ID:
+        from_secret: INFURA_PROJECT_ID
+    settings:
+      username:
+        from_secret: github-username
+      password:
+        from_secret: github-personal-access-token
+      registry: "ghcr.io"
+      repo: "ghcr.io/sidestream-tech/auction-ui/frontend"
+      dockerfile: frontend/Dockerfile
+      context: frontend/
+      build_args_from_env:
+        - INFURA_PROJECT_ID
+      custom_labels:
+        - org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui
+
+  - name: create-helm-deloy-values
+    image: alpine
+    commands:
+    - |
+      export HELM_VALUE_OVERRIDE_FILE=deploy_version.values.yaml
+      echo "frontendDeploymentTag: $(cat .tags)" > $HELM_VALUE_OVERRIDE_FILE
+      echo "Deploying with the following helm value overrides:"
+      cat $HELM_VALUE_OVERRIDE_FILE
+
+  - name: deploy
+    image: pelotech/drone-helm3
+    settings:
+      mode: upgrade
+      namespace: auction-ui
+      chart: ./kubernetes/helm
+      release: auction-ui
+      api_server:
+        from_secret: KUBE_API_SERVER
+      kube_certificate:
+        from_secret: KUBE_CERT_BASE_64
+      kube_service_account:
+        from_secret: KUBE_ACCOUNT_NAME
+      kube_token:
+        from_secret: KUBE_TOKEN
+      values_files: [ "./deploy_version.values.yaml" ]
+
+  - name: success
+    image: alpine
+    commands:
+      - echo "success, deployed auction-ui/frontend at version:"
+      - cat .tags
