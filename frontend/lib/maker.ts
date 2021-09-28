@@ -19,8 +19,8 @@ const createMaker = async function (network: string): Promise<typeof Maker> {
             type: 'HTTP',
         },
         web3: {
-            statusTimerDelay: 15000,
-            pollingInterval: 15000,
+            statusTimerDelay: 24 * 60 * 60 * 1000,
+            pollingInterval: 24 * 60 * 60 * 1000,
         },
         log: false,
         multicall: true,

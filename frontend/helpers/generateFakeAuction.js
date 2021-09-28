@@ -5,16 +5,17 @@ import COLLATERALS from '~/lib/constants/COLLATERALS';
 export const generateFakeAuction = function () {
     const amountRAW = parseFloat(faker.finance.amount());
     const amountDAI = parseFloat(faker.finance.amount());
+    const isActive = faker.datatype.boolean();
     return {
         id: faker.datatype.number().toString(),
         collateralType: faker.helpers.randomize(Object.values(COLLATERALS).map(c => c.title)),
         amountRAW: parseFloat(faker.finance.amount()),
         amountDAI: parseFloat(faker.finance.amount()),
         till: faker.date.future().toString(),
-        marketValue: faker.datatype.number({ min: -1, max: 1, precision: 0.001 }),
         vaultOwner: faker.finance.ethereumAddress(),
         amountPerCollateral: amountDAI / amountRAW,
-        isActive: faker.datatype.boolean(),
+        isActive,
+        marketValue: isActive ? faker.datatype.number({ min: -1, max: 1, precision: 0.001 }) : undefined,
         transactionAddress: undefined,
     };
 };

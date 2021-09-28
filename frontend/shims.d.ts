@@ -22,10 +22,10 @@ declare interface Auction {
     amountRAW: BigNumber | number;
     amountDAI: BigNumber | number;
     till: string;
-    marketValue: number;
     vaultOwner: string;
     amountPerCollateral: number;
     isActive: boolean;
+    marketValue?: number;
     transactionAddress?: string;
 }
 

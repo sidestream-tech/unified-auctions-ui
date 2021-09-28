@@ -7,7 +7,7 @@
         :is-authorised="isAuthorised"
         :is-executing="isExecuting"
         :wallet-address="walletAddress"
-        :transaction-address="transactionAddress"
+        :transaction-address="selectedAuction && selectedAuction.transactionAddress"
         :is-explanations-shown.sync="isExplanationsShown"
         @connect="connect"
         @disconnect="disconnect"

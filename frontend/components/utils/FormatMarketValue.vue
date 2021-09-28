@@ -1,5 +1,7 @@
 <template>
-    <span :class="isBelowZero && 'text-primary'"> {{ percentage }}% {{ isBelowZero ? 'below' : 'above' }} </span>
+    <span v-if="value !== undefined" :class="{ 'text-primary': isBelowZero }"
+        >{{ formattedValue }}% {{ belowOrAbove }}</span
+    >
 </template>
 
 <script lang="ts">
@@ -10,15 +12,24 @@ export default Vue.extend({
     props: {
         value: {
             type: Number,
-            default: 0,
+            default: undefined,
         },
     },
     computed: {
-        percentage(): string {
+        formattedValue(): string {
             return Math.abs(this.value * 100).toFixed(2);
         },
         isBelowZero(): boolean {
             return this.value > 0;
+        },
+        belowOrAbove(): string {
+            if (this.value > 0) {
+                return 'below';
+            }
+            if (this.value < 0) {
+                return 'above';
+            }
+            return '';
         },
     },
 });
