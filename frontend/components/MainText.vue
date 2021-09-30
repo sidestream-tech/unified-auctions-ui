@@ -22,13 +22,13 @@
             liquidated by the Maker protocol and other people can buy it at a discount.
         </TextBlock>
         <template v-if="isExplanationsShown">
-            <TextBlock title="How to profit?" class="TextBlock">
-                Similar to a Dutch-style auction system, the liquidation auction price starts 30% above the market and
-                drops by <format-percentage :value="params.cut" /> every {{ params.step }} seconds. The first person
-                who bids on the auction wins it. During normal market conditions, auction price rarely drops
-                <format-percentage :value="params.drop" /> beyond usual exchange rates on other platforms, so make sure
-                to act quickly. If no one bids on the auction for for a certain amount of time or if price drops below
-                a certain threshold, the auction will not accept any further bids and will require a reset.
+            <TextBlock title="Why should I participate?" class="TextBlock">
+                Your participation can yield a profit by leveraging price differences between the auction price from
+                Maker Protocol and the price on other marketplaces. Similar to a Dutch-style auction system, the
+                auction price starts above the real market price and drops by a defined ratio in defined time
+                intervals. For example, ETH-A auctions start 30% above the market price and drop by
+                <format-percentage :value="params.cut" /> every {{ params.step }} seconds. When the auction price drops
+                below the exchange rate on other marketplaces there is a chance to make a profit.
             </TextBlock>
             <TextBlock v-if="auctions.length > 0" title="Active auctions" class="TextBlock w-full">
                 There are {{ openAuctionsValues.length }} active auctions for
@@ -53,6 +53,17 @@
                 :selected-auction-id.sync="selectedAuctionId"
             />
         </Loading>
+        <TextBlock v-if="isExplanationsShown" title="What's the catch?" class="TextBlock">
+            This situation exists in the first place, because the Maker protocol can not be executed by itself. There
+            need to be players who execute vital parts of the protocol and pay a transaction fee for it. In a
+            decentralised system like this, anyone can become such a player. But as execution can sometimes end up in a
+            loss of transaction fee, those operations are made to be profitable by the protocol itself. Players who
+            risk to make DAI more stable and keep the protocol in a healthy condition get rewarded with higher profits.
+            Most of the auctions will be cleared by players with bots bidding very quickly, whenever there is a slight
+            market opportunity. However, in some occasions like bigger market crashes a larger number of auctions will
+            be started. That’s when regular users and newcomers can have an opportunity to engage, as there can be not
+            enough market players to clear all of them.
+        </TextBlock>
     </div>
 </template>
 <script lang="ts">

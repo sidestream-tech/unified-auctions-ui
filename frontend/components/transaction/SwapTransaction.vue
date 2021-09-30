@@ -2,16 +2,17 @@
     <div>
         <TextBlock title="Swap transaction" />
         <SwapTransactionTable :auction-transaction="auctionTransaction" class="mt-4" />
-        <TextBlock class="TextBlock mt-4 mb-8">
-            Please note that the transaction fee, as well as the potential profit, are approximate numbers. The
-            transaction fee will be charged even if the swap fails, since computational power was used. Failure can
-            happen in the case of other market participants trying to swap at the same time willing to pay more
-            transaction fees. Meaning their swap is executed first. This risk is called
+        <TextBlock v-if="isExplanationsShown" class="TextBlock mt-4 mb-8">
+            Please note, the transaction fee is a suggested value based on the current gas prices on the market; the
+            transaction outcome is also approximate, since it is extrapolated from the exchange rates and may change
+            during the transaction. If you’re bidding with other participants at the same time, the one who pays a
+            higher transaction fee has more chances to win the auction (for more, see
             <a
                 target="_blank"
                 href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#front-running"
-                >front-running.</a
             >
+                front running</a
+            >). In case your transaction will be rejected, it only results in the loss of the transaction fee.
         </TextBlock>
         <WalletBlock
             class="mb-6 lg:mb-0"

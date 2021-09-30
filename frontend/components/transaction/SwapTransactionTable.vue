@@ -1,11 +1,11 @@
 <template>
     <div class="flex flex-col space-y-1">
         <div class="flex w-full justify-between">
-            <div>Expires in</div>
+            <div>Expires In</div>
             <div><time-till :date="auctionTransaction.till" /></div>
         </div>
         <div class="flex w-full justify-between">
-            <div>Auction Amout</div>
+            <div>Auction Amount</div>
             <div>
                 <FormatCurrency :value="auctionTransaction.amountRAW" :currency="auctionTransaction.collateralType" />
             </div>
@@ -18,13 +18,20 @@
             </div>
         </div>
         <div class="flex w-full justify-between">
-            <div>Market value*</div>
+            <div>Price On Uniswap</div>
+            <div>
+                <FormatCurrency :value="auctionTransaction.marketPricePerCollateral" currency="DAI" /> per
+                <span class="uppercase">{{ auctionTransaction.collateralType }}</span>
+            </div>
+        </div>
+        <div class="flex w-full justify-between">
+            <div>Market Difference</div>
             <div>
                 <FormatMarketValue :value="auctionTransaction.marketValue" />
             </div>
         </div>
         <div class="flex w-full justify-between">
-            <div>Potential profit</div>
+            <div>Potential Profit</div>
             <div><FormatCurrency show-sign :value="auctionTransaction.transactionProfit" currency="DAI" /></div>
         </div>
         <div class="flex w-full justify-between">
@@ -43,7 +50,7 @@
             </div>
         </div>
         <div class="flex w-full justify-between">
-            <div class="font-extrabold">Transaction outcome</div>
+            <div class="font-extrabold">Transaction Outcome</div>
             <div class="font-extrabold">
                 <FormatCurrency show-sign :value="auctionTransaction.transactionOutcome" currency="DAI" />
             </div>

@@ -19,13 +19,13 @@
                 <format-currency :value="amountPerCollateral" currency="DAI" /> per
                 <format-currency :currency="record.collateralType" />
             </div>
-            <div slot="marketValue" slot-scope="marketValue">
-                <format-market-value :value="marketValue" />
-            </div>
             <div slot="till" slot-scope="till, record" class="text-center">
                 <span v-if="record.transactionAddress">Finished</span>
                 <span v-else-if="!record.isActive">Inactive</span>
                 <time-till v-else :date="till" />
+            </div>
+            <div slot="marketValue" slot-scope="marketValue">
+                <format-market-value :value="marketValue" />
             </div>
             <div slot="action" slot-scope="text, record, index" class="w-full h-full">
                 <nuxt-link
@@ -123,17 +123,17 @@ export default Vue.extend({
                     sorter: compareBy('amountPerCollateral'),
                 },
                 {
-                    title: 'Market Value*',
+                    title: 'Next Price Drop',
+                    dataIndex: 'till',
+                    scopedSlots: { customRender: 'till' },
+                    sorter: compareBy('till', (a: Date, b: Date) => compareAsc(new Date(a), new Date(b))),
+                },
+                {
+                    title: 'Market Difference',
                     dataIndex: 'marketValue',
                     scopedSlots: { customRender: 'marketValue' },
                     sorter: compareBy('marketValue'),
                     defaultSortOrder: 'descend',
-                },
-                {
-                    title: 'Next price drop',
-                    dataIndex: 'till',
-                    scopedSlots: { customRender: 'till' },
-                    sorter: compareBy('till', (a: Date, b: Date) => compareAsc(new Date(a), new Date(b))),
                 },
                 {
                     title: '',

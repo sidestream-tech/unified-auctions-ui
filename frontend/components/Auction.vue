@@ -6,8 +6,10 @@
                 <table class="w-full table-fixed border-collapse border">
                     <tbody>
                         <tr>
-                            <td class="w-1/2">Currency</td>
-                            <td class="w-1/2 uppercase">{{ auction.collateralType }}</td>
+                            <td>Next Price Drop</td>
+                            <td>
+                                <time-till :date="auction.till" />
+                            </td>
                         </tr>
                         <tr>
                             <td>Auction Amount</td>
@@ -24,31 +26,32 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Market Value*</td>
-                            <td><format-market-value :value="auction.marketValue" /></td>
+                            <td>Price On Uniswap</td>
+                            <td>
+                                <format-currency :value="auction.marketPricePerCollateral" currency="DAI" /> per
+                                <format-currency :currency="auction.collateralType" />
+                            </td>
                         </tr>
                         <tr>
-                            <td>Next price drop</td>
-                            <td>
-                                <time-till :date="auction.till" />
-                            </td>
+                            <td>Market Difference</td>
+                            <td><format-market-value :value="auction.marketValue" /></td>
                         </tr>
                         <template v-if="isTableExpanded">
                             <tr class="bg-gray-100">
-                                <td>Auction price total</td>
+                                <td>Auction Price Total</td>
                                 <td>
                                     <format-currency :value="auction.amountDAI" currency="DAI" />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100">
-                                <td>Vault owner</td>
+                                <td>Vault Owner</td>
                                 <td>
                                     <format-address :value="auction.vaultOwner" />
                                     <format-address explicit :value="auction.vaultOwner" />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100">
-                                <td>Auction ends at</td>
+                                <td>Auction Ends At</td>
                                 <td>{{ new Date(auction.till).toUTCString() }}</td>
                             </tr>
                         </template>

@@ -6,16 +6,20 @@ export const generateFakeAuction = function () {
     const amountRAW = parseFloat(faker.finance.amount());
     const amountDAI = parseFloat(faker.finance.amount());
     const isActive = faker.datatype.boolean();
+    const marketValue = isActive ? faker.datatype.number({ min: -0.05, max: 0.05, precision: 0.001 }) : undefined;
+    const amountPerCollateral = amountDAI / amountRAW;
+
     return {
         id: faker.datatype.number().toString(),
         collateralType: faker.helpers.randomize(Object.values(COLLATERALS).map(c => c.title)),
-        amountRAW: parseFloat(faker.finance.amount()),
-        amountDAI: parseFloat(faker.finance.amount()),
+        amountRAW,
+        amountDAI,
         till: faker.date.future().toString(),
+        marketValue,
+        marketPricePerCollateral: amountPerCollateral * (marketValue + 1),
         vaultOwner: faker.finance.ethereumAddress(),
-        amountPerCollateral: amountDAI / amountRAW,
+        amountPerCollateral,
         isActive,
-        marketValue: isActive ? faker.datatype.number({ min: -1, max: 1, precision: 0.001 }) : undefined,
         transactionAddress: undefined,
     };
 };
