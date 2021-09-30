@@ -48,7 +48,7 @@
         >
             <AuctionsTable
                 :class="{ 'md:mx-10': !isExplanationsShown }"
-                class="block overflow-x-scroll"
+                class="block overflow-auto"
                 :auctions="auctions"
                 :selected-auction-id.sync="selectedAuctionId"
             />

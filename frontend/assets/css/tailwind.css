@@ -1,3 +1,8 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+/* globally fix vertical-align of ant design icons */
+.anticon {
+    vertical-align: 0.125em !important;
+}
