@@ -1,11 +1,15 @@
 <template>
     <div class="flex flex-col space-y-8 py-8">
         <TextBlock v-if="isExplanationsShown" title="What is the Maker Protocol?" class="TextBlock">
-            The Maker Protocol is a set of rules that defines how a cryptocurrency called DAI is kept approximately
-            equal to USD by incentivizing market players. People who help to keep DAI stable, benefit from their
-            actions by acquiring cryptocurrency at a discount. The main promise of the protocol is to provide a
-            decentralized stable currency, which can be used to borrow money over a longer period without being
-            affected by unpredictable exchange rates.
+            The Maker Protocol is
+            <Explain text="a set of rules" :get-popup-container="() => $el"
+                >a <a href="https://changelog.makerdao.com/" target="_blank">set of smart contracts</a> running on the
+                Ethereum blockchain</Explain
+            >
+            that defines how a cryptocurrency called DAI is kept approximately equal to USD by incentivizing market
+            players. People who help to keep DAI stable, benefit from their actions by acquiring cryptocurrency at a
+            discount. The main promise of the protocol is to provide a decentralized stable currency, which can be used
+            to borrow money over a longer period without being affected by unpredictable exchange rates.
         </TextBlock>
         <TextBlock v-if="isExplanationsShown" class="TextBlock">
             <template #title>
@@ -73,6 +77,7 @@ import AuctionsTable from '~/components/AuctionsTable.vue';
 import Loading from '~/components/common/Loading.vue';
 import getParams from '~/lib/getParams';
 import FormatPercentage from '~/components/utils/FormatPercentage.vue';
+import Explain from '~/components/utils/Explain.vue';
 
 export default Vue.extend({
     components: {
@@ -80,6 +85,7 @@ export default Vue.extend({
         TextBlock,
         AuctionsTable,
         Loading,
+        Explain,
     },
     props: {
         auctions: {

@@ -56,7 +56,7 @@ export default Vue.extend({
     @apply absolute hidden cursor-pointer top-0 right-0 w-10 h-10 p-2 mr-5 mt-5 z-40;
 }
 .Slot0 {
-    @apply w-full h-full transition-all overflow-auto duration-500;
+    @apply w-full h-full transition-all overflow-auto duration-500 relative;
 }
 .Slot1 {
     @apply absolute md:w-1/2 w-full h-full right-0 top-0 overflow-hidden transform translate-x-full transition-all duration-500 overscroll-none z-20;
