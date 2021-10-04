@@ -1,7 +1,7 @@
 <template>
     <div>
         <popover
-            v-model="visible"
+            v-model="localVisible"
             class="hidden md:flex"
             trigger="hover"
             placement="bottomLeft"
@@ -12,16 +12,20 @@
                     <li
                         v-for="option in options"
                         :key="option.value"
-                        class="w-full hover:bg-gray-200 px-4 py-2 cursor-pointer"
-                        @click="updateInput(option.value)"
+                        class="w-full flex hover:bg-gray-200 px-4 py-2 cursor-pointer items-center"
+                        :class="option.classes"
+                        @click="$emit('input', option.value)"
                     >
+                        <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
                         {{ option.label }}
                     </li>
                 </ul>
             </div>
             <button class="flex items-center">
                 <slot name="text-prefix" />
-                <span class="hidden md:block">{{ selectedLabel }}</span>
+                <span class="hidden md:block"
+                    ><slot name="title">{{ selectTitle }}</slot></span
+                >
                 <slot name="text-suffix" />
             </button>
         </popover>
@@ -31,7 +35,7 @@
                 <slot name="text-suffix" />
             </button>
             <modal
-                v-model="visible"
+                v-model="localVisible"
                 :title="title"
                 :footer="null"
                 class="Select md:hidden"
@@ -41,9 +45,10 @@
                     <li
                         v-for="option in options"
                         :key="option.value"
-                        class="w-full hover:bg-gray-200 px-4 py-2 cursor-pointer"
+                        class="w-full hover:bg-gray-200 px-4 py-2 cursor-pointer flex"
                         @click="updateInput(option.value)"
                     >
+                        <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
                         {{ option.label }}
                     </li>
                 </ul>
@@ -68,33 +73,56 @@ export default Vue.extend({
             default: () => [],
         },
         value: {
-            type: String,
+            type: [String, Number],
             default: '',
         },
         title: {
             type: String,
             default: 'Please select...',
         },
+        showJustTitle: {
+            type: Boolean,
+            default: false,
+        },
+        visible: {
+            type: Boolean,
+            default: false,
+        },
     },
+
     data() {
         return {
-            visible: false,
-            visibleModal: false,
+            localVisible: false,
         };
     },
     computed: {
-        selectedLabel(): string {
+        selectTitle(): string {
             const selectedOption = this.options.find(option => option.value === this.value);
-            return selectedOption?.label || 'Please select...';
+            if (this.showJustTitle || !selectedOption) {
+                return this.title;
+            }
+            return selectedOption.label;
+        },
+    },
+    watch: {
+        localVisible: {
+            handler(newVisible) {
+                this.$emit('update:visible', newVisible);
+            },
+        },
+        visible: {
+            handler(newVisible) {
+                this.localVisible = newVisible;
+            },
         },
     },
     methods: {
         updateInput(value: string): void {
-            this.visible = false;
+            this.localVisible = false;
             this.$emit('input', value);
         },
         toggleModal(): void {
-            this.visible = !this.visible;
+            this.localVisible = !this.localVisible;
         },
     },
 });

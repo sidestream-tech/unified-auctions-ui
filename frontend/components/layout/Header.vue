@@ -18,29 +18,32 @@
 
                 <NetworkSelector :network="network" @update:network="$emit('update:network', $event)" />
 
-                <div class="flex items-center space-x-2 cursor-pointer">
-                    <icon type="wallet" class="text-3xl md:text-sm" />
-                    <span class="hidden md:block text-gray-700">Connect Wallet</span>
-                </div>
+                <WalletSelector
+                    :wallet-address="walletAddress"
+                    :is-loading="isWalletLoading"
+                    :is-modal-open="isWalletModalOpen"
+                    @update:isModalOpen="$emit('update:isModalOpen', $event)"
+                    @changeWalletType="$emit('changeWalletType', $event)"
+                />
             </div>
         </nav>
     </header>
 </template>
 
 <script lang="ts">
-import { Icon } from 'ant-design-vue';
 import Vue from 'vue';
-import NetworkSelector from '~/components/utils/NetworkSelector.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
 import BaseSwitch from '~/components/common/BaseSwitch.vue';
+import NetworkSelector from '~/components/utils/NetworkSelector.vue';
+import WalletSelector from '~/components/utils/WalletSelector.vue';
 
 export default Vue.extend({
     name: 'Header',
     components: {
         BrandingIcon,
-        Icon,
         BaseSwitch,
         NetworkSelector,
+        WalletSelector,
     },
     props: {
         isExplanationsShown: {
@@ -50,6 +53,18 @@ export default Vue.extend({
         network: {
             type: String,
             default: null,
+        },
+        walletAddress: {
+            type: String,
+            default: null,
+        },
+        isWalletLoading: {
+            type: Boolean,
+            default: false,
+        },
+        isWalletModalOpen: {
+            type: Boolean,
+            default: false,
         },
     },
 });

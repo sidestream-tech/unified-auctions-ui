@@ -34,6 +34,7 @@
     "ant-design-vue": "^1.7.6",
     "core-js": "^3.15.2",
     "date-fns": "^2.23.0",
+    "ethers": "^5.4.6",
     "nuxt": "^2.15.7",
     "vuex-persist": "^3.1.3"
   },

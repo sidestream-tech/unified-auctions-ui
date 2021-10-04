@@ -4,6 +4,9 @@
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
             :network.sync="network"
+            :wallet-address="walletAddress"
+            :is-wallet-loading="isWalletLoading"
+            @changeWalletType="changeWalletType"
         />
         <Nuxt />
     </div>
@@ -11,6 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { mapGetters } from 'vuex';
 import Header from '~/components/layout/Header.vue';
 
 export default Vue.extend({
@@ -18,6 +22,10 @@ export default Vue.extend({
         Header,
     },
     computed: {
+        ...mapGetters('wallet', {
+            isWalletLoading: 'isLoading',
+            walletAddress: 'getAddress',
+        }),
         isExplanationsShown: {
             get() {
                 return this.$store.getters['preferences/getIsExplanationsShown'];
@@ -33,6 +41,11 @@ export default Vue.extend({
             set(newNetwork) {
                 this.$store.dispatch('preferences/setNetwork', newNetwork);
             },
+        },
+    },
+    methods: {
+        changeWalletType(walletType: string): void {
+            this.$store.dispatch('wallet/changeWalletType', walletType);
         },
     },
 });

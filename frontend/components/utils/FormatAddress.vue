@@ -13,7 +13,7 @@
 import Vue from 'vue';
 import NETWORKS from '~/lib/constants/NETWORKS';
 
-const TRIM_POSITION_FROM_START = 7;
+const TRIM_POSITION_FROM_START = 5;
 const TRIM_POSITION_FROM_END = 4;
 
 export default Vue.extend({

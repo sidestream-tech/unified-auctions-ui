@@ -44,6 +44,7 @@ declare interface CollateralConfig {
 }
 
 declare interface NetworkConfig {
+    chainId: string;
     title: string;
     url: string;
     etherscanUrl: string;
@@ -56,10 +57,15 @@ declare interface Indexable {
 declare interface SelectOption {
     label: string;
     value: string;
+    icon?: object;
 }
 
 declare interface MakerParams {
     step: number;
     cut: number;
     drop: number;
+}
+
+declare interface Window {
+    ethereum?: any;
 }
