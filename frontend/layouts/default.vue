@@ -1,9 +1,10 @@
 <template>
-    <div>
+    <div :class="isDarkMode && 'dark bg-dark'">
         <Header
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
             :network.sync="network"
+            :dark-mode.sync="isDarkMode"
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
             @changeWalletType="changeWalletType"
@@ -40,6 +41,14 @@ export default Vue.extend({
             },
             set(newNetwork) {
                 this.$store.dispatch('preferences/setNetwork', newNetwork);
+            },
+        },
+        isDarkMode: {
+            get(): Boolean {
+                return this.$store.getters['preferences/getIsDarkMode'];
+            },
+            set(newIsDarkMode) {
+                this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
         },
     },

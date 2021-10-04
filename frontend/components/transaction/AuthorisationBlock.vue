@@ -1,12 +1,12 @@
 <template>
     <div>
         <TextBlock v-if="isExplanationsShown" title="Authorize transaction">
-            <div v-if="isAuthorized" class="text-gray-800">
+            <div v-if="isAuthorized">
                 Different types of transactions have to be authorized once per type before participating in auction.
                 The transaction type for <span class="uppercase">{{ collateralType }}</span> has already been
                 authorized by you.
             </div>
-            <div v-else class="text-gray-800">
+            <div v-else>
                 Auction participation requires a preliminary one-time per user authorization that incurs transaction
                 fees. It is essential for every new user that wants to interact with the auction process because an
                 automated mechanism changes the balance of the user's wallet.

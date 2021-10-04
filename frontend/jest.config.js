@@ -1,7 +1,7 @@
 module.exports = {
     verbose: true,
     moduleNameMapper: {
-        '.*\\.(jpg|ico|jpeg|png|gif|mp4|webm|wav|mp3|m4a|aac|oga|css)$': '<rootDir>/jest.file-mock.js',
+        '.*\\.(jpg|ico|jpeg|png|gif|mp4|webm|wav|mp3|m4a|aac|oga|css|less)$': '<rootDir>/jest.file-mock.js',
         '^@/(.*)$': '<rootDir>/$1',
         '^~/(.*)$': '<rootDir>/$1',
         '^vue$': 'vue/dist/vue.common.js',

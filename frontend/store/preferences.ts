@@ -5,11 +5,13 @@ import getWallet from '~/lib/wallet';
 interface State {
     network: string | null;
     isExplanationsShown: boolean;
+    isDarkMode: boolean;
 }
 
 export const state = (): State => ({
     network: null,
     isExplanationsShown: true,
+    isDarkMode: false,
 });
 
 export const getters = {
@@ -19,6 +21,9 @@ export const getters = {
     getIsExplanationsShown(state: State) {
         return state.isExplanationsShown;
     },
+    getIsDarkMode(state: State) {
+        return state.isDarkMode;
+    },
 };
 
 export const mutations = {
@@ -27,6 +32,9 @@ export const mutations = {
     },
     setExplanations(state: State, isExplanationsShown: boolean): void {
         state.isExplanationsShown = isExplanationsShown;
+    },
+    setIsDarkMode(state: State, isDarkMode: boolean): void {
+        state.isDarkMode = isDarkMode;
     },
 };
 
@@ -61,5 +69,8 @@ export const actions = {
     },
     setExplanationsAction({ commit }: ActionContext<State, State>, isExplanationsShown: boolean): void {
         commit('setExplanations', isExplanationsShown);
+    },
+    setIsDarkMode({ commit }: ActionContext<State, State>, isDarkMode: boolean): void {
+        commit('setIsDarkMode', isDarkMode);
     },
 };

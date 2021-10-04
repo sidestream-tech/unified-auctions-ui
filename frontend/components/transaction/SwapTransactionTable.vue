@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col space-y-1">
+    <TextBlock class="flex flex-col space-y-1">
         <div class="flex w-full justify-between">
             <div>Expires In</div>
             <div><time-till :date="auctionTransaction.till" /></div>
@@ -55,16 +55,18 @@
                 <FormatCurrency show-sign :value="auctionTransaction.transactionOutcome" currency="DAI" />
             </div>
         </div>
-    </div>
+    </TextBlock>
 </template>
 <script lang="ts">
 import Vue from 'vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
+import TextBlock from '~/components/common/TextBlock.vue';
 
 export default Vue.extend({
     components: {
+        TextBlock,
         TimeTill,
         FormatCurrency,
         FormatMarketValue,

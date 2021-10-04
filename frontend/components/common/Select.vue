@@ -12,7 +12,7 @@
                     <li
                         v-for="option in options"
                         :key="option.value"
-                        class="w-full flex hover:bg-gray-200 px-4 py-2 cursor-pointer items-center"
+                        class="w-full flex hover:bg-primary px-4 py-2 cursor-pointer items-center"
                         :class="option.classes"
                         @click="$emit('input', option.value)"
                     >
@@ -45,7 +45,7 @@
                     <li
                         v-for="option in options"
                         :key="option.value"
-                        class="w-full hover:bg-gray-200 px-4 py-2 cursor-pointer flex"
+                        class="w-full hover:bg-primary px-4 py-2 cursor-pointer flex"
                         @click="updateInput(option.value)"
                     >
                         <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
@@ -130,7 +130,7 @@ export default Vue.extend({
 
 <style>
 .Select .ant-popover-inner-content {
-    @apply p-0;
+    @apply p-0 relative z-10;
 }
 
 .Select .ant-modal-body {

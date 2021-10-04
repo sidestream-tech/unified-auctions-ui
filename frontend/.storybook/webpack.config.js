@@ -16,6 +16,27 @@ module.exports = ({ config }) => {
         include: path.resolve(__dirname, '../'),
     });
 
+    config.module.rules.push({
+        test: /\.less$/,
+        use: [
+            {
+                loader: 'style-loader',
+            },
+            {
+                loader: 'css-loader',
+            },
+            {
+                loader: 'less-loader',
+                options: {
+                    lessOptions: {
+                        javascriptEnabled: true,
+                    },
+                },
+            },
+        ],
+        include: path.resolve(__dirname, '../'),
+    });
+
     // load svg as components
     const svgRule = config.module.rules.find(rule => rule.test.test('.svg'));
     svgRule.test = /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|ttf|woff|woff2|cur|ani|pdf)(\?.*)?$/;

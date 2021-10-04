@@ -1,11 +1,11 @@
 <template>
     <div>
         <TextBlock v-if="isExplanationsShown" title="Connect a wallet">
-            <div v-if="walletAddress" class="text-gray-800">
+            <div v-if="walletAddress">
                 The operation will be carried over the connected wallet
                 <format-address shorten :value="walletAddress" />
             </div>
-            <div v-else class="text-gray-800">
+            <div v-else>
                 To participate in the auction, you need to connect a wallet. If you don’t have a wallet yet, you can
                 simply sign up for it on a service like
                 <a href="https://metamask.io/" target="_blank">MetaMask</a>.

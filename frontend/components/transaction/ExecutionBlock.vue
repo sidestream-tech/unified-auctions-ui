@@ -1,11 +1,11 @@
 <template>
     <div>
         <TextBlock :title="isExplanationsShown ? 'Make a bid' : ''">
-            <div v-if="state === 'executed'" class="text-gray-800">
+            <div v-if="state === 'executed'">
                 Transaction <format-address shorten :value="transactionAddress" /> was successfully executed.
                 <format-address explicit :value="transactionAddress" />
             </div>
-            <div v-else-if="isExplanationsShown" class="text-gray-800">
+            <div v-else-if="isExplanationsShown">
                 Auction participation incurs transaction fees (<FormatCurrency
                     :value="transactionFee"
                     :decimals="6"

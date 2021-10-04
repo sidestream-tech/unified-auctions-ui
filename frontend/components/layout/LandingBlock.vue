@@ -1,6 +1,6 @@
 <template>
-    <div class="LandingBlock" :style="{ backgroundImage: `url(${backgroundImage})` }">
-        <div class="flex flex-col items-center w-full">
+    <div class="LandingBlock">
+        <div class="flex flex-col items-center w-full z-10">
             <div class="LandingTitle">Maker liquidations</div>
             <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 my-8">
                 <Button class="SecondaryButton mx-3" @click="$emit('explanations', false)"
@@ -11,6 +11,10 @@
                 >
             </div>
         </div>
+        <div
+            class="absolute inset-0 select-none bg-center bg-cover filter dark:invert"
+            :style="{ backgroundImage: `url(${backgroundImage})` }"
+        />
     </div>
 </template>
 
@@ -33,18 +37,18 @@ export default Vue.extend({
 
 <style scoped>
 .LandingBlock {
-    @apply relative flex h-full text-center items-center w-full bg-center bg-cover;
+    @apply relative flex h-full text-center items-center w-full;
 }
 .ButtonBase {
     @apply rounded-full border-2;
 }
 .PrimaryButton {
-    @apply ButtonBase bg-primary-light border-primary focus:bg-primary-light hover:bg-white hover:text-primary focus:text-primary;
+    @apply ButtonBase bg-primary-light border-primary focus:bg-primary-light hover:bg-white hover:text-primary focus:text-primary dark:bg-primary-dark dark:border-primary-dark dark:text-white dark:hover:bg-primary;
 }
 .SecondaryButton {
-    @apply ButtonBase border-gray-500 hover:text-primary focus:text-primary hover:border-primary;
+    @apply ButtonBase border-gray-500 hover:text-primary focus:text-primary hover:border-primary dark:bg-gray-600 dark:border-gray-600 dark:text-white dark:hover:bg-gray-500;
 }
 .LandingTitle {
-    @apply text-4xl font-bold text-gray-800;
+    @apply text-4xl font-bold text-gray-800 dark:text-gray-100;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="TextBlock">
-        <h3 v-if="title || $slots.title" class="text-xl font-extrabold mb-1 text-gray-700">
+        <h3 v-if="title || $slots.title" class="text-xl font-extrabold mb-1 text-gray-700 dark:text-gray-200">
             {{ title }}<slot name="title" />
         </h3>
         <slot />
@@ -20,6 +20,9 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.TextBlock {
+    @apply dark:text-gray-300;
+}
 .TextBlock >>> a:link {
     @apply text-primary underline;
 }

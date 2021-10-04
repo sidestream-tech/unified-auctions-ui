@@ -1,5 +1,5 @@
 <template>
-    <header class="bg-primary">
+    <header class="bg-primary dark:bg-primary-dark">
         <nav class="flex items-center py-2 px-4 md:px-10">
             <nuxt-link to="/" class="flex items-center text-gray-700 hover:text-gray-600 no-underline">
                 <branding-icon class="h-12 w-12" />
@@ -25,6 +25,8 @@
                     @update:isModalOpen="$emit('update:isModalOpen', $event)"
                     @changeWalletType="$emit('changeWalletType', $event)"
                 />
+
+                <ThemeSwitcher :dark-mode="darkMode" @update="$emit('update:darkMode', $event)" />
             </div>
         </nav>
     </header>
@@ -34,12 +36,15 @@
 import Vue from 'vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
 import BaseSwitch from '~/components/common/BaseSwitch.vue';
+
 import NetworkSelector from '~/components/utils/NetworkSelector.vue';
 import WalletSelector from '~/components/utils/WalletSelector.vue';
+import ThemeSwitcher from '~/components/utils/ThemeSwitcher.vue';
 
 export default Vue.extend({
     name: 'Header',
     components: {
+        ThemeSwitcher,
         BrandingIcon,
         BaseSwitch,
         NetworkSelector,
@@ -53,6 +58,10 @@ export default Vue.extend({
         network: {
             type: String,
             default: null,
+        },
+        darkMode: {
+            type: Boolean,
+            default: false,
         },
         walletAddress: {
             type: String,

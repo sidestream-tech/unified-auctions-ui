@@ -1,6 +1,8 @@
 <template>
-    <AuctionsFakeData v-if="!network" />
-    <AuctionsContainer v-else :network="network" />
+    <div>
+        <AuctionsFakeData v-if="!network" />
+        <AuctionsContainer v-else :network="network" />
+    </div>
 </template>
 
 <script lang="ts">

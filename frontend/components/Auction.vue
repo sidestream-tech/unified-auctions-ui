@@ -37,20 +37,20 @@
                             <td><format-market-value :value="auction.marketValue" /></td>
                         </tr>
                         <template v-if="isTableExpanded">
-                            <tr class="bg-gray-100">
+                            <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Auction Price Total</td>
                                 <td>
                                     <format-currency :value="auction.amountDAI" currency="DAI" />
                                 </td>
                             </tr>
-                            <tr class="bg-gray-100">
+                            <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Vault Owner</td>
                                 <td>
                                     <format-address :value="auction.vaultOwner" />
                                     <format-address explicit :value="auction.vaultOwner" />
                                 </td>
                             </tr>
-                            <tr class="bg-gray-100">
+                            <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Auction Ends At</td>
                                 <td>{{ new Date(auction.till).toUTCString() }}</td>
                             </tr>
@@ -60,7 +60,14 @@
                 <div v-if="error" class="Disable" />
             </div>
             <button
-                class="w-full border-2 border-gray-300 p-1 border-t-0 text-center text-gray-400"
+                class="
+                    w-full
+                    border-2 border-gray-300
+                    p-1
+                    border-t-0
+                    text-center text-gray-400
+                    dark:border-gray-600 dark:text-gray-600
+                "
                 @click="toggleExpandable"
             >
                 {{ isTableExpanded ? 'Hide additional numbers' : 'Show additional numbers' }}
@@ -221,7 +228,7 @@ export default Vue.extend({
 <style scoped>
 th,
 td {
-    @apply p-2 border-2 border-collapse border-gray-300;
+    @apply p-2 border-2 border-collapse border-gray-300 dark:border-gray-600 dark:text-gray-200;
 }
 .Disable {
     @apply absolute inset-0 bg-gray-700 opacity-70;

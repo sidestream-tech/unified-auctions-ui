@@ -48,12 +48,11 @@ export default Vue.extend({
 
 <style scoped>
 /* DEFAULT STATE  */
-
 .Container {
     @apply relative w-full h-full overflow-hidden;
 }
 .CloseIcon {
-    @apply absolute hidden cursor-pointer top-0 right-0 w-10 h-10 p-2 mr-5 mt-5 z-40;
+    @apply absolute hidden cursor-pointer top-0 right-0 w-10 h-10 p-2 mr-5 mt-5 z-40 fill-current dark:text-gray-200;
 }
 .Slot0 {
     @apply w-full h-full transition-all overflow-auto duration-500 relative;
@@ -64,22 +63,18 @@ export default Vue.extend({
 .Slot2 {
     @apply absolute hidden md:w-1/2 w-full h-full right-0 top-0 overflow-hidden  transition-all duration-500 z-30;
 }
-
 .SlotContainer {
-    @apply relative w-full h-full bg-white overflow-auto shadow-2xl md:shadow-none;
+    @apply relative w-full h-full bg-white dark:bg-dark overflow-auto shadow-2xl md:shadow-none;
 }
-
 .Step1 .CloseIcon,
 .Step2 .Slot2 .CloseIcon {
     @apply block;
 }
-
 .Overlay {
     @apply absolute w-full h-full inset-0 bg-gray-500 opacity-0 transition-all duration-500 hidden z-10;
 }
 
 /* STATE STEP 1 */
-
 .Step1 .Slot0 {
     @apply md:w-1/2 px-4;
 }
@@ -89,7 +84,6 @@ export default Vue.extend({
 .Step1 .Slot2 {
     @apply flex transform translate-x-full;
 }
-
 .Step1 .Slot1 .CloseIcon {
     @apply block;
 }

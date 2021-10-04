@@ -6,3 +6,7 @@
 .anticon {
     vertical-align: 0.125em !important;
 }
+
+.dark {
+    color-scheme: dark;
+}

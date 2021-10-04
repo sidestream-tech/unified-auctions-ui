@@ -14,18 +14,26 @@ module.exports = {
                     DEFAULT: '#1AAB9B',
                     dark: '#169184',
                 },
+                dark: {
+                    DEFAULT: '#111E1E',
+                    light: '#12302e',
+                    dark: '#081615',
+                },
             },
         },
     },
     variants: {
         extend: {
             backgroundColor: ['active'],
+            opacity: ['dark'],
+            invert: ['dark'],
+            margin: ['dark'],
         },
     },
-    plugins: [],
     purge: {
         // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
         enabled: process.env.NODE_ENV === 'production',
         content: ['components/**/*.vue', 'layouts/**/*.vue', 'pages/**/*.vue', 'plugins/**/*.js', 'nuxt.config.js'],
     },
+    darkMode: 'class',
 };

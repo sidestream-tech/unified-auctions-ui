@@ -5,6 +5,7 @@
         :title="title || text"
         :overlay-style="{ width: '200px' }"
         :get-popup-container="getPopupContainer"
+        overlay-class-name="ExplainOverlay"
     >
         <span class="Explain" :class="{ Pressed: isVisible }">{{ text }}</span>
         <template #content>
@@ -49,8 +50,15 @@ export default Vue.extend({
 .Explain {
     padding: 0 0.2em 0.1em;
     @apply border rounded cursor-pointer border-gray-300 bg-gray-100;
+    @apply dark:border-gray-600 dark:bg-gray-800;
 }
 .Explain.Pressed {
     @apply border-yellow-400;
+}
+</style>
+
+<style>
+.ExplainOverlay a {
+    @apply text-primary underline;
 }
 </style>
