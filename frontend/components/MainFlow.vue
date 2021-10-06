@@ -37,13 +37,15 @@
                     :auction-transaction="selectedAuction"
                     :is-connecting="isConnecting"
                     :is-authorizing="isAuthorizing"
-                    :is-authorised="isAuthorised"
+                    :is-wallet-authorised="isWalletAuthorised"
+                    :authorised-collaterals="authorisedCollaterals"
                     :is-executing="isExecuting"
                     :wallet-address="walletAddress"
                     :is-explanations-shown="isExplanationsShown"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
-                    @authorize="$emit('authorize')"
+                    @authorizeWallet="$emit('authorizeWallet')"
+                    @authorizeCollateral="$emit('authorizeCollateral', $event)"
                     @execute="$emit('execute')"
                 />
             </template>
@@ -89,9 +91,13 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isAuthorised: {
+        isWalletAuthorised: {
             type: Boolean,
             default: false,
+        },
+        authorisedCollaterals: {
+            type: Array as Vue.PropType<string[]>,
+            default: () => [],
         },
         walletAddress: {
             type: String,

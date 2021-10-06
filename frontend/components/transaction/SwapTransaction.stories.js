@@ -1,5 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
+import { action } from '@storybook/addon-actions';
 import SwapTransaction from '~/components/transaction/SwapTransaction';
 import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 
@@ -13,7 +14,8 @@ const common = {
             isConnecting: false,
             isAuthorizing: false,
             isExecuting: false,
-            isAuthorised: false,
+            isWalletAuthorised: false,
+            authorisedCollaterals: [],
             walletAddress: null,
             transactionAddress: null,
         };
@@ -30,16 +32,25 @@ const common = {
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = null;
-                this.isAuthorised = false;
+                this.isWalletAuthorised = false;
+                this.authorisedCollaterals = [];
                 this.transactionAddress = null;
                 this.isConnecting = false;
             }, 1000);
         },
-        authorize() {
+        authorizeWallet() {
             this.isAuthorizing = true;
             setTimeout(() => {
-                this.isAuthorised = true;
+                this.isWalletAuthorised = true;
                 this.isAuthorizing = false;
+            }, 1000);
+        },
+        authorizeCollateral(collateralType) {
+            this.isAuthorizing = true;
+            setTimeout(() => {
+                this.authorisedCollaterals.push(collateralType);
+                this.isAuthorizing = false;
+                action('Authorized Collateral:')(collateralType);
             }, 1000);
         },
         execute() {
@@ -55,5 +66,5 @@ const common = {
 storiesOf('Transaction/SwapTransaction', module).add('Default', () => ({
     ...common,
     template:
-        '<SwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isAuthorised="isAuthorised" :isExecuting="isExecuting" :walletAddress="walletAddress" @connect="connect" @disconnect="disconnect" @authorize="authorize" @execute="execute" />',
+        '<SwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isWalletAuthorised="isWalletAuthorised" :authorisedCollaterals="authorisedCollaterals" :isExecuting="isExecuting" :walletAddress="walletAddress" @connect="connect" @disconnect="disconnect" @authorizeCollateral="authorizeCollateral" @authorizeWallet="authorizeWallet" @execute="execute" />',
 }));

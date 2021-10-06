@@ -7,15 +7,23 @@ const common = {
     data() {
         return {
             isLoading: false,
-            isAuthorized: false,
-            currencyType: faker.lorem.word(),
+            isWalletAuthorised: false,
+            isCollateralAuthorised: false,
+            currencyType: faker.finance.currencyCode(),
         };
     },
     methods: {
-        authorize() {
+        authorizeWallet() {
             this.isLoading = true;
             setTimeout(() => {
-                this.isAuthorized = true;
+                this.isWalletAuthorised = true;
+                this.isLoading = false;
+            }, 1000);
+        },
+        authorizeCollateral() {
+            this.isLoading = true;
+            setTimeout(() => {
+                this.isCollateralAuthorised = true;
                 this.isLoading = false;
             }, 1000);
         },
@@ -26,7 +34,7 @@ storiesOf('Transaction/AuthorisationBlock', module)
     .add('Default', () => ({
         ...common,
         template:
-            '<AuthorisationBlock :isLoading="isLoading" :isAuthorized="isAuthorized" @authorize="authorize" :collateralType="currencyType"/>',
+            '<AuthorisationBlock :isLoading="isLoading" :isWalletAuthorised="isWalletAuthorised" :isCollateralAuthorised="isCollateralAuthorised"  @authorizeWallet="authorizeWallet" @authorizeCollateral="authorizeCollateral" :collateralType="currencyType"/>',
     }))
     .add('Disabled', () => ({
         ...common,
@@ -42,5 +50,6 @@ storiesOf('Transaction/AuthorisationBlock', module)
     }))
     .add('Authorized', () => ({
         ...common,
-        template: '<AuthorisationBlock :isAuthorized="true" :collateralType="currencyType"/>',
+        template:
+            '<AuthorisationBlock :isWalletAuthorised="true" :isCollateralAuthorised="true" :collateralType="currencyType"/>',
     }));

@@ -27,12 +27,14 @@
             :disabled="!isConnected"
             :collateral-type="auctionTransaction.collateralType"
             :is-loading="isAuthorizing"
-            :is-authorized="isAuthorised"
+            :is-wallet-authorised="isWalletAuthorised"
+            :is-collateral-authorised="isCollateralAuthorised"
             :is-explanations-shown="isExplanationsShown"
-            @authorize="$emit('authorize')"
+            @authorizeWallet="$emit('authorizeWallet')"
+            @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
         />
         <ExecutionBlock
-            :disabled="!isAuthorised"
+            :disabled="!isCollateralAuthorised"
             :is-loading="isExecuting"
             :transaction-address="auctionTransaction.transactionAddress"
             :is-explanations-shown="isExplanationsShown"
@@ -77,9 +79,13 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isAuthorised: {
+        isWalletAuthorised: {
             type: Boolean,
             default: false,
+        },
+        authorisedCollaterals: {
+            type: Array as Vue.PropType<string[]>,
+            default: () => [],
         },
         walletAddress: {
             type: String,
@@ -93,6 +99,9 @@ export default Vue.extend({
     computed: {
         isConnected(): boolean {
             return this.walletAddress !== null;
+        },
+        isCollateralAuthorised(): boolean {
+            return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
         },
     },
 });

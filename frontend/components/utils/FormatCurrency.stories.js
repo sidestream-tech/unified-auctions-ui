@@ -5,7 +5,12 @@ const common = {
     components: { FormatCurrency },
 };
 
-storiesOf('Utils/FormatCurrency', module).add('Default', () => ({
-    ...common,
-    template: '<FormatCurrency :value="654.6546" currency="dai" />',
-}));
+storiesOf('Utils/FormatCurrency', module)
+    .add('Default', () => ({
+        ...common,
+        template: '<FormatCurrency :value="654.6546" currency="dai" />',
+    }))
+    .add('No value', () => ({
+        ...common,
+        template: '<FormatCurrency currency="dai" />',
+    }));

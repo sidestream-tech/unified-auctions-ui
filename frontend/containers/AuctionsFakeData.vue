@@ -4,14 +4,16 @@
         :selected-auction-id.sync="selectedAuctionId"
         :is-connecting="isConnecting"
         :is-authorizing="isAuthorizing"
-        :is-authorised="isAuthorised"
+        :is-wallet-authorised="isWalletAuthorised"
+        :authorised-collaterals="authorisedCollaterals"
         :is-executing="isExecuting"
         :wallet-address="walletAddress"
         :transaction-address="selectedAuction && selectedAuction.transactionAddress"
         :is-explanations-shown.sync="isExplanationsShown"
         @connect="connect"
         @disconnect="disconnect"
-        @authorize="authorize"
+        @authorizeWallet="authorizeWallet"
+        @authorizeCollateral="authorizeCollateral"
         @execute="execute"
     />
 </template>
@@ -33,7 +35,8 @@ export default Vue.extend({
             isConnecting: false,
             isAuthorizing: false,
             isExecuting: false,
-            isAuthorised: false,
+            isWalletAuthorised: false,
+            authorisedCollaterals: [] as string[],
             walletAddress: null as string | null,
         };
     },
@@ -85,17 +88,25 @@ export default Vue.extend({
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = null;
-                this.isAuthorised = false;
+                this.isWalletAuthorised = false;
+                this.authorisedCollaterals = [];
                 if (this.selectedAuction) {
                     this.selectedAuction.transactionAddress = undefined;
                 }
                 this.isConnecting = false;
             }, 1000);
         },
-        authorize() {
+        authorizeWallet() {
             this.isAuthorizing = true;
             setTimeout(() => {
-                this.isAuthorised = true;
+                this.isWalletAuthorised = true;
+                this.isAuthorizing = false;
+            }, 1000);
+        },
+        authorizeCollateral(collateralType: string) {
+            this.isAuthorizing = true;
+            setTimeout(() => {
+                this.authorisedCollaterals.push(collateralType);
                 this.isAuthorizing = false;
             }, 1000);
         },

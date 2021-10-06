@@ -20,15 +20,15 @@
             <base-button
                 v-if="state === 'notExecuted'"
                 type="primary"
-                class="w-full md:w-60"
+                class="w-full md:w-80"
                 @click="$emit('execute')"
             >
                 Execute
             </base-button>
-            <base-button v-if="state === 'disabled'" type="primary" class="w-full md:w-60" disabled>
+            <base-button v-if="state === 'disabled'" type="primary" class="w-full md:w-80" disabled>
                 Execute
             </base-button>
-            <base-button v-if="state === 'loading'" type="primary" class="w-full md:w-60" is-loading>
+            <base-button v-if="state === 'loading'" type="primary" class="w-full md:w-80" is-loading>
                 Executing...
             </base-button>
         </div>

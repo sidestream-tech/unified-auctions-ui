@@ -5,6 +5,7 @@
             'text-white bg-primary border-primary active:bg-primary-dark active:border-primary-dark  focus:bg-primary-light focus:border-primary-light hover:bg-primary-light hover:border-primary-light':
                 type === 'primary',
         }"
+        class="overflow-hidden"
         :type="type"
         @click="$emit('click')"
     >
