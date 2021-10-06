@@ -164,7 +164,7 @@ export default Vue.extend({
                 classes.push('selected-row');
             }
             if (!auction.isActive || auction.transactionAddress) {
-                classes.push('bg-gray-100 dark:bg-dark-dark');
+                classes.push('bg-gray-100 dark:bg-gray-800');
             }
             return classes.join(' ');
         },

@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import { action } from '@storybook/addon-actions';
-import 'ant-design-vue/dist/antd.less';
-import '../assets/css/ant-design-dark.less';
-import '../assets/css/tailwind.css';
+import '~/assets/styles/index';
 
 export const parameters = {
     actions: { argTypesRegex: '^on[A-Z].*' },

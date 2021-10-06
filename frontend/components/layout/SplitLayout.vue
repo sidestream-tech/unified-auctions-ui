@@ -76,7 +76,7 @@ export default Vue.extend({
 
 /* STATE STEP 1 */
 .Step1 .Slot0 {
-    @apply md:w-1/2 px-4;
+    @apply md:w-1/2 px-4 overflow-hidden;
 }
 .Step1 .Slot1 {
     @apply flex transform-none md:shadow-2xl;
@@ -99,7 +99,7 @@ export default Vue.extend({
 
 /* STATE STEP 2 */
 .Step2 .Slot0 {
-    @apply md:w-1/2 md:relative md:transform md:-translate-x-full;
+    @apply md:w-1/2 md:relative md:transform md:-translate-x-full overflow-hidden;
 }
 .Step2 .Slot0 .Overlay {
     @apply transition-none;

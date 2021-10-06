@@ -5,13 +5,13 @@ import getWallet from '~/lib/wallet';
 interface State {
     network: string | null;
     isExplanationsShown: boolean;
-    isDarkMode: boolean;
+    isDarkMode: boolean | undefined;
 }
 
 export const state = (): State => ({
     network: null,
     isExplanationsShown: true,
-    isDarkMode: false,
+    isDarkMode: undefined,
 });
 
 export const getters = {
@@ -22,6 +22,9 @@ export const getters = {
         return state.isExplanationsShown;
     },
     getIsDarkMode(state: State) {
+        if (state.isDarkMode === undefined) {
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
         return state.isDarkMode;
     },
 };

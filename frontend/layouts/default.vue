@@ -17,6 +17,7 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import Header from '~/components/layout/Header.vue';
+import '~/assets/styles/index';
 
 export default Vue.extend({
     components: {

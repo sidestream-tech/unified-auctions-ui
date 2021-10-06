@@ -20,9 +20,9 @@ export default Vue.extend({
 </script>
 <style scoped>
 .BaseSwitch {
-    @apply w-10 md:h-4 md:w-5 dark:mt-0.5;
+    @apply w-10 md:h-4 md:w-5 dark:mt-0.5 !important;
 
-    min-width: 28px;
+    min-width: 28px !important;
 }
 .BaseSwitch::after {
     @apply md:h-3 md:w-3 dark:bg-gray-100 !important;

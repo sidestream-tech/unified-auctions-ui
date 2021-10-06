@@ -1,5 +1,5 @@
 <template>
-    <span v-if="value !== undefined" :class="{ 'text-primary': isBelowZero }"
+    <span v-if="value !== undefined" :class="{ 'text-primary dark:text-primary-light': isBelowZero }"
         >{{ formattedValue }}% {{ belowOrAbove }}</span
     >
 </template>

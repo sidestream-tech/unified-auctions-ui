@@ -130,18 +130,18 @@ export default Vue.extend({
 
 <style>
 .Select .ant-popover-inner-content {
-    @apply p-0 relative z-10;
+    @apply p-0 relative z-10 !important;
 }
 
 .Select .ant-modal-body {
-    @apply px-0 py-3;
+    @apply px-0 py-3 !important;
 }
 
 .Select .ant-modal-header {
-    @apply p-3;
+    @apply p-3 !important;
 }
 
 .Select .ant-modal-close {
-    top: -7px;
+    top: -7px !important;
 }
 </style>
