@@ -45,10 +45,10 @@
                     <li
                         v-for="option in options"
                         :key="option.value"
-                        class="w-full hover:bg-primary px-4 py-2 cursor-pointer flex"
+                        class="w-full hover:bg-primary px-4 py-2 cursor-pointer flex items-center"
                         @click="updateInput(option.value)"
                     >
-                        <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
+                        <component :is="option.icon" v-if="option.icon" class="w-8 h-8 pr-3" />
                         {{ option.label }}
                     </li>
                 </ul>
