@@ -1,4 +1,6 @@
+import BigNumber from 'bignumber.js';
 import { storiesOf } from '@storybook/vue';
+import faker from 'faker';
 import FormatCurrency from '~/components/utils/FormatCurrency';
 
 const common = {
@@ -8,7 +10,21 @@ const common = {
 storiesOf('Utils/FormatCurrency', module)
     .add('Default', () => ({
         ...common,
-        template: '<FormatCurrency :value="654.6546" currency="dai" />',
+        data() {
+            return {
+                amount: Number(faker.finance.amount()),
+            };
+        },
+        template: '<FormatCurrency :value="amount" currency="dai" />',
+    }))
+    .add('Big Number', () => ({
+        ...common,
+        data() {
+            return {
+                amount: BigNumber(faker.finance.amount()),
+            };
+        },
+        template: '<FormatCurrency :value="amount" currency="dai" />',
     }))
     .add('No value', () => ({
         ...common,

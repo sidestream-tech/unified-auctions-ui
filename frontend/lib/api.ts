@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import getMaker from '~/lib/maker';
 import COLLATERALS from '~/lib/constants/COLLATERALS';
 
@@ -11,8 +12,8 @@ const fetchAuctionsByType = async function (type: string, network: string): Prom
             id: `${protoAuction.ilk}-${protoAuction.saleId}`,
             collateralType: COLLATERALS[protoAuction.ilk].title,
             vaultOwner: protoAuction.usr,
-            amountRAW: protoAuction.lot,
-            amountDAI: protoAuction.tab,
+            amountRAW: new BigNumber(protoAuction.lot),
+            amountDAI: new BigNumber(protoAuction.tab),
             amountPerCollateral: protoAuction.tab / protoAuction.lot,
             till: protoAuction.endDate,
             isActive,
