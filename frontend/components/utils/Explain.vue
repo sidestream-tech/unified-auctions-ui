@@ -2,10 +2,11 @@
     <Popover
         v-model="isVisible"
         trigger="click"
-        :title="title || text"
+        :title="displayTitle"
         :overlay-style="{ width: '200px' }"
-        :get-popup-container="getPopupContainer"
+        :get-popup-container="() => $el"
         overlay-class-name="ExplainOverlay"
+        :placement="placement"
     >
         <span class="Explain" :class="{ Pressed: isVisible }">{{ text }}</span>
         <template #content>
@@ -35,13 +36,28 @@ export default Vue.extend({
             type: String,
             default: '',
         },
-        getPopupContainer: {
-            type: Function,
-            default: () => document.body,
+        showTitle: {
+            type: Boolean,
+            default: false,
+        },
+        placement: {
+            type: String,
+            default: 'top',
         },
     },
     data() {
         return { isVisible: false };
+    },
+    computed: {
+        displayTitle() {
+            if (!this.showTitle) {
+                return null;
+            }
+            if (this.title) {
+                return this.title;
+            }
+            return this.text;
+        },
     },
 });
 </script>

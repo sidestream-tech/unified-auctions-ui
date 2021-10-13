@@ -10,10 +10,19 @@
                     :value="transactionFee"
                     :decimals="6"
                     currency="ETH"
-                />). Hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is
+                />), hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is
                 a recommended value and based on the
-                <a target="_blank" href="https://ethgasstation.info/">average transaction fee</a>. The amount can be
-                edited by the participant to influence the speed of the transaction.
+                <Explain text="average price">
+                    <a
+                        href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high"
+                        target="_blank"
+                    >
+                        Gas Prices can change
+                    </a>
+                    due to changing busyness of the Ethereum network. However, you can look up the current average gas
+                    price
+                    <a href="https://ethgasstation.info/" target="_blank"> here </a> </Explain
+                >. The amount can be edited by the participant to influence the speed of the transaction.
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse my-3 md:mb-0">
@@ -41,10 +50,12 @@ import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+import Explain from '~/components/utils/Explain.vue';
 
 export default Vue.extend({
     name: 'WalletBlock',
     components: {
+        Explain,
         FormatAddress,
         TextBlock,
         BaseButton,

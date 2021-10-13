@@ -110,11 +110,16 @@
                             Directly swap into profit: The auctioned collateral is bought and sold on an available
                             marketplace in exchange for DAI in a single transaction. You will receive the resulting
                             profit. In the Maker community this is known as a
-                            <a
-                                target="_blank"
-                                href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#flash-lending-of-collateral"
-                            >
-                                flash loan</a
+                            <Explain text="flash loan">
+                                <a
+                                    href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#flash-lending-of-collateral"
+                                    target="_blank"
+                                >
+                                    Flash lending of collateral
+                                </a>
+                                enables even a participant with zero DAI (and nothing to trade for DAI) to purchase
+                                from an auction by directing the sale of the auction's collateral into other protocols
+                                in exchange for DAI. </Explain
                             >.
                         </li>
                     </ul>
@@ -158,10 +163,12 @@ import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import Loading from '~/components/common/Loading.vue';
+import Explain from '~/components/utils/Explain.vue';
 
 export default Vue.extend({
     name: 'Auction',
     components: {
+        Explain,
         Loading,
         FormatCurrency,
         TextBlock,

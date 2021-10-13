@@ -2,15 +2,22 @@
     <div class="flex flex-col space-y-8 py-8">
         <TextBlock v-if="isExplanationsShown" title="What is the Maker Protocol?" class="TextBlock">
             The Maker Protocol is
-            <Explain text="a set of rules" :get-popup-container="() => $el"
-                >a <a href="https://changelog.makerdao.com/" target="_blank">set of smart contracts</a> running on the
+            <Explain text="a set of rules">
+                a <a href="https://changelog.makerdao.com/" target="_blank"> set of smart contracts </a> running on the
                 Ethereum blockchain</Explain
             >
             that defines how a cryptocurrency called DAI is kept approximately equal to USD by incentivizing market
             players. People who help to keep DAI stable, benefit from their actions by acquiring cryptocurrency at a
-            discount. The main promise of the protocol is to provide a decentralized stable currency, which can be used
-            to borrow money over a longer period without being affected by unpredictable exchange rates.
+            discount. The main promise of the protocol is to provide a decentralized
+            <Explain text="stable currency">
+                <a href="https://makerdao.com/en/whitepaper#the-dai-stablecoin" target="_blank">
+                    The DAI Stablecoin
+                </a>
+                is a decentralized, unbiased, collateral-backed cryptocurrency soft-pegged to the US Dollar </Explain
+            >, which can be used to borrow money over a longer period without being affected by unpredictable exchange
+            rates.
         </TextBlock>
+
         <TextBlock v-if="isExplanationsShown" class="TextBlock">
             <template #title>
                 What are the
@@ -21,9 +28,19 @@
                 >?
             </template>
             To get DAI, people need to lock up some other cryptocurrency (e.g., ETH) in a vault. With time, if the
-            price of the cryptocurrency in the vault drops below the predefined ratio (e.g. 150% for ETH), owners of
-            the vault have to add more collateral or return their DAI. If they fail to do so, their vault can be
-            liquidated by the Maker protocol and other people can buy it at a discount.
+            price of the cryptocurrency in the vault drops below the
+            <Explain text="predefined ratio">
+                <a
+                    href="https://community-development.makerdao.com/en/learn/vaults/liquidation/#:~:text=available%20for%20withdrawal.-,Liquidation%20Ratio,-The%20Liquidation%20Ratio"
+                    target="_blank"
+                >
+                    The Liquidation Ratio
+                </a>
+                is the minimum required collateralization level for each Vault type before it is considered
+                undercollateralized and subject to liquidation
+            </Explain>
+            (e.g. 150% for ETH), owners of the vault have to add more collateral or return their DAI. If they fail to
+            do so, their vault can be liquidated by the Maker protocol and other people can buy it at a discount.
         </TextBlock>
         <template v-if="isExplanationsShown">
             <TextBlock title="Why should I participate?" class="TextBlock">
@@ -59,14 +76,25 @@
         </Loading>
         <TextBlock v-if="isExplanationsShown" title="What's the catch?" class="TextBlock">
             This situation exists in the first place, because the Maker protocol can not be executed by itself. There
-            need to be players who execute vital parts of the protocol and pay a transaction fee for it. In a
-            decentralised system like this, anyone can become such a player. But as execution can sometimes end up in a
-            loss of transaction fee, those operations are made to be profitable by the protocol itself. Players who
-            risk to make DAI more stable and keep the protocol in a healthy condition get rewarded with higher profits.
-            Most of the auctions will be cleared by players with bots bidding very quickly, whenever there is a slight
-            market opportunity. However, in some occasions like bigger market crashes a larger number of auctions will
-            be started. That’s when regular users and newcomers can have an opportunity to engage, as there can be not
-            enough market players to clear all of them.
+            need to be players who execute vital parts of the protocol and pay a
+            <Explain text="transaction fee">
+                Transaction fees are paid as
+                <a href="https://ethereum.org/en/developers/docs/gas/" target="_blank"> Gas </a>
+                for the Ethereum network. It is the fuel that allows it to operate, in the same way, that a car needs
+                gasoline to run.
+            </Explain>
+            for it. In a decentralised system like this, anyone can become such a player. But as execution can
+            sometimes end up in a loss of transaction fee, those operations are made to be profitable by the protocol
+            itself. Players who risk to make DAI more stable and keep the protocol in a
+            <Explain text="healthy condition" placement="topRight">
+                Overall health of the system is predominantly defined by the surplus in collateral that is backing all
+                DAI. This system health can be monitored on
+                <a href="https://daistats.com/#/" target="_blank">daistats</a>.
+            </Explain>
+            get rewarded with higher profits. Most of the auctions will be cleared by players with bots bidding very
+            quickly, whenever there is a slight market opportunity. However, in some occasions like bigger market
+            crashes a larger number of auctions will be started. That’s when regular users and newcomers can have an
+            opportunity to engage, as there can be not enough market players to clear all of them.
         </TextBlock>
     </div>
 </template>
