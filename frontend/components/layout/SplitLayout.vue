@@ -18,7 +18,7 @@
             <div class="MobileSpace" @click="closeSidePanel" />
             <div class="SlotContainer">
                 <CloseIcon class="CloseIcon" @click="closeSidePanel" />
-                <slot name="step2" />
+                <slot v-if="step !== 0" name="step2" />
             </div>
         </div>
     </div>

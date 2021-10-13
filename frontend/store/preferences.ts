@@ -51,7 +51,12 @@ export const actions = {
         // ask wallet to change the network
         if (hasNetworkChanged && newNetwork) {
             try {
-                const wallet = getWallet();
+                let wallet;
+                try {
+                    wallet = getWallet();
+                } catch (error) {
+                    console.info('wallet is not yet connected', error);
+                }
                 if (wallet) {
                     await wallet.switchNetwork(newNetwork);
                 }

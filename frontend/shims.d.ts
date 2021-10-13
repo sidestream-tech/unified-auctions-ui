@@ -18,7 +18,9 @@ declare module '@makerdao/*' {
 
 declare interface Auction {
     id: string;
+    auctionId: number;
     collateralType: string;
+    collateralSymbol: string;
     amountRAW: BigNumber | number;
     amountDAI: BigNumber | number;
     till: string;
@@ -67,5 +69,6 @@ declare interface MakerParams {
 }
 
 declare interface Window {
+    maker?: any;
     ethereum?: any;
 }

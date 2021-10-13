@@ -34,7 +34,7 @@ export default class MetaMask extends AbstractWallet {
         if (!this.addresses) {
             return undefined;
         }
-        return this.addresses[0];
+        return this.addresses[0].toLowerCase();
     }
 
     public async connect(): Promise<void> {
@@ -46,7 +46,8 @@ export default class MetaMask extends AbstractWallet {
         const provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
         await provider.send('eth_requestAccounts', []);
         this.signer = provider.getSigner();
-        this.addresses = [await this.signer.getAddress()];
+        const address = await this.signer.getAddress();
+        this.addresses = [address];
         this.networkChangedHandler();
         this.setup();
     }

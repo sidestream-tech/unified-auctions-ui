@@ -22,7 +22,7 @@
                     <Auction
                         v-if="selectedAuctionId"
                         :is-explanations-shown="isExplanationsShown"
-                        class="mt-6 mx-8"
+                        class="mt-6 mb-8 mx-8"
                         :auction="selectedAuction"
                         :auction-id="selectedAuctionId"
                         :is-auctions-loading="isAuctionsLoading"
@@ -33,7 +33,7 @@
             <template #step2>
                 <SwapTransaction
                     v-if="selectedAuction"
-                    class="my-6 mx-8"
+                    class="mt-6 mb-8 mx-8"
                     :auction-transaction="selectedAuction"
                     :is-connecting="isConnecting"
                     :is-authorizing="isAuthorizing"

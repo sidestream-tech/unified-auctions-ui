@@ -9,27 +9,24 @@
             :custom-row="customRowEvents"
             :get-popup-container="() => $el"
         >
-            <div slot="collateralType" slot-scope="collateralType">
-                <format-currency :currency="collateralType" />
-            </div>
             <div slot="amountRAW" slot-scope="amountRAW, record">
-                <format-currency :value="amountRAW" :currency="record.collateralType" />
+                <format-currency :value="amountRAW" :currency="record.collateralSymbol" />
             </div>
             <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record">
                 <format-currency :value="amountPerCollateral" currency="DAI" /> per
-                <format-currency :currency="record.collateralType" />
+                <format-currency :currency="record.collateralSymbol" />
+            </div>
+            <div slot="marketValue" slot-scope="marketValue">
+                <format-market-value :value="marketValue" />
             </div>
             <div slot="till" slot-scope="till, record" class="text-center">
                 <span v-if="record.transactionAddress">Finished</span>
                 <span v-else-if="!record.isActive">Inactive</span>
                 <time-till v-else :date="till" />
             </div>
-            <div slot="marketValue" slot-scope="marketValue">
-                <format-market-value :value="marketValue" />
-            </div>
             <div slot="action" slot-scope="text, record, index" class="w-full h-full">
                 <nuxt-link
-                    :to="`/?auction=${record.id}`"
+                    :to="getAuctionLink(record)"
                     :class="
                         (hoveredRowIndex === index && 'bg-primary text-white dark:bg-primary-dark') || 'text-primary'
                     "
@@ -90,7 +87,7 @@ export default Vue.extend({
     },
     computed: {
         columns(): Object[] {
-            const currencies = this.auctions.map(auction => auction.collateralType);
+            const currencies = this.auctions.map(auction => auction.collateralSymbol);
             const uniqueCurrencies = Array.from(new Set(currencies));
             const currenciesFilters = uniqueCurrencies.map(currency => ({
                 text: currency.toUpperCase(),
@@ -100,23 +97,18 @@ export default Vue.extend({
             return [
                 {
                     title: 'ID',
-                    dataIndex: 'id',
-                    sorter: compareBy('collateralType', (a: string, b: string) => a.localeCompare(b)),
-                },
-                {
-                    title: 'Currency',
-                    dataIndex: 'collateralType',
-                    scopedSlots: { customRender: 'collateralType' },
-                    sorter: compareBy('collateralType', (a: string, b: string) => a.localeCompare(b)),
-                    filters: currenciesFilters,
-                    onFilter: (selectedCurrency: string, auction: Auction) =>
-                        auction.collateralType.includes(selectedCurrency),
+                    dataIndex: 'auctionId',
+                    sorter: compareBy('auctionId'),
                 },
                 {
                     title: 'Auction Amount',
                     dataIndex: 'amountRAW',
                     scopedSlots: { customRender: 'amountRAW' },
                     sorter: compareBy('amountRAW'),
+                    filters: currenciesFilters,
+                    onFilter: (selectedCurrency: string, auction: Auction) => {
+                        return auction.collateralSymbol.includes(selectedCurrency);
+                    },
                 },
                 {
                     title: 'Auction Price',
@@ -125,17 +117,17 @@ export default Vue.extend({
                     sorter: compareBy('amountPerCollateral'),
                 },
                 {
-                    title: 'Next Price Drop',
-                    dataIndex: 'till',
-                    scopedSlots: { customRender: 'till' },
-                    sorter: compareBy('till', (a: Date, b: Date) => compareAsc(new Date(a), new Date(b))),
-                },
-                {
                     title: 'Market Difference',
                     dataIndex: 'marketValue',
                     scopedSlots: { customRender: 'marketValue' },
                     sorter: compareBy('marketValue'),
                     defaultSortOrder: 'descend',
+                },
+                {
+                    title: 'Next Price Drop',
+                    dataIndex: 'till',
+                    scopedSlots: { customRender: 'till' },
+                    sorter: compareBy('till', (a: Date, b: Date) => compareAsc(new Date(a), new Date(b))),
                 },
                 {
                     title: '',
@@ -146,11 +138,11 @@ export default Vue.extend({
         },
     },
     methods: {
-        customRowEvents(record: Record<string, number>, rowIndex: number): Object {
+        customRowEvents(record: Auction, rowIndex: number): Object {
             return {
                 on: {
                     click: () => {
-                        this.$router?.push(`/?auction=${record.id}`);
+                        this.$router?.push(this.getAuctionLink(record));
                     },
                     mouseenter: () => {
                         this.hoveredRowIndex = rowIndex;
@@ -167,6 +159,9 @@ export default Vue.extend({
                 classes.push('bg-gray-100 dark:bg-gray-800');
             }
             return classes.join(' ');
+        },
+        getAuctionLink(auction: Auction) {
+            return `/?auction=${auction.id}`;
         },
     },
 });

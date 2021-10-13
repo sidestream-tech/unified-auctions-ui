@@ -16,10 +16,10 @@
                 class="w-full md:w-80"
                 @click="$emit('authorizeWallet')"
             >
-                Enable Maker Transactions
+                Authorize DAI Transactions
             </base-button>
             <base-button v-if="walletAuthorizationState === 'disabled'" type="primary" class="w-full md:w-80" disabled>
-                Enable Maker Transactions
+                Authorize DAI Transactions
             </base-button>
             <base-button
                 v-if="walletAuthorizationState === 'authorizing'"
@@ -27,7 +27,7 @@
                 class="w-full md:w-80"
                 is-loading
             >
-                Enabling...
+                Authorizing...
             </base-button>
         </div>
         <TextBlock v-if="isExplanationsShown" :title="isWalletAuthorised ? 'Authorize your participation' : ''">
@@ -50,7 +50,7 @@
                 class="w-full md:w-80"
                 @click="$emit('authorizeCollateral')"
             >
-                Enable <format-currency class="px-1" :currency="collateralType" /> Transactions
+                Authorize <format-currency class="px-1" :currency="collateralType" /> Transactions
             </base-button>
             <base-button
                 v-else-if="collateralAuthorizationState === 'disabled'"
@@ -58,7 +58,7 @@
                 class="w-full md:w-80"
                 disabled
             >
-                Enable <format-currency class="px-1" :currency="collateralType" /> Transactions
+                Authorize <format-currency class="px-1" :currency="collateralType" /> Transactions
             </base-button>
             <base-button
                 v-else-if="collateralAuthorizationState === 'authorizing'"
@@ -66,7 +66,7 @@
                 class="w-full md:w-80"
                 is-loading
             >
-                Enabling...
+                Authorizing...
             </base-button>
         </div>
     </div>

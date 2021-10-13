@@ -7,21 +7,24 @@
         <div class="flex w-full justify-between">
             <div>Auction Amount</div>
             <div>
-                <FormatCurrency :value="auctionTransaction.amountRAW" :currency="auctionTransaction.collateralType" />
+                <FormatCurrency
+                    :value="auctionTransaction.amountRAW"
+                    :currency="auctionTransaction.collateralSymbol"
+                />
             </div>
         </div>
         <div class="flex w-full justify-between">
             <div>Auction Price</div>
             <div>
                 <FormatCurrency :value="auctionTransaction.amountPerCollateral" currency="DAI" /> per
-                <span class="uppercase">{{ auctionTransaction.collateralType }}</span>
+                <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
             </div>
         </div>
         <div class="flex w-full justify-between">
             <div>Price On Uniswap</div>
             <div>
                 <FormatCurrency :value="auctionTransaction.marketPricePerCollateral" currency="DAI" /> per
-                <span class="uppercase">{{ auctionTransaction.collateralType }}</span>
+                <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
             </div>
         </div>
         <div class="flex w-full justify-between">

@@ -1,5 +1,6 @@
 import Maker from '@makerdao/dai';
 import LiquidationPlugin from '@makerdao/dai-plugin-liquidations';
+import McdPlugin from '@makerdao/dai-plugin-mcd';
 import NETWORKS from './constants/NETWORKS';
 
 let globalMaker: typeof Maker;
@@ -10,32 +11,60 @@ const getNetworkURL = function (network: string): string {
 };
 
 const createMaker = async function (network: string): Promise<typeof Maker> {
+    console.info(`creating maker object with "${network}" network`);
     const networkURL = getNetworkURL(network);
     globalNetwork = network;
     globalMaker = await Maker.create('http', {
-        plugins: [[LiquidationPlugin, { vulcanize: false }]],
+        plugins: [
+            [McdPlugin, { prefetch: false }],
+            [LiquidationPlugin, { vulcanize: false }],
+        ],
         provider: {
             url: networkURL,
             type: 'HTTP',
         },
         web3: {
+            confirmedBlockCount: 5,
             statusTimerDelay: 24 * 60 * 60 * 1000,
-            pollingInterval: 24 * 60 * 60 * 1000,
+            pollingInterval: 3000,
         },
         log: false,
         multicall: true,
     });
     if (typeof window !== 'undefined') {
-        (window as any).maker = globalMaker;
+        window.maker = globalMaker;
     }
     return globalMaker;
 };
 
-const getMaker = async function (network: string): Promise<typeof Maker> {
-    if (globalNetwork === network && globalMaker) {
+const getMaker = async function (network?: string): Promise<typeof Maker> {
+    if (!network) {
+        if (!globalMaker) {
+            throw new Error('dai.js was not yet initialised');
+        }
+        return globalMaker;
+    }
+    if (globalNetwork === network) {
+        if (!globalMaker) {
+            // if `getMaker` called two times at the same time,
+            // we need a delay till the first execution is complete
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return await getMaker(network);
+        }
         return globalMaker;
     }
     return await createMaker(network);
+};
+
+export const addMakerAccount = async function (address: string, network?: string) {
+    const maker = await getMaker(network);
+    const accounts = maker.listAccounts();
+    const isAlreadyAdded = accounts.some((a: any) => a.address.toLowerCase() === address);
+    if (isAlreadyAdded) {
+        await maker.useAccountWithAddress(address);
+    } else {
+        await maker.addAccount({ type: 'browser', autoSwitch: true });
+    }
 };
 
 export default getMaker;

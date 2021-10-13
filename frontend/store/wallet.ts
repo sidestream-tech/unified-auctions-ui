@@ -1,6 +1,7 @@
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import getWallet, { WALLETS } from '~/lib/wallet';
+import { addMakerAccount } from '~/lib/maker';
 
 interface State {
     walletType?: string;
@@ -17,6 +18,9 @@ export const state = (): State => ({
 export const getters = {
     getAddress(state: State) {
         return state.address;
+    },
+    isConnected(state: State) {
+        return !!state.address;
     },
     isLoading(state: State) {
         return state.isLoading;
@@ -51,19 +55,23 @@ export const actions = {
     async changeWalletType({ dispatch }: ActionContext<State, State>, walletType: string): Promise<void> {
         if (walletType) {
             await dispatch('connect', walletType);
+            dispatch('authorizations/refetch', undefined, { root: true });
         } else {
             await dispatch('disconnect');
+            dispatch('authorizations/reset', undefined, { root: true });
         }
     },
-    async connect({ commit }: ActionContext<State, State>, walletType: string): Promise<void> {
-        const wallet = getWallet(walletType);
-        if (!wallet) {
-            return;
-        }
+    async connect({ commit, rootGetters, dispatch }: ActionContext<State, State>, walletType: string): Promise<void> {
+        dispatch('authorizations/reset', undefined, { root: true });
         commit('setIsLoading', true);
         try {
+            const wallet = getWallet(walletType);
             await wallet.connect();
             commit('setAddress', wallet.address);
+            if (wallet.address) {
+                const network = rootGetters['preferences/getNetwork'];
+                await addMakerAccount(wallet.address, network);
+            }
             commit('setWalletType', walletType);
         } catch (error) {
             message.error(`Wallet connection error: ${error.message}`);
@@ -71,15 +79,17 @@ export const actions = {
             commit('setIsLoading', false);
         }
     },
-    async disconnect({ getters, commit }: ActionContext<State, State>): Promise<void> {
+    async disconnect({ getters, commit, dispatch }: ActionContext<State, State>): Promise<void> {
         commit('setIsLoading', true);
-        const wallet = getWallet(getters.getWallet);
-        if (wallet) {
+        try {
+            const wallet = getWallet(getters.getWallet);
             await wallet.disconnect();
+        } finally {
+            commit('setIsLoading', false);
         }
-        commit('setIsLoading', false);
         commit('setWalletType', undefined);
         commit('setAddress', undefined);
+        dispatch('authorizations/reset', undefined, { root: true });
     },
     setAddress({ commit }: ActionContext<State, State>, address: string): void {
         commit('setAddress', address);

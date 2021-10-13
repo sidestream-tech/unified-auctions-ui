@@ -8,16 +8,23 @@
             :is-explanations-shown.sync="isExplanationsShown"
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
+            :is-authorizing="isAuthorizing"
+            :is-wallet-authorised="isWalletAuthorised"
+            :authorised-collaterals="authorisedCollaterals"
             @connect="openWalletModal"
             @disconnect="disconnect"
+            @authorizeWallet="authorizeWallet"
+            @authorizeCollateral="authorizeCollateral"
+            @execute="execute"
         />
         <WalletModal :visible.sync="isModalOpen" @connect="connect" />
     </div>
 </template>
 
 <script lang="ts">
+import { message } from 'ant-design-vue';
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import MainFlow from '~/components/MainFlow.vue';
 import WalletModal from '~/components/utils/WalletModal.vue';
 
@@ -38,6 +45,11 @@ export default Vue.extend({
         ...mapGetters('wallet', {
             isWalletLoading: 'isLoading',
             walletAddress: 'getAddress',
+        }),
+        ...mapGetters('authorizations', {
+            isAuthorizing: 'isAuthorizationLoading',
+            isWalletAuthorised: 'isWalletAuthorizationDone',
+            authorisedCollaterals: 'collateralAuthorizations',
         }),
         selectedAuctionId: {
             get(): string | null {
@@ -62,12 +74,33 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
+        selectedAuction(): Auction | null {
+            return this.auctions.find((auction: Auction) => auction.id === this.selectedAuctionId) || null;
+        },
+    },
+    watch: {
+        selectedAuction: {
+            immediate: true,
+            handler(selectedAuction) {
+                if (!selectedAuction) {
+                    return;
+                }
+                this.fetchWalletAuthorizationStatus();
+                this.fetchCollateralAuthorizationStatus(selectedAuction.collateralType);
+            },
+        },
     },
     created(): void {
         this.$store.dispatch('auctions/fetch');
         this.$store.dispatch('wallet/autoConnect');
     },
     methods: {
+        ...mapActions('authorizations', [
+            'authorizeWallet',
+            'authorizeCollateral',
+            'fetchWalletAuthorizationStatus',
+            'fetchCollateralAuthorizationStatus',
+        ]),
         openWalletModal(): void {
             this.isModalOpen = true;
         },
@@ -77,6 +110,9 @@ export default Vue.extend({
         },
         disconnect(): void {
             this.$store.dispatch('wallet/disconnect');
+        },
+        execute(): void {
+            message.error('This feature is not yet implemented');
         },
     },
 });

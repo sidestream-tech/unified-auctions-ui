@@ -14,7 +14,7 @@
                         <tr>
                             <td>Auction Amount</td>
                             <td>
-                                <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />
+                                <format-currency :value="auction.amountRAW" :currency="auction.collateralSymbol" />
                             </td>
                         </tr>
                         <tr>
@@ -22,14 +22,14 @@
                             <td>
                                 <format-currency :value="auction.amountPerCollateral" currency="DAI" />
                                 per
-                                <format-currency :currency="auction.collateralType" />
+                                <format-currency :currency="auction.collateralSymbol" />
                             </td>
                         </tr>
                         <tr>
                             <td>Price On Uniswap</td>
                             <td>
                                 <format-currency :value="auction.marketPricePerCollateral" currency="DAI" /> per
-                                <format-currency :currency="auction.collateralType" />
+                                <format-currency :currency="auction.collateralSymbol" />
                             </td>
                         </tr>
                         <tr>
@@ -37,6 +37,12 @@
                             <td><format-market-value :value="auction.marketValue" /></td>
                         </tr>
                         <template v-if="isTableExpanded">
+                            <tr class="bg-gray-100 dark:bg-gray-800">
+                                <td>Vault type</td>
+                                <td>
+                                    <format-currency :currency="auction.collateralType" />
+                                </td>
+                            </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Auction Price Total</td>
                                 <td>
@@ -76,19 +82,19 @@
                 <TextBlock class="mt-4">
                     <template v-if="!error">
                         The auctioned vault <format-address shorten :value="auction.vaultOwner" /> contains
-                        <format-currency :value="auction.amountRAW" :currency="auction.collateralType" />. Currently,
+                        <format-currency :value="auction.amountRAW" :currency="auction.collateralSymbol" />. Currently,
                         it is sold for <format-currency :value="auction.amountDAI" currency="DAI" />. This equals
                         <format-currency :value="auction.amountPerCollateral" currency="DAI" /> per
-                        <format-currency :currency="auction.collateralType" />, or approximately
+                        <format-currency :currency="auction.collateralSymbol" />, or approximately
                         <format-market-value :value="auction.marketValue" /> than if you buy
-                        <format-currency :currency="auction.collateralType" /> on another exchange platform such as
+                        <format-currency :currency="auction.collateralSymbol" /> on another exchange platform such as
                         Uniswap.
                     </template>
                     <template v-else>
                         This auction was finished at {{ new Date(auction.till).toUTCString() }} at a closing auction
                         price of <format-currency :value="auction.amountPerCollateral" currency="DAI" /> (meaning
                         <format-currency :value="auction.amountPerCollateral" currency="DAI" />
-                        per <format-currency :currency="auction.collateralType" /> on average) after
+                        per <format-currency :currency="auction.collateralSymbol" /> on average) after
                         <time-till :date="auction.till" />.
                     </template>
                 </TextBlock>
@@ -115,10 +121,10 @@
                 </TextBlock>
             </template>
             <TextBlock>
-                <div class="flex w-full justify-end flex-wrap my-4">
+                <div class="flex w-full justify-end flex-wrap mt-4">
                     <Tooltip title="This transaction type is not supported yet" placement="bottom">
                         <div>
-                            <Button disabled type="secondary" class="w-60 mb-2 ml-2" @click="$emit('purchase')">
+                            <Button disabled type="secondary" class="w-60 mb-4" @click="$emit('purchase')">
                                 Purchase with DAI
                             </Button>
                         </div>
@@ -128,7 +134,7 @@
                             <Button
                                 :disabled="error !== '' || !auction.isActive || auction.transactionAddress"
                                 type="primary"
-                                class="w-60 ml-2"
+                                class="w-60 ml-4"
                                 @click="$emit('swap')"
                             >
                                 Directly swap into profit

@@ -4,15 +4,18 @@ import WalletConnect from '~/lib/wallets/WalletConnect';
 
 const WALLETS = [MetaMask, WalletConnect];
 
-let globalWallet: AbstractWallet | undefined;
+let globalWallet: AbstractWallet;
 
 const getWallet = function (walletTitle?: string): typeof globalWallet {
     if (!walletTitle) {
+        if (!globalWallet) {
+            throw new Error('wallet was not yet initialised');
+        }
         return globalWallet;
     }
     const SelectedWallet = WALLETS.find(v => v.title === walletTitle);
     if (!walletTitle || !SelectedWallet) {
-        return undefined;
+        throw new Error(`no wallet type "${walletTitle}" found`);
     }
     if (globalWallet && globalWallet instanceof SelectedWallet) {
         return globalWallet;

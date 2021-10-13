@@ -8,10 +8,14 @@ export const generateFakeAuction = function () {
     const isActive = faker.datatype.boolean();
     const marketValue = isActive ? faker.datatype.number({ min: -0.05, max: 0.05, precision: 0.001 }) : undefined;
     const amountPerCollateral = amountDAI / amountRAW;
+    const collateralObject = faker.helpers.randomize(Object.values(COLLATERALS));
+    const auctionId = faker.datatype.number();
 
     return {
-        id: faker.datatype.number().toString(),
-        collateralType: faker.helpers.randomize(Object.values(COLLATERALS).map(c => c.title)),
+        id: `${collateralObject.ilk}:${auctionId}`,
+        auctionId,
+        collateralType: collateralObject.ilk,
+        collateralSymbol: collateralObject.symbol,
         amountRAW,
         amountDAI,
         till: faker.date.future().toString(),
