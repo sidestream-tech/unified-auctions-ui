@@ -23,9 +23,9 @@ declare interface Auction {
     collateralSymbol: string;
     amountRAW: BigNumber | number;
     amountDAI: BigNumber | number;
+    amountPerCollateral: BigNumber | number;
     till: string;
     vaultOwner: string;
-    amountPerCollateral: number;
     isActive: boolean;
     marketValue?: number;
     transactionAddress?: string;

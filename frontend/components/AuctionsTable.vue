@@ -124,7 +124,7 @@ export default Vue.extend({
                     defaultSortOrder: 'descend',
                 },
                 {
-                    title: 'Next Price Drop',
+                    title: 'Auction Ends',
                     dataIndex: 'till',
                     scopedSlots: { customRender: 'till' },
                     sorter: compareBy('till', (a: Date, b: Date) => compareAsc(new Date(a), new Date(b))),

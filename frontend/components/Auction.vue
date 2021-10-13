@@ -6,7 +6,7 @@
                 <table class="w-full table-fixed border-collapse border">
                     <tbody>
                         <tr>
-                            <td>Next Price Drop</td>
+                            <td>Auction Ends</td>
                             <td>
                                 <time-till :date="auction.till" />
                             </td>

@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import getMaker from '~/lib/maker';
 import COLLATERALS from '~/lib/constants/COLLATERALS';
+import { WAD, RAD, RAY } from '~/lib/constants/UNITS';
 
 const fetchAuctionsByType = async function (type: string, maker: any): Promise<Auction[]> {
     const protoAuctions = await maker.service('liquidation').getAllClips(type);
@@ -19,16 +20,41 @@ const fetchAuctionsByType = async function (type: string, maker: any): Promise<A
             till: protoAuction.endDate,
             isActive,
             marketValue: isActive ? 0 : undefined,
-            // from: protoAuction.tic,
-            // amountDAIminimum: protoAuction.chost,
         };
     });
+};
+
+const enrichAuctionWithActualNumbers = async function (auction: Auction, network?: string): Promise<Auction> {
+    const maker = await getMaker(network);
+    if (!auction.isActive) {
+        return auction;
+    }
+    const status = await maker.service('liquidation').getStatus(auction.collateralType, auction.auctionId);
+    return {
+        ...auction,
+        isActive: !status.needsRedo,
+        amountRAW: new BigNumber(status.lot).div(WAD),
+        amountDAI: new BigNumber(status.tab).div(RAD),
+        amountPerCollateral: new BigNumber(status.price).div(RAY),
+    };
 };
 
 export const fetchAllAuctions = async function (network: string): Promise<Auction[]> {
     const maker = await getMaker(network);
     const collateralNames = Object.keys(COLLATERALS);
-    const promises = collateralNames.map((collateralName: string) => fetchAuctionsByType(collateralName, maker));
-    const auctionGroups = await Promise.all(promises);
-    return auctionGroups.flat();
+
+    // get all auctions
+    const auctionGroupsPromises = collateralNames.map((collateralName: string) =>
+        fetchAuctionsByType(collateralName, maker)
+    );
+    const auctionGroups = await Promise.all(auctionGroupsPromises);
+    const auctions = auctionGroups.flat();
+
+    // enrich them with statuses
+    const enrichedAuctionsPromises = auctions.map((auction: Auction) =>
+        enrichAuctionWithActualNumbers(auction, network)
+    );
+    const enrichedAuctions = await Promise.all(enrichedAuctionsPromises);
+
+    return enrichedAuctions;
 };

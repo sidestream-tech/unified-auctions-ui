@@ -1,5 +1,8 @@
 import { ActionContext } from 'vuex';
-import { fetchAllAuctions } from '~/lib/api';
+import { fetchAllAuctions } from '~/lib/auctions';
+
+const REFETCH_INTERVAL = 30 * 1000;
+let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
 
 interface State {
     auctions: Auction[];
@@ -38,12 +41,11 @@ export const mutations = {
 };
 
 export const actions = {
-    async fetch({ commit, rootGetters }: ActionContext<State, State>) {
+    async fetchWithoutLoading({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['preferences/getNetwork'];
         if (!network) {
             return;
         }
-        commit('setLoading', true);
         try {
             const auctions = await fetchAllAuctions(network);
             commit('setError', null);
@@ -55,8 +57,12 @@ export const actions = {
             commit('setLoading', false);
         }
     },
-    async refetch({ commit, dispatch }: ActionContext<State, State>) {
-        commit('setAuctions', []);
-        await dispatch('fetch');
+    async fetch({ commit, dispatch }: ActionContext<State, State>) {
+        commit('setLoading', true);
+        await dispatch('fetchWithoutLoading');
+        if (refetchIntervalId) {
+            clearInterval(refetchIntervalId);
+        }
+        refetchIntervalId = setInterval(() => dispatch('fetchWithoutLoading'), REFETCH_INTERVAL);
     },
 };
