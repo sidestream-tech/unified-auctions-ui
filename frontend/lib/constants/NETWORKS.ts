@@ -13,12 +13,15 @@ const NETWORKS: Record<string, NetworkConfig> = {
     },
 };
 
-export const getChainIdByNetworkType = function (networkType: string): string | undefined {
+export const getChainIdByNetworkType = function (networkType: string | null): string | undefined {
+    if (!networkType) {
+        return undefined;
+    }
     const network = NETWORKS[networkType];
     return network && network.chainId;
 };
 
-export const getNetworkTypeByChainId = function (chainId: string): string | undefined {
+export const getNetworkTypeByChainId = function (chainId: string | null): string | undefined {
     const networkEntry = Object.entries(NETWORKS).find(([_, networkObject]) => networkObject.chainId === chainId);
     return networkEntry && networkEntry[0];
 };

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import { action } from '@storybook/addon-actions';
 import '~/assets/styles/index';
+import '~/plugins/antdesign.client';
 
 export const parameters = {
     actions: { argTypesRegex: '^on[A-Z].*' },

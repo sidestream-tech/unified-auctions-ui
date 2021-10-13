@@ -1,17 +1,20 @@
 import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
 import getWallet from '~/lib/wallet';
+import { getChainIdByNetworkType, getNetworkTypeByChainId } from '~/lib/constants/NETWORKS';
 
 interface State {
     network: string | null;
     isExplanationsShown: boolean;
     isDarkMode: boolean | undefined;
+    chainID: string | null;
 }
 
 export const state = (): State => ({
     network: null,
     isExplanationsShown: true,
     isDarkMode: undefined,
+    chainID: null,
 });
 
 export const getters = {
@@ -27,6 +30,15 @@ export const getters = {
         }
         return state.isDarkMode;
     },
+    getChainID(state: State) {
+        return state.chainID;
+    },
+    getIsInvalidNetwork(state: State): boolean {
+        if (!state.network) {
+            return false;
+        }
+        return !getNetworkTypeByChainId(state.chainID);
+    },
 };
 
 export const mutations = {
@@ -39,9 +51,22 @@ export const mutations = {
     setIsDarkMode(state: State, isDarkMode: boolean): void {
         state.isDarkMode = isDarkMode;
     },
+    setChainID(state: State, chainID: string | null): void {
+        state.chainID = chainID;
+    },
 };
 
 export const actions = {
+    async setChainID({ commit, dispatch }: ActionContext<State, State>, chainID: string): Promise<void> {
+        commit('setChainID', chainID);
+
+        const network = getNetworkTypeByChainId(chainID);
+        if (network) {
+            await dispatch('setNetwork', network);
+        } else {
+            commit('setNetwork', chainID);
+        }
+    },
     async setNetwork({ commit, getters }: ActionContext<State, State>, newNetwork: string | null): Promise<void> {
         const oldNetwork = getters.getNetwork;
         const hasNetworkChanged = newNetwork !== oldNetwork;
@@ -66,6 +91,10 @@ export const actions = {
                 return;
             }
         }
+
+        // Set ChainID
+        const chainID = getChainIdByNetworkType(newNetwork);
+        commit('setChainID', chainID);
 
         // save changes to the local store
         commit('setNetwork', newNetwork);

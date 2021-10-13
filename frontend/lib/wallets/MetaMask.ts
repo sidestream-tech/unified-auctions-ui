@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { message } from 'ant-design-vue';
 import MetaMaskLogo from '~/assets/icons/wallets/metamask.svg';
-import { getChainIdByNetworkType, getNetworkTypeByChainId } from '~/lib/constants/NETWORKS';
+import { getChainIdByNetworkType } from '~/lib/constants/NETWORKS';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
 
 export default class MetaMask extends AbstractWallet {
@@ -64,8 +64,7 @@ export default class MetaMask extends AbstractWallet {
     }
 
     public networkChangedHandler() {
-        const networkType = getNetworkTypeByChainId(window.ethereum.chainId);
-        window.$nuxt.$store.dispatch('preferences/setNetwork', networkType);
+        window.$nuxt.$store.dispatch('preferences/setChainID', window.ethereum.chainId);
     }
 
     public accountsChangedHandler(addresses: Array<string>) {

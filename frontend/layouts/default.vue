@@ -10,6 +10,7 @@
             @changeWalletType="changeWalletType"
         />
         <Nuxt />
+        <ForceNetworkModal :is-invalid-network="isInvalidNetwork" :chain-id="chainID" @updateNetwork="changeNetwork" />
     </div>
 </template>
 
@@ -18,9 +19,11 @@ import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
+import ForceNetworkModal from '~/components/ForceNetworkModal.vue';
 
 export default Vue.extend({
     components: {
+        ForceNetworkModal,
         Header,
     },
     computed: {
@@ -52,10 +55,19 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
         },
+        isInvalidNetwork(): boolean {
+            return this.$store.getters['preferences/getIsInvalidNetwork'];
+        },
+        chainID(): string {
+            return this.$store.getters['preferences/getChainID'];
+        },
     },
     methods: {
         changeWalletType(walletType: string): void {
             this.$store.dispatch('wallet/changeWalletType', walletType);
+        },
+        changeNetwork(newNetwork: string): void {
+            this.$store.dispatch('preferences/setNetwork', newNetwork);
         },
     },
 });
