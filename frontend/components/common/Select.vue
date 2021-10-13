@@ -49,7 +49,7 @@
                         @click="updateInput(option.value)"
                     >
                         <component :is="option.icon" v-if="option.icon" class="w-8 h-8 pr-3" />
-                        {{ option.label }}
+                        {{ option.label }} <span v-if="option.value === value" class="italic ml-1">(selected)</span>
                     </li>
                 </ul>
             </modal>
@@ -143,5 +143,9 @@ export default Vue.extend({
 
 .Select .ant-modal-close {
     top: -7px !important;
+}
+
+.Select .ant-modal-title {
+    max-width: 90%;
 }
 </style>
