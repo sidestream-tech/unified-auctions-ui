@@ -33,8 +33,10 @@ declare interface Auction {
 
 declare interface AuctionTransaction extends Auction {
     transactionProfit: number;
-    transactionFeeETH: number;
-    transactionFeeDAI: number;
+    biddingTransactionFeeETH: BigNumber | number;
+    biddingTransactionFeeDAI: BigNumber | number;
+    authTransactionFeeETH: BigNumber | number;
+    authTransactionFeeDAI: BigNumber | number;
     transactionOutcome: number;
 }
 

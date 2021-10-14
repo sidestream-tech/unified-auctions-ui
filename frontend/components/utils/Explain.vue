@@ -4,7 +4,7 @@
         trigger="click"
         :title="displayTitle"
         :overlay-style="{ width: '200px' }"
-        :get-popup-container="() => $el"
+        :get-popup-container="() => $el.parentElement"
         overlay-class-name="ExplainOverlay"
         :placement="placement"
     >
@@ -42,7 +42,7 @@ export default Vue.extend({
         },
         placement: {
             type: String,
-            default: 'top',
+            default: 'topRight',
         },
     },
     data() {

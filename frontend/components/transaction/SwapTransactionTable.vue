@@ -42,14 +42,14 @@
                 Transaction Fee
                 <span class="text-gray-300"
                     >(<FormatCurrency
-                        :value="auctionTransaction.transactionFeeETH"
+                        :value="auctionTransaction.biddingTransactionFeeETH"
                         :decimals="6"
                         currency="ETH"
                     />)</span
                 >
             </div>
             <div>
-                <FormatCurrency :value="auctionTransaction.transactionFeeDAI * -1" currency="DAI" />
+                <FormatCurrency :value="auctionTransaction.biddingTransactionFeeDAI * -1" currency="DAI" />
             </div>
         </div>
         <div class="flex w-full justify-between">

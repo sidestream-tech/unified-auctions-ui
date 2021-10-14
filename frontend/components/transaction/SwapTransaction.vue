@@ -2,7 +2,7 @@
     <div>
         <TextBlock title="Swap transaction" />
         <SwapTransactionTable :auction-transaction="auctionTransaction" class="mt-4" />
-        <TextBlock v-if="isExplanationsShown" class="TextBlock mt-4 mb-8">
+        <TextBlock class="TextBlock mt-4 mb-8">
             Please note, the transaction fee is a suggested value based on the current gas prices on the market; the
             transaction outcome is also approximate, since it is extrapolated from the exchange rates and may change
             during the transaction. If you’re bidding with other participants at the same time, the one who pays a
@@ -36,7 +36,7 @@
         <AuthorisationBlock
             class="mb-6 lg:mb-0"
             :disabled="!isConnected"
-            :collateral-type="auctionTransaction.collateralType"
+            :auction-transaction="auctionTransaction"
             :is-loading="isAuthorizing"
             :is-wallet-authorised="isWalletAuthorised"
             :is-collateral-authorised="isCollateralAuthorised"
@@ -45,12 +45,12 @@
             @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
         />
         <ExecutionBlock
-            :disabled="!isCollateralAuthorised"
+            :disabled="!isCollateralAuthorised || !isWalletAuthorised"
             :is-loading="isExecuting"
             :transaction-address="auctionTransaction.transactionAddress"
             :is-explanations-shown="isExplanationsShown"
             :collateral-type="auctionTransaction.collateralType"
-            :transaction-fee="auctionTransaction.transactionFeeETH"
+            :transaction-fee="auctionTransaction.biddingTransactionFeeETH"
             @execute="$emit('execute')"
         />
     </div>

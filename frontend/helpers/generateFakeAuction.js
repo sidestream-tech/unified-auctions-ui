@@ -30,15 +30,19 @@ export const generateFakeAuction = function () {
 
 export const generateFakeAuctionTransaction = function () {
     const fakeAuction = generateFakeAuction();
-    const transactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
     const transactionProfit = fakeAuction.marketValue * fakeAuction.amountDAI;
-    const transactionFeeDAI = transactionFeeETH * 1000;
-    const transactionOutcome = transactionProfit - transactionFeeDAI;
+    const biddingTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
+    const biddingTransactionFeeDAI = biddingTransactionFeeETH * 1000;
+    const authTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
+    const authTransactionFeeDAI = authTransactionFeeETH * 1000;
+    const transactionOutcome = transactionProfit - biddingTransactionFeeDAI;
     return {
         ...fakeAuction,
-        transactionFeeETH,
+        biddingTransactionFeeETH,
+        biddingTransactionFeeDAI,
+        authTransactionFeeETH,
+        authTransactionFeeDAI,
         transactionProfit,
-        transactionFeeDAI,
         transactionOutcome,
     };
 };

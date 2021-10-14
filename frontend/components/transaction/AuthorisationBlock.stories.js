@@ -1,6 +1,9 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import AuthorisationBlock from '~/components/transaction/AuthorisationBlock';
+import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
+
+const fakeAuctionTransaction = generateFakeAuctionTransaction();
 
 const common = {
     components: { AuthorisationBlock },
@@ -9,6 +12,7 @@ const common = {
             isLoading: false,
             isWalletAuthorised: false,
             isCollateralAuthorised: false,
+            auctionTransaction: fakeAuctionTransaction,
             currencyType: faker.finance.currencyCode(),
         };
     },
@@ -34,22 +38,22 @@ storiesOf('Transaction/AuthorisationBlock', module)
     .add('Default', () => ({
         ...common,
         template:
-            '<AuthorisationBlock :isLoading="isLoading" :isWalletAuthorised="isWalletAuthorised" :isCollateralAuthorised="isCollateralAuthorised"  @authorizeWallet="authorizeWallet" @authorizeCollateral="authorizeCollateral" :collateralType="currencyType"/>',
+            '<AuthorisationBlock :auction-transaction="auctionTransaction" :isLoading="isLoading" :isWalletAuthorised="isWalletAuthorised" :isCollateralAuthorised="isCollateralAuthorised"  @authorizeWallet="authorizeWallet" @authorizeCollateral="authorizeCollateral" />',
     }))
     .add('Disabled', () => ({
         ...common,
-        template: '<AuthorisationBlock :disabled="true" :collateralType="currencyType" />',
+        template: '<AuthorisationBlock :auction-transaction="auctionTransaction" :disabled="true" />',
     }))
     .add('Not Authorized', () => ({
         ...common,
-        template: '<AuthorisationBlock :collateralType="currencyType" />',
+        template: '<AuthorisationBlock :auction-transaction="auctionTransaction" />',
     }))
     .add('Authorizing', () => ({
         ...common,
-        template: '<AuthorisationBlock :isLoading="true" :collateralType="currencyType" />',
+        template: '<AuthorisationBlock :isLoading="true" :auction-transaction="auctionTransaction" />',
     }))
     .add('Authorized', () => ({
         ...common,
         template:
-            '<AuthorisationBlock :isWalletAuthorised="true" :isCollateralAuthorised="true" :collateralType="currencyType"/>',
+            '<AuthorisationBlock :isWalletAuthorised="true" :isCollateralAuthorised="true" :auction-transaction="auctionTransaction"/>',
     }));
