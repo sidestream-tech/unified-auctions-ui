@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center space-x-2 cursor-pointer pt-1 md:pt-0" @click="toggle">
+    <div class="flex items-center space-x-2 cursor-pointer pt-1 md:pt-0" @click="$emit('update', !darkMode)">
         <sun-icon v-if="darkMode" class="h-8 w-8 md:h-4 md:w-4" />
         <moon-icon v-else class="h-8 w-8 md:h-4 md:w-4" />
     </div>
@@ -22,14 +22,21 @@ export default Vue.extend({
             required: true,
         },
     },
+    watch: {
+        darkMode: {
+            immediate: true,
+            handler(darkMode) {
+                this.switch(darkMode);
+            },
+        },
+    },
     methods: {
-        toggle(): void {
-            if (this.darkMode) {
-                document.body.classList.remove('dark');
-            } else {
+        switch(isDarkMode: boolean): void {
+            if (isDarkMode) {
                 document.body.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
             }
-            this.$emit('update', !this.darkMode);
         },
     },
 });
