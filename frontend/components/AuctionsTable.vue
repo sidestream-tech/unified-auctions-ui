@@ -1,42 +1,39 @@
 <template>
-    <div class="AuctionsTable relative">
-        <Table
-            :data-source="auctions"
-            :columns="columns"
-            :pagination="{ pageSize: rowsPerPage, hideOnSinglePage: true }"
-            :row-class-name="getRowClassNames"
-            :row-key="record => record.id"
-            :custom-row="customRowEvents"
-            :get-popup-container="() => $el"
-        >
-            <div slot="amountRAW" slot-scope="amountRAW, record">
-                <format-currency :value="amountRAW" :currency="record.collateralSymbol" />
-            </div>
-            <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record">
-                <format-currency :value="amountPerCollateral" currency="DAI" /> per
-                <format-currency :currency="record.collateralSymbol" />
-            </div>
-            <div slot="marketValue" slot-scope="marketValue">
-                <format-market-value :value="marketValue" />
-            </div>
-            <div slot="till" slot-scope="till, record" class="text-center">
-                <span v-if="record.transactionAddress">Finished</span>
-                <span v-else-if="!record.isActive">Inactive</span>
-                <time-till v-else :date="till" />
-            </div>
-            <div slot="action" slot-scope="text, record, index" class="w-full h-full">
-                <nuxt-link
-                    :to="getAuctionLink(record)"
-                    :class="
-                        (hoveredRowIndex === index && 'bg-primary text-white dark:bg-primary-dark') || 'text-primary'
-                    "
-                    class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
-                >
-                    See details
-                </nuxt-link>
-            </div>
-        </Table>
-    </div>
+    <Table
+        :data-source="auctions"
+        :columns="columns"
+        :pagination="{ pageSize: rowsPerPage, hideOnSinglePage: true }"
+        :row-class-name="getRowClassNames"
+        :row-key="record => record.id"
+        :custom-row="customRowEvents"
+        :get-popup-container="() => $el"
+        class="AuctionsTable relative overflow-visible"
+    >
+        <div slot="amountRAW" slot-scope="amountRAW, record">
+            <format-currency :value="amountRAW" :currency="record.collateralSymbol" />
+        </div>
+        <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record">
+            <format-currency :value="amountPerCollateral" currency="DAI" /> per
+            <format-currency :currency="record.collateralSymbol" />
+        </div>
+        <div slot="marketValue" slot-scope="marketValue">
+            <format-market-value :value="marketValue" />
+        </div>
+        <div slot="till" slot-scope="till, record" class="text-center">
+            <span v-if="record.transactionAddress">Finished</span>
+            <span v-else-if="!record.isActive">Inactive</span>
+            <time-till v-else :date="till" />
+        </div>
+        <div slot="action" slot-scope="text, record, index" class="w-full h-full">
+            <nuxt-link
+                :to="getAuctionLink(record)"
+                :class="(hoveredRowIndex === index && 'bg-primary text-white dark:bg-primary-dark') || 'text-primary'"
+                class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
+            >
+                See details
+            </nuxt-link>
+        </div>
+    </Table>
 </template>
 
 <script lang="ts">
@@ -196,5 +193,8 @@ export default Vue.extend({
 }
 .AuctionsTable >>> .ant-table-tbody tr:hover td {
     @apply dark:bg-dark-light;
+}
+.AuctionsTable >>> .ant-dropdown-menu-item {
+    @apply mb-1;
 }
 </style>

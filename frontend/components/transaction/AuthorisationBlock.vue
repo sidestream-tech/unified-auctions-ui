@@ -67,8 +67,7 @@
                 </Explain>
                 to alter your internal DAI balance and is needed to bid on the auction. This operation is done only
                 once per auction type and can be done in advance. Approximate fee:
-                <FormatCurrency :value="auctionTransaction.authTransactionFeeETH" :decimals="6" currency="eth" />. The
-                second authorization is required to allow an automated mechanism to sell the auctioned
+                <FormatCurrency :value="auctionTransaction.authTransactionFeeETH" :decimals="6" currency="eth" />.
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">

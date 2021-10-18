@@ -39,7 +39,7 @@
                 is the minimum required collateralization level for each Vault type before it is considered
                 undercollateralized and subject to liquidation
             </Explain>
-            (e.g. 150% for ETH), owners of the vault have to add more collateral or return their DAI. If they fail to
+            (e.g. 145% for ETH-A), owners of the vault have to add more collateral or return their DAI. If they fail to
             do so, their vault can be liquidated by the Maker protocol and other people can buy it at a discount.
         </TextBlock>
         <template v-if="isExplanationsShown">
