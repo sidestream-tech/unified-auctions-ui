@@ -1,6 +1,11 @@
 <template>
     <div>
         <TextBlock title="Swap transaction" />
+        <Alert
+            v-if="!auctionTransaction.isActive"
+            message="This auction is inactive and must be restarted"
+            type="error"
+        />
         <SwapTransactionTable :auction-transaction="auctionTransaction" class="mt-4" />
         <TextBlock class="TextBlock mt-4 mb-8">
             Please note, the transaction fee is a suggested value based on the current gas prices on the market; the
@@ -27,6 +32,7 @@
         </TextBlock>
         <WalletBlock
             class="mb-6 lg:mb-0"
+            :disabled="!auctionTransaction.isActive"
             :is-loading="isConnecting"
             :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
@@ -35,7 +41,7 @@
         />
         <AuthorisationBlock
             class="mb-6 lg:mb-0"
-            :disabled="!isConnected"
+            :disabled="!isConnected || !auctionTransaction.isActive"
             :auction-transaction="auctionTransaction"
             :is-loading="isAuthorizing"
             :is-wallet-authorised="isWalletAuthorised"
@@ -45,7 +51,7 @@
             @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
         />
         <ExecutionBlock
-            :disabled="!isCollateralAuthorised || !isWalletAuthorised"
+            :disabled="!isCollateralAuthorised || !isWalletAuthorised || !auctionTransaction.isActive"
             :is-loading="isExecuting"
             :transaction-address="auctionTransaction.transactionAddress"
             :is-explanations-shown="isExplanationsShown"
@@ -58,6 +64,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Alert } from 'ant-design-vue';
 import WalletBlock from '~/components/transaction/WalletBlock.vue';
 import AuthorisationBlock from '~/components/transaction/AuthorisationBlock.vue';
 import ExecutionBlock from '~/components/transaction/ExecutionBlock.vue';
@@ -74,6 +81,7 @@ export default Vue.extend({
         WalletBlock,
         AuthorisationBlock,
         ExecutionBlock,
+        Alert,
     },
     props: {
         auctionTransaction: {

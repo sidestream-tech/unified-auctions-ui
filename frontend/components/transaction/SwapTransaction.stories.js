@@ -10,7 +10,10 @@ const common = {
     components: { SwapTransaction },
     data() {
         return {
-            auctionTransaction: fakeAuctionTransaction,
+            auctionTransaction: {
+                ...fakeAuctionTransaction,
+                isActive: true,
+            },
             isConnecting: false,
             isAuthorizing: false,
             isExecuting: false,
@@ -63,8 +66,21 @@ const common = {
     },
 };
 
-storiesOf('Transaction/SwapTransaction', module).add('Default', () => ({
-    ...common,
-    template:
-        '<SwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isWalletAuthorised="isWalletAuthorised" :authorisedCollaterals="authorisedCollaterals" :isExecuting="isExecuting" :walletAddress="walletAddress" @connect="connect" @disconnect="disconnect" @authorizeCollateral="authorizeCollateral" @authorizeWallet="authorizeWallet" @execute="execute" />',
-}));
+storiesOf('Transaction/SwapTransaction', module)
+    .add('Default', () => ({
+        ...common,
+        template:
+            '<SwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isWalletAuthorised="isWalletAuthorised" :authorisedCollaterals="authorisedCollaterals" :isExecuting="isExecuting" :walletAddress="walletAddress" @connect="connect" @disconnect="disconnect" @authorizeCollateral="authorizeCollateral" @authorizeWallet="authorizeWallet" @execute="execute" />',
+    }))
+    .add('Inactive Auction', () => ({
+        components: { SwapTransaction },
+        data() {
+            return {
+                auctionTransaction: {
+                    ...fakeAuctionTransaction,
+                    isActive: false,
+                },
+            };
+        },
+        template: '<SwapTransaction :auction-transaction="auctionTransaction"/>',
+    }));

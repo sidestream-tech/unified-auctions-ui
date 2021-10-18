@@ -20,15 +20,16 @@
             >
                 Connect a wallet
             </base-button>
-            <base-button v-if="state === 'connecting'" class="w-full md:w-80" type="primary" is-loading>
+            <base-button v-else-if="state === 'connecting'" class="w-full md:w-80" type="primary" is-loading>
                 Connecting...
             </base-button>
-            <base-button v-if="state === 'connected'" class="w-full md:w-80" @click="$emit('disconnectWallet')">
+            <base-button v-else-if="state === 'connected'" class="w-full md:w-80" @click="$emit('disconnectWallet')">
                 <div>Disconnect wallet <format-address disable shorten :value="walletAddress" /></div>
             </base-button>
-            <base-button v-if="state === 'disconnecting'" class="w-full md:w-80" is-loading>
+            <base-button v-else-if="state === 'disconnecting'" class="w-full md:w-80" is-loading>
                 Disconnecting...
             </base-button>
+            <base-button v-else disabled class="w-full md:w-80" type="primary"> Connect a wallet </base-button>
         </div>
     </div>
 </template>
@@ -59,9 +60,16 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
     },
     computed: {
         state(): string {
+            if (this.disabled) {
+                return 'disabled';
+            }
             if (!this.walletAddress && !this.isLoading) {
                 return 'notConnected';
             }

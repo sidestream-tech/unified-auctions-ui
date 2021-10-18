@@ -34,12 +34,10 @@
             >
                 Execute
             </base-button>
-            <base-button v-if="state === 'disabled'" type="primary" class="w-full md:w-80" disabled>
-                Execute
-            </base-button>
-            <base-button v-if="state === 'loading'" type="primary" class="w-full md:w-80" is-loading>
+            <base-button v-else-if="state === 'loading'" type="primary" class="w-full md:w-80" is-loading>
                 Executing...
             </base-button>
+            <base-button v-else type="primary" class="w-full md:w-80" disabled> Execute </base-button>
         </div>
     </div>
 </template>
