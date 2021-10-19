@@ -1,15 +1,15 @@
 <template>
-    <ASwitch class="BaseSwitch" :checked="isChecked" @click="$emit('update:isChecked', !isChecked)" />
+    <label class="BaseSwitch relative flex items-center cursor-pointer">
+        <input type="checkbox" class="sr-only" :checked="isChecked" @change="$emit('update:isChecked', !isChecked)" />
+        <span class="rail block bg-gray-600 w-10 h-6 md:w-8 md:h-5 rounded-full" />
+        <span class="dot absolute left-1 top-1 bg-white w-4 h-4 md:w-3 md:h-3 rounded-full transition" />
+    </label>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { Switch } from 'ant-design-vue';
 
 export default Vue.extend({
-    components: {
-        ASwitch: Switch,
-    },
     props: {
         isChecked: {
             type: Boolean,
@@ -19,18 +19,13 @@ export default Vue.extend({
 });
 </script>
 <style scoped>
-.BaseSwitch {
-    @apply w-10 md:h-4 md:w-5 dark:mt-0.5 !important;
+.BaseSwitch input:checked ~ .dot {
+    @apply bg-white;
 
-    min-width: 28px !important;
+    transform: translateX(100%);
 }
-.BaseSwitch::after {
-    @apply md:h-3 md:w-3 dark:bg-gray-100 !important;
-}
-.BaseSwitch.ant-switch-checked {
+
+.BaseSwitch input:checked ~ .rail {
     @apply bg-primary-light;
-}
-.BaseSwitch.ant-switch:not(.BaseSwitch.ant-switch-checked) {
-    @apply bg-gray-700;
 }
 </style>
