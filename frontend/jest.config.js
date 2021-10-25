@@ -14,6 +14,7 @@ module.exports = {
         '^.+\\.js$': 'babel-jest',
         '.*\\.(vue)$': 'vue-jest',
     },
+    transformIgnorePatterns: ['<rootDir>/node_modules/(?!vue-cryptoicon/)'],
     collectCoverage: false,
     collectCoverageFrom: ['<rootDir>/**/*.(vue|js)'],
     forceExit: !!process.env.CI,

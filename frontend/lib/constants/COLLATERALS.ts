@@ -193,4 +193,9 @@ const COLLATERALS: Record<string, CollateralConfig> = {
     },
 };
 
+export const getAllCollateralSymbols = function (): string[] {
+    const collateralSymbols = Object.values(COLLATERALS).map(collateral => collateral.symbol);
+    return Array.from(new Set(collateralSymbols));
+};
+
 export default COLLATERALS;

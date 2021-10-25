@@ -9,7 +9,8 @@
         :get-popup-container="() => $el"
         class="AuctionsTable relative overflow-visible"
     >
-        <div slot="amountRAW" slot-scope="amountRAW, record">
+        <div slot="amountRAW" slot-scope="amountRAW, record" class="flex items-center space-x-2">
+            <currency-icon :currency-symbol="record.collateralSymbol" />
             <format-currency :value="amountRAW" :currency="record.collateralSymbol" />
         </div>
         <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record">
@@ -43,6 +44,7 @@ import { compareAsc } from 'date-fns';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+import CurrencyIcon from '~/components/common/CurrencyIcon.vue';
 
 const compareBy = function (field: string, cmp: Function = (a: number, b: number): number => a - b): Function {
     return (firstElement: Indexable, secondElement: Indexable, sortOrder: string) => {
@@ -65,6 +67,7 @@ export default Vue.extend({
         TimeTill,
         FormatMarketValue,
         FormatCurrency,
+        CurrencyIcon,
     },
     props: {
         auctions: {
