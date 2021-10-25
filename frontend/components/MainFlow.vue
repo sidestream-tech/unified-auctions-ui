@@ -26,6 +26,7 @@
                         :auction="selectedAuction"
                         :auction-id="selectedAuctionId"
                         :is-auctions-loading="isAuctionsLoading"
+                        @restart="$emit('restart')"
                         @swap="step = 2"
                     />
                 </div>

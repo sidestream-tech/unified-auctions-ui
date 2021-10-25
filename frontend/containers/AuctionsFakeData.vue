@@ -14,6 +14,7 @@
         @disconnect="disconnect"
         @authorizeWallet="authorizeWallet"
         @authorizeCollateral="authorizeCollateral"
+        @restart="restart"
         @execute="execute"
     />
 </template>
@@ -21,6 +22,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import faker from 'faker';
+import { message } from 'ant-design-vue';
 import MainFlow from '~/components/MainFlow.vue';
 import { generateFakeAuctionTransactions } from '~/helpers/generateFakeAuction';
 
@@ -118,6 +120,12 @@ export default Vue.extend({
                 }
                 this.isExecuting = false;
             }, 1000);
+        },
+        restart() {
+            if (this.selectedAuction) {
+                this.selectedAuction.isActive = true;
+                message.success('The auction has been restarted!');
+            }
         },
     },
 });

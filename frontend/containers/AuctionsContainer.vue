@@ -15,6 +15,7 @@
             @disconnect="disconnect"
             @authorizeWallet="authorizeWallet"
             @authorizeCollateral="authorizeCollateral"
+            @restart="restart"
             @execute="execute"
         />
         <WalletModal :visible.sync="isModalOpen" @connect="connect" />
@@ -112,6 +113,9 @@ export default Vue.extend({
             this.$store.dispatch('wallet/disconnect');
         },
         execute(): void {
+            message.error('This feature is not yet implemented');
+        },
+        restart(): void {
             message.error('This feature is not yet implemented');
         },
     },

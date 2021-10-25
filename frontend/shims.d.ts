@@ -37,6 +37,7 @@ declare interface AuctionTransaction extends Auction {
     biddingTransactionFeeDAI: BigNumber | number;
     authTransactionFeeETH: BigNumber | number;
     authTransactionFeeDAI: BigNumber | number;
+    restartTransactionFeeETH: BigNumber | number;
     transactionOutcome: number;
 }
 

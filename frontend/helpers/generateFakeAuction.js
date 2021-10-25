@@ -35,6 +35,7 @@ export const generateFakeAuctionTransaction = function () {
     const biddingTransactionFeeDAI = biddingTransactionFeeETH * 1000;
     const authTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
     const authTransactionFeeDAI = authTransactionFeeETH * 1000;
+    const restartTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
     const transactionOutcome = transactionProfit - biddingTransactionFeeDAI;
     return {
         ...fakeAuction,
@@ -42,6 +43,7 @@ export const generateFakeAuctionTransaction = function () {
         biddingTransactionFeeDAI,
         authTransactionFeeETH,
         authTransactionFeeDAI,
+        restartTransactionFeeETH,
         transactionProfit,
         transactionOutcome,
     };

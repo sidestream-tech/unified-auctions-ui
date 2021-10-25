@@ -1,6 +1,12 @@
 <template>
     <TextBlock :title="`Auction #${auctionId}`">
         <Alert v-if="errorText" :message="errorText" type="error" />
+        <RestartBlock
+            v-if="errorText === 'This auction is inactive and must be restarted'"
+            :value="auction.restartTransactionFeeETH"
+            :is-explanations-shown="isExplanationsShown"
+            @restart="$emit('restart')"
+        />
         <div v-if="auction">
             <div class="relative mt-4">
                 <table class="w-full table-fixed border-collapse border">
@@ -164,10 +170,12 @@ import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import Loading from '~/components/common/Loading.vue';
 import Explain from '~/components/utils/Explain.vue';
+import RestartBlock from '~/components/transaction/RestartBlock.vue';
 
 export default Vue.extend({
     name: 'Auction',
     components: {
+        RestartBlock,
         Explain,
         Loading,
         FormatCurrency,
@@ -181,7 +189,7 @@ export default Vue.extend({
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<Auction>,
+            type: Object as Vue.PropType<AuctionTransaction>,
             default: null,
         },
         auctionId: {
