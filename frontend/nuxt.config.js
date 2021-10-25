@@ -7,6 +7,7 @@ export default {
 
     env: {
         INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID,
+        DEMO_MODE: process.env.DEMO_MODE || false,
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head

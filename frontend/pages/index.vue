@@ -1,8 +1,6 @@
 <template>
-    <div>
-        <AuctionsFakeData v-if="!network" />
-        <AuctionsContainer v-else :network="network" />
-    </div>
+    <AuctionsFakeData v-if="!network" />
+    <AuctionsContainer v-else :network="network" />
 </template>
 
 <script lang="ts">
@@ -14,6 +12,12 @@ export default Vue.extend({
     components: {
         AuctionsFakeData,
         AuctionsContainer,
+    },
+    layout: process.env.DEMO_MODE ? 'demoMode' : 'default',
+    data() {
+        return {
+            overlay: true,
+        };
     },
     computed: {
         network() {
