@@ -2,7 +2,7 @@
     <div>
         <MainFlow
             :auctions="auctions"
-            :is-auctions-loading="isAuctionsLoading"
+            :is-auctions-loading="isAuctionsFetching"
             :auctions-error="auctionsError"
             :selected-auction-id.sync="selectedAuctionId"
             :is-explanations-shown.sync="isExplanationsShown"
@@ -11,11 +11,12 @@
             :is-authorizing="isAuthorizing"
             :is-wallet-authorised="isWalletAuthorised"
             :authorised-collaterals="authorisedCollaterals"
+            :is-executing="isAuctionBidding"
             @connect="openWalletModal"
             @disconnect="disconnect"
             @authorizeWallet="authorizeWallet"
             @authorizeCollateral="authorizeCollateral"
-            @restart="restart"
+            @restart="restartAuction"
             @execute="execute"
         />
         <WalletModal :visible.sync="isModalOpen" @connect="connect" />
@@ -23,7 +24,6 @@
 </template>
 
 <script lang="ts">
-import { message } from 'ant-design-vue';
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import MainFlow from '~/components/MainFlow.vue';
@@ -40,7 +40,8 @@ export default Vue.extend({
     computed: {
         ...mapGetters('auctions', {
             auctions: 'list',
-            isAuctionsLoading: 'getIsLoading',
+            isAuctionsFetching: 'getIsFetching',
+            isAuctionBidding: 'getIsBidding',
             auctionsError: 'getError',
         }),
         ...mapGetters('wallet', {
@@ -102,6 +103,7 @@ export default Vue.extend({
             'fetchWalletAuthorizationStatus',
             'fetchCollateralAuthorizationStatus',
         ]),
+        ...mapActions('auctions', ['bid', 'restart']),
         openWalletModal(): void {
             this.isModalOpen = true;
         },
@@ -112,11 +114,11 @@ export default Vue.extend({
         disconnect(): void {
             this.$store.dispatch('wallet/disconnect');
         },
-        execute(): void {
-            message.error('This feature is not yet implemented');
+        execute(auction: AuctionTransaction): void {
+            this.bid(auction.id);
         },
-        restart(): void {
-            message.error('This feature is not yet implemented');
+        restartAuction(auctionId: string): void {
+            this.restart(auctionId);
         },
     },
 });

@@ -3,9 +3,9 @@
         <Alert v-if="errorText" :message="errorText" type="error" />
         <RestartBlock
             v-if="errorText === 'This auction is inactive and must be restarted'"
-            :value="auction.restartTransactionFeeETH"
+            :transaction-fee="auction.restartTransactionFeeETH"
             :is-explanations-shown="isExplanationsShown"
-            @restart="$emit('restart')"
+            @restart="$emit('restart', auctionId)"
         />
         <div v-if="auction">
             <div class="relative mt-4">
@@ -26,21 +26,32 @@
                         <tr>
                             <td>Auction Price</td>
                             <td>
-                                <format-currency :value="auction.amountPerCollateral" currency="DAI" />
-                                per
-                                <format-currency :currency="auction.collateralSymbol" />
+                                <template v-if="auction.isActive">
+                                    <format-currency :value="auction.amountPerCollateral" currency="DAI" />
+                                    per
+                                    <format-currency :currency="auction.collateralSymbol" />
+                                </template>
+                                <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
                         <tr>
                             <td>Price On Uniswap</td>
                             <td>
-                                <format-currency :value="auction.marketPricePerCollateral" currency="DAI" /> per
-                                <format-currency :currency="auction.collateralSymbol" />
+                                <template v-if="auction.isActive && auction.marketPricePerCollateral">
+                                    <format-currency :value="auction.marketPricePerCollateral" currency="DAI" /> per
+                                    <format-currency :currency="auction.collateralSymbol" />
+                                </template>
+                                <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
                         <tr>
                             <td>Market Difference</td>
-                            <td><format-market-value :value="auction.marketValue" /></td>
+                            <td>
+                                <template v-if="auction.isActive && auction.marketValue">
+                                    <format-market-value :value="auction.marketValue" />
+                                </template>
+                                <span v-else class="opacity-50">Unknown</span>
+                            </td>
                         </tr>
                         <template v-if="isTableExpanded">
                             <tr class="bg-gray-100 dark:bg-gray-800">
@@ -82,7 +93,7 @@
                 "
                 @click="toggleExpandable"
             >
-                {{ isTableExpanded ? 'Hide additional numbers' : 'Show additional numbers' }}
+                {{ isTableExpanded ? 'Hide additional info' : 'Show additional info' }}
             </button>
             <template v-if="isExplanationsShown">
                 <TextBlock class="mt-4">
@@ -133,7 +144,7 @@
             </template>
             <TextBlock>
                 <div class="flex w-full justify-end flex-wrap mt-4">
-                    <Tooltip title="This transaction type is not supported yet" placement="bottom">
+                    <Tooltip title="This transaction type is not supported yet" placement="top">
                         <div>
                             <Button disabled type="secondary" class="w-60 mb-4" @click="$emit('purchase')">
                                 Purchase with DAI
@@ -142,12 +153,7 @@
                     </Tooltip>
                     <Tooltip :title="errorText" placement="bottom">
                         <div>
-                            <Button
-                                :disabled="error !== '' || !auction.isActive || auction.transactionAddress"
-                                type="primary"
-                                class="w-60 ml-4"
-                                @click="$emit('swap')"
-                            >
+                            <Button :disabled="!!errorText" type="primary" class="w-60 ml-4" @click="$emit('swap')">
                                 Directly swap into profit
                             </Button>
                         </div>
@@ -224,6 +230,9 @@ export default Vue.extend({
                 return 'This auction is inactive and must be restarted';
             } else if (this.auction?.transactionAddress) {
                 return 'This auction is finished';
+            } else if (!this.isAuctionsLoading && typeof this.auction?.marketValue === 'undefined') {
+                return `Swap transaction is not possible,
+                because we can't get value of ${this.auction?.collateralSymbol} on UniSwap`;
             }
             return null;
         },

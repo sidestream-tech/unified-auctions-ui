@@ -1,9 +1,9 @@
 <template>
     <div class="my-3">
         <TextBlock v-if="isExplanationsShown">
-            If an auction either has experienced a too steep decrease in price or has reached its time limit, it
-            becomes inactive and requires interaction to be restarted by calling functions of the Maker Protocol. It
-            then restarts at a new calculated price and a fresh duration. Restarting an auction includes an
+            Auction that either has experienced a too steep decrease in price or has reached its time limit becomes
+            inactive and requires interaction to be restarted. When restarted, a new price is calculated and a fresh
+            time limit is set. Restarting an auction includes an
             <Explain text="incentive">
                 The
                 <a
@@ -34,10 +34,8 @@
                     </li>
                 </ul>
             </Explain>
-            that is sent to the participant’s wallet. However, this action incurs transaction fees and if you’re
-            bidding with other participants at the same time, the one who pays a higher transaction fee has more
-            chances to win the auction. In case your transaction will be rejected, it only results in the loss of the
-            transaction fee. Approximate fee: <FormatCurrency :value="value" :decimals="6" currency="eth" />.
+            that is sent to the participant’s wallet. However, this action incurs transaction fee of approximately
+            <FormatCurrency :value="transactionFee" :decimals="6" currency="eth" />.
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
             <base-button class="w-full md:w-80" type="primary" @click="$emit('restart')">
@@ -59,9 +57,9 @@ export default Vue.extend({
     name: 'RestartBlock',
     components: { TextBlock, BaseButton, FormatCurrency, Explain },
     props: {
-        value: {
+        transactionFee: {
             type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
-            required: true,
+            default: null,
         },
         isExplanationsShown: {
             type: Boolean,

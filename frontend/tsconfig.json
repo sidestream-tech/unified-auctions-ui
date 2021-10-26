@@ -15,6 +15,7 @@
     "noEmit": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": false,
+    "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
       "~/*": [

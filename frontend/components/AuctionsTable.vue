@@ -14,16 +14,18 @@
             <format-currency :value="amountRAW" :currency="record.collateralSymbol" />
         </div>
         <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record">
-            <format-currency :value="amountPerCollateral" currency="DAI" /> per
-            <format-currency :currency="record.collateralSymbol" />
+            <template v-if="record.isActive">
+                <format-currency :value="amountPerCollateral" currency="DAI" /> per
+                <format-currency :currency="record.collateralSymbol" />
+            </template>
+            <span v-else class="opacity-50">Unknown</span>
         </div>
-        <div slot="marketValue" slot-scope="marketValue">
-            <format-market-value :value="marketValue" />
+        <div slot="marketValue" slot-scope="marketValue, record">
+            <format-market-value v-if="record.isActive && record.marketValue" :value="marketValue" />
+            <span v-else class="opacity-50">Unknown</span>
         </div>
-        <div slot="till" slot-scope="till, record" class="text-center">
-            <span v-if="record.transactionAddress">Finished</span>
-            <span v-else-if="!record.isActive">Inactive</span>
-            <time-till v-else :date="till" />
+        <div slot="till" slot-scope="till" class="text-center">
+            <time-till :date="till" />
         </div>
         <div slot="action" slot-scope="text, record, index" class="w-full h-full">
             <nuxt-link
@@ -47,10 +49,13 @@ import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import CurrencyIcon from '~/components/common/CurrencyIcon.vue';
 
 const compareBy = function (field: string, cmp: Function = (a: number, b: number): number => a - b): Function {
-    return (firstElement: Indexable, secondElement: Indexable, sortOrder: string) => {
+    return (aAuction: any, bAuction: any, sortOrder: string) => {
         const greaterVal = sortOrder === 'ascend' ? 1 : -1;
-        const aVal = firstElement[field];
-        const bVal = secondElement[field];
+        const aVal = aAuction[field];
+        const bVal = bAuction[field];
+        if (!bAuction.isActive) {
+            return -greaterVal;
+        }
         if (typeof aVal === 'undefined') {
             return greaterVal;
         }
@@ -121,7 +126,7 @@ export default Vue.extend({
                     dataIndex: 'marketValue',
                     scopedSlots: { customRender: 'marketValue' },
                     sorter: compareBy('marketValue'),
-                    defaultSortOrder: 'descend',
+                    defaultSortOrder: 'ascend',
                 },
                 {
                     title: 'Auction Ends',

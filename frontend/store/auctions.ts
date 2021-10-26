@@ -1,27 +1,37 @@
 import { ActionContext } from 'vuex';
-import { fetchAllAuctions } from '~/lib/auctions';
+import { message } from 'ant-design-vue';
+import { fetchAllAuctions, bidOnTheAuction, restartAuction } from '~/lib/auctions';
+import { checkAllExchangeRates } from '~/lib/uniswap';
 
 const REFETCH_INTERVAL = 30 * 1000;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
 
 interface State {
-    auctions: Auction[];
-    isLoading: boolean;
+    auctionStorage: Record<string, Auction>;
+    isFetching: boolean;
+    isBidding: boolean;
     error: string | null;
 }
 
 export const state = (): State => ({
-    auctions: [],
-    isLoading: false,
+    auctionStorage: {},
+    isFetching: false,
+    isBidding: false,
     error: null,
 });
 
 export const getters = {
     list(state: State) {
-        return state.auctions;
+        return Object.values(state.auctionStorage);
     },
-    getIsLoading(state: State) {
-        return state.isLoading;
+    getAuctionById: (state: State) => (id: string) => {
+        return state.auctionStorage[id];
+    },
+    getIsFetching(state: State) {
+        return state.isFetching;
+    },
+    getIsBidding(state: State) {
+        return state.isBidding;
     },
     getError(state: State) {
         return state.error;
@@ -30,10 +40,24 @@ export const getters = {
 
 export const mutations = {
     setAuctions(state: State, auctions: Auction[]) {
-        state.auctions = auctions;
+        const newAuctionStorage = auctions.reduce((auctionStorage: Record<string, Auction>, auction: Auction) => {
+            auctionStorage[auction.id] = auction;
+            return auctionStorage;
+        }, {});
+        state.auctionStorage = {
+            ...state.auctionStorage,
+            ...newAuctionStorage,
+        };
     },
-    setLoading(state: State, isLoading: boolean) {
-        state.isLoading = isLoading;
+    setAcutionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
+        state.auctionStorage[id].transactionAddress = transactionAddress;
+        state.auctionStorage[id].till = new Date().toISOString();
+    },
+    setIsFetching(state: State, isFetching: boolean) {
+        state.isFetching = isFetching;
+    },
+    setIsBidding(state: State, isBidding: boolean) {
+        state.isBidding = isBidding;
     },
     setError(state: State, error: string) {
         state.error = error;
@@ -54,15 +78,49 @@ export const actions = {
             console.error('fetch auction error', error);
             commit('setError', error.message);
         } finally {
-            commit('setLoading', false);
+            commit('setIsFetching', false);
         }
     },
     async fetch({ commit, dispatch }: ActionContext<State, State>) {
-        commit('setLoading', true);
+        commit('setIsFetching', true);
         await dispatch('fetchWithoutLoading');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }
         refetchIntervalId = setInterval(() => dispatch('fetchWithoutLoading'), REFETCH_INTERVAL);
+    },
+    async bid({ getters, commit, rootGetters }: ActionContext<State, State>, id: string) {
+        const auction = getters.getAuctionById(id);
+        if (!auction) {
+            message.error(`Bidding error: can not find auction with id "${id}"`);
+            return;
+        }
+        const network = rootGetters['preferences/getNetwork'];
+        commit('setIsBidding', true);
+        try {
+            const transactionAddress = await bidOnTheAuction(network, auction);
+            commit('setAcutionFinish', { id, transactionAddress });
+        } catch (error) {
+            console.error(`Bidding error: ${error.message}`);
+        } finally {
+            commit('setIsBidding', false);
+        }
+    },
+    async restart({ getters, dispatch }: ActionContext<State, State>, id: string) {
+        const auction = getters.getAuctionById(id);
+        if (!auction) {
+            message.error(`Auction reset error: can not find auction with id "${id}"`);
+            return;
+        }
+        try {
+            await restartAuction(auction.collateralType, auction.auctionId);
+            await dispatch('fetchWithoutLoading');
+        } catch (error) {
+            console.error(`Auction redo error: ${error.message}`);
+        }
+    },
+    async checkAllExchangeRates({ rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['preferences/getNetwork'];
+        await checkAllExchangeRates(network);
     },
 };

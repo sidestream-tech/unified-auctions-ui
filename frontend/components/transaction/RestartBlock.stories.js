@@ -16,5 +16,5 @@ const common = {
 
 storiesOf('Transaction/RestartBlock', module).add('Default', () => ({
     ...common,
-    template: '<RestartBlock :value="restartFee" @restart="restart" />',
+    template: '<RestartBlock :transaction-fee="restartFee" @restart="restart" />',
 }));

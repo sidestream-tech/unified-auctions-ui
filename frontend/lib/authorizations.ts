@@ -2,7 +2,7 @@ import getMaker from './maker';
 import getWallet from './wallet';
 import trackTransaction from './tracker';
 
-export const authorizeWallet = async function (revoke = false): Promise<void> {
+export const authorizeWallet = async function (revoke = false): Promise<string> {
     const maker = await getMaker();
     const joinDaiAddress = maker.service('smartContract').getContract('MCD_JOIN_DAI').address;
     const vatContract = maker.service('smartContract').getContract('MCD_VAT');
@@ -10,7 +10,7 @@ export const authorizeWallet = async function (revoke = false): Promise<void> {
     return trackTransaction(transaction, maker);
 };
 
-export const authorizeCollateral = async function (collateralType: string, revoke = false): Promise<void> {
+export const authorizeCollateral = async function (collateralType: string, revoke = false): Promise<string> {
     const maker = await getMaker();
     const clipperAddress = maker.service('liquidation')._clipperContractByIlk(collateralType).address;
     const vatContract = maker.service('smartContract').getContract('MCD_VAT');

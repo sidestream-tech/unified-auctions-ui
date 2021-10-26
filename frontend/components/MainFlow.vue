@@ -26,7 +26,7 @@
                         :auction="selectedAuction"
                         :auction-id="selectedAuctionId"
                         :is-auctions-loading="isAuctionsLoading"
-                        @restart="$emit('restart')"
+                        @restart="$emit('restart', $event)"
                         @swap="step = 2"
                     />
                 </div>
@@ -47,7 +47,7 @@
                     @disconnect="$emit('disconnect')"
                     @authorizeWallet="$emit('authorizeWallet')"
                     @authorizeCollateral="$emit('authorizeCollateral', $event)"
-                    @execute="$emit('execute')"
+                    @execute="$emit('execute', $event)"
                 />
             </template>
         </SplitLayout>

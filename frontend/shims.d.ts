@@ -15,6 +15,10 @@ declare module '@makerdao/*' {
     const content: any;
     export default content;
 }
+declare module 'dai-monorepo/*' {
+    const content: any;
+    export default content;
+}
 
 declare interface Auction {
     id: string;
@@ -27,7 +31,8 @@ declare interface Auction {
     till: string;
     vaultOwner: string;
     isActive: boolean;
-    marketValue?: number;
+    marketPricePerCollateral?: BigNumber | number;
+    marketValue?: BigNumber | number;
     transactionAddress?: string;
 }
 
@@ -41,11 +46,23 @@ declare interface AuctionTransaction extends Auction {
     transactionOutcome: number;
 }
 
+declare interface UniswapTokenConfig {
+    type: 'token';
+    route: string[];
+}
+
+declare interface UniswapLpTokenConfig {
+    type: 'lpToken';
+    token0: string;
+    token1: string;
+}
+
 declare interface CollateralConfig {
     title: string;
     ilk: string;
     symbol: string;
     decimals: number;
+    uniswap: UniswapTokenConfig | UniswapLpTokenConfig;
 }
 
 declare interface NetworkConfig {
@@ -53,6 +70,8 @@ declare interface NetworkConfig {
     title: string;
     url: string;
     etherscanUrl: string;
+    uniswapV2CalleeDaiAddress: string;
+    uniswapV2LpTokenCalleeDaiAddress: string;
 }
 
 declare interface Indexable {

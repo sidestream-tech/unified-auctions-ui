@@ -6,30 +6,34 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 
 export default Vue.extend({
     name: 'FormatMarketValue',
     props: {
         value: {
-            type: Number,
+            type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
             default: undefined,
         },
     },
     computed: {
         formattedValue(): string {
-            return Math.abs(this.value * 100).toFixed(2);
+            if (BigNumber.isBigNumber(this.value)) {
+                return (this.value as BigNumber).absoluteValue().multipliedBy(100).toFixed(2);
+            }
+            return Math.abs((this.value as number) * 100).toFixed(2);
         },
         isBelowZero(): boolean {
-            return this.value > 0;
+            return this.value < 0;
         },
         belowOrAbove(): string {
-            if (this.value > 0) {
+            if (this.value < 0) {
                 return 'below';
             }
-            if (this.value < 0) {
+            if (this.value > 0) {
                 return 'above';
             }
-            return '';
+            return 'same';
         },
     },
 });

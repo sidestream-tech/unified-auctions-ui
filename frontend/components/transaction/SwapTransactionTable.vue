@@ -23,39 +23,67 @@
         <div class="flex w-full justify-between">
             <div>Price On Uniswap</div>
             <div>
-                <FormatCurrency :value="auctionTransaction.marketPricePerCollateral" currency="DAI" /> per
-                <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                <template v-if="auctionTransaction.isActive && auctionTransaction.marketPricePerCollateral">
+                    <FormatCurrency :value="auctionTransaction.marketPricePerCollateral" currency="DAI" /> per
+                    <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                </template>
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
         <div class="flex w-full justify-between">
             <div>Market Difference</div>
             <div>
-                <FormatMarketValue :value="auctionTransaction.marketValue" />
+                <template v-if="auctionTransaction.isActive && auctionTransaction.marketValue">
+                    <FormatMarketValue :value="auctionTransaction.marketValue" />
+                </template>
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
         <div class="flex w-full justify-between">
             <div>Potential Profit</div>
-            <div><FormatCurrency show-sign :value="auctionTransaction.transactionProfit" currency="DAI" /></div>
+            <div>
+                <FormatCurrency
+                    v-if="auctionTransaction.transactionProfit"
+                    show-sign
+                    :value="auctionTransaction.transactionProfit"
+                    currency="DAI"
+                />
+                <span v-else class="opacity-50">Unknown</span>
+            </div>
         </div>
         <div class="flex w-full justify-between">
             <div>
                 Transaction Fee
                 <span class="text-gray-300"
                     >(<FormatCurrency
+                        v-if="auctionTransaction.biddingTransactionFeeETH"
                         :value="auctionTransaction.biddingTransactionFeeETH"
                         :decimals="6"
-                        currency="ETH"
-                    />)</span
+                    />
+                    <span v-else>Unknown</span>
+                    ETH)</span
                 >
             </div>
             <div>
-                <FormatCurrency :value="auctionTransaction.biddingTransactionFeeDAI * -1" currency="DAI" />
+                <FormatCurrency
+                    v-if="auctionTransaction.biddingTransactionFeeDAI"
+                    :value="auctionTransaction.biddingTransactionFeeDAI * -1"
+                    currency="DAI"
+                />
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
         <div class="flex w-full justify-between">
             <div class="font-extrabold">Transaction Outcome</div>
-            <div class="font-extrabold">
-                <FormatCurrency show-sign :value="auctionTransaction.transactionOutcome" currency="DAI" />
+            <div>
+                <FormatCurrency
+                    v-if="auctionTransaction.transactionOutcome"
+                    show-sign
+                    :value="auctionTransaction.transactionOutcome"
+                    currency="DAI"
+                    class="font-extrabold"
+                />
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
     </TextBlock>
