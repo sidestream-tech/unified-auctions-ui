@@ -46,7 +46,15 @@ export default {
     ],
 
     // Modules: https://go.nuxtjs.dev/config-modules
-    modules: [],
+    modules: [
+        // https://github.com/moritzsternemann/vue-plausible
+        'vue-plausible',
+    ],
+
+    // Plausible.io Settings
+    plausible: {
+        domain: process.env.PRODUCTION_DOMAIN,
+    },
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {
