@@ -44,13 +44,21 @@ export const mutations = {
             auctionStorage[auction.id] = auction;
             return auctionStorage;
         }, {});
+        const finishedAuctionIds = Object.keys(state.auctionStorage).filter(auctionID => {
+            return !newAuctionStorage[auctionID];
+        });
+        for (const finishedAuctionId in finishedAuctionIds) {
+            state.auctionStorage[finishedAuctionIds[finishedAuctionId]].isFinished = true;
+            state.auctionStorage[finishedAuctionIds[finishedAuctionId]].till = new Date().toISOString();
+        }
         state.auctionStorage = {
             ...state.auctionStorage,
             ...newAuctionStorage,
         };
     },
-    setAcutionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
+    setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
         state.auctionStorage[id].transactionAddress = transactionAddress;
+        state.auctionStorage[id].isFinished = true;
         state.auctionStorage[id].till = new Date().toISOString();
     },
     setIsFetching(state: State, isFetching: boolean) {
@@ -99,7 +107,7 @@ export const actions = {
         commit('setIsBidding', true);
         try {
             const transactionAddress = await bidOnTheAuction(network, auction);
-            commit('setAcutionFinish', { id, transactionAddress });
+            commit('setAuctionFinish', { id, transactionAddress });
         } catch (error) {
             console.error(`Bidding error: ${error.message}`);
         } finally {

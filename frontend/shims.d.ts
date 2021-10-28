@@ -31,6 +31,7 @@ declare interface Auction {
     till: string;
     vaultOwner: string;
     isActive: boolean;
+    isFinished: boolean;
     marketPricePerCollateral?: BigNumber | number;
     marketValue?: BigNumber | number;
     transactionAddress?: string;

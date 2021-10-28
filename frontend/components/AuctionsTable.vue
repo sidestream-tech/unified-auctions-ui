@@ -14,18 +14,23 @@
             <format-currency :value="amountRAW" :currency="record.collateralSymbol" />
         </div>
         <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record">
-            <template v-if="record.isActive">
+            <template v-if="record.isActive && !record.isFinished">
                 <format-currency :value="amountPerCollateral" currency="DAI" /> per
                 <format-currency :currency="record.collateralSymbol" />
             </template>
             <span v-else class="opacity-50">Unknown</span>
         </div>
         <div slot="marketValue" slot-scope="marketValue, record">
-            <format-market-value v-if="record.isActive && record.marketValue" :value="marketValue" />
+            <format-market-value
+                v-if="record.isActive && record.marketValue && !record.isFinished"
+                :value="marketValue"
+            />
             <span v-else class="opacity-50">Unknown</span>
         </div>
-        <div slot="till" slot-scope="till" class="text-center">
-            <time-till :date="till" />
+        <div slot="till" slot-scope="till, record" class="text-center">
+            <span v-if="record.isFinished" class="opacity-50"> Finished </span>
+            <span v-else-if="!record.isActive" class="opacity-50"> Inactive </span>
+            <time-till v-else :date="till" />
         </div>
         <div slot="action" slot-scope="text, record, index" class="w-full h-full">
             <nuxt-link
@@ -53,7 +58,10 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
         const greaterVal = sortOrder === 'ascend' ? 1 : -1;
         const aVal = aAuction[field];
         const bVal = bAuction[field];
-        if (!bAuction.isActive) {
+        if (aAuction.isFinished) {
+            return greaterVal;
+        }
+        if (!bAuction.isActive || bAuction.isFinished) {
             return -greaterVal;
         }
         if (typeof aVal === 'undefined') {
@@ -160,7 +168,7 @@ export default Vue.extend({
             if (auction.id === this.selectedAuctionId) {
                 classes.push('selected-row');
             }
-            if (!auction.isActive || auction.transactionAddress) {
+            if (!auction.isActive || auction.transactionAddress || auction.isFinished) {
                 classes.push('bg-gray-100 dark:bg-gray-800');
             }
             return classes.join(' ');

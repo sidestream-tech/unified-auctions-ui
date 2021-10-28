@@ -116,6 +116,8 @@ export default Vue.extend({
             this.isExecuting = true;
             setTimeout(() => {
                 if (this.selectedAuction) {
+                    this.selectedAuction.isFinished = true;
+                    this.selectedAuction.till = new Date().toISOString();
                     this.selectedAuction.transactionAddress = faker.finance.ethereumAddress();
                 }
                 this.isExecuting = false;

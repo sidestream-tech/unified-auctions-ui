@@ -6,6 +6,7 @@
             message="This auction is inactive and must be restarted"
             type="error"
         />
+        <Alert v-if="auctionTransaction.isFinished" message="This auction is finished" type="error" />
         <SwapTransactionTable :auction-transaction="auctionTransaction" class="mt-4" />
         <TextBlock class="TextBlock mt-4 mb-8">
             Please note, the transaction fee is a suggested value based on the current gas prices on the market; the
@@ -51,7 +52,12 @@
             @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
         />
         <ExecutionBlock
-            :disabled="!isCollateralAuthorised || !isWalletAuthorised || !auctionTransaction.isActive"
+            :disabled="
+                !isCollateralAuthorised ||
+                !isWalletAuthorised ||
+                !auctionTransaction.isActive ||
+                auctionTransaction.isFinished
+            "
             :is-loading="isExecuting"
             :transaction-address="auctionTransaction.transactionAddress"
             :is-explanations-shown="isExplanationsShown"

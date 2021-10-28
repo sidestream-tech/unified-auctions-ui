@@ -159,6 +159,13 @@
                         </div>
                     </Tooltip>
                 </div>
+                <div v-if="auction.transactionAddress" class="flex w-full justify-end">
+                    <span>
+                        Transaction <format-address shorten :value="auction.transactionAddress" /> was successfully
+                        executed.
+                        <format-address explicit :value="auction.transactionAddress" />
+                    </span>
+                </div>
             </TextBlock>
         </div>
         <Loading v-else-if="isAuctionsLoading" is-loading class="w-full self-center Loading h-48" />
@@ -226,10 +233,10 @@ export default Vue.extend({
                 return 'This auction was not found';
             } else if (this.error) {
                 return this.error;
+            } else if (this.auction?.isFinished) {
+                return 'This auction is finished';
             } else if (!this.auction?.isActive && !this.isAuctionsLoading) {
                 return 'This auction is inactive and must be restarted';
-            } else if (this.auction?.transactionAddress) {
-                return 'This auction is finished';
             } else if (!this.isAuctionsLoading && typeof this.auction?.marketValue === 'undefined') {
                 return `Swap transaction is not possible,
                 because we can't get value of ${this.auction?.collateralSymbol} on UniSwap`;

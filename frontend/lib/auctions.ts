@@ -25,6 +25,7 @@ const fetchAuctionsByType = async function (type: string, maker: any): Promise<A
             amountPerCollateral: amountRAW.dividedBy(amountDAI),
             till: protoAuction.endDate,
             isActive,
+            isFinished: false,
         };
     });
 };
