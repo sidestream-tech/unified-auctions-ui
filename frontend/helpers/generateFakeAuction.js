@@ -7,11 +7,12 @@ export const generateFakeAuction = function () {
     const amountDAI = parseFloat(faker.finance.amount());
     const isActive = faker.datatype.boolean();
     const isFinished = faker.datatype.boolean();
-    const marketValue = isActive ? faker.datatype.number({ min: -0.05, max: 0.05, precision: 0.001 }) : undefined;
     const amountPerCollateral = amountDAI / amountRAW;
+    const marketValue = isActive ? faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 }) : undefined;
     const collateralObject = faker.helpers.randomize(Object.values(COLLATERALS));
     const auctionId = faker.datatype.number();
-
+    const marketPricePerCollateral = amountPerCollateral * (1 - marketValue);
+    const transactionProfit = marketPricePerCollateral * amountRAW - amountPerCollateral * amountRAW;
     return {
         id: `${collateralObject.ilk}:${auctionId}`,
         auctionId,
@@ -21,32 +22,31 @@ export const generateFakeAuction = function () {
         amountDAI,
         till: faker.date.future().toString(),
         marketValue,
-        marketPricePerCollateral: amountPerCollateral * (marketValue + 1),
         vaultOwner: faker.finance.ethereumAddress(),
         amountPerCollateral,
+        marketPricePerCollateral,
         isActive,
+        transactionProfit,
         isFinished,
         transactionAddress: undefined,
     };
 };
 
 export const generateFakeAuctionTransaction = function () {
-    const fakeAuction = generateFakeAuction();
-    const transactionProfit = fakeAuction.marketValue * fakeAuction.amountDAI;
+    const auction = generateFakeAuction();
     const biddingTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
     const biddingTransactionFeeDAI = biddingTransactionFeeETH * 1000;
     const authTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
     const authTransactionFeeDAI = authTransactionFeeETH * 1000;
     const restartTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
-    const transactionOutcome = transactionProfit - biddingTransactionFeeDAI;
+    const transactionOutcome = auction.transactionProfit - biddingTransactionFeeDAI;
     return {
-        ...fakeAuction,
+        ...auction,
         biddingTransactionFeeETH,
         biddingTransactionFeeDAI,
         authTransactionFeeETH,
         authTransactionFeeDAI,
         restartTransactionFeeETH,
-        transactionProfit,
         transactionOutcome,
     };
 };

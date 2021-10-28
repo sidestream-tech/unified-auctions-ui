@@ -55,10 +55,10 @@
             <div>
                 Transaction Fee
                 <span class="text-gray-300"
-                    >(<FormatCurrency
+                    >(~<FormatCurrency
                         v-if="auctionTransaction.biddingTransactionFeeETH"
                         :value="auctionTransaction.biddingTransactionFeeETH"
-                        :decimals="6"
+                        :decimals="5"
                     />
                     <span v-else>Unknown</span>
                     ETH)</span

@@ -35,7 +35,7 @@
                 </ul>
             </Explain>
             that is sent to the participant’s wallet. However, this action incurs transaction fee of approximately
-            <FormatCurrency :value="transactionFee" :decimals="6" currency="eth" />.
+            <FormatCurrency :value="transactionFee" :decimals="5" currency="eth" />.
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
             <base-button class="w-full md:w-80" type="primary" @click="$emit('restart')">

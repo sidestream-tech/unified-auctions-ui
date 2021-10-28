@@ -2,6 +2,7 @@ import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import { fetchAllAuctions, bidOnTheAuction, restartAuction } from '~/lib/auctions';
 import { checkAllExchangeRates } from '~/lib/uniswap';
+import { enrichAuctionWithTransactionFees } from '~/lib/fees';
 
 const REFETCH_INTERVAL = 30 * 1000;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
@@ -21,8 +22,12 @@ export const state = (): State => ({
 });
 
 export const getters = {
-    list(state: State) {
+    listAuctions(state: State) {
         return Object.values(state.auctionStorage);
+    },
+    listAuctionTransactions(state: State, _getters: any, _rootState: any, rootGetters: any): AuctionTransaction[] {
+        const fees: TransactionFees = rootGetters['fees/fees'];
+        return Object.values(state.auctionStorage).map(auction => enrichAuctionWithTransactionFees(auction, fees));
     },
     getAuctionById: (state: State) => (id: string) => {
         return state.auctionStorage[id];
@@ -92,6 +97,7 @@ export const actions = {
     async fetch({ commit, dispatch }: ActionContext<State, State>) {
         commit('setIsFetching', true);
         await dispatch('fetchWithoutLoading');
+        dispatch('fees/setup', null, { root: true });
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }

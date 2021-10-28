@@ -11,10 +11,10 @@ interface State {
 }
 
 export const state = (): State => ({
-    network: null,
+    network: 'kovan',
+    chainID: '0x2a',
     isExplanationsShown: true,
     isDarkMode: undefined,
-    chainID: null,
 });
 
 export const getters = {

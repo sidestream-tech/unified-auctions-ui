@@ -6,13 +6,11 @@
                 <format-address explicit :value="transactionAddress" />
             </div>
             <div v-else-if="isExplanationsShown">
-                Auction participation incurs transaction fees (<FormatCurrency
-                    :value="transactionFee"
-                    :decimals="6"
-                    currency="ETH"
-                />), hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is
-                a recommended value and based on the
-                <Explain text="average price">
+                Auction bidding incurs transaction fee of approximately
+                <FormatCurrency :value="transactionFee" :decimals="5" currency="ETH" />, hence, the connected wallet
+                needs to hold enough funds to cover these fees. The transaction fee is a recommended value and based on
+                the
+                <Explain text="average fast fee">
                     <a
                         href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high"
                         target="_blank"
@@ -25,6 +23,13 @@
                 >. The amount can be edited by the participant to influence the speed of the transaction.
             </div>
         </TextBlock>
+        <Alert
+            v-if="state === 'notProfitable'"
+            class="my-3 md:mb-0"
+            message="Executing this auction is not yet profitable. Please wait till the auction price drops below the price
+            on UniSwap"
+            type="error"
+        />
         <div class="flex flex-row-reverse my-3 md:mb-0">
             <base-button
                 v-if="state === 'notExecuted'"
@@ -44,6 +49,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
+import { Alert } from 'ant-design-vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
@@ -53,6 +60,7 @@ import Explain from '~/components/utils/Explain.vue';
 export default Vue.extend({
     name: 'WalletBlock',
     components: {
+        Alert,
         Explain,
         FormatAddress,
         TextBlock,
@@ -77,12 +85,16 @@ export default Vue.extend({
             default: true,
         },
         transactionFee: {
-            type: Number,
+            type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
             default: null,
         },
         collateralType: {
             type: String,
             required: true,
+        },
+        transactionProfit: {
+            type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
+            default: null,
         },
     },
     computed: {
@@ -92,6 +104,9 @@ export default Vue.extend({
             }
             if (this.disabled) {
                 return 'disabled';
+            }
+            if (this.transactionProfit < 0) {
+                return 'notProfitable';
             }
             if (!this.transactionAddress) {
                 return 'notExecuted';

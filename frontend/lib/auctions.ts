@@ -9,7 +9,7 @@ import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParameters
 const fetchAuctionsByType = async function (type: string, maker: any): Promise<Auction[]> {
     const protoAuctions = await maker.service('liquidation').getAllClips(type);
     const now = new Date();
-    return protoAuctions.map((protoAuction: any) => {
+    return protoAuctions.map((protoAuction: any): Auction => {
         const isActive = protoAuction.active && protoAuction.endDate > now;
         const collateralSymbol = COLLATERALS[protoAuction.ilk].symbol as string;
         const amountRAW = new BigNumber(protoAuction.lot);
@@ -55,12 +55,17 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
             auction.collateralSymbol,
             auction.amountRAW
         );
+        const marketValue = auction.amountPerCollateral
+            .minus(marketPricePerCollateral)
+            .dividedBy(marketPricePerCollateral);
+        const transactionProfit = marketPricePerCollateral
+            .multipliedBy(auction.amountRAW)
+            .minus(auction.amountPerCollateral.multipliedBy(auction.amountRAW));
         return {
             ...auction,
             marketPricePerCollateral,
-            marketValue: auction.amountPerCollateral
-                .minus(marketPricePerCollateral)
-                .dividedBy(marketPricePerCollateral),
+            marketValue,
+            transactionProfit,
         };
     } catch (error) {
         console.warn(`Fetching exchange rates from UniSwap failed for ${auction.id} with error:`, error.message);

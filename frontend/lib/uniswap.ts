@@ -32,9 +32,10 @@ const getUniswapRouteAddressesBySymbol = function (network: string, symbol: stri
     }
     const tokenAddress = getTokenAddressByNetworkAndSymbol(network, symbol);
     const addresses = [tokenAddress];
-    for (const routeSymbol of collateral.uniswap.route) {
-        addresses.push(getTokenAddressByNetworkAndSymbol(network, routeSymbol));
-    }
+    // TODO: enable routing when getExchangeRateBySymbol support it as well
+    // for (const routeSymbol of collateral.uniswap.route) {
+    //     addresses.push(getTokenAddressByNetworkAndSymbol(network, routeSymbol));
+    // }
     addresses.push(getTokenAddressByNetworkAndSymbol(network, 'DAI'));
     return addresses;
 };

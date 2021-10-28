@@ -2,6 +2,7 @@ const NETWORKS: Record<string, NetworkConfig> = {
     mainnet: {
         chainId: '0x1',
         title: 'Main',
+        gasPrice: undefined,
         url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://etherscan.io',
         uniswapV2CalleeDaiAddress: '0x49399BB0Fcb52b32aB5A0909206BFf7B54FF80b3',
@@ -10,6 +11,7 @@ const NETWORKS: Record<string, NetworkConfig> = {
     kovan: {
         chainId: '0x2a',
         title: 'Kovan',
+        gasPrice: 1000000000,
         url: `https://kovan.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://kovan.etherscan.io',
         uniswapV2CalleeDaiAddress: '0x5A40F810754f725DA93e2362775a0600468f7a83',
@@ -36,6 +38,13 @@ export const getChainIdByNetworkType = function (networkType: string | null): st
 export const getNetworkTypeByChainId = function (chainId: string | null): string | undefined {
     const networkEntry = Object.entries(NETWORKS).find(([_, networkObject]) => networkObject.chainId === chainId);
     return networkEntry && networkEntry[0];
+};
+
+export const getNetworkConfigByType = function (networkType: string | null): NetworkConfig {
+    if (!networkType || !NETWORKS[networkType]) {
+        throw new Error(`No network found with name "${networkType}"`);
+    }
+    return NETWORKS[networkType];
 };
 
 export default NETWORKS;

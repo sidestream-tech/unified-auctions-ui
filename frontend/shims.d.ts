@@ -34,17 +34,20 @@ declare interface Auction {
     isFinished: boolean;
     marketPricePerCollateral?: BigNumber | number;
     marketValue?: BigNumber | number;
+    transactionProfit?: BigNumber | number;
     transactionAddress?: string;
 }
 
-declare interface AuctionTransaction extends Auction {
-    transactionProfit: number;
+declare interface TransactionFees {
     biddingTransactionFeeETH: BigNumber | number;
     biddingTransactionFeeDAI: BigNumber | number;
     authTransactionFeeETH: BigNumber | number;
     authTransactionFeeDAI: BigNumber | number;
     restartTransactionFeeETH: BigNumber | number;
-    transactionOutcome: number;
+}
+
+declare interface AuctionTransaction extends Auction, TransactionFees {
+    transactionOutcome: BigNumber | number;
 }
 
 declare interface UniswapTokenConfig {
@@ -70,6 +73,7 @@ declare interface NetworkConfig {
     chainId: string;
     title: string;
     url: string;
+    gasPrice?: number;
     etherscanUrl: string;
     uniswapV2CalleeDaiAddress: string;
     uniswapV2LpTokenCalleeDaiAddress: string;

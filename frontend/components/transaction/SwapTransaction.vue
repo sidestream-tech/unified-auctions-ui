@@ -63,6 +63,7 @@
             :is-explanations-shown="isExplanationsShown"
             :collateral-type="auctionTransaction.collateralType"
             :transaction-fee="auctionTransaction.biddingTransactionFeeETH"
+            :transaction-profit="auctionTransaction.transactionProfit"
             @execute="$emit('execute', auctionTransaction)"
         />
     </div>

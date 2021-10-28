@@ -39,7 +39,7 @@ export default Vue.extend({
     },
     computed: {
         ...mapGetters('auctions', {
-            auctions: 'list',
+            auctions: 'listAuctionTransactions',
             isAuctionsFetching: 'getIsFetching',
             isAuctionBidding: 'getIsBidding',
             auctionsError: 'getError',
@@ -91,10 +91,6 @@ export default Vue.extend({
                 this.fetchCollateralAuthorizationStatus(selectedAuction.collateralType);
             },
         },
-    },
-    created(): void {
-        this.$store.dispatch('auctions/fetch');
-        this.$store.dispatch('wallet/autoConnect');
     },
     methods: {
         ...mapActions('authorizations', [

@@ -3,18 +3,14 @@ import McdPlugin from '@makerdao/dai-plugin-mcd';
 // TODO: upstream local changes to liquidations plugin
 // import LiquidationPlugin from '@makerdao/dai-plugin-liquidations';
 import LiquidationPlugin from 'dai-monorepo/packages/dai-plugin-liquidations/src';
-import NETWORKS from './constants/NETWORKS';
+import { getNetworkConfigByType } from './constants/NETWORKS';
 
 let globalMaker: typeof Maker;
 let globalNetwork: string;
 
-const getNetworkURL = function (network: string): string {
-    return NETWORKS[network].url;
-};
-
 const createMaker = async function (network: string): Promise<typeof Maker> {
     console.info(`creating maker object with "${network}" network`);
-    const networkURL = getNetworkURL(network);
+    const networkConfig = getNetworkConfigByType(network);
     globalNetwork = network;
     globalMaker = await Maker.create('http', {
         plugins: [
@@ -22,13 +18,16 @@ const createMaker = async function (network: string): Promise<typeof Maker> {
             [LiquidationPlugin, { vulcanize: false }],
         ],
         provider: {
-            url: networkURL,
+            url: networkConfig.url,
             type: 'HTTP',
         },
         web3: {
             confirmedBlockCount: 5,
             statusTimerDelay: 24 * 60 * 60 * 1000,
             pollingInterval: 3000,
+            transactionSettings: {
+                gasPrice: networkConfig.gasPrice,
+            },
         },
         log: false,
         multicall: true,
@@ -46,6 +45,9 @@ const getMaker = async function (network?: string): Promise<typeof Maker> {
         }
         return globalMaker;
     }
+    if (!globalNetwork) {
+        return await createMaker(network);
+    }
     if (globalNetwork === network) {
         if (!globalMaker) {
             // if `getMaker` called two times at the same time,
@@ -55,7 +57,7 @@ const getMaker = async function (network?: string): Promise<typeof Maker> {
         }
         return globalMaker;
     }
-    return await createMaker(network);
+    throw new Error('Can not initialise dai.js on a different network');
 };
 
 export const addMakerAccount = async function (address: string, network?: string) {

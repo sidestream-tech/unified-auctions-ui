@@ -67,10 +67,9 @@
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
-                                <td>Vault Owner</td>
+                                <td>Vault address</td>
                                 <td>
-                                    <format-address :value="auction.vaultOwner" />
-                                    <format-address explicit :value="auction.vaultOwner" />
+                                    <format-address :value="auction.vaultOwner" disable />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">

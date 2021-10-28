@@ -21,8 +21,7 @@
                         here
                     </a></Explain
                 >. This operation should be done only once for all auctions and can be done in advance. Approximate
-                fee:
-                <FormatCurrency :value="auctionTransaction.biddingTransactionFeeETH" :decimals="6" currency="eth" />.
+                fee: <FormatCurrency :value="auctionTransaction.authTransactionFeeETH" :decimals="5" currency="eth" />.
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse my-3">
@@ -67,7 +66,7 @@
                 </Explain>
                 to alter your internal DAI balance and is needed to bid on the auction. This operation is done only
                 once per auction type and can be done in advance. Approximate fee:
-                <FormatCurrency :value="auctionTransaction.authTransactionFeeETH" :decimals="6" currency="eth" />.
+                <FormatCurrency :value="auctionTransaction.authTransactionFeeETH" :decimals="5" currency="eth" />.
             </div>
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">

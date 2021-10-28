@@ -8,3 +8,4 @@ export const WAD = new BigNumber('1e18');
 export const RAD = new BigNumber('1e45');
 export const RAY = new BigNumber('1e27');
 export const DAI_NUMBER_OF_DIGITS = 18;
+export const ETH_NUMBER_OF_DIGITS = 18;
