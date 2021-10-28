@@ -64,6 +64,7 @@ steps:
       INFURA_PROJECT_ID:
         from_secret: INFURA_PROJECT_ID
     settings:
+      cache_from: "ghcr.io/sidestream-tech/auction-ui/frontend:0.2.0"
       username:
         from_secret: github-username
       password:
