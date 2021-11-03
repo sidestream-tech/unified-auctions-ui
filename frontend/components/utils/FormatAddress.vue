@@ -35,6 +35,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        type: {
+            type: String,
+            default: 'tx',
+        },
     },
     computed: {
         addressStart(): string {
@@ -49,7 +53,7 @@ export default Vue.extend({
             return this.value.substr(this.value.length - TRIM_POSITION_FROM_END);
         },
         url(): string {
-            return `${this.etherscanURL}/tx/${this.value}`;
+            return `${this.etherscanURL}/${this.type}/${this.value}`;
         },
         etherscanURL(): string {
             if (!this.$store) {

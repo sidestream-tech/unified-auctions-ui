@@ -29,7 +29,7 @@
         </div>
         <div slot="till" slot-scope="till, record" class="text-center">
             <span v-if="record.isFinished" class="opacity-50"> Finished </span>
-            <span v-else-if="!record.isActive" class="opacity-50"> Inactive </span>
+            <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
             <time-till v-else :date="till" />
         </div>
         <div slot="action" slot-scope="text, record, index" class="w-full h-full">

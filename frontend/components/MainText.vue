@@ -21,10 +21,16 @@
         <TextBlock v-if="isExplanationsShown" class="TextBlock">
             <template #title>
                 What are the
-                <a
-                    href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#resetting-an-auction"
-                    target="_blank"
-                    >Liquidations</a
+
+                <Explain text="Liquidations">
+                    A
+                    <a
+                        href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation"
+                        target="_blank"
+                        >liquidation</a
+                    >
+                    is the automatic transfer of collateral from an insufficiently collateralized Vault to the
+                    protocol.</Explain
                 >?
             </template>
             To get DAI, people need to lock up some other cryptocurrency (e.g., ETH) in a vault. With time, if the
@@ -52,9 +58,12 @@
                 below the exchange rate on other marketplaces there is a chance to make a profit.
             </TextBlock>
             <TextBlock v-if="auctions.length > 0" title="Active auctions" class="TextBlock w-full">
-                There are {{ openAuctionsValues.length }} active auctions for
-                {{ openAuctionCurrencyTypes.length }} different types of collateral, {{ openAuctionNotActive }} of them
-                need<span v-if="openAuctionNotActive === 1">s</span> to be restarted.
+                There {{ unfinishedAuctionsCount === 1 ? 'is' : 'are' }} {{ unfinishedAuctionsCount }} auction<span
+                    v-if="unfinishedAuctionsCount !== 1"
+                    >s</span
+                >
+                for {{ openAuctionCurrencyTypes.length }} different types of collateral. {{ inactiveAuctionsCount }} of
+                them need to be restarted.
             </TextBlock>
             <TextBlock v-else title="No active auctions" class="TextBlock">
                 Currently, there are no active auctions. Times of steep price drops in cryptocurrencies bear the
@@ -138,11 +147,6 @@ export default Vue.extend({
         },
     },
     computed: {
-        openAuctionsValues(): Array<number> {
-            return this.auctions
-                .filter((auction: Auction) => new Date(auction.till).getTime() > new Date().getTime())
-                .map((auction: Auction) => Number(auction.amountDAI));
-        },
         openAuctionCurrencyTypes(): Array<string> {
             const currencyTypes: string[] = [];
             this.auctions.forEach(auction => {
@@ -152,7 +156,7 @@ export default Vue.extend({
             });
             return currencyTypes;
         },
-        openAuctionNotActive(): number {
+        inactiveAuctionsCount(): number {
             let nonActiveAuctions = 0;
             this.auctions.forEach(auction => {
                 if (!auction.isActive) {
@@ -160,6 +164,9 @@ export default Vue.extend({
                 }
             });
             return nonActiveAuctions;
+        },
+        unfinishedAuctionsCount(): number {
+            return this.auctions.filter(auction => !auction.isFinished).length;
         },
         params(): MakerParams {
             return getParams();

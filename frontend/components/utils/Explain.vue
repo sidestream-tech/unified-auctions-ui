@@ -10,7 +10,9 @@
     >
         <span class="Explain" :class="{ Pressed: isVisible }">{{ text }}</span>
         <template #content>
-            <slot>{{ content }}</slot>
+            <div class="capitalize-first">
+                <slot>{{ content }}</slot>
+            </div>
         </template>
     </Popover>
 </template>
@@ -70,6 +72,9 @@ export default Vue.extend({
 }
 .Explain.Pressed {
     @apply border-yellow-400;
+}
+.capitalize-first::first-letter {
+    @apply uppercase;
 }
 </style>
 

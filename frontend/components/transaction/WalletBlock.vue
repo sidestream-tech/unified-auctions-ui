@@ -3,7 +3,7 @@
         <TextBlock v-if="isExplanationsShown" title="Connect a wallet">
             <div v-if="walletAddress">
                 The operation will be carried over the connected wallet
-                <format-address shorten :value="walletAddress" />
+                <format-address shorten :value="walletAddress" type="address" />
             </div>
             <div v-else>
                 To participate in the auction, you need to connect a wallet. If you don’t have a wallet yet, you can
