@@ -24,6 +24,7 @@
                         :is-explanations-shown="isExplanationsShown"
                         class="mt-6 mb-8 mx-8"
                         :auction="selectedAuction"
+                        :wallet-address="walletAddress"
                         :auction-id="selectedAuctionId"
                         :is-auctions-loading="isAuctionsLoading"
                         @restart="$emit('restart', $event)"

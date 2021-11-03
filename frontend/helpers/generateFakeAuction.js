@@ -28,6 +28,7 @@ export const generateFakeAuction = function () {
         isActive,
         transactionProfit,
         isFinished,
+        isRestarting: false,
         transactionAddress: undefined,
     };
 };

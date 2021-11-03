@@ -66,6 +66,9 @@ export const mutations = {
         state.auctionStorage[id].isFinished = true;
         state.auctionStorage[id].till = new Date().toISOString();
     },
+    setAuctionRestarting(state: State, { id, isRestarting }: { id: string; isRestarting: boolean }) {
+        state.auctionStorage[id].isRestarting = isRestarting;
+    },
     setIsFetching(state: State, isFetching: boolean) {
         state.isFetching = isFetching;
     },
@@ -120,16 +123,18 @@ export const actions = {
             commit('setIsBidding', false);
         }
     },
-    async restart({ getters, dispatch }: ActionContext<State, State>, id: string) {
+    async restart({ getters, dispatch, commit }: ActionContext<State, State>, id: string) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
             message.error(`Auction reset error: can not find auction with id "${id}"`);
             return;
         }
+        commit('setAuctionRestarting', { id, isRestarting: true });
         try {
             await restartAuction(auction.collateralType, auction.auctionId);
             await dispatch('fetchWithoutLoading');
         } catch (error) {
+            commit('setAuctionRestarting', { id, isRestarting: false });
             console.error(`Auction redo error: ${error.message}`);
         }
     },

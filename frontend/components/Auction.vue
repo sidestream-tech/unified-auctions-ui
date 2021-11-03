@@ -1,13 +1,15 @@
 <template>
     <TextBlock :title="`Auction #${auctionId}`">
         <Alert v-if="errorText" :message="errorText" type="error" />
-        <RestartBlock
-            v-if="errorText === 'This auction is inactive and must be restarted'"
-            :transaction-fee="auction.restartTransactionFeeETH"
-            :is-explanations-shown="isExplanationsShown"
-            @restart="$emit('restart', auctionId)"
-        />
         <div v-if="auction">
+            <RestartBlock
+                v-if="errorText === 'This auction is inactive and must be restarted'"
+                :transaction-fee="auction.restartTransactionFeeETH"
+                :is-explanations-shown="isExplanationsShown"
+                :wallet-address="walletAddress"
+                :is-restarting="auction.isRestarting"
+                @restart="$emit('restart', auctionId)"
+            />
             <div class="relative mt-4">
                 <table class="w-full table-fixed border-collapse border">
                     <tbody>
@@ -219,6 +221,10 @@ export default Vue.extend({
         isAuctionsLoading: {
             type: Boolean,
             default: false,
+        },
+        walletAddress: {
+            type: String,
+            default: null,
         },
     },
     data() {

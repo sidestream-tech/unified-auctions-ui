@@ -38,9 +38,20 @@
             <FormatCurrency :value="transactionFee" :decimals="5" currency="eth" />.
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
-            <base-button class="w-full md:w-80" type="primary" @click="$emit('restart')">
-                Restart Auction
-            </base-button>
+            <Tooltip :title="!walletAddress ? 'Please connect a wallet' : null" placement="top">
+                <div>
+                    <base-button
+                        class="w-full md:w-80"
+                        type="primary"
+                        :is-loading="isRestarting"
+                        :disabled="!walletAddress || isRestarting"
+                        @click="$emit('restart')"
+                    >
+                        <span v-if="isRestarting">Restarting...</span>
+                        <span v-else>Restart Auction</span>
+                    </base-button>
+                </div>
+            </Tooltip>
         </div>
     </div>
 </template>
@@ -48,6 +59,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
+import { Tooltip } from 'ant-design-vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
@@ -55,7 +67,7 @@ import Explain from '~/components/utils/Explain.vue';
 
 export default Vue.extend({
     name: 'RestartBlock',
-    components: { TextBlock, BaseButton, FormatCurrency, Explain },
+    components: { TextBlock, BaseButton, FormatCurrency, Explain, Tooltip },
     props: {
         transactionFee: {
             type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
@@ -64,6 +76,14 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        walletAddress: {
+            type: String,
+            default: null,
+        },
+        isRestarting: {
+            type: Boolean,
+            default: false,
         },
     },
 });
