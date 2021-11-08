@@ -11,10 +11,11 @@ RUN npm ci
 
 FROM dependency-base AS production-base
 
-# Set server origin
+# bake env variables
 ARG INFURA_PROJECT_ID
 ENV INFURA_PROJECT_ID=${INFURA_PROJECT_ID}
-
+ARG PRODUCTION_DOMAIN
+ENV PRODUCTION_DOMAIN=${PRODUCTION_DOMAIN}
 
 # generate will also take care of building
 # if necessary
