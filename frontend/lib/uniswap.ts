@@ -4,7 +4,7 @@
 */
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
-import { Fetcher, Token, Route, Trade, TokenAmount, TradeType } from '@uniswap/sdk';
+import { Fetcher, Token, Route, Pair, Trade, TokenAmount, TradeType } from '@uniswap/sdk';
 import NETWORKS, { getDecimalChainIdByNetworkType } from '~/lib/constants/NETWORKS';
 import {
     getCollateralConfigBySymbol,
@@ -25,19 +25,19 @@ const getProvider = function (network: string): ethers.providers.JsonRpcProvider
     return providers[network];
 };
 
-const getUniswapRouteAddressesBySymbol = function (network: string, symbol: string): string[] {
+const getCompleteExchangePathBySymbol = function (symbol: string, useExchangeRoute: boolean = true) {
     const collateral = getCollateralConfigBySymbol(symbol);
     if (collateral.uniswap.type !== 'token') {
         throw new Error(`"${symbol}" is not a uniswap token`);
     }
-    const tokenAddress = getTokenAddressByNetworkAndSymbol(network, symbol);
-    const addresses = [tokenAddress];
-    // TODO: enable routing when getExchangeRateBySymbol support it as well
-    // for (const routeSymbol of collateral.uniswap.route) {
-    //     addresses.push(getTokenAddressByNetworkAndSymbol(network, routeSymbol));
-    // }
-    addresses.push(getTokenAddressByNetworkAndSymbol(network, 'DAI'));
-    return addresses;
+    return !useExchangeRoute ? [symbol, 'DAI'] : [symbol, ...collateral.uniswap.route, 'DAI'];
+};
+
+const getUniswapRouteAddressesBySymbol = function (network: string, symbol: string): string[] {
+    const completeExchangePath = getCompleteExchangePathBySymbol(symbol);
+    return completeExchangePath.map(exchangePathSymbol =>
+        getTokenAddressByNetworkAndSymbol(network, exchangePathSymbol)
+    );
 };
 
 export const getUniswapParametersByCollateral = async function (
@@ -89,25 +89,53 @@ const getUniswapTokenBySymbol = function (network: string, symbol: string): Toke
     return new Token(decimalChainId, tokenAddress, tokenDecimals, symbol);
 };
 
+const getUniswapPairBySymbols = async function (network: string, symbol1: string, symbol2: string): Promise<Pair> {
+    const provider = getProvider(network);
+    const token1 = getUniswapTokenBySymbol(network, symbol1);
+    const token2 = getUniswapTokenBySymbol(network, symbol2);
+    try {
+        return await Fetcher.fetchPairData(token1, token2, provider);
+    } catch (error) {
+        throw new Error(`The pair of "${symbol1}/${symbol2}" is not tradable on UniSwap "${network}" network`);
+    }
+};
+
+const splitArrayIntoPairs = function (array: string[]): string[][] {
+    /* 
+        Function that takes an array of strings, e.g.: `[ 'one', 'two', 'three' ]`
+        and turns it into array or pairs, e.g.: `[ ['one', 'two'], [ 'two', 'three' ] ]`
+    */
+    const pairs = [];
+    for (let index = 0; index < array.length - 1; index++) {
+        pairs.push([array[index], array[index + 1]]);
+    }
+    return pairs;
+};
+
 export const getExchangeRateBySymbol = async function (
     network: string,
     symbol: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<BigNumber> {
-    const provider = getProvider(network);
-    const daiToken = getUniswapTokenBySymbol(network, 'DAI');
-    const collateralToken = getUniswapTokenBySymbol(network, symbol);
+    /* 
+        More info on how it works and other available numbers can be found here:
+        https://www.quicknode.com/guides/defi/how-to-interact-with-uniswap-using-javascript#interacting-with-uniswap
+    */
     const collateral = getCollateralConfigBySymbol(symbol);
-    const pair = await Fetcher.fetchPairData(daiToken, collateralToken, provider);
-    const route = new Route([pair], collateralToken);
-    const trade = new Trade(
-        route,
-        new TokenAmount(collateralToken, amount.shiftedBy(collateral.decimals).toFixed(0)),
+    if (collateral.uniswap.type !== 'token') {
+        throw new Error(`"${symbol}" is not a uniswap token`);
+    }
+    const completeExchangePath = getCompleteExchangePathBySymbol(symbol);
+    const pairs = splitArrayIntoPairs(completeExchangePath);
+    const uniswapPairs = await Promise.all(pairs.map(pair => getUniswapPairBySymbols(network, pair[0], pair[1])));
+    const exchangeToken = getUniswapTokenBySymbol(network, symbol);
+    const uniswapRoute = new Route(uniswapPairs, exchangeToken);
+    const uniswapTrade = new Trade(
+        uniswapRoute,
+        new TokenAmount(exchangeToken, amount.shiftedBy(collateral.decimals).toFixed(0)),
         TradeType.EXACT_INPUT
     );
-    // More info on how it works and other available numbers can be found here:
-    // https://www.quicknode.com/guides/defi/how-to-interact-with-uniswap-using-javascript#interacting-with-uniswap
-    return new BigNumber(trade.executionPrice.toSignificant(collateral.decimals));
+    return new BigNumber(uniswapTrade.executionPrice.toSignificant(collateral.decimals));
 };
 
 export const checkAllExchangeRates = async function (network: string): Promise<void> {
