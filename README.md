@@ -1,4 +1,6 @@
-# Auction UI
+![Screenshot of the main page](./screenshot.jpg)
+
+# Unified Auctions UI
 
 The tool to enable easy and straightforward participation in [MakerDAO](https://makerdao.com/) liquidations for users both completely unfamiliar with Maker protocol but also experts.
 
