@@ -5,6 +5,7 @@
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Fetcher, Token, Route, Pair, Trade, TokenAmount, TradeType } from '@uniswap/sdk';
+import { abi as uniswapV2PairABI } from '@uniswap/v2-core/build/UniswapV2Pair.json';
 import NETWORKS, { getDecimalChainIdByNetworkType } from '~/lib/constants/NETWORKS';
 import {
     getCollateralConfigBySymbol,
@@ -26,6 +27,10 @@ const getProvider = function (network: string): ethers.providers.JsonRpcProvider
 };
 
 const getCompleteExchangePathBySymbol = function (symbol: string, useExchangeRoute: boolean = true) {
+    if (symbol === 'DAI') {
+        // no exchange is needed for DAI -> DAI
+        return ['DAI'];
+    }
     const collateral = getCollateralConfigBySymbol(symbol);
     if (collateral.uniswap.type !== 'token') {
         throw new Error(`"${symbol}" is not a uniswap token`);
@@ -112,18 +117,71 @@ const splitArrayIntoPairs = function (array: string[]): string[][] {
     return pairs;
 };
 
-export const getExchangeRateBySymbol = async function (
+const getLpTokenTotalSupply = async function (network: string, symbol: string): Promise<BigNumber> {
+    const provider = getProvider(network);
+    const address = getTokenAddressByNetworkAndSymbol(network, symbol);
+    const contract = new ethers.Contract(address, uniswapV2PairABI, provider);
+    const totalSupply = await contract.totalSupply();
+    const collateral = getCollateralConfigBySymbol(symbol);
+    return new BigNumber(totalSupply).shiftedBy(-collateral.decimals);
+};
+
+const getTotalPriceInDai = async function (
+    network: string,
+    reserve: TokenAmount,
+    portionOfTheTotalSupply: BigNumber
+): Promise<BigNumber> {
+    if (!reserve.token.symbol) {
+        throw new Error(`reserve.token.symbol is not defined`);
+    }
+    const amountInThePool = new BigNumber(reserve.toFixed(reserve.token.decimals));
+    const amountOwned = amountInThePool.multipliedBy(portionOfTheTotalSupply);
+    const tokenExchangeRate = await getRegularTokenExchangeRateBySymbol(network, reserve.token.symbol, amountOwned);
+    return tokenExchangeRate.multipliedBy(amountOwned);
+};
+
+const getLpTokenExchangeRateBySymbol = async function (
     network: string,
     symbol: string,
-    amount: BigNumber = new BigNumber('1')
+    amount: BigNumber
+): Promise<BigNumber> {
+    const collateral = getCollateralConfigBySymbol(symbol);
+    if (collateral.uniswap.type !== 'lpToken') {
+        throw new Error(`"${collateral.symbol}" is not a UniSwap LP token`);
+    }
+    const uniswapPair = await getUniswapPairBySymbols(network, collateral.uniswap.token0, collateral.uniswap.token1);
+    const totalSupply = await getLpTokenTotalSupply(network, symbol);
+    const portionOfTheTotalSupply = amount.div(totalSupply);
+    const totalPriceOfToken0 = await getTotalPriceInDai(
+        network,
+        uniswapPair.reserveOf(getUniswapTokenBySymbol(network, collateral.uniswap.token0)),
+        portionOfTheTotalSupply
+    );
+    const totalPriceOfToken1 = await getTotalPriceInDai(
+        network,
+        uniswapPair.reserveOf(getUniswapTokenBySymbol(network, collateral.uniswap.token1)),
+        portionOfTheTotalSupply
+    );
+    const totalPrice = totalPriceOfToken0.plus(totalPriceOfToken1);
+    return totalPrice.dividedBy(amount);
+};
+
+const getRegularTokenExchangeRateBySymbol = async function (
+    network: string,
+    symbol: string,
+    amount: BigNumber
 ): Promise<BigNumber> {
     /* 
-        More info on how it works and other available numbers can be found here:
+        More info on how UniSwap works and other available methods can be found here:
         https://www.quicknode.com/guides/defi/how-to-interact-with-uniswap-using-javascript#interacting-with-uniswap
     */
+    if (symbol === 'DAI') {
+        // exchnage rate between DAI and DAI is always 1
+        return new BigNumber(1);
+    }
     const collateral = getCollateralConfigBySymbol(symbol);
     if (collateral.uniswap.type !== 'token') {
-        throw new Error(`"${symbol}" is not a uniswap token`);
+        throw new Error(`"${collateral.symbol}" is not an UniSwap token`);
     }
     const completeExchangePath = getCompleteExchangePathBySymbol(symbol);
     const pairs = splitArrayIntoPairs(completeExchangePath);
@@ -136,6 +194,21 @@ export const getExchangeRateBySymbol = async function (
         TradeType.EXACT_INPUT
     );
     return new BigNumber(uniswapTrade.executionPrice.toSignificant(collateral.decimals));
+};
+
+export const getExchangeRateBySymbol = async function (
+    network: string,
+    symbol: string,
+    amount: BigNumber = new BigNumber('1')
+): Promise<BigNumber> {
+    const collateral = getCollateralConfigBySymbol(symbol);
+    if (collateral.uniswap.type === 'token') {
+        return await getRegularTokenExchangeRateBySymbol(network, symbol, amount);
+    }
+    if (collateral.uniswap.type === 'lpToken') {
+        return await getLpTokenExchangeRateBySymbol(network, symbol, amount);
+    }
+    throw new Error(`"${symbol}" is not a uniswap token`);
 };
 
 export const checkAllExchangeRates = async function (network: string): Promise<void> {

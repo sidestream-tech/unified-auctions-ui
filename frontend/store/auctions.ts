@@ -118,7 +118,7 @@ export const actions = {
             const transactionAddress = await bidOnTheAuction(network, auction);
             commit('setAuctionFinish', { id, transactionAddress });
         } catch (error) {
-            console.error(`Bidding error: ${error.message}`);
+            console.error('Bidding error', error);
         } finally {
             commit('setIsBidding', false);
         }

@@ -79,9 +79,15 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     const collateralNames = Object.keys(COLLATERALS);
 
     // get all auctions
-    const auctionGroupsPromises = collateralNames.map((collateralName: string) =>
-        fetchAuctionsByType(collateralName, maker)
-    );
+    const auctionGroupsPromises = collateralNames.map((collateralName: string) => {
+        // hack to get over invalid token addresses hardcoded in dai.js mcd plugin
+        // https://github.com/makerdao/dai.js/blob/dev/packages/dai-plugin-mcd/contracts/addresses/kovan.json#L153-L201
+        // TODO: remove this as soon as we fetch addresses ourselves
+        if (network === 'kovan' && collateralName.startsWith('UNIV2') && collateralName !== 'UNIV2DAIETH-A') {
+            return [];
+        }
+        return fetchAuctionsByType(collateralName, maker);
+    });
     const auctionGroups = await Promise.all(auctionGroupsPromises);
     const auctions = auctionGroups.flat();
 
