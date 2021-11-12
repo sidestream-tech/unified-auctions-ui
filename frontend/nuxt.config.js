@@ -1,3 +1,5 @@
+import pkg from './package.json';
+
 export default {
     // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
     ssr: false,
@@ -10,6 +12,7 @@ export default {
         DEMO_MODE: process.env.DEMO_MODE || false,
         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,
         CONTACT_EMAIL: process.env.CONTACT_EMAIL || undefined,
+        GITHUB_URL: pkg.repository.url,
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head

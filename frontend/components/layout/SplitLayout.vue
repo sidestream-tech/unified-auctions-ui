@@ -1,8 +1,9 @@
 <template>
     <div class="Container" :class="{ Step1: step === 1, Step2: step === 2 }">
         <div class="Slot0">
-            <slot name="step0" :step="step" />
+            <slot class="min-h-screen" name="step0" :step="step" />
             <div class="Overlay" @click="closeSidePanel" />
+            <Footer />
         </div>
 
         <div class="Slot1">
@@ -27,9 +28,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import CloseIcon from '~/assets/icons/close.svg';
+import Footer from '~/components/layout/Footer.vue';
 
 export default Vue.extend({
     components: {
+        Footer,
         CloseIcon,
     },
     props: {

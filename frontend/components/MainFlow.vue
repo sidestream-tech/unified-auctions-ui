@@ -5,7 +5,7 @@
                 <div v-if="isExplanationsShown" class="h-1/2">
                     <LandingBlock @explanations="explanationsTrigger" />
                 </div>
-                <div class="mx-4 md:mx-0">
+                <div class="mx-4 md:mx-0 MainTextContainer">
                     <MainText
                         ref="mainText"
                         :auctions="auctions"
@@ -152,5 +152,8 @@ export default Vue.extend({
 <style scoped>
 .SplitLayoutContainer {
     height: calc(100vh - 4rem);
+}
+.MainTextContainer {
+    min-height: calc(100vh - 10rem);
 }
 </style>
