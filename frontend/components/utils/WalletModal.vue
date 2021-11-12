@@ -1,18 +1,18 @@
 <template>
     <Modal
-        :visible="visible"
+        :visible="isShown"
         class="WalletModal"
         title="Connect a Wallet"
         :footer="null"
         :dialog-style="{ top: '60px' }"
-        @cancel="cancel"
+        @cancel="close"
     >
         <ul>
             <li
                 v-for="wallet in wallets"
                 :key="wallet.value"
-                class="w-full hover:bg-gray-200 px-4 py-2 cursor-pointer flex"
-                @click="$emit('connect', wallet.value)"
+                class="w-full hover:bg-primary px-4 py-2 cursor-pointer flex items-center"
+                @click="submit(wallet.value)"
             >
                 <component :is="wallet.icon" v-if="wallet.icon" class="w-8 pr-3" />
                 {{ wallet.label }}
@@ -32,7 +32,7 @@ export default Vue.extend({
         Modal,
     },
     props: {
-        visible: {
+        isShown: {
             type: Boolean,
             default: false,
         },
@@ -45,8 +45,12 @@ export default Vue.extend({
         },
     },
     methods: {
-        cancel() {
-            this.$emit('update:visible', false);
+        submit(wallet: string) {
+            this.$emit('connect', wallet);
+            this.$emit('close');
+        },
+        close() {
+            this.$emit('close');
         },
     },
 });

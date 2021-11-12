@@ -22,8 +22,10 @@
                     :wallet-address="walletAddress"
                     :is-loading="isWalletLoading"
                     :is-modal-open="isWalletModalOpen"
+                    :has-accepted-terms="hasAcceptedTerms"
                     @update:isModalOpen="$emit('update:isModalOpen', $event)"
                     @changeWalletType="$emit('changeWalletType', $event)"
+                    @openTermsModal="$emit('openTermsModal')"
                 />
 
                 <ThemeSwitcher :dark-mode="darkMode" @update="$emit('update:darkMode', $event)" />
@@ -72,6 +74,10 @@ export default Vue.extend({
             default: false,
         },
         isWalletModalOpen: {
+            type: Boolean,
+            default: false,
+        },
+        hasAcceptedTerms: {
             type: Boolean,
             default: false,
         },

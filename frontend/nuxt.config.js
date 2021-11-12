@@ -9,6 +9,7 @@ export default {
         INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID,
         DEMO_MODE: process.env.DEMO_MODE || false,
         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,
+        CONTACT_EMAIL: process.env.CONTACT_EMAIL || undefined,
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head

@@ -7,6 +7,7 @@ interface State {
     network: string | null;
     isExplanationsShown: boolean;
     isDarkMode: boolean | undefined;
+    acceptedTerms: boolean;
     chainID: string | null;
 }
 
@@ -15,6 +16,7 @@ export const state = (): State => ({
     chainID: '0x2a',
     isExplanationsShown: true,
     isDarkMode: undefined,
+    acceptedTerms: false,
 });
 
 export const getters = {
@@ -39,6 +41,9 @@ export const getters = {
         }
         return !getNetworkTypeByChainId(state.chainID);
     },
+    getAcceptedTerms(state: State): boolean {
+        return state.acceptedTerms;
+    },
 };
 
 export const mutations = {
@@ -53,6 +58,9 @@ export const mutations = {
     },
     setChainID(state: State, chainID: string | null): void {
         state.chainID = chainID;
+    },
+    setAcceptedTerms(state: State, accepted: boolean): void {
+        state.acceptedTerms = accepted;
     },
 };
 

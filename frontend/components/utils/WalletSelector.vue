@@ -16,6 +16,10 @@
             <FormatAddress v-else-if="walletAddress" :value="walletAddress" shorten disable />
         </template>
     </Select>
+    <div v-else-if="!hasAcceptedTerms" class="flex items-center cursor-pointer" @click="$emit('openTermsModal')">
+        <icon type="wallet" class="pr-2 text-3xl md:text-sm" />
+        <span class="hidden lg:inline">Connect a Wallet</span>
+    </div>
     <Select
         v-else
         title="Connect a Wallet"
@@ -53,6 +57,10 @@ export default Vue.extend({
             default: false,
         },
         isModalOpen: {
+            type: Boolean,
+            default: false,
+        },
+        hasAcceptedTerms: {
             type: Boolean,
             default: false,
         },

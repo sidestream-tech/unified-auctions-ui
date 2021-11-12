@@ -19,7 +19,6 @@
             @restart="restartAuction"
             @execute="execute"
         />
-        <WalletModal :visible.sync="isModalOpen" @connect="connect" />
     </div>
 </template>
 
@@ -27,15 +26,10 @@
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import MainFlow from '~/components/MainFlow.vue';
-import WalletModal from '~/components/utils/WalletModal.vue';
 
 export default Vue.extend({
     components: {
         MainFlow,
-        WalletModal,
-    },
-    data() {
-        return { isModalOpen: false };
     },
     computed: {
         ...mapGetters('auctions', {
@@ -79,6 +73,9 @@ export default Vue.extend({
         selectedAuction(): Auction | null {
             return this.auctions.find((auction: Auction) => auction.id === this.selectedAuctionId) || null;
         },
+        hasAcceptedTerms(): boolean {
+            return this.$store.getters['preferences/getAcceptedTerms'];
+        },
     },
     watch: {
         selectedAuction: {
@@ -101,11 +98,11 @@ export default Vue.extend({
         ]),
         ...mapActions('auctions', ['bid', 'restart']),
         openWalletModal(): void {
-            this.isModalOpen = true;
-        },
-        connect(walletType: string): void {
-            this.isModalOpen = false;
-            this.$store.dispatch('wallet/changeWalletType', walletType);
+            if (!this.hasAcceptedTerms) {
+                this.$store.commit('modals/setTermsModal', true);
+                return;
+            }
+            this.$store.commit('modals/setWalletModal', true);
         },
         disconnect(): void {
             this.$store.dispatch('wallet/disconnect');

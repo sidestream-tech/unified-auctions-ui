@@ -5,7 +5,7 @@ import ForceNetworkModal from '~/components/ForceNetworkModal';
 const common = {
     components: { ForceNetworkModal },
     data: () => ({
-        invalidNetwork: '0x4',
+        chainId: '0x5',
     }),
     methods: {
         updateNetwork(newNetwork) {
@@ -14,7 +14,7 @@ const common = {
     },
 };
 
-storiesOf('ForceNetworkModal', module).add('Default', () => ({
+storiesOf('Modals/ForceNetworkModal', module).add('Default', () => ({
     ...common,
-    template: '<ForceNetworkModal :invalid-network="invalidNetwork" @updateNetwork="updateNetwork" />',
+    template: '<ForceNetworkModal :is-invalid-network="true" :chain-id="chainId" @updateNetwork="updateNetwork" />',
 }));
