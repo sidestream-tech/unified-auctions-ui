@@ -3,8 +3,10 @@ import trackTransaction from './tracker';
 import getMaker from '~/lib/maker';
 import getWallet from '~/lib/wallet';
 import COLLATERALS from '~/lib/constants/COLLATERALS';
-import { WAD, RAD, RAY } from '~/lib/constants/UNITS';
+import { WAD, RAD, RAY, WAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS } from '~/lib/constants/UNITS';
 import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from '~/lib/uniswap';
+
+BigNumber.config({ DECIMAL_PLACES: RAY_NUMBER_OF_DIGITS });
 
 const fetchAuctionsByType = async function (type: string, maker: any): Promise<Auction[]> {
     const protoAuctions = await maker.service('liquidation').getAllClips(type);
@@ -122,8 +124,8 @@ export const bidOnTheAuction = async function (network: string, auction: Auction
         .take(
             auction.collateralType,
             auction.auctionId,
-            auction.amountRAW.toString(),
-            auction.amountPerCollateral.toString(),
+            auction.amountRAW.toFixed(WAD_NUMBER_OF_DIGITS),
+            auction.amountPerCollateral.toFixed(RAY_NUMBER_OF_DIGITS),
             calleeAddress,
             flashData
         );
