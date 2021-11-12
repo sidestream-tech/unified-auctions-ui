@@ -63,6 +63,10 @@ steps:
     environment:
       INFURA_PROJECT_ID:
         from_secret: INFURA_PROJECT_ID
+      CONTACT_EMAIL:
+        from_secret: CONTACT_EMAIL
+      PRODUCTION_DOMAIN:
+        from_secret: PRODUCTION_DOMAIN
     settings:
       cache_from: "ghcr.io/sidestream-tech/auction-ui/frontend:0.2.0"
       username:
@@ -75,6 +79,10 @@ steps:
       context: frontend/
       build_args_from_env:
         - INFURA_PROJECT_ID
+      build_args_from_env:
+        - CONTACT_EMAIL
+      build_args_from_env:
+        - PRODUCTION_DOMAIN
       custom_labels:
         - org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui
 
