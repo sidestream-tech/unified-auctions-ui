@@ -67,7 +67,7 @@ export default Vue.extend({
     @apply absolute hidden md:w-1/2 w-full h-full right-0 top-0 overflow-hidden  transition-all duration-500 z-30;
 }
 .SlotContainer {
-    @apply relative w-full h-full bg-white dark:bg-dark overflow-auto shadow-2xl md:shadow-none;
+    @apply relative w-full h-full bg-white dark:bg-gray-900 overflow-auto shadow-2xl md:shadow-none;
 }
 .Step1 .CloseIcon,
 .Step2 .Slot2 .CloseIcon {

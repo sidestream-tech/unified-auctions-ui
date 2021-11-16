@@ -1,3 +1,4 @@
+const colors = require('tailwindcss/colors');
 /*
  ** TailwindCSS Configuration File
  **
@@ -9,6 +10,7 @@ module.exports = {
     theme: {
         extend: {
             colors: {
+                gray: colors.trueGray,
                 primary: {
                     light: '#8dd7cf',
                     DEFAULT: '#1AAB9B',

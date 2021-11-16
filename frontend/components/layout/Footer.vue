@@ -3,10 +3,10 @@
         <ul
             class="
                 flex flex-col
-                lg:flex-row
+                md:flex-row
                 items-center
                 space-y-2 space-x-0
-                lg:space-y-0 lg:space-x-10
+                md:space-y-0 md:space-x-10
                 justify-center
             "
         >
@@ -50,11 +50,11 @@ export default Vue.extend({
 
 <style scoped>
 .Footer {
-    @apply bg-gray-100 w-full py-4 mt-8 dark:bg-dark-light;
+    @apply opacity-75 bg-gray-100 w-full py-4 mt-8 dark:bg-gray-800;
 }
 
 .Footer .FooterLink {
-    @apply font-bold text-base dark:text-gray-100;
+    @apply dark:text-gray-100;
 }
 
 .Footer a {

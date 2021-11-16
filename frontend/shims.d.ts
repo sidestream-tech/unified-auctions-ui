@@ -9,6 +9,10 @@ declare module '*.png' {
     const content: string;
     export default content;
 }
+declare module '*.jpg' {
+    const content: string;
+    export default content;
+}
 
 // stub modules that unfortunetely doesn't have any types
 declare module '@makerdao/*' {

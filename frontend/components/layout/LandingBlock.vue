@@ -21,7 +21,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Button from '~/components/common/BaseButton.vue';
-import backgroundImage from '~/assets/images/background-image.png';
+import backgroundImage from '~/assets/images/background-image.jpg';
 
 export default Vue.extend({
     components: {

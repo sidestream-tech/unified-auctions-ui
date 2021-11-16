@@ -70,19 +70,18 @@
                 highest probability for auctions to be triggered.
             </TextBlock>
         </template>
-        <Loading
-            :is-loading="isAuctionsLoading"
-            :error="auctionsError"
+        <div
             class="w-full self-center Loading"
-            :class="{ 'max-w-4xl': isExplanationsShown }"
+            :class="{ 'max-w-4xl': isExplanationsShown, 'md:px-10': !isExplanationsShown }"
         >
-            <AuctionsTable
-                :class="{ 'md:mx-10': !isExplanationsShown }"
-                class="block overflow-x-auto"
-                :auctions="auctions"
-                :selected-auction-id.sync="selectedAuctionId"
-            />
-        </Loading>
+            <Loading :is-loading="isAuctionsLoading" :error="auctionsError">
+                <AuctionsTable
+                    class="block overflow-x-auto"
+                    :auctions="auctions"
+                    :selected-auction-id.sync="selectedAuctionId"
+                />
+            </Loading>
+        </div>
         <TextBlock v-if="isExplanationsShown" title="What's the catch?" class="TextBlock">
             This situation exists in the first place, because the Maker protocol can not be executed by itself. There
             need to be players who execute vital parts of the protocol and pay a
