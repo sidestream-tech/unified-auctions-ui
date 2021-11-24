@@ -28,6 +28,7 @@ export const generateFakeAuction = function () {
         isActive,
         transactionProfit,
         isFinished,
+        start: faker.date.recent(),
         isRestarting: false,
         transactionAddress: undefined,
     };

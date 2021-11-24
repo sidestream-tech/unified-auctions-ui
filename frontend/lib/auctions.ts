@@ -29,6 +29,7 @@ const fetchAuctionsByType = async function (type: string, maker: any): Promise<A
             isActive,
             isFinished: false,
             isRestarting: false,
+            start: protoAuction.created,
         };
     });
 };

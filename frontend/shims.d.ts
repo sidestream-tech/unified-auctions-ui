@@ -41,6 +41,7 @@ declare interface Auction {
     marketValue?: BigNumber | number;
     transactionProfit?: BigNumber | number;
     transactionAddress?: string;
+    start: Date;
 }
 
 declare interface TransactionFees {
