@@ -10,8 +10,7 @@
         </template>
         <template #title>
             <div v-if="isLoading" class="flex items-center">
-                <span v-if="!walletAddress">Connecting...</span>
-                <span v-else>Disconnecting...</span>
+                <span>Connecting...</span>
             </div>
             <FormatAddress v-else-if="walletAddress" :value="walletAddress" shorten disable />
         </template>

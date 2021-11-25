@@ -7,6 +7,7 @@
         :row-key="record => record.id"
         :custom-row="customRowEvents"
         :get-popup-container="() => $el"
+        :locale="{ emptyText: 'No active auctions' }"
         class="AuctionsTable relative overflow-visible"
     >
         <div slot="amountRAW" slot-scope="amountRAW, record" class="flex items-center space-x-2">
@@ -29,6 +30,7 @@
         </div>
         <div slot="till" slot-scope="till, record" class="text-center">
             <span v-if="record.isFinished" class="opacity-50"> Finished </span>
+            <span v-else-if="record.isRestarting" class="opacity-50"> Restarting </span>
             <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
             <time-till v-else :date="till" />
         </div>
