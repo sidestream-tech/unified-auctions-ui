@@ -47,10 +47,11 @@ const getUniswapRouteAddressesBySymbol = function (network: string, symbol: stri
 
 export const getUniswapParametersByCollateral = async function (
     network: string,
-    collateralType: string
+    collateralType: string,
+    alternativeDestinationAddress?: string
 ): Promise<string> {
     const maker = await getMaker();
-    const wallet = getWallet();
+    const destinationAddress = alternativeDestinationAddress || getWallet().address;
     const collateral = getCollateralConfigByType(collateralType);
     // TODO: properly calculate minimum profit value
     const minProfit = 0;
@@ -58,7 +59,7 @@ export const getUniswapParametersByCollateral = async function (
     if (collateral.uniswap.type === 'token') {
         const typesArray = ['address', 'address', 'uint256', 'address[]'];
         return ethers.utils.defaultAbiCoder.encode(typesArray, [
-            wallet.address,
+            destinationAddress,
             joinAdapterAddress,
             minProfit,
             getUniswapRouteAddressesBySymbol(network, collateral.symbol),
@@ -67,7 +68,7 @@ export const getUniswapParametersByCollateral = async function (
     if (collateral.uniswap.type === 'lpToken') {
         const typesArray = ['address', 'address', 'uint256', 'address[]', 'address[]'];
         return ethers.utils.defaultAbiCoder.encode(typesArray, [
-            wallet.address,
+            destinationAddress,
             joinAdapterAddress,
             minProfit,
             getUniswapRouteAddressesBySymbol(network, collateral.uniswap.token0),

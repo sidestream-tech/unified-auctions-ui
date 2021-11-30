@@ -116,10 +116,18 @@ export const restartAuction = async function (collateralType: string, id: number
     return trackTransaction(transaction, maker);
 };
 
-export const bidOnTheAuction = async function (network: string, auction: Auction): Promise<string> {
+export const bidOnTheAuction = async function (
+    network: string,
+    auction: Auction,
+    alternativeDestinationAddress?: string
+): Promise<string> {
     const maker = await getMaker();
     const calleeAddress = getUniswapCalleeBySymbol(network, auction.collateralSymbol);
-    const flashData = await getUniswapParametersByCollateral(network, auction.collateralType);
+    const flashData = await getUniswapParametersByCollateral(
+        network,
+        auction.collateralType,
+        alternativeDestinationAddress
+    );
     const transaction = maker
         .service('liquidation')
         .take(

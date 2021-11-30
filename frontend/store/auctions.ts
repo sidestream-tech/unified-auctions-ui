@@ -106,7 +106,10 @@ export const actions = {
         }
         refetchIntervalId = setInterval(() => dispatch('fetchWithoutLoading'), REFETCH_INTERVAL);
     },
-    async bid({ getters, commit, rootGetters }: ActionContext<State, State>, id: string) {
+    async bid(
+        { getters, commit, rootGetters }: ActionContext<State, State>,
+        { id, alternativeDestinationAddress }: { id: string; alternativeDestinationAddress: string | undefined }
+    ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
             message.error(`Bidding error: can not find auction with id "${id}"`);
@@ -115,7 +118,7 @@ export const actions = {
         const network = rootGetters['preferences/getNetwork'];
         commit('setIsBidding', true);
         try {
-            const transactionAddress = await bidOnTheAuction(network, auction);
+            const transactionAddress = await bidOnTheAuction(network, auction, alternativeDestinationAddress);
             commit('setAuctionFinish', { id, transactionAddress });
         } catch (error) {
             console.error('Bidding error', error);

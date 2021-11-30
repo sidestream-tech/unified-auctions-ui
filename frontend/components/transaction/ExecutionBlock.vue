@@ -20,29 +20,42 @@
                     due to changing busyness of the Ethereum network. However, you can look up the current average gas
                     price
                     <a href="https://ethgasstation.info/" target="_blank"> here </a> </Explain
-                >. The amount can be edited by the participant to influence the speed of the transaction.
+                >. The amount can be edited by the participant to influence the speed of the transaction. <br /><br />
+                By default, the profit from a successful bidding will be sent to the same wallet which executed the
+                transaction. However, you can provide a different address which will receive the transaction profit.
             </div>
         </TextBlock>
-        <Alert
-            v-if="state === 'notProfitable'"
-            class="my-3 md:mb-0"
-            message="Executing this auction is not yet profitable. Please wait till the auction price drops below the price
+        <div class="flex flex-col space-y-3 my-3 md:mb-0">
+            <Alert
+                v-if="state === 'notProfitable'"
+                message="Executing this auction is not yet profitable. Please wait till the auction price drops below the price
             on UniSwap"
-            type="error"
-        />
-        <div class="flex flex-row-reverse my-3 md:mb-0">
-            <base-button
-                v-if="state === 'notExecuted'"
-                type="primary"
-                class="w-full md:w-80"
-                @click="$emit('execute')"
-            >
-                Execute
-            </base-button>
-            <base-button v-else-if="state === 'loading'" type="primary" class="w-full md:w-80" is-loading>
-                Executing...
-            </base-button>
-            <base-button v-else type="primary" class="w-full md:w-80" disabled> Execute </base-button>
+                type="error"
+            />
+        </div>
+
+        <div class="flex flex-col md:flex-row md:space-x-4 justify-end flex-wrap mt-4">
+            <ExecuteWithOtherWalletBlock
+                :disabled="disabled || isLoading || state === 'notProfitable' || state === 'executed'"
+                :default-wallet="walletAddress"
+                :is-loading="state === 'loading'"
+                class="pb-3"
+                @execute="executeWithOtherWallet"
+            />
+            <div>
+                <base-button
+                    v-if="state === 'notExecuted'"
+                    type="primary"
+                    class="w-full md:w-80"
+                    @click="$emit('execute')"
+                >
+                    Execute
+                </base-button>
+                <base-button v-else-if="state === 'loading'" type="primary" class="w-full md:w-80" is-loading>
+                    Executing...
+                </base-button>
+                <base-button v-else type="primary" class="w-full md:w-80" disabled> Execute </base-button>
+            </div>
         </div>
     </div>
 </template>
@@ -56,10 +69,12 @@ import BaseButton from '~/components/common/BaseButton.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import Explain from '~/components/utils/Explain.vue';
+import ExecuteWithOtherWalletBlock from '~/components/transaction/ExecuteWithOtherWalletBlock.vue';
 
 export default Vue.extend({
     name: 'WalletBlock',
     components: {
+        ExecuteWithOtherWalletBlock,
         Alert,
         Explain,
         FormatAddress,
@@ -96,6 +111,10 @@ export default Vue.extend({
             type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
             default: null,
         },
+        walletAddress: {
+            type: String,
+            default: null,
+        },
     },
     computed: {
         state(): string {
@@ -115,6 +134,11 @@ export default Vue.extend({
         },
         transactionURL(): string {
             return `https://kovan.etherscan.io/address/${this.transactionAddress}`;
+        },
+    },
+    methods: {
+        executeWithOtherWallet(wallet: string | undefined) {
+            this.$emit('execute', wallet);
         },
     },
 });

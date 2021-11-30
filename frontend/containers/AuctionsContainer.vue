@@ -17,7 +17,7 @@
             @authorizeWallet="authorizeWallet"
             @authorizeCollateral="authorizeCollateral"
             @restart="restartAuction"
-            @execute="execute"
+            @execute="bid"
         />
     </div>
 </template>
@@ -106,9 +106,6 @@ export default Vue.extend({
         },
         disconnect(): void {
             this.$store.dispatch('wallet/disconnect');
-        },
-        execute(auction: AuctionTransaction): void {
-            this.bid(auction.id);
         },
         restartAuction(auctionId: string): void {
             this.restart(auctionId);

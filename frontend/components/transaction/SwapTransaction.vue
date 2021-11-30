@@ -60,11 +60,12 @@
             "
             :is-loading="isExecuting"
             :transaction-address="auctionTransaction.transactionAddress"
+            :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
             :collateral-type="auctionTransaction.collateralType"
             :transaction-fee="auctionTransaction.biddingTransactionFeeETH"
             :transaction-profit="auctionTransaction.transactionProfit"
-            @execute="$emit('execute', auctionTransaction)"
+            @execute="$emit('execute', { id: auctionTransaction.id, alternativeDestinationAddress: $event })"
         />
     </div>
 </template>
