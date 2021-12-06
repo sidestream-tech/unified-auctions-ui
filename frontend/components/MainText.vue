@@ -79,6 +79,7 @@
                     class="block overflow-x-auto"
                     :auctions="auctions"
                     :selected-auction-id.sync="selectedAuctionId"
+                    :show-more-rows="!isExplanationsShown"
                 />
             </Loading>
         </div>

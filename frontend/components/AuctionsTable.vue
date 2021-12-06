@@ -1,8 +1,9 @@
 <template>
     <Table
+        ref="tableContainer"
         :data-source="auctions"
         :columns="columns"
-        :pagination="{ pageSize: rowsPerPage, hideOnSinglePage: true }"
+        :pagination="{ pageSize: numberOfRowsPerPage, hideOnSinglePage: true }"
         :row-class-name="getRowClassNames"
         :row-key="record => record.id"
         :custom-row="customRowEvents"
@@ -93,10 +94,13 @@ export default Vue.extend({
             type: String,
             default: null,
         },
+        showMoreRows: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
-            rowsPerPage: 7,
             hoveredRowIndex: 0,
         };
     },
@@ -150,6 +154,9 @@ export default Vue.extend({
                     width: '20%',
                 },
             ];
+        },
+        numberOfRowsPerPage(): Number {
+            return this.showMoreRows ? 15 : 10;
         },
     },
     methods: {
