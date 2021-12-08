@@ -352,4 +352,8 @@ export const getAllCollateralSymbols = function (): string[] {
     return Array.from(new Set(collateralSymbols));
 };
 
+export const getAllCollateralTypes = function (): string[] {
+    return Object.keys(COLLATERALS);
+};
+
 export default COLLATERALS;

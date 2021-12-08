@@ -3,14 +3,17 @@ import trackTransaction from './tracker';
 import getMaker from '~/lib/maker';
 import getWallet from '~/lib/wallet';
 import COLLATERALS from '~/lib/constants/COLLATERALS';
-import { WAD, RAD, RAY, WAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS } from '~/lib/constants/UNITS';
+import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from '~/lib/constants/UNITS';
 import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from '~/lib/uniswap';
+import { fetchCalcParametersByCollateralType } from '~/lib/params';
 
 BigNumber.config({ DECIMAL_PLACES: RAY_NUMBER_OF_DIGITS });
 
-const fetchAuctionsByType = async function (type: string, maker: any): Promise<Auction[]> {
+const fetchAuctionsByType = async function (type: string, maker: any, network: string): Promise<Auction[]> {
     const protoAuctions = await maker.service('liquidation').getAllClips(type);
     const now = new Date();
+    const params = await fetchCalcParametersByCollateralType(network, type);
+
     return protoAuctions.map((protoAuction: any): Auction => {
         const isActive = protoAuction.active && protoAuction.endDate > now;
         const collateralSymbol = COLLATERALS[protoAuction.ilk].symbol as string;
@@ -30,6 +33,8 @@ const fetchAuctionsByType = async function (type: string, maker: any): Promise<A
             isFinished: false,
             isRestarting: false,
             start: protoAuction.created,
+            step: params.step,
+            cut: params.cut,
         };
     });
 };
@@ -89,7 +94,7 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
         if (network === 'kovan' && collateralName.startsWith('UNIV2') && collateralName !== 'UNIV2DAIETH-A') {
             return [];
         }
-        return fetchAuctionsByType(collateralName, maker);
+        return fetchAuctionsByType(collateralName, maker, network);
     });
     const auctionGroups = await Promise.all(auctionGroupsPromises);
     const auctions = auctionGroups.flat();

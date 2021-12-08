@@ -1,5 +1,6 @@
 import faker from 'faker';
 import { random } from 'lodash';
+import BigNumber from 'bignumber.js';
 import COLLATERALS from '~/lib/constants/COLLATERALS';
 
 export const generateFakeAuction = function () {
@@ -31,6 +32,8 @@ export const generateFakeAuction = function () {
         start: faker.date.recent(),
         isRestarting: false,
         transactionAddress: undefined,
+        step: new BigNumber(faker.datatype.number(120)),
+        cut: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
     };
 };
 

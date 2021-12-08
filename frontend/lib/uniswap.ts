@@ -15,16 +15,7 @@ import {
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '~/lib/tokens';
 import getWallet from '~/lib/wallet';
 import getMaker from '~/lib/maker';
-
-const providers: Record<string, ethers.providers.JsonRpcProvider> = {};
-
-const getProvider = function (network: string): ethers.providers.JsonRpcProvider {
-    if (!providers[network]) {
-        const networkUrl = NETWORKS[network].url;
-        providers[network] = new ethers.providers.JsonRpcProvider(networkUrl);
-    }
-    return providers[network];
-};
+import getProvider from '~/lib/provider';
 
 const getCompleteExchangePathBySymbol = function (symbol: string, useExchangeRoute: boolean = true) {
     if (symbol === 'DAI') {

@@ -3,6 +3,7 @@ import { message } from 'ant-design-vue';
 import { fetchAllAuctions, bidOnTheAuction, restartAuction } from '~/lib/auctions';
 import { checkAllExchangeRates } from '~/lib/uniswap';
 import { enrichAuctionWithTransactionFees } from '~/lib/fees';
+import { checkAllCalcParameters } from '~/lib/params';
 
 const REFETCH_INTERVAL = 30 * 1000;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
@@ -144,5 +145,9 @@ export const actions = {
     async checkAllExchangeRates({ rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['preferences/getNetwork'];
         await checkAllExchangeRates(network);
+    },
+    async checkAllCalcParameters({ rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['preferences/getNetwork'];
+        await checkAllCalcParameters(network);
     },
 };

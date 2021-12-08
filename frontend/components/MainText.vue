@@ -112,7 +112,6 @@ import Vue, { PropType } from 'vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import AuctionsTable from '~/components/AuctionsTable.vue';
 import Loading from '~/components/common/Loading.vue';
-import getParams from '~/lib/getParams';
 import FormatPercentage from '~/components/utils/FormatPercentage.vue';
 import Explain from '~/components/utils/Explain.vue';
 
@@ -169,7 +168,10 @@ export default Vue.extend({
             return this.auctions.filter(auction => !auction.isFinished).length;
         },
         params(): MakerParams {
-            return getParams();
+            return {
+                step: 90,
+                cut: 0.01,
+            };
         },
     },
 });

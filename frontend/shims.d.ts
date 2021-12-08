@@ -42,6 +42,8 @@ declare interface Auction {
     transactionProfit?: BigNumber | number;
     transactionAddress?: string;
     start: Date;
+    step: BigNumber;
+    cut: BigNumber;
 }
 
 declare interface TransactionFees {
@@ -96,9 +98,8 @@ declare interface SelectOption {
 }
 
 declare interface MakerParams {
-    step: number;
-    cut: number;
-    drop: number;
+    step: BigNumber | number;
+    cut: BigNumber | number;
 }
 
 declare interface Window {
