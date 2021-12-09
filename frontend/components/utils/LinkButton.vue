@@ -1,16 +1,15 @@
 <template>
-    <a :href="link" target="_blank">
+    <component :is="isLocalLink ? 'nuxt-link' : 'a'" :href="link" :to="link" :target="linkTarget">
         <button
             :type="type"
             :class="{ Primary: type === 'primary', Secondary: type === 'secondary' }"
             class="rounded-full text-gray-700"
         >
-            <div class="flex items-center pl-3 pr-2 my-0.5">
-                <slot />
-                <ExternalLink class="w-5 h-5 text-gray-500 ml-1" />
+            <div class="flex items-center px-2 my-0.5">
+                <slot /> <ExternalLink class="w-5 h-5 ml-0.5 -mr-0.5 fill-current" />
             </div>
         </button>
-    </a>
+    </component>
 </template>
 
 <script lang="ts">
@@ -31,12 +30,20 @@ export default Vue.extend({
             default: 'primary',
         },
     },
+    computed: {
+        isLocalLink(): boolean {
+            return this.link.startsWith('/');
+        },
+        linkTarget(): string | undefined {
+            return !this.isLocalLink && '_blank';
+        },
+    },
 });
 </script>
 
 <style scoped>
 .Primary {
-    @apply bg-primary-light border-2 border-primary-light hover:text-primary;
+    @apply bg-primary-light border-2 border-primary hover:text-primary;
 }
 
 .Secondary {

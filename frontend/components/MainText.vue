@@ -22,12 +22,12 @@
             <template #title>
                 What are the
 
-                <Explain text="Liquidations">
+                <Explain text="collateral auctions">
                     A
                     <a
                         href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation"
                         target="_blank"
-                        >liquidation</a
+                        >collateral auction</a
                     >
                     is the automatic transfer of collateral from an insufficiently collateralized Vault to the
                     protocol.</Explain

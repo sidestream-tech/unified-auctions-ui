@@ -1,7 +1,7 @@
 <template>
-    <div class="border-2 border-gray-300 py-2 px-3">
+    <div class="border-2 border-gray-300 py-2 px-3 rounded">
         <div class="flex justify-between items-center">
-            <h3 class="text-lg text-gray-700 font-extrabold">{{ title }}</h3>
+            <h3 class="text-lg text-gray-700 font-extrabold pr-2">{{ title }}</h3>
             <div class="space-x-1">
                 <LinkButton v-if="sourceUrl" type="secondary" :link="sourceUrl">source code</LinkButton>
                 <LinkButton v-if="profileUrl" type="secondary" :link="profileUrl">view profile</LinkButton>

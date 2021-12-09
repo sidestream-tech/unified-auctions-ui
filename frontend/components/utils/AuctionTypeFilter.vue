@@ -23,8 +23,8 @@
                 System debt auctions
             </button>
         </div>
-        <div v-if="isExplanationsShown && selectedType" class="max-w-screen-sm mt-6">
-            <TextBlock v-if="selectedType == 'collateral'" title="Collateral auctions">
+        <div v-show="isExplanationsShown && selectedType" class="max-w-screen-sm mt-6">
+            <TextBlock v-show="selectedType == 'collateral'" title="Collateral auctions">
                 The Maker Protocol allows users to borrow
                 <Explain text="DAI">
                     <a href="https://makerdao.com/en/whitepaper#the-dai-stablecoin">The DAI Stablecoin</a> is a
@@ -35,7 +35,7 @@
                 is transferred to the Protocol. Part of the collateral is then auctioned off to cover the outstanding
                 debt and a penalty fee.
             </TextBlock>
-            <TextBlock v-if="selectedType == 'surplus'" title="System surplus auctions">
+            <TextBlock v-show="selectedType == 'surplus'" title="System surplus auctions">
                 If the Maker Protocol is successfully governed, surplus DAI is accrued. Once this surplus hits a
                 certain threshold the Protocol will discharge it by buying and burning
                 <Explain text="Maker tokens (MKR)">
@@ -44,7 +44,7 @@
                 </Explain>
                 . This process is facilitated by surplus auctions.
             </TextBlock>
-            <TextBlock v-if="selectedType == 'debt'" title="System debt auctions">
+            <TextBlock v-show="selectedType == 'debt'" title="System debt auctions">
                 If liquidations are not adequate in order to maintain Maker Protocol’s solvency meaning that overall
                 debt hits a certain threshold and cannot be covered by accrued surplus, the Protocol will reduce its
                 debt position by minting and selling MKR for DAI. This process is facilitated by debt auctions.

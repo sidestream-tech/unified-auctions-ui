@@ -19,23 +19,26 @@
             accrued system surplus or to cover system’s debt.
         </TextBlock>
         <AuctionTypeFilter :is-explanations-shown="isExplanationsShown" @selected="applyFilter" />
-        <div v-if="isExplanationsShown" class="w-full max-w-screen-sm">
-            <h3 v-if="filter" class="text-xl font-extrabold text-gray-700">Tools that support this auction type</h3>
-            <h3 v-else class="text-xl font-extrabold text-gray-700">Existing auction tools</h3>
-        </div>
-        <div class="space-y-4 w-full max-w-screen-sm items-center">
-            <li v-for="tool in filteredToolList" :key="tool.title" class="list-none">
-                <AuctionTool
-                    :title="tool.title"
-                    :is-explanations-shown="isExplanationsShown"
-                    :source-url="tool.links.source"
-                    :participate-url="tool.links.participate"
-                    :analytics-url="tool.links.analytics"
-                    :profile-url="tool.links.profile"
-                >
-                    {{ tool.description }}
-                </AuctionTool>
-            </li>
+        <div>
+            <TextBlock
+                v-if="isExplanationsShown"
+                class="w-full max-w-screen-sm mb-3"
+                :title="filter ? 'Tools that support this auction type' : 'Existing auction tools'"
+            />
+            <div class="space-y-4 w-full max-w-screen-sm items-center">
+                <li v-for="tool in filteredToolList" :key="tool.title" class="list-none">
+                    <AuctionTool
+                        :title="tool.title"
+                        :is-explanations-shown="isExplanationsShown"
+                        :source-url="tool.links.source"
+                        :participate-url="tool.links.participate"
+                        :analytics-url="tool.links.analytics"
+                        :profile-url="tool.links.profile"
+                    >
+                        {{ tool.description }}
+                    </AuctionTool>
+                </li>
+            </div>
         </div>
     </div>
 </template>
@@ -212,7 +215,7 @@ export default Vue.extend({
 .LandingBlock {
     @apply w-full;
 
-    min-height: 50vh;
+    min-height: 33vh;
 }
 
 .HeightFix {

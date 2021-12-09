@@ -7,7 +7,7 @@
             >
                 <branding-icon class="h-12 w-12" />
                 <span v-if="isUnifiedPage" class="ml-2 mb-0 hidden md:block"> Unified Auctions </span>
-                <span v-else class="ml-2 mb-0 hidden md:block"> Maker liquidations </span>
+                <span v-else class="ml-2 mb-0 hidden md:block"> Collateral auctions </span>
             </nuxt-link>
 
             <div class="flex-1 flex justify-end space-x-4 items-center">
