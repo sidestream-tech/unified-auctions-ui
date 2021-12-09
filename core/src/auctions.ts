@@ -8,16 +8,15 @@ import trackTransaction from './tracker';
 
 BigNumber.config({ DECIMAL_PLACES: RAY_NUMBER_OF_DIGITS });
 
-const fetchAuctionsByType = async function (type: string, maker: any, network: string): Promise<Auction[]> {
+const fetchAuctionsByType = async function (type: string, maker: any, network: string): Promise<AuctionInitialInfo[]> {
     const protoAuctions = await maker.service('liquidation').getAllClips(type);
     const now = new Date();
     const params = await fetchCalcParametersByCollateralType(network, type);
 
-    return protoAuctions.map((protoAuction: any): Auction => {
+    return protoAuctions.map((protoAuction: any): AuctionInitialInfo => {
         const isActive = protoAuction.active && protoAuction.endDate > now;
         const collateralSymbol = COLLATERALS[protoAuction.ilk].symbol as string;
         const amountRAW = new BigNumber(protoAuction.lot);
-        const amountDAI = new BigNumber(protoAuction.tab);
         return {
             id: `${protoAuction.ilk}:${protoAuction.saleId}`,
             auctionId: protoAuction.saleId,
@@ -25,8 +24,7 @@ const fetchAuctionsByType = async function (type: string, maker: any, network: s
             collateralSymbol,
             vaultOwner: protoAuction.usr,
             amountRAW,
-            amountDAI,
-            amountPerCollateral: amountRAW.dividedBy(amountDAI),
+            debtDAI: new BigNumber(protoAuction.tab),
             till: protoAuction.endDate,
             start: protoAuction.created,
             isActive,
@@ -38,19 +36,39 @@ const fetchAuctionsByType = async function (type: string, maker: any, network: s
     });
 };
 
-const enrichAuctionWithActualNumbers = async function (auction: Auction, network?: string): Promise<Auction> {
+const enrichAuctionWithActualNumbers = async function (
+    auction: AuctionInitialInfo,
+    network?: string
+): Promise<Auction> {
     const maker = await getMaker(network);
     if (!auction.isActive) {
-        return auction;
+        return {
+            ...auction,
+            amountPerCollateral: new BigNumber(0),
+            amountDAI: new BigNumber(0),
+        };
     }
     const status = await maker.service('liquidation').getStatus(auction.collateralType, auction.auctionId);
+    const amountPerCollateral = new BigNumber(status.price).div(RAY);
+    const amountRAW = new BigNumber(status.lot).div(WAD);
     return {
         ...auction,
         isActive: !status.needsRedo,
-        amountRAW: new BigNumber(status.lot).div(WAD),
-        amountDAI: new BigNumber(status.tab).div(RAD),
-        amountPerCollateral: new BigNumber(status.price).div(RAY),
+        debtDAI: new BigNumber(status.tab).div(RAD),
+        amountRAW,
+        amountPerCollateral,
+        amountDAI: amountRAW.multipliedBy(amountPerCollateral),
     };
+};
+
+const calculateTransactionProfit = function (auction: Auction): BigNumber {
+    const totalMarketValue = auction.amountRAW.multipliedBy(auction.marketPricePerCollateral);
+    if (totalMarketValue <= auction.debtDAI) {
+        return totalMarketValue.minus(auction.amountDAI);
+    }
+    const collateralAmountLimitedByDebt = auction.debtDAI.dividedBy(auction.amountPerCollateral);
+    const totalMarketValueLimitedByDebt = collateralAmountLimitedByDebt.multipliedBy(auction.marketPricePerCollateral);
+    return totalMarketValueLimitedByDebt.minus(auction.debtDAI);
 };
 
 const enrichAuctionWithMarketValues = async function (auction: Auction, network: string): Promise<Auction> {
@@ -66,14 +84,14 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
         const marketValue = auction.amountPerCollateral
             .minus(marketPricePerCollateral)
             .dividedBy(marketPricePerCollateral);
-        const transactionProfit = marketPricePerCollateral
-            .multipliedBy(auction.amountRAW)
-            .minus(auction.amountPerCollateral.multipliedBy(auction.amountRAW));
-        return {
+        const auctionWithMarketValues = {
             ...auction,
             marketPricePerCollateral,
             marketValue,
-            transactionProfit,
+        };
+        return {
+            ...auctionWithMarketValues,
+            transactionProfit: calculateTransactionProfit(auctionWithMarketValues),
         };
     } catch (error) {
         console.warn(
@@ -102,7 +120,7 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     const auctions = auctionGroups.flat();
 
     // enrich them with statuses
-    const auctionsWithStatusesPromises = auctions.map((auction: Auction) =>
+    const auctionsWithStatusesPromises = auctions.map((auction: AuctionInitialInfo) =>
         enrichAuctionWithActualNumbers(auction, network)
     );
     const auctionsWithStatuses = await Promise.all(auctionsWithStatusesPromises);

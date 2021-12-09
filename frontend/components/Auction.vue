@@ -69,6 +69,12 @@
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
+                                <td>Debt</td>
+                                <td>
+                                    <format-currency :value="auction.debtDAI" currency="DAI" />
+                                </td>
+                            </tr>
+                            <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Vault address</td>
                                 <td>
                                     <format-address :value="auction.vaultOwner" disable />

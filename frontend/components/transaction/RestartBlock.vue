@@ -70,7 +70,7 @@ export default Vue.extend({
     components: { TextBlock, BaseButton, FormatCurrency, Explain, Tooltip },
     props: {
         transactionFee: {
-            type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
+            type: [Number, Object] as Vue.PropType<Number | BigNumber>,
             default: null,
         },
         isExplanationsShown: {

@@ -4,14 +4,13 @@ declare module 'dai-monorepo/*';
 
 declare type BigNumber = any;
 
-declare interface Auction {
+declare interface AuctionInitialInfo {
     id: string;
     auctionId: number;
     collateralType: string;
     collateralSymbol: string;
     amountRAW: BigNumber | number;
-    amountDAI: BigNumber | number;
-    amountPerCollateral: BigNumber | number;
+    debtDAI: BigNumber;
     till: string;
     vaultOwner: string;
     isActive: boolean;
@@ -24,6 +23,11 @@ declare interface Auction {
     start: Date;
     step: BigNumber;
     cut: BigNumber;
+}
+
+declare interface Auction extends AuctionInitialInfo {
+    amountPerCollateral: BigNumber | number;
+    amountDAI: BigNumber | number;
 }
 
 declare interface TransactionFees {
