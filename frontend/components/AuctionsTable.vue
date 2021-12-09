@@ -183,7 +183,7 @@ export default Vue.extend({
             return classes.join(' ');
         },
         getAuctionLink(auction: Auction) {
-            return `/?auction=${auction.id}`;
+            return `/collateral/?auction=${auction.id}`;
         },
     },
 });

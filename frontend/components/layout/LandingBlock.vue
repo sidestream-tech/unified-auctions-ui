@@ -1,6 +1,6 @@
 <template>
     <div class="LandingBlock">
-        <div class="flex flex-col items-center w-full z-10">
+        <div v-if="!$slots.default" class="flex flex-col items-center w-full z-10">
             <div class="LandingTitle">Maker liquidations</div>
             <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 my-8">
                 <Button class="SecondaryButton mx-3" @click="$emit('explanations', false)"
@@ -9,6 +9,11 @@
                 <Button class="PrimaryButton mx-3" @click="$emit('explanations', true)"
                     >Please explain me what it is</Button
                 >
+            </div>
+        </div>
+        <div v-else class="flex flex-col items-center w-full z-10">
+            <div class="LandingTitle">
+                <slot />
             </div>
         </div>
         <div

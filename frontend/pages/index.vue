@@ -1,28 +1,20 @@
 <template>
-    <AuctionsFakeData v-if="!network" />
-    <AuctionsContainer v-else :network="network" />
+    <div>
+        <UnifiedContainer />
+        <Footer type="unified" />
+    </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import AuctionsFakeData from '~/containers/AuctionsFakeData.vue';
-import AuctionsContainer from '~/containers/AuctionsContainer.vue';
+import UnifiedContainer from '~/containers/UnifiedContainer.vue';
+import Footer from '~/components/layout/Footer.vue';
 
 export default Vue.extend({
     components: {
-        AuctionsFakeData,
-        AuctionsContainer,
+        UnifiedContainer,
+        Footer,
     },
-    layout: process.env.DEMO_MODE ? 'demoMode' : 'default',
-    data() {
-        return {
-            overlay: true,
-        };
-    },
-    computed: {
-        network() {
-            return this.$store.getters['preferences/getNetwork'];
-        },
-    },
+    layout: process.env.DEMO_MODE ? 'demoMode' : 'unified',
 });
 </script>

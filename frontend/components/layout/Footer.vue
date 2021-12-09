@@ -13,7 +13,7 @@
             <li>
                 <NuxtLink class="FooterLink" to="/terms"> Terms & Conditions </NuxtLink>
             </li>
-            <li>
+            <li v-if="!isUnified">
                 <a class="FooterLink" :href="githubURL" target="_blank">Source Code</a>
             </li>
             <li v-if="contactEmail">
@@ -29,7 +29,7 @@
                 <a href="https://github.com/sidestream-tech" target="_blank"><icon type="github" class="text-xl" /></a>
                 <a href="https://twitter.com/MakerDAO_SAS" target="_blank"><icon type="twitter" class="text-xl" /></a>
                 <a href="https://forum.makerdao.com/c/core-units/sidestream-core-unit/58" target="_blank">
-                    <DiscourseIcon class="w-5 h-5 mt-1" />
+                    <DiscourseIcon class="w-5 h-5 mt-0.5" />
                 </a>
             </li>
         </ul>
@@ -44,12 +44,22 @@ import DiscourseIcon from '~/assets/icons/discourse.svg';
 export default Vue.extend({
     name: 'Footer',
     components: { Icon, DiscourseIcon },
+    props: {
+        type: {
+            type: String,
+            default: 'default',
+            validator: type => ['default', 'unified'].includes(type),
+        },
+    },
     computed: {
         contactEmail(): string | undefined {
             return process.env.CONTACT_EMAIL;
         },
         githubURL(): string | undefined {
             return process.env.GITHUB_URL;
+        },
+        isUnified(): Boolean {
+            return this.type === 'unified';
         },
     },
 });

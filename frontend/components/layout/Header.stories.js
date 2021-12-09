@@ -14,12 +14,21 @@ const common = {
     }),
 };
 
-storiesOf('Layout/Header', module).add('Default', () => ({
-    ...common,
-    template: `<Header
+storiesOf('Layout/Header', module)
+    .add('Default', () => ({
+        ...common,
+        template: `<Header
         :network.sync="network"
         :isExplanationsShown.sync="isExplanationsShown"
         @update:network="updateNetwork"
         @update:isExplanationsShown="updateIsExplanationsShown"
     />`,
-}));
+    }))
+    .add('Unified Auctions Page', () => ({
+        ...common,
+        template: `<Header
+        type="unified" 
+        :isExplanationsShown.sync="isExplanationsShown"
+        @update:isExplanationsShown="updateIsExplanationsShown"
+        />`,
+    }));
