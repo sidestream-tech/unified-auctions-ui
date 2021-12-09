@@ -23,16 +23,26 @@
       ],
       "@/*": [
         "./*"
+      ],
+      "core/*": [
+        "../core/src*"
       ]
     },
     "types": [
       "@nuxt/types",
       "@types/node"
-    ]
+    ],
+    "outDir": "./ts-build"
   },
+  "include": ["package.json", "*.ts"],
   "exclude": [
     "node_modules",
     ".nuxt",
     "dist"
+  ],
+  "references": [
+    { 
+      "path": "../core"
+    }
   ]
 }

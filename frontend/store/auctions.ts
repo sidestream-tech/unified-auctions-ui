@@ -1,9 +1,11 @@
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
-import { fetchAllAuctions, bidOnTheAuction, restartAuction } from '~/lib/auctions';
-import { checkAllExchangeRates } from '~/lib/uniswap';
-import { enrichAuctionWithTransactionFees } from '~/lib/fees';
-import { checkAllCalcParameters } from '~/lib/params';
+import { fetchAllAuctions, bidOnTheAuction, restartAuction } from '~/../core/src/auctions';
+import { checkAllExchangeRates } from '~/../core/src/uniswap';
+import { enrichAuctionWithTransactionFees } from '~/../core/src/fees';
+import { checkAllCalcParameters } from '~/../core/src/params';
+import getWallet from '~/lib/wallet';
+import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
@@ -117,9 +119,19 @@ export const actions = {
             return;
         }
         const network = rootGetters['preferences/getNetwork'];
+        const walletAddress = getWallet().address;
+        if (!walletAddress) {
+            message.error('Bidding error: can not find wallet');
+            return;
+        }
         commit('setIsBidding', true);
         try {
-            const transactionAddress = await bidOnTheAuction(network, auction, alternativeDestinationAddress);
+            const transactionAddress = await bidOnTheAuction(
+                network,
+                auction,
+                alternativeDestinationAddress || walletAddress,
+                notifier
+            );
             commit('setAuctionFinish', { id, transactionAddress });
         } catch (error) {
             console.error('Bidding error', error);
@@ -133,9 +145,14 @@ export const actions = {
             message.error(`Auction reset error: can not find auction with id "${id}"`);
             return;
         }
+        const walletAddress = getWallet().address;
+        if (!walletAddress) {
+            message.error('Bidding error: can not find wallet');
+            return;
+        }
         commit('setAuctionRestarting', { id, isRestarting: true });
         try {
-            await restartAuction(auction.collateralType, auction.auctionId);
+            await restartAuction(auction.collateralType, auction.auctionId, walletAddress);
             await dispatch('fetchWithoutLoading');
         } catch (error) {
             commit('setAuctionRestarting', { id, isRestarting: false });

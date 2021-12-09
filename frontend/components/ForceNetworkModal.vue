@@ -25,7 +25,7 @@
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
 import Vue from 'vue';
-import NETWORKS from '~/lib/constants/NETWORKS';
+import NETWORKS from '~/../core/src/constants/NETWORKS';
 
 export default Vue.extend({
     name: 'ForceNetworkModal',

@@ -10,11 +10,6 @@
                 :is-restarting="auction.isRestarting"
                 @restart="$emit('restart', auctionId)"
             />
-            <PriceDropAnimation
-                :disabled="auction.isFinished || !auction.isActive"
-                :auction-start-date="auction.start"
-                :drop-duration="auction.step.toNumber()"
-            />
             <div class="relative mt-4">
                 <table class="w-full table-fixed border-collapse border">
                     <tbody>
@@ -191,12 +186,10 @@ import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import Loading from '~/components/common/Loading.vue';
 import Explain from '~/components/utils/Explain.vue';
 import RestartBlock from '~/components/transaction/RestartBlock.vue';
-import PriceDropAnimation from '~/components/utils/PriceDropAnimation.vue';
 
 export default Vue.extend({
     name: 'Auction',
     components: {
-        PriceDropAnimation,
         RestartBlock,
         Explain,
         Loading,

@@ -1,6 +1,6 @@
-import { getCollateralConfigBySymbol } from '~/lib/constants/COLLATERALS';
-import { DAI_NUMBER_OF_DIGITS } from '~/lib/constants/UNITS';
-import { getTokenContractsByNetwork } from '~/lib/contracts';
+import { getCollateralConfigBySymbol } from './constants/COLLATERALS';
+import { DAI_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { getTokenContractsByNetwork } from './contracts';
 
 export const getTokenAddressByNetworkAndSymbol = function (network: string, symbol: string): string {
     let tokenName = symbol.toUpperCase();

@@ -5,7 +5,8 @@ import {
     authorizeWallet,
     getCollateralAuthorizationStatus,
     authorizeCollateral,
-} from '~/lib/authorizations';
+} from '~/../core/src/authorizations';
+import notifier from '~/lib/notifier';
 
 interface State {
     isWalletAuthorizationLoading: boolean;
@@ -74,13 +75,14 @@ export const actions = {
         }
     },
     async fetchWalletAuthorizationStatus({ commit, rootGetters }: ActionContext<State, State>) {
-        if (!rootGetters['wallet/isConnected']) {
+        const walletAddress = rootGetters['wallet/getAddress'];
+        if (!walletAddress) {
             commit('setIsWalletAuthorizationDone', false);
             return;
         }
         commit('setIsWalletAuthorizationLoading', true);
         try {
-            const isAuthorized = await getWalletAuthorizationStatus();
+            const isAuthorized = await getWalletAuthorizationStatus(walletAddress);
             commit('setIsWalletAuthorizationDone', isAuthorized);
             return isAuthorized;
         } catch (error) {
@@ -93,7 +95,7 @@ export const actions = {
     async authorizeWallet({ commit, dispatch }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
         try {
-            await authorizeWallet();
+            await authorizeWallet(false, notifier);
             dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
@@ -104,7 +106,7 @@ export const actions = {
     async deauthorizeWallet({ commit, dispatch }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
         try {
-            await authorizeWallet(true);
+            await authorizeWallet(true, notifier);
             dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
@@ -116,14 +118,14 @@ export const actions = {
         { commit, rootGetters }: ActionContext<State, State>,
         collateralType: string
     ) {
-        const isWalletConnected = rootGetters['wallet/isConnected'];
-        if (!isWalletConnected) {
+        const walletAddress = rootGetters['wallet/getAddress'];
+        if (!walletAddress) {
             commit('setIsWalletAuthorizationDone', false);
             return;
         }
         commit('setIsCollateralAuthorizationLoading', true);
         try {
-            const isAuthorized = await getCollateralAuthorizationStatus(collateralType);
+            const isAuthorized = await getCollateralAuthorizationStatus(collateralType, walletAddress);
             if (isAuthorized) {
                 commit('addCollateralAuthorization', collateralType);
             } else {
@@ -139,7 +141,7 @@ export const actions = {
     async authorizeCollateral({ commit, dispatch }: ActionContext<State, State>, collateralType: string) {
         commit('setIsCollateralAuthorizationLoading', true);
         try {
-            await authorizeCollateral(collateralType);
+            await authorizeCollateral(collateralType, false, notifier);
             dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
@@ -150,7 +152,7 @@ export const actions = {
     async deauthorizeCollateral({ commit, dispatch }: ActionContext<State, State>, collateralType: string) {
         commit('setIsCollateralAuthorizationLoading', true);
         try {
-            await authorizeCollateral(collateralType, true);
+            await authorizeCollateral(collateralType, true, notifier);
             dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);

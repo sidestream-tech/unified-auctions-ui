@@ -18,15 +18,13 @@
                 <a
                     href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#front-running"
                     target="_blank"
-                >
-                    in the same block</a
+                    >in the same block</a
                 >, a
                 <a
                     href="https://ethereum.org/en/developers/docs/gas/#:~:text=10302608.6%20gwei-,Priority%20fee%20(tips),-Before%20the%20London"
                     target="_blank"
+                    >higher tip</a
                 >
-                    higher tip
-                </a>
                 will be necessary to attempt to outbid competing transactions
             </Explain>
             the auction. In case your transaction will be rejected, it only results in the loss of the transaction fee.

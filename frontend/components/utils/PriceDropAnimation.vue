@@ -2,7 +2,9 @@
     <div>
         <p>
             Time to next price drop:
-            <span v-if="timerCount !== undefined" class="font-semibold">{{ timerCount.toFixed() }} s</span>
+            <span v-if="timerCount !== undefined || Number.isNaN(timerCount)" class="font-semibold"
+                >{{ timerCount.toFixed() }}s</span
+            >
             <span v-else class="font-semibold"> N/A </span>
         </p>
         <Progress class="progress-bar" size="small" :show-info="false" :percent="percent" />
@@ -53,7 +55,12 @@ export default Vue.extend({
                 const auctionStartTimestamp = new Date(this.auctionStartDate).getTime();
                 const now = new Date().getTime();
                 const elapsedTime = (now - auctionStartTimestamp) / 1000;
-                this.timerCount = this.dropDuration - (elapsedTime % this.dropDuration);
+                const timerCount = this.dropDuration - (elapsedTime % this.dropDuration);
+                this.timerCount = timerCount;
+
+                if (timerCount > this.dropDuration - 1) {
+                    this.fetchAuctions();
+                }
             } else {
                 this.timerCount = undefined;
             }
@@ -68,6 +75,12 @@ export default Vue.extend({
                 return false;
             }
             return now >= auctionStartTimestamp;
+        },
+        fetchAuctions(): void {
+            // TODO: remove this call as soon as we properly implement price drop
+            if (this.$store) {
+                this.$store.dispatch('auctions/fetchWithoutLoading');
+            }
         },
     },
 });

@@ -11,7 +11,7 @@ const NETWORKS: Record<string, NetworkConfig> = {
     kovan: {
         chainId: '0x2a',
         title: 'Kovan',
-        gasPrice: 1000000000,
+        gasPrice: 2000000000,
         url: `https://kovan.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://kovan.etherscan.io',
         uniswapV2CalleeDaiAddress: '0x5A40F810754f725DA93e2362775a0600468f7a83',

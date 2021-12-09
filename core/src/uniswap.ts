@@ -6,18 +6,17 @@ import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import { Fetcher, Token, Route, Pair, Trade, TokenAmount, TradeType } from '@uniswap/sdk';
 import { abi as uniswapV2PairABI } from '@uniswap/v2-core/build/UniswapV2Pair.json';
-import NETWORKS, { getDecimalChainIdByNetworkType } from '~/lib/constants/NETWORKS';
+import NETWORKS, { getDecimalChainIdByNetworkType } from './constants/NETWORKS';
+import getMaker from './maker';
+import getProvider from './provider';
+import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from './tokens';
 import {
     getCollateralConfigBySymbol,
     getCollateralConfigByType,
     getAllCollateralSymbols,
-} from '~/lib/constants/COLLATERALS';
-import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '~/lib/tokens';
-import getWallet from '~/lib/wallet';
-import getMaker from '~/lib/maker';
-import getProvider from '~/lib/provider';
+} from './constants/COLLATERALS';
 
-const getCompleteExchangePathBySymbol = function (symbol: string, useExchangeRoute: boolean = true) {
+const getCompleteExchangePathBySymbol = function (symbol: string, useExchangeRoute = true) {
     if (symbol === 'DAI') {
         // no exchange is needed for DAI -> DAI
         return ['DAI'];
@@ -39,10 +38,9 @@ const getUniswapRouteAddressesBySymbol = function (network: string, symbol: stri
 export const getUniswapParametersByCollateral = async function (
     network: string,
     collateralType: string,
-    alternativeDestinationAddress?: string
+    profitAddress: string
 ): Promise<string> {
     const maker = await getMaker();
-    const destinationAddress = alternativeDestinationAddress || getWallet().address;
     const collateral = getCollateralConfigByType(collateralType);
     // TODO: properly calculate minimum profit value
     const minProfit = 0;
@@ -50,7 +48,7 @@ export const getUniswapParametersByCollateral = async function (
     if (collateral.uniswap.type === 'token') {
         const typesArray = ['address', 'address', 'uint256', 'address[]'];
         return ethers.utils.defaultAbiCoder.encode(typesArray, [
-            destinationAddress,
+            profitAddress,
             joinAdapterAddress,
             minProfit,
             getUniswapRouteAddressesBySymbol(network, collateral.symbol),
@@ -59,7 +57,7 @@ export const getUniswapParametersByCollateral = async function (
     if (collateral.uniswap.type === 'lpToken') {
         const typesArray = ['address', 'address', 'uint256', 'address[]', 'address[]'];
         return ethers.utils.defaultAbiCoder.encode(typesArray, [
-            destinationAddress,
+            profitAddress,
             joinAdapterAddress,
             minProfit,
             getUniswapRouteAddressesBySymbol(network, collateral.uniswap.token0),
@@ -77,6 +75,7 @@ export const getUniswapCalleeBySymbol = function (network: string, symbol: strin
     if (collateral.uniswap.type === 'lpToken') {
         return NETWORKS[network].uniswapV2LpTokenCalleeDaiAddress;
     }
+    throw new Error(`token of this type doesn't exist`);
 };
 
 const getUniswapTokenBySymbol = function (network: string, symbol: string): Token {

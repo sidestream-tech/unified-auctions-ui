@@ -26,19 +26,19 @@ const basicStory = {
 storiesOf('Auction', module)
     .add('Default', () => ({
         ...basicStory,
-        template: `<Auction :auction="auctionParams" @swap="swap"/>`,
+        template: `<Auction :auction="auctionParams" auctionId="test" @swap="swap"/>`,
     }))
     .add('Max Width', () => ({
         ...basicStory,
         template: `
-        <div class="flex items-center w-3/5">    
-            <Auction :auction="auctionParams" @swap="swap"/>
+        <div class="flex items-center w-3/5">
+            <Auction :auction="auctionParams" auctionId="test" @swap="swap"/>
         </div>`,
     }))
     .add('Finished', () => ({
         ...basicStory,
         template: `
-        <div class="flex items-center w-3/5">    
-            <Auction :auction="auctionParams" error="This auction is finished"/>
+        <div class="flex items-center w-3/5">
+            <Auction :auction="auctionParams" auctionId="test" error="This auction is finished"/>
         </div>`,
     }));

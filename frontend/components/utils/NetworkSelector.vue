@@ -10,7 +10,7 @@
 import Vue from 'vue';
 import { Icon } from 'ant-design-vue';
 import Select from '~/components/common/Select.vue';
-import NETWORKS from '~/lib/constants/NETWORKS';
+import NETWORKS from '~/../core/src/constants/NETWORKS';
 
 export default Vue.extend({
     name: 'NetworkSelector',

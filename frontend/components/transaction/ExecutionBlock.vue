@@ -100,7 +100,7 @@ export default Vue.extend({
             default: true,
         },
         transactionFee: {
-            type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
+            type: [Number, Object] as Vue.PropType<Number | BigNumber>,
             default: null,
         },
         collateralType: {
@@ -108,7 +108,7 @@ export default Vue.extend({
             required: true,
         },
         transactionProfit: {
-            type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
+            type: [Number, Object] as Vue.PropType<Number | BigNumber>,
             default: null,
         },
         walletAddress: {

@@ -1,11 +1,10 @@
 import BigNumber from 'bignumber.js';
+import getMaker from './maker';
+import COLLATERALS from './constants/COLLATERALS';
+import { WAD, RAD, RAY, WAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
+import { fetchCalcParametersByCollateralType } from './params';
 import trackTransaction from './tracker';
-import getMaker from '~/lib/maker';
-import getWallet from '~/lib/wallet';
-import COLLATERALS from '~/lib/constants/COLLATERALS';
-import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from '~/lib/constants/UNITS';
-import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from '~/lib/uniswap';
-import { fetchCalcParametersByCollateralType } from '~/lib/params';
 
 BigNumber.config({ DECIMAL_PLACES: RAY_NUMBER_OF_DIGITS });
 
@@ -29,10 +28,10 @@ const fetchAuctionsByType = async function (type: string, maker: any, network: s
             amountDAI,
             amountPerCollateral: amountRAW.dividedBy(amountDAI),
             till: protoAuction.endDate,
+            start: protoAuction.created,
             isActive,
             isFinished: false,
             isRestarting: false,
-            start: protoAuction.created,
             step: params.step,
             cut: params.cut,
         };
@@ -77,7 +76,10 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
             transactionProfit,
         };
     } catch (error) {
-        console.warn(`Fetching exchange rates from UniSwap failed for ${auction.id} with error:`, error.message);
+        console.warn(
+            `Fetching exchange rates from UniSwap failed for ${auction.id} with error:`,
+            error instanceof Error && error.message
+        );
         return auction;
     }
 };
@@ -113,26 +115,26 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     return auctionsWithMarketValues;
 };
 
-export const restartAuction = async function (collateralType: string, id: number): Promise<string> {
-    const wallet = getWallet();
+export const restartAuction = async function (
+    collateralType: string,
+    id: number,
+    profitAddress: string
+): Promise<string> {
     const maker = await getMaker();
     const clipperContract = maker.service('liquidation')._clipperContractByIlk(collateralType);
-    const transaction = clipperContract.redo(id, wallet.address);
-    return trackTransaction(transaction, maker);
+    const transaction = clipperContract.redo(id, profitAddress);
+    return transaction;
 };
 
 export const bidOnTheAuction = async function (
     network: string,
     auction: Auction,
-    alternativeDestinationAddress?: string
+    profitAddress: string,
+    notifier?: Notifier
 ): Promise<string> {
     const maker = await getMaker();
     const calleeAddress = getUniswapCalleeBySymbol(network, auction.collateralSymbol);
-    const flashData = await getUniswapParametersByCollateral(
-        network,
-        auction.collateralType,
-        alternativeDestinationAddress
-    );
+    const flashData = await getUniswapParametersByCollateral(network, auction.collateralType, profitAddress);
     const transaction = maker
         .service('liquidation')
         .take(
@@ -143,5 +145,5 @@ export const bidOnTheAuction = async function (
             calleeAddress,
             flashData
         );
-    return trackTransaction(transaction, maker);
+    return trackTransaction(transaction, notifier);
 };

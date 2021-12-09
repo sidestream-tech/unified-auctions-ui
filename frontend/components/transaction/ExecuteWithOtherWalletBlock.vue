@@ -11,7 +11,7 @@
             </base-button>
         </div>
         <modal v-model="isVisible" title="Execute to another wallet" destroy-on-close>
-            <TextBlock class="py-2 px-6 text-sm">
+            <TextBlock class="py-4 px-6 text-sm">
                 Currently, the wallet which will receive the transaction profit is
                 <format-address type="address" shorten :value="defaultWallet" />. If you want to use a different
                 address for the profit of a successful bid, you can set it below. It can be an address of someone you
@@ -42,10 +42,12 @@
                 </div>
             </TextBlock>
             <template slot="footer">
-                <BaseButton @click="cancel"> Cancel </BaseButton>
-                <BaseButton :disabled="!isOutcomeWalletInputValueValid" @click="execute">
-                    Execute transaction
-                </BaseButton>
+                <div class="py-2 px-2">
+                    <BaseButton @click="cancel"> Cancel </BaseButton>
+                    <BaseButton :disabled="!isOutcomeWalletInputValueValid" @click="execute">
+                        Execute transaction
+                    </BaseButton>
+                </div>
             </template>
         </modal>
     </div>

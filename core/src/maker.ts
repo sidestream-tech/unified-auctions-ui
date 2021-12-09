@@ -33,7 +33,7 @@ const createMaker = async function (network: string): Promise<typeof Maker> {
         multicall: true,
     });
     if (typeof window !== 'undefined') {
-        window.maker = globalMaker;
+        (window as any).maker = globalMaker;
     }
     return globalMaker;
 };

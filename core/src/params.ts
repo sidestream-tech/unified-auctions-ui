@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 import memoizee from 'memoizee';
-import getProvider from '~/lib/provider';
-import abacABI from '~/lib/abis/ABACI.json';
-import { getAllCollateralTypes } from '~/lib/constants/COLLATERALS';
-import { RAY_NUMBER_OF_DIGITS } from '~/lib/constants/UNITS';
-import { getLiquidationsContractsByNetwork } from '~/lib/contracts';
+import getProvider from './provider';
+import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
+import { getAllCollateralTypes } from './constants/COLLATERALS';
+import { RAY_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { getLiquidationsContractsByNetwork } from './contracts';
 
 const PARAMS_CACHE_SECONDS = 60 * 60 * 24 * 30;
 
@@ -26,14 +26,14 @@ const _fetchCalcParametersByCollateralType = async function (
 ): Promise<MakerParams> {
     const address = getCalcAddressByCollateralType(network, collateralType);
     const provider = getProvider(network);
-    const contract = await new ethers.Contract(address, abacABI, provider);
+    const contract = await new ethers.Contract(address, MCD_CLIP_CALC, provider);
 
     const cut = await contract.cut();
     const step = await contract.step();
 
     return {
-        step: new BigNumber(step),
-        cut: new BigNumber(cut).shiftedBy(-RAY_NUMBER_OF_DIGITS),
+        step: new BigNumber(step.toString()),
+        cut: new BigNumber(cut.toString()).shiftedBy(-RAY_NUMBER_OF_DIGITS),
     };
 };
 

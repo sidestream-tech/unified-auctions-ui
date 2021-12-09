@@ -26,7 +26,15 @@
         </TextBlock>
         <div class="flex flex-row-reverse my-3">
             <base-button
-                v-if="walletAuthorizationState === 'notAuthorized'"
+                v-if="walletAuthorizationState === 'authorizing'"
+                type="primary"
+                class="w-full md:w-80"
+                is-loading
+            >
+                Authorizing...
+            </base-button>
+            <base-button
+                v-else-if="walletAuthorizationState === 'notAuthorized'"
                 type="primary"
                 class="w-full md:w-80"
                 @click="$emit('authorizeWallet')"
@@ -40,14 +48,6 @@
                 disabled
             >
                 Authorize DAI Transactions
-            </base-button>
-            <base-button
-                v-else-if="walletAuthorizationState === 'authorizing'"
-                type="primary"
-                class="w-full md:w-80"
-                is-loading
-            >
-                Authorizing...
             </base-button>
             <Tooltip v-else title="Already authorized for this wallet" placement="top">
                 <div class="w-full md:w-80">

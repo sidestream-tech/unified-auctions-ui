@@ -12,7 +12,7 @@ export default Vue.extend({
     name: 'FormatCurrency',
     props: {
         value: {
-            type: [Number, BigNumber] as Vue.PropType<Number | BigNumber>,
+            type: [Number, Object] as Vue.PropType<Number | BigNumber>,
             default: null,
         },
         currency: {

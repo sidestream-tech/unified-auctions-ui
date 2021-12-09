@@ -1,7 +1,7 @@
 import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
 import getWallet from '~/lib/wallet';
-import { getChainIdByNetworkType, getNetworkTypeByChainId } from '~/lib/constants/NETWORKS';
+import { getChainIdByNetworkType, getNetworkTypeByChainId } from '~/../core/src/constants/NETWORKS';
 
 interface State {
     network: string | null;
@@ -28,6 +28,9 @@ export const getters = {
     },
     getIsDarkMode(state: State) {
         if (state.isDarkMode === undefined) {
+            if (!window?.matchMedia) {
+                return false;
+            }
             return window.matchMedia('(prefers-color-scheme: dark)').matches;
         }
         return state.isDarkMode;

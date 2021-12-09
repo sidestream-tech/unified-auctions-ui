@@ -1,0 +1,49 @@
+{
+    "compilerOptions": {
+        "declarationMap": true,
+        "rootDir": ".",
+        "composite": true,
+        "incremental": true,
+        "target": "es2017",
+        "outDir": "ts-build",
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "declaration": true,
+        "inlineSourceMap": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "traceResolution": false,
+        "listEmittedFiles": false,
+        "listFiles": false,
+        "pretty": true,
+        "lib": [
+            "es2019",
+            "dom"
+        ],
+        "types": [
+            "node"
+        ],
+        "typeRoots": [
+            "node_modules/@types",
+            "."
+        ],
+        "paths": {
+            "core/*": [
+                "./src/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.json",
+        "src/shims.d.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ],
+    "references": []
+}

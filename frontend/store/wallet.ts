@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import getWallet, { WALLETS } from '~/lib/wallet';
-import { addMakerAccount } from '~/lib/maker';
+import { addMakerAccount } from '~/../core/src/maker';
 
 interface State {
     walletType?: string;

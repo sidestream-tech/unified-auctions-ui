@@ -2,29 +2,51 @@ kind: pipeline
 name: default
 
 steps:
-    - name: install
+    - name: core-install
       image: node:16.9.1
+      depends_on: [clone]
+      commands:
+          - cd core
+          - npm ci
+
+    - name: core-lint
+      image: node:16.9.1
+      depends_on: [core-install]
+      commands:
+          - cd core
+          - npm run lint
+
+    - name: core-build
+      image: node:16.9.1
+      depends_on: [core-install]
+      commands:
+        - cd core
+        - npm run build
+
+    - name: frontend-install
+      image: node:16.9.1
+      depends_on: [clone]
       commands:
           - cd frontend
           - npm ci
 
-    - name: lint
+    - name: frontend-lint
       image: node:16.9.1
-      depends_on: [install]
+      depends_on: [frontend-install, core-install]
       commands:
           - cd frontend
           - npm run lint
 
-    - name: test
+    - name: frontend-test
       image: node:16.9.1
-      depends_on: [install]
+      depends_on: [frontend-install, core-install]
       commands:
           - cd frontend
           - npm run test
 
-    - name: build-and-typescript-check
+    - name: frontend-build
       image: node:16.9.1
-      depends_on: [install]
+      depends_on: [frontend-install, core-install]
       commands:
         - cd frontend
         - npm run build
@@ -75,13 +97,11 @@ steps:
         from_secret: github-personal-access-token
       registry: "ghcr.io"
       repo: "ghcr.io/sidestream-tech/auction-ui/frontend"
-      dockerfile: frontend/Dockerfile
-      context: frontend/
+      context: .
+      dockerfile: ./frontend/Dockerfile
       build_args_from_env:
         - INFURA_PROJECT_ID
-      build_args_from_env:
         - CONTACT_EMAIL
-      build_args_from_env:
         - PRODUCTION_DOMAIN
       custom_labels:
         - org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import NETWORKS from '~/lib/constants/NETWORKS';
+import NETWORKS from './constants/NETWORKS';
 
 const providers: Record<string, ethers.providers.JsonRpcProvider> = {};
 

@@ -10,7 +10,8 @@ services:
         environment:
             - INFURA_PROJECT_ID=${INFURA_PROJECT_ID}
         build:
-            context: ./frontend
+            context: .
+            dockerfile: ./frontend/Dockerfile
             args:
                 - INFURA_PROJECT_ID=${INFURA_PROJECT_ID}
     reverse-proxy:

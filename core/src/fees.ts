@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
-import getMaker from '~/lib/maker';
-import { getExchangeRateBySymbol } from '~/lib/uniswap';
-import { getNetworkConfigByType } from '~/lib/constants/NETWORKS';
-import { ETH_NUMBER_OF_DIGITS } from '~/lib/constants/UNITS';
+import getMaker from './maker';
+import { getExchangeRateBySymbol } from './uniswap';
+import { getNetworkConfigByType } from './constants/NETWORKS';
+import { ETH_NUMBER_OF_DIGITS } from './constants/UNITS';
 
 export const getGasPrice = async function (network: string): Promise<BigNumber | undefined> {
     const networkConfig = getNetworkConfigByType(network);
