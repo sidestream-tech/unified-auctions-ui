@@ -20,10 +20,16 @@
                     <span class="text-gray-700">Explanations</span>
                 </label>
 
-                <div v-if="!isUnifiedPage" class="flex space-x-4">
-                    <NetworkSelector :network="network" @update:network="$emit('update:network', $event)" />
+                <div class="flex space-x-4">
+                    <NetworkSelector
+                        v-if="!isUnifiedPage"
+                        :network="network"
+                        @update:network="$emit('update:network', $event)"
+                    />
 
                     <WalletSelector
+                        v-if="!isUnifiedPage"
+                        class="hidden sm:block"
                         :wallet-address="walletAddress"
                         :is-loading="isWalletLoading"
                         :is-modal-open="isWalletModalOpen"

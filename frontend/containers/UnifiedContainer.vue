@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="UnifiedContainer">
         <UnifiedAuctionsView :is-explanations-shown.sync="isExplanationsShown" />
     </div>
 </template>
@@ -24,3 +24,9 @@ export default Vue.extend({
     },
 });
 </script>
+
+<style scoped>
+.UnifiedContainer {
+    min-height: calc(100vh - 9.8rem);
+}
+</style>

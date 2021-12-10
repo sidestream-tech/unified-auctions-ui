@@ -1,6 +1,6 @@
 <template>
-    <div class="flex flex-col items-center">
-        <div class="flex flex-shrink-0 space-x-10">
+    <div class="flex flex-col items-center w-full">
+        <div class="flex flex-shrink-0 space-y-3 md:space-y-0 flex-col w-full md:w-auto md:space-x-10 md:flex-row">
             <button
                 class="BaseButton"
                 :class="selectedType === 'collateral' ? 'Selected' : 'Primary'"
@@ -23,7 +23,7 @@
                 System debt auctions
             </button>
         </div>
-        <div v-show="isExplanationsShown && selectedType" class="max-w-screen-sm mt-6">
+        <div v-show="isExplanationsShown && selectedType" class="max-w-screen-sm mt-4 md:mt-8">
             <TextBlock v-show="selectedType == 'collateral'" title="Collateral auctions">
                 The Maker Protocol allows users to borrow
                 <Explain text="DAI">
@@ -89,7 +89,7 @@ export default Vue.extend({
 
 <style scoped>
 .BaseButton {
-    @apply px-4 py-1.5 border-2 rounded-md font-semibold text-lg;
+    @apply px-4 py-1.5 border-2 rounded-md font-semibold text-base md:text-lg;
 }
 
 .Primary {

@@ -1,9 +1,10 @@
 <template>
-    <div>
+    <div :class="isDarkMode && 'dark bg-gray-900'">
         <Header
             class="sticky top-0 z-50 w-full h-16"
             type="unified"
             :is-explanations-shown.sync="isExplanationsShown"
+            :dark-mode.sync="isDarkMode"
         />
         <Nuxt />
     </div>
@@ -25,6 +26,14 @@ export default Vue.extend({
             },
             set(newIsExplanationsShown) {
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
+            },
+        },
+        isDarkMode: {
+            get(): Boolean {
+                return this.$store.getters['preferences/getIsDarkMode'];
+            },
+            set(newIsDarkMode) {
+                this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
         },
     },

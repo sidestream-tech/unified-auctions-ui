@@ -1,7 +1,7 @@
 <template>
     <div class="LandingBlock">
         <div v-if="!$slots.default" class="flex flex-col items-center w-full z-10">
-            <div class="LandingTitle">Collateral auctions</div>
+            <div class="LandingTitle pt-6">Collateral auctions</div>
             <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 my-8">
                 <Button class="SecondaryButton mx-3" @click="$emit('explanations', false)"
                     >I already know how it works</Button
@@ -54,6 +54,6 @@ export default Vue.extend({
     @apply ButtonBase border-gray-500 hover:text-primary focus:text-primary hover:border-primary dark:bg-gray-600 dark:border-gray-600 dark:text-white dark:hover:bg-gray-500;
 }
 .LandingTitle {
-    @apply text-4xl font-bold text-gray-800 dark:text-gray-100;
+    @apply text-4xl font-bold text-gray-800 dark:text-gray-100 px-4;
 }
 </style>

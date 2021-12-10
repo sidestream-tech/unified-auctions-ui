@@ -1,33 +1,31 @@
 <template>
-    <div
-        class="HeightFix flex flex-col w-full h-full items-center space-y-8"
-        :class="{ 'mt-8': !isExplanationsShown }"
-    >
+    <div class="HeightFix flex flex-col w-full h-full items-center">
         <LandingBlock v-if="isExplanationsShown" use-custom-header class="LandingBlock">
-            <h1>
+            <h1 class="text-gray-800 dark:text-gray-100">
                 Maker Protocol <br />
                 Unified Auctions
             </h1>
         </LandingBlock>
-        <TextBlock v-if="isExplanationsShown" title="Different auction types" class="max-w-screen-sm">
-            There are three distinct auction types that help maintain
-            <Explain text="Maker Protocol’s">
-                a <a href="https://changelog.makerdao.com/">set of smart contracts</a> running on the Ethereum
-                blockchain with the purpose to keep the cryptoasset Dai approximately equal to USD
-            </Explain>
-            solvency. They are taking effect in different situations like liquidation of single debt positions, to cap
-            accrued system surplus or to cover system’s debt.
-        </TextBlock>
-        <AuctionTypeFilter :is-explanations-shown="isExplanationsShown" @selected="applyFilter" />
-        <div>
-            <TextBlock
-                v-if="isExplanationsShown"
-                class="w-full max-w-screen-sm mb-3"
-                :title="filter ? 'Tools that support this auction type' : 'Existing auction tools'"
-            />
+        <div class="flex flex-col w-full items-center space-y-4 md:space-y-8 mt-4 md:mt-8 mb-4 px-4">
+            <TextBlock v-if="isExplanationsShown" title="Different auction types" class="max-w-screen-sm">
+                There are three distinct auction types that help maintain
+                <Explain text="Maker Protocol’s">
+                    a <a href="https://changelog.makerdao.com/">set of smart contracts</a> running on the Ethereum
+                    blockchain with the purpose to keep the cryptoasset Dai approximately equal to USD
+                </Explain>
+                solvency. They are taking effect in different situations like liquidation of single debt positions, to
+                cap accrued system surplus or to cover system’s debt.
+            </TextBlock>
+            <AuctionTypeFilter :is-explanations-shown="isExplanationsShown" @selected="applyFilter" />
             <div class="space-y-4 w-full max-w-screen-sm items-center">
-                <li v-for="tool in filteredToolList" :key="tool.title" class="list-none">
+                <TextBlock
+                    v-if="isExplanationsShown"
+                    class="w-full"
+                    :title="filter ? 'Tools that support this auction type' : 'Existing auction tools'"
+                />
+                <li v-for="tool in filteredToolList" :key="tool.title" class="list-none w-full">
                     <AuctionTool
+                        class="w-full"
                         :title="tool.title"
                         :is-explanations-shown="isExplanationsShown"
                         :source-url="tool.links.source"
