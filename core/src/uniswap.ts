@@ -114,7 +114,7 @@ const getLpTokenTotalSupply = async function (network: string, symbol: string): 
     const contract = new ethers.Contract(address, uniswapV2PairABI, provider);
     const totalSupply = await contract.totalSupply();
     const collateral = getCollateralConfigBySymbol(symbol);
-    return new BigNumber(totalSupply).shiftedBy(-collateral.decimals);
+    return new BigNumber(totalSupply.toString()).shiftedBy(-collateral.decimals);
 };
 
 const getTotalPriceInDai = async function (
