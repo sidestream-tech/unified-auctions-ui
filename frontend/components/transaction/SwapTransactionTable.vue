@@ -1,7 +1,7 @@
 <template>
     <TextBlock class="flex flex-col space-y-1">
         <div class="flex w-full justify-between">
-            <div>Expires In</div>
+            <div>Auction Ends</div>
             <div><time-till :date="auctionTransaction.till" /></div>
         </div>
         <div class="flex w-full justify-between">

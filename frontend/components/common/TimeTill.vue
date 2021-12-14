@@ -1,6 +1,6 @@
 <template>
     <span :title="parsedDate">
-        <span v-if="timeTill">{{ timeTill }}</span>
+        <span v-if="timeTill" :class="{ 'font-bold': isEndingSoon }">{{ timeTill }}</span>
         <span v-else-if="date">{{ date }}</span>
         <span v-else></span>
     </span>
@@ -9,6 +9,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { formatInterval } from '~/helpers/tillDuration';
+
+const ENDING_SOON_THRESHOLD = 1000 * 60 * 15;
 
 export default Vue.extend({
     props: {
@@ -19,6 +21,7 @@ export default Vue.extend({
     },
     data: () => ({
         timeTill: '',
+        isEndingSoon: false,
     }),
     computed: {
         parsedDate(): Date | null {
@@ -36,7 +39,11 @@ export default Vue.extend({
     methods: {
         calculateTime(): void {
             if (this.parsedDate) {
-                this.timeTill = formatInterval(new Date(), this.parsedDate);
+                const now = new Date();
+                this.timeTill = formatInterval(now, this.parsedDate);
+
+                const duration = this.parsedDate.getTime() - now.getTime();
+                this.isEndingSoon = duration < ENDING_SOON_THRESHOLD && duration > 0;
             } else {
                 this.timeTill = '';
             }

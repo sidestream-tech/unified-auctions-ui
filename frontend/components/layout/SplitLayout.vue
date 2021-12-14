@@ -64,7 +64,7 @@ export default Vue.extend({
     @apply absolute md:w-1/2 w-full h-full right-0 top-0 overflow-hidden transform translate-x-full transition-all duration-500 overscroll-none z-20;
 }
 .Slot2 {
-    @apply absolute hidden md:w-1/2 w-full h-full right-0 top-0 overflow-hidden  transition-all duration-500 z-30;
+    @apply absolute hidden md:w-1/2 w-full h-full right-0 top-0 overflow-hidden transition-all duration-500 z-30;
 }
 .SlotContainer {
     @apply relative w-full h-full bg-white dark:bg-gray-900 overflow-auto shadow-2xl md:shadow-none;
@@ -74,7 +74,7 @@ export default Vue.extend({
     @apply block;
 }
 .Overlay {
-    @apply absolute w-full h-full inset-0 bg-gray-500 opacity-0 transition-all duration-500 hidden z-10;
+    @apply fixed w-full h-full inset-0 bg-gray-500 opacity-0 transition-all duration-500 hidden z-10;
 }
 
 /* STATE STEP 1 */
@@ -103,11 +103,6 @@ export default Vue.extend({
 /* STATE STEP 2 */
 .Step2 .Slot0 {
     @apply md:w-1/2 md:relative md:transform md:-translate-x-full overflow-hidden;
-}
-.Step2 .Slot0 .Overlay {
-    @apply transition-none;
-
-    height: 300%;
 }
 .Step2 .Slot1 {
     @apply flex transform md:-translate-x-full;
