@@ -1,5 +1,5 @@
 <template>
-    <div class="border-2 border-gray-300 py-2 px-3 rounded">
+    <div class="border-2 border-gray-300 py-2 px-3 rounded bg-white dark:bg-gray-900">
         <div class="flex justify-between items-center flex-col md:flex-row w-full">
             <h3 class="text-lg text-gray-700 dark:text-gray-200 font-extrabold pr-2 w-full">{{ title }}</h3>
             <div class="space-x-1 w-full md:flex md:justify-end">

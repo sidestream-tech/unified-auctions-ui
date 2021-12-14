@@ -17,25 +17,31 @@
                 cap accrued system surplus or to cover system’s debt.
             </TextBlock>
             <AuctionTypeFilter :is-explanations-shown="isExplanationsShown" @selected="applyFilter" />
-            <div class="space-y-4 w-full max-w-screen-sm items-center">
+            <div class="w-full max-w-screen-sm items-center">
                 <TextBlock
                     v-if="isExplanationsShown"
-                    class="w-full"
+                    class="w-full mb-4"
                     :title="filter ? 'Tools that support this auction type' : 'Existing auction tools'"
                 />
-                <li v-for="tool in filteredToolList" :key="tool.title" class="list-none w-full">
-                    <AuctionTool
-                        class="w-full"
-                        :title="tool.title"
-                        :is-explanations-shown="isExplanationsShown"
-                        :source-url="tool.links.source"
-                        :participate-url="tool.links.participate"
-                        :analytics-url="tool.links.analytics"
-                        :profile-url="tool.links.profile"
+                <transition-group name="Tool-List" class="space-y-4">
+                    <li
+                        v-for="tool in filteredToolList"
+                        :key="tool.title"
+                        class="Tool list-none w-full max-w-screen-sm"
                     >
-                        {{ tool.description }}
-                    </AuctionTool>
-                </li>
+                        <AuctionTool
+                            class="w-full"
+                            :title="tool.title"
+                            :is-explanations-shown="isExplanationsShown"
+                            :source-url="tool.links.source"
+                            :participate-url="tool.links.participate"
+                            :analytics-url="tool.links.analytics"
+                            :profile-url="tool.links.profile"
+                        >
+                            {{ tool.description }}
+                        </AuctionTool>
+                    </li>
+                </transition-group>
             </div>
         </div>
     </div>
@@ -218,5 +224,22 @@ export default Vue.extend({
 
 .HeightFix {
     min-height: 75vh;
+}
+
+.Tool {
+    transition: all 0.6s;
+}
+
+.Tool-List-enter {
+    opacity: 0;
+    transform: translateY(-50px);
+}
+
+.Tool-List-leave-to {
+    opacity: 0;
+}
+
+.Tool-List-leave-active {
+    position: absolute;
 }
 </style>
