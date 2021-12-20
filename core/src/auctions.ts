@@ -18,6 +18,7 @@ const fetchAuctionsByType = async function (type: string, maker: any, network: s
         const collateralSymbol = COLLATERALS[protoAuction.ilk].symbol as string;
         const amountRAW = new BigNumber(protoAuction.lot);
         return {
+            network,
             id: `${protoAuction.ilk}:${protoAuction.saleId}`,
             auctionId: protoAuction.saleId,
             collateralType: protoAuction.ilk,

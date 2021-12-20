@@ -12,7 +12,18 @@
             @openTermsModal="setTermsModal(true)"
         />
         <Nuxt />
-        <ForceNetworkModal :is-invalid-network="isInvalidNetwork" :chain-id="chainID" @updateNetwork="changeNetwork" />
+        <ChangePageNetworkModal
+            v-if="!isPageNetworkValid"
+            :invalid-network="getPageNetwork"
+            @setPageNetwork="setPageNetwork"
+        />
+        <ChangeWalletNetworkModal
+            v-else-if="!isWalletNetworkValid"
+            :invalid-network="getWalletNetworkTitle"
+            :page-network="network"
+            @setPageNetwork="setPageNetwork"
+            @fixWalletNetwork="fixWalletNetwork"
+        />
         <TermsModal :is-shown="isTermsModalShown" @accept="acceptTerms" @close="setTermsModal(false)" />
         <WalletModal :is-shown="isWalletModalShown" @connect="changeWalletType" @close="setWalletModal(false)" />
     </div>
@@ -20,17 +31,19 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
-import ForceNetworkModal from '~/components/ForceNetworkModal.vue';
-import TermsModal from '~/components/TermsModal.vue';
-import WalletModal from '~/components/utils/WalletModal.vue';
+import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.vue';
+import ChangeWalletNetworkModal from '~/components/modals/ChangeWalletNetworkModal.vue';
+import TermsModal from '~/components/modals/TermsModal.vue';
+import WalletModal from '~/components/modals/WalletModal.vue';
 
 export default Vue.extend({
     components: {
         TermsModal,
-        ForceNetworkModal,
+        ChangePageNetworkModal,
+        ChangeWalletNetworkModal,
         Header,
         WalletModal,
     },
@@ -44,10 +57,14 @@ export default Vue.extend({
             isWalletModalShown: 'getWalletModal',
         }),
         ...mapGetters('preferences', {
-            isInvalidNetwork: 'getIsInvalidNetwork',
-            chainID: 'getChainID',
             hasAcceptedTerms: 'getAcceptedTerms',
         }),
+        ...mapGetters('network', [
+            'getWalletNetworkTitle',
+            'getPageNetwork',
+            'isPageNetworkValid',
+            'isWalletNetworkValid',
+        ]),
         isExplanationsShown: {
             get() {
                 return this.$store.getters['preferences/getIsExplanationsShown'];
@@ -58,10 +75,10 @@ export default Vue.extend({
         },
         network: {
             get() {
-                return this.$store.getters['preferences/getNetwork'];
+                return this.getPageNetwork;
             },
             set(newNetwork) {
-                this.$store.dispatch('preferences/setNetwork', newNetwork);
+                this.setPageNetwork(newNetwork);
             },
         },
         isDarkMode: {
@@ -74,12 +91,8 @@ export default Vue.extend({
         },
     },
     methods: {
-        changeWalletType(walletType: string): void {
-            this.$store.dispatch('wallet/changeWalletType', walletType);
-        },
-        changeNetwork(newNetwork: string): void {
-            this.$store.dispatch('preferences/setNetwork', newNetwork);
-        },
+        ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
+        ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
             this.$store.commit('preferences/setAcceptedTerms', true);
             this.$store.commit('modals/setTermsModal', false);

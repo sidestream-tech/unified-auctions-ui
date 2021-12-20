@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import TermsModal from '~/components/TermsModal';
+import TermsModal from './TermsModal';
 
 const common = {
     components: { TermsModal },

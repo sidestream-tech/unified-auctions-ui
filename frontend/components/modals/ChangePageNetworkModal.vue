@@ -1,19 +1,24 @@
 <template>
     <modal
-        :visible="isInvalidNetwork"
+        :visible="true"
         :mask-closable="false"
         :closable="false"
         :footer="null"
         class="my-0"
-        title="Error switching networks."
+        title="Unsupported network type"
     >
-        <Alert type="error" :message="errorMessage" banner />
+        <Alert type="error" banner>
+            <template #message>
+                Network "<span class="font-medium">{{ invalidNetwork }}</span
+                >" is not supported, please change it to a supported one:
+            </template>
+        </Alert>
         <ul class="py-3">
             <li
                 v-for="option in options"
                 :key="option.value"
-                class="w-full hover:bg-primary px-4 py-2 cursor-pointer flex"
-                @click="$emit('updateNetwork', option.value)"
+                class="w-full hover:bg-primary px-5 py-2 cursor-pointer flex"
+                @click="$emit('setPageNetwork', option.value)"
             >
                 <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
                 {{ option.label }}
@@ -28,14 +33,10 @@ import Vue from 'vue';
 import NETWORKS from '~/../core/src/constants/NETWORKS';
 
 export default Vue.extend({
-    name: 'ForceNetworkModal',
+    name: 'ChangePageNetworkModal',
     components: { Modal, Alert },
     props: {
-        isInvalidNetwork: {
-            type: Boolean,
-            default: false,
-        },
-        chainId: {
+        invalidNetwork: {
             type: String,
             default: '',
         },
@@ -44,15 +45,10 @@ export default Vue.extend({
         return {
             options: [
                 ...Object.entries(NETWORKS).map(([name, propeties]) => {
-                    return { label: propeties.title, value: name as string | null };
+                    return { label: propeties.title, value: name };
                 }),
             ],
         };
-    },
-    computed: {
-        errorMessage(): string {
-            return `Network "${this.chainId}" is not supported, please change it to a known one:`;
-        },
     },
 });
 </script>

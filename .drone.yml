@@ -64,7 +64,7 @@ steps:
 
     - name: frontend-build
       image: node:16.9.1
-      depends_on: [frontend-install, core-install]
+      depends_on: [frontend-test]
       commands:
         - cd frontend
         - npm run build

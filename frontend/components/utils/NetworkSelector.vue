@@ -11,6 +11,7 @@ import Vue from 'vue';
 import { Icon } from 'ant-design-vue';
 import Select from '~/components/common/Select.vue';
 import NETWORKS from '~/../core/src/constants/NETWORKS';
+import { FAKE_NETWORK_NAME } from '~/store/network';
 
 export default Vue.extend({
     name: 'NetworkSelector',
@@ -30,7 +31,7 @@ export default Vue.extend({
                 ...Object.entries(NETWORKS).map(([name, propeties]) => {
                     return { label: propeties.title, value: name as string | null };
                 }),
-                { label: 'Stub data', value: null },
+                { label: 'Stub data', value: FAKE_NETWORK_NAME },
             ],
         };
     },

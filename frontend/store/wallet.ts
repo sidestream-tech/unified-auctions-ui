@@ -69,8 +69,10 @@ export const actions = {
             await wallet.connect();
             commit('setAddress', wallet.address);
             if (wallet.address) {
-                const network = rootGetters['preferences/getNetwork'];
-                await addMakerAccount(wallet.address, network);
+                const network = rootGetters['network/getMakerNetwork'];
+                if (network) {
+                    await addMakerAccount(wallet.address, network);
+                }
             }
             commit('setWalletType', walletType);
         } catch (error) {

@@ -183,7 +183,8 @@ export default Vue.extend({
             return classes.join(' ');
         },
         getAuctionLink(auction: Auction) {
-            return `/collateral/?auction=${auction.id}`;
+            const searchParams = new URLSearchParams({ network: auction.network, auction: auction.id });
+            return `/collateral?${searchParams.toString()}`;
         },
     },
 });

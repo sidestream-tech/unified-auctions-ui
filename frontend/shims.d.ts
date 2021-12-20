@@ -26,6 +26,7 @@ declare interface SelectOption {
 }
 
 declare interface Auction {
+    network: string;
     id: string;
     auctionId: number;
     collateralType: string;

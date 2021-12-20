@@ -28,7 +28,7 @@
                     />
 
                     <WalletSelector
-                        v-if="!isUnifiedPage"
+                        v-if="!(isUnifiedPage || network === 'stub')"
                         class="hidden sm:block"
                         :wallet-address="walletAddress"
                         :is-loading="isWalletLoading"

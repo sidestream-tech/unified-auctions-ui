@@ -85,7 +85,7 @@ export const mutations = {
 
 export const actions = {
     async fetchWithoutLoading({ commit, rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['preferences/getNetwork'];
+        const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
@@ -118,7 +118,7 @@ export const actions = {
             message.error(`Bidding error: can not find auction with id "${id}"`);
             return;
         }
-        const network = rootGetters['preferences/getNetwork'];
+        const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getWallet().address;
         if (!walletAddress) {
             message.error('Bidding error: can not find wallet');
@@ -160,11 +160,11 @@ export const actions = {
         }
     },
     async checkAllExchangeRates({ rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['preferences/getNetwork'];
+        const network = rootGetters['network/getMakerNetwork'];
         await checkAllExchangeRates(network);
     },
     async checkAllCalcParameters({ rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['preferences/getNetwork'];
+        const network = rootGetters['network/getMakerNetwork'];
         await checkAllCalcParameters(network);
     },
 };

@@ -59,7 +59,7 @@ export default Vue.extend({
             if (!this.$store) {
                 return 'https://etherscan.io';
             }
-            const network = this.$store.getters['preferences/getNetwork'];
+            const network = this.$store.getters['network/getMakerNetwork'];
             if (NETWORKS[network]) {
                 return NETWORKS[network].etherscanUrl;
             }

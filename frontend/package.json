@@ -38,6 +38,7 @@
     "date-fns": "^2.23.0",
     "ethers": "^5.4.6",
     "nuxt": "^2.15.7",
+    "nuxt-vuex-router-sync": "^0.0.3",
     "uuid": "^8.3.2",
     "vue-cryptoicon": "^0.18.0-a",
     "vue-plausible": "^1.2.1",

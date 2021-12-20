@@ -15,6 +15,7 @@ export const generateFakeAuction = function () {
     const marketPricePerCollateral = amountPerCollateral * (1 - marketValue);
     const transactionProfit = marketPricePerCollateral * amountRAW - amountPerCollateral * amountRAW;
     return {
+        network: 'stub',
         id: `${collateralObject.ilk}:${auctionId}`,
         auctionId,
         collateralType: collateralObject.ilk,

@@ -1,5 +1,5 @@
 <template>
-    <AuctionsFakeData v-if="!network" />
+    <AuctionsFakeData v-if="isPageNetworkFake" />
     <AuctionsContainer v-else :network="network" />
 </template>
 
@@ -15,8 +15,11 @@ export default Vue.extend({
     },
     layout: process.env.DEMO_MODE ? 'demoMode' : 'default',
     computed: {
+        isPageNetworkFake() {
+            return this.$store.getters['network/isPageNetworkFake'];
+        },
         network() {
-            return this.$store.getters['preferences/getNetwork'];
+            return this.$store.getters['network/getPageNetwork'];
         },
     },
 });

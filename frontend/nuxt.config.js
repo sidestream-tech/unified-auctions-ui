@@ -52,6 +52,8 @@ export default {
 
     // Modules: https://go.nuxtjs.dev/config-modules
     modules: [
+        // https://github.com/paulgv/nuxt-vuex-router-sync
+        'nuxt-vuex-router-sync',
         // https://github.com/moritzsternemann/vue-plausible
         'vue-plausible',
     ],

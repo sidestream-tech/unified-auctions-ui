@@ -26,7 +26,7 @@ export const mutations = {
 
 export const actions = {
     async fetch({ commit, rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['preferences/getNetwork'];
+        const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }

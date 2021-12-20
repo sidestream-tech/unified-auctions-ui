@@ -5,6 +5,7 @@ declare module 'dai-monorepo/*';
 declare type BigNumber = any;
 
 declare interface AuctionInitialInfo {
+    network: string;
     id: string;
     auctionId: number;
     collateralType: string;

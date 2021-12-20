@@ -58,8 +58,9 @@ export default Vue.extend({
     watch: {
         selectedAuctionId: {
             handler(newAuctionId) {
-                if (!newAuctionId && this.$router.currentRoute.fullPath !== '/collateral') {
-                    this.$router.replace('/collateral');
+                if (!newAuctionId) {
+                    const network = this.$route.query.network;
+                    this.$router.push({ query: { network } });
                 }
             },
         },

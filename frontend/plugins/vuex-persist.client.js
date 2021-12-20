@@ -6,7 +6,7 @@ export default ({ store }) => {
             storage: window.localStorage,
             modules: ['preferences'],
         }).plugin(store);
-        const network = store.getters['preferences/getNetwork'];
+        const network = store.getters['network/getMakerNetwork'];
         if (network) {
             store.dispatch('auctions/fetch');
             store.dispatch('wallet/autoConnect');

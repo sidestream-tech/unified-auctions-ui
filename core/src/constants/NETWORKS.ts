@@ -19,6 +19,15 @@ const NETWORKS: Record<string, NetworkConfig> = {
     },
 };
 
+const NETWORK_TITLES: Record<string, string | undefined> = {
+    // full list can be found on https://chainlist.org
+    '0x1': 'mainnet',
+    '0x2a': 'kovan',
+    '0x3': 'ropsten',
+    '0x4': 'rinkeby',
+    '0x5': 'goerli',
+};
+
 export const getDecimalChainIdByNetworkType = function (networkType: string): number {
     const network = NETWORKS[networkType];
     if (!network || !network.chainId) {
@@ -27,7 +36,7 @@ export const getDecimalChainIdByNetworkType = function (networkType: string): nu
     return parseInt(network.chainId, 16);
 };
 
-export const getChainIdByNetworkType = function (networkType: string | null): string | undefined {
+export const getChainIdByNetworkType = function (networkType: string | undefined): string | undefined {
     if (!networkType) {
         return undefined;
     }
@@ -35,16 +44,23 @@ export const getChainIdByNetworkType = function (networkType: string | null): st
     return network && network.chainId;
 };
 
-export const getNetworkTypeByChainId = function (chainId: string | null): string | undefined {
+export const getNetworkTypeByChainId = function (chainId: string | undefined): string | undefined {
     const networkEntry = Object.entries(NETWORKS).find(([_, networkObject]) => networkObject.chainId === chainId);
     return networkEntry && networkEntry[0];
 };
 
-export const getNetworkConfigByType = function (networkType: string | null): NetworkConfig {
+export const getNetworkConfigByType = function (networkType: string | undefined): NetworkConfig {
     if (!networkType || !NETWORKS[networkType]) {
         throw new Error(`No network found with name "${networkType}"`);
     }
     return NETWORKS[networkType];
+};
+
+export const getNetworkTitleByChainId = function (chainId: string | undefined) {
+    if (!chainId) {
+        return;
+    }
+    return NETWORK_TITLES[chainId];
 };
 
 export default NETWORKS;
