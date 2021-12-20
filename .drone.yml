@@ -1,5 +1,6 @@
 kind: pipeline
-name: default
+type: kubernetes
+name: core-lint-and-test
 
 steps:
     - name: core-install
@@ -22,6 +23,23 @@ steps:
       commands:
         - cd core
         - npm run build
+
+trigger:
+    event:
+        - pull_request
+
+---
+kind: pipeline
+type: kubernetes
+name: frontend-lint-and-test
+
+steps:
+    - name: core-install
+      image: node:16.9.1
+      depends_on: [clone]
+      commands:
+          - cd core
+          - npm ci
 
     - name: frontend-install
       image: node:16.9.1
@@ -57,6 +75,7 @@ trigger:
 
 ---
 kind: pipeline
+type: kubernetes
 name: build-publish-deploy
 
 trigger:
