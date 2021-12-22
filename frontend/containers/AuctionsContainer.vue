@@ -71,22 +71,25 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
-        selectedAuction(): Auction | null {
-            return this.auctions.find((auction: Auction) => auction.id === this.selectedAuctionId) || null;
+        selectedAuction(): Auction | undefined {
+            return this.auctions.find((auction: Auction) => auction.id === this.selectedAuctionId);
+        },
+        fetchedSelectedAuctionId(): string | undefined {
+            return this.selectedAuction && this.selectedAuction.id;
         },
         hasAcceptedTerms(): boolean {
             return this.$store.getters['preferences/getAcceptedTerms'];
         },
     },
     watch: {
-        selectedAuction: {
+        fetchedSelectedAuctionId: {
             immediate: true,
-            handler(selectedAuction) {
-                if (!selectedAuction) {
+            handler(fetchedSelectedAuctionId) {
+                if (!fetchedSelectedAuctionId) {
                     return;
                 }
                 this.fetchWalletAuthorizationStatus();
-                this.fetchCollateralAuthorizationStatus(selectedAuction.collateralType);
+                this.fetchCollateralAuthorizationStatus(this.selectedAuction.collateralType);
             },
         },
     },

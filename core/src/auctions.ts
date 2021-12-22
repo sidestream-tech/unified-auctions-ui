@@ -1,12 +1,11 @@
-import BigNumber from 'bignumber.js';
+import BigNumber from './bignumber';
 import getMaker from './maker';
 import COLLATERALS from './constants/COLLATERALS';
-import { WAD, RAD, RAY, WAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
 import { fetchCalcParametersByCollateralType } from './params';
 import trackTransaction from './tracker';
-
-BigNumber.config({ DECIMAL_PLACES: RAY_NUMBER_OF_DIGITS });
+import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
 
 const fetchAuctionsByType = async function (type: string, maker: any, network: string): Promise<AuctionInitialInfo[]> {
     const protoAuctions = await maker.service('liquidation').getAllClips(type);
@@ -27,6 +26,7 @@ const fetchAuctionsByType = async function (type: string, maker: any, network: s
             amountRAW,
             debtDAI: new BigNumber(protoAuction.tab),
             till: protoAuction.endDate,
+            initialPrice: new BigNumber(protoAuction.top),
             start: protoAuction.created,
             isActive,
             isFinished: false,
@@ -46,30 +46,23 @@ const enrichAuctionWithActualNumbers = async function (
         return {
             ...auction,
             amountPerCollateral: new BigNumber(0),
+            fetchedAmountPerCollateral: new BigNumber(0),
             amountDAI: new BigNumber(0),
         };
     }
     const status = await maker.service('liquidation').getStatus(auction.collateralType, auction.auctionId);
     const amountPerCollateral = new BigNumber(status.price).div(RAY);
     const amountRAW = new BigNumber(status.lot).div(WAD);
+
     return {
         ...auction,
         isActive: !status.needsRedo,
         debtDAI: new BigNumber(status.tab).div(RAD),
         amountRAW,
         amountPerCollateral,
+        fetchedAmountPerCollateral: amountPerCollateral,
         amountDAI: amountRAW.multipliedBy(amountPerCollateral),
     };
-};
-
-const calculateTransactionProfit = function (auction: Auction): BigNumber {
-    const totalMarketValue = auction.amountRAW.multipliedBy(auction.marketPricePerCollateral);
-    if (totalMarketValue <= auction.debtDAI) {
-        return totalMarketValue.minus(auction.amountDAI);
-    }
-    const collateralAmountLimitedByDebt = auction.debtDAI.dividedBy(auction.amountPerCollateral);
-    const totalMarketValueLimitedByDebt = collateralAmountLimitedByDebt.multipliedBy(auction.marketPricePerCollateral);
-    return totalMarketValueLimitedByDebt.minus(auction.debtDAI);
 };
 
 const enrichAuctionWithMarketValues = async function (auction: Auction, network: string): Promise<Auction> {
@@ -103,6 +96,31 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
     }
 };
 
+export const enrichAuctionWithPriceDrop = async function (auction: Auction): Promise<Auction> {
+    if (!auction.isActive) {
+        return auction;
+    }
+    const currentDate = new Date();
+    const secondsTillNextPriceDrop = calculateAuctionDropTime(auction, currentDate);
+    const amountPerCollateral = calculateAuctionPrice(auction, currentDate);
+    const amountDAI = auction.amountRAW.multipliedBy(amountPerCollateral);
+
+    return {
+        ...auction,
+        secondsTillNextPriceDrop,
+        amountPerCollateral,
+        amountDAI,
+    };
+};
+
+export const enrichAuctionWithPriceDropAndMarketValue = async function (
+    auction: Auction,
+    network: string
+): Promise<Auction> {
+    const enrichedAuctionWithNewPriceDrop = await enrichAuctionWithPriceDrop(auction);
+    return await enrichAuctionWithMarketValues(enrichedAuctionWithNewPriceDrop, network);
+};
+
 export const fetchAllAuctions = async function (network: string): Promise<Auction[]> {
     const maker = await getMaker(network);
     const collateralNames = Object.keys(COLLATERALS);
@@ -126,12 +144,11 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     );
     const auctionsWithStatuses = await Promise.all(auctionsWithStatusesPromises);
 
-    // enrich them with market values
-    const auctionsWithMarketValues = await Promise.all(
-        auctionsWithStatuses.map(a => enrichAuctionWithMarketValues(a, network))
-    );
+    // enrich them with price drop
+    const auctionsWithPriceDrop = await Promise.all(auctionsWithStatuses.map(enrichAuctionWithPriceDrop));
 
-    return auctionsWithMarketValues;
+    // enrich them with market values
+    return await Promise.all(auctionsWithPriceDrop.map(a => enrichAuctionWithMarketValues(a, network)));
 };
 
 export const restartAuction = async function (
@@ -160,7 +177,7 @@ export const bidOnTheAuction = async function (
             auction.collateralType,
             auction.auctionId,
             auction.amountRAW.toFixed(WAD_NUMBER_OF_DIGITS),
-            auction.amountPerCollateral.toFixed(RAY_NUMBER_OF_DIGITS),
+            auction.fetchedAmountPerCollateral.toFixed(RAY_NUMBER_OF_DIGITS),
             calleeAddress,
             flashData
         );

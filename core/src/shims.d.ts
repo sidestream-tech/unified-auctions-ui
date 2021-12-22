@@ -21,6 +21,7 @@ declare interface AuctionInitialInfo {
     marketValue?: BigNumber | number;
     transactionProfit?: BigNumber | number;
     transactionAddress?: string;
+    initialPrice: BigNumber;
     start: Date;
     step: BigNumber;
     cut: BigNumber;
@@ -28,7 +29,9 @@ declare interface AuctionInitialInfo {
 
 declare interface Auction extends AuctionInitialInfo {
     amountPerCollateral: BigNumber | number;
+    fetchedAmountPerCollateral: BigNumber;
     amountDAI: BigNumber | number;
+    secondsTillNextPriceDrop?: number;
 }
 
 declare interface TransactionFees {

@@ -1,14 +1,22 @@
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
-import { fetchAllAuctions, bidOnTheAuction, restartAuction } from '~/../core/src/auctions';
-import { checkAllExchangeRates } from '~/../core/src/uniswap';
-import { enrichAuctionWithTransactionFees } from '~/../core/src/fees';
-import { checkAllCalcParameters } from '~/../core/src/params';
-import getWallet from '~/lib/wallet';
-import notifier from '~/lib/notifier';
+import {
+    fetchAllAuctions,
+    bidOnTheAuction,
+    restartAuction,
+    enrichAuctionWithPriceDropAndMarketValue,
+} from '../../core/src/auctions';
+import { checkAllExchangeRates } from '../../core/src/uniswap';
+import { enrichAuctionWithTransactionFees } from '../../core/src/fees';
+import { checkAllCalcParameters } from '../../core/src/params';
+import getWallet from '../lib/wallet';
+import notifier from '../lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
+const TIMER_INTERVAL = 1000;
+
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
+let updateAuctionsPricesIntervalId: ReturnType<typeof setInterval> | undefined;
 
 interface State {
     auctionStorage: Record<string, Auction>;
@@ -64,6 +72,9 @@ export const mutations = {
             ...newAuctionStorage,
         };
     },
+    setAuction(state: State, auction: Auction) {
+        state.auctionStorage[auction.id] = auction;
+    },
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
         state.auctionStorage[id].transactionAddress = transactionAddress;
         state.auctionStorage[id].isFinished = true;
@@ -107,7 +118,11 @@ export const actions = {
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }
+        if (updateAuctionsPricesIntervalId) {
+            clearInterval(updateAuctionsPricesIntervalId);
+        }
         refetchIntervalId = setInterval(() => dispatch('fetchWithoutLoading'), REFETCH_INTERVAL);
+        updateAuctionsPricesIntervalId = setInterval(() => dispatch('updateAuctionsPrices'), TIMER_INTERVAL);
     },
     async bid(
         { getters, commit, rootGetters }: ActionContext<State, State>,
@@ -157,6 +172,26 @@ export const actions = {
         } catch (error) {
             commit('setAuctionRestarting', { id, isRestarting: false });
             console.error(`Auction redo error: ${error.message}`);
+        }
+    },
+    updateAuctionsPrices({ getters, dispatch }: ActionContext<State, State>) {
+        const auctions = getters.listAuctions;
+
+        auctions.forEach((auction: Auction) => {
+            dispatch('updateAuctionPrice', auction.id);
+        });
+    },
+    async updateAuctionPrice({ getters, commit, rootGetters }: ActionContext<State, State>, id: string) {
+        const network = rootGetters['network/getMakerNetwork'];
+        const auction = getters.getAuctionById(id);
+        try {
+            const updatedAuction = await enrichAuctionWithPriceDropAndMarketValue(auction, network);
+            commit('setAuction', updatedAuction);
+        } catch (error) {
+            console.warn(
+                `Updating price for ${auction.id} failed with error:`,
+                error instanceof Error && error.message
+            );
         }
     },
     async checkAllExchangeRates({ rootGetters }: ActionContext<State, State>) {

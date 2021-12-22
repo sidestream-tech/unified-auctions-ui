@@ -1,13 +1,13 @@
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
 import memoizee from 'memoizee';
+import BigNumber from './bignumber';
 import getProvider from './provider';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import { getAllCollateralTypes } from './constants/COLLATERALS';
 import { RAY_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { getLiquidationsContractsByNetwork } from './contracts';
 
-const PARAMS_CACHE_SECONDS = 60 * 60 * 24 * 30;
+const PARAMS_CACHE = 24 * 60 * 60 * 1000;
 
 const getCalcAddressByCollateralType = function (network: string, collateralType: string): string {
     const suffix = collateralType.replace('-', '_');
@@ -38,8 +38,9 @@ const _fetchCalcParametersByCollateralType = async function (
 };
 
 export const fetchCalcParametersByCollateralType = memoizee(_fetchCalcParametersByCollateralType, {
-    maxAge: PARAMS_CACHE_SECONDS,
+    maxAge: PARAMS_CACHE,
     promise: true,
+    length: 2,
 });
 
 export const checkAllCalcParameters = async function (network: string): Promise<void> {

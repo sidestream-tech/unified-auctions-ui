@@ -69,8 +69,6 @@
   @alert-error-bg-color: darken(@error, 20%);
   @alert-error-icon-color: @error;
 
-  @progress-default-color: #00AB9B;
-
   // Popover
   @popover-bg: @component-background;
 
@@ -84,6 +82,10 @@
 
   .ant-modal-body {
     padding: 0;
+  }
+
+  .ant-progress-circle-trail {
+    stroke: lighten(@main-light, 10%) !important;
   }
 
   color-scheme: dark;

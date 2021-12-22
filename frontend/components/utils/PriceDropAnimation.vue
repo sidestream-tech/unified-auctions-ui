@@ -1,93 +1,72 @@
 <template>
-    <div>
-        <p>
-            Time to next price drop:
-            <span v-if="timerCount !== undefined || Number.isNaN(timerCount)" class="font-semibold"
-                >{{ timerCount.toFixed() }}s</span
-            >
-            <span v-else class="font-semibold"> N/A </span>
-        </p>
-        <Progress class="progress-bar" size="small" :show-info="false" :percent="percent" />
-    </div>
+    <span v-if="auction.isActive && !auction.isFinished">
+        <Popover :placement="placement">
+            <template slot="content">
+                <div class="text-center">
+                    <p>
+                        Price in
+                        <span v-if="auction.secondsTillNextPriceDrop !== undefined" class="font-semibold"
+                            >{{ auction.secondsTillNextPriceDrop.toFixed() }} s</span
+                        >
+                        <span v-else class="font-semibold"> N/A </span>
+                    </p>
+                    <p>
+                        <FormatCurrency :value="nextPrice.toNumber()" currency="DAI" /> per
+                        <FormatCurrency :currency="auction.collateralSymbol" />
+                    </p>
+                </div>
+            </template>
+            <Progress
+                type="circle"
+                class="progress-bar"
+                :width="20"
+                :stroke-width="15"
+                :percent="percent"
+                :show-info="false"
+            />
+        </Popover>
+    </span>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { Progress } from 'ant-design-vue';
+import { Progress, Popover } from 'ant-design-vue';
+import BigNumber from 'bignumber.js';
+import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 export default Vue.extend({
     name: 'PriceDropAnimation',
-    components: { Progress },
+    components: { FormatCurrency, Progress, Popover },
     props: {
-        auctionStartDate: {
-            type: [Date, String],
+        auction: {
+            type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
         },
-        dropDuration: {
-            type: Number,
-            required: true,
+        placement: {
+            type: String,
+            default: 'top',
         },
-        disabled: {
-            type: Boolean,
-            default: false,
-        },
-    },
-    data() {
-        return {
-            timerCount: 0 as number | undefined,
-        };
     },
     computed: {
         percent(): number {
-            if (this.timerCount) {
-                return 100 - (this.timerCount / this.dropDuration) * 100;
+            if (this.auction.secondsTillNextPriceDrop) {
+                return 100 - (this.auction.secondsTillNextPriceDrop / this.auction.step) * 100;
             }
             return 0;
         },
-    },
-    mounted() {
-        this.calculateTimerCount();
-        setInterval(this.calculateTimerCount, 1000);
-    },
-    methods: {
-        calculateTimerCount(): void {
-            if (this.isValidTimeStamp()) {
-                const auctionStartTimestamp = new Date(this.auctionStartDate).getTime();
-                const now = new Date().getTime();
-                const elapsedTime = (now - auctionStartTimestamp) / 1000;
-                const timerCount = this.dropDuration - (elapsedTime % this.dropDuration);
-                this.timerCount = timerCount;
-
-                if (timerCount > this.dropDuration - 1) {
-                    this.fetchAuctions();
-                }
-            } else {
-                this.timerCount = undefined;
-            }
-        },
-        isValidTimeStamp(): boolean {
-            const auctionStartTimestamp = new Date(this.auctionStartDate).getTime();
-            const now = new Date().getTime();
-            if (isNaN(auctionStartTimestamp)) {
-                return false;
-            }
-            if (this.disabled) {
-                return false;
-            }
-            return now >= auctionStartTimestamp;
-        },
-        fetchAuctions(): void {
-            // TODO: remove this call as soon as we properly implement price drop
-            if (this.$store) {
-                this.$store.dispatch('auctions/fetchWithoutLoading');
-            }
+        nextPrice(): BigNumber {
+            return this.auction.amountPerCollateral.multipliedBy(this.auction.cut);
         },
     },
 });
 </script>
 
 <style scoped>
-.progress-bar >>> .ant-progress-bg {
+.progress-bar >>> .ant-progress-circle path {
     transition: all 1s linear 0s !important;
+}
+
+.progress-bar {
+    @apply ml-2;
 }
 </style>

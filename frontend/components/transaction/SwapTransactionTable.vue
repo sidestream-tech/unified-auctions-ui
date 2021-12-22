@@ -16,6 +16,7 @@
         <div class="flex w-full justify-between">
             <div>Auction Price</div>
             <div>
+                <PriceDropAnimation :auction="auctionTransaction" class="mr-1" />
                 <FormatCurrency :value="auctionTransaction.amountPerCollateral" currency="DAI" /> per
                 <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
             </div>
@@ -90,6 +91,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
+import PriceDropAnimation from '../utils/PriceDropAnimation.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
@@ -97,6 +99,7 @@ import TextBlock from '~/components/common/TextBlock.vue';
 
 export default Vue.extend({
     components: {
+        PriceDropAnimation,
         TextBlock,
         TimeTill,
         FormatCurrency,

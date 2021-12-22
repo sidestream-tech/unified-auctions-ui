@@ -3,9 +3,10 @@
     https://github.com/makerdao/auction-demo-keeper/blob/main/src/clipper.js#L134-L160
 */
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
+import memoizee from 'memoizee';
 import { Fetcher, Token, Route, Pair, Trade, TokenAmount, TradeType } from '@uniswap/sdk';
 import { abi as uniswapV2PairABI } from '@uniswap/v2-core/build/UniswapV2Pair.json';
+import BigNumber from './bignumber';
 import NETWORKS, { getDecimalChainIdByNetworkType } from './constants/NETWORKS';
 import getMaker from './maker';
 import getProvider from './provider';
@@ -15,6 +16,8 @@ import {
     getCollateralConfigByType,
     getAllCollateralSymbols,
 } from './constants/COLLATERALS';
+
+const EXCHANGE_RATE_CACHE = 20 * 1000;
 
 const getCompleteExchangePathBySymbol = function (symbol: string, useExchangeRoute = true) {
     if (symbol === 'DAI') {
@@ -85,7 +88,7 @@ const getUniswapTokenBySymbol = function (network: string, symbol: string): Toke
     return new Token(decimalChainId, tokenAddress, tokenDecimals, symbol);
 };
 
-const getUniswapPairBySymbols = async function (network: string, symbol1: string, symbol2: string): Promise<Pair> {
+const _getUniswapPairBySymbols = async function (network: string, symbol1: string, symbol2: string): Promise<Pair> {
     const provider = getProvider(network);
     const token1 = getUniswapTokenBySymbol(network, symbol1);
     const token2 = getUniswapTokenBySymbol(network, symbol2);
@@ -95,6 +98,12 @@ const getUniswapPairBySymbols = async function (network: string, symbol1: string
         throw new Error(`The pair of "${symbol1}/${symbol2}" is not tradable on UniSwap "${network}" network`);
     }
 };
+
+const getUniswapPairBySymbols = memoizee(_getUniswapPairBySymbols, {
+    maxAge: EXCHANGE_RATE_CACHE,
+    promise: true,
+    length: 3,
+});
 
 const splitArrayIntoPairs = function (array: string[]): string[][] {
     /* 

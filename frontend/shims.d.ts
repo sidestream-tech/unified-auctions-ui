@@ -25,15 +25,14 @@ declare interface SelectOption {
     icon?: object;
 }
 
-declare interface Auction {
+declare interface AuctionInitialInfo {
     network: string;
     id: string;
     auctionId: number;
     collateralType: string;
     collateralSymbol: string;
     amountRAW: BigNumber | number;
-    amountDAI: BigNumber | number;
-    amountPerCollateral: BigNumber | number;
+    debtDAI: BigNumber;
     till: string;
     vaultOwner: string;
     isActive: boolean;
@@ -43,9 +42,17 @@ declare interface Auction {
     marketValue?: BigNumber | number;
     transactionProfit?: BigNumber | number;
     transactionAddress?: string;
+    initialPrice: BigNumber;
     start: Date;
     step: BigNumber;
     cut: BigNumber;
+}
+
+declare interface Auction extends AuctionInitialInfo {
+    amountPerCollateral: BigNumber | number;
+    fetchedAmountPerCollateral: BigNumber;
+    amountDAI: BigNumber | number;
+    secondsTillNextPriceDrop?: number;
 }
 
 declare interface TransactionFees {

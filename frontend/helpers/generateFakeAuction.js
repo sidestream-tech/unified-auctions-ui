@@ -8,7 +8,7 @@ export const generateFakeAuction = function () {
     const amountDAI = parseFloat(faker.finance.amount());
     const isActive = faker.datatype.boolean();
     const isFinished = faker.datatype.boolean();
-    const amountPerCollateral = amountDAI / amountRAW;
+    const amountPerCollateral = new BigNumber(amountDAI / amountRAW);
     const marketValue = isActive ? faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 }) : undefined;
     const collateralObject = faker.helpers.randomize(Object.values(COLLATERALS));
     const auctionId = faker.datatype.number();
@@ -22,6 +22,7 @@ export const generateFakeAuction = function () {
         collateralSymbol: collateralObject.symbol,
         amountRAW,
         amountDAI,
+        initialPrice: amountPerCollateral,
         till: faker.date.future().toString(),
         marketValue,
         vaultOwner: faker.finance.ethereumAddress(),
@@ -58,11 +59,9 @@ export const generateFakeAuctionTransaction = function () {
 };
 
 export const generateFakeAuctionTransactions = function (number = random(5, 15)) {
-    const auctionTransactions = Array(number).fill(null).map(generateFakeAuctionTransaction);
-    return auctionTransactions;
+    return Array(number).fill(null).map(generateFakeAuctionTransaction);
 };
 
 export const generateFakeAuctions = function (number = random(5, 15)) {
-    const auctions = Array(number).fill(null).map(generateFakeAuction);
-    return auctions;
+    return Array(number).fill(null).map(generateFakeAuction);
 };

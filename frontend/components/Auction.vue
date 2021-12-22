@@ -32,6 +32,7 @@
                                     <format-currency :value="auction.amountPerCollateral" currency="DAI" />
                                     per
                                     <format-currency :currency="auction.collateralSymbol" />
+                                    <PriceDropAnimation :auction="auction" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
@@ -81,8 +82,22 @@
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
-                                <td>Auction Ends At</td>
-                                <td>{{ new Date(auction.till).toUTCString() }}</td>
+                                <td>Auction Start</td>
+                                <td>
+                                    <template v-if="auction.isActive">
+                                        {{ new Date(auction.start).toUTCString() }}
+                                    </template>
+                                    <span v-else class="opacity-50">Unknown</span>
+                                </td>
+                            </tr>
+                            <tr class="bg-gray-100 dark:bg-gray-800">
+                                <td>Auction End</td>
+                                <td>
+                                    <template v-if="auction.isActive">
+                                        {{ new Date(auction.till).toUTCString() }}
+                                    </template>
+                                    <span v-else class="opacity-50">Unknown</span>
+                                </td>
                             </tr>
                         </template>
                     </tbody>
@@ -183,6 +198,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Alert, Tooltip } from 'ant-design-vue';
+import PriceDropAnimation from './utils/PriceDropAnimation.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import Button from '~/components/common/BaseButton.vue';
@@ -196,6 +212,7 @@ import RestartBlock from '~/components/transaction/RestartBlock.vue';
 export default Vue.extend({
     name: 'Auction',
     components: {
+        PriceDropAnimation,
         RestartBlock,
         Explain,
         Loading,

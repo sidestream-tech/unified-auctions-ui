@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import BigNumber from 'bignumber.js';
+import BigNumber from './bignumber';
 import getMaker from './maker';
 import { getExchangeRateBySymbol } from './uniswap';
 import { getNetworkConfigByType } from './constants/NETWORKS';
