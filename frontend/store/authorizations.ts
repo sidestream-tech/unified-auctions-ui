@@ -1,12 +1,13 @@
-import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
 import {
     getWalletAuthorizationStatus,
     authorizeWallet,
     getCollateralAuthorizationStatus,
     authorizeCollateral,
-} from '~/../core/src/authorizations';
+} from 'auctions-core/src/authorizations';
 import notifier from '~/lib/notifier';
+
+const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
 
 interface State {
     isWalletAuthorizationLoading: boolean;
@@ -74,7 +75,7 @@ export const actions = {
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         }
     },
-    async fetchWalletAuthorizationStatus({ commit, rootGetters }: ActionContext<State, State>) {
+    async fetchWalletAuthorizationStatus({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         const walletAddress = rootGetters['wallet/getAddress'];
         if (!walletAddress) {
             commit('setIsWalletAuthorizationDone', false);
@@ -87,7 +88,8 @@ export const actions = {
             return isAuthorized;
         } catch (error) {
             commit('setIsWalletAuthorizationDone', false);
-            message.error(`Wallet authorization status error: ${error.message}`);
+            console.error(`Wallet authorization status error: ${error.message}`);
+            setTimeout(() => dispatch('fetchWalletAuthorizationStatus'), AUTHORIZATION_STATUS_RETRY_DELAY);
         } finally {
             commit('setIsWalletAuthorizationLoading', false);
         }
@@ -115,7 +117,7 @@ export const actions = {
         }
     },
     async fetchCollateralAuthorizationStatus(
-        { commit, rootGetters }: ActionContext<State, State>,
+        { commit, dispatch, rootGetters }: ActionContext<State, State>,
         collateralType: string
     ) {
         const walletAddress = rootGetters['wallet/getAddress'];
@@ -133,7 +135,11 @@ export const actions = {
             }
             return isAuthorized;
         } catch (error) {
-            message.error(`Collateral authorization status error: ${error.message}`);
+            console.error(`Collateral authorization status error: ${error.message}`);
+            setTimeout(
+                () => dispatch('fetchCollateralAuthorizationStatus', collateralType),
+                AUTHORIZATION_STATUS_RETRY_DELAY
+            );
         } finally {
             commit('setIsCollateralAuthorizationLoading', false);
         }

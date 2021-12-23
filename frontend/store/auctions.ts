@@ -5,12 +5,12 @@ import {
     bidOnTheAuction,
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
-} from '../../core/src/auctions';
-import { checkAllExchangeRates } from '../../core/src/uniswap';
-import { enrichAuctionWithTransactionFees } from '../../core/src/fees';
-import { checkAllCalcParameters } from '../../core/src/params';
-import getWallet from '../lib/wallet';
-import notifier from '../lib/notifier';
+} from 'auctions-core/src/auctions';
+import { checkAllExchangeRates } from 'auctions-core/src/uniswap';
+import { enrichAuctionWithTransactionFees } from 'auctions-core/src/fees';
+import { checkAllCalcParameters } from 'auctions-core/src/params';
+import getWallet from '~/lib/wallet';
+import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
 const TIMER_INTERVAL = 1000;

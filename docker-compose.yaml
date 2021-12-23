@@ -1,19 +1,38 @@
 version: '3'
 
 services:
+
+    bot-twitter:
+        restart: unless-stopped
+        env_file:
+            - './bot-twitter/.env'
+        environment:
+            - INFURA_PROJECT_ID
+            - ETHEREUM_NETWORK
+            - FRONTEND_ORIGIN
+            - TWITTER_API_KEY
+            - TWITTER_API_SECRET
+            - TWITTER_ACCESS_TOKEN
+            - TWITTER_ACCESS_SECRET
+        build:
+            context: .
+            dockerfile: ./bot-twitter/Dockerfile
+
     frontend:
         restart: unless-stopped
         expose:
             - 3000
         env_file:
-            - ./frontend/.env
-        environment:
-            - INFURA_PROJECT_ID=${INFURA_PROJECT_ID}
+            - './frontend/.env'
         build:
             context: .
             dockerfile: ./frontend/Dockerfile
             args:
-                - INFURA_PROJECT_ID=${INFURA_PROJECT_ID}
+                - INFURA_PROJECT_ID
+                - DEMO_MODE
+                - PRODUCTION_DOMAIN
+                - CONTACT_EMAIL
+
     reverse-proxy:
         image: nginx:stable-alpine
         ports:

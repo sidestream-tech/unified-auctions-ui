@@ -13,9 +13,6 @@ export const state = (): State => ({
 });
 
 export const getters = {
-    getIsInvalidNetwork(_state: State, getters: any): boolean {
-        return !!getters.getNetwork;
-    },
     getIsExplanationsShown(state: State) {
         return state.isExplanationsShown;
     },

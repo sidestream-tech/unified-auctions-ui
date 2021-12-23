@@ -9,8 +9,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Icon } from 'ant-design-vue';
+import NETWORKS from 'auctions-core/src/constants/NETWORKS';
 import Select from '~/components/common/Select.vue';
-import NETWORKS from '~/../core/src/constants/NETWORKS';
 import { FAKE_NETWORK_NAME } from '~/store/network';
 
 export default Vue.extend({

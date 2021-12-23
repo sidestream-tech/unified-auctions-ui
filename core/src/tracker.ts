@@ -1,3 +1,4 @@
+import type { Notifier } from './types';
 import getMaker from './maker';
 import { v4 as uuidv4 } from 'uuid';
 

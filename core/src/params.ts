@@ -1,3 +1,4 @@
+import type { MakerParams } from './types';
 import { ethers } from 'ethers';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';

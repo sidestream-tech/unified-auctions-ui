@@ -7,6 +7,7 @@
     "npm": ">=7.0.0"
   },
   "scripts": {
+    "preinstall": "cd ../core && npm i",
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
@@ -33,6 +34,7 @@
   "dependencies": {
     "@nuxtjs/dotenv": "^1.4.1",
     "ant-design-vue": "^1.7.6",
+    "auctions-core": "file:../core",
     "bignumber.js": "^9.0.1",
     "core-js": "^3.15.2",
     "date-fns": "^2.23.0",

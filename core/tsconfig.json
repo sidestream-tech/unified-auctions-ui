@@ -1,14 +1,14 @@
 {
     "compilerOptions": {
-        "declarationMap": true,
         "rootDir": ".",
+        "outDir": "dist",
         "composite": true,
         "incremental": true,
         "target": "es2017",
-        "outDir": "ts-build",
         "moduleResolution": "node",
         "module": "commonjs",
         "declaration": true,
+        "declarationMap": true,
         "inlineSourceMap": true,
         "esModuleInterop": true,
         "resolveJsonModule": true,
@@ -17,30 +17,21 @@
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
         "traceResolution": false,
-        "listEmittedFiles": false,
+        "listEmittedFiles": true,
         "listFiles": false,
         "pretty": true,
         "lib": [
             "es2019",
             "dom"
         ],
-        "types": [
-            "node"
-        ],
         "typeRoots": [
             "node_modules/@types",
-            "."
-        ],
-        "paths": {
-            "core/*": [
-                "./src/*"
-            ]
-        }
+            "src/**/*"
+        ]
     },
     "include": [
         "src/**/*.ts",
-        "src/**/*.json",
-        "src/shims.d.ts"
+        "src/**/*.json"
     ],
     "exclude": [
         "node_modules"

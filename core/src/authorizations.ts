@@ -1,3 +1,4 @@
+import type { Notifier } from './types';
 import getMaker from './maker';
 import trackTransaction from './tracker';
 

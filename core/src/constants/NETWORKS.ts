@@ -1,3 +1,5 @@
+import type { NetworkConfig } from '../types';
+
 const NETWORKS: Record<string, NetworkConfig> = {
     mainnet: {
         chainId: '0x1',

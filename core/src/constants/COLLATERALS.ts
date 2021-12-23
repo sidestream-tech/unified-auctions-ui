@@ -1,3 +1,5 @@
+import type { CollateralConfig } from '../types';
+
 const COLLATERALS: Record<string, CollateralConfig> = {
     'AAVE-A': {
         title: 'AAVE',

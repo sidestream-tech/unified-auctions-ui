@@ -1,5 +1,5 @@
 import { ActionContext } from 'vuex';
-import { getApproximateTransactionFees } from '~/../core/src/fees';
+import { getApproximateTransactionFees } from 'auctions-core/src/fees';
 
 const REFETCH_INTERVAL = 30 * 1000;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;

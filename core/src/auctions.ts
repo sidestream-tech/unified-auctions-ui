@@ -1,3 +1,4 @@
+import type { Auction, AuctionInitialInfo, Notifier } from './types';
 import BigNumber from './bignumber';
 import getMaker from './maker';
 import COLLATERALS from './constants/COLLATERALS';
@@ -121,7 +122,7 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
     return await enrichAuctionWithMarketValues(enrichedAuctionWithNewPriceDrop, network);
 };
 
-export const fetchAllAuctions = async function (network: string): Promise<Auction[]> {
+export const fetchAllInitialAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
     const maker = await getMaker(network);
     const collateralNames = Object.keys(COLLATERALS);
 
@@ -137,6 +138,11 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     });
     const auctionGroups = await Promise.all(auctionGroupsPromises);
     const auctions = auctionGroups.flat();
+    return auctions;
+};
+
+export const fetchAllAuctions = async function (network: string): Promise<Auction[]> {
+    const auctions = await fetchAllInitialAuctions(network);
 
     // enrich them with statuses
     const auctionsWithStatusesPromises = auctions.map((auction: AuctionInitialInfo) =>

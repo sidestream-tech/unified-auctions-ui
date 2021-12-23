@@ -1,3 +1,4 @@
+import type { Auction, AuctionTransaction, TransactionFees } from './types';
 import { ethers } from 'ethers';
 import BigNumber from './bignumber';
 import getMaker from './maker';
@@ -51,8 +52,7 @@ export const enrichAuctionWithTransactionFees = function (
     const auctionTransaction = {
         ...auction,
         ...fees,
-        transactionOutcome: undefined,
-    };
+    } as AuctionTransaction;
     if (auction.transactionProfit && fees.biddingTransactionFeeDAI) {
         auctionTransaction.transactionOutcome = auction.transactionProfit.minus(fees.biddingTransactionFeeDAI);
     }

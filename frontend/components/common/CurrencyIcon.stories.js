@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
+import { getAllCollateralSymbols } from 'auctions-core/src/constants/COLLATERALS';
 import CurrencyIcon from '~/components/common/CurrencyIcon';
-import { getAllCollateralSymbols } from '~/../core/src/constants/COLLATERALS';
 
 const common = {
     components: { CurrencyIcon },

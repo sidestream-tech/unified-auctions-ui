@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 import { message } from 'ant-design-vue';
+import { getChainIdByNetworkType } from 'auctions-core/src/constants/NETWORKS';
 import MetaMaskLogo from '~/assets/icons/wallets/metamask.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
-import { getChainIdByNetworkType } from '~/../core/src/constants/NETWORKS';
 
 export default class MetaMask extends AbstractWallet {
     public static title = 'Metamask';

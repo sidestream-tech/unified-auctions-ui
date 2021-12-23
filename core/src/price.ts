@@ -1,3 +1,4 @@
+import type { Auction, AuctionInitialInfo } from './types';
 import BigNumber from './bignumber';
 
 const checkAuctionStartDate = function (startDate: Date, currentDate: Date): void {
@@ -35,6 +36,9 @@ export const calculateAuctionDropTime = function (auction: Auction | AuctionInit
 };
 
 export const calculateTransactionProfit = function (auction: Auction): BigNumber {
+    if (!auction.marketPricePerCollateral) {
+        return new BigNumber(0);
+    }
     const totalMarketValue = auction.amountRAW.multipliedBy(auction.marketPricePerCollateral);
     if (totalMarketValue <= auction.debtDAI) {
         return totalMarketValue.minus(auction.amountDAI);

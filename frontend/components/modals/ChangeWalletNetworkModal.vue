@@ -32,7 +32,7 @@
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
 import Vue from 'vue';
-import NETWORKS from '~/../core/src/constants/NETWORKS';
+import NETWORKS from 'auctions-core/src/constants/NETWORKS';
 import BaseButton from '~/components/common/BaseButton';
 
 export default Vue.extend({

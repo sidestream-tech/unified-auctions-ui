@@ -1,5 +1,5 @@
-import mainnetLiquidationsContracts from 'dai-monorepo/packages/dai-plugin-liquidations/contracts/addresses/mainnet.json';
-import kovanLiquidationsContracts from 'dai-monorepo/packages/dai-plugin-liquidations/contracts/addresses/kovan.json';
+import mainnetLiquidationsContracts from '@valiafetisov/dai-plugin-liquidations/contracts/addresses/mainnet.json';
+import kovanLiquidationsContracts from '@valiafetisov/dai-plugin-liquidations/contracts/addresses/kovan.json';
 import mainnetTokensContracts from '@makerdao/dai-plugin-mcd/contracts/addresses/mainnet.json';
 import kovanTokensContracts from '@makerdao/dai-plugin-mcd/contracts/addresses/kovan.json';
 

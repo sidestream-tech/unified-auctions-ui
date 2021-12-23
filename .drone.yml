@@ -34,13 +34,6 @@ type: kubernetes
 name: frontend-lint-and-test
 
 steps:
-    - name: core-install
-      image: node:16.9.1
-      depends_on: [clone]
-      commands:
-          - cd core
-          - npm ci
-
     - name: frontend-install
       image: node:16.9.1
       depends_on: [clone]
@@ -50,14 +43,14 @@ steps:
 
     - name: frontend-lint
       image: node:16.9.1
-      depends_on: [frontend-install, core-install]
+      depends_on: [frontend-install]
       commands:
           - cd frontend
           - npm run lint
 
     - name: frontend-test
       image: node:16.9.1
-      depends_on: [frontend-install, core-install]
+      depends_on: [frontend-install]
       commands:
           - cd frontend
           - npm run test
@@ -67,6 +60,37 @@ steps:
       depends_on: [frontend-test]
       commands:
         - cd frontend
+        - npm run build
+
+trigger:
+    event:
+        - pull_request
+
+---
+kind: pipeline
+type: kubernetes
+name: bot-twitter-lint-and-test
+
+steps:
+    - name: bot-twitter-install
+      image: node:16.9.1
+      depends_on: [clone]
+      commands:
+          - cd bot-twitter
+          - npm ci
+
+    - name: bot-twitter-lint
+      image: node:16.9.1
+      depends_on: [bot-twitter-install]
+      commands:
+          - cd bot-twitter
+          - npm run lint
+
+    - name: bot-twitter-build
+      image: node:16.9.1
+      depends_on: [bot-twitter-install]
+      commands:
+        - cd bot-twitter
         - npm run build
 
 trigger:

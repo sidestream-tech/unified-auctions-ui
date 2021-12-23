@@ -2,7 +2,7 @@ import Maker from '@makerdao/dai';
 import McdPlugin from '@makerdao/dai-plugin-mcd';
 // TODO: upstream local changes to liquidations plugin
 // import LiquidationPlugin from '@makerdao/dai-plugin-liquidations';
-import LiquidationPlugin from 'dai-monorepo/packages/dai-plugin-liquidations/src';
+import LiquidationPlugin from '@valiafetisov/dai-plugin-liquidations';
 import { getNetworkConfigByType } from './constants/NETWORKS';
 
 let globalMaker: typeof Maker;

@@ -1,7 +1,7 @@
 import faker from 'faker';
 import { random } from 'lodash';
 import BigNumber from 'bignumber.js';
-import COLLATERALS from '~/../core/src/constants/COLLATERALS';
+import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 
 export const generateFakeAuction = function () {
     const amountRAW = parseFloat(faker.finance.amount());

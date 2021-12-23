@@ -4,7 +4,7 @@ import {
     getNetworkConfigByType,
     getNetworkTypeByChainId,
     getNetworkTitleByChainId,
-} from '~/../core/src/constants/NETWORKS';
+} from 'auctions-core/src/constants/NETWORKS';
 import getWallet from '~/lib/wallet';
 
 const DEFAUT_NETWORK = 'kovan';
