@@ -65,7 +65,6 @@ steps:
 trigger:
     event:
         - pull_request
-
 ---
 kind: pipeline
 type: kubernetes
@@ -99,84 +98,146 @@ trigger:
 
 ---
 kind: pipeline
-type: kubernetes
-name: build-publish-deploy
+name: build-and-publish
 
 trigger:
-  event:
-    - push
+  # note: ignored for `tag` event
   branch:
-    - main
+  - main
+  event:
+  - push
+  - tag
+
+# Share docker socket for build steps
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
+  - name: dockerconfig
+    temp: {}
 
 steps:
-  - name: verify-tags
-    image: alpine
-    commands:
-    - |
-      minimumsize=6
-      actualsize=$(wc -c < .tags)
-      if [ $actualsize -ge $minimumsize ]; then
-        echo "Deploying with tag:"
-        cat .tags
-      else
-        echo "Must provide the version inside the `.tags` file" 1>&2
-        exit 1
-      fi
-
-  - name: frontend-build-publish
-    image: plugins/docker
+  - name: docker-registry-login
+    image: sidestream/docker-in-docker-chamber:0.1.0
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: dockerconfig
+        path: /root/.docker
     environment:
-      INFURA_PROJECT_ID:
-        from_secret: INFURA_PROJECT_ID
-      CONTACT_EMAIL:
-        from_secret: CONTACT_EMAIL
-      PRODUCTION_DOMAIN:
-        from_secret: PRODUCTION_DOMAIN
-    settings:
-      cache_from: "ghcr.io/sidestream-tech/auction-ui/frontend:0.2.0"
-      username:
-        from_secret: github-username
-      password:
-        from_secret: github-personal-access-token
-      registry: "ghcr.io"
-      repo: "ghcr.io/sidestream-tech/auction-ui/frontend"
-      context: .
-      dockerfile: ./frontend/Dockerfile
-      build_args_from_env:
-        - INFURA_PROJECT_ID
-        - CONTACT_EMAIL
-        - PRODUCTION_DOMAIN
-      custom_labels:
-        - org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui
-
-  - name: create-helm-deloy-values
-    image: alpine
+      AWS_ACCESS_KEY_ID:
+        from_secret: "AWS_ACCESS_KEY_ID"
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: "AWS_SECRET_ACCESS_KEY"
+      AWS_DEFAULT_REGION: "eu-central-1"
     commands:
-    - |
-      export HELM_VALUE_OVERRIDE_FILE=deploy_version.values.yaml
-      echo "frontendDeploymentTag: $(cat .tags)" > $HELM_VALUE_OVERRIDE_FILE
-      echo "Deploying with the following helm value overrides:"
-      cat $HELM_VALUE_OVERRIDE_FILE
+      # login to docker, credentials will be stored in `/root/.docker` folder, that is shared
+      # as a volume with other steps
+      - chamber read --quiet sidestream/drone-ci github_password | docker login https://ghcr.io --username sideborg --password-stdin
 
-  - name: deploy
-    image: pelotech/drone-helm3
-    settings:
-      mode: upgrade
-      namespace: auction-ui
-      chart: ./kubernetes/helm
-      release: auction-ui
-      api_server:
-        from_secret: KUBE_API_SERVER
-      kube_certificate:
-        from_secret: KUBE_CERT_BASE_64
-      kube_service_account:
-        from_secret: KUBE_ACCOUNT_NAME
-      kube_token:
-        from_secret: KUBE_TOKEN
-      values_files: [ "./deploy_version.values.yaml" ]
-
-  - name: success
-    image: alpine
+  - name: frontend-staging
+    image: sidestream/docker-in-docker-chamber:0.1.0
+    depends_on: [docker-registry-login]
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: dockerconfig
+        path: /root/.docker
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: "AWS_ACCESS_KEY_ID"
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: "AWS_SECRET_ACCESS_KEY"
+      AWS_DEFAULT_REGION: "eu-central-1"
     commands:
-      - echo "success, deployed auction-ui/frontend at version:"
-      - cat .tags
+      # declare cache source, the image tag to be created, secrets location to get build time variables from
+      - export IMAGE_CACHE=ghcr.io/sidestream-tech/auction-ui/frontend:next
+      - export IMAGE_AND_TAG=ghcr.io/sidestream-tech/auction-ui/frontend:${DRONE_TAG:-next}
+      - export SECRET_LOCATION=auction-ui/staging
+      # hydrate build-cache
+      - docker pull $$IMAGE_CACHE
+      # build and tag the new image
+      - |
+        export DOCKER_BUILDKIT=1
+        docker build \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --build-arg INFURA_PROJECT_ID=$(chamber read --quiet $$SECRET_LOCATION INFURA_PROJECT_ID) \
+          --build-arg PRODUCTION_DOMAIN=$(chamber read --quiet $$SECRET_LOCATION PRODUCTION_DOMAIN) \
+          --build-arg CONTACT_EMAIL=$(chamber read --quiet $$SECRET_LOCATION CONTACT_EMAIL) \
+          --cache-from $$IMAGE_CACHE \
+          --label org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui \
+          -t $$IMAGE_AND_TAG \
+          -f frontend/Dockerfile \
+          .
+      # publish the new image
+      - docker push $$IMAGE_AND_TAG
+
+  - name: frontend-makerdao
+    image: sidestream/docker-in-docker-chamber:0.1.0
+    depends_on: [docker-registry-login]
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: dockerconfig
+        path: /root/.docker
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: "AWS_ACCESS_KEY_ID"
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: "AWS_SECRET_ACCESS_KEY"
+      AWS_DEFAULT_REGION: "eu-central-1"
+    commands:
+      # declare cache source, the image tag to be created, secrets location to get build time variables from
+      - export IMAGE_CACHE=ghcr.io/sidestream-tech/auction-ui/frontend:next-makerdao
+      - export IMAGE_AND_TAG=ghcr.io/sidestream-tech/auction-ui/frontend:${DRONE_TAG:-next}-makerdao
+      - export SECRET_LOCATION=auction-ui/production
+      # hydrate build-cache
+      - docker pull $$IMAGE_CACHE
+      # build and tag the new image
+      - |
+        export DOCKER_BUILDKIT=1
+        docker build \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --build-arg INFURA_PROJECT_ID=$(chamber read --quiet $$SECRET_LOCATION INFURA_PROJECT_ID) \
+          --build-arg PRODUCTION_DOMAIN=$(chamber read --quiet $$SECRET_LOCATION PRODUCTION_DOMAIN) \
+          --build-arg CONTACT_EMAIL=$(chamber read --quiet $$SECRET_LOCATION CONTACT_EMAIL) \
+          --cache-from $$IMAGE_CACHE \
+          --label org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui \
+          -t $$IMAGE_AND_TAG \
+          -f frontend/Dockerfile \
+          .
+      # publish the new image
+      - docker push $$IMAGE_AND_TAG
+
+  - name: bot-twitter
+    image: sidestream/docker-in-docker-chamber:0.1.0
+    depends_on: [docker-registry-login]
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+      - name: dockerconfig
+        path: /root/.docker
+    environment:
+      AWS_ACCESS_KEY_ID:
+        from_secret: "AWS_ACCESS_KEY_ID"
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: "AWS_SECRET_ACCESS_KEY"
+      AWS_DEFAULT_REGION: "eu-central-1"
+    commands:
+      # declare cache source and the image tag to be created
+      - export IMAGE_CACHE=ghcr.io/sidestream-tech/auction-ui/bot-twitter:next
+      - export IMAGE_AND_TAG=ghcr.io/sidestream-tech/auction-ui/bot-twitter:${DRONE_TAG:-next}
+      # hydrate build-cache
+      - docker pull $$IMAGE_CACHE
+      # build and tag the new image
+      - |
+        export DOCKER_BUILDKIT=1
+        docker build \
+          --build-arg BUILDKIT_INLINE_CACHE=1 \
+          --cache-from $$IMAGE_CACHE \
+          --label org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui \
+          -t $$IMAGE_AND_TAG \
+          -f bot-twitter/Dockerfile \
+          .
+      # publish the new image
+      - docker push $$IMAGE_AND_TAG

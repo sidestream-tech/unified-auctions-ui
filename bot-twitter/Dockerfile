@@ -18,8 +18,6 @@ RUN npm ci
 
 FROM dependency-base AS production-base
 
-# do not bake env variables
-
 # generate will also take care of building
 # if necessary
 COPY ./core /core
