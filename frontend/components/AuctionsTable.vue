@@ -48,6 +48,7 @@
 </template>
 
 <script lang="ts">
+import type { Auction } from 'auctions-core/src/types';
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
 import { compareAsc } from 'date-fns';
@@ -155,7 +156,7 @@ export default Vue.extend({
                 },
             ];
         },
-        numberOfRowsPerPage(): Number {
+        numberOfRowsPerPage(): number {
             return this.showMoreRows ? 15 : 10;
         },
     },

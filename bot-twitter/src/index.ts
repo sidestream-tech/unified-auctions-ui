@@ -2,7 +2,7 @@ import { getNewAuctions } from './auctions';
 import notify from './notify';
 
 const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
-const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL) || DEFAULT_REFETCH_INTERVAL;
+const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL ?? '') || DEFAULT_REFETCH_INTERVAL;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
 
 const loop = async function (): Promise<void> {

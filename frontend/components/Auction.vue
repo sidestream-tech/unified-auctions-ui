@@ -196,6 +196,7 @@
 </template>
 
 <script lang="ts">
+import type { AuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert, Tooltip } from 'ant-design-vue';
 import PriceDropAnimation from './utils/PriceDropAnimation.vue';

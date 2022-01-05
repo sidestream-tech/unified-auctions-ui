@@ -1,3 +1,4 @@
+import type { AuctionInitialInfo } from 'auctions-core/src/types';
 import { fetchAllInitialAuctions } from 'auctions-core/src/auctions';
 import NETWORKS from 'auctions-core/src/constants/NETWORKS';
 

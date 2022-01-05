@@ -1,3 +1,4 @@
+import type { TransactionFees } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import { getApproximateTransactionFees } from 'auctions-core/src/fees';
 

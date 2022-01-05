@@ -1,7 +1,5 @@
+import type { AuctionInitialInfo } from 'auctions-core/src/types';
 import { sendNotification } from './twitter';
-import { enforceEnvVariables } from './utils';
-
-enforceEnvVariables(['FRONTEND_ORIGIN']);
 
 const generateNotificationText = function (auction: AuctionInitialInfo): string {
     const url = `${process.env.FRONTEND_ORIGIN}/collateral/?network=${auction.network}&auction=${auction.id}`;

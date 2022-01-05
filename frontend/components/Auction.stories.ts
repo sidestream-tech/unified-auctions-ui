@@ -1,11 +1,14 @@
+import type { Auction } from 'auctions-core/src/types';
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import Auction from './Auction.vue';
+import AuctionComponent from './Auction.vue';
 import { generateFakeAuction } from '~/helpers/generateFakeAuction';
 
 const fakeAuction = generateFakeAuction();
 const basicStory = {
-    components: { Auction },
+    components: {
+        Auction: AuctionComponent,
+    },
     computed: {
         auctionParams(): Auction {
             return {

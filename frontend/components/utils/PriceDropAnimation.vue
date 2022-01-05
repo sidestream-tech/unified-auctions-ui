@@ -29,6 +29,7 @@
 </template>
 
 <script lang="ts">
+import type { AuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Progress, Popover } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
@@ -50,7 +51,7 @@ export default Vue.extend({
     computed: {
         percent(): number {
             if (this.auction.secondsTillNextPriceDrop) {
-                return 100 - (this.auction.secondsTillNextPriceDrop / this.auction.step) * 100;
+                return 100 - (this.auction.secondsTillNextPriceDrop / this.auction.step.toNumber()) * 100;
             }
             return 0;
         },

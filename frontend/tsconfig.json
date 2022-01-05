@@ -32,7 +32,7 @@
     },
     "include": [
         "package.json",
-        "*.ts"
+        "**/*.ts"
     ],
     "exclude": [
         "node_modules",

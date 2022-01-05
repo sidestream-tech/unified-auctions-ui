@@ -1,3 +1,4 @@
+import type { Auction, AuctionTransaction, TransactionFees } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import {

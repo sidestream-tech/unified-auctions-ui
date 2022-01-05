@@ -7,7 +7,7 @@
     "npm": ">=7.0.0"
   },
   "scripts": {
-    "preinstall": "cd ../core && npm i",
+    "preinstall": "cd ../core && npm i && npm run build",
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
