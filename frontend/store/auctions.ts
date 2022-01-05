@@ -24,6 +24,7 @@ interface State {
     isFetching: boolean;
     isBidding: boolean;
     error: string | null;
+    restartingAuctionsIds: string[];
 }
 
 export const state = (): State => ({
@@ -31,15 +32,22 @@ export const state = (): State => ({
     isFetching: false,
     isBidding: false,
     error: null,
+    restartingAuctionsIds: [],
 });
 
 export const getters = {
     listAuctions(state: State) {
         return Object.values(state.auctionStorage);
     },
-    listAuctionTransactions(state: State, _getters: any, _rootState: any, rootGetters: any): AuctionTransaction[] {
+    listAuctionTransactions(state: State, getters: any, _rootState: any, rootGetters: any): AuctionTransaction[] {
         const fees: TransactionFees = rootGetters['fees/fees'];
-        return Object.values(state.auctionStorage).map(auction => enrichAuctionWithTransactionFees(auction, fees));
+        const auctions = Object.values(state.auctionStorage).map(auction =>
+            enrichAuctionWithTransactionFees(auction, fees)
+        );
+        auctions.forEach(auction => {
+            auction.isRestarting = getters.isAuctionRestarting(auction.id);
+        });
+        return auctions;
     },
     getAuctionById: (state: State) => (id: string) => {
         return state.auctionStorage[id];
@@ -52,6 +60,9 @@ export const getters = {
     },
     getError(state: State) {
         return state.error;
+    },
+    isAuctionRestarting: (state: State) => (id: string) => {
+        return state.restartingAuctionsIds.includes(id);
     },
 };
 
@@ -81,8 +92,15 @@ export const mutations = {
         state.auctionStorage[id].isFinished = true;
         state.auctionStorage[id].till = new Date().toISOString();
     },
-    setAuctionRestarting(state: State, { id, isRestarting }: { id: string; isRestarting: boolean }) {
-        state.auctionStorage[id].isRestarting = isRestarting;
+    addAuctionRestarting(state: State, id: string) {
+        if (!state.restartingAuctionsIds.includes(id)) {
+            state.restartingAuctionsIds.push(id);
+        }
+    },
+    removeAuctionRestarting(state: State, id: string) {
+        if (state.restartingAuctionsIds.includes(id)) {
+            state.restartingAuctionsIds = state.restartingAuctionsIds.filter(auctionId => auctionId !== id);
+        }
     },
     setIsFetching(state: State, isFetching: boolean) {
         state.isFetching = isFetching;
@@ -103,6 +121,10 @@ export const actions = {
         }
         try {
             const auctions = await fetchAllAuctions(network);
+            const active = auctions.filter(auction => auction.isActive);
+            active.forEach(auction => {
+                commit('removeAuctionRestarting', auction.id);
+            });
             commit('setError', null);
             commit('setAuctions', auctions);
         } catch (error) {
@@ -166,12 +188,12 @@ export const actions = {
             message.error('Bidding error: can not find wallet');
             return;
         }
-        commit('setAuctionRestarting', { id, isRestarting: true });
+        commit('addAuctionRestarting', id);
         try {
             await restartAuction(auction.collateralType, auction.auctionId, walletAddress);
             await dispatch('fetchWithoutLoading');
         } catch (error) {
-            commit('setAuctionRestarting', { id, isRestarting: false });
+            commit('removeAuctionRestarting', id);
             console.error(`Auction redo error: ${error.message}`);
         }
     },
