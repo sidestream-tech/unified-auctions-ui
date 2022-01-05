@@ -41,8 +41,10 @@ FROM dependency-base AS production-base
 WORKDIR /core
 RUN npm ci --production
 
+# the frontend needs `@nuxt/typescript-build` which technically is
+# a development only dependency
 WORKDIR /frontend
-RUN npm ci --production
+RUN npm ci
 
 # bake env variables
 ARG INFURA_PROJECT_ID
