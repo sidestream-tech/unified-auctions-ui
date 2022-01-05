@@ -1,6 +1,6 @@
 <template>
     <div class="HeightFix flex flex-col w-full h-full items-center">
-        <LandingBlock v-if="isExplanationsShown" use-custom-header class="LandingBlock">
+        <LandingBlock v-if="isExplanationsShown" class="LandingBlock">
             <h1 class="text-gray-800 dark:text-gray-100">
                 Maker Protocol <br />
                 Unified Auctions
