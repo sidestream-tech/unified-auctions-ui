@@ -1,34 +1,37 @@
 # Auction-UI Helm Chart
 
 This is the helm chart of auction-ui.
-The cluster runs on K8S version 1.18.6.
 
-## Usage
+## Deployment
 
-To deploy this chart, run:
-```sh
-# 0. Set the namespace for subsequent commands
-> export K8S_NAMESPACE=<your-namespace-here>
-> kubectl create namespace $K8S_NAMESPACE
+This chart supports deployment to the AWS Cluster and to a local development cluster with minimal changes in-between.
 
-# 2. Install `auction-ui` in the current context
-
-# Create the image pull secret the cluster can use to get the images
-> kubectl create secret \
-    docker-registry \
-    sidestream-github \
-    --namespace $K8S_NAMESPACE \
-    --docker-server=ghcr.io \
-    --docker-username=$DOCKER_USERNAME \
-    --docker-password=$DOCKER_PASSWORD
-
-# THIS IS WHERE THE CD PIPELINE STARTS
-# Package the chart
-> helm package .
-
-# Install `auction-ui`
-> helm install  --debug\
-    --namespace $K8S_NAMESPACE \
-    auction-ui \
-    auction-ui-0.1.0.tgz
-```
+To deploy this chart:
+1. Create the `secrets.yaml` file:
+    - Staging:
+        ```sh
+        > aws-vault exec YOUR_AWS_USERNAME -- chamber read --quiet auction-ui/staging secrets_yaml | base64 -d > secrets.yaml
+        ```
+    - Production:
+        ```sh
+        > aws-vault exec YOUR_AWS_USERNAME -- chamber read --quiet auction-ui/production secrets_yaml | base64 -d > secrets.yaml
+        ```
+2. Deploy to:
+    - Staging:
+        ```sh
+        > helm upgrade --install --wait --namespace auction-ui --create-namespace -f values.yaml -f values.override-staging.yaml -f secrets.yaml auction-ui .
+        ```
+    - Production:
+        ```sh
+        # Confusingly, the production namespace is indeed called `auction-ui-staging`
+        > helm upgrade --install --wait --namespace auction-ui-staging --create-namespace -f values.yaml -f values.override-production.yaml -f secrets.yaml auction-ui .
+        ```
+3. Check the application status
+    - Check running pods status (grouping of containers):
+        ```sh
+        > kubectl get pods --namespace auction-ui
+        ```
+4. Undeploy the application
+    ```sh
+    > helm uninstall --namespace auction-ui auction-ui
+    ```

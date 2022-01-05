@@ -1,243 +1,194 @@
-kind: pipeline
-type: kubernetes
-name: core-lint-and-test
+kind: template
+load: pipeline-builder.star
+data:
+  builds:
+    # frontend: publish main
+    - name: publish-frontend-main
+      repository: ghcr.io/sidestream-tech/auction-ui/frontend
+      tags:
+        - "main"
+        - "${DRONE_COMMIT_SHA}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/auction-ui
+      path_to_dockerfile: frontend/Dockerfile
+      path_to_context: ./
+      build_args:
+        - key: PRODUCTION_DOMAIN
+          value_from_secret: auction-ui/staging/production_domain
+        - key: INFURA_PROJECT_ID
+          value_from_secret: auction-ui/staging/infura_project_id
+        - key: CONTACT_EMAIL
+          value_from_secret: auction-ui/staging/contact_email
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - push
+        branch:
+          - main
 
-steps:
-    - name: core-install
-      image: node:16.9.1
-      depends_on: [clone]
-      commands:
-          - cd core
-          - npm ci
+    # frontend: publish release
+    - name: publish-frontend-release
+      tags:
+        - "${DRONE_TAG}"
+      repository: ghcr.io/sidestream-tech/auction-ui/frontend
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/auction-ui
+      path_to_dockerfile: frontend/Dockerfile
+      path_to_context: ./
+      build_args:
+        - key: PRODUCTION_DOMAIN
+          value_from_secret: auction-ui/staging/production_domain
+        - key: INFURA_PROJECT_ID
+          value_from_secret: auction-ui/staging/infura_project_id
+        - key: CONTACT_EMAIL
+          value_from_secret: auction-ui/staging/contact_email
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - tag
 
-    - name: core-lint
-      image: node:16.9.1
-      depends_on: [core-install]
-      commands:
-          - cd core
-          - npm run lint
+    # frontend: publish development
+    - name: publish-frontend-development
+      target: development
+      repository: ghcr.io/sidestream-tech/auction-ui/frontend
+      tags:
+        - "pr-${DRONE_PULL_REQUEST}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/auction-ui
+      path_to_dockerfile: frontend/Dockerfile
+      path_to_context: ./
+      build_args:
+        - key: PRODUCTION_DOMAIN
+          value_from_secret: auction-ui/staging/production_domain
+        - key: INFURA_PROJECT_ID
+          value_from_secret: auction-ui/staging/infura_project_id
+        - key: CONTACT_EMAIL
+          value_from_secret: auction-ui/staging/contact_email
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
 
-    - name: core-build
-      image: node:16.9.1
-      depends_on: [core-install]
-      commands:
-        - cd core
-        - npm run build
+    # frontend-makerdao: publish release
+    - name: publish-frontend-makerdao
+      repository: ghcr.io/sidestream-tech/auction-ui/frontend-makerdao
+      tags:
+        - "${DRONE_TAG}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/auction-ui
+      path_to_dockerfile: frontend/Dockerfile
+      path_to_context: ./
+      build_args:
+        - key: PRODUCTION_DOMAIN
+          value_from_secret: auction-ui/production/production_domain
+        - key: INFURA_PROJECT_ID
+          value_from_secret: auction-ui/production/infura_project_id
+        - key: CONTACT_EMAIL
+          value_from_secret: auction-ui/production/contact_email
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - tag
 
-trigger:
-    event:
-        - pull_request
+    # bot-twitter: publish main
+    - name: publish-bot-twitter-main
+      repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
+      tags:
+        - "main"
+        - "${DRONE_COMMIT_SHA}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/auction-ui
+      path_to_dockerfile: bot-twitter/Dockerfile
+      path_to_context: ./
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - push
+        branch:
+          - main
 
----
-kind: pipeline
-type: kubernetes
-name: frontend-lint-and-test
+    # bot-twitter: publish release
+    - name: publish-bot-twitter-release
+      repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
+      tags:
+        - "${DRONE_TAG}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/auction-ui
+      path_to_dockerfile: bot-twitter/Dockerfile
+      path_to_context: ./
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - tag
 
-steps:
-    - name: frontend-install
-      image: node:16.9.1
-      depends_on: [clone]
-      commands:
-          - cd frontend
-          - npm ci
+    # bot-twitter: publish development
+    - name: publish-bot-twitter-development
+      target: development
+      repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
+      tags:
+        - "pr-${DRONE_PULL_REQUEST}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/auction-ui
+      path_to_dockerfile: bot-twitter/Dockerfile
+      path_to_context: ./
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
 
-    - name: frontend-lint
-      image: node:16.9.1
-      depends_on: [frontend-install]
-      commands:
-          - cd frontend
-          - npm run lint
-
-    - name: frontend-test
-      image: node:16.9.1
-      depends_on: [frontend-install]
-      commands:
-          - cd frontend
-          - npm run test
-
-    - name: frontend-build
-      image: node:16.9.1
-      depends_on: [frontend-test]
-      commands:
-        - cd frontend
-        - npm run build
-
-trigger:
-    event:
-        - pull_request
----
-kind: pipeline
-type: kubernetes
-name: bot-twitter-lint-and-test
-
-steps:
-    - name: bot-twitter-install
-      image: node:16.9.1
-      depends_on: [clone]
-      commands:
-          - cd bot-twitter
-          - npm ci
-
-    - name: bot-twitter-lint
-      image: node:16.9.1
-      depends_on: [bot-twitter-install]
-      commands:
-          - cd bot-twitter
-          - npm run lint
-
-    - name: bot-twitter-build
-      image: node:16.9.1
-      depends_on: [bot-twitter-install]
-      commands:
-        - cd bot-twitter
-        - npm run build
-
-trigger:
-    event:
-        - pull_request
-
----
-kind: pipeline
-name: build-and-publish
-
-trigger:
-  # note: ignored for `tag` event
-  branch:
-  - main
-  event:
-  - push
-  - tag
-
-# Share docker socket for build steps
-volumes:
-  - name: dockersock
-    host:
-      path: /var/run/docker.sock
-  - name: dockerconfig
-    temp: {}
-
-steps:
-  - name: docker-registry-login
-    image: sidestream/docker-in-docker-chamber:0.1.0
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-      - name: dockerconfig
-        path: /root/.docker
-    environment:
-      AWS_ACCESS_KEY_ID:
-        from_secret: "AWS_ACCESS_KEY_ID"
-      AWS_SECRET_ACCESS_KEY:
-        from_secret: "AWS_SECRET_ACCESS_KEY"
-      AWS_DEFAULT_REGION: "eu-central-1"
-    commands:
-      # login to docker, credentials will be stored in `/root/.docker` folder, that is shared
-      # as a volume with other steps
-      - chamber read --quiet sidestream/drone-ci github_password | docker login https://ghcr.io --username sideborg --password-stdin
-
-  - name: frontend-staging
-    image: sidestream/docker-in-docker-chamber:0.1.0
-    depends_on: [docker-registry-login]
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-      - name: dockerconfig
-        path: /root/.docker
-    environment:
-      AWS_ACCESS_KEY_ID:
-        from_secret: "AWS_ACCESS_KEY_ID"
-      AWS_SECRET_ACCESS_KEY:
-        from_secret: "AWS_SECRET_ACCESS_KEY"
-      AWS_DEFAULT_REGION: "eu-central-1"
-    commands:
-      # declare cache source, the image tag to be created, secrets location to get build time variables from
-      - export IMAGE_CACHE=ghcr.io/sidestream-tech/auction-ui/frontend:next
-      - export IMAGE_AND_TAG=ghcr.io/sidestream-tech/auction-ui/frontend:${DRONE_TAG:-next}
-      - export SECRET_LOCATION=auction-ui/staging
-      # hydrate build-cache
-      - docker pull $$IMAGE_CACHE
-      # build and tag the new image
-      - |
-        export DOCKER_BUILDKIT=1
-        docker build \
-          --build-arg BUILDKIT_INLINE_CACHE=1 \
-          --build-arg INFURA_PROJECT_ID=$(chamber read --quiet $$SECRET_LOCATION INFURA_PROJECT_ID) \
-          --build-arg PRODUCTION_DOMAIN=$(chamber read --quiet $$SECRET_LOCATION PRODUCTION_DOMAIN) \
-          --build-arg CONTACT_EMAIL=$(chamber read --quiet $$SECRET_LOCATION CONTACT_EMAIL) \
-          --cache-from $$IMAGE_CACHE \
-          --label org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui \
-          -t $$IMAGE_AND_TAG \
-          -f frontend/Dockerfile \
-          .
-      # publish the new image
-      - docker push $$IMAGE_AND_TAG
-
-  - name: frontend-makerdao
-    image: sidestream/docker-in-docker-chamber:0.1.0
-    depends_on: [docker-registry-login]
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-      - name: dockerconfig
-        path: /root/.docker
-    environment:
-      AWS_ACCESS_KEY_ID:
-        from_secret: "AWS_ACCESS_KEY_ID"
-      AWS_SECRET_ACCESS_KEY:
-        from_secret: "AWS_SECRET_ACCESS_KEY"
-      AWS_DEFAULT_REGION: "eu-central-1"
-    commands:
-      # declare cache source, the image tag to be created, secrets location to get build time variables from
-      - export IMAGE_CACHE=ghcr.io/sidestream-tech/auction-ui/frontend:next-makerdao
-      - export IMAGE_AND_TAG=ghcr.io/sidestream-tech/auction-ui/frontend:${DRONE_TAG:-next}-makerdao
-      - export SECRET_LOCATION=auction-ui/production
-      # hydrate build-cache
-      - docker pull $$IMAGE_CACHE
-      # build and tag the new image
-      - |
-        export DOCKER_BUILDKIT=1
-        docker build \
-          --build-arg BUILDKIT_INLINE_CACHE=1 \
-          --build-arg INFURA_PROJECT_ID=$(chamber read --quiet $$SECRET_LOCATION INFURA_PROJECT_ID) \
-          --build-arg PRODUCTION_DOMAIN=$(chamber read --quiet $$SECRET_LOCATION PRODUCTION_DOMAIN) \
-          --build-arg CONTACT_EMAIL=$(chamber read --quiet $$SECRET_LOCATION CONTACT_EMAIL) \
-          --cache-from $$IMAGE_CACHE \
-          --label org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui \
-          -t $$IMAGE_AND_TAG \
-          -f frontend/Dockerfile \
-          .
-      # publish the new image
-      - docker push $$IMAGE_AND_TAG
-
-  - name: bot-twitter
-    image: sidestream/docker-in-docker-chamber:0.1.0
-    depends_on: [docker-registry-login]
-    volumes:
-      - name: dockersock
-        path: /var/run/docker.sock
-      - name: dockerconfig
-        path: /root/.docker
-    environment:
-      AWS_ACCESS_KEY_ID:
-        from_secret: "AWS_ACCESS_KEY_ID"
-      AWS_SECRET_ACCESS_KEY:
-        from_secret: "AWS_SECRET_ACCESS_KEY"
-      AWS_DEFAULT_REGION: "eu-central-1"
-    commands:
-      # declare cache source and the image tag to be created
-      - export IMAGE_CACHE=ghcr.io/sidestream-tech/auction-ui/bot-twitter:next
-      - export IMAGE_AND_TAG=ghcr.io/sidestream-tech/auction-ui/bot-twitter:${DRONE_TAG:-next}
-      # hydrate build-cache
-      - docker pull $$IMAGE_CACHE
-      # build and tag the new image
-      - |
-        export DOCKER_BUILDKIT=1
-        docker build \
-          --build-arg BUILDKIT_INLINE_CACHE=1 \
-          --cache-from $$IMAGE_CACHE \
-          --label org.opencontainers.image.source=https://github.com/sidestream-tech/auction-ui \
-          -t $$IMAGE_AND_TAG \
-          -f bot-twitter/Dockerfile \
-          .
-      # publish the new image
-      - docker push $$IMAGE_AND_TAG
+  in_development_image_pipelines:
+    - name: core-lint-build
+      type: kubernetes
+      depends_on: [publish-frontend-development]
+      image: ghcr.io/sidestream-tech/auction-ui/frontend:pr-${DRONE_PULL_REQUEST}
+      workdir: /core
+      steps_parallel:
+        - name: lint
+          command: npm run lint
+        - name: build
+          command: npm run build
+      trigger:
+        event:
+          - pull_request
+    - name: frontend-lint-test-build
+      type: kubernetes
+      depends_on: [publish-frontend-development]
+      image: ghcr.io/sidestream-tech/auction-ui/frontend:pr-${DRONE_PULL_REQUEST}
+      workdir: /frontend
+      steps_parallel:
+        - name: lint
+          command: npm run lint
+        - name: test
+          command: npm run test
+        - name: build
+          command: npm run build
+      trigger:
+        event:
+          - pull_request
+    - name: bot-twitter-lint-build
+      type: kubernetes
+      depends_on: [publish-bot-twitter-development]
+      image: ghcr.io/sidestream-tech/auction-ui/bot-twitter:pr-${DRONE_PULL_REQUEST}
+      workdir: /core
+      steps_parallel:
+        - name: lint
+          command: npm run lint
+        - name: build
+          command: npm run build
+      trigger:
+        event:
+          - pull_request

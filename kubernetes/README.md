@@ -1,11 +1,10 @@
 # Kubernetes auction-ui
+
 This folder contains the kubernetes related setup for auction-ui.
 
 ## Development Setup
 
-BANZ uses rancher to maintain their cluster. Their cluster has a specific version and a specific `ingress` type (`nginx`). In order to develop and target their cluster with out helm charts, we use `k3d`.
-
-`k3d` is a container based dev-cluster that is related to `k3s`, a minimal, fully compliant kubernetes cluster implementation.
+In order to develop and target a cluster locally, we use `k3d`. `k3d` is a container based dev-cluster that is related to `k3s`, a minimal, fully compliant kubernetes cluster implementation.
 
 To develop this projects helm chart cluster deployment:
 - setting up the cluster: [install k3d](https://k3d.io/#installation)
@@ -18,7 +17,6 @@ In the setup that is created here, all port `80` applications will be accessible
 
 Once you've installed the above tools, run the following command _from this folder_:
 ```sh
-# Deploy cluster locally, in as close a configuration to BANZ as possible
 > ./dev-cluster/deploy.sh
 WARN[0000] No node filter specified
 INFO[0000] Prep: Network

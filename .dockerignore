@@ -1,0 +1,14 @@
+# shared
+kubernetes
+reverse-proxy
+.drone.yml
+screenshot.jpg
+**/Dockerfile
+**/.env
+
+# node/npm (frontend, bot-twitter)
+node_modules
+npm-debug*
+.nuxt
+dist
+ts-build

@@ -1,24 +1,28 @@
-# See `traefik` ingress docs here: https://doc.traefik.io/traefik/v1.7/user-guide/kubernetes
-#
-# In order to use regex, one must use `go` like regex expressions, see comment in docs below table
-# here: https://doc.traefik.io/traefik/v1.7/basics/#matchers
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Chart.Name }}-ingress
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.class }}
-    traefik.frontend.rule.type: PathPrefixStrip
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    {{- if .Values.ingress.isCertManagerActivated }}
+    cert-manager.io/cluster-issuer: "cloudflare-issuer"
+    {{- end }}
 spec:
+  {{- if .Values.ingress.isTlsActivated }}
+  tls:
+  - hosts:
+    - {{ .Values.host }}
+    secretName: {{ .Values.ingress.tlsSecretName }}
+  {{- end }}
   rules:
-    - host: {{ .Values.host }}
+    - host: {{ required "A host is required for the ingress to work" .Values.host }}
       http:
         paths:
-        - path: /
+        - path: /(.*)
           pathType: Prefix
           backend:
             service:
               name: {{ .Values.frontend.name }}-service
               port:
                 number: 80
-

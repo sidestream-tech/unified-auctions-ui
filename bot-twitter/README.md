@@ -46,3 +46,18 @@ Testing scenario:
 2. Start the project in production mode, i.e.: `npm run build && npm start` or using docker image
 3. Restart auction on kovan using frontend
 4. Check the logs for the tweet message and its url
+
+Using the `Dockerfile`:
+
+Run the following commands:
+```sh
+
+# 1. Build the docker image
+> docker build -t auction-ui-bot -f Dockerfile ..
+
+# 2. Generate temporary AWS credentials
+> aws-vault exec YOUR_AWS_ACCOUNT_NAME -- env  | grep AWS > .env
+
+# 3. Start the bot
+> docker run  --env-file .env auction-ui-bot
+```

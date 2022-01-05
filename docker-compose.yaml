@@ -4,16 +4,10 @@ services:
 
     bot-twitter:
         restart: unless-stopped
-        env_file:
-            - './bot-twitter/.env'
         environment:
-            - INFURA_PROJECT_ID
-            - ETHEREUM_NETWORK
-            - FRONTEND_ORIGIN
-            - TWITTER_API_KEY
-            - TWITTER_API_SECRET
-            - TWITTER_ACCESS_TOKEN
-            - TWITTER_ACCESS_SECRET
+            - AWS_REGION=eu-central-1
+            - AWS_ACCESS_KEY_ID
+            - AWS_SECRET_ACCESS_KEY
         build:
             context: .
             dockerfile: ./bot-twitter/Dockerfile
@@ -27,7 +21,7 @@ services:
         build:
             context: .
             dockerfile: ./frontend/Dockerfile
-            args:
+            environment:
                 - INFURA_PROJECT_ID
                 - DEMO_MODE
                 - PRODUCTION_DOMAIN

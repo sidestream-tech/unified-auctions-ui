@@ -1,4 +1,7 @@
-FROM node:16.9.1 AS dependency-base
+# see https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
+ARG NODE_VERSION=node:16.9.1
+
+FROM $NODE_VERSION AS dependency-base
 
 # create destination directory
 RUN mkdir -p /core
@@ -8,15 +11,38 @@ RUN mkdir -p /frontend
 WORKDIR /core
 COPY ./core/package.json .
 COPY ./core/package-lock.json .
-RUN npm ci
 
 # copy the app, note .dockerignore
 WORKDIR /frontend
 COPY ./frontend/package.json .
 COPY ./frontend/package-lock.json .
+
+FROM dependency-base AS development-base
+
+WORKDIR /core
 RUN npm ci
 
+WORKDIR /frontend
+RUN npm ci
+
+FROM $NODE_VERSION AS development
+
+COPY --from=development-base /core /core
+COPY --from=development-base /frontend /frontend
+
+COPY ./core /core
+COPY ./frontend /frontend
+
+WORKDIR /frontend
+CMD ["npm", "run", "dev"]
+
 FROM dependency-base AS production-base
+
+WORKDIR /core
+RUN npm ci --production
+
+WORKDIR /frontend
+RUN npm ci --production
 
 # bake env variables
 ARG INFURA_PROJECT_ID
@@ -26,16 +52,18 @@ ENV PRODUCTION_DOMAIN=${PRODUCTION_DOMAIN}
 ARG CONTACT_EMAIL
 ENV CONTACT_EMAIL=${CONTACT_EMAIL}
 
+COPY ./core /core
+COPY ./frontend /frontend
+
 # generate will also take care of building
 # if necessary
-COPY ./core /core
-COPY ./frontend .
+WORKDIR /frontend
 RUN npm run generate
 
-FROM production-base AS production
+FROM nginx:stable-alpine AS production
 
-# Service hostname
-ENV NUXT_HOST=0.0.0.0
+COPY --from=production-base /frontend/dist /usr/share/nginx/html
 
-# start the app
-CMD [ "npm", "start" ]
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]

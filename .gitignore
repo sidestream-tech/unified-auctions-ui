@@ -4,4 +4,4 @@
 # macOS
 .DS_Store
 
-**/secrets.yml
+secrets.yaml

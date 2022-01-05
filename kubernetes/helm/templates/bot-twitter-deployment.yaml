@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.botTwitter.name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.botTwitter.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.botTwitter.name }}
+    spec:
+      {{- if .Values.images.secretName }}
+      imagePullSecrets:
+      - name: {{ .Values.images.secretName }}
+      {{- end }}
+      containers:
+      - name: {{ .Values.botTwitter.name }}
+        image: {{ .Values.repoPrefix }}{{ .Values.botTwitter.deployment.image }}:{{ required "You must specify the version to be deployed" .Values.botTwitter.deployment.tag }}
+        imagePullPolicy: {{ .Values.botTwitter.deployment.pullPolicy }}
+        env:
+        - name: "AWS_REGION"
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.awsChamberAccountSecretName }}
+              key: "region"
+        - name: "AWS_ACCESS_KEY_ID"
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.awsChamberAccountSecretName }}
+              key: "accessKeyId"
+        - name: "AWS_SECRET_ACCESS_KEY"
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.awsChamberAccountSecretName }}
+              key: "secretAccessKey"
