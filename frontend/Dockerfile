@@ -17,34 +17,23 @@ WORKDIR /frontend
 COPY ./frontend/package.json .
 COPY ./frontend/package-lock.json .
 
-FROM dependency-base AS development-base
-
 WORKDIR /core
-RUN npm ci
+COPY ./core /core
 
 WORKDIR /frontend
 RUN npm ci
 
+COPY ./frontend /frontend
+
 FROM $NODE_VERSION AS development
 
-COPY --from=development-base /core /core
-COPY --from=development-base /frontend /frontend
-
-COPY ./core /core
-COPY ./frontend /frontend
+COPY --from=dependency-base /core /core
+COPY --from=dependency-base /frontend /frontend
 
 WORKDIR /frontend
 CMD ["npm", "run", "dev"]
 
 FROM dependency-base AS production-base
-
-WORKDIR /core
-RUN npm ci --production
-
-# the frontend needs `@nuxt/typescript-build` which technically is
-# a development only dependency
-WORKDIR /frontend
-RUN npm ci
 
 # bake env variables
 ARG INFURA_PROJECT_ID
@@ -54,11 +43,6 @@ ENV PRODUCTION_DOMAIN=${PRODUCTION_DOMAIN}
 ARG CONTACT_EMAIL
 ENV CONTACT_EMAIL=${CONTACT_EMAIL}
 
-COPY ./core /core
-COPY ./frontend /frontend
-
-# generate will also take care of building
-# if necessary
 WORKDIR /frontend
 RUN npm run generate
 

@@ -183,7 +183,7 @@ data:
       type: kubernetes
       depends_on: [publish-bot-twitter-development]
       image: ghcr.io/sidestream-tech/auction-ui/bot-twitter:pr-${DRONE_PULL_REQUEST}
-      workdir: /core
+      workdir: /bot-twitter
       steps_parallel:
         - name: lint
           command: npm run lint

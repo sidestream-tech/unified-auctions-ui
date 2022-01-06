@@ -19,44 +19,27 @@ WORKDIR /bot-twitter
 COPY ./bot-twitter/package.json .
 COPY ./bot-twitter/package-lock.json .
 
-FROM dependency-base AS development-base
-
 WORKDIR /core
-RUN npm ci
+COPY ./core /core
 
 WORKDIR /bot-twitter
 RUN npm ci
 
-COPY ./core /core
 COPY ./bot-twitter /bot-twitter
 
 FROM $NODE_VERSION AS development
 
 COPY --from=chamber /chamber /bin/chamber
-COPY --from=development-base /core /core
-COPY --from=development-base /bot-twitter /bot-twitter
+COPY --from=dependency-base /core /core
+COPY --from=dependency-base /bot-twitter /bot-twitter
 
 WORKDIR /bot-twitter
 CMD ["chamber", "exec", "auction-ui/bot/dev", "--", "npm", "run", "dev"]
 
 FROM dependency-base AS production-base
 
-WORKDIR /core
-RUN npm ci --production
-
-# do not use `--production` for bot-twitter as it relies on
-# devDependency `@nuxt/typescript-build` to run `npm run generate` below
 WORKDIR /bot-twitter
-RUN npm ci
-
-
-COPY ./core /core
-COPY ./bot-twitter /bot-twitter
-
-# generate will also take care of building
-# if necessary
-WORKDIR /bot-twitter
-RUN npm run generate
+RUN npm run build
 
 FROM $NODE_VERSION AS production
 
