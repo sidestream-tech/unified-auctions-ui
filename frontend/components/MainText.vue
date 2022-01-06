@@ -54,8 +54,9 @@
                 Maker Protocol and the price on other marketplaces. Similar to a Dutch-style auction system, the
                 auction price starts above the real market price and drops by a defined ratio in defined time
                 intervals. For example, ETH-A auctions start 30% above the market price and drop by
-                <format-percentage :value="params.cut" /> every {{ params.step }} seconds. When the auction price drops
-                below the exchange rate on other marketplaces there is a chance to make a profit.
+                <format-percentage :value="params.priceDropRatio" /> every
+                {{ params.secondsBetweenPriceDrops }} seconds. When the auction price drops below the exchange rate on
+                other marketplaces there is a chance to make a profit.
             </TextBlock>
             <TextBlock v-if="auctions.length > 0" title="Active auctions" class="TextBlock w-full">
                 There {{ unfinishedAuctionsCount === 1 ? 'is' : 'are' }} {{ unfinishedAuctionsCount }} auction<span
@@ -169,8 +170,8 @@ export default Vue.extend({
         },
         params(): MakerParams {
             return {
-                step: 90,
-                cut: 0.01,
+                secondsBetweenPriceDrops: 90,
+                priceDropRatio: 0.01,
             };
         },
     },

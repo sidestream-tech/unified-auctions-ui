@@ -11,29 +11,29 @@
         :locale="{ emptyText: 'No active auctions' }"
         class="AuctionsTable relative overflow-visible"
     >
-        <div slot="amountRAW" slot-scope="amountRAW, record" class="flex items-center space-x-2">
+        <div slot="collateralAmount" slot-scope="collateralAmount, record" class="flex items-center space-x-2">
             <currency-icon :currency-symbol="record.collateralSymbol" />
-            <format-currency :value="amountRAW" :currency="record.collateralSymbol" />
+            <format-currency :value="collateralAmount" :currency="record.collateralSymbol" />
         </div>
-        <div slot="amountPerCollateral" slot-scope="amountPerCollateral, record">
+        <div slot="approximateUnitPrice" slot-scope="approximateUnitPrice, record">
             <template v-if="record.isActive && !record.isFinished">
-                <format-currency :value="amountPerCollateral" currency="DAI" /> per
+                <format-currency :value="approximateUnitPrice" currency="DAI" /> per
                 <format-currency :currency="record.collateralSymbol" />
             </template>
             <span v-else class="opacity-50">Unknown</span>
         </div>
-        <div slot="marketValue" slot-scope="marketValue, record">
+        <div slot="marketUnitPriceToUnitPriceRatio" slot-scope="marketUnitPriceToUnitPriceRatio, record">
             <format-market-value
-                v-if="record.isActive && record.marketValue && !record.isFinished"
-                :value="marketValue"
+                v-if="record.isActive && record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
+                :value="marketUnitPriceToUnitPriceRatio"
             />
             <span v-else class="opacity-50">Unknown</span>
         </div>
-        <div slot="till" slot-scope="till, record" class="text-center">
+        <div slot="endDate" slot-scope="endDate, record" class="text-center">
             <span v-if="record.isFinished" class="opacity-50"> Finished </span>
             <span v-else-if="record.isRestarting" class="opacity-50"> Restarting </span>
             <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
-            <time-till v-else :date="till" />
+            <time-till v-else :date="endDate" />
         </div>
         <div slot="action" slot-scope="text, record, index" class="w-full h-full">
             <nuxt-link
@@ -122,9 +122,9 @@ export default Vue.extend({
                 },
                 {
                     title: 'Auction Amount',
-                    dataIndex: 'amountRAW',
-                    scopedSlots: { customRender: 'amountRAW' },
-                    sorter: compareBy('amountRAW'),
+                    dataIndex: 'collateralAmount',
+                    scopedSlots: { customRender: 'collateralAmount' },
+                    sorter: compareBy('collateralAmount'),
                     filters: currenciesFilters,
                     onFilter: (selectedCurrency: string, auction: Auction) => {
                         return auction.collateralSymbol.includes(selectedCurrency);
@@ -132,22 +132,22 @@ export default Vue.extend({
                 },
                 {
                     title: 'Auction Price',
-                    dataIndex: 'amountPerCollateral',
-                    scopedSlots: { customRender: 'amountPerCollateral' },
-                    sorter: compareBy('amountPerCollateral'),
+                    dataIndex: 'approximateUnitPrice',
+                    scopedSlots: { customRender: 'approximateUnitPrice' },
+                    sorter: compareBy('approximateUnitPrice'),
                 },
                 {
                     title: 'Market Difference',
-                    dataIndex: 'marketValue',
-                    scopedSlots: { customRender: 'marketValue' },
-                    sorter: compareBy('marketValue'),
+                    dataIndex: 'marketUnitPriceToUnitPriceRatio',
+                    scopedSlots: { customRender: 'marketUnitPriceToUnitPriceRatio' },
+                    sorter: compareBy('marketUnitPriceToUnitPriceRatio'),
                     defaultSortOrder: 'ascend',
                 },
                 {
                     title: 'Auction Ends',
-                    dataIndex: 'till',
-                    scopedSlots: { customRender: 'till' },
-                    sorter: compareBy('till', (a: Date, b: Date) => compareAsc(new Date(a), new Date(b))),
+                    dataIndex: 'endDate',
+                    scopedSlots: { customRender: 'endDate' },
+                    sorter: compareBy('endDate', (a: Date, b: Date) => compareAsc(a, b)),
                 },
                 {
                     title: '',

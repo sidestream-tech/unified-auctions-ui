@@ -6,28 +6,28 @@ export declare interface AuctionInitialInfo {
     auctionId: number;
     collateralType: string;
     collateralSymbol: string;
-    amountRAW: BigNumber;
+    collateralAmount: BigNumber;
     debtDAI: BigNumber;
-    till: string;
-    vaultOwner: string;
+    startDate: Date;
+    endDate: Date;
+    vaultAddress: string;
     isActive: boolean;
     isFinished: boolean;
     isRestarting: boolean;
-    marketPricePerCollateral?: BigNumber;
-    marketValue?: BigNumber;
+    marketUnitPrice?: BigNumber;
+    marketUnitPriceToUnitPriceRatio?: BigNumber;
     transactionProfit?: BigNumber;
     transactionAddress?: string;
     initialPrice: BigNumber;
-    start: Date;
-    step: BigNumber;
-    cut: BigNumber;
 }
 
 export declare interface Auction extends AuctionInitialInfo {
-    amountPerCollateral: BigNumber;
-    fetchedAmountPerCollateral: BigNumber;
-    amountDAI: BigNumber;
+    unitPrice: BigNumber;
+    totalPrice: BigNumber;
+    approximateUnitPrice: BigNumber;
+    secondsBetweenPriceDrops?: number;
     secondsTillNextPriceDrop?: number;
+    priceDropRatio?: BigNumber;
 }
 
 export declare interface TransactionFees {
@@ -39,7 +39,7 @@ export declare interface TransactionFees {
 }
 
 export declare interface AuctionTransaction extends Auction, TransactionFees {
-    transactionOutcome: BigNumber;
+    transactionProfitMinusFees: BigNumber;
 }
 
 export declare interface UniswapTokenConfig {
@@ -72,8 +72,8 @@ export declare interface NetworkConfig {
 }
 
 export declare interface MakerParams {
-    step: BigNumber;
-    cut: BigNumber;
+    secondsBetweenPriceDrops: number;
+    priceDropRatio: BigNumber;
 }
 
 export declare interface MessageContent {

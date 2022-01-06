@@ -8,32 +8,30 @@ import trackTransaction from './tracker';
 import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
 
-const fetchAuctionsByType = async function (type: string, maker: any, network: string): Promise<AuctionInitialInfo[]> {
-    const protoAuctions = await maker.service('liquidation').getAllClips(type);
+const fetchAuctionsByType = async function (
+    collateralType: string,
+    maker: any,
+    network: string
+): Promise<AuctionInitialInfo[]> {
+    const protoAuctions = await maker.service('liquidation').getAllClips(collateralType);
     const now = new Date();
-    const params = await fetchCalcParametersByCollateralType(network, type);
-
     return protoAuctions.map((protoAuction: any): AuctionInitialInfo => {
         const isActive = protoAuction.active && protoAuction.endDate > now;
-        const collateralSymbol = COLLATERALS[protoAuction.ilk].symbol as string;
-        const amountRAW = new BigNumber(protoAuction.lot);
         return {
             network,
             id: `${protoAuction.ilk}:${protoAuction.saleId}`,
             auctionId: protoAuction.saleId,
             collateralType: protoAuction.ilk,
-            collateralSymbol,
-            vaultOwner: protoAuction.usr,
-            amountRAW,
+            collateralSymbol: COLLATERALS[protoAuction.ilk].symbol as string,
+            collateralAmount: new BigNumber(protoAuction.lot),
+            vaultAddress: protoAuction.usr,
             debtDAI: new BigNumber(protoAuction.tab),
-            till: protoAuction.endDate,
+            endDate: protoAuction.endDate,
             initialPrice: new BigNumber(protoAuction.top),
-            start: protoAuction.created,
+            startDate: protoAuction.created,
             isActive,
             isFinished: false,
             isRestarting: false,
-            step: params.step,
-            cut: params.cut,
         };
     });
 };
@@ -46,43 +44,42 @@ const enrichAuctionWithActualNumbers = async function (
     if (!auction.isActive) {
         return {
             ...auction,
-            amountPerCollateral: new BigNumber(0),
-            fetchedAmountPerCollateral: new BigNumber(0),
-            amountDAI: new BigNumber(0),
+            unitPrice: new BigNumber(0),
+            approximateUnitPrice: new BigNumber(0),
+            totalPrice: new BigNumber(0),
         };
     }
     const status = await maker.service('liquidation').getStatus(auction.collateralType, auction.auctionId);
-    const amountPerCollateral = new BigNumber(status.price).div(RAY);
-    const amountRAW = new BigNumber(status.lot).div(WAD);
-
+    const unitPrice = new BigNumber(status.price).div(RAY);
+    const collateralAmount = new BigNumber(status.lot).div(WAD);
     return {
         ...auction,
         isActive: !status.needsRedo,
         debtDAI: new BigNumber(status.tab).div(RAD),
-        amountRAW,
-        amountPerCollateral,
-        fetchedAmountPerCollateral: amountPerCollateral,
-        amountDAI: amountRAW.multipliedBy(amountPerCollateral),
+        collateralAmount,
+        unitPrice,
+        approximateUnitPrice: unitPrice,
+        totalPrice: collateralAmount.multipliedBy(unitPrice),
     };
 };
 
 const enrichAuctionWithMarketValues = async function (auction: Auction, network: string): Promise<Auction> {
-    if (!auction.isActive) {
+    if (!auction.isActive || !auction.approximateUnitPrice) {
         return auction;
     }
     try {
-        const marketPricePerCollateral = await getExchangeRateBySymbol(
+        const marketUnitPrice = await getExchangeRateBySymbol(
             network,
             auction.collateralSymbol,
-            auction.amountRAW
+            auction.collateralAmount
         );
-        const marketValue = auction.amountPerCollateral
-            .minus(marketPricePerCollateral)
-            .dividedBy(marketPricePerCollateral);
+        const marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
+            .minus(marketUnitPrice)
+            .dividedBy(marketUnitPrice);
         const auctionWithMarketValues = {
             ...auction,
-            marketPricePerCollateral,
-            marketValue,
+            marketUnitPrice,
+            marketUnitPriceToUnitPriceRatio,
         };
         return {
             ...auctionWithMarketValues,
@@ -101,16 +98,21 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
     if (!auction.isActive) {
         return auction;
     }
-    const currentDate = new Date();
-    const secondsTillNextPriceDrop = calculateAuctionDropTime(auction, currentDate);
-    const amountPerCollateral = calculateAuctionPrice(auction, currentDate);
-    const amountDAI = auction.amountRAW.multipliedBy(amountPerCollateral);
-
-    return {
+    const params = await fetchCalcParametersByCollateralType(auction.network, auction.collateralType);
+    const auctionWithParams = {
         ...auction,
+        secondsBetweenPriceDrops: params.secondsBetweenPriceDrops,
+        priceDropRatio: params.priceDropRatio,
+    };
+    const currentDate = new Date();
+    const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
+    const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
+    const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
+    return {
+        ...auctionWithParams,
         secondsTillNextPriceDrop,
-        amountPerCollateral,
-        amountDAI,
+        approximateUnitPrice,
+        totalPrice,
     };
 };
 
@@ -182,8 +184,8 @@ export const bidOnTheAuction = async function (
         .take(
             auction.collateralType,
             auction.auctionId,
-            auction.amountRAW.toFixed(WAD_NUMBER_OF_DIGITS),
-            auction.fetchedAmountPerCollateral.toFixed(RAY_NUMBER_OF_DIGITS),
+            auction.collateralAmount.toFixed(WAD_NUMBER_OF_DIGITS),
+            auction.unitPrice.toFixed(RAY_NUMBER_OF_DIGITS),
             calleeAddress,
             flashData
         );

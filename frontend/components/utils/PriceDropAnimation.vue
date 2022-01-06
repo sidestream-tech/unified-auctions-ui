@@ -50,13 +50,19 @@ export default Vue.extend({
     },
     computed: {
         percent(): number {
-            if (this.auction.secondsTillNextPriceDrop) {
-                return 100 - (this.auction.secondsTillNextPriceDrop / this.auction.step.toNumber()) * 100;
+            if (
+                this.auction.secondsTillNextPriceDrop === undefined ||
+                this.auction.secondsBetweenPriceDrops === undefined
+            ) {
+                return 0;
             }
-            return 0;
+            return 100 - (this.auction.secondsTillNextPriceDrop / this.auction.secondsBetweenPriceDrops) * 100;
         },
         nextPrice(): BigNumber {
-            return this.auction.amountPerCollateral.multipliedBy(this.auction.cut);
+            if (this.auction.priceDropRatio === undefined) {
+                return new BigNumber(0);
+            }
+            return this.auction.approximateUnitPrice.multipliedBy(this.auction.priceDropRatio);
         },
     },
 });

@@ -54,7 +54,7 @@ export const enrichAuctionWithTransactionFees = function (
         ...fees,
     } as AuctionTransaction;
     if (auction.transactionProfit && fees.biddingTransactionFeeDAI) {
-        auctionTransaction.transactionOutcome = auction.transactionProfit.minus(fees.biddingTransactionFeeDAI);
+        auctionTransaction.transactionProfitMinusFees = auction.transactionProfit.minus(fees.biddingTransactionFeeDAI);
     }
     return auctionTransaction;
 };

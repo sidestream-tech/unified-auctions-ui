@@ -26,7 +26,7 @@ export const getNewAuctions = async function (): Promise<AuctionInitialInfo[]> {
     console.info(`auctions: "${activeActions.length}" of "${auctions.length}" are active`);
 
     const newAuctions = activeActions.filter(activeAction => {
-        const isNew = activeAction.start > new Date(Date.now() - THRESHOLD_FOR_NEW_AUCTIONS);
+        const isNew = activeAction.startDate > new Date(Date.now() - THRESHOLD_FOR_NEW_AUCTIONS);
         return isNew && checkIfAuctionIsAlreadyKnown(activeAction);
     });
     console.info(`auctions: "${newAuctions.length}" of "${activeActions.length}" are new`);

@@ -29,12 +29,13 @@ const _fetchCalcParametersByCollateralType = async function (
     const provider = getProvider(network);
     const contract = await new ethers.Contract(address, MCD_CLIP_CALC, provider);
 
+    const secondsBetweenPriceDrops = await contract.step();
     const cut = await contract.cut();
-    const step = await contract.step();
+    const priceDropRatio = new BigNumber(cut.toString()).shiftedBy(-RAY_NUMBER_OF_DIGITS);
 
     return {
-        step: new BigNumber(step.toString()),
-        cut: new BigNumber(cut.toString()).shiftedBy(-RAY_NUMBER_OF_DIGITS),
+        secondsBetweenPriceDrops,
+        priceDropRatio,
     };
 };
 
@@ -54,8 +55,8 @@ export const checkAllCalcParameters = async function (network: string): Promise<
             console.info(
                 'getAllCacParameters:',
                 collateral,
-                new BigNumber(calcParameters.step).toNumber(),
-                new BigNumber(calcParameters.cut).toNumber()
+                calcParameters.secondsBetweenPriceDrops,
+                new BigNumber(calcParameters.priceDropRatio).toNumber()
             );
         } catch (error) {
             errors.push(collateral);

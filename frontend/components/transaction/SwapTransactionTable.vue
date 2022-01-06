@@ -2,13 +2,13 @@
     <TextBlock class="flex flex-col space-y-1">
         <div class="flex w-full justify-between">
             <div>Auction Ends</div>
-            <div><time-till :date="auctionTransaction.till" /></div>
+            <div><time-till :date="auctionTransaction.endDate" /></div>
         </div>
         <div class="flex w-full justify-between">
             <div>Auction Amount</div>
             <div>
                 <FormatCurrency
-                    :value="auctionTransaction.amountRAW"
+                    :value="auctionTransaction.collateralAmount"
                     :currency="auctionTransaction.collateralSymbol"
                 />
             </div>
@@ -17,15 +17,15 @@
             <div>Auction Price</div>
             <div>
                 <PriceDropAnimation :auction="auctionTransaction" class="mr-1" />
-                <FormatCurrency :value="auctionTransaction.amountPerCollateral" currency="DAI" /> per
+                <FormatCurrency :value="auctionTransaction.approximateUnitPrice" currency="DAI" /> per
                 <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
             </div>
         </div>
         <div class="flex w-full justify-between">
             <div>Price On Uniswap</div>
             <div>
-                <template v-if="auctionTransaction.isActive && auctionTransaction.marketPricePerCollateral">
-                    <FormatCurrency :value="auctionTransaction.marketPricePerCollateral" currency="DAI" /> per
+                <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPrice">
+                    <FormatCurrency :value="auctionTransaction.marketUnitPrice" currency="DAI" /> per
                     <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
@@ -34,8 +34,8 @@
         <div class="flex w-full justify-between">
             <div>Market Difference</div>
             <div>
-                <template v-if="auctionTransaction.isActive && auctionTransaction.marketValue">
-                    <FormatMarketValue :value="auctionTransaction.marketValue" />
+                <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPriceToUnitPriceRatio">
+                    <FormatMarketValue :value="auctionTransaction.marketUnitPriceToUnitPriceRatio" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -78,9 +78,9 @@
             <div class="font-extrabold">Transaction Outcome</div>
             <div>
                 <FormatCurrency
-                    v-if="auctionTransaction.transactionOutcome"
+                    v-if="auctionTransaction.transactionProfitMinusFees"
                     show-sign
-                    :value="auctionTransaction.transactionOutcome"
+                    :value="auctionTransaction.transactionProfitMinusFees"
                     currency="DAI"
                     class="font-extrabold"
                 />

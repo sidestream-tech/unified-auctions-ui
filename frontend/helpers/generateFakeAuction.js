@@ -5,44 +5,44 @@ import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 
 export const generateFakeAuction = function () {
     const auctionId = faker.datatype.number();
-    const amountRAW = new BigNumber(parseFloat(faker.finance.amount()));
-    const amountDAI = new BigNumber(parseFloat(faker.finance.amount()));
-    const debtDAI = amountDAI.multipliedBy(faker.datatype.number({ min: 0.1, max: 0.5, precision: 0.001 }));
+    const collateralAmount = new BigNumber(parseFloat(faker.finance.amount()));
+    const totalPrice = new BigNumber(parseFloat(faker.finance.amount()));
+    const debtDAI = totalPrice.multipliedBy(faker.datatype.number({ min: 0.1, max: 0.5, precision: 0.001 }));
     const isActive = faker.datatype.boolean();
     const isFinished = faker.datatype.boolean();
-    const amountPerCollateral = amountDAI.dividedBy(amountRAW);
-    const marketValue = isActive
+    const approximateUnitPrice = totalPrice.dividedBy(collateralAmount);
+    const marketUnitPriceToUnitPriceRatio = isActive
         ? new BigNumber(faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 }))
         : undefined;
     const collateralObject = faker.helpers.randomize(Object.values(COLLATERALS));
-    const marketPricePerCollateral = amountPerCollateral.multipliedBy(1 - marketValue);
-    const transactionProfit = marketPricePerCollateral
-        .multipliedBy(amountRAW)
-        .minus(amountPerCollateral.multipliedBy(amountRAW));
+    const marketUnitPrice = approximateUnitPrice.multipliedBy(1 - marketUnitPriceToUnitPriceRatio);
+    const transactionProfit = marketUnitPrice
+        .multipliedBy(collateralAmount)
+        .minus(approximateUnitPrice.multipliedBy(collateralAmount));
     return {
         network: 'stub',
         id: `${collateralObject.ilk}:${auctionId}`,
         auctionId,
         collateralType: collateralObject.ilk,
         collateralSymbol: collateralObject.symbol,
-        amountRAW,
-        amountDAI,
+        collateralAmount,
+        totalPrice,
         debtDAI,
-        initialPrice: amountPerCollateral,
-        till: faker.date.future().toString(),
-        marketValue,
-        vaultOwner: faker.finance.ethereumAddress(),
-        amountPerCollateral,
-        fetchedAmountPerCollateral: amountPerCollateral,
-        marketPricePerCollateral,
+        initialPrice: approximateUnitPrice,
+        endDate: faker.date.future(),
+        marketUnitPriceToUnitPriceRatio,
+        vaultAddress: faker.finance.ethereumAddress(),
+        approximateUnitPrice,
+        unitPrice: approximateUnitPrice,
+        marketUnitPrice,
         isActive,
         transactionProfit,
         isFinished,
-        start: faker.date.recent(),
+        startDate: faker.date.recent(),
         isRestarting: false,
         transactionAddress: undefined,
-        step: new BigNumber(faker.datatype.number(120)),
-        cut: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
+        secondsBetweenPriceDrops: faker.datatype.number(120),
+        priceDropRatio: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
     };
 };
 
@@ -53,7 +53,7 @@ export const generateFakeAuctionTransaction = function () {
     const authTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
     const authTransactionFeeDAI = authTransactionFeeETH * 1000;
     const restartTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
-    const transactionOutcome = auction.transactionProfit - biddingTransactionFeeDAI;
+    const transactionProfitMinusFees = auction.transactionProfit - biddingTransactionFeeDAI;
     return {
         ...auction,
         biddingTransactionFeeETH,
@@ -61,7 +61,7 @@ export const generateFakeAuctionTransaction = function () {
         authTransactionFeeETH,
         authTransactionFeeDAI,
         restartTransactionFeeETH,
-        transactionOutcome,
+        transactionProfitMinusFees,
     };
 };
 

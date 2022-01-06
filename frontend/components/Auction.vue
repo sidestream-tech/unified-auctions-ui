@@ -16,20 +16,23 @@
                         <tr>
                             <td>Auction Ends</td>
                             <td>
-                                <time-till :date="auction.till" />
+                                <time-till :date="auction.endDate" />
                             </td>
                         </tr>
                         <tr>
                             <td>Auction Amount</td>
                             <td>
-                                <format-currency :value="auction.amountRAW" :currency="auction.collateralSymbol" />
+                                <format-currency
+                                    :value="auction.collateralAmount"
+                                    :currency="auction.collateralSymbol"
+                                />
                             </td>
                         </tr>
                         <tr>
                             <td>Auction Price</td>
                             <td>
                                 <template v-if="auction.isActive">
-                                    <format-currency :value="auction.amountPerCollateral" currency="DAI" />
+                                    <format-currency :value="auction.approximateUnitPrice" currency="DAI" />
                                     per
                                     <format-currency :currency="auction.collateralSymbol" />
                                     <PriceDropAnimation :auction="auction" />
@@ -40,8 +43,8 @@
                         <tr>
                             <td>Price On Uniswap</td>
                             <td>
-                                <template v-if="auction.isActive && auction.marketPricePerCollateral">
-                                    <format-currency :value="auction.marketPricePerCollateral" currency="DAI" /> per
+                                <template v-if="auction.isActive && auction.marketUnitPrice">
+                                    <format-currency :value="auction.marketUnitPrice" currency="DAI" /> per
                                     <format-currency :currency="auction.collateralSymbol" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
@@ -50,8 +53,8 @@
                         <tr>
                             <td>Market Difference</td>
                             <td>
-                                <template v-if="auction.isActive && auction.marketValue">
-                                    <format-market-value :value="auction.marketValue" />
+                                <template v-if="auction.isActive && auction.marketUnitPriceToUnitPriceRatio">
+                                    <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
@@ -66,7 +69,7 @@
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Auction Price Total</td>
                                 <td>
-                                    <format-currency :value="auction.amountDAI" currency="DAI" />
+                                    <format-currency :value="auction.totalPrice" currency="DAI" />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
@@ -78,14 +81,14 @@
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Vault address</td>
                                 <td>
-                                    <format-address :value="auction.vaultOwner" disable />
+                                    <format-address :value="auction.vaultAddress" disable />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Auction Start</td>
                                 <td>
                                     <template v-if="auction.isActive">
-                                        {{ new Date(auction.start).toUTCString() }}
+                                        {{ new Date(auction.startDate).toUTCString() }}
                                     </template>
                                     <span v-else class="opacity-50">Unknown</span>
                                 </td>
@@ -94,7 +97,7 @@
                                 <td>Auction End</td>
                                 <td>
                                     <template v-if="auction.isActive">
-                                        {{ new Date(auction.till).toUTCString() }}
+                                        {{ new Date(auction.endDate).toUTCString() }}
                                     </template>
                                     <span v-else class="opacity-50">Unknown</span>
                                 </td>
@@ -121,21 +124,21 @@
                 <TextBlock class="mt-4">
                     <template v-if="!error">
                         The auctioned vault
-                        <format-address type="address" shorten :value="auction.vaultOwner" /> contains
-                        <format-currency :value="auction.amountRAW" :currency="auction.collateralSymbol" />. Currently,
-                        it is sold for <format-currency :value="auction.amountDAI" currency="DAI" />. This equals
-                        <format-currency :value="auction.amountPerCollateral" currency="DAI" /> per
+                        <format-address type="address" :value="auction.vaultAddress" shorten disable /> contains
+                        <format-currency :value="auction.collateralAmount" :currency="auction.collateralSymbol" />.
+                        Currently, it is sold for <format-currency :value="auction.totalPrice" currency="DAI" />. This
+                        equals <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> per
                         <format-currency :currency="auction.collateralSymbol" />, or approximately
-                        <format-market-value :value="auction.marketValue" /> than if you buy
+                        <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you buy
                         <format-currency :currency="auction.collateralSymbol" /> on another exchange platform such as
                         Uniswap.
                     </template>
                     <template v-else>
-                        This auction was finished at {{ new Date(auction.till).toUTCString() }} at a closing auction
-                        price of <format-currency :value="auction.amountPerCollateral" currency="DAI" /> (meaning
-                        <format-currency :value="auction.amountPerCollateral" currency="DAI" />
+                        This auction was finished at {{ auction.endDate.toUTCString() }} at a closing auction price of
+                        <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> (meaning
+                        <format-currency :value="auction.approximateUnitPrice" currency="DAI" />
                         per <format-currency :currency="auction.collateralSymbol" /> on average) after
-                        <time-till :date="auction.till" />.
+                        <time-till :date="auction.endDate" />.
                     </template>
                 </TextBlock>
 
@@ -267,7 +270,10 @@ export default Vue.extend({
                 return 'This auction is finished';
             } else if (!this.auction?.isActive && !this.isAuctionsLoading) {
                 return 'This auction is inactive and must be restarted';
-            } else if (!this.isAuctionsLoading && typeof this.auction?.marketValue === 'undefined') {
+            } else if (
+                !this.isAuctionsLoading &&
+                typeof this.auction?.marketUnitPriceToUnitPriceRatio === 'undefined'
+            ) {
                 return `Swap transaction is not possible,
                 because we can't get value of ${this.auction?.collateralSymbol} on UniSwap`;
             }

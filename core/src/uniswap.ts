@@ -216,9 +216,9 @@ export const checkAllExchangeRates = async function (network: string): Promise<v
     const successes = [];
     for (const symbol of getAllCollateralSymbols()) {
         try {
-            const marketPricePerCollateral = await getExchangeRateBySymbol(network, symbol);
+            const marketUnitPrice = await getExchangeRateBySymbol(network, symbol);
             successes.push(symbol);
-            console.info('getAllExchangeRates', symbol, marketPricePerCollateral.toString());
+            console.info('getAllExchangeRates', symbol, marketUnitPrice.toString());
         } catch (error) {
             errors.push(symbol);
             console.error('getAllExchangeRates error', symbol, error);

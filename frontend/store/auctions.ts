@@ -77,7 +77,7 @@ export const mutations = {
         });
         for (const finishedAuctionId in finishedAuctionIds) {
             state.auctionStorage[finishedAuctionIds[finishedAuctionId]].isFinished = true;
-            state.auctionStorage[finishedAuctionIds[finishedAuctionId]].till = new Date().toISOString();
+            state.auctionStorage[finishedAuctionIds[finishedAuctionId]].endDate = new Date();
         }
         state.auctionStorage = {
             ...state.auctionStorage,
@@ -90,7 +90,7 @@ export const mutations = {
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
         state.auctionStorage[id].transactionAddress = transactionAddress;
         state.auctionStorage[id].isFinished = true;
-        state.auctionStorage[id].till = new Date().toISOString();
+        state.auctionStorage[id].endDate = new Date();
     },
     addAuctionRestarting(state: State, id: string) {
         if (!state.restartingAuctionsIds.includes(id)) {
