@@ -88,22 +88,39 @@ const getUniswapTokenBySymbol = function (network: string, symbol: string): Toke
     return new Token(decimalChainId, tokenAddress, tokenDecimals, symbol);
 };
 
-const _getUniswapPairBySymbols = async function (network: string, symbol1: string, symbol2: string): Promise<Pair> {
+const _getCachedUniswapPairBySymbols = async function (
+    network: string,
+    symbol1: string,
+    symbol2: string
+): Promise<Pair | undefined> {
     const provider = getProvider(network);
     const token1 = getUniswapTokenBySymbol(network, symbol1);
     const token2 = getUniswapTokenBySymbol(network, symbol2);
     try {
         return await Fetcher.fetchPairData(token1, token2, provider);
     } catch (error) {
-        throw new Error(`The pair of "${symbol1}/${symbol2}" is not tradable on UniSwap "${network}" network`);
+        return undefined;
     }
 };
 
-const getUniswapPairBySymbols = memoizee(_getUniswapPairBySymbols, {
+const getCachedUniswapPairBySymbols = memoizee(_getCachedUniswapPairBySymbols, {
     maxAge: EXCHANGE_RATE_CACHE,
     promise: true,
     length: 3,
 });
+
+export const getUniswapPairBySymbols = async function (
+    network: string,
+    symbol1: string,
+    symbol2: string
+): Promise<Pair> {
+    const cachedResult = await getCachedUniswapPairBySymbols(network, symbol1, symbol2);
+
+    if (!cachedResult) {
+        throw new Error(`The pair of "${symbol1}/${symbol2}" is not tradable on UniSwap "${network}" network`);
+    }
+    return cachedResult;
+};
 
 const splitArrayIntoPairs = function (array: string[]): string[][] {
     /* 
