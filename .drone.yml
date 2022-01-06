@@ -28,6 +28,17 @@ data:
         branch:
           - main
 
+    # frontend: test production build
+    - name: build-frontend-to-test-production-build
+      repository: ghcr.io/sidestream-tech/auction-ui/frontend
+      path_to_dockerfile: frontend/Dockerfile
+      path_to_context: ./
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
+
     # frontend: publish release
     - name: publish-frontend-release
       tags:
@@ -117,6 +128,17 @@ data:
         branch:
           - main
 
+    # bot-twitter: test production build
+    - name: build-bot-twitter-to-test-production-build
+      repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
+      path_to_dockerfile: bot-twitter/Dockerfile
+      path_to_context: ./
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
+
     # bot-twitter: publish release
     - name: publish-bot-twitter-release
       repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
@@ -174,8 +196,6 @@ data:
           command: npm run lint
         - name: test
           command: npm run test
-        - name: build
-          command: npm run build
       trigger:
         event:
           - pull_request
@@ -187,8 +207,6 @@ data:
       steps_parallel:
         - name: lint
           command: npm run lint
-        - name: build
-          command: npm run build
       trigger:
         event:
           - pull_request
