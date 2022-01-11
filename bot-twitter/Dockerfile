@@ -34,7 +34,7 @@ COPY --from=dependency-base /core /core
 COPY --from=dependency-base /bot-twitter /bot-twitter
 
 WORKDIR /bot-twitter
-CMD ["chamber", "exec", "auction-ui/bot/dev", "--", "npm", "run", "dev"]
+CMD chamber exec $SECRET_CHAMBER_PATH -- npm run dev
 
 FROM dependency-base AS production-base
 
@@ -52,4 +52,4 @@ ENV NUXT_HOST=0.0.0.0
 
 # start the app
 WORKDIR /bot-twitter
-CMD ["chamber", "exec", "auction-ui/bot/production", "--", "npm", "start" ]
+CMD chamber exec $SECRET_CHAMBER_PATH -- npm start
