@@ -31,10 +31,11 @@ const getCompleteExchangePathBySymbol = function (symbol: string, useExchangeRou
     return !useExchangeRoute ? [symbol, 'DAI'] : [symbol, ...collateral.uniswap.route, 'DAI'];
 };
 
-const getUniswapRouteAddressesBySymbol = function (network: string, symbol: string): string[] {
+const getUniswapRouteAddressesBySymbol = async function (network: string, symbol: string): Promise<string[]> {
     const completeExchangePath = getCompleteExchangePathBySymbol(symbol);
-    return completeExchangePath.map(exchangePathSymbol =>
-        getTokenAddressByNetworkAndSymbol(network, exchangePathSymbol)
+
+    return await Promise.all(
+        completeExchangePath.map(exchangePathSymbol => getTokenAddressByNetworkAndSymbol(network, exchangePathSymbol))
     );
 };
 
@@ -54,7 +55,7 @@ export const getUniswapParametersByCollateral = async function (
             profitAddress,
             joinAdapterAddress,
             minProfit,
-            getUniswapRouteAddressesBySymbol(network, collateral.symbol),
+            await getUniswapRouteAddressesBySymbol(network, collateral.symbol),
         ]);
     }
     if (collateral.uniswap.type === 'lpToken') {
@@ -63,8 +64,8 @@ export const getUniswapParametersByCollateral = async function (
             profitAddress,
             joinAdapterAddress,
             minProfit,
-            getUniswapRouteAddressesBySymbol(network, collateral.uniswap.token0),
-            getUniswapRouteAddressesBySymbol(network, collateral.uniswap.token1),
+            await getUniswapRouteAddressesBySymbol(network, collateral.uniswap.token0),
+            await getUniswapRouteAddressesBySymbol(network, collateral.uniswap.token1),
         ]);
     }
     throw new Error(`unexpected collateral type "${collateralType}"`);
@@ -81,8 +82,8 @@ export const getUniswapCalleeBySymbol = function (network: string, symbol: strin
     throw new Error(`token of this type doesn't exist`);
 };
 
-const getUniswapTokenBySymbol = function (network: string, symbol: string): Token {
-    const tokenAddress = getTokenAddressByNetworkAndSymbol(network, symbol);
+const getUniswapTokenBySymbol = async function (network: string, symbol: string): Promise<Token> {
+    const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const tokenDecimals = getTokenDecimalsBySymbol(symbol);
     const decimalChainId = getDecimalChainIdByNetworkType(network);
     return new Token(decimalChainId, tokenAddress, tokenDecimals, symbol);
@@ -94,8 +95,8 @@ const _getCachedUniswapPairBySymbols = async function (
     symbol2: string
 ): Promise<Pair | undefined> {
     const provider = getProvider(network);
-    const token1 = getUniswapTokenBySymbol(network, symbol1);
-    const token2 = getUniswapTokenBySymbol(network, symbol2);
+    const token1 = await getUniswapTokenBySymbol(network, symbol1);
+    const token2 = await getUniswapTokenBySymbol(network, symbol2);
     try {
         return await Fetcher.fetchPairData(token1, token2, provider);
     } catch (error) {
@@ -136,7 +137,7 @@ const splitArrayIntoPairs = function (array: string[]): string[][] {
 
 const getLpTokenTotalSupply = async function (network: string, symbol: string): Promise<BigNumber> {
     const provider = getProvider(network);
-    const address = getTokenAddressByNetworkAndSymbol(network, symbol);
+    const address = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const contract = new ethers.Contract(address, uniswapV2PairABI, provider);
     const totalSupply = await contract.totalSupply();
     const collateral = getCollateralConfigBySymbol(symbol);
@@ -171,12 +172,12 @@ const getLpTokenExchangeRateBySymbol = async function (
     const portionOfTheTotalSupply = amount.div(totalSupply);
     const totalPriceOfToken0 = await getTotalPriceInDai(
         network,
-        uniswapPair.reserveOf(getUniswapTokenBySymbol(network, collateral.uniswap.token0)),
+        uniswapPair.reserveOf(await getUniswapTokenBySymbol(network, collateral.uniswap.token0)),
         portionOfTheTotalSupply
     );
     const totalPriceOfToken1 = await getTotalPriceInDai(
         network,
-        uniswapPair.reserveOf(getUniswapTokenBySymbol(network, collateral.uniswap.token1)),
+        uniswapPair.reserveOf(await getUniswapTokenBySymbol(network, collateral.uniswap.token1)),
         portionOfTheTotalSupply
     );
     const totalPrice = totalPriceOfToken0.plus(totalPriceOfToken1);
@@ -203,7 +204,7 @@ const getRegularTokenExchangeRateBySymbol = async function (
     const completeExchangePath = getCompleteExchangePathBySymbol(symbol);
     const pairs = splitArrayIntoPairs(completeExchangePath);
     const uniswapPairs = await Promise.all(pairs.map(pair => getUniswapPairBySymbols(network, pair[0], pair[1])));
-    const exchangeToken = getUniswapTokenBySymbol(network, symbol);
+    const exchangeToken = await getUniswapTokenBySymbol(network, symbol);
     const uniswapRoute = new Route(uniswapPairs, exchangeToken);
     const uniswapTrade = new Trade(
         uniswapRoute,

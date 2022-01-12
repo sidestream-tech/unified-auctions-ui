@@ -4,15 +4,14 @@ import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import getProvider from './provider';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
-import { getAllCollateralTypes } from './constants/COLLATERALS';
 import { RAY_NUMBER_OF_DIGITS } from './constants/UNITS';
-import { getLiquidationsContractsByNetwork } from './contracts';
+import { fetchContractsAddressesByNetwork, getSupportedCollateralTypes } from './contracts';
 
 const PARAMS_CACHE = 24 * 60 * 60 * 1000;
 
-const getCalcAddressByCollateralType = function (network: string, collateralType: string): string {
+const getCalcAddressByCollateralType = async function (network: string, collateralType: string): Promise<string> {
     const suffix = collateralType.replace('-', '_');
-    const contracts = getLiquidationsContractsByNetwork(network);
+    const contracts = await fetchContractsAddressesByNetwork(network);
     const calcAddress = contracts[`MCD_CLIP_CALC_${suffix}`];
 
     if (!calcAddress) {
@@ -25,7 +24,7 @@ const _fetchCalcParametersByCollateralType = async function (
     network: string,
     collateralType: string
 ): Promise<MakerParams> {
-    const address = getCalcAddressByCollateralType(network, collateralType);
+    const address = await getCalcAddressByCollateralType(network, collateralType);
     const provider = getProvider(network);
     const contract = await new ethers.Contract(address, MCD_CLIP_CALC, provider);
 
@@ -48,7 +47,7 @@ export const fetchCalcParametersByCollateralType = memoizee(_fetchCalcParameters
 export const checkAllCalcParameters = async function (network: string): Promise<void> {
     const errors = [];
     const successes = [];
-    for (const collateral of getAllCollateralTypes()) {
+    for (const collateral of await getSupportedCollateralTypes(network)) {
         try {
             const calcParameters = await fetchCalcParametersByCollateralType(network, collateral);
             successes.push(collateral);

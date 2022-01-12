@@ -4,6 +4,7 @@ import McdPlugin from '@makerdao/dai-plugin-mcd';
 // import LiquidationPlugin from '@makerdao/dai-plugin-liquidations';
 import LiquidationPlugin from '@valiafetisov/dai-plugin-liquidations';
 import { getNetworkConfigByType } from './constants/NETWORKS';
+import { fetchContractsAddressesByNetwork } from './contracts';
 
 let globalMaker: typeof Maker;
 let globalNetwork: string;
@@ -11,12 +12,16 @@ let globalNetwork: string;
 const createMaker = async function (network: string): Promise<typeof Maker> {
     console.info(`creating maker object with "${network}" network`);
     const networkConfig = getNetworkConfigByType(network);
+    const addressOverrides = await fetchContractsAddressesByNetwork(network);
     globalNetwork = network;
     globalMaker = await Maker.create('http', {
         plugins: [
             [McdPlugin, { prefetch: false }],
             [LiquidationPlugin, { vulcanize: false }],
         ],
+        smartContract: {
+            addressOverrides,
+        },
         provider: {
             url: networkConfig.url,
             type: 'HTTP',

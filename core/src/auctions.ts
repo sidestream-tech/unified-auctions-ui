@@ -7,6 +7,7 @@ import { fetchCalcParametersByCollateralType } from './params';
 import trackTransaction from './tracker';
 import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
+import { getSupportedCollateralTypes } from './contracts';
 
 const fetchAuctionsByType = async function (
     collateralType: string,
@@ -126,21 +127,14 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
 
 export const fetchAllInitialAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
     const maker = await getMaker(network);
-    const collateralNames = Object.keys(COLLATERALS);
+    const collateralNames = await getSupportedCollateralTypes(network);
 
     // get all auctions
     const auctionGroupsPromises = collateralNames.map((collateralName: string) => {
-        // hack to get over invalid token addresses hardcoded in dai.js mcd plugin
-        // https://github.com/makerdao/dai.js/blob/dev/packages/dai-plugin-mcd/contracts/addresses/kovan.json#L153-L201
-        // TODO: remove this as soon as we fetch addresses ourselves
-        if (network === 'kovan' && collateralName.startsWith('UNIV2') && collateralName !== 'UNIV2DAIETH-A') {
-            return [];
-        }
         return fetchAuctionsByType(collateralName, maker, network);
     });
     const auctionGroups = await Promise.all(auctionGroupsPromises);
-    const auctions = auctionGroups.flat();
-    return auctions;
+    return auctionGroups.flat();
 };
 
 export const fetchAllAuctions = async function (network: string): Promise<Auction[]> {

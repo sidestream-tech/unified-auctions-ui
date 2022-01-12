@@ -10,6 +10,7 @@ import {
 import { checkAllExchangeRates } from 'auctions-core/src/uniswap';
 import { enrichAuctionWithTransactionFees } from 'auctions-core/src/fees';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
+import { checkAllSupportedCollaterals } from 'auctions-core/src/contracts';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
@@ -224,5 +225,9 @@ export const actions = {
     async checkAllCalcParameters({ rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         await checkAllCalcParameters(network);
+    },
+    async checkAllSupportedCollaterals({ rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        await checkAllSupportedCollaterals(network);
     },
 };
