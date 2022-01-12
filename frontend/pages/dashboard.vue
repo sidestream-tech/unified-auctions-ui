@@ -15,6 +15,6 @@ export default Vue.extend({
         DashboardContainer,
         Footer,
     },
-    layout: process.env.DEMO_MODE ? 'demoMode' : 'unified',
+    layout: process.env.DEMO_MODE ? 'demoMode' : 'default',
 });
 </script>

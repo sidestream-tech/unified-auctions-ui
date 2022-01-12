@@ -38,6 +38,10 @@ export declare interface TransactionFees {
     restartTransactionFeeETH: BigNumber;
 }
 
+export declare interface CollateralRow extends CollateralConfig, Partial<MakerParams> {
+    marketUnitPrice?: BigNumber | string;
+}
+
 export declare interface AuctionTransaction extends Auction, TransactionFees {
     transactionProfitMinusFees: BigNumber;
 }

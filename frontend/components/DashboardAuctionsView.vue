@@ -6,21 +6,25 @@
                 Auctions Dashboard
             </h1>
         </LandingBlock>
-        <div class="mt-4 md:mt-8 px-4">
-            <TextBlock v-if="isExplanationsShown" title="Information provided in the table" class="max-w-screen-sm">
-                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et
-                ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem
-                ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-                dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-                Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        <div class="mt-4 md:mt-8 px-4 space-y-4 md:space-y-8 w-full max-w-screen-sm">
+            <TextBlock v-if="isExplanationsShown" title="Collateral auction parameters">
+                In the dutch-style auction system the step parameter defines for each collateral type the length of
+                time between price drops (e.g. {{ exampleCollateral.secondsBetweenPriceDrops }} sec for
+                {{ exampleCollateral.ilk }}). The cut parameter defines the percentage of each price drop (e.g.
+                {{ exampleCollateral.priceDropRatio }}% for {{ exampleCollateral.ilk }}). The market price for the
+                collateral on another marketplace like Uniswap is relevant as it determines the arbitrage opportunity.
+                This arbitrage opportunity during an active auction is based on the price difference between the
+                auction price and the price for the collateral on another marketplace.
             </TextBlock>
+            <CollateralTable :collaterals="collaterals" class="overflow-x-scroll" />
         </div>
     </div>
 </template>
 
 <script lang="ts">
+import type { CollateralRow } from 'auctions-core/src/types';
 import Vue from 'vue';
+import CollateralTable from './CollateralTable.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 
@@ -28,11 +32,26 @@ export default Vue.extend({
     components: {
         LandingBlock,
         TextBlock,
+        CollateralTable,
     },
     props: {
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        collaterals: {
+            type: Array as Vue.PropType<CollateralRow[]>,
+            default: () => [],
+        },
+    },
+    computed: {
+        exampleCollateral() {
+            const example = this.collaterals.find(collateral => collateral.ilk === 'ETH-A');
+            return {
+                ilk: example?.ilk || 'ETH-A',
+                secondsBetweenPriceDrops: example?.secondsBetweenPriceDrops || 90,
+                priceDropRatio: example?.priceDropRatio || 1,
+            };
         },
     },
 });
