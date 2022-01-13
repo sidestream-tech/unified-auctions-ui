@@ -159,10 +159,10 @@ export default Vue.extend({
             return bigNumber instanceof Object;
         },
         isSupported(symbol: string) {
-            return this.$store.getters['collaterals/getIsSupported'](symbol);
+            return this.$store?.getters['collaterals/getIsSupported'](symbol);
         },
         isSupportedLoading(symbol: string) {
-            return this.$store.getters['collaterals/getIsSupported'](symbol) === undefined;
+            return this.$store?.getters['collaterals/getIsSupported'](symbol) === undefined;
         },
     },
 });
