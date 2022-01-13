@@ -155,9 +155,6 @@ export default Vue.extend({
                 typeof record.marketUnitPrice === 'undefined'
             );
         },
-        isLoadingSupported(symbol: string) {
-            return typeof this.$store.getters['collaterals/getIsSupported'](symbol) === 'undefined';
-        },
         validBigNumber(bigNumber: Object | String) {
             return bigNumber instanceof Object;
         },
