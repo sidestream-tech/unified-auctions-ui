@@ -71,6 +71,15 @@
         <div slot="icon" slot-scope="record" class="Element">
             <CurrencyIcon :currency-symbol="record.symbol" />
         </div>
+        <div
+            slot="supported"
+            slot-scope="record"
+            class="Element justify-center"
+            :class="{ Loading: isSupportedLoading(record.ilk) }"
+        >
+            <div v-if="isSupported(record.ilk)">&#9989;</div>
+            <div v-if="isSupported(record.ilk) === false">&#10060;</div>
+        </div>
     </Table>
 </template>
 
@@ -128,6 +137,10 @@ export default Vue.extend({
                     scopedSlots: { customRender: 'priceDropRatio' },
                 },
                 {
+                    title: 'Supported',
+                    scopedSlots: { customRender: 'supported' },
+                },
+                {
                     title: 'Icon',
                     scopedSlots: { customRender: 'icon' },
                 },
@@ -142,8 +155,17 @@ export default Vue.extend({
                 typeof record.marketUnitPrice === 'undefined'
             );
         },
+        isLoadingSupported(symbol: string) {
+            return typeof this.$store.getters['collaterals/getIsSupported'](symbol) === 'undefined';
+        },
         validBigNumber(bigNumber: Object | String) {
             return bigNumber instanceof Object;
+        },
+        isSupported(symbol: string) {
+            return this.$store.getters['collaterals/getIsSupported'](symbol);
+        },
+        isSupportedLoading(symbol: string) {
+            return this.$store.getters['collaterals/getIsSupported'](symbol) === undefined;
         },
     },
 });

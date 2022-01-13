@@ -6,7 +6,7 @@
                 Auctions Dashboard
             </h1>
         </LandingBlock>
-        <div class="mt-4 md:mt-8 px-4 space-y-4 md:space-y-8 w-full max-w-screen-sm">
+        <div class="mt-4 md:mt-8 px-4 mb-4 md:mb-8 w-full max-w-screen-sm">
             <TextBlock v-if="isExplanationsShown" title="Collateral auction parameters">
                 In the dutch-style auction system the step parameter defines for each collateral type the length of
                 time between price drops (e.g. {{ exampleCollateral.secondsBetweenPriceDrops }} sec for
@@ -16,8 +16,8 @@
                 This arbitrage opportunity during an active auction is based on the price difference between the
                 auction price and the price for the collateral on another marketplace.
             </TextBlock>
-            <CollateralTable :collaterals="collaterals" class="overflow-x-scroll" />
         </div>
+        <CollateralTable :collaterals="collaterals" class="w-full px-4 overflow-x-scroll max-w-screen-md" />
     </div>
 </template>
 
