@@ -15,11 +15,11 @@ data:
       path_to_context: ./
       build_args:
         - key: PRODUCTION_DOMAIN
-          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/production_domain
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/production_domain
         - key: INFURA_PROJECT_ID
-          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/infura_project_id
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/infura_project_id
         - key: CONTACT_EMAIL
-          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/contact_email
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/contact_email
       tags_to_cache_from:
         - "main"
       trigger:
@@ -183,7 +183,7 @@ data:
       trigger:
         event:
           - pull_request
-    - name: frontend-lint-test-build
+    - name: frontend-lint-test
       type: kubernetes
       depends_on: [publish-frontend-on-pr-push]
       image: ghcr.io/sidestream-tech/auction-ui/frontend:pr-${DRONE_PULL_REQUEST}
@@ -196,7 +196,7 @@ data:
       trigger:
         event:
           - pull_request
-    - name: bot-twitter-lint-build
+    - name: bot-twitter-lint
       type: kubernetes
       depends_on: [publish-bot-twitter-on-pr-push]
       image: ghcr.io/sidestream-tech/auction-ui/bot-twitter:pr-${DRONE_PULL_REQUEST}
