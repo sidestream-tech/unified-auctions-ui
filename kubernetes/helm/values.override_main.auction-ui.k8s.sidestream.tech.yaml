@@ -1,13 +1,5 @@
 # Value overrides for the deployment to the following host:
 host: "main.auction-ui.k8s.sidestream.tech"
 
-frontend:
-  deployment:
-    tag: "main"
-    pullPolicy: "Always"
-
 botTwitter:
   secretChamberPath: "auction-ui/main.auction-ui.k8s.sidestream.tech/bot-twitter"
-  deployment:
-    tag: "main"
-    pullPolicy: "Always"
