@@ -4,18 +4,24 @@ import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { getExchangeRateBySymbol } from 'auctions-core/src/uniswap';
 import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
 import Vue from 'vue';
+import { isCollateralSupported } from 'auctions-core/src/contracts';
 
 interface State {
     collaterals: CollateralRow[];
+    isSupported: Record<string, boolean>;
 }
 
 export const state = (): State => ({
     collaterals: [],
+    isSupported: {},
 });
 
 export const getters = {
     collaterals(state: State) {
         return state.collaterals || [];
+    },
+    getIsSupported: (state: State) => (collateral: string) => {
+        return state.isSupported[collateral];
     },
 };
 
@@ -30,15 +36,17 @@ export const mutations = {
             ...updatedCollateral,
         });
     },
+    setIsSupported(state: State, { collateral, isSupported }: { collateral: string; isSupported: boolean }) {
+        state.isSupported[collateral] = isSupported;
+    },
 };
 
 export const actions = {
-    async fetchStepAndCut({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+    async fetchStepAndCut({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        dispatch('setup');
         for (const collateral of Object.values(COLLATERALS)) {
             const marketUnitPrice = await getExchangeRateBySymbol(network, collateral.symbol).catch(error => {
                 console.error(error);
@@ -60,11 +68,21 @@ export const actions = {
             commit('updateCollateral', updated);
         }
     },
-    setup({ commit }: ActionContext<State, State>) {
+    async fetchSupportedCollaterals({ commit, rootGetters }: ActionContext<State, State>) {
+        const pageNetwork = rootGetters['network/getPageNetwork'];
+        for (const collateral of Object.values(COLLATERALS)) {
+            const supported = await isCollateralSupported(pageNetwork, collateral.symbol);
+            commit('setIsSupported', { collateral: collateral.ilk, isSupported: supported });
+        }
+    },
+    async setup({ commit, dispatch }: ActionContext<State, State>) {
         const collaterals = Object.values(COLLATERALS).map(collateral => ({
             ilk: collateral.ilk,
             symbol: collateral.symbol,
         }));
         commit('setCollaterals', collaterals);
+
+        await dispatch('fetchSupportedCollaterals');
+        await dispatch('fetchStepAndCut');
     },
 };
