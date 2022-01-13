@@ -168,9 +168,9 @@ data:
         - values.override_main.auction-ui.k8s.sidestream.tech.yaml
         target_namespace: "auction-ui-main"
         release_name: "auction-ui"
-      values_to_set:
-        - frontend.deployment.tag=$DRONE_COMMIT_SHA
-        - botTwitter.deployment.tag=$DRONE_COMMIT_SHA
+        values_to_set:
+          - frontend.deployment.tag=$DRONE_COMMIT_SHA
+          - botTwitter.deployment.tag=$DRONE_COMMIT_SHA
 
   in_development_image_pipelines:
     - name: core-lint-build
