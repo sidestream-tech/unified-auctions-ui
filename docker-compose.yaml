@@ -15,7 +15,7 @@ services:
     frontend:
         restart: unless-stopped
         expose:
-            - 3000
+            - 80
         env_file:
             - './frontend/.env'
         build:
