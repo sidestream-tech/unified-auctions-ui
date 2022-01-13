@@ -19,7 +19,8 @@
         >
             <FormatCurrency v-if="validBigNumber(marketUnitPrice)" :value="marketUnitPrice" currency="DAI" />
             <div v-else>
-                <div v-if="isLoading(record)" class="flex items-center">
+                <div v-if="isOnChain(record.symbol) === false" />
+                <div v-else-if="isLoading(record)" class="flex items-center">
                     <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
                     <span>Loading...</span>
                 </div>
@@ -72,13 +73,13 @@
             <CurrencyIcon :currency-symbol="record.symbol" />
         </div>
         <div
-            slot="supported"
+            slot="found"
             slot-scope="record"
             class="Element justify-center"
-            :class="{ Loading: isSupportedLoading(record.ilk) }"
+            :class="{ Loading: isOnChainLoading(record.symbol) }"
         >
-            <div v-if="isSupported(record.ilk)">&#9989;</div>
-            <div v-if="isSupported(record.ilk) === false">&#10060;</div>
+            <div v-if="isOnChain(record.symbol)">&#9989;</div>
+            <div v-else-if="isOnChain(record.symbol) === false">&#10060;</div>
         </div>
     </Table>
 </template>
@@ -122,6 +123,10 @@ export default Vue.extend({
                     scopedSlots: { customRender: 'symbol' },
                 },
                 {
+                    title: 'Found',
+                    scopedSlots: { customRender: 'found' },
+                },
+                {
                     title: 'Uniswap Market Value',
                     dataIndex: 'marketUnitPrice',
                     scopedSlots: { customRender: 'marketUnitPrice' },
@@ -135,10 +140,6 @@ export default Vue.extend({
                     title: 'Cut',
                     dataIndex: 'priceDropRatio',
                     scopedSlots: { customRender: 'priceDropRatio' },
-                },
-                {
-                    title: 'Supported',
-                    scopedSlots: { customRender: 'supported' },
                 },
                 {
                     title: 'Icon',
@@ -158,11 +159,11 @@ export default Vue.extend({
         validBigNumber(bigNumber: Object | String) {
             return bigNumber instanceof Object;
         },
-        isSupported(symbol: string) {
-            return this.$store?.getters['collaterals/getIsSupported'](symbol);
+        isOnChain(symbol: string) {
+            return this.$store?.getters['collaterals/getIsOnChain'](symbol);
         },
-        isSupportedLoading(symbol: string) {
-            return this.$store?.getters['collaterals/getIsSupported'](symbol) === undefined;
+        isOnChainLoading(symbol: string) {
+            return this.$store?.getters['collaterals/getIsOnChain'](symbol) === undefined;
         },
     },
 });

@@ -8,20 +8,20 @@ import { isCollateralSupported } from 'auctions-core/src/contracts';
 
 interface State {
     collaterals: CollateralRow[];
-    isSupported: Record<string, boolean>;
+    isOnChain: Record<string, boolean>;
 }
 
 export const state = (): State => ({
     collaterals: [],
-    isSupported: {},
+    isOnChain: {},
 });
 
 export const getters = {
     collaterals(state: State) {
         return state.collaterals || [];
     },
-    getIsSupported: (state: State) => (collateral: string) => {
-        return state.isSupported[collateral];
+    getIsOnChain: (state: State) => (collateral: string) => {
+        return state.isOnChain[collateral];
     },
 };
 
@@ -36,18 +36,21 @@ export const mutations = {
             ...updatedCollateral,
         });
     },
-    setIsSupported(state: State, { collateral, isSupported }: { collateral: string; isSupported: boolean }) {
-        state.isSupported[collateral] = isSupported;
+    setIsOnChain(state: State, { collateral, isOnChain }: { collateral: string; isOnChain: boolean }) {
+        state.isOnChain[collateral] = isOnChain;
     },
 };
 
 export const actions = {
-    async fetchStepAndCut({ commit, rootGetters }: ActionContext<State, State>) {
+    async fetchStepAndCut({ getters, commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
         for (const collateral of Object.values(COLLATERALS)) {
+            if (getters.getIsOnChain(collateral.symbol) === false) {
+                continue;
+            }
             const marketUnitPrice = await getExchangeRateBySymbol(network, collateral.symbol).catch(error => {
                 console.error(error);
                 return error.toString();
@@ -68,11 +71,11 @@ export const actions = {
             commit('updateCollateral', updated);
         }
     },
-    async fetchSupportedCollaterals({ commit, rootGetters }: ActionContext<State, State>) {
+    async fetchCollateralsOnChain({ commit, rootGetters }: ActionContext<State, State>) {
         const pageNetwork = rootGetters['network/getPageNetwork'];
         for (const collateral of Object.values(COLLATERALS)) {
             const supported = await isCollateralSupported(pageNetwork, collateral.symbol);
-            commit('setIsSupported', { collateral: collateral.ilk, isSupported: supported });
+            commit('setIsOnChain', { collateral: collateral.symbol, isOnChain: supported });
         }
     },
     async setup({ commit, dispatch }: ActionContext<State, State>) {
@@ -82,7 +85,7 @@ export const actions = {
         }));
         commit('setCollaterals', collaterals);
 
-        await dispatch('fetchSupportedCollaterals');
+        await dispatch('fetchCollateralsOnChain');
         await dispatch('fetchStepAndCut');
     },
 };
