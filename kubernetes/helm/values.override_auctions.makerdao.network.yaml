@@ -1,0 +1,19 @@
+# Value overrides for the deployment to the following host:
+host: "auctions.makerdao.network"
+
+ingress:
+  # certificates in this environment are generated and terminated by `auctions.makerdao.network` owners
+  isCertManagerActivated: false
+  isTlsActivated: false
+
+frontend:
+  deployment:
+    # the frontend bakes in environment variables that need to be changed for makerdao,
+    # so we built a second image just for that
+    image: "frontend-makerdao"
+    tag: "v0.4.1"
+
+botTwitter:
+  secretChamberPath: "auction-ui/auctions.makerdao.network/bot-twitter"
+  deployment:
+    tag: "v0.4.1"

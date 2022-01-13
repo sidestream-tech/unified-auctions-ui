@@ -2,8 +2,8 @@ kind: template
 load: pipeline-builder.star
 data:
   builds:
-    # frontend: publish main
-    - name: publish-frontend-main
+    # frontend:main and frontend:$MAIN_COMMIT_SHA
+    - name: publish-frontend-merge-main
       repository: ghcr.io/sidestream-tech/auction-ui/frontend
       tags:
         - "main"
@@ -15,11 +15,11 @@ data:
       path_to_context: ./
       build_args:
         - key: PRODUCTION_DOMAIN
-          value_from_secret: auction-ui/staging/production_domain
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/production_domain
         - key: INFURA_PROJECT_ID
-          value_from_secret: auction-ui/staging/infura_project_id
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/infura_project_id
         - key: CONTACT_EMAIL
-          value_from_secret: auction-ui/staging/contact_email
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/contact_email
       tags_to_cache_from:
         - "main"
       trigger:
@@ -28,7 +28,7 @@ data:
         branch:
           - main
 
-    # frontend: test production build
+    # frontend no tag, just test production build
     - name: build-frontend-to-test-production-build
       repository: ghcr.io/sidestream-tech/auction-ui/frontend
       path_to_dockerfile: frontend/Dockerfile
@@ -39,31 +39,8 @@ data:
         event:
           - pull_request
 
-    # frontend: publish release
-    - name: publish-frontend-release
-      tags:
-        - "${DRONE_TAG}"
-      repository: ghcr.io/sidestream-tech/auction-ui/frontend
-      labels:
-        - key: org.opencontainers.image.source
-          value: https://github.com/sidestream-tech/auction-ui
-      path_to_dockerfile: frontend/Dockerfile
-      path_to_context: ./
-      build_args:
-        - key: PRODUCTION_DOMAIN
-          value_from_secret: auction-ui/staging/production_domain
-        - key: INFURA_PROJECT_ID
-          value_from_secret: auction-ui/staging/infura_project_id
-        - key: CONTACT_EMAIL
-          value_from_secret: auction-ui/staging/contact_email
-      tags_to_cache_from:
-        - "main"
-      trigger:
-        event:
-          - tag
-
-    # frontend: publish development
-    - name: publish-frontend-development
+    # frontend:pr-$PULL_REQUEST_NUMBER
+    - name: publish-frontend-on-pr-push
       target: development
       repository: ghcr.io/sidestream-tech/auction-ui/frontend
       tags:
@@ -75,18 +52,18 @@ data:
       path_to_context: ./
       build_args:
         - key: PRODUCTION_DOMAIN
-          value_from_secret: auction-ui/staging/production_domain
+          value: "null.sidestream.tech"
         - key: INFURA_PROJECT_ID
-          value_from_secret: auction-ui/staging/infura_project_id
+          value: "key-not-provided"
         - key: CONTACT_EMAIL
-          value_from_secret: auction-ui/staging/contact_email
+          value: "development@sidestream.tech"
       tags_to_cache_from:
         - "main"
       trigger:
         event:
           - pull_request
 
-    # frontend-makerdao: publish release
+    # frontend-makerdao:$RELEASE_TAG
     - name: publish-frontend-makerdao
       repository: ghcr.io/sidestream-tech/auction-ui/frontend-makerdao
       tags:
@@ -98,19 +75,19 @@ data:
       path_to_context: ./
       build_args:
         - key: PRODUCTION_DOMAIN
-          value_from_secret: auction-ui/production/production_domain
+          value_from_secret: auction-ui/auctions.makerdao.network/production_domain
         - key: INFURA_PROJECT_ID
-          value_from_secret: auction-ui/production/infura_project_id
+          value_from_secret: auction-ui/auctions.makerdao.network/infura_project_id
         - key: CONTACT_EMAIL
-          value_from_secret: auction-ui/production/contact_email
+          value_from_secret: auction-ui/auctions.makerdao.network/contact_email
       tags_to_cache_from:
         - "main"
       trigger:
         event:
           - tag
 
-    # bot-twitter: publish main
-    - name: publish-bot-twitter-main
+    # bot-twitter:main and frontend:$MAIN_COMMIT_SHA
+    - name: publish-bot-twitter-merge-main
       repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
       tags:
         - "main"
@@ -128,7 +105,7 @@ data:
         branch:
           - main
 
-    # bot-twitter: test production build
+    # bot-twitter no tag, just test production build
     - name: build-bot-twitter-to-test-production-build
       repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
       path_to_dockerfile: bot-twitter/Dockerfile
@@ -139,8 +116,8 @@ data:
         event:
           - pull_request
 
-    # bot-twitter: publish release
-    - name: publish-bot-twitter-release
+    # bot-twitter:$RELEASE_TAG
+    - name: publish-bot-twitter-on-tag
       repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
       tags:
         - "${DRONE_TAG}"
@@ -155,8 +132,8 @@ data:
         event:
           - tag
 
-    # bot-twitter: publish development
-    - name: publish-bot-twitter-development
+    # bot-twitter:pr-$PULL_REQUEST_NUMBER
+    - name: publish-bot-twitter-on-pr-push
       target: development
       repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
       tags:
@@ -172,10 +149,30 @@ data:
         event:
           - pull_request
 
+  deployments_to_aws_eks:
+    - name: deploy-main.auction-ui.k8s.sidestream.tech
+      depends_on:
+        - publish-bot-twitter-merge-main
+        - publish-frontend-merge-main
+      trigger:
+        event:
+          - push
+        branch:
+          - main
+      settings:
+        helm_root_path: kubernetes/helm
+        aws_target_eks_cluster_name: eks-cluster-sidestream
+        aws_ssm_path_to_base64_encoded_secrets_yaml: auction-ui/secrets.yaml
+        value_files:
+        - values.yaml
+        - values.override_main.auction-ui.k8s.sidestream.tech.yaml
+        target_namespace: "auction-ui-main"
+        release_name: "auction-ui"
+
   in_development_image_pipelines:
     - name: core-lint-build
       type: kubernetes
-      depends_on: [publish-frontend-development]
+      depends_on: [publish-frontend-on-pr-push]
       image: ghcr.io/sidestream-tech/auction-ui/frontend:pr-${DRONE_PULL_REQUEST}
       workdir: /core
       steps_parallel:
@@ -188,7 +185,7 @@ data:
           - pull_request
     - name: frontend-lint-test-build
       type: kubernetes
-      depends_on: [publish-frontend-development]
+      depends_on: [publish-frontend-on-pr-push]
       image: ghcr.io/sidestream-tech/auction-ui/frontend:pr-${DRONE_PULL_REQUEST}
       workdir: /frontend
       steps_parallel:
@@ -201,7 +198,7 @@ data:
           - pull_request
     - name: bot-twitter-lint-build
       type: kubernetes
-      depends_on: [publish-bot-twitter-development]
+      depends_on: [publish-bot-twitter-on-pr-push]
       image: ghcr.io/sidestream-tech/auction-ui/bot-twitter:pr-${DRONE_PULL_REQUEST}
       workdir: /bot-twitter
       steps_parallel:

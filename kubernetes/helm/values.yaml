@@ -10,7 +10,7 @@ repoPrefix: "ghcr.io/sidestream-tech/auction-ui/"
 
 frontend:
   name: "frontend"
-  containerPort: 3000
+  containerPort: 80
   deployment:
     image: "frontend"
     pullPolicy: "IfNotPresent"
@@ -19,11 +19,12 @@ botTwitter:
   name: "bot-twitter"
   deployment:
     image: "bot-twitter"
-    tag: "v0.4.0"
     pullPolicy: "IfNotPresent"
+  # AWS SSM path for chamber to read secrets for the pods from, e.g., `auction-ui/staging/bot`
+  secretChamberPath:
 
 ingress:
   class: nginx
-  isCertManagerActivated: false
-  isTlsActivated: false
+  isCertManagerActivated: true
+  isTlsActivated: true
   tlsSecretName: "auction-ui-tls-certificate"
