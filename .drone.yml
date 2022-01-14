@@ -75,11 +75,11 @@ data:
       path_to_context: ./
       build_args:
         - key: PRODUCTION_DOMAIN
-          value_from_secret: auction-ui/auctions.makerdao.network/production_domain
+          value_from_secret: auction-ui/auctions.makerdao.network/frontend/production_domain
         - key: INFURA_PROJECT_ID
-          value_from_secret: auction-ui/auctions.makerdao.network/infura_project_id
+          value_from_secret: auction-ui/auctions.makerdao.network/frontend/infura_project_id
         - key: CONTACT_EMAIL
-          value_from_secret: auction-ui/auctions.makerdao.network/contact_email
+          value_from_secret: auction-ui/auctions.makerdao.network/frontend/contact_email
       tags_to_cache_from:
         - "main"
       trigger:
