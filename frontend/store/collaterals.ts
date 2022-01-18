@@ -23,6 +23,9 @@ export const getters = {
     getIsOnChain: (state: State) => (collateral: string) => {
         return state.isOnChain[collateral];
     },
+    getCollateralsOnChain(state: State) {
+        return state.isOnChain;
+    },
 };
 
 export const mutations = {
@@ -42,13 +45,18 @@ export const mutations = {
 };
 
 export const actions = {
-    async fetchStepAndCut({ getters, commit, rootGetters }: ActionContext<State, State>) {
+    async fetchCoreValues({ getters, commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
+        const pageNetwork = rootGetters['network/getPageNetwork'];
         if (!network) {
             return;
         }
         for (const collateral of Object.values(COLLATERALS)) {
-            if (getters.getIsOnChain(collateral.symbol) === false) {
+            const supported = await isCollateralSupported(pageNetwork, collateral.symbol);
+
+            commit('setIsOnChain', { collateral: collateral.symbol, isOnChain: supported });
+
+            if (supported !== true) {
                 continue;
             }
             const marketUnitPrice = await getExchangeRateBySymbol(network, collateral.symbol).catch(error => {
@@ -85,7 +93,6 @@ export const actions = {
         }));
         commit('setCollaterals', collaterals);
 
-        await dispatch('fetchCollateralsOnChain');
-        await dispatch('fetchStepAndCut');
+        await dispatch('fetchCoreValues');
     },
 };

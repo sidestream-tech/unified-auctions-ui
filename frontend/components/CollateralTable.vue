@@ -78,7 +78,7 @@
             class="Element justify-center"
             :class="{ Loading: isOnChainLoading(record.symbol) }"
         >
-            <div v-if="isOnChain(record.symbol)">&#9989;</div>
+            <div v-if="isOnChain(record.symbol) === true">&#9989;</div>
             <div v-else-if="isOnChain(record.symbol) === false">&#10060;</div>
         </div>
     </Table>
@@ -104,6 +104,10 @@ export default Vue.extend({
         collaterals: {
             type: Array as Vue.PropType<CollateralRow[]>,
             default: () => [],
+        },
+        onChainCollaterals: {
+            type: Object,
+            default: () => {},
         },
     },
     computed: {
@@ -151,7 +155,7 @@ export default Vue.extend({
     methods: {
         isLoading(record: CollateralRow) {
             return (
-                typeof record.secondsBetweenPriceDrop === 'undefined' &&
+                typeof record.secondsBetweenPriceDrops === 'undefined' &&
                 typeof record.priceDropRatio === 'undefined' &&
                 typeof record.marketUnitPrice === 'undefined'
             );
@@ -160,10 +164,10 @@ export default Vue.extend({
             return bigNumber instanceof Object;
         },
         isOnChain(symbol: string) {
-            return this.$store?.getters['collaterals/getIsOnChain'](symbol);
+            return this.onChainCollaterals[symbol];
         },
         isOnChainLoading(symbol: string) {
-            return this.$store?.getters['collaterals/getIsOnChain'](symbol) === undefined;
+            return this.onChainCollaterals[symbol] === undefined;
         },
     },
 });

@@ -1,6 +1,10 @@
 <template>
     <div class="DashboardContainer">
-        <DashboardAuctionsView :collaterals="collaterals" :is-explanations-shown.sync="isExplanationsShown" />
+        <DashboardAuctionsView
+            :collaterals="collaterals"
+            :on-chain-collaterals="onChainCollaterals"
+            :is-explanations-shown.sync="isExplanationsShown"
+        />
     </div>
 </template>
 
@@ -24,6 +28,9 @@ export default Vue.extend({
             set(newIsExplanationsShown): void {
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
+        },
+        onChainCollaterals() {
+            return this.$store.getters['collaterals/getCollateralsOnChain'];
         },
     },
     async mounted() {
