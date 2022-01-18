@@ -125,8 +125,11 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
     return await enrichAuctionWithMarketValues(enrichedAuctionWithNewPriceDrop, network);
 };
 
-export const fetchAllInitialAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
-    const maker = await getMaker(network);
+export const fetchAllInitialAuctions = async function (
+    network: string,
+    privateKey?: string
+): Promise<AuctionInitialInfo[]> {
+    const maker = await getMaker(network, privateKey);
     const collateralNames = await getSupportedCollateralTypes(network);
 
     // get all auctions
@@ -137,8 +140,8 @@ export const fetchAllInitialAuctions = async function (network: string): Promise
     return auctionGroups.flat();
 };
 
-export const fetchAllAuctions = async function (network: string): Promise<Auction[]> {
-    const auctions = await fetchAllInitialAuctions(network);
+export const fetchAllAuctions = async function (network: string, privateKey?: string): Promise<Auction[]> {
+    const auctions = await fetchAllInitialAuctions(network, privateKey);
 
     // enrich them with statuses
     const auctionsWithStatusesPromises = auctions.map((auction: AuctionInitialInfo) =>

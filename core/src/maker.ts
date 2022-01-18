@@ -9,11 +9,12 @@ import { fetchContractsAddressesByNetwork } from './contracts';
 let globalMaker: typeof Maker;
 let globalNetwork: string;
 
-const createMaker = async function (network: string): Promise<typeof Maker> {
+const createMaker = async function (network: string, privateKey?: string): Promise<typeof Maker> {
     console.info(`creating maker object with "${network}" network`);
     const networkConfig = getNetworkConfigByType(network);
     const addressOverrides = await fetchContractsAddressesByNetwork(network);
     globalNetwork = network;
+
     globalMaker = await Maker.create('http', {
         plugins: [
             [McdPlugin, { prefetch: false }],
@@ -26,6 +27,7 @@ const createMaker = async function (network: string): Promise<typeof Maker> {
             url: networkConfig.url,
             type: 'HTTP',
         },
+        privateKey,
         web3: {
             confirmedBlockCount: 5,
             statusTimerDelay: 24 * 60 * 60 * 1000,
@@ -43,7 +45,7 @@ const createMaker = async function (network: string): Promise<typeof Maker> {
     return globalMaker;
 };
 
-const getMaker = async function (network?: string): Promise<typeof Maker> {
+const getMaker = async function (network?: string, privateKey?: string): Promise<typeof Maker> {
     if (!network) {
         if (!globalMaker) {
             throw new Error('dai.js was not yet initialised');
@@ -51,14 +53,14 @@ const getMaker = async function (network?: string): Promise<typeof Maker> {
         return globalMaker;
     }
     if (!globalNetwork) {
-        return await createMaker(network);
+        return await createMaker(network, privateKey);
     }
     if (globalNetwork === network) {
         if (!globalMaker) {
             // if `getMaker` called two times at the same time,
             // we need a delay till the first execution is complete
             await new Promise(resolve => setTimeout(resolve, 1000));
-            return await getMaker(network);
+            return await getMaker(network, privateKey);
         }
         return globalMaker;
     }
