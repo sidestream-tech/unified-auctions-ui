@@ -1,17 +1,22 @@
-import getProvider from './provider';
+import type { Contract } from 'ethers';
 import { ethers } from 'ethers';
-import CHAINLOG from './abis/CHAINLOG.json';
-import { CHAINLOG_ADDRESS } from './constants/NETWORKS';
 import memoizee from 'memoizee';
 import COLLATERALS, { getAllCollateralTypes } from './constants/COLLATERALS';
+import getProvider from './provider';
+import CHAINLOG from './abis/CHAINLOG.json';
+import { CHAINLOG_ADDRESS } from './constants/NETWORKS';
 
 const CHAINLOG_CACHE = 24 * 60 * 60 * 1000;
+
+const getChainLogContract = async function (network: string): Promise<Contract> {
+    const provider = getProvider(network);
+    return await new ethers.Contract(CHAINLOG_ADDRESS, CHAINLOG, provider);
+};
 
 const _fetchContractsAddressesByNetwork = async function (
     network: string
 ): Promise<Record<string, string | undefined>> {
-    const provider = getProvider(network);
-    const contract = await new ethers.Contract(CHAINLOG_ADDRESS, CHAINLOG, provider);
+    const contract = await getChainLogContract(network);
 
     const contractNames: string[] = await contract.list();
     const contracts: Record<string, string | undefined> = {};
@@ -32,19 +37,17 @@ export const fetchContractsAddressesByNetwork = memoizee(_fetchContractsAddresse
 });
 
 export const isCollateralSupported = async function (network: string, collateral: string): Promise<boolean> {
-    const contracts = await fetchContractsAddressesByNetwork(network);
-    return !!contracts[collateral];
+    const addresses = await fetchContractsAddressesByNetwork(network);
+    return !!addresses[collateral];
 };
 
 export const getSupportedCollateralTypes = async function (network: string): Promise<string[]> {
     const allCollateralTypes = getAllCollateralTypes();
-    const contracts = await fetchContractsAddressesByNetwork(network);
+    const addresses = await fetchContractsAddressesByNetwork(network);
 
-    return await Promise.all(
-        allCollateralTypes.filter(collateralType => {
-            return !!contracts[COLLATERALS[collateralType].symbol];
-        })
-    );
+    return allCollateralTypes.filter(collateralType => {
+        return !!addresses[COLLATERALS[collateralType].symbol];
+    });
 };
 
 export const checkAllSupportedCollaterals = async function (network: string): Promise<void> {
