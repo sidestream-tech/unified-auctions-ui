@@ -7,11 +7,12 @@ const collaterals = generateFakeCollaterals();
 const common = {
     components: { CollateralTable },
     data: () => ({
-        collaterals,
+        collaterals: collaterals.collaterals,
+        onChainCollaterals: collaterals.onChain,
     }),
 };
 
 storiesOf('CollateralTable', module).add('Default', () => ({
     ...common,
-    template: '<CollateralTable :collaterals="collaterals" />',
+    template: '<CollateralTable :collaterals="collaterals" :on-chain-collaterals="onChainCollaterals" />',
 }));
