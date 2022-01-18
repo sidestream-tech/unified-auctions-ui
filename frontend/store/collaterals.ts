@@ -40,12 +40,12 @@ export const mutations = {
         });
     },
     setIsOnChain(state: State, { collateral, isOnChain }: { collateral: string; isOnChain: boolean }) {
-        state.isOnChain[collateral] = isOnChain;
+        Vue.set(state.isOnChain, collateral, isOnChain);
     },
 };
 
 export const actions = {
-    async fetchCoreValues({ getters, commit, rootGetters }: ActionContext<State, State>) {
+    async fetchCoreValues({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         const pageNetwork = rootGetters['network/getPageNetwork'];
         if (!network) {

@@ -76,7 +76,7 @@
             slot="found"
             slot-scope="record"
             class="Element justify-center"
-            :class="{ Loading: isOnChainLoading(record.symbol) }"
+            :class="{ Loading: isOnChain(record.symbol) === undefined }"
         >
             <div v-if="isOnChain(record.symbol) === true">&#9989;</div>
             <div v-else-if="isOnChain(record.symbol) === false">&#10060;</div>
@@ -165,9 +165,6 @@ export default Vue.extend({
         },
         isOnChain(symbol: string) {
             return this.onChainCollaterals[symbol];
-        },
-        isOnChainLoading(symbol: string) {
-            return this.onChainCollaterals[symbol] === undefined;
         },
     },
 });
