@@ -7,7 +7,7 @@ import { fetchCalcParametersByCollateralType } from './params';
 import trackTransaction from './tracker';
 import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
-import { getSupportedCollateralTypes } from './contracts';
+import { getSupportedCollateralTypes } from './addresses';
 
 const fetchAuctionsByType = async function (
     collateralType: string,
