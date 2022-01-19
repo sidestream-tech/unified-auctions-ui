@@ -121,7 +121,7 @@ export const actions = {
             return;
         }
         try {
-            const auctions = await fetchAllAuctions(network, process.env.WALLET_PRIVATE_KEY);
+            const auctions = await fetchAllAuctions(network);
             const active = auctions.filter(auction => auction.isActive);
             active.forEach(auction => {
                 commit('removeAuctionRestarting', auction.id);

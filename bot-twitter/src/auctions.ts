@@ -19,7 +19,7 @@ const markAcutionAsKnown = function (auction: AuctionInitialInfo): void {
 };
 
 export const getNewAuctions = async function (): Promise<AuctionInitialInfo[]> {
-    const auctions = await fetchAllInitialAuctions(network);
+    const auctions = await fetchAllInitialAuctions(network, process.env.WALLET_PRIVATE_KEY);
     console.info(`auctions: found "${auctions.length}" on "${network}" network`);
 
     const activeActions = auctions.filter(auction => auction.isActive);

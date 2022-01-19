@@ -13,7 +13,6 @@ export default {
         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,
         CONTACT_EMAIL: process.env.CONTACT_EMAIL || undefined,
         GITHUB_URL: pkg.repository.url,
-        WALLET_PRIVATE_KEY: process.env.WALLET_PRIVATE_KEY || undefined,
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head

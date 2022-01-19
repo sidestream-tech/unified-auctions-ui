@@ -16,15 +16,16 @@ $ npm run start
 
 ## Environment variables
 
--   `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum -> create new project -> settings -> keys). Note: this project can not be restricted by the origin.
--   `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available options can be found in [constants/NETWORKS](../core/src/constants/NETWORKS.ts)
--   `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
--   `FRONTEND_ORIGIN`: (required) An origin to which the bot will redirect users (valid example: `https://auctions.makerdao.network`)
--   `TWITTER_*`: variables (optional for dev environment) – a set of secrets from twitter developer account with `OAuth 1.0a` `Elevated` access and `Read and Write` permissions:
-    -   `TWITTER_API_KEY`: (required)
-    -   `TWITTER_API_SECRET`: (required)
-    -   `TWITTER_ACCESS_TOKEN`: (required)
-    -   `TWITTER_ACCESS_SECRET`: (required)
+- `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum -> create new project -> settings -> keys). Note: this project can not be restricted by the origin.
+- `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available options can be found in [constants/NETWORKS](../core/src/constants/NETWORKS.ts)
+- `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
+- `FRONTEND_ORIGIN`: (required) An origin to which the bot will redirect users (valid example: `https://auctions.makerdao.network`)
+- `TWITTER_*`: variables (optional for dev environment) – a set of secrets from twitter developer account with `OAuth 1.0a` `Elevated` access and `Read and Write` permissions:
+    - `TWITTER_API_KEY`: (required)
+    - `TWITTER_API_SECRET`: (required)
+    - `TWITTER_ACCESS_TOKEN`: (required)
+    - `TWITTER_ACCESS_SECRET`: (required)
+- `WALLET_PRIVATE_KEY`: (optional) Required to execute server side wallet actions. (e.g. Keeper functions)
 
 Note: env variables are accessible via the `secret` command under `auction-ui/bot/${environment}`.
 
