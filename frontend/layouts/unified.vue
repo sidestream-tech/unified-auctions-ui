@@ -1,5 +1,6 @@
 <template>
     <div :class="isDarkMode && 'dark bg-gray-900'">
+        <StagingHeader v-if="isStagingEnvironment" />
         <Header
             class="sticky top-0 z-50 w-full h-16"
             type="unified"
@@ -12,11 +13,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import StagingHeader from '../components/layout/StagingHeader.vue';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 
 export default Vue.extend({
     components: {
+        StagingHeader,
         Header,
     },
     computed: {
@@ -35,6 +38,9 @@ export default Vue.extend({
             set(newIsDarkMode) {
                 this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
+        },
+        isStagingEnvironment() {
+            return process.env.STAGING_ENVIRONMENT;
         },
     },
 });

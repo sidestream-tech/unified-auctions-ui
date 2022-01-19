@@ -1,5 +1,6 @@
 <template>
     <div :class="isDarkMode && 'dark bg-gray-900'">
+        <StagingHeader v-if="isStagingEnvironment" />
         <Header
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
@@ -32,6 +33,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
+import StagingHeader from '../components/layout/StagingHeader.vue';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.vue';
@@ -46,6 +48,7 @@ export default Vue.extend({
         ChangeWalletNetworkModal,
         Header,
         WalletModal,
+        StagingHeader,
     },
     computed: {
         ...mapGetters('wallet', {
@@ -88,6 +91,9 @@ export default Vue.extend({
             set(newIsDarkMode) {
                 this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
+        },
+        isStagingEnvironment() {
+            return process.env.STAGING_ENVIRONMENT;
         },
     },
     methods: {
