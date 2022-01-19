@@ -59,6 +59,15 @@
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
+                        <tr>
+                            <td>Time till profitability</td>
+                            <td>
+                                <template v-if="auction.isActive && auction.marketUnitPrice">
+                                    <time-till-profitable :auction="auction" />
+                                </template>
+                                <span v-else class="opacity-50">Unknown</span>
+                            </td>
+                        </tr>
                         <template v-if="isTableExpanded">
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Vault type</td>
@@ -212,6 +221,7 @@ import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import Loading from '~/components/common/Loading.vue';
 import Explain from '~/components/utils/Explain.vue';
 import RestartBlock from '~/components/transaction/RestartBlock.vue';
+import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 
 export default Vue.extend({
     name: 'Auction',
@@ -228,6 +238,7 @@ export default Vue.extend({
         FormatAddress,
         Alert,
         Tooltip,
+        TimeTillProfitable,
     },
     props: {
         auction: {

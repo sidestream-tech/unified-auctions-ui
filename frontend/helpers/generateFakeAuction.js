@@ -19,6 +19,8 @@ export const generateFakeAuction = function () {
     const transactionProfit = marketUnitPrice
         .multipliedBy(collateralAmount)
         .minus(approximateUnitPrice.multipliedBy(collateralAmount));
+    const secondsBetweenPriceDrops = faker.datatype.number(120);
+    const secondsTillNextPriceDrop = faker.datatype.number(secondsBetweenPriceDrops);
     return {
         network: 'stub',
         id: `${collateralObject.ilk}:${auctionId}`,
@@ -41,7 +43,8 @@ export const generateFakeAuction = function () {
         startDate: faker.date.recent(),
         isRestarting: false,
         transactionAddress: undefined,
-        secondsBetweenPriceDrops: faker.datatype.number(120),
+        secondsBetweenPriceDrops,
+        secondsTillNextPriceDrop,
         priceDropRatio: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
     };
 };
