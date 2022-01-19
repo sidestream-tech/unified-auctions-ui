@@ -38,4 +38,4 @@ Help on both things is given in the linked resources above.
 - `DEMO_MODE`: (optional) When set to true the page will only show a "Coming soon" screen. Can be used for production while the page is not ready yet.
 - `PRODUCTION_DOMAIN`: (optional) Required in order to enable [plausible.io statistics](https://github.com/moritzsternemann/vue-plausible#configuration). In addition to adding it here, the domain (e.g. `auctions.makerdao.network`) should also be registered within [plausible dashboard](https://plausible.io/).
 - `CONTACT_EMAIL`: (optional) Required in order to display contact link in the footer. This email should be able to accept and manage bug reports and other contact requests.
-- `PRIVATE_WALLET_KEY`: (optional) Required to execute server side wallet actions. (e.g. Keeper functions)
+- `WALLET_PRIVATE_KEY`: (optional) Required to execute server side wallet actions. (e.g. Keeper functions)
