@@ -7,7 +7,7 @@ import {
 } from 'auctions-core/src/constants/NETWORKS';
 import getWallet from '~/lib/wallet';
 
-const DEFAUT_NETWORK = 'kovan';
+const DEFAUT_NETWORK = 'mainnet';
 export const FAKE_NETWORK_NAME = 'stub';
 
 interface State {
