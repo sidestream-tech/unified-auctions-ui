@@ -12,6 +12,7 @@
             :is-wallet-authorised="isWalletAuthorised"
             :authorised-collaterals="authorisedCollaterals"
             :is-executing="isAuctionBidding"
+            :is-staging-environment="isStagingEnvironment"
             @connect="openWalletModal"
             @disconnect="disconnect"
             @authorizeWallet="authorizeWallet"
@@ -79,6 +80,9 @@ export default Vue.extend({
         },
         hasAcceptedTerms(): boolean {
             return this.$store.getters['preferences/getAcceptedTerms'];
+        },
+        isStagingEnvironment() {
+            return process.env.IS_STAGING_ENVIRONMENT;
         },
     },
     watch: {

@@ -93,7 +93,7 @@ export default Vue.extend({
             },
         },
         isStagingEnvironment() {
-            return process.env.STAGING_ENVIRONMENT;
+            return process.env.IS_STAGING_ENVIRONMENT;
         },
     },
     methods: {

@@ -1,5 +1,5 @@
 <template>
-    <div class="SplitLayoutContainer">
+    <div :class="isStagingEnvironment ? 'SplitLayoutStagingContainer' : 'SplitLayoutContainer'">
         <SplitLayout :step.sync="step">
             <template #step0>
                 <div v-if="isExplanationsShown" class="h-1/2">
@@ -109,6 +109,10 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
+        isStagingEnvironment: {
+            type: Boolean,
+            default: false,
+        },
     },
     data: () => ({
         step: 0,
@@ -153,6 +157,11 @@ export default Vue.extend({
 .SplitLayoutContainer {
     height: calc(100vh - 4rem);
 }
+
+.SplitLayoutStagingContainer {
+    height: calc(100vh - 6.3rem);
+}
+
 .MainTextContainer {
     min-height: calc(100vh - 10rem);
 }
