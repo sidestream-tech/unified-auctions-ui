@@ -60,7 +60,7 @@
                             </td>
                         </tr>
                         <tr v-if="!isProfitable">
-                            <td>Time till profitability</td>
+                            <td>Time Till Profitability</td>
                             <td>
                                 <template v-if="auction.isActive && auction.marketUnitPrice">
                                     <time-till-profitable :auction="auction" />
