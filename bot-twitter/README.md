@@ -25,7 +25,9 @@ $ npm run start
     - `TWITTER_API_SECRET`: (required)
     - `TWITTER_ACCESS_TOKEN`: (required)
     - `TWITTER_ACCESS_SECRET`: (required)
-- `WALLET_PRIVATE_KEY`: (optional) Required to execute server side wallet actions. (e.g. Keeper functions)
+- `WALLET_*`: variables (required for server side execution) - a set of secrets for a developer wallet that allows use to execute transactions server-side:
+    - `WALLET_PRIVATE_KEY`: (required) The secret key of the wallet (https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key)
+    - `WALLET_ADDRESS`: (required) The public address of the wallet
 
 Note: env variables are accessible via the `secret` command under `auction-ui/bot/${environment}`.
 
