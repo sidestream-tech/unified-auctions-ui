@@ -1,3 +1,4 @@
+---
 kind: template
 load: pipeline-builder.star
 data:
@@ -210,3 +211,8 @@ data:
       trigger:
         event:
           - pull_request
+---
+kind: signature
+hmac: d8d8ae3617db2e2f8150030ab38c7d1429c20c9d77f546d8991b0b7cc1c3d1ac
+
+...
