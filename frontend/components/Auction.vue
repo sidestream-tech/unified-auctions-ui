@@ -59,7 +59,7 @@
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
-                        <tr>
+                        <tr v-if="!isProfitable">
                             <td>Time till profitability</td>
                             <td>
                                 <template v-if="auction.isActive && auction.marketUnitPrice">
@@ -289,6 +289,12 @@ export default Vue.extend({
                 because we can't get value of ${this.auction?.collateralSymbol} on UniSwap`;
             }
             return null;
+        },
+        isProfitable() {
+            if (this.auction?.marketUnitPriceToUnitPriceRatio) {
+                return this.auction.marketUnitPriceToUnitPriceRatio.toNumber() < 0;
+            }
+            return false;
         },
     },
     watch: {

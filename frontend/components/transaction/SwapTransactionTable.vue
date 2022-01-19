@@ -40,7 +40,7 @@
                 <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
-        <div class="flex w-full justify-between">
+        <div v-if="!isProfitable" class="flex w-full justify-between">
             <div>Time till profitability</div>
             <div>
                 <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPrice">
@@ -120,6 +120,14 @@ export default Vue.extend({
         auctionTransaction: {
             type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
+        },
+    },
+    computed: {
+        isProfitable(): boolean {
+            if (this.auctionTransaction.marketUnitPriceToUnitPriceRatio) {
+                return this.auctionTransaction.marketUnitPriceToUnitPriceRatio.toNumber() < 0;
+            }
+            return false;
         },
     },
 });
