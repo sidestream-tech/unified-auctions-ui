@@ -23,15 +23,17 @@
                     <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
                     <span>Loading...</span>
                 </div>
-                <Popover
-                    v-else
-                    placement="top"
-                    title="Error while fetching Uniswap Market Value"
-                    :content="marketUnitPrice"
-                    trigger="hover"
-                >
+                <div v-else>
                     <span class="text-red-500">error</span>
-                </Popover>
+                    <Popover
+                        placement="top"
+                        title="Error while fetching Uniswap Market Value"
+                        :content="marketUnitPrice"
+                        trigger="hover"
+                    >
+                        <span class="Error">...</span>
+                    </Popover>
+                </div>
             </div>
         </div>
         <div
@@ -43,15 +45,17 @@
             <span v-if="secondsBetweenPriceDrops && validBigNumber(secondsBetweenPriceDrops)"
                 >{{ secondsBetweenPriceDrops }} sec.</span
             >
-            <Popover
-                v-if="secondsBetweenPriceDrops && !validBigNumber(secondsBetweenPriceDrops)"
-                placement="top"
-                title="Error while fetching Step and Cut"
-                :content="secondsBetweenPriceDrops"
-                trigger="hover"
-            >
+            <div v-if="secondsBetweenPriceDrops && !validBigNumber(secondsBetweenPriceDrops)">
                 <span class="text-red-500">error</span>
-            </Popover>
+                <Popover
+                    placement="top"
+                    title="Error while fetching Step and Cut"
+                    :content="secondsBetweenPriceDrops"
+                    trigger="hover"
+                >
+                    <span class="Error">...</span>
+                </Popover>
+            </div>
         </div>
         <div
             slot="priceDropRatio"
@@ -156,6 +160,12 @@ export default Vue.extend({
 
 .Loading {
     @apply bg-gray-200 dark:bg-gray-700 opacity-50;
+}
+
+.Error {
+    padding: 0 0.2em 0.1em;
+    @apply border rounded border-gray-300 bg-gray-100;
+    @apply dark:border-gray-600 dark:bg-gray-800;
 }
 
 .CollateralTable >>> .ant-table-thead th {
