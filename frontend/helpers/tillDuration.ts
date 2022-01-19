@@ -1,4 +1,5 @@
 import { intervalToDuration, formatDistance, Duration } from 'date-fns';
+import { AuctionTransaction } from 'auctions-core/src/types';
 
 const formatDuration = function (duration: Duration): string {
     // formats duration into `1y 2m 3d 4h 5m 6s` format
@@ -24,4 +25,18 @@ export const formatInterval = function (startDate: Date, endDate: Date): string 
             addSuffix: true,
         });
     }
+};
+
+export const timeTillProfitable = function (auction: AuctionTransaction) {
+    let steps = 0;
+    let currentPrice = auction.approximateUnitPrice.toNumber();
+
+    const currentStepProgress = auction.secondsBetweenPriceDrops!! - auction.secondsTillNextPriceDrop!!;
+
+    while (currentPrice > auction.marketUnitPrice!!.toNumber()) {
+        steps += 1;
+        currentPrice -= auction.priceDropRatio!!.toNumber();
+    }
+
+    return steps * auction.secondsBetweenPriceDrops!! - currentStepProgress;
 };
