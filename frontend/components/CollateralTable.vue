@@ -23,17 +23,16 @@
                     <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
                     <span>Loading...</span>
                 </div>
-                <div v-else>
-                    <Popover
-                        placement="top"
-                        title="Error while fetching Uniswap Market Value"
-                        :content="marketUnitPrice"
-                        trigger="hover"
-                    >
-                        <span class="text-red-500 mr-1">error</span>
-                        <span class="Error">...</span>
-                    </Popover>
-                </div>
+                <Popover
+                    v-else
+                    placement="top"
+                    title="Error while fetching Uniswap Market Value"
+                    :content="marketUnitPrice"
+                    trigger="hover"
+                >
+                    <span class="text-red-500 mr-1">error</span>
+                    <span class="Error">...</span>
+                </Popover>
             </div>
         </div>
         <div
@@ -45,17 +44,16 @@
             <span v-if="secondsBetweenPriceDrops && validBigNumber(secondsBetweenPriceDrops)"
                 >{{ secondsBetweenPriceDrops }} sec.</span
             >
-            <div v-if="secondsBetweenPriceDrops && !validBigNumber(secondsBetweenPriceDrops)">
-                <Popover
-                    placement="top"
-                    title="Error while fetching Step and Cut"
-                    :content="secondsBetweenPriceDrops"
-                    trigger="hover"
-                >
-                    <span class="text-red-500 mr-1">error</span>
-                    <span class="Error">...</span>
-                </Popover>
-            </div>
+            <Popover
+                v-if="secondsBetweenPriceDrops && !validBigNumber(secondsBetweenPriceDrops)"
+                placement="top"
+                title="Error while fetching Step and Cut"
+                :content="secondsBetweenPriceDrops"
+                trigger="hover"
+            >
+                <span class="text-red-500 mr-1">error</span>
+                <span class="Error">...</span>
+            </Popover>
         </div>
         <div
             slot="priceDropRatio"
