@@ -290,7 +290,7 @@ export default Vue.extend({
             }
             return null;
         },
-        isProfitable() {
+        isProfitable(): boolean {
             if (this.auction?.marketUnitPriceToUnitPriceRatio) {
                 return this.auction.marketUnitPriceToUnitPriceRatio.toNumber() < 0;
             }
