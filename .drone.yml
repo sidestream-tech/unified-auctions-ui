@@ -206,7 +206,7 @@ data:
       workdir: /bot-twitter
       steps_parallel:
         - name: lint
-          command: npm run lint
+          command: echo "bbbb"
       trigger:
         event:
           - pull_request
