@@ -1,11 +1,11 @@
 <template>
     <div :class="isDarkMode && 'dark bg-gray-900'">
-        <StagingHeader v-if="isStagingEnvironment" />
         <Header
             class="sticky top-0 z-50 w-full h-16"
             type="unified"
             :is-explanations-shown.sync="isExplanationsShown"
             :dark-mode.sync="isDarkMode"
+            :is-staging-environment="isStagingEnvironment"
         />
         <Nuxt />
     </div>
@@ -13,13 +13,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import StagingHeader from '../components/layout/StagingHeader.vue';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 
 export default Vue.extend({
     components: {
-        StagingHeader,
         Header,
     },
     computed: {

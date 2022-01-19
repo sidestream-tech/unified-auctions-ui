@@ -10,7 +10,6 @@
         :wallet-address="walletAddress"
         :transaction-address="selectedAuction && selectedAuction.transactionAddress"
         :is-explanations-shown.sync="isExplanationsShown"
-        :is-staging-environment="isStagingEnvironment"
         @connect="connect"
         @disconnect="disconnect"
         @authorizeWallet="authorizeWallet"
@@ -54,9 +53,6 @@ export default Vue.extend({
         },
         selectedAuction(): AuctionTransaction | null {
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
-        },
-        isStagingEnvironment() {
-            return process.env.IS_STAGING_ENVIRONMENT;
         },
     },
     watch: {

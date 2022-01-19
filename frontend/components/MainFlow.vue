@@ -109,10 +109,6 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isStagingEnvironment: {
-            type: Boolean,
-            default: false,
-        },
     },
     data: () => ({
         step: 0,
@@ -120,6 +116,9 @@ export default Vue.extend({
     computed: {
         selectedAuction(): AuctionTransaction | null {
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
+        },
+        isStagingEnvironment() {
+            return process.env.IS_STAGING_ENVIRONMENT;
         },
     },
     watch: {
@@ -159,6 +158,7 @@ export default Vue.extend({
 }
 
 .SplitLayoutStagingContainer {
+    margin-top: 2.3rem;
     height: calc(100vh - 6.3rem);
 }
 

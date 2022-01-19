@@ -31,4 +31,13 @@ storiesOf('Layout/Header', module)
         :isExplanationsShown.sync="isExplanationsShown"
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
+    }))
+    .add('With Staging header', () => ({
+        ...common,
+        template: `<Header
+        type="unified" 
+        :isExplanationsShown.sync="isExplanationsShown"
+        :isStagingEnvironment="true"
+        @update:isExplanationsShown="updateIsExplanationsShown"
+        />`,
     }));

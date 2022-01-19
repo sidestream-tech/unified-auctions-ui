@@ -1,6 +1,5 @@
 <template>
     <div :class="isDarkMode && 'dark bg-gray-900'">
-        <StagingHeader v-if="isStagingEnvironment" />
         <Header
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
@@ -9,6 +8,7 @@
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
+            :is-staging-environment="isStagingEnvironment"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
         />
@@ -33,7 +33,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
-import StagingHeader from '../components/layout/StagingHeader.vue';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.vue';
@@ -48,7 +47,6 @@ export default Vue.extend({
         ChangeWalletNetworkModal,
         Header,
         WalletModal,
-        StagingHeader,
     },
     computed: {
         ...mapGetters('wallet', {
