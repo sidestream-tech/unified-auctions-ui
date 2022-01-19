@@ -24,13 +24,13 @@
                     <span>Loading...</span>
                 </div>
                 <div v-else>
-                    <span class="text-red-500">error</span>
                     <Popover
                         placement="top"
                         title="Error while fetching Uniswap Market Value"
                         :content="marketUnitPrice"
                         trigger="hover"
                     >
+                        <span class="text-red-500 mr-1">error</span>
                         <span class="Error">...</span>
                     </Popover>
                 </div>
@@ -46,13 +46,13 @@
                 >{{ secondsBetweenPriceDrops }} sec.</span
             >
             <div v-if="secondsBetweenPriceDrops && !validBigNumber(secondsBetweenPriceDrops)">
-                <span class="text-red-500">error</span>
                 <Popover
                     placement="top"
                     title="Error while fetching Step and Cut"
                     :content="secondsBetweenPriceDrops"
                     trigger="hover"
                 >
+                    <span class="text-red-500 mr-1">error</span>
                     <span class="Error">...</span>
                 </Popover>
             </div>
