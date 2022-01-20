@@ -25,6 +25,7 @@
                                 <format-currency
                                     :value="auction.collateralAmount"
                                     :currency="auction.collateralSymbol"
+                                    :is-animated="false"
                                 />
                             </td>
                         </tr>
@@ -75,7 +76,7 @@
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Debt</td>
                                 <td>
-                                    <format-currency :value="auction.debtDAI" currency="DAI" />
+                                    <format-currency :value="auction.debtDAI" currency="DAI" :is-animated="false" />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">

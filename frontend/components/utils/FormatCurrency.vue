@@ -1,8 +1,9 @@
 <template>
     <span
-        >{{ sign }}<animated-number :value="value" :decimal-places="decimals" /><span class="uppercase">
-            {{ currency }}</span
-        ></span
+        >{{ sign }}<animated-number v-if="isAnimated" :value="value" :decimal-places="decimals" /><span v-else>{{
+            formattedNumber
+        }}</span
+        ><span class="uppercase"> {{ currency }}</span></span
     >
 </template>
 
@@ -31,8 +32,18 @@ export default Vue.extend({
             type: Number,
             default: 2,
         },
+        isAnimated: {
+            type: Boolean,
+            default: true,
+        },
     },
     computed: {
+        formattedNumber(): string {
+            if (this.value === null) {
+                return '';
+            }
+            return this.value.toFixed(this.decimals);
+        },
         sign(): string {
             if (!this.showSign) {
                 return '';
