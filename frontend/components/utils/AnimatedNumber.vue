@@ -11,7 +11,7 @@ import AnimatedNumber from 'animated-number-vue';
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 
-export default {
+export default Vue.extend({
     components: {
         AnimatedNumber,
     },
@@ -22,7 +22,7 @@ export default {
         },
         duration: {
             type: Number,
-            default: 1000,
+            default: 500,
         },
         decimalPlaces: {
             type: Number,
@@ -30,9 +30,9 @@ export default {
         },
     },
     methods: {
-        formatValue(value) {
+        formatValue(value: number | BigNumber): string {
             return value.toFixed(this.decimalPlaces);
         },
     },
-};
+});
 </script>

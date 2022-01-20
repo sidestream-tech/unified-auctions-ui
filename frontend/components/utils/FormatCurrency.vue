@@ -1,19 +1,23 @@
 <template>
     <span
-        >{{ sign }}{{ formattedNumber }}<span class="uppercase"> {{ currency }}</span></span
+        >{{ sign }}<animated-number :value="value" :decimal-places="decimals" /><span class="uppercase">
+            {{ currency }}</span
+        ></span
     >
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
+import AnimatedNumber from '~/components/utils/AnimatedNumber.vue';
 
 export default Vue.extend({
     name: 'FormatCurrency',
+    components: { AnimatedNumber },
     props: {
         value: {
             type: [Number, Object] as Vue.PropType<Number | BigNumber>,
-            default: null,
+            default: undefined,
         },
         currency: {
             type: String,
@@ -29,12 +33,6 @@ export default Vue.extend({
         },
     },
     computed: {
-        formattedNumber(): string {
-            if (this.value === null) {
-                return '';
-            }
-            return this.value.toFixed(this.decimals);
-        },
         sign(): string {
             if (!this.showSign) {
                 return '';

@@ -1,15 +1,19 @@
 <template>
     <span v-if="value !== undefined" :class="{ 'text-primary dark:text-primary-light': isBelowZero }"
-        >{{ formattedValue }}% {{ belowOrAbove }}</span
+        ><animated-number :value="formattedValue" />% {{ belowOrAbove }}</span
     >
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
+import AnimatedNumber from '~/components/utils/AnimatedNumber.vue';
 
 export default Vue.extend({
     name: 'FormatMarketValue',
+    components: {
+        AnimatedNumber,
+    },
     props: {
         value: {
             type: [Number, Object] as Vue.PropType<Number | BigNumber>,
@@ -17,11 +21,11 @@ export default Vue.extend({
         },
     },
     computed: {
-        formattedValue(): string {
+        formattedValue(): number | BigNumber {
             if (BigNumber.isBigNumber(this.value)) {
-                return (this.value as BigNumber).absoluteValue().multipliedBy(100).toFixed(2);
+                return (this.value as BigNumber).absoluteValue().multipliedBy(100);
             }
-            return Math.abs((this.value as number) * 100).toFixed(2);
+            return Math.abs((this.value as number) * 100);
         },
         isBelowZero(): boolean {
             return this.value < 0;
