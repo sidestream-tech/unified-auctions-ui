@@ -40,6 +40,7 @@ export declare interface TransactionFees {
 
 export declare interface CollateralRow extends CollateralConfig, Partial<MakerParams> {
     marketUnitPrice?: BigNumber | string;
+    isOnChain?: boolean;
 }
 
 export declare interface AuctionTransaction extends Auction, TransactionFees {

@@ -19,7 +19,7 @@
         >
             <FormatCurrency v-if="validBigNumber(marketUnitPrice)" :value="marketUnitPrice" currency="DAI" />
             <div v-else>
-                <div v-if="isOnChain(record.symbol) === false" />
+                <div v-if="record.isOnChain === false" />
                 <div v-else-if="isLoading(record)" class="flex items-center">
                     <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
                     <span>Loading...</span>
@@ -76,10 +76,10 @@
             slot="found"
             slot-scope="record"
             class="Element justify-center"
-            :class="{ Loading: isOnChain(record.symbol) === undefined }"
+            :class="{ Loading: record.isOnChain === undefined }"
         >
-            <div v-if="isOnChain(record.symbol) === true">&#9989;</div>
-            <div v-else-if="isOnChain(record.symbol) === false">&#10060;</div>
+            <div v-if="record.isOnChain === true">&#9989;</div>
+            <div v-else-if="record.isOnChain === false">&#10060;</div>
         </div>
     </Table>
 </template>
@@ -104,10 +104,6 @@ export default Vue.extend({
         collaterals: {
             type: Array as Vue.PropType<CollateralRow[]>,
             default: () => [],
-        },
-        onChainCollaterals: {
-            type: Object,
-            default: () => {},
         },
     },
     computed: {
@@ -162,9 +158,6 @@ export default Vue.extend({
         },
         validBigNumber(bigNumber: Object | String) {
             return bigNumber instanceof Object;
-        },
-        isOnChain(symbol: string) {
-            return this.onChainCollaterals[symbol];
         },
     },
 });

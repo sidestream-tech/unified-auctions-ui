@@ -17,11 +17,7 @@
                 auction price and the price for the collateral on another marketplace.
             </TextBlock>
         </div>
-        <CollateralTable
-            :collaterals="collaterals"
-            :on-chain-collaterals="onChainCollaterals"
-            class="w-full px-4 overflow-x-auto max-w-screen-md"
-        />
+        <CollateralTable :collaterals="collaterals" class="w-full px-4 overflow-x-auto max-w-screen-md" />
     </div>
 </template>
 
@@ -46,10 +42,6 @@ export default Vue.extend({
         collaterals: {
             type: Array as Vue.PropType<CollateralRow[]>,
             default: () => [],
-        },
-        onChainCollaterals: {
-            type: Object,
-            default: () => {},
         },
     },
     computed: {

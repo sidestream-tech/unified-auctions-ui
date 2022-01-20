@@ -23,8 +23,14 @@ export const getters = {
     getIsOnChain: (state: State) => (collateral: string) => {
         return state.isOnChain[collateral];
     },
-    getCollateralsOnChain(state: State) {
-        return state.isOnChain;
+    getCollateralsOnChain(state: State, getters: any) {
+        const collateralsOnChain = state.collaterals.map(collateral => {
+            return {
+                ...collateral,
+                isOnChain: getters.getIsOnChain(collateral.symbol),
+            };
+        });
+        return collateralsOnChain;
     },
 };
 
