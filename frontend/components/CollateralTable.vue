@@ -30,7 +30,7 @@
                     :content="marketUnitPrice"
                     trigger="hover"
                 >
-                    <span class="text-red-500 mr-1">error</span>
+                    <span class="mr-1 text-red-500">error</span>
                     <span class="Error">...</span>
                 </Popover>
             </div>
@@ -51,7 +51,7 @@
                 :content="secondsBetweenPriceDrops"
                 trigger="hover"
             >
-                <span class="text-red-500 mr-1">error</span>
+                <span class="mr-1 text-red-500">error</span>
                 <span class="Error">...</span>
             </Popover>
         </div>
