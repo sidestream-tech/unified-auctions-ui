@@ -12,10 +12,10 @@ let globalNetwork: string;
 const createMaker = async function (network: string, privateKey?: string): Promise<typeof Maker> {
     console.info(`creating maker object with "${network}" network`);
     const networkConfig = getNetworkConfigByType(network);
-    const addressOverrides = await fetchContractsAddressesByNetwork(network);
+    const addressOverrides = await fetchContractsAddressesByNetwork(network); // IT GETS SUCK HERE
     globalNetwork = network;
 
-    globalMaker = await Maker.create('http', {
+    const makerOptions = {
         plugins: [
             [McdPlugin, { prefetch: false }],
             [LiquidationPlugin, { vulcanize: false }],
@@ -27,7 +27,6 @@ const createMaker = async function (network: string, privateKey?: string): Promi
             url: networkConfig.url,
             type: 'HTTP',
         },
-        privateKey,
         web3: {
             confirmedBlockCount: 5,
             statusTimerDelay: 24 * 60 * 60 * 1000,
@@ -38,7 +37,21 @@ const createMaker = async function (network: string, privateKey?: string): Promi
         },
         log: false,
         multicall: true,
-    });
+    };
+
+    if (privateKey) {
+        // and then here
+        globalMaker = await Maker.create('http', {
+            ...makerOptions,
+            privateKey: privateKey,
+        });
+        console.info(`created maker object with address: ${globalMaker.currentAddress()}`);
+    } else {
+        globalMaker = await Maker.create('http', {
+            ...makerOptions,
+        });
+    }
+
     if (typeof window !== 'undefined') {
         (window as any).maker = globalMaker;
     }
