@@ -24,3 +24,6 @@ declare interface SelectOption {
     value: string;
     icon?: object;
 }
+
+// As there are no types for this package I defined the module, to silence any warning we get.
+declare module 'animated-number-vue' {}
