@@ -2,11 +2,11 @@
     <TextBlock class="flex flex-col space-y-1">
         <div class="flex w-full justify-between">
             <div>Auction Ends</div>
-            <div><time-till :date="auctionTransaction.endDate" /></div>
+            <div class="RightInfo"><time-till :date="auctionTransaction.endDate" /></div>
         </div>
         <div class="flex w-full justify-between">
             <div>Auction Amount</div>
-            <div>
+            <div class="RightInfo">
                 <FormatCurrency
                     :value="auctionTransaction.collateralAmount"
                     :currency="auctionTransaction.collateralSymbol"
@@ -15,7 +15,7 @@
         </div>
         <div class="flex w-full justify-between">
             <div>Auction Price</div>
-            <div>
+            <div class="RightInfo">
                 <PriceDropAnimation :auction="auctionTransaction" class="mr-1" />
                 <FormatCurrency :value="auctionTransaction.approximateUnitPrice" currency="DAI" /> per
                 <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
@@ -23,7 +23,7 @@
         </div>
         <div class="flex w-full justify-between">
             <div>Price On Uniswap</div>
-            <div>
+            <div class="RightInfo">
                 <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPrice">
                     <FormatCurrency :value="auctionTransaction.marketUnitPrice" currency="DAI" /> per
                     <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
@@ -33,7 +33,7 @@
         </div>
         <div class="flex w-full justify-between">
             <div>Market Difference</div>
-            <div>
+            <div class="RightInfo">
                 <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPriceToUnitPriceRatio">
                     <FormatMarketValue :value="auctionTransaction.marketUnitPriceToUnitPriceRatio" />
                 </template>
@@ -42,7 +42,7 @@
         </div>
         <div class="flex w-full justify-between">
             <div>Potential Profit</div>
-            <div>
+            <div class="RightInfo">
                 <FormatCurrency
                     v-if="auctionTransaction.transactionProfit"
                     show-sign
@@ -65,7 +65,7 @@
                     ETH)</span
                 >
             </div>
-            <div>
+            <div class="RightInfo">
                 <FormatCurrency
                     v-if="auctionTransaction.biddingTransactionFeeDAI"
                     :value="auctionTransaction.biddingTransactionFeeDAI * -1"
@@ -76,7 +76,7 @@
         </div>
         <div class="flex w-full justify-between">
             <div class="font-extrabold">Transaction Outcome</div>
-            <div>
+            <div class="RightInfo">
                 <FormatCurrency
                     v-if="auctionTransaction.transactionProfitMinusFees"
                     show-sign
@@ -113,3 +113,9 @@ export default Vue.extend({
     },
 });
 </script>
+
+<style scoped>
+.RightInfo {
+    @apply text-right ml-2;
+}
+</style>
