@@ -1,0 +1,6 @@
+# Value overrides for the sidestream k8s aws production environment
+host: "auctions.makerdao.network"
+
+frontend:
+  deployment:
+    tag: "v0.4.0-makerdao"
