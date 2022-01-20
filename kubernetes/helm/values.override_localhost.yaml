@@ -1,0 +1,17 @@
+# Value overrides for the deployment to the following host:
+host: "localhost"
+
+ingress:
+  isCertManagerActivated: false
+  isTlsActivated: false
+
+frontend:
+  deployment:
+    tag: "main"
+    pullPolicy: "Always"
+
+botTwitter:
+  secretChamberPath: "auction-ui/localhost/bot-twitter"
+  deployment:
+    tag: "main"
+    pullPolicy: "Always"
