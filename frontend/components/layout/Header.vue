@@ -1,6 +1,6 @@
 <template>
     <div>
-        <StagingHeader v-if="isStagingEnvironment" />
+        <StagingBanner v-if="isStagingEnvironment" />
         <header class="bg-primary dark:bg-primary-dark">
             <nav class="flex items-center py-2 px-4 md:px-10">
                 <nuxt-link
@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import StagingHeader from './StagingHeader.vue';
+import StagingBanner from './StagingBanner.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
 import BaseSwitch from '~/components/common/BaseSwitch.vue';
 import NetworkSelector from '~/components/utils/NetworkSelector.vue';
@@ -61,7 +61,7 @@ import ThemeSwitcher from '~/components/utils/ThemeSwitcher.vue';
 export default Vue.extend({
     name: 'Header',
     components: {
-        StagingHeader,
+        StagingBanner,
         ThemeSwitcher,
         BrandingIcon,
         BaseSwitch,
