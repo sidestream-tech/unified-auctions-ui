@@ -17,7 +17,7 @@ spec:
       {{- end }}
       containers:
       - name: {{ .Values.frontend.name }}
-        image: {{ .Values.repoPrefix }}{{ required "You must specify a deployment image" .Values.frontend.deployment.image }}:{{ required "You must specify the version to be deployed" .Values.frontend.deployment.tag }}
+        image: {{ .Values.repoPrefix }}{{ .Values.frontend.deployment.image }}:{{ required "You must specify the version to be deployed" .Values.frontend.deployment.tag }}
         imagePullPolicy: {{ .Values.frontend.deployment.pullPolicy }}
         ports:
         - containerPort: {{ .Values.frontend.containerPort }}
