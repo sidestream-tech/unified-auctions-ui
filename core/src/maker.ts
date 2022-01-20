@@ -2,7 +2,7 @@ import Maker from '@makerdao/dai';
 import McdPlugin from '@makerdao/dai-plugin-mcd';
 // TODO: upstream local changes to liquidations plugin
 // import LiquidationPlugin from '@makerdao/dai-plugin-liquidations';
-import LiquidationPlugin from '@valiafetisov/dai-plugin-liquidations';
+import LiquidationPlugin from '@sidestream/dai-plugin-liquidations';
 import { getNetworkConfigByType } from './constants/NETWORKS';
 import { fetchContractsAddressesByNetwork } from './contracts';
 

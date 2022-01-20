@@ -1,0 +1,5 @@
+# Value overrides for the deployment to the following host:
+host: "main.auction-ui.k8s.sidestream.tech"
+
+botTwitter:
+  secretChamberPath: "auction-ui/main.auction-ui.k8s.sidestream.tech/bot-twitter"
