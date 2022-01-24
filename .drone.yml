@@ -157,8 +157,8 @@ data:
       trigger:
         event:
           - push
-        branch:
-          - main
+        # branch:
+        #   - main
       settings:
         helm_root_path: kubernetes/helm
         aws_target_eks_cluster_name: eks-cluster-sidestream
