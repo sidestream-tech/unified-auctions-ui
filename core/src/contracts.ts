@@ -20,7 +20,7 @@ export const getClipperAddressByCollateralType = async function (
     network: string,
     collateralType: string
 ): Promise<string> {
-    const suffix = collateralType.toUpperCase().replace('-', '_');
+    const suffix = collateralType.replace('-', '_');
     return getContractAddressByName(network, `MCD_CLIP_${suffix}`);
 };
 

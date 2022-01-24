@@ -1,4 +1,5 @@
 import type { Auction, AuctionInitialInfo, Notifier } from './types';
+import { ethers } from 'ethers';
 import BigNumber from './bignumber';
 import getMaker from './maker';
 import COLLATERALS from './constants/COLLATERALS';
@@ -8,6 +9,8 @@ import trackTransaction from './tracker';
 import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
 import { getSupportedCollateralTypes } from './addresses';
+import getContract from './contracts';
+import { numberToBytes32 } from './converters';
 
 const fetchAuctionsByType = async function (
     collateralType: string,
@@ -170,18 +173,15 @@ export const bidOnTheAuction = async function (
     profitAddress: string,
     notifier?: Notifier
 ): Promise<string> {
-    const maker = await getMaker();
     const calleeAddress = getUniswapCalleeBySymbol(network, auction.collateralSymbol);
     const flashData = await getUniswapParametersByCollateral(network, auction.collateralType, profitAddress);
-    const transaction = maker
-        .service('liquidation')
-        .take(
-            auction.collateralType,
-            auction.auctionId,
-            auction.collateralAmount.toFixed(WAD_NUMBER_OF_DIGITS),
-            auction.unitPrice.toFixed(RAY_NUMBER_OF_DIGITS),
-            calleeAddress,
-            flashData
-        );
+    const contract = await getContract(network, `MCD_CLIP_${auction.collateralType.replace('-', '_')}`);
+    const transaction = contract.take(
+        numberToBytes32(auction.auctionId),
+        auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
+        auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(),
+        calleeAddress,
+        flashData
+    );
     return trackTransaction(transaction, notifier);
 };
