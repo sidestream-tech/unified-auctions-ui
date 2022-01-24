@@ -36,7 +36,15 @@ const getContract = async function (network: string, contractName: string): Prom
     const contractAddress = await getContractAddressByName(network, contractName);
     const contractInterface = await getContractInterfaceByName(contractName);
     const provider = getProvider(network);
-    return await new ethers.Contract(contractAddress, contractInterface, provider);
+    const contract = await new ethers.Contract(contractAddress, contractInterface, provider);
+    console.log(
+        'contract interface',
+        contractName,
+        contract,
+        contract.interface.fragments,
+        contract.interface.functions
+    );
+    return contract;
 };
 
 export default getContract;

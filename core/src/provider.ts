@@ -1,9 +1,10 @@
 import { ethers } from 'ethers';
 import NETWORKS from './constants/NETWORKS';
 
-const providers: Record<string, ethers.providers.JsonRpcProvider> = {};
+type Provider = ethers.providers.JsonRpcProvider | ethers.providers.JsonRpcSigner;
+const providers: Record<string, Provider> = {};
 
-const getProvider = function (network: string): ethers.providers.JsonRpcProvider {
+const getProvider = function (network: string): Provider {
     if (!NETWORKS[network]) {
         throw new Error(`The network "${network}" is not supported yet!`);
     }
@@ -13,6 +14,10 @@ const getProvider = function (network: string): ethers.providers.JsonRpcProvider
         providers[network] = new ethers.providers.JsonRpcProvider(networkUrl);
     }
     return providers[network];
+};
+
+export const setProvider = function (network: string, provider: Provider) {
+    providers[network] = provider;
 };
 
 export default getProvider;

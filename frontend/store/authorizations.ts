@@ -77,13 +77,14 @@ export const actions = {
     },
     async fetchWalletAuthorizationStatus({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         const walletAddress = rootGetters['wallet/getAddress'];
+        const network = rootGetters['network/getMakerNetwork'];
         if (!walletAddress) {
             commit('setIsWalletAuthorizationDone', false);
             return;
         }
         commit('setIsWalletAuthorizationLoading', true);
         try {
-            const isAuthorized = await getWalletAuthorizationStatus(walletAddress);
+            const isAuthorized = await getWalletAuthorizationStatus(network, walletAddress);
             commit('setIsWalletAuthorizationDone', isAuthorized);
             return isAuthorized;
         } catch (error) {
@@ -94,10 +95,11 @@ export const actions = {
             commit('setIsWalletAuthorizationLoading', false);
         }
     },
-    async authorizeWallet({ commit, dispatch }: ActionContext<State, State>) {
+    async authorizeWallet({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
         try {
-            await authorizeWallet(false, notifier);
+            await authorizeWallet(network, false, notifier);
             dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
@@ -105,10 +107,11 @@ export const actions = {
             commit('setIsWalletAuthorizationLoading', false);
         }
     },
-    async deauthorizeWallet({ commit, dispatch }: ActionContext<State, State>) {
+    async deauthorizeWallet({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
         try {
-            await authorizeWallet(true, notifier);
+            await authorizeWallet(network, true, notifier);
             dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);

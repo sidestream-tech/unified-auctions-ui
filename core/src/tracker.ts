@@ -1,11 +1,16 @@
+import { ethers } from 'ethers';
 import type { Notifier } from './types';
-import getMaker from './maker';
 import { v4 as uuidv4 } from 'uuid';
 
-const trackTransaction = async function (transactionPromise: Promise<any>, notifier?: Notifier): Promise<string> {
-    const maker = await getMaker();
+const NUMBER_OF_BLOCKS_TO_VERIFY = 5;
+
+const trackTransaction = async function (
+    transactionPromise: Promise<ethers.ContractTransaction>,
+    notifier?: Notifier
+): Promise<string> {
     const messageId = uuidv4();
-    const transactionManager = maker.service('transactionManager');
+
+    // Display initial message
     if (notifier) {
         notifier('loading', {
             content: 'Transaction is preparing to be mined...',
@@ -13,57 +18,60 @@ const trackTransaction = async function (transactionPromise: Promise<any>, notif
             duration: 0,
         });
     }
-    await new Promise((resolve, reject): void => {
-        // check if initial request is not rejected by the user
-        transactionPromise.catch((error: Error) => {
-            reject(error);
-        });
-        // track transaction progress
-        transactionManager.listen(transactionPromise, {
-            pending: () => {
-                if (notifier) {
-                    notifier('loading', {
-                        content: 'Transaction is pending to be mined...',
-                        key: messageId,
-                        duration: 0,
-                    });
-                }
-            },
-            mined: (tx: any) => {
-                if (notifier) {
-                    notifier('loading', {
-                        content: `Transaction was mined into block "${tx?.receipt?.blockNumber}", confirming...`,
-                        key: messageId,
-                        duration: 0,
-                    });
-                }
-            },
-            confirmed: (tx: any) => {
-                if (notifier) {
-                    notifier('success', {
-                        content: `Transaction was confirmed in block "${tx?.receipt?.blockNumber}"`,
-                        key: messageId,
-                        duration: 3,
-                    });
-                }
-                resolve(tx);
-            },
-            error: (tx: any) => {
-                const errorMessage = tx?.error?.message || 'unknown';
-                if (notifier) {
-                    notifier('error', {
-                        content: `Transaction was rejected with error: "${tx?.error?.message}"`,
-                        key: messageId,
-                        duration: 3,
-                    });
-                }
-                reject(new Error(errorMessage));
-            },
-        });
-        transactionManager.confirm(transactionPromise);
-    });
-    const transaction = await transactionPromise;
-    return transaction.hash;
+
+    // Wait for the user approval
+    let transaction: ethers.ContractTransaction;
+    try {
+        transaction = await transactionPromise;
+        if (notifier) {
+            notifier('loading', {
+                content: 'Transaction is pending to be mined...',
+                key: messageId,
+                duration: 0,
+            });
+        }
+    } catch (error: any) {
+        if (notifier) {
+            notifier('error', {
+                content: `Transaction error: ${error?.message || 'unknown'}`,
+                key: messageId,
+                duration: 3,
+            });
+        }
+        throw new Error(error);
+    }
+
+    try {
+        // Wait for mining
+        const initialTransactionReceipt = await transaction.wait(1);
+        if (notifier) {
+            notifier('loading', {
+                content: `Transaction was mined into block "${initialTransactionReceipt.blockNumber}", confirming...`,
+                key: messageId,
+                duration: 0,
+            });
+        }
+
+        // Wait for confirmation
+        const confirmedTransactionReceipt = await transaction.wait(NUMBER_OF_BLOCKS_TO_VERIFY);
+        if (notifier) {
+            notifier('success', {
+                content: `Transaction was confirmed in block "${confirmedTransactionReceipt.blockNumber}"`,
+                key: messageId,
+                duration: 3,
+            });
+        }
+        return confirmedTransactionReceipt.transactionHash;
+    } catch (error: any) {
+        if (notifier) {
+            notifier('error', {
+                content: `Transaction was rejected with error: "${error?.message || 'unknown'}"`,
+                key: messageId,
+                duration: 3,
+            });
+        }
+        throw new Error(error);
+    }
 };
 
 export default trackTransaction;
