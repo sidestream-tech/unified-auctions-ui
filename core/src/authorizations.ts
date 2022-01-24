@@ -1,7 +1,6 @@
 import type { Notifier } from './types';
-import getMaker from './maker';
 import trackTransaction from './tracker';
-import getContract, { getContractAddressByName } from './contracts';
+import getContract, { getContractAddressByName, getClipperAddressByCollateralType } from './contracts';
 
 export const authorizeWallet = async function (
     network: string,
@@ -15,15 +14,15 @@ export const authorizeWallet = async function (
 };
 
 export const authorizeCollateral = async function (
+    network: string,
     collateralType: string,
     revoke: boolean,
     notifier?: Notifier
 ): Promise<string> {
-    const maker = await getMaker();
-    const clipperAddress = maker.service('liquidation')._clipperContractByIlk(collateralType).address;
-    const vatContract = maker.service('smartContract').getContract('MCD_VAT');
-    const transaction = revoke ? vatContract.nope(clipperAddress) : vatContract.hope(clipperAddress);
-    return trackTransaction(transaction, notifier);
+    const clipperAddress = await getClipperAddressByCollateralType(network, collateralType);
+    const contract = await getContract(network, 'MCD_VAT');
+    const contractMethod = revoke ? 'nope' : 'hope';
+    return trackTransaction(contract[contractMethod](clipperAddress), notifier);
 };
 
 export const getWalletAuthorizationStatus = async function (network: string, walletAddress: string): Promise<boolean> {
@@ -34,14 +33,12 @@ export const getWalletAuthorizationStatus = async function (network: string, wal
 };
 
 export const getCollateralAuthorizationStatus = async function (
+    network: string,
     collateralType: string,
     walletAddress: string
 ): Promise<boolean> {
-    const maker = await getMaker();
-    const clipperAddress = maker.service('liquidation')._clipperContractByIlk(collateralType).address;
-    const authorizationStatus = await maker
-        .service('smartContract')
-        .getContract('MCD_VAT')
-        .can(walletAddress, clipperAddress);
+    const clipperAddress = await getClipperAddressByCollateralType(network, collateralType);
+    const contract = await getContract(network, 'MCD_VAT');
+    const authorizationStatus = await contract.can(walletAddress, clipperAddress);
     return authorizationStatus.toNumber() === 1;
 };

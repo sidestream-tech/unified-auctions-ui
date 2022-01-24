@@ -16,6 +16,14 @@ export const getContractAddressByName = async function (network: string, contrac
     return contractAddress;
 };
 
+export const getClipperAddressByCollateralType = async function (
+    network: string,
+    collateralType: string
+): Promise<string> {
+    const suffix = collateralType.toUpperCase().replace('-', '_');
+    return getContractAddressByName(network, `MCD_CLIP_${suffix}`);
+};
+
 const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {
     if (contractName === 'MCD_VAT') {
         return MCD_VAT;
@@ -37,13 +45,6 @@ const getContract = async function (network: string, contractName: string): Prom
     const contractInterface = await getContractInterfaceByName(contractName);
     const provider = getProvider(network);
     const contract = await new ethers.Contract(contractAddress, contractInterface, provider);
-    console.log(
-        'contract interface',
-        contractName,
-        contract,
-        contract.interface.fragments,
-        contract.interface.functions
-    );
     return contract;
 };
 

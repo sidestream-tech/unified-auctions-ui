@@ -124,13 +124,14 @@ export const actions = {
         collateralType: string
     ) {
         const walletAddress = rootGetters['wallet/getAddress'];
+        const network = rootGetters['network/getMakerNetwork'];
         if (!walletAddress) {
             commit('setIsWalletAuthorizationDone', false);
             return;
         }
         commit('setIsCollateralAuthorizationLoading', true);
         try {
-            const isAuthorized = await getCollateralAuthorizationStatus(collateralType, walletAddress);
+            const isAuthorized = await getCollateralAuthorizationStatus(network, collateralType, walletAddress);
             if (isAuthorized) {
                 commit('addCollateralAuthorization', collateralType);
             } else {
@@ -147,10 +148,11 @@ export const actions = {
             commit('setIsCollateralAuthorizationLoading', false);
         }
     },
-    async authorizeCollateral({ commit, dispatch }: ActionContext<State, State>, collateralType: string) {
+    async authorizeCollateral({ commit, dispatch, rootGetters }: ActionContext<State, State>, collateralType: string) {
         commit('setIsCollateralAuthorizationLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
         try {
-            await authorizeCollateral(collateralType, false, notifier);
+            await authorizeCollateral(network, collateralType, false, notifier);
             dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
@@ -158,10 +160,14 @@ export const actions = {
             commit('setIsCollateralAuthorizationLoading', false);
         }
     },
-    async deauthorizeCollateral({ commit, dispatch }: ActionContext<State, State>, collateralType: string) {
+    async deauthorizeCollateral(
+        { commit, dispatch, rootGetters }: ActionContext<State, State>,
+        collateralType: string
+    ) {
         commit('setIsCollateralAuthorizationLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
         try {
-            await authorizeCollateral(collateralType, true, notifier);
+            await authorizeCollateral(network, collateralType, true, notifier);
             dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
