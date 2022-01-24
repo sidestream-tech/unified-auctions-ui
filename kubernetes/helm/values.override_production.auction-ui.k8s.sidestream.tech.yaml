@@ -1,0 +1,11 @@
+# Value overrides for the deployment to the following host:
+host: "production.auction-ui.k8s.sidestream.tech"
+
+frontend:
+  deployment:
+    # the frontend bakes in environment variables that need to be changed for makerdao,
+    # so we built a separate image just for that
+    image: "frontend-production"
+
+botTwitter:
+  secretChamberPath: "auction-ui/production.auction-ui.k8s.sidestream.tech/bot-twitter"

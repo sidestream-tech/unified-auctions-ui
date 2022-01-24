@@ -86,9 +86,9 @@ data:
         event:
           - tag
 
-    # frontend:$RELEASE_TAG
-    - name: publish-frontend-on-tag
-      repository: ghcr.io/sidestream-tech/auction-ui/frontend
+    # frontend-production:$RELEASE_TAG
+    - name: publish-frontend-production-on-tag
+      repository: ghcr.io/sidestream-tech/auction-ui/frontend-production
       tags:
         - "${DRONE_TAG}"
       labels:
@@ -98,11 +98,11 @@ data:
       path_to_context: ./
       build_args:
         - key: PRODUCTION_DOMAIN
-          value_from_secret: auction-ui/auctions.makerdao.network/frontend/production_domain
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/production_domain
         - key: INFURA_PROJECT_ID
-          value_from_secret: auction-ui/auctions.makerdao.network/frontend/infura_project_id
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/infura_project_id
         - key: CONTACT_EMAIL
-          value_from_secret: auction-ui/auctions.makerdao.network/frontend/contact_email
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/contact_email
       tags_to_cache_from:
         - "main"
       trigger:
@@ -198,20 +198,18 @@ data:
     - name: deploy-production.auction-ui.k8s.sidestream.tech
       depends_on:
         - publish-bot-twitter-on-tag
-        - publish-frontend-on-tag
+        - publish-frontend-production-on-tag
       trigger:
         event:
-          - push
-        branch:
-          - main
+          - tag
       settings:
         helm_root_path: kubernetes/helm
         aws_target_eks_cluster_name: eks-cluster-sidestream
         aws_ssm_path_to_base64_encoded_secrets_yaml: auction-ui/secrets.yaml
         value_files:
         - values.yaml
-        - values.override_main.auction-ui.k8s.sidestream.tech.yaml
-        target_namespace: "auction-ui-main"
+        - values.override_production.auction-ui.k8s.sidestream.tech.yaml
+        target_namespace: "auction-ui-production"
         release_name: "auction-ui"
         values_to_set:
           - frontend.deployment.tag=$DRONE_COMMIT_SHA

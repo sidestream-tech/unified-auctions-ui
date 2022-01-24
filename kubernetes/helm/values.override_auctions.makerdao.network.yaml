@@ -9,7 +9,7 @@ ingress:
 frontend:
   deployment:
     # the frontend bakes in environment variables that need to be changed for makerdao,
-    # so we built a second image just for that
+    # so we built a separate image just for that
     image: "frontend-makerdao"
 
 botTwitter:
