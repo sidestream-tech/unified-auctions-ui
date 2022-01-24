@@ -6,7 +6,7 @@ data:
     - name: publish-frontend-merge-main
       repository: ghcr.io/sidestream-tech/auction-ui/frontend
       tags:
-        # - "main"
+        - "main"
         - "${DRONE_COMMIT_SHA}"
       labels:
         - key: org.opencontainers.image.source
@@ -25,8 +25,8 @@ data:
       trigger:
         event:
           - push
-        # branch:
-        #   - main
+        branch:
+          - main
 
     # frontend no tag, just test production build
     - name: build-frontend-to-test-production-build
@@ -90,7 +90,7 @@ data:
     - name: publish-bot-twitter-merge-main
       repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
       tags:
-        # - "main"
+        - "main"
         - "${DRONE_COMMIT_SHA}"
       labels:
         - key: org.opencontainers.image.source
@@ -102,8 +102,8 @@ data:
       trigger:
         event:
           - push
-        # branch:
-        #   - main
+        branch:
+          - main
 
     # bot-twitter no tag, just test production build
     - name: build-bot-twitter-to-test-production-build
@@ -157,8 +157,8 @@ data:
       trigger:
         event:
           - push
-        # branch:
-        #   - main
+        branch:
+          - main
       settings:
         helm_root_path: kubernetes/helm
         aws_target_eks_cluster_name: eks-cluster-sidestream
