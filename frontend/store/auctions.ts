@@ -178,7 +178,8 @@ export const actions = {
             commit('setIsBidding', false);
         }
     },
-    async restart({ getters, dispatch, commit }: ActionContext<State, State>, id: string) {
+    async restart({ getters, dispatch, commit, rootGetters }: ActionContext<State, State>, id: string) {
+        const network = rootGetters['network/getMakerNetwork'];
         const auction = getters.getAuctionById(id);
         if (!auction) {
             message.error(`Auction reset error: can not find auction with id "${id}"`);
@@ -191,7 +192,7 @@ export const actions = {
         }
         commit('addAuctionRestarting', id);
         try {
-            await restartAuction(auction.collateralType, auction.auctionId, walletAddress);
+            await restartAuction(network, auction, walletAddress, notifier);
             await dispatch('fetchWithoutLoading');
         } catch (error) {
             commit('removeAuctionRestarting', id);

@@ -1,6 +1,6 @@
 import type { Notifier } from './types';
 import trackTransaction from './tracker';
-import getContract, { getContractAddressByName, getClipperAddressByCollateralType } from './contracts';
+import getContract, { getContractAddressByName, getClipperNameByCollateralType } from './contracts';
 
 export const authorizeWallet = async function (
     network: string,
@@ -19,7 +19,8 @@ export const authorizeCollateral = async function (
     revoke: boolean,
     notifier?: Notifier
 ): Promise<string> {
-    const clipperAddress = await getClipperAddressByCollateralType(network, collateralType);
+    const contractName = getClipperNameByCollateralType(collateralType);
+    const clipperAddress = await getContractAddressByName(network, contractName);
     const contract = await getContract(network, 'MCD_VAT');
     const contractMethod = revoke ? 'nope' : 'hope';
     return trackTransaction(contract[contractMethod](clipperAddress), notifier);
@@ -37,7 +38,8 @@ export const getCollateralAuthorizationStatus = async function (
     collateralType: string,
     walletAddress: string
 ): Promise<boolean> {
-    const clipperAddress = await getClipperAddressByCollateralType(network, collateralType);
+    const contractName = getClipperNameByCollateralType(collateralType);
+    const clipperAddress = await getContractAddressByName(network, contractName);
     const contract = await getContract(network, 'MCD_VAT');
     const authorizationStatus = await contract.can(walletAddress, clipperAddress);
     return authorizationStatus.toNumber() === 1;

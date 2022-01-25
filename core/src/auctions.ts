@@ -1,5 +1,4 @@
 import type { Auction, AuctionInitialInfo, Notifier } from './types';
-import { ethers } from 'ethers';
 import BigNumber from './bignumber';
 import getMaker from './maker';
 import COLLATERALS from './constants/COLLATERALS';
@@ -9,7 +8,7 @@ import trackTransaction from './tracker';
 import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
 import { getSupportedCollateralTypes } from './addresses';
-import getContract from './contracts';
+import getContract, { getClipperNameByCollateralType } from './contracts';
 import { numberToBytes32 } from './converters';
 
 const fetchAuctionsByType = async function (
@@ -157,14 +156,14 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
 };
 
 export const restartAuction = async function (
-    collateralType: string,
-    id: number,
-    profitAddress: string
+    network: string,
+    auction: Auction,
+    profitAddress: string,
+    notifier?: Notifier
 ): Promise<string> {
-    const maker = await getMaker();
-    const clipperContract = maker.service('liquidation')._clipperContractByIlk(collateralType);
-    const transaction = clipperContract.redo(id, profitAddress);
-    return transaction;
+    const clipperContract = await getContract(network, getClipperNameByCollateralType(auction.collateralType));
+    const transactionPromise = clipperContract.redo(auction.auctionId, profitAddress);
+    return trackTransaction(transactionPromise, notifier, false);
 };
 
 export const bidOnTheAuction = async function (
@@ -175,7 +174,7 @@ export const bidOnTheAuction = async function (
 ): Promise<string> {
     const calleeAddress = getUniswapCalleeBySymbol(network, auction.collateralSymbol);
     const flashData = await getUniswapParametersByCollateral(network, auction.collateralType, profitAddress);
-    const contract = await getContract(network, `MCD_CLIP_${auction.collateralType.replace('-', '_')}`);
+    const contract = await getContract(network, getClipperNameByCollateralType(auction.collateralType));
     const transaction = contract.take(
         numberToBytes32(auction.auctionId),
         auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),

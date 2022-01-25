@@ -7,6 +7,11 @@ import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import MCD_CLIP from './abis/MCD_CLIP.json';
 
+export const getClipperNameByCollateralType = function (collateralType: string): string {
+    const suffix = collateralType.toUpperCase().replace('-', '_');
+    return `MCD_CLIP_${suffix}`;
+};
+
 export const getContractAddressByName = async function (network: string, contractName: string): Promise<string> {
     const contractAddresses = await fetchContractsAddressesByNetwork(network);
     const contractAddress = contractAddresses[contractName];
@@ -14,14 +19,6 @@ export const getContractAddressByName = async function (network: string, contrac
         throw new Error(`No contract address found for "${contractName}"`);
     }
     return contractAddress;
-};
-
-export const getClipperAddressByCollateralType = async function (
-    network: string,
-    collateralType: string
-): Promise<string> {
-    const suffix = collateralType.replace('-', '_');
-    return getContractAddressByName(network, `MCD_CLIP_${suffix}`);
 };
 
 const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {
