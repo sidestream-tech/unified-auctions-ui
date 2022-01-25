@@ -13,11 +13,11 @@
     >
         <div slot="collateralAmount" slot-scope="collateralAmount, record" class="flex items-center space-x-2">
             <currency-icon :currency-symbol="record.collateralSymbol" />
-            <format-currency :value="collateralAmount" :currency="record.collateralSymbol" :is-animated="false" />
+            <format-currency :value="collateralAmount" :currency="record.collateralSymbol" />
         </div>
         <div slot="approximateUnitPrice" slot-scope="approximateUnitPrice, record">
             <template v-if="record.isActive && !record.isFinished">
-                <format-currency :value="approximateUnitPrice" currency="DAI" :is-animated="false" /> per
+                <format-currency :value="approximateUnitPrice" currency="DAI" /> per
                 <format-currency :currency="record.collateralSymbol" />
             </template>
             <span v-else class="opacity-50">Unknown</span>
