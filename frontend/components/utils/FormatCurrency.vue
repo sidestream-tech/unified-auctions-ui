@@ -1,8 +1,9 @@
 <template>
     <span
-        >{{ sign }}<animated-number v-if="isAnimated" :value="value" :decimal-places="decimals" /><span v-else>{{
-            formattedNumber
-        }}</span
+        >{{ sign
+        }}<animated-number v-if="isAnimated && value !== 'NaN'" :value="value" :decimal-places="decimals" /><span
+            v-else
+            >{{ formattedNumber }}</span
         ><span class="uppercase"> {{ currency }}</span></span
     >
 </template>
