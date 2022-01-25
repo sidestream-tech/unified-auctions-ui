@@ -9,7 +9,7 @@ import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './con
 import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
 import { getSupportedCollateralTypes } from './addresses';
 import getContract, { getClipperNameByCollateralType } from './contracts';
-import { numberToBytes32 } from './converters';
+import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 
 const fetchAuctionsByType = async function (
     collateralType: string,
@@ -176,7 +176,7 @@ export const bidOnTheAuction = async function (
     const flashData = await getUniswapParametersByCollateral(network, auction.collateralType, profitAddress);
     const contract = await getContract(network, getClipperNameByCollateralType(auction.collateralType));
     const transaction = contract.take(
-        numberToBytes32(auction.auctionId),
+        convertNumberTo32Bytes(auction.auctionId),
         auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
         auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(),
         calleeAddress,
