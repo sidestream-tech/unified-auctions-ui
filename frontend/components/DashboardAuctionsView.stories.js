@@ -1,6 +1,5 @@
 import { storiesOf } from '@storybook/vue';
 import DashboardAuctionsView from './DashboardAuctionsView.vue';
-
 import { generateFakeCollaterals } from '~/helpers/generateFakeCollateral';
 
 const collaterals = generateFakeCollaterals();
@@ -8,20 +7,18 @@ const collaterals = generateFakeCollaterals();
 const common = {
     components: { DashboardAuctionsView },
     data: () => ({
-        collaterals: collaterals.collaterals,
-        onChainCollaterals: collaterals.onChain,
+        collaterals,
     }),
 };
 
 storiesOf('DashboardAuctionsView', module)
     .add('Default', () => ({
         ...common,
-        template: '<DashboardAuctionsView :collaterals="collaterals" :on-chain-collaterals="onChainCollaterals" />',
+        template: '<DashboardAuctionsView :collaterals="collaterals" />',
     }))
     .add('Expert Mode', () => ({
         ...common,
-        template:
-            '<DashboardAuctionsView :collaterals="collaterals" :on-chain-collaterals="onChainCollaterals" :is-explanations-shown="false" />',
+        template: '<DashboardAuctionsView :collaterals="collaterals" :is-explanations-shown="false" />',
     }))
     .add('Empty Collateral List', () => ({
         ...common,
