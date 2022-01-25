@@ -1,10 +1,9 @@
 import { ethers } from 'ethers';
 import NETWORKS from './constants/NETWORKS';
 
-type Provider = ethers.providers.BaseProvider;
-const providers: Record<string, Provider> = {};
+const providers: Record<string, ethers.providers.BaseProvider> = {};
 
-const getProvider = function (network: string): Provider {
+const getProvider = function (network: string): ethers.providers.BaseProvider {
     if (!NETWORKS[network]) {
         throw new Error(`The network "${network}" is not supported yet!`);
     }
@@ -16,7 +15,7 @@ const getProvider = function (network: string): Provider {
     return providers[network];
 };
 
-export const setProvider = function (network: string, provider: Provider) {
+export const setProvider = function (network: string, provider: ethers.providers.BaseProvider) {
     providers[network] = provider;
 };
 
