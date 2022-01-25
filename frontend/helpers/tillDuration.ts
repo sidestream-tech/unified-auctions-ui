@@ -27,16 +27,19 @@ export const formatInterval = function (startDate: Date, endDate: Date): string 
     }
 };
 
-export const timeTillProfitable = function (auction: AuctionTransaction) {
-    let steps = 0;
-    let currentPrice = auction.approximateUnitPrice.toNumber();
-
-    const currentStepProgress = auction.secondsBetweenPriceDrops!! - auction.secondsTillNextPriceDrop!!;
-
-    while (currentPrice > auction.marketUnitPrice!!.toNumber()) {
-        steps += 1;
-        currentPrice -= auction.priceDropRatio!!.toNumber();
+export const calculateTimeTillProfitable = function (auction: AuctionTransaction) {
+    if (
+        auction.secondsBetweenPriceDrops === undefined ||
+        auction.secondsTillNextPriceDrop === undefined ||
+        auction.marketUnitPrice === undefined ||
+        auction.priceDropRatio === undefined
+    ) {
+        return 0;
     }
 
-    return steps * auction.secondsBetweenPriceDrops!! - currentStepProgress;
+    const currentStepProgress = auction.secondsBetweenPriceDrops - auction.secondsTillNextPriceDrop;
+    const stepsTillProfitable = Math.round(
+        auction.approximateUnitPrice.dividedBy(auction.priceDropRatio).minus(auction.marketUnitPrice).toNumber()
+    );
+    return auction.secondsBetweenPriceDrops * stepsTillProfitable - currentStepProgress;
 };

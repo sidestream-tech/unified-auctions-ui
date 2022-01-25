@@ -1,12 +1,13 @@
 <template>
-    <time-till :date="timeTillProfitable" />
+    <time-till v-if="isProfitableBeforeEnd" :date="timeTillProfitable" />
+    <div v-else>Likely will not be profitable</div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { AuctionTransaction } from '~/../core/src/types';
 import TimeTill from '~/components/common/TimeTill.vue';
-import { timeTillProfitable } from '~/helpers/tillDuration';
+import { calculateTimeTillProfitable } from '~/helpers/tillDuration';
 
 export default Vue.extend({
     components: {
@@ -26,8 +27,12 @@ export default Vue.extend({
     computed: {
         timeTillProfitable(): Date {
             const timeTill = this.startingDate;
-            timeTill.setSeconds(timeTill.getSeconds() + timeTillProfitable(this.auction));
+            const seconds = calculateTimeTillProfitable(this.auction);
+            timeTill.setSeconds(timeTill.getSeconds() + seconds);
             return timeTill;
+        },
+        isProfitableBeforeEnd(): boolean {
+            return this.auction.endDate.getTime() > this.timeTillProfitable.getTime();
         },
     },
 });

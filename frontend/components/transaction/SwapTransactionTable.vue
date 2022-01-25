@@ -41,7 +41,7 @@
             </div>
         </div>
         <div v-if="!isProfitable" class="flex w-full justify-between">
-            <div>Time Till Profitability</div>
+            <div>Estimated Profitability Time</div>
             <div>
                 <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPrice">
                     <time-till-profitable :auction="auctionTransaction" />
