@@ -36,7 +36,7 @@ const trackTransaction = async function (
     } catch (error: any) {
         if (notifier) {
             notifier('error', {
-                content: `Transaction error: ${error?.message || 'unknown'}`,
+                content: `Transaction error: ${truncateText(error?.message || 'unknown')}`,
                 key: messageId,
                 duration: DEFAULT_NOTIFICATION_DURATION,
             });
