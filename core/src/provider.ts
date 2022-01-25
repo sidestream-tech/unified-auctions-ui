@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import NETWORKS from './constants/NETWORKS';
 
-type Provider = ethers.providers.JsonRpcProvider | ethers.providers.JsonRpcSigner;
+type Provider = ethers.providers.BaseProvider;
 const providers: Record<string, Provider> = {};
 
 const getProvider = function (network: string): Provider {
