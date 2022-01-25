@@ -7,7 +7,7 @@ import {
 } from 'auctions-core/src/constants/NETWORKS';
 import getWallet from '~/lib/wallet';
 
-const DEFAUT_NETWORK = 'mainnet';
+const DEFAUT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
 export const FAKE_NETWORK_NAME = 'stub';
 
 interface State {

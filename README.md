@@ -15,7 +15,7 @@ NOTE: Environment variables are accessible/available via the `secret` command. P
 #### Running
 
 ```sh
-secret export auction-ui/dev --format dotenv > ./frontend/.env
+secret export auction-ui/localhost/frontend --format dotenv > ./frontend/.env
 cd ./frontend && npm ci && npm run dev
 ```
 
