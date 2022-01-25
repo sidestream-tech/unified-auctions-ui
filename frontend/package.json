@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@nuxtjs/dotenv": "^1.4.1",
-    "animated-number-vue": "^1.0.0",
     "ant-design-vue": "^1.7.6",
     "auctions-core": "file:../core",
     "bignumber.js": "^9.0.1",
