@@ -4,11 +4,11 @@ import getMaker from './maker';
 import COLLATERALS from './constants/COLLATERALS';
 import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
 import { fetchCalcParametersByCollateralType } from './params';
-import trackTransaction from './tracker';
+import executeTransaction from './execute';
 import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
 import { getSupportedCollateralTypes } from './addresses';
-import getContract, { getClipperNameByCollateralType } from './contracts';
+import { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 
 const fetchAuctionsByType = async function (
@@ -161,9 +161,8 @@ export const restartAuction = async function (
     profitAddress: string,
     notifier?: Notifier
 ): Promise<string> {
-    const clipperContract = await getContract(network, getClipperNameByCollateralType(auction.collateralType));
-    const transactionPromise = clipperContract.redo(auction.auctionId, profitAddress);
-    return trackTransaction(transactionPromise, notifier, false);
+    const contractName = getClipperNameByCollateralType(auction.collateralType);
+    return executeTransaction(network, contractName, 'redo', [auction.auctionId, profitAddress], notifier, false);
 };
 
 export const bidOnTheAuction = async function (
@@ -174,13 +173,13 @@ export const bidOnTheAuction = async function (
 ): Promise<string> {
     const calleeAddress = getUniswapCalleeBySymbol(network, auction.collateralSymbol);
     const flashData = await getUniswapParametersByCollateral(network, auction.collateralType, profitAddress);
-    const contract = await getContract(network, getClipperNameByCollateralType(auction.collateralType));
-    const transaction = contract.take(
+    const contractName = getClipperNameByCollateralType(auction.collateralType);
+    const contractParameters = [
         convertNumberTo32Bytes(auction.auctionId),
         auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
         auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(),
         calleeAddress,
-        flashData
-    );
-    return trackTransaction(transaction, notifier);
+        flashData,
+    ];
+    return executeTransaction(network, contractName, 'take', contractParameters, notifier);
 };

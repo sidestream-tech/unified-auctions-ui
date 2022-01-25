@@ -1,27 +1,10 @@
 import type { Auction, AuctionTransaction, TransactionFees } from './types';
 import BigNumber from './bignumber';
 import { getExchangeRateBySymbol } from './uniswap';
-import { getNetworkConfigByType } from './constants/NETWORKS';
-import { ETH_NUMBER_OF_DIGITS } from './constants/UNITS';
-import { getCurrentGasPrice } from './gas';
+import { getGasPrice } from './gas';
 
-export const getGasPrice = async function (network: string): Promise<BigNumber | undefined> {
-    const networkConfig = getNetworkConfigByType(network);
-    if (networkConfig.gasPrice) {
-        return new BigNumber(networkConfig.gasPrice).shiftedBy(-ETH_NUMBER_OF_DIGITS);
-    }
-    try {
-        return await getCurrentGasPrice();
-    } catch (error) {
-        console.warn('Gas data is not available', error);
-    }
-};
-
-export const getApproximateTransactionFees = async function (network: string): Promise<TransactionFees | undefined> {
+export const getApproximateTransactionFees = async function (network: string): Promise<TransactionFees> {
     const gasPrice = await getGasPrice(network);
-    if (!gasPrice) {
-        return;
-    }
     const exchangeRate = await getExchangeRateBySymbol(network, 'ETH');
     const convertETHtoDAI = function (eth: BigNumber) {
         return eth.multipliedBy(exchangeRate);
