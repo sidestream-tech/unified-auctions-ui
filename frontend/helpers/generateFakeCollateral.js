@@ -6,6 +6,7 @@ export const generateFakeCollaterals = function () {
     const collaterals = [];
 
     for (const collateralObject of Object.values(COLLATERALS)) {
+        const isOnChain = faker.datatype.boolean();
         collaterals.push({
             ilk: collateralObject.ilk,
             symbol: collateralObject.symbol,
