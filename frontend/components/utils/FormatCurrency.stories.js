@@ -29,4 +29,12 @@ storiesOf('Utils/FormatCurrency', module)
     .add('No value', () => ({
         ...common,
         template: '<FormatCurrency currency="dai" />',
+    }))
+    .add('Number under 0.01', () => ({
+        ...common,
+        template: '<FormatCurrency :value="0.000454786546754578645678546874546789" currency="dai" />',
+    }))
+    .add('Number under 0.000001', () => ({
+        ...common,
+        template: '<FormatCurrency :value="0.0000000000001" currency="dai" />',
     }));

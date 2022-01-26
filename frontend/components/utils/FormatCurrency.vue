@@ -33,6 +33,10 @@ export default Vue.extend({
             if (this.value === null) {
                 return '';
             }
+            if (this.value < 0.01) {
+                const decimalCutOff = Math.abs(Math.floor(Math.log10(Number(this.value)))) + 1;
+                return parseFloat(parseFloat(this.value.toString()).toFixed(decimalCutOff)).toString();
+            }
             return this.value.toFixed(this.decimals);
         },
         sign(): string {
