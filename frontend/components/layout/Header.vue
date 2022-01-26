@@ -1,6 +1,6 @@
 <template>
     <div>
-        <StagingBanner v-if="isStagingEnvironment" />
+        <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
         <header class="bg-primary dark:bg-primary-dark">
             <nav class="flex items-center py-2 px-4 md:px-10">
                 <nuxt-link
@@ -102,9 +102,9 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isStagingEnvironment: {
-            type: Boolean,
-            default: false,
+        stagingBannerUrl: {
+            type: String,
+            default: undefined,
         },
     },
     computed: {
