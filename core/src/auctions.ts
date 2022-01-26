@@ -1,7 +1,7 @@
 import type { Auction, AuctionInitialInfo, Notifier } from './types';
 import BigNumber from './bignumber';
 import getMaker from './maker';
-import COLLATERALS from './constants/COLLATERALS';
+import fetchAuctionsByCollateralType from './fetch';
 import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
@@ -10,34 +10,6 @@ import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionPr
 import { getSupportedCollateralTypes } from './addresses';
 import { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
-
-const fetchAuctionsByType = async function (
-    collateralType: string,
-    maker: any,
-    network: string
-): Promise<AuctionInitialInfo[]> {
-    const protoAuctions = await maker.service('liquidation').getAllClips(collateralType);
-    const now = new Date();
-    return protoAuctions.map((protoAuction: any): AuctionInitialInfo => {
-        const isActive = protoAuction.active && protoAuction.endDate > now;
-        return {
-            network,
-            id: `${protoAuction.ilk}:${protoAuction.saleId}`,
-            auctionId: protoAuction.saleId,
-            collateralType: protoAuction.ilk,
-            collateralSymbol: COLLATERALS[protoAuction.ilk].symbol as string,
-            collateralAmount: new BigNumber(protoAuction.lot),
-            vaultAddress: protoAuction.usr,
-            debtDAI: new BigNumber(protoAuction.tab),
-            endDate: protoAuction.endDate,
-            initialPrice: new BigNumber(protoAuction.top),
-            startDate: protoAuction.created,
-            isActive,
-            isFinished: false,
-            isRestarting: false,
-        };
-    });
-};
 
 const enrichAuctionWithActualNumbers = async function (
     auction: AuctionInitialInfo,
@@ -128,12 +100,9 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
 };
 
 export const fetchAllInitialAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
-    const maker = await getMaker(network);
-    const collateralNames = await getSupportedCollateralTypes(network);
-
-    // get all auctions
-    const auctionGroupsPromises = collateralNames.map((collateralName: string) => {
-        return fetchAuctionsByType(collateralName, maker, network);
+    const collateralTypes = await getSupportedCollateralTypes(network);
+    const auctionGroupsPromises = collateralTypes.map((collateralType: string) => {
+        return fetchAuctionsByCollateralType(network, collateralType);
     });
     const auctionGroups = await Promise.all(auctionGroupsPromises);
     return auctionGroups.flat();
