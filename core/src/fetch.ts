@@ -1,11 +1,14 @@
 import type { AuctionInitialInfo, AuctionStatus } from './types';
+import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import getContract, { getClipperNameByCollateralType } from './contracts';
 import { RAD, RAY, WAD } from './constants/UNITS';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 
-const fetchMaximumAuctionDurationInSeconds = async function (
+const AUCTION_DURATION_CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
+
+const _fetchMaximumAuctionDurationInSeconds = async function (
     network: string,
     collateralType: string
 ): Promise<number> {
@@ -13,6 +16,12 @@ const fetchMaximumAuctionDurationInSeconds = async function (
     const tail = await contract.tail();
     return tail.toNumber();
 };
+
+const fetchMaximumAuctionDurationInSeconds = memoizee(_fetchMaximumAuctionDurationInSeconds, {
+    maxAge: AUCTION_DURATION_CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
 
 export const fetchAuctionStatus = async function (
     network: string,
