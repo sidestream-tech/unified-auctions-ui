@@ -1,6 +1,6 @@
 <template>
     <span v-if="value !== undefined" :class="{ 'text-primary dark:text-primary-light': isBelowZero }"
-        ><animated-number :value="formattedValue" />% {{ belowOrAbove }}</span
+        ><animated-number :value="percentage" />% {{ belowOrAbove }}</span
     >
 </template>
 
@@ -21,7 +21,7 @@ export default Vue.extend({
         },
     },
     computed: {
-        formattedValue(): number | BigNumber {
+        percentage(): number | BigNumber {
             if (BigNumber.isBigNumber(this.value)) {
                 return (this.value as BigNumber).absoluteValue().multipliedBy(100);
             }
