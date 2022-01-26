@@ -26,6 +26,15 @@ storiesOf('Utils/FormatCurrency', module)
         },
         template: '<FormatCurrency :value="amount" currency="dai" />',
     }))
+    .add('Big Number NaN', () => ({
+        ...common,
+        data() {
+            return {
+                amount: BigNumber("NaN"),
+            };
+        },
+        template: '<FormatCurrency :value="amount" currency="dai" />',
+    }))
     .add('No value', () => ({
         ...common,
         template: '<FormatCurrency currency="dai" />',

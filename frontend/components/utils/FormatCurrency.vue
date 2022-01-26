@@ -44,10 +44,8 @@ export default Vue.extend({
             return this.value > 0 ? '+' : '';
         },
         isValidNumber(): boolean {
-            if (BigNumber.isBigNumber(this.value)) {
-                if (this.value.toString() === 'NaN') {
-                    return false;
-                }
+            if (BigNumber.isBigNumber(this.value) && this.value.isNaN()) {
+                return false;
             }
 
             return !!this.value;
