@@ -12,6 +12,11 @@ export const getClipperNameByCollateralType = function (collateralType: string):
     return `MCD_CLIP_${suffix}`;
 };
 
+export const getJoinNameByCollateralType = function (collateralType: string): string {
+    const suffix = collateralType.toUpperCase().replace('-', '_');
+    return `MCD_JOIN_${suffix}`;
+};
+
 export const getContractAddressByName = async function (network: string, contractName: string): Promise<string> {
     const contractAddresses = await fetchContractsAddressesByNetwork(network);
     const contractAddress = contractAddresses[contractName];
