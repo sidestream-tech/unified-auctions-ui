@@ -44,7 +44,7 @@ const enrichAuctionWithActualNumbers = async function (
     network?: string
 ): Promise<Auction> {
     const maker = await getMaker(network);
-    if (!auction.isActive) {
+    if (!auction.isActive || auction.isFinished) {
         return {
             ...auction,
             unitPrice: new BigNumber(0),
@@ -67,7 +67,7 @@ const enrichAuctionWithActualNumbers = async function (
 };
 
 const enrichAuctionWithMarketValues = async function (auction: Auction, network: string): Promise<Auction> {
-    if (!auction.isActive || !auction.approximateUnitPrice) {
+    if (!auction.isActive || !auction.approximateUnitPrice || auction.isFinished) {
         return auction;
     }
     try {
@@ -98,7 +98,7 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
 };
 
 export const enrichAuctionWithPriceDrop = async function (auction: Auction): Promise<Auction> {
-    if (!auction.isActive) {
+    if (!auction.isActive || auction.isFinished) {
         return auction;
     }
     const params = await fetchCalcParametersByCollateralType(auction.network, auction.collateralType);
