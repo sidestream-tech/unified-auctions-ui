@@ -47,7 +47,7 @@ export default Vue.extend({
             if (BigNumber.isBigNumber(this.value) && this.value.isNaN()) {
                 return false;
             }
-            return !(this.value === undefined);
+            return !(this.value === undefined || this.value === null);
         },
     },
 });
