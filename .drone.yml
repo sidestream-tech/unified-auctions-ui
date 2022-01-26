@@ -90,8 +90,7 @@ data:
     - name: publish-frontend-production-on-tag
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend-production
       tags:
-        # - "${DRONE_TAG}"
-        - "${DRONE_COMMIT_SHA}"
+        - "${DRONE_TAG}"
       labels:
         - key: org.opencontainers.image.source
           value: https://github.com/sidestream-tech/unified-auctions-ui
@@ -108,8 +107,7 @@ data:
         - "main"
       trigger:
         event:
-          # - tag
-          - push
+          - tag
 
     # bot-twitter:main and bot-twitter:$MAIN_COMMIT_SHA
     - name: publish-bot-twitter-merge-main
@@ -145,8 +143,7 @@ data:
     - name: publish-bot-twitter-on-tag
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
       tags:
-        # - "${DRONE_TAG}"
-        - "${DRONE_COMMIT_SHA}"
+        - "${DRONE_TAG}"
       labels:
         - key: org.opencontainers.image.source
           value: https://github.com/sidestream-tech/unified-auctions-ui
@@ -156,8 +153,7 @@ data:
         - "main"
       trigger:
         event:
-          # - tag
-          - push
+          - tag
 
     # bot-twitter:pr-$PULL_REQUEST_NUMBER
     - name: publish-bot-twitter-on-pr-push
@@ -205,8 +201,7 @@ data:
         - publish-frontend-production-on-tag
       trigger:
         event:
-          # - tag
-          - push
+          - tag
       settings:
         helm_root_path: kubernetes/helm
         aws_target_eks_cluster_name: eks-cluster-sidestream
@@ -217,10 +212,8 @@ data:
         target_namespace: "auction-ui-production"
         release_name: "auction-ui"
         values_to_set:
-          # - frontend.deployment.tag=$DRONE_TAG
-          # - botTwitter.deployment.tag=$DRONE_TAG
-          - frontend.deployment.tag=$DRONE_COMMIT_SHA
-          - botTwitter.deployment.tag=$DRONE_COMMIT_SHA
+          - frontend.deployment.tag=$DRONE_TAG
+          - botTwitter.deployment.tag=$DRONE_TAG
 
   in_development_image_pipelines:
     - name: core-lint-build
