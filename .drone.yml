@@ -20,6 +20,8 @@ data:
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/infura_project_id
         - key: CONTACT_EMAIL
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/contact_email
+        - key: IS_STAGING_ENVIRONMENT
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/is_staging_environment
       tags_to_cache_from:
         - "main"
       trigger:
@@ -80,6 +82,8 @@ data:
           value_from_secret: auction-ui/auctions.makerdao.network/infura_project_id
         - key: CONTACT_EMAIL
           value_from_secret: auction-ui/auctions.makerdao.network/contact_email
+        - key: IS_STAGING_ENVIRONMENT
+          value_from_secret: auction-ui/auctions.makerdao.network/is_staging_environment
       tags_to_cache_from:
         - "main"
       trigger:
