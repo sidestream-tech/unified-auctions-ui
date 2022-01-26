@@ -14,6 +14,7 @@ export default {
         CONTACT_EMAIL: process.env.CONTACT_EMAIL || undefined,
         GITHUB_URL: pkg.repository.url,
         STAGING_BANNER_URL: process.env.STAGING_BANNER_URL || undefined,
+        DEFAULT_ETHEREUM_NETWORK: process.env.DEFAULT_ETHEREUM_NETWORK || 'mainnet',
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head
