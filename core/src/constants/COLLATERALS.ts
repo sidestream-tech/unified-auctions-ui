@@ -221,6 +221,36 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
     },
+    'MATIC-A': {
+        title: 'Matic',
+        ilk: 'MATIC-A',
+        symbol: 'MATIC',
+        decimals: 18,
+        uniswap: {
+            type: 'token',
+            route: ['ETH'],
+        },
+    },
+    'WBTC-B': {
+        title: 'Wrapped BTC',
+        ilk: 'WBTC-B',
+        symbol: 'WBTC',
+        decimals: 8,
+        uniswap: {
+            type: 'token',
+            route: ['ETH'],
+        },
+    },
+    'WBTC-C': {
+        title: 'Wrapped BTC',
+        ilk: 'WBTC-C',
+        symbol: 'WBTC',
+        decimals: 8,
+        uniswap: {
+            type: 'token',
+            route: ['ETH'],
+        },
+    },
     'UNIV2DAIETH-A': {
         title: 'UNIV2DAIETH LP',
         ilk: 'UNIV2DAIETH-A',
