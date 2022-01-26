@@ -52,8 +52,9 @@
                 :content="secondsBetweenPriceDrops"
                 trigger="hover"
             >
-                <span class="mr-1 text-red-500">error</span>
-                <span class="Error">...</span>
+                <p class="inline-block w-10 text-red-500 truncate">
+                    <span class="mr-1">{{ secondsBetweenPriceDrops }}</span>
+                </p>
             </Popover>
         </div>
         <div
