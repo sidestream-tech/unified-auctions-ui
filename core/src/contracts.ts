@@ -1,65 +1,48 @@
-import getProvider from './provider';
+import type { Contract, ContractInterface } from 'ethers';
 import { ethers } from 'ethers';
-import CHAINLOG from './abis/CHAINLOG.json';
-import { CHAINLOG_ADDRESS } from './constants/NETWORKS';
-import memoizee from 'memoizee';
-import COLLATERALS, { getAllCollateralTypes } from './constants/COLLATERALS';
+import getProvider from './provider';
+import { fetchContractsAddressesByNetwork } from './addresses';
+import MCD_VAT from './abis/MCD_VAT.json';
+import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
+import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
+import MCD_CLIP from './abis/MCD_CLIP.json';
 
-const CHAINLOG_CACHE = 24 * 60 * 60 * 1000;
-
-const _fetchContractsAddressesByNetwork = async function (
-    network: string
-): Promise<Record<string, string | undefined>> {
-    const provider = getProvider(network);
-    const contract = await new ethers.Contract(CHAINLOG_ADDRESS, CHAINLOG, provider);
-
-    const contractNames: string[] = await contract.list();
-    const contracts: Record<string, string | undefined> = {};
-
-    await Promise.all(
-        contractNames.map(async contractName => {
-            const key = ethers.utils.parseBytes32String(contractName);
-            contracts[key] = await contract.getAddress(contractName);
-        })
-    );
-    return contracts;
+export const getClipperNameByCollateralType = function (collateralType: string): string {
+    const suffix = collateralType.toUpperCase().replace('-', '_');
+    return `MCD_CLIP_${suffix}`;
 };
 
-export const fetchContractsAddressesByNetwork = memoizee(_fetchContractsAddressesByNetwork, {
-    maxAge: CHAINLOG_CACHE,
-    promise: true,
-    length: 1,
-});
-
-export const isCollateralSupported = async function (network: string, collateral: string): Promise<boolean> {
-    const contracts = await fetchContractsAddressesByNetwork(network);
-    return !!contracts[collateral];
-};
-
-export const getSupportedCollateralTypes = async function (network: string): Promise<string[]> {
-    const allCollateralTypes = getAllCollateralTypes();
-    const contracts = await fetchContractsAddressesByNetwork(network);
-
-    return await Promise.all(
-        allCollateralTypes.filter(collateralType => {
-            return !!contracts[COLLATERALS[collateralType].symbol];
-        })
-    );
-};
-
-export const checkAllSupportedCollaterals = async function (network: string): Promise<void> {
-    const errors = [];
-    const successes = [];
-    for (const collateral of getAllCollateralTypes()) {
-        const isSupported = await isCollateralSupported(network, COLLATERALS[collateral].symbol);
-
-        if (isSupported) {
-            successes.push(collateral);
-            console.info(`${collateral} is supported on the network: ${network}`);
-        } else {
-            errors.push(collateral);
-            console.error(`${collateral} is NOT supported on the network: ${network}`);
-        }
+export const getContractAddressByName = async function (network: string, contractName: string): Promise<string> {
+    const contractAddresses = await fetchContractsAddressesByNetwork(network);
+    const contractAddress = contractAddresses[contractName];
+    if (!contractAddress) {
+        throw new Error(`No contract address found for "${contractName}"`);
     }
-    console.info('checkAllSupportedCollaterals finished, not supported collaterals:', errors, successes);
+    return contractAddress;
 };
+
+const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {
+    if (contractName === 'MCD_VAT') {
+        return MCD_VAT;
+    }
+    if (contractName === 'MCD_JOIN_DAI') {
+        return MCD_JOIN_DAI;
+    }
+    if (contractName.startsWith('MCD_CLIP_CALC_')) {
+        return MCD_CLIP_CALC;
+    }
+    if (contractName.startsWith('MCD_CLIP_')) {
+        return MCD_CLIP;
+    }
+    throw new Error(`No contract interface found for "${contractName}"`);
+};
+
+const getContract = async function (network: string, contractName: string): Promise<Contract> {
+    const contractAddress = await getContractAddressByName(network, contractName);
+    const contractInterface = await getContractInterfaceByName(contractName);
+    const provider = getProvider(network);
+    const contract = await new ethers.Contract(contractAddress, contractInterface, provider);
+    return contract;
+};
+
+export default getContract;

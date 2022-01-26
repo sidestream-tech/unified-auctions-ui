@@ -4,7 +4,7 @@ import McdPlugin from '@makerdao/dai-plugin-mcd';
 // import LiquidationPlugin from '@makerdao/dai-plugin-liquidations';
 import LiquidationPlugin from '@sidestream/dai-plugin-liquidations';
 import { getNetworkConfigByType } from './constants/NETWORKS';
-import { fetchContractsAddressesByNetwork } from './contracts';
+import { fetchContractsAddressesByNetwork } from './addresses';
 
 let globalMaker: typeof Maker;
 let globalNetwork: string;

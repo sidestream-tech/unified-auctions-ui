@@ -1,6 +1,6 @@
 import { getCollateralConfigBySymbol } from './constants/COLLATERALS';
 import { DAI_NUMBER_OF_DIGITS } from './constants/UNITS';
-import { fetchContractsAddressesByNetwork } from './contracts';
+import { fetchContractsAddressesByNetwork } from './addresses';
 
 export const getTokenAddressByNetworkAndSymbol = async function (network: string, symbol: string): Promise<string> {
     let tokenName = symbol.toUpperCase();
