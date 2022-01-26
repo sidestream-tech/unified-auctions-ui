@@ -38,4 +38,5 @@ Help on both things is given in the linked resources above.
 -   `DEMO_MODE`: (optional) When set to true the page will only show a "Coming soon" screen. Can be used for production while the page is not ready yet.
 -   `PRODUCTION_DOMAIN`: (optional) Required in order to enable [plausible.io statistics](https://github.com/moritzsternemann/vue-plausible#configuration). In addition to adding it here, the domain (e.g. `auctions.makerdao.network`) should also be registered within [plausible dashboard](https://plausible.io/).
 -   `CONTACT_EMAIL`: (optional) Required in order to display contact link in the footer. This email should be able to accept and manage bug reports and other contact requests.
+-   `STAGING_BANNER_URL`: (optional) When set a banner will be displayed, warning the user that they are using a staging version. The text will use `STAGING_BANNER_URL` as a link to production UI.
 -   `DEFAULT_ETHEREUM_NETWORK`: (optional) Can be set to change the default ethereum network. Default is mainnet.

@@ -4,10 +4,12 @@ import getMaker from './maker';
 import COLLATERALS from './constants/COLLATERALS';
 import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
 import { fetchCalcParametersByCollateralType } from './params';
-import trackTransaction from './tracker';
+import executeTransaction from './execute';
 import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
-import { getSupportedCollateralTypes } from './contracts';
+import { getSupportedCollateralTypes } from './addresses';
+import { getClipperNameByCollateralType } from './contracts';
+import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 
 const fetchAuctionsByType = async function (
     collateralType: string,
@@ -42,7 +44,7 @@ const enrichAuctionWithActualNumbers = async function (
     network?: string
 ): Promise<Auction> {
     const maker = await getMaker(network);
-    if (!auction.isActive) {
+    if (!auction.isActive || auction.isFinished) {
         return {
             ...auction,
             unitPrice: new BigNumber(0),
@@ -65,7 +67,7 @@ const enrichAuctionWithActualNumbers = async function (
 };
 
 const enrichAuctionWithMarketValues = async function (auction: Auction, network: string): Promise<Auction> {
-    if (!auction.isActive || !auction.approximateUnitPrice) {
+    if (!auction.isActive || !auction.approximateUnitPrice || auction.isFinished) {
         return auction;
     }
     try {
@@ -96,7 +98,7 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
 };
 
 export const enrichAuctionWithPriceDrop = async function (auction: Auction): Promise<Auction> {
-    if (!auction.isActive) {
+    if (!auction.isActive || auction.isFinished) {
         return auction;
     }
     const params = await fetchCalcParametersByCollateralType(auction.network, auction.collateralType);
@@ -154,14 +156,13 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
 };
 
 export const restartAuction = async function (
-    collateralType: string,
-    id: number,
-    profitAddress: string
+    network: string,
+    auction: Auction,
+    profitAddress: string,
+    notifier?: Notifier
 ): Promise<string> {
-    const maker = await getMaker();
-    const clipperContract = maker.service('liquidation')._clipperContractByIlk(collateralType);
-    const transaction = clipperContract.redo(id, profitAddress);
-    return transaction;
+    const contractName = getClipperNameByCollateralType(auction.collateralType);
+    return executeTransaction(network, contractName, 'redo', [auction.auctionId, profitAddress], notifier, false);
 };
 
 export const bidOnTheAuction = async function (
@@ -170,18 +171,15 @@ export const bidOnTheAuction = async function (
     profitAddress: string,
     notifier?: Notifier
 ): Promise<string> {
-    const maker = await getMaker();
     const calleeAddress = getUniswapCalleeBySymbol(network, auction.collateralSymbol);
     const flashData = await getUniswapParametersByCollateral(network, auction.collateralType, profitAddress);
-    const transaction = maker
-        .service('liquidation')
-        .take(
-            auction.collateralType,
-            auction.auctionId,
-            auction.collateralAmount.toFixed(WAD_NUMBER_OF_DIGITS),
-            auction.unitPrice.toFixed(RAY_NUMBER_OF_DIGITS),
-            calleeAddress,
-            flashData
-        );
-    return trackTransaction(transaction, notifier);
+    const contractName = getClipperNameByCollateralType(auction.collateralType);
+    const contractParameters = [
+        convertNumberTo32Bytes(auction.auctionId),
+        auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
+        auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(),
+        calleeAddress,
+        flashData,
+    ];
+    return executeTransaction(network, contractName, 'take', contractParameters, notifier);
 };
