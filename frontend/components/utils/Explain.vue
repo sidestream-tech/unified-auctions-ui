@@ -3,7 +3,7 @@
         v-model="isVisible"
         trigger="click"
         :title="displayTitle"
-        :overlay-style="{ width: '200px' }"
+        :overlay-style="{ width: '200px', zIndex: '35' }"
         :get-popup-container="() => $el.parentElement"
         overlay-class-name="ExplainOverlay"
         :placement="placement"
