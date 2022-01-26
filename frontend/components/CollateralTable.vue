@@ -18,19 +18,19 @@
             :class="{ Loading: isLoading(record) }"
         >
             <FormatCurrency v-if="validBigNumber(marketUnitPrice)" :value="marketUnitPrice" currency="DAI" />
-            <div v-else>
+            <div v-else class="w-40 truncate">
                 <div v-if="isLoading(record)" class="flex items-center">
                     <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
                     <span>Loading...</span>
                 </div>
                 <Popover
                     v-else
-                    placement="top"
+                    placement="topLeft"
                     title="Error while fetching Uniswap Market Value"
                     :content="marketUnitPrice"
                     trigger="hover"
                 >
-                    <span class="mr-1 text-red-500">error</span>
+                    <span class="mr-1 text-red-500">{{ marketUnitPrice }}</span>
                     <span class="Error">...</span>
                 </Popover>
             </div>
