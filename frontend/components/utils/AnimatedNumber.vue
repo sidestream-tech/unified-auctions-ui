@@ -1,6 +1,6 @@
 <template>
     <animated-number
-        v-if="value || value === 0"
+        v-if="isValidNumber"
         :value="formatValue(value)"
         :format-value="formatValue"
         :duration="duration"
@@ -27,6 +27,14 @@ export default Vue.extend({
         decimalPlaces: {
             type: Number,
             default: 2,
+        },
+    },
+    computed: {
+        isValidNumber(): boolean {
+            if (BigNumber.isBigNumber(this.value) && this.value.isNaN()) {
+                return false;
+            }
+            return !(this.value === undefined);
         },
     },
     methods: {
