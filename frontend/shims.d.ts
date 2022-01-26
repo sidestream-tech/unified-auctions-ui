@@ -4,6 +4,11 @@ declare module '*.svg' {
     export default Vue;
 }
 
+declare module 'animated-number-vue' {
+    import Vue from 'vue';
+    export default Vue;
+}
+
 // allow typescript to properly process image imports
 declare module '*.png' {
     const content: string;
@@ -24,6 +29,3 @@ declare interface SelectOption {
     value: string;
     icon?: object;
 }
-
-// As there are no types for this package I defined the module, to silence any warning we get.
-declare module 'animated-number-vue' {}
