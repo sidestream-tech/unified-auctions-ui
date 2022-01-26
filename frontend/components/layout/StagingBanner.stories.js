@@ -7,5 +7,5 @@ const common = {
 
 storiesOf('Layout/StagingBanner', module).add('Default', () => ({
     ...common,
-    template: `<StagingBanner :url="https://auctions.makerdao.network/" />`,
+    template: `<StagingBanner url="https://auctions.makerdao.network/" />`,
 }));
