@@ -1,5 +1,5 @@
 <template>
-    <div class="SplitLayoutContainer">
+    <div :class="isStagingEnvironment ? 'SplitLayoutStagingContainer' : 'SplitLayoutContainer'">
         <SplitLayout :step.sync="step">
             <template #step0>
                 <div v-if="isExplanationsShown" class="h-1/2">
@@ -117,6 +117,9 @@ export default Vue.extend({
         selectedAuction(): AuctionTransaction | null {
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
         },
+        isStagingEnvironment() {
+            return process.env.IS_STAGING_ENVIRONMENT;
+        },
     },
     watch: {
         selectedAuctionId: {
@@ -153,6 +156,12 @@ export default Vue.extend({
 .SplitLayoutContainer {
     height: calc(100vh - 4rem);
 }
+
+.SplitLayoutStagingContainer {
+    margin-top: 2.3rem;
+    height: calc(100vh - 6.3rem);
+}
+
 .MainTextContainer {
     min-height: calc(100vh - 10rem);
 }

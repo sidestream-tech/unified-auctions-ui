@@ -8,6 +8,7 @@
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
+            :is-staging-environment="isStagingEnvironment"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
         />
@@ -88,6 +89,9 @@ export default Vue.extend({
             set(newIsDarkMode) {
                 this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
+        },
+        isStagingEnvironment() {
+            return process.env.IS_STAGING_ENVIRONMENT;
         },
     },
     methods: {
