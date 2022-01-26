@@ -21,6 +21,14 @@ export declare interface AuctionInitialInfo {
     initialPrice: BigNumber;
 }
 
+export declare interface AuctionStatus {
+    isActive: boolean;
+    debtDAI: BigNumber;
+    collateralAmount: BigNumber;
+    unitPrice: BigNumber;
+    totalPrice: BigNumber;
+}
+
 export declare interface Auction extends AuctionInitialInfo {
     unitPrice: BigNumber;
     totalPrice: BigNumber;

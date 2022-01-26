@@ -1,21 +1,19 @@
 import type { Auction, AuctionInitialInfo, Notifier } from './types';
 import BigNumber from './bignumber';
-import getMaker from './maker';
-import fetchAuctionsByCollateralType from './fetch';
+import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
 import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
-import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
 import { getSupportedCollateralTypes } from './addresses';
 import { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 
 const enrichAuctionWithActualNumbers = async function (
-    auction: AuctionInitialInfo,
-    network?: string
+    network: string,
+    auction: AuctionInitialInfo
 ): Promise<Auction> {
-    const maker = await getMaker(network);
     if (!auction.isActive) {
         return {
             ...auction,
@@ -24,17 +22,11 @@ const enrichAuctionWithActualNumbers = async function (
             totalPrice: new BigNumber(0),
         };
     }
-    const status = await maker.service('liquidation').getStatus(auction.collateralType, auction.auctionId);
-    const unitPrice = new BigNumber(status.price).div(RAY);
-    const collateralAmount = new BigNumber(status.lot).div(WAD);
+    const auctionStatus = await fetchAuctionStatus(network, auction.collateralType, auction.auctionId);
     return {
         ...auction,
-        isActive: !status.needsRedo,
-        debtDAI: new BigNumber(status.tab).div(RAD),
-        collateralAmount,
-        unitPrice,
-        approximateUnitPrice: unitPrice,
-        totalPrice: collateralAmount.multipliedBy(unitPrice),
+        ...auctionStatus,
+        approximateUnitPrice: auctionStatus.unitPrice,
     };
 };
 
@@ -113,7 +105,7 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
 
     // enrich them with statuses
     const auctionsWithStatusesPromises = auctions.map((auction: AuctionInitialInfo) =>
-        enrichAuctionWithActualNumbers(auction, network)
+        enrichAuctionWithActualNumbers(network, auction)
     );
     const auctionsWithStatuses = await Promise.all(auctionsWithStatusesPromises);
 

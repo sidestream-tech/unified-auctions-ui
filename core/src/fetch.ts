@@ -1,8 +1,9 @@
-import type { AuctionInitialInfo } from './types';
+import type { AuctionInitialInfo, AuctionStatus } from './types';
+import BigNumber from './bignumber';
 import getContract, { getClipperNameByCollateralType } from './contracts';
 import { RAD, RAY, WAD } from './constants/UNITS';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
-import BigNumber from './bignumber';
+import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 
 const fetchMaximumAuctionDurationInSeconds = async function (
     network: string,
@@ -11,6 +12,25 @@ const fetchMaximumAuctionDurationInSeconds = async function (
     const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
     const tail = await contract.tail();
     return tail.toNumber();
+};
+
+export const fetchAuctionStatus = async function (
+    network: string,
+    collateralType: string,
+    auctionId: number
+): Promise<AuctionStatus> {
+    const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
+    const statusData = await contract.getStatus(convertNumberTo32Bytes(auctionId));
+    const unitPrice = new BigNumber(statusData.price._hex).div(RAY);
+    const collateralAmount = new BigNumber(statusData.lot._hex).div(WAD);
+    const debtDAI = new BigNumber(statusData.tab._hex).div(RAD);
+    return {
+        isActive: !statusData.needsRedo,
+        collateralAmount,
+        debtDAI,
+        unitPrice,
+        totalPrice: collateralAmount.multipliedBy(unitPrice),
+    };
 };
 
 const fetchAuctionByCollateralTypeAndAuctionId = async function (
