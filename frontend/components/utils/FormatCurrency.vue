@@ -1,9 +1,9 @@
 <template>
     <span>
-        {{ sign }}
-        <animated-number v-if="isValidNumber" :value="value" :decimal-places="decimals" />
-        <span v-else-if="value">NaN</span>
-        <span class="uppercase"> {{ currency }}</span>
+        {{ sign }}<animated-number v-if="isValidNumber" :value="value" :decimal-places="decimals" /><span
+            v-else-if="value"
+            >NaN</span
+        ><span class="uppercase"> {{ currency }}</span>
     </span>
 </template>
 
