@@ -7,7 +7,7 @@ images:
   secretName: "sidestream-github"
 
 awsChamberAccountSecretName: "sidestream-tech-chamber-read-secret"
-repoPrefix: "ghcr.io/sidestream-tech/auction-ui/"
+repoPrefix: "ghcr.io/sidestream-tech/unified-auctions-ui/"
 
 frontend:
   name: "frontend"

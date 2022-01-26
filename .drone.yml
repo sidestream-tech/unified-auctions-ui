@@ -4,7 +4,7 @@ data:
   builds:
     # frontend:main and frontend:$MAIN_COMMIT_SHA
     - name: publish-frontend-merge-main
-      repository: ghcr.io/sidestream-tech/auction-ui/frontend
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend
       tags:
         - "main"
         - "${DRONE_COMMIT_SHA}"
@@ -30,7 +30,7 @@ data:
 
     # frontend no tag, just test production build
     - name: build-frontend-to-test-production-build
-      repository: ghcr.io/sidestream-tech/auction-ui/frontend
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend
       path_to_dockerfile: frontend/Dockerfile
       path_to_context: ./
       tags_to_cache_from:
@@ -42,7 +42,7 @@ data:
     # frontend:pr-$PULL_REQUEST_NUMBER
     - name: publish-frontend-on-pr-push
       target: development
-      repository: ghcr.io/sidestream-tech/auction-ui/frontend
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend
       tags:
         - "pr-${DRONE_PULL_REQUEST}"
       labels:
@@ -65,7 +65,7 @@ data:
 
     # frontend-makerdao:$RELEASE_TAG
     - name: publish-frontend-makerdao-on-tag
-      repository: ghcr.io/sidestream-tech/auction-ui/frontend-makerdao
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend-makerdao
       tags:
         - "${DRONE_TAG}"
       labels:
@@ -88,7 +88,7 @@ data:
 
     # frontend-production:$RELEASE_TAG
     - name: publish-frontend-production-on-tag
-      repository: ghcr.io/sidestream-tech/auction-ui/frontend-production
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend-production
       tags:
         # - "${DRONE_TAG}"
         - "${DRONE_COMMIT_SHA}"
@@ -113,7 +113,7 @@ data:
 
     # bot-twitter:main and bot-twitter:$MAIN_COMMIT_SHA
     - name: publish-bot-twitter-merge-main
-      repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
       tags:
         - "main"
         - "${DRONE_COMMIT_SHA}"
@@ -132,7 +132,7 @@ data:
 
     # bot-twitter no tag, just test production build
     - name: build-bot-twitter-to-test-production-build
-      repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
       path_to_dockerfile: bot-twitter/Dockerfile
       path_to_context: ./
       tags_to_cache_from:
@@ -143,7 +143,7 @@ data:
 
     # bot-twitter:$RELEASE_TAG
     - name: publish-bot-twitter-on-tag
-      repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
       tags:
         # - "${DRONE_TAG}"
         - "${DRONE_COMMIT_SHA}"
@@ -162,7 +162,7 @@ data:
     # bot-twitter:pr-$PULL_REQUEST_NUMBER
     - name: publish-bot-twitter-on-pr-push
       target: development
-      repository: ghcr.io/sidestream-tech/auction-ui/bot-twitter
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
       tags:
         - "pr-${DRONE_PULL_REQUEST}"
       labels:
@@ -226,7 +226,7 @@ data:
     - name: core-lint-build
       type: kubernetes
       depends_on: [publish-frontend-on-pr-push]
-      image: ghcr.io/sidestream-tech/auction-ui/frontend:pr-${DRONE_PULL_REQUEST}
+      image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:pr-${DRONE_PULL_REQUEST}
       workdir: /core
       steps_parallel:
         - name: lint
@@ -239,7 +239,7 @@ data:
     - name: frontend-lint-test
       type: kubernetes
       depends_on: [publish-frontend-on-pr-push]
-      image: ghcr.io/sidestream-tech/auction-ui/frontend:pr-${DRONE_PULL_REQUEST}
+      image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:pr-${DRONE_PULL_REQUEST}
       workdir: /frontend
       steps_parallel:
         - name: lint
@@ -252,7 +252,7 @@ data:
     - name: bot-twitter-lint
       type: kubernetes
       depends_on: [publish-bot-twitter-on-pr-push]
-      image: ghcr.io/sidestream-tech/auction-ui/bot-twitter:pr-${DRONE_PULL_REQUEST}
+      image: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter:pr-${DRONE_PULL_REQUEST}
       workdir: /bot-twitter
       steps_parallel:
         - name: lint
