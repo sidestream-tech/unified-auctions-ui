@@ -30,7 +30,7 @@ storiesOf('Utils/FormatCurrency', module)
         ...common,
         data() {
             return {
-                amount: BigNumber("NaN"),
+                amount: BigNumber('NaN'),
             };
         },
         template: '<FormatCurrency :value="amount" currency="dai" />',
