@@ -4,6 +4,8 @@ declare module '*.svg' {
     export default Vue;
 }
 
+declare module 'animated-number-vue' {}
+
 // allow typescript to properly process image imports
 declare module '*.png' {
     const content: string;
