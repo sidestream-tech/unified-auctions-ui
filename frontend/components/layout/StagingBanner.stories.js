@@ -7,5 +7,5 @@ const common = {
 
 storiesOf('Layout/StagingBanner', module).add('Default', () => ({
     ...common,
-    template: `<StagingBanner />`,
+    template: `<StagingBanner url="https://example.com/" />`,
 }));
