@@ -13,7 +13,7 @@ export default {
         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,
         CONTACT_EMAIL: process.env.CONTACT_EMAIL || undefined,
         GITHUB_URL: pkg.repository.url,
-        IS_STAGING_ENVIRONMENT: process.env.IS_STAGING_ENVIRONMENT || false,
+        IS_STAGING_ENVIRONMENT: Boolean(process.env.IS_STAGING_ENVIRONMENT) || false,
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head
