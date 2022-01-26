@@ -1,7 +1,7 @@
 <template>
     <animated-number
         v-if="value || value === 0"
-        :value="value.toString()"
+        :value="formatValue(value)"
         :format-value="formatValue"
         :duration="duration"
     />

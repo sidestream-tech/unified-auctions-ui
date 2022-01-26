@@ -35,6 +35,10 @@ storiesOf('Utils/FormatCurrency', module)
         },
         template: '<FormatCurrency :value="amount" currency="dai" />',
     }))
+    .add('With Zero', () => ({
+        ...common,
+        template: '<FormatCurrency :value="0" currency="dai" />',
+    }))
     .add('No value', () => ({
         ...common,
         template: '<FormatCurrency currency="dai" />',
