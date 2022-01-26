@@ -21,8 +21,8 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
-        isStagingEnvironment() {
-            return process.env.IS_STAGING_ENVIRONMENT;
+        isStagingEnvironment(): boolean {
+            return !!process.env.STAGING_BANNER_URL;
         },
     },
 });
