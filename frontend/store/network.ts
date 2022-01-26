@@ -7,7 +7,7 @@ import {
 } from 'auctions-core/src/constants/NETWORKS';
 import getWallet from '~/lib/wallet';
 
-const DEFAUT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
+const DEFAULT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
 export const FAKE_NETWORK_NAME = 'stub';
 
 interface State {
@@ -34,7 +34,7 @@ export const getters = {
     getPageNetwork(_state: State, _getters: any, rootState: any) {
         const pageNetwork = rootState.route.query.network;
         if (!pageNetwork) {
-            return DEFAUT_NETWORK;
+            return DEFAULT_NETWORK;
         }
         return pageNetwork;
     },
