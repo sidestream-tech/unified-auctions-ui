@@ -46,7 +46,8 @@ export const getSupportedCollateralTypes = async function (network: string): Pro
     const addresses = await fetchContractsAddressesByNetwork(network);
 
     return allCollateralTypes.filter(collateralType => {
-        return !!addresses[COLLATERALS[collateralType].symbol];
+        const suffix = collateralType.toUpperCase().replace('-', '_');
+        return !!addresses[COLLATERALS[collateralType].symbol] && !!addresses[`MCD_CLIP_${suffix}`];
     });
 };
 
