@@ -89,8 +89,8 @@ export default class MetaMask extends AbstractWallet {
         if (!(this.constructor as typeof MetaMask).isInterfaceReady) {
             return;
         }
-        window.ethereum.on('accountsChanged', this.accountsChangedHandler);
-        window.ethereum.on('chainChanged', this.networkChangedHandler);
+        window.ethereum.on('accountsChanged', this.accountsChangedHandler.bind(this));
+        window.ethereum.on('chainChanged', this.networkChangedHandler.bind(this));
     }
 
     public teardown() {
@@ -98,7 +98,7 @@ export default class MetaMask extends AbstractWallet {
             return;
         }
         window.$nuxt.$store.dispatch('network/setWalletChainId', undefined);
-        window.ethereum.removeListener('accountsChanged', this.accountsChangedHandler);
-        window.ethereum.removeListener('chainChanged', this.networkChangedHandler);
+        window.ethereum.removeListener('accountsChanged', this.accountsChangedHandler.bind(this));
+        window.ethereum.removeListener('chainChanged', this.networkChangedHandler.bind(this));
     }
 }
