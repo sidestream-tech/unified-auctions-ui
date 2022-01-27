@@ -77,13 +77,14 @@ export const actions = {
     },
     async fetchWalletAuthorizationStatus({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         const walletAddress = rootGetters['wallet/getAddress'];
+        const network = rootGetters['network/getMakerNetwork'];
         if (!walletAddress) {
             commit('setIsWalletAuthorizationDone', false);
             return;
         }
         commit('setIsWalletAuthorizationLoading', true);
         try {
-            const isAuthorized = await getWalletAuthorizationStatus(walletAddress);
+            const isAuthorized = await getWalletAuthorizationStatus(network, walletAddress);
             commit('setIsWalletAuthorizationDone', isAuthorized);
             return isAuthorized;
         } catch (error) {
@@ -94,10 +95,11 @@ export const actions = {
             commit('setIsWalletAuthorizationLoading', false);
         }
     },
-    async authorizeWallet({ commit, dispatch }: ActionContext<State, State>) {
+    async authorizeWallet({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
         try {
-            await authorizeWallet(false, notifier);
+            await authorizeWallet(network, false, notifier);
             dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
@@ -105,10 +107,11 @@ export const actions = {
             commit('setIsWalletAuthorizationLoading', false);
         }
     },
-    async deauthorizeWallet({ commit, dispatch }: ActionContext<State, State>) {
+    async deauthorizeWallet({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
         try {
-            await authorizeWallet(true, notifier);
+            await authorizeWallet(network, true, notifier);
             dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
@@ -121,13 +124,14 @@ export const actions = {
         collateralType: string
     ) {
         const walletAddress = rootGetters['wallet/getAddress'];
+        const network = rootGetters['network/getMakerNetwork'];
         if (!walletAddress) {
             commit('setIsWalletAuthorizationDone', false);
             return;
         }
         commit('setIsCollateralAuthorizationLoading', true);
         try {
-            const isAuthorized = await getCollateralAuthorizationStatus(collateralType, walletAddress);
+            const isAuthorized = await getCollateralAuthorizationStatus(network, collateralType, walletAddress);
             if (isAuthorized) {
                 commit('addCollateralAuthorization', collateralType);
             } else {
@@ -144,10 +148,11 @@ export const actions = {
             commit('setIsCollateralAuthorizationLoading', false);
         }
     },
-    async authorizeCollateral({ commit, dispatch }: ActionContext<State, State>, collateralType: string) {
+    async authorizeCollateral({ commit, dispatch, rootGetters }: ActionContext<State, State>, collateralType: string) {
         commit('setIsCollateralAuthorizationLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
         try {
-            await authorizeCollateral(collateralType, false, notifier);
+            await authorizeCollateral(network, collateralType, false, notifier);
             dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
@@ -155,10 +160,14 @@ export const actions = {
             commit('setIsCollateralAuthorizationLoading', false);
         }
     },
-    async deauthorizeCollateral({ commit, dispatch }: ActionContext<State, State>, collateralType: string) {
+    async deauthorizeCollateral(
+        { commit, dispatch, rootGetters }: ActionContext<State, State>,
+        collateralType: string
+    ) {
         commit('setIsCollateralAuthorizationLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
         try {
-            await authorizeCollateral(collateralType, true, notifier);
+            await authorizeCollateral(network, collateralType, true, notifier);
             dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);

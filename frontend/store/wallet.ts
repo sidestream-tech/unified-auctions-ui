@@ -1,6 +1,5 @@
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
-import { addMakerAccount } from 'auctions-core/src/maker';
 import getWallet, { WALLETS } from '~/lib/wallet';
 
 interface State {
@@ -61,19 +60,13 @@ export const actions = {
             dispatch('authorizations/reset', undefined, { root: true });
         }
     },
-    async connect({ commit, rootGetters, dispatch }: ActionContext<State, State>, walletType: string): Promise<void> {
+    async connect({ commit, dispatch }: ActionContext<State, State>, walletType: string): Promise<void> {
         dispatch('authorizations/reset', undefined, { root: true });
         commit('setIsLoading', true);
         try {
             const wallet = getWallet(walletType);
             await wallet.connect();
             commit('setAddress', wallet.address);
-            if (wallet.address) {
-                const network = rootGetters['network/getMakerNetwork'];
-                if (network) {
-                    await addMakerAccount(wallet.address, network);
-                }
-            }
             commit('setWalletType', walletType);
         } catch (error) {
             message.error(`Wallet connection error: ${error.message}`);
