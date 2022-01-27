@@ -5,16 +5,6 @@ import { setProvider } from 'auctions-core/src/provider';
 import MetaMaskLogo from '~/assets/icons/wallets/metamask.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
 
-const getProvider = function (): ethers.providers.JsonRpcProvider {
-    return new ethers.providers.Web3Provider(window.ethereum, 'any');
-};
-
-const getSigner = async function (): Promise<ethers.providers.JsonRpcSigner> {
-    const provider = getProvider();
-    await provider.send('eth_requestAccounts', []);
-    return provider.getSigner();
-};
-
 export default class MetaMask extends AbstractWallet {
     public static title = 'Metamask';
     public static icon = MetaMaskLogo;
@@ -48,13 +38,23 @@ export default class MetaMask extends AbstractWallet {
         return this.addresses[0].toLowerCase();
     }
 
+    getProvider(): ethers.providers.JsonRpcProvider {
+        return new ethers.providers.Web3Provider(window.ethereum, 'any');
+    }
+
+    async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
+        const provider = this.getProvider();
+        await provider.send('eth_requestAccounts', []);
+        return provider.getSigner();
+    }
+
     public async connect(): Promise<void> {
         const constructor = this.constructor as typeof MetaMask;
         if (!constructor.isConnected) {
             message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
             return;
         }
-        const signer = await getSigner();
+        const signer = await this.getSigner();
         this.addresses = [await signer.getAddress()];
         this.networkChangedHandler();
         this.setup();
@@ -66,14 +66,14 @@ export default class MetaMask extends AbstractWallet {
             message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
             return;
         }
-        const provider = getProvider();
+        const provider = this.getProvider();
         const chainId = getChainIdByNetworkType(network);
         await provider.send('wallet_switchEthereumChain', [{ chainId }]);
     }
 
     public async networkChangedHandler() {
         const networkType = getNetworkTypeByChainId(window.ethereum.chainId);
-        const signer = await getSigner();
+        const signer = await this.getSigner();
         if (networkType) {
             setProvider(networkType, signer as any);
         }
@@ -89,8 +89,8 @@ export default class MetaMask extends AbstractWallet {
         if (!(this.constructor as typeof MetaMask).isInterfaceReady) {
             return;
         }
-        window.ethereum.on('accountsChanged', this.accountsChangedHandler);
-        window.ethereum.on('chainChanged', this.networkChangedHandler);
+        window.ethereum.on('accountsChanged', this.accountsChangedHandler.bind(this));
+        window.ethereum.on('chainChanged', this.networkChangedHandler.bind(this));
     }
 
     public teardown() {
@@ -98,7 +98,7 @@ export default class MetaMask extends AbstractWallet {
             return;
         }
         window.$nuxt.$store.dispatch('network/setWalletChainId', undefined);
-        window.ethereum.removeListener('accountsChanged', this.accountsChangedHandler);
-        window.ethereum.removeListener('chainChanged', this.networkChangedHandler);
+        window.ethereum.removeListener('accountsChanged', this.accountsChangedHandler.bind(this));
+        window.ethereum.removeListener('chainChanged', this.networkChangedHandler.bind(this));
     }
 }
