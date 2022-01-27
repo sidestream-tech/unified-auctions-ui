@@ -15,7 +15,7 @@ export default Vue.extend({
     },
     computed: {
         ...mapGetters('collaterals', {
-            collaterals: 'getCollateralsOnChain',
+            collaterals: 'collaterals',
         }),
         isExplanationsShown: {
             get(): boolean {

@@ -4,24 +4,19 @@ import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { getExchangeRateBySymbol } from 'auctions-core/src/uniswap';
 import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
 import Vue from 'vue';
-import { isCollateralSupported } from 'auctions-core/src/contracts';
+import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 
 interface State {
     collaterals: CollateralRow[];
-    isOnChain: Record<string, boolean>;
 }
 
 export const state = (): State => ({
     collaterals: [],
-    isOnChain: {},
 });
 
 export const getters = {
     collaterals(state: State) {
         return state.collaterals || [];
-    },
-    getIsOnChain: (state: State) => (collateral: string) => {
-        return state.isOnChain[collateral];
     },
     getCollateralsOnChain(state: State, getters: any) {
         const collateralsOnChain = state.collaterals.map(collateral => {
@@ -45,26 +40,30 @@ export const mutations = {
             ...updatedCollateral,
         });
     },
-    setIsOnChain(state: State, { collateral, isOnChain }: { collateral: string; isOnChain: boolean }) {
-        Vue.set(state.isOnChain, collateral, isOnChain);
-    },
 };
 
 export const actions = {
     async fetchCoreValues({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
-        const pageNetwork = rootGetters['network/getPageNetwork'];
         if (!network) {
             return;
         }
         for (const collateral of Object.values(COLLATERALS)) {
-            const supported = await isCollateralSupported(pageNetwork, collateral.symbol);
+            const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateral.symbol).catch(() => {
+                return undefined;
+            });
 
-            commit('setIsOnChain', { collateral: collateral.symbol, isOnChain: supported });
+            if (!tokenAddress) {
+                commit('updateCollateral', {
+                    ilk: collateral.ilk,
+                    uniswap: {
+                        type: 'token',
+                    },
+                });
 
-            if (supported !== true) {
                 continue;
             }
+
             const marketUnitPrice = await getExchangeRateBySymbol(network, collateral.symbol).catch(error => {
                 console.error(error);
                 return error.toString();
@@ -81,15 +80,12 @@ export const actions = {
                 marketUnitPrice,
                 secondsBetweenPriceDrops: calcParameters.secondsBetweenPriceDrops,
                 priceDropRatio: calcParameters.priceDropRatio,
+                uniswap: {
+                    type: 'token',
+                    route: tokenAddress,
+                },
             };
             commit('updateCollateral', updated);
-        }
-    },
-    async fetchCollateralsOnChain({ commit, rootGetters }: ActionContext<State, State>) {
-        const pageNetwork = rootGetters['network/getPageNetwork'];
-        for (const collateral of Object.values(COLLATERALS)) {
-            const supported = await isCollateralSupported(pageNetwork, collateral.symbol);
-            commit('setIsOnChain', { collateral: collateral.symbol, isOnChain: supported });
         }
     },
     async setup({ commit, dispatch }: ActionContext<State, State>) {

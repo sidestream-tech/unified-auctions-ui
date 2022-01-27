@@ -17,9 +17,9 @@
             class="Element"
             :class="{ Loading: isLoading(record) }"
         >
-            <FormatCurrency v-if="validBigNumber(marketUnitPrice)" :value="marketUnitPrice" currency="DAI" />
+            <FormatCurrency v-if="isValidBigNumber(marketUnitPrice)" :value="marketUnitPrice" currency="DAI" />
             <div v-else>
-                <div v-if="record.isOnChain === false" />
+                <div v-if="record.uniswap && !record.uniswap.route" />
                 <div v-else-if="isLoading(record)" class="flex items-center">
                     <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
                     <span>Loading...</span>
@@ -41,11 +41,11 @@
             class="Element"
             :class="{ Loading: isLoading(record) }"
         >
-            <span v-if="secondsBetweenPriceDrops && validBigNumber(secondsBetweenPriceDrops)"
+            <span v-if="secondsBetweenPriceDrops && isValidBigNumber(secondsBetweenPriceDrops)"
                 >{{ secondsBetweenPriceDrops }} sec.</span
             >
             <Popover
-                v-if="secondsBetweenPriceDrops && !validBigNumber(secondsBetweenPriceDrops)"
+                v-if="secondsBetweenPriceDrops && !isValidBigNumber(secondsBetweenPriceDrops)"
                 placement="top"
                 title="Error while fetching Step and Cut"
                 :content="secondsBetweenPriceDrops"
@@ -60,7 +60,7 @@
             class="Element"
             :class="{ Loading: isLoading(record) }"
         >
-            <span v-if="priceDropRatio && validBigNumber(priceDropRatio)">
+            <span v-if="priceDropRatio && isValidBigNumber(priceDropRatio)">
                 {{
                     priceDropRatio
                         .toNumber()
@@ -72,14 +72,11 @@
         <div slot="icon" slot-scope="record" class="Element">
             <CurrencyIcon :currency-symbol="record.symbol" />
         </div>
-        <div
-            slot="found"
-            slot-scope="record"
-            class="Element justify-center"
-            :class="{ Loading: record.isOnChain === undefined }"
-        >
-            <div v-if="record.isOnChain === true">&#9989;</div>
-            <div v-else-if="record.isOnChain === false">&#10060;</div>
+        <div slot="token" slot-scope="uniswap" class="Element" :class="{ Loading: !uniswap }">
+            <div v-if="uniswap">
+                <format-address v-if="uniswap.route" :value="uniswap.route" shorten type="address" />
+                <span v-else class="text-red-500">Not found</span>
+            </div>
         </div>
     </Table>
 </template>
@@ -91,6 +88,7 @@ import { Table, Popover } from 'ant-design-vue';
 import CurrencyIcon from './common/CurrencyIcon.vue';
 import FormatCurrency from './utils/FormatCurrency.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
+import FormatAddress from '~/components/utils/FormatAddress.vue';
 
 export default Vue.extend({
     components: {
@@ -99,6 +97,7 @@ export default Vue.extend({
         Table,
         LoadingIcon,
         Popover,
+        FormatAddress,
     },
     props: {
         collaterals: {
@@ -123,8 +122,9 @@ export default Vue.extend({
                     scopedSlots: { customRender: 'symbol' },
                 },
                 {
-                    title: 'Found',
-                    scopedSlots: { customRender: 'found' },
+                    title: 'Token',
+                    dataIndex: 'uniswap',
+                    scopedSlots: { customRender: 'token' },
                 },
                 {
                     title: 'Uniswap Market Value',
@@ -156,7 +156,7 @@ export default Vue.extend({
                 typeof record.marketUnitPrice === 'undefined'
             );
         },
-        validBigNumber(bigNumber: Object | String) {
+        isValidBigNumber(bigNumber: Object | String) {
             return bigNumber instanceof Object;
         },
     },
