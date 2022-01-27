@@ -40,21 +40,14 @@ export const actions = {
             return;
         }
         for (const collateral of Object.values(COLLATERALS)) {
-            const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateral.symbol).catch(() => {
-                return undefined;
-            });
-
-            if (!tokenAddress) {
+            const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateral.symbol).catch(error => {
+                console.error(error);
                 commit('updateCollateral', {
                     ilk: collateral.ilk,
-                    uniswap: {
-                        type: 'token',
-                    },
+                    tokenAddressError: error.toString(),
                 });
-
-                continue;
-            }
-
+                return undefined;
+            });
             const marketUnitPrice = await getExchangeRateBySymbol(network, collateral.symbol).catch(error => {
                 console.error(error);
                 return error.toString();
@@ -71,10 +64,7 @@ export const actions = {
                 marketUnitPrice,
                 secondsBetweenPriceDrops: calcParameters.secondsBetweenPriceDrops,
                 priceDropRatio: calcParameters.priceDropRatio,
-                uniswap: {
-                    type: 'token',
-                    route: tokenAddress,
-                },
+                tokenAddress,
             };
             commit('updateCollateral', updated);
         }
