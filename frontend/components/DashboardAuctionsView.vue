@@ -17,7 +17,7 @@
                 auction price and the price for the collateral on another marketplace.
             </TextBlock>
         </div>
-        <div class="mt-4 md:mt-8 px-4 space-y-4 md:space-y-8 w-full max-w-screen-md">
+        <div class="mt-4 md:mt-8 px-4 space-y-4 md:space-y-8 w-full max-w-screen-lg">
             <CollateralTable :collaterals="collaterals" class="overflow-x-scroll" />
         </div>
     </div>
