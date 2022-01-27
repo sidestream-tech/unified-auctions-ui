@@ -18,15 +18,6 @@ export const getters = {
     collaterals(state: State) {
         return state.collaterals || [];
     },
-    getCollateralsOnChain(state: State, getters: any) {
-        const collateralsOnChain = state.collaterals.map(collateral => {
-            return {
-                ...collateral,
-                isOnChain: getters.getIsOnChain(collateral.symbol),
-            };
-        });
-        return collateralsOnChain;
-    },
 };
 
 export const mutations = {
