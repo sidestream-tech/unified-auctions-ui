@@ -86,29 +86,6 @@ data:
         event:
           - tag
 
-    # frontend-production:$RELEASE_TAG
-    - name: publish-frontend-production-on-tag
-      repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend-production
-      tags:
-        - "${DRONE_TAG}"
-      labels:
-        - key: org.opencontainers.image.source
-          value: https://github.com/sidestream-tech/unified-auctions-ui
-      path_to_dockerfile: frontend/Dockerfile
-      path_to_context: ./
-      build_args:
-        - key: PRODUCTION_DOMAIN
-          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/production_domain
-        - key: INFURA_PROJECT_ID
-          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/infura_project_id
-        - key: CONTACT_EMAIL
-          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/contact_email
-      tags_to_cache_from:
-        - "main"
-      trigger:
-        event:
-          - tag
-
     # bot-twitter:main and bot-twitter:$MAIN_COMMIT_SHA
     - name: publish-bot-twitter-merge-main
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
@@ -198,7 +175,7 @@ data:
     - name: deploy-production.auction-ui.k8s.sidestream.tech
       depends_on:
         - publish-bot-twitter-on-tag
-        - publish-frontend-production-on-tag
+        - publish-frontend-makerdao-on-tag
       trigger:
         event:
           - tag

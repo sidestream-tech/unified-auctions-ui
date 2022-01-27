@@ -16,7 +16,7 @@ frontend:
   deployment:
     # the frontend bakes in environment variables that need to be changed for makerdao,
     # so we built a separate image just for that
-    image: "frontend-production"
+    image: "frontend-makerdao"
 
 botTwitter:
   secretChamberPath: "auction-ui/production.auction-ui.k8s.sidestream.tech/bot-twitter"
