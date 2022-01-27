@@ -146,8 +146,10 @@
                     There are two ways to participate in an auction:
                     <ul class="list-disc list-outside pl-5">
                         <li>
-                            Purchase with DAI: This allows the participant to manually bid DAI on the auctioned
-                            collateral and redeem the auctioned collateral. Partial bids are also allowed.
+                            Bid with DAI: This allows the participant to manually bid DAI on the auctioned collateral
+                            and redeem the auctioned collateral. This transaction type is not yet supported. In the
+                            meantime, you can use
+                            <a href="https://liquidations.makerdao.com/" target="_blank">Liquidation Portal</a>
                         </li>
                         <li>
                             Directly swap into profit: The auctioned collateral is bought and sold on an available
@@ -170,10 +172,17 @@
             </template>
             <TextBlock>
                 <div class="flex w-full justify-end flex-wrap mt-4">
-                    <Tooltip title="This transaction type is not supported yet" placement="top">
+                    <Tooltip placement="top">
+                        <div slot="title">
+                            This website does not yet support bidding on the auction with your own DAI. In the
+                            meantime, you can use
+                            <a href="https://liquidations.makerdao.com/" target="_blank" class="underline text-primary"
+                                >Liquidation Portal</a
+                            >
+                        </div>
                         <div>
                             <Button disabled type="secondary" class="w-60 mb-4" @click="$emit('purchase')">
-                                Purchase with DAI
+                                Bid with DAI
                             </Button>
                         </div>
                     </Tooltip>
