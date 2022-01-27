@@ -67,7 +67,7 @@ data:
     - name: publish-frontend-makerdao-on-tag
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend-makerdao
       tags:
-        - "${DRONE_TAG}"
+        # - "${DRONE_TAG}"
         - "${DRONE_COMMIT_SHA}"
       labels:
         - key: org.opencontainers.image.source
@@ -122,7 +122,7 @@ data:
     - name: publish-bot-twitter-on-tag
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
       tags:
-        - "${DRONE_TAG}"
+        # - "${DRONE_TAG}"
         - "${DRONE_COMMIT_SHA}"
       labels:
         - key: org.opencontainers.image.source
