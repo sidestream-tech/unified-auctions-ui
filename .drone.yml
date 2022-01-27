@@ -6,7 +6,7 @@ data:
     - name: publish-frontend-merge-main
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend
       tags:
-        - "main"
+        # - "main"
         - "${DRONE_COMMIT_SHA}"
       labels:
         - key: org.opencontainers.image.source
@@ -25,8 +25,8 @@ data:
       trigger:
         event:
           - push
-        branch:
-          - main
+        # branch:
+        #   - main
 
     # frontend no tag, just test production build
     - name: build-frontend-to-test-production-build
@@ -92,7 +92,7 @@ data:
     - name: publish-bot-twitter-merge-main
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
       tags:
-        - "main"
+        # - "main"
         - "${DRONE_COMMIT_SHA}"
       labels:
         - key: org.opencontainers.image.source
@@ -104,8 +104,8 @@ data:
       trigger:
         event:
           - push
-        branch:
-          - main
+        # branch:
+        #   - main
 
     # bot-twitter no tag, just test production build
     - name: build-bot-twitter-to-test-production-build
