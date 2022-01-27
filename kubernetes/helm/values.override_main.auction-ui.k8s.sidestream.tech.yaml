@@ -1,5 +1,13 @@
 # Value overrides for the deployment to the following host:
-host: "main.auction-ui.k8s.sidestream.tech"
+hosts:
+- "main.auction-ui.k8s.sidestream.tech"
+
+ingress:
+  isCertManagerActivated: true
+  tls:
+    - hosts:
+      - "main.auction-ui.k8s.sidestream.tech"
+      secretName: "auction-ui-tls-certificate"
 
 botTwitter:
   secretChamberPath: "auction-ui/main.auction-ui.k8s.sidestream.tech/bot-twitter"

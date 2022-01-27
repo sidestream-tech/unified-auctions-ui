@@ -1,7 +1,7 @@
 # Default values for auction-ui.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-host:
+hosts: null
 
 images:
   secretName: "sidestream-github"
@@ -13,7 +13,7 @@ frontend:
   name: "frontend"
   containerPort: 80
   deployment:
-    tag:
+    tag: null
     image: "frontend"
     pullPolicy: "IfNotPresent"
 
@@ -22,12 +22,11 @@ botTwitter:
   # AWS SSM path for chamber to read secrets for the pods from, e.g., `auction-ui/staging/bot`
   secretChamberPath:
   deployment:
-    tag:
+    tag: null
     image: "bot-twitter"
     pullPolicy: "IfNotPresent"
 
 ingress:
   class: nginx
-  isCertManagerActivated: true
-  isTlsActivated: true
-  tlsSecretName: "auction-ui-tls-certificate"
+  isCertManagerActivated: false
+  tls: null

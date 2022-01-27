@@ -1,10 +1,6 @@
 # Value overrides for the deployment to the following host:
-host: "auctions.makerdao.network"
-
-ingress:
-  # certificates in this environment are generated and terminated by `auctions.makerdao.network` owners
-  isCertManagerActivated: false
-  isTlsActivated: false
+hosts:
+- "auctions.makerdao.network"
 
 frontend:
   deployment:
