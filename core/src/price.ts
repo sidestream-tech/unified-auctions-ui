@@ -1,5 +1,6 @@
 import type { Auction } from './types';
 import BigNumber from './bignumber';
+import { addSeconds } from 'date-fns';
 
 const checkAuctionStartDate = function (startDate: Date, currentDate: Date): void {
     const auctionStartTimestamp = startDate.getTime();
@@ -61,27 +62,24 @@ export const calculateTransactionProfitDate = function (auction: Auction): Date 
     }
 
     const isAlreadyProfitable = auction.approximateUnitPrice.isLessThan(auction.marketUnitPrice);
-    const date = new Date();
 
     let steps = 0;
-    let currentValue = auction.approximateUnitPrice;
-    let secondsTillProfitable = 0;
+    let currentValue = new BigNumber(auction.approximateUnitPrice);
 
     if (isAlreadyProfitable) {
         while (currentValue.isLessThan(auction.marketUnitPrice)) {
             steps -= 1;
             currentValue = currentValue.multipliedBy(new BigNumber(1).minus(auction.priceDropRatio).plus(1));
         }
-        secondsTillProfitable = auction.secondsBetweenPriceDrops * steps + auction.secondsTillNextPriceDrop;
-    } else {
-        while (currentValue.isGreaterThan(auction.marketUnitPrice)) {
-            steps += 1;
-            currentValue = currentValue.multipliedBy(auction.priceDropRatio);
-        }
-        const secondsSinceLastPriceDrop = auction.secondsBetweenPriceDrops - auction.secondsTillNextPriceDrop;
-        secondsTillProfitable = auction.secondsBetweenPriceDrops * steps - secondsSinceLastPriceDrop;
+        const secondsTillProfitable = auction.secondsBetweenPriceDrops * steps + auction.secondsTillNextPriceDrop;
+        return addSeconds(new Date(), secondsTillProfitable);
     }
 
-    date.setSeconds(date.getSeconds() + secondsTillProfitable);
-    return date;
+    while (currentValue.isGreaterThan(auction.marketUnitPrice)) {
+        steps += 1;
+        currentValue = currentValue.multipliedBy(auction.priceDropRatio);
+    }
+    const secondsSinceLastPriceDrop = auction.secondsBetweenPriceDrops - auction.secondsTillNextPriceDrop;
+    const secondsTillProfitable = auction.secondsBetweenPriceDrops * steps - secondsSinceLastPriceDrop;
+    return addSeconds(new Date(), secondsTillProfitable);
 };
