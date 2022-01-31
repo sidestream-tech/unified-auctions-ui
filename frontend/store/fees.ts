@@ -31,8 +31,12 @@ export const actions = {
         if (!network) {
             return;
         }
-        const fees = await getApproximateTransactionFees(network);
-        commit('setFees', fees);
+        try {
+            const fees = await getApproximateTransactionFees(network);
+            commit('setFees', fees);
+        } catch (error) {
+            console.warn(`Fees calculation error: ${error.message}`);
+        }
     },
     async setup({ dispatch }: ActionContext<State, State>) {
         await dispatch('fetch');

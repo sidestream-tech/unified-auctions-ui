@@ -8,7 +8,6 @@ import { Fetcher, Token, Route, Pair, Trade, TokenAmount, TradeType } from '@uni
 import { abi as uniswapV2PairABI } from '@uniswap/v2-core/build/UniswapV2Pair.json';
 import BigNumber from './bignumber';
 import NETWORKS, { getDecimalChainIdByNetworkType } from './constants/NETWORKS';
-import getMaker from './maker';
 import getProvider from './provider';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from './tokens';
 import {
@@ -16,6 +15,7 @@ import {
     getCollateralConfigByType,
     getAllCollateralSymbols,
 } from './constants/COLLATERALS';
+import { getContractAddressByName, getJoinNameByCollateralType } from './contracts';
 
 const EXCHANGE_RATE_CACHE = 20 * 1000;
 
@@ -44,11 +44,10 @@ export const getUniswapParametersByCollateral = async function (
     collateralType: string,
     profitAddress: string
 ): Promise<string> {
-    const maker = await getMaker();
     const collateral = getCollateralConfigByType(collateralType);
     // TODO: properly calculate minimum profit value
     const minProfit = 0;
-    const joinAdapterAddress = maker.service('liquidation')._joinGemAdapter(collateralType).address;
+    const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateralType));
     if (collateral.uniswap.type === 'token') {
         const typesArray = ['address', 'address', 'uint256', 'address[]'];
         return ethers.utils.defaultAbiCoder.encode(typesArray, [

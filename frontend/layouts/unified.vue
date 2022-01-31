@@ -5,6 +5,7 @@
             type="unified"
             :is-explanations-shown.sync="isExplanationsShown"
             :dark-mode.sync="isDarkMode"
+            :staging-banner-url="stagingBannerURL"
         />
         <Nuxt />
     </div>
@@ -35,6 +36,9 @@ export default Vue.extend({
             set(newIsDarkMode) {
                 this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
+        },
+        stagingBannerURL() {
+            return process.env.STAGING_BANNER_URL;
         },
     },
 });

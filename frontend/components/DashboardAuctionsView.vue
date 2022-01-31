@@ -16,6 +16,8 @@
                 This arbitrage opportunity during an active auction is based on the price difference between the
                 auction price and the price for the collateral on another marketplace.
             </TextBlock>
+        </div>
+        <div class="mt-4 md:mt-8 px-4 space-y-4 md:space-y-8 w-full max-w-screen-md">
             <CollateralTable :collaterals="collaterals" class="overflow-x-scroll" />
         </div>
     </div>

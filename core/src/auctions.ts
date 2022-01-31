@@ -1,53 +1,25 @@
 import type { Auction, AuctionInitialInfo, Notifier } from './types';
 import BigNumber from './bignumber';
-import getMaker from './maker';
-import COLLATERALS from './constants/COLLATERALS';
+import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
 import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
 import { fetchCalcParametersByCollateralType } from './params';
-import trackTransaction from './tracker';
-import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import executeTransaction from './execute';
+import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import {
     calculateAuctionDropTime,
     calculateAuctionPrice,
     calculateTransactionProfit,
     calculateTransactionProfitDate,
 } from './price';
-import { getSupportedCollateralTypes } from './contracts';
-
-const fetchAuctionsByType = async function (
-    collateralType: string,
-    maker: any,
-    network: string
-): Promise<AuctionInitialInfo[]> {
-    const protoAuctions = await maker.service('liquidation').getAllClips(collateralType);
-    const now = new Date();
-    return protoAuctions.map((protoAuction: any): AuctionInitialInfo => {
-        const isActive = protoAuction.active && protoAuction.endDate > now;
-        return {
-            network,
-            id: `${protoAuction.ilk}:${protoAuction.saleId}`,
-            auctionId: protoAuction.saleId,
-            collateralType: protoAuction.ilk,
-            collateralSymbol: COLLATERALS[protoAuction.ilk].symbol as string,
-            collateralAmount: new BigNumber(protoAuction.lot),
-            vaultAddress: protoAuction.usr,
-            debtDAI: new BigNumber(protoAuction.tab),
-            endDate: protoAuction.endDate,
-            initialPrice: new BigNumber(protoAuction.top),
-            startDate: protoAuction.created,
-            isActive,
-            isFinished: false,
-            isRestarting: false,
-        };
-    });
-};
+import { getSupportedCollateralTypes } from './addresses';
+import { getClipperNameByCollateralType } from './contracts';
+import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 
 const enrichAuctionWithActualNumbers = async function (
-    auction: AuctionInitialInfo,
-    network?: string
+    network: string,
+    auction: AuctionInitialInfo
 ): Promise<Auction> {
-    const maker = await getMaker(network);
-    if (!auction.isActive) {
+    if (!auction.isActive || auction.isFinished) {
         return {
             ...auction,
             unitPrice: new BigNumber(0),
@@ -55,22 +27,16 @@ const enrichAuctionWithActualNumbers = async function (
             totalPrice: new BigNumber(0),
         };
     }
-    const status = await maker.service('liquidation').getStatus(auction.collateralType, auction.auctionId);
-    const unitPrice = new BigNumber(status.price).div(RAY);
-    const collateralAmount = new BigNumber(status.lot).div(WAD);
+    const auctionStatus = await fetchAuctionStatus(network, auction.collateralType, auction.auctionId);
     return {
         ...auction,
-        isActive: !status.needsRedo,
-        debtDAI: new BigNumber(status.tab).div(RAD),
-        collateralAmount,
-        unitPrice,
-        approximateUnitPrice: unitPrice,
-        totalPrice: collateralAmount.multipliedBy(unitPrice),
+        ...auctionStatus,
+        approximateUnitPrice: auctionStatus.unitPrice,
     };
 };
 
 const enrichAuctionWithMarketValues = async function (auction: Auction, network: string): Promise<Auction> {
-    if (!auction.isActive || !auction.approximateUnitPrice) {
+    if (!auction.isActive || !auction.approximateUnitPrice || auction.isFinished) {
         return auction;
     }
     try {
@@ -101,7 +67,7 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
 };
 
 export const enrichAuctionWithPriceDrop = async function (auction: Auction): Promise<Auction> {
-    if (!auction.isActive) {
+    if (!auction.isActive || auction.isFinished) {
         return auction;
     }
     const params = await fetchCalcParametersByCollateralType(auction.network, auction.collateralType);
@@ -133,12 +99,9 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
 };
 
 export const fetchAllInitialAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
-    const maker = await getMaker(network);
-    const collateralNames = await getSupportedCollateralTypes(network);
-
-    // get all auctions
-    const auctionGroupsPromises = collateralNames.map((collateralName: string) => {
-        return fetchAuctionsByType(collateralName, maker, network);
+    const collateralTypes = await getSupportedCollateralTypes(network);
+    const auctionGroupsPromises = collateralTypes.map((collateralType: string) => {
+        return fetchAuctionsByCollateralType(network, collateralType);
     });
     const auctionGroups = await Promise.all(auctionGroupsPromises);
     return auctionGroups.flat();
@@ -149,7 +112,7 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
 
     // enrich them with statuses
     const auctionsWithStatusesPromises = auctions.map((auction: AuctionInitialInfo) =>
-        enrichAuctionWithActualNumbers(auction, network)
+        enrichAuctionWithActualNumbers(network, auction)
     );
     const auctionsWithStatuses = await Promise.all(auctionsWithStatusesPromises);
 
@@ -161,14 +124,13 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
 };
 
 export const restartAuction = async function (
-    collateralType: string,
-    id: number,
-    profitAddress: string
+    network: string,
+    auction: Auction,
+    profitAddress: string,
+    notifier?: Notifier
 ): Promise<string> {
-    const maker = await getMaker();
-    const clipperContract = maker.service('liquidation')._clipperContractByIlk(collateralType);
-    const transaction = clipperContract.redo(id, profitAddress);
-    return transaction;
+    const contractName = getClipperNameByCollateralType(auction.collateralType);
+    return executeTransaction(network, contractName, 'redo', [auction.auctionId, profitAddress], notifier, false);
 };
 
 export const bidOnTheAuction = async function (
@@ -177,18 +139,15 @@ export const bidOnTheAuction = async function (
     profitAddress: string,
     notifier?: Notifier
 ): Promise<string> {
-    const maker = await getMaker();
     const calleeAddress = getUniswapCalleeBySymbol(network, auction.collateralSymbol);
     const flashData = await getUniswapParametersByCollateral(network, auction.collateralType, profitAddress);
-    const transaction = maker
-        .service('liquidation')
-        .take(
-            auction.collateralType,
-            auction.auctionId,
-            auction.collateralAmount.toFixed(WAD_NUMBER_OF_DIGITS),
-            auction.unitPrice.toFixed(RAY_NUMBER_OF_DIGITS),
-            calleeAddress,
-            flashData
-        );
-    return trackTransaction(transaction, notifier);
+    const contractName = getClipperNameByCollateralType(auction.collateralType);
+    const contractParameters = [
+        convertNumberTo32Bytes(auction.auctionId),
+        auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
+        auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(),
+        calleeAddress,
+        flashData,
+    ];
+    return executeTransaction(network, contractName, 'take', contractParameters, notifier);
 };

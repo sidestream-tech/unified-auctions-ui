@@ -8,6 +8,7 @@
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
+            :staging-banner-url="stagingBannerURL"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
         />
@@ -88,6 +89,9 @@ export default Vue.extend({
             set(newIsDarkMode) {
                 this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
+        },
+        stagingBannerURL() {
+            return process.env.STAGING_BANNER_URL;
         },
     },
     methods: {

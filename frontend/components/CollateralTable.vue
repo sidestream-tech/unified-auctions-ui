@@ -7,6 +7,9 @@
         :locale="{ emptyText: 'No Collateral Types found.' }"
         :pagination="{ pageSize: collateralAmount, hideOnSinglePage: true }"
     >
+        <div slot="icon" slot-scope="record" class="Element">
+            <CurrencyIcon :currency-symbol="record.symbol" />
+        </div>
         <div slot="ilk" slot-scope="ilk" class="Element">
             {{ ilk }}
         </div>
@@ -17,20 +20,16 @@
             class="Element"
             :class="{ Loading: isLoading(record) }"
         >
-            <FormatCurrency v-if="validBigNumber(marketUnitPrice)" :value="marketUnitPrice" currency="DAI" />
+            <FormatCurrency v-if="isValidBigNumber(marketUnitPrice)" :value="marketUnitPrice" currency="DAI" />
             <div v-else>
                 <div v-if="isLoading(record)" class="flex items-center">
                     <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
                     <span>Loading...</span>
                 </div>
-                <Popover
-                    v-else
-                    placement="top"
-                    title="Error while fetching Uniswap Market Value"
-                    :content="marketUnitPrice"
-                    trigger="hover"
-                >
-                    <span class="text-red-500">error</span>
+                <Popover v-else placement="topLeft" :content="marketUnitPrice" trigger="hover">
+                    <p class="inline-block w-48 text-red-500 truncate">
+                        <span>{{ marketUnitPrice }}</span>
+                    </p>
                 </Popover>
             </div>
         </div>
@@ -40,17 +39,18 @@
             class="Element"
             :class="{ Loading: isLoading(record) }"
         >
-            <span v-if="secondsBetweenPriceDrops && validBigNumber(secondsBetweenPriceDrops)"
+            <span v-if="secondsBetweenPriceDrops && isValidBigNumber(secondsBetweenPriceDrops)"
                 >{{ secondsBetweenPriceDrops }} sec.</span
             >
             <Popover
-                v-if="secondsBetweenPriceDrops && !validBigNumber(secondsBetweenPriceDrops)"
+                v-if="secondsBetweenPriceDrops && !isValidBigNumber(secondsBetweenPriceDrops)"
                 placement="top"
-                title="Error while fetching Step and Cut"
                 :content="secondsBetweenPriceDrops"
                 trigger="hover"
             >
-                <span class="text-red-500">error</span>
+                <p class="inline-block w-20 text-red-500 truncate">
+                    <span>{{ secondsBetweenPriceDrops }}</span>
+                </p>
             </Popover>
         </div>
         <div
@@ -59,17 +59,10 @@
             class="Element"
             :class="{ Loading: isLoading(record) }"
         >
-            <span v-if="priceDropRatio && validBigNumber(priceDropRatio)">
-                {{
-                    priceDropRatio
-                        .toNumber()
-                        .toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                }}
+            <span v-if="priceDropRatio && isValidBigNumber(priceDropRatio)">
+                {{ priceDropRatio.multipliedBy(100).toFixed(2) }}
                 %
             </span>
-        </div>
-        <div slot="icon" slot-scope="record" class="Element">
-            <CurrencyIcon :currency-symbol="record.symbol" />
         </div>
     </Table>
 </template>
@@ -77,6 +70,7 @@
 <script lang="ts">
 import type { CollateralRow } from 'auctions-core/src/types';
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import { Table, Popover } from 'ant-design-vue';
 import CurrencyIcon from './common/CurrencyIcon.vue';
 import FormatCurrency from './utils/FormatCurrency.vue';
@@ -103,6 +97,10 @@ export default Vue.extend({
         columns(): Object[] {
             return [
                 {
+                    title: 'Icon',
+                    scopedSlots: { customRender: 'icon' },
+                },
+                {
                     title: 'Collateral Type',
                     dataIndex: 'ilk',
                     scopedSlots: { customRender: 'ilk' },
@@ -127,10 +125,6 @@ export default Vue.extend({
                     dataIndex: 'priceDropRatio',
                     scopedSlots: { customRender: 'priceDropRatio' },
                 },
-                {
-                    title: 'Icon',
-                    scopedSlots: { customRender: 'icon' },
-                },
             ];
         },
     },
@@ -142,8 +136,8 @@ export default Vue.extend({
                 typeof record.marketUnitPrice === 'undefined'
             );
         },
-        validBigNumber(bigNumber: Object | String) {
-            return bigNumber instanceof Object;
+        isValidBigNumber(bigNumber: BigNumber) {
+            return BigNumber.isBigNumber(bigNumber);
         },
     },
 });
