@@ -17,10 +17,14 @@ const getSigner = function (network: string): ethers.Wallet | undefined {
 
 export const setSigner = async function (network: string, privateKey: string) {
     const provider = getProvider(network);
-    signers[network] = new ethers.Wallet(privateKey, provider);
 
-    const address = await signers[network].getAddress();
-    console.info(`Authenticated with wallet "${address}"`);
+    try {
+        signers[network] = new ethers.Wallet(privateKey, provider);
+        const address = await signers[network].getAddress();
+        console.info(`Authenticated with wallet "${address}"`);
+    } catch (error) {
+        console.error(`Could not authenticate with the private key: ${error}`);
+    }
 };
 
 export default getSigner;
