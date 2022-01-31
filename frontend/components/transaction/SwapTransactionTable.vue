@@ -43,7 +43,7 @@
         <div class="flex w-full justify-between">
             <div>Estimated Profitability Time</div>
             <div>
-                <template v-if="auctionTransaction.transactionProfitDate">
+                <template v-if="auctionTransaction.isActive && auctionTransaction.transactionProfitDate">
                     <time-till-profitable :auction="auctionTransaction" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>

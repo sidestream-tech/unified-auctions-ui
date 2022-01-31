@@ -18,11 +18,6 @@ export default Vue.extend({
             required: true,
         },
     },
-    data() {
-        return {
-            startingDate: new Date(),
-        };
-    },
     computed: {
         isProfitableBeforeEnding(): boolean {
             if (!this.auction.transactionProfitDate) {
