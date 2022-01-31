@@ -46,6 +46,7 @@ export const generateFakeAuction = function () {
         secondsBetweenPriceDrops,
         secondsTillNextPriceDrop,
         priceDropRatio: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
+        transactionProfitDate: faker.date.future(),
     };
 };
 
