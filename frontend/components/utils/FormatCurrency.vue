@@ -1,9 +1,12 @@
 <template>
     <span>
-        {{ sign }}<animated-number v-if="isValidNumber" :value="value" :decimal-places="decimals" /><span
-            v-else-if="value"
-            >NaN</span
-        ><span class="uppercase"> {{ currency }}</span>
+        {{ sign }}
+        <span v-if="isValidNumber">
+            <animated-number v-if="value > 0.01" :value="value" :decimal-places="decimals" />
+            <span v-else>{{ formattedNumber }}</span>
+        </span>
+        <span v-else-if="value"> NaN </span>
+        <span class="uppercase"> {{ currency }}</span>
     </span>
 </template>
 
@@ -34,15 +37,18 @@ export default Vue.extend({
         },
     },
     computed: {
-        formattedNumber(): string {
-            if (this.value === null) {
-                return '';
+        formattedNumber(): number {
+            if (!this.value.toFixed()) {
+                return 0;
             }
+
             if (this.value < 0.01) {
                 const decimalCutOff = Math.abs(Math.floor(Math.log10(Number(this.value)))) + 1;
-                return parseFloat(parseFloat(this.value.toString()).toFixed(decimalCutOff)).toString();
+                return parseFloat(
+                    parseFloat(this.value.toString()).toFixed(decimalCutOff === Infinity ? 0 : decimalCutOff)
+                );
             }
-            return this.value.toFixed(this.decimals);
+            return Number(this.value);
         },
         sign(): string {
             if (!this.showSign) {
