@@ -22,11 +22,7 @@
         >
             <FormatCurrency v-if="isValidBigNumber(marketUnitPrice)" :value="marketUnitPrice" currency="DAI" />
             <div v-else>
-                <div v-if="isLoading(record)" class="flex items-center">
-                    <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
-                    <span>Loading...</span>
-                </div>
-                <Popover v-else placement="topLeft" :content="marketUnitPrice" trigger="hover">
+                <Popover placement="topLeft" :content="marketUnitPrice" trigger="hover">
                     <p class="inline-block w-48 text-red-500 truncate">
                         <span>{{ marketUnitPrice }}</span>
                     </p>
@@ -64,6 +60,23 @@
                 %
             </span>
         </div>
+        <div slot="icon" slot-scope="record" class="Element">
+            <CurrencyIcon :currency-symbol="record.symbol" />
+        </div>
+        <div slot="token" slot-scope="tokenAddress, record" class="Element" :class="{ Loading: isLoading(record) }">
+            <div v-if="isLoading(record)" class="flex items-center">
+                <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
+                <span>Loading...</span>
+            </div>
+            <div v-else>
+                <format-address v-if="tokenAddress" :value="tokenAddress" shorten type="address" />
+                <Popover v-else placement="top" :content="record.tokenAddressError" trigger="hover">
+                    <p class="inline-block w-20 text-red-500 truncate">
+                        <span>{{ record.tokenAddressError }}</span>
+                    </p>
+                </Popover>
+            </div>
+        </div>
     </Table>
 </template>
 
@@ -75,6 +88,7 @@ import { Table, Popover } from 'ant-design-vue';
 import CurrencyIcon from './common/CurrencyIcon.vue';
 import FormatCurrency from './utils/FormatCurrency.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
+import FormatAddress from '~/components/utils/FormatAddress.vue';
 
 export default Vue.extend({
     components: {
@@ -83,6 +97,7 @@ export default Vue.extend({
         Table,
         LoadingIcon,
         Popover,
+        FormatAddress,
     },
     props: {
         collaterals: {
@@ -111,6 +126,11 @@ export default Vue.extend({
                     scopedSlots: { customRender: 'symbol' },
                 },
                 {
+                    title: 'Token',
+                    dataIndex: 'tokenAddress',
+                    scopedSlots: { customRender: 'token' },
+                },
+                {
                     title: 'Uniswap Market Value',
                     dataIndex: 'marketUnitPrice',
                     scopedSlots: { customRender: 'marketUnitPrice' },
@@ -131,7 +151,7 @@ export default Vue.extend({
     methods: {
         isLoading(record: CollateralRow) {
             return (
-                typeof record.secondsBetweenPriceDrop === 'undefined' &&
+                typeof record.secondsBetweenPriceDrops === 'undefined' &&
                 typeof record.priceDropRatio === 'undefined' &&
                 typeof record.marketUnitPrice === 'undefined'
             );

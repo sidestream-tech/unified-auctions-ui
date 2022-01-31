@@ -1,6 +1,5 @@
 import { storiesOf } from '@storybook/vue';
 import DashboardAuctionsView from './DashboardAuctionsView.vue';
-
 import { generateFakeCollaterals } from '~/helpers/generateFakeCollateral';
 
 const collaterals = generateFakeCollaterals();

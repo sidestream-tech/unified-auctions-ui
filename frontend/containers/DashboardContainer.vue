@@ -27,7 +27,7 @@ export default Vue.extend({
         },
     },
     async mounted() {
-        await this.$store.dispatch('collaterals/fetchStepAndCut');
+        await this.$store.dispatch('collaterals/setup');
     },
 });
 </script>
