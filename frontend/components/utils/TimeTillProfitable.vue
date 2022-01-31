@@ -1,6 +1,11 @@
 <template>
-    <time-till v-if="isProfitableBeforeEnding" :date="auction.transactionProfitDate" />
-    <div v-else>Likely will not be profitable</div>
+    <div>
+        <div v-if="auction.isActive && auction.transactionProfitDate">
+            <time-till v-if="isProfitableBeforeEnding" :date="auction.transactionProfitDate" />
+            <div v-else>Likely will not be profitable</div>
+        </div>
+        <span v-else class="opacity-50">Unknown</span>
+    </div>
 </template>
 
 <script lang="ts">

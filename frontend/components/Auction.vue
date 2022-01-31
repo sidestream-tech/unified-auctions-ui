@@ -62,10 +62,7 @@
                         <tr>
                             <td>Estimated Profitability Time</td>
                             <td>
-                                <template v-if="auction.isActive && auction.transactionProfitDate">
-                                    <time-till-profitable :auction="auction" />
-                                </template>
-                                <span v-else class="opacity-50">Unknown</span>
+                                <time-till-profitable :auction="auction" />
                             </td>
                         </tr>
                         <template v-if="isTableExpanded">
