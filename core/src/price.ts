@@ -49,3 +49,37 @@ export const calculateTransactionProfit = function (auction: Auction): BigNumber
     const totalMarketPriceLimitedByDebt = collateralAmountLimitedByDebt.multipliedBy(auction.marketUnitPrice);
     return totalMarketPriceLimitedByDebt.minus(auction.debtDAI);
 };
+
+export const calculateTransactionProfitDate = function (auction: Auction): Date | undefined {
+    if (
+        auction.secondsBetweenPriceDrops === undefined ||
+        auction.secondsTillNextPriceDrop === undefined ||
+        auction.marketUnitPrice === undefined ||
+        auction.priceDropRatio === undefined
+    ) {
+        return undefined;
+    }
+
+    const isAlreadyProfitable = auction.approximateUnitPrice.isLessThan(auction.marketUnitPrice);
+    const date = new Date();
+
+    let steps = 0;
+    let currentValue = auction.approximateUnitPrice;
+
+    if (isAlreadyProfitable) {
+        while (currentValue.isLessThan(auction.marketUnitPrice)) {
+            steps -= 1;
+            currentValue = currentValue.multipliedBy(new BigNumber(1).minus(auction.priceDropRatio).plus(1));
+        }
+    } else {
+        while (currentValue.isGreaterThan(auction.marketUnitPrice)) {
+            steps += 1;
+            currentValue = currentValue.multipliedBy(auction.priceDropRatio);
+        }
+    }
+    const secondsSinceLastPriceDrop = auction.secondsBetweenPriceDrops - auction.secondsTillNextPriceDrop;
+    const secondsTillProfitable = auction.secondsBetweenPriceDrops * steps - secondsSinceLastPriceDrop;
+
+    date.setSeconds(date.getSeconds() + secondsTillProfitable);
+    return date;
+};

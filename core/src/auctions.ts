@@ -6,7 +6,12 @@ import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParameters
 import { fetchCalcParametersByCollateralType } from './params';
 import trackTransaction from './tracker';
 import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
-import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
+import {
+    calculateAuctionDropTime,
+    calculateAuctionPrice,
+    calculateTransactionProfit,
+    calculateTransactionProfitDate,
+} from './price';
 import { getSupportedCollateralTypes } from './contracts';
 
 const fetchAuctionsByType = async function (
@@ -109,11 +114,13 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
     const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
     const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
     const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
+    const transactionProfitDate = calculateTransactionProfitDate(auctionWithParams);
     return {
         ...auctionWithParams,
         secondsTillNextPriceDrop,
         approximateUnitPrice,
         totalPrice,
+        transactionProfitDate,
     };
 };
 
