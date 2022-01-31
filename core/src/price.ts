@@ -65,20 +65,22 @@ export const calculateTransactionProfitDate = function (auction: Auction): Date 
 
     let steps = 0;
     let currentValue = auction.approximateUnitPrice;
+    let secondsTillProfitable = 0;
 
     if (isAlreadyProfitable) {
         while (currentValue.isLessThan(auction.marketUnitPrice)) {
             steps -= 1;
             currentValue = currentValue.multipliedBy(new BigNumber(1).minus(auction.priceDropRatio).plus(1));
         }
+        secondsTillProfitable = auction.secondsBetweenPriceDrops * steps + auction.secondsTillNextPriceDrop;
     } else {
         while (currentValue.isGreaterThan(auction.marketUnitPrice)) {
             steps += 1;
             currentValue = currentValue.multipliedBy(auction.priceDropRatio);
         }
+        const secondsSinceLastPriceDrop = auction.secondsBetweenPriceDrops - auction.secondsTillNextPriceDrop;
+        secondsTillProfitable = auction.secondsBetweenPriceDrops * steps - secondsSinceLastPriceDrop;
     }
-    const secondsSinceLastPriceDrop = auction.secondsBetweenPriceDrops - auction.secondsTillNextPriceDrop;
-    const secondsTillProfitable = auction.secondsBetweenPriceDrops * steps - secondsSinceLastPriceDrop;
 
     date.setSeconds(date.getSeconds() + secondsTillProfitable);
     return date;
