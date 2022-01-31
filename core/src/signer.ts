@@ -10,7 +10,7 @@ const getSigner = function (network: string): ethers.Wallet | undefined {
     }
 
     if (!signers[network]) {
-        return undefined;
+        throw new Error(`No signer has been authorized for this network!`);
     }
     return signers[network];
 };
@@ -23,7 +23,7 @@ export const setSigner = async function (network: string, privateKey: string) {
         const address = await signers[network].getAddress();
         console.info(`Authenticated with wallet "${address}"`);
     } catch (error) {
-        console.error(`Could not authenticate with the private key: ${error}`);
+        throw error;
     }
 };
 

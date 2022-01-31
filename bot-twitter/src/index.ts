@@ -1,4 +1,4 @@
-import NETWORKS from 'auctions-core/src/constants/NETWORKS';
+import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 import { setSigner } from 'auctions-core/src/signer';
 import { getNewAuctions } from './auctions';
 import notify from './notify';
@@ -8,13 +8,7 @@ const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
 const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL ?? '') || DEFAULT_REFETCH_INTERVAL;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
 
-if (!NETWORKS[NETWORK]) {
-    throw new Error(`network "${NETWORK}" is not supported`);
-}
-
-if (process.env.WALLET_PRIVATE_KEY) {
-    setSigner(NETWORK, process.env.WALLET_PRIVATE_KEY).then(() => {});
-}
+getNetworkConfigByType(NETWORK);
 
 const loop = async function (): Promise<void> {
     if (refetchIntervalId) {
@@ -29,4 +23,13 @@ const loop = async function (): Promise<void> {
     }
 };
 
-loop().then(() => {});
+const setup = async function (): Promise<void> {
+    if (process.env.WALLET_PRIVATE_KEY) {
+        await setSigner(NETWORK, process.env.WALLET_PRIVATE_KEY);
+    }
+    await loop();
+};
+
+setup().catch(error => {
+    throw error;
+});
