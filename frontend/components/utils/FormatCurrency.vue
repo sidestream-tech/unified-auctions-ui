@@ -1,13 +1,12 @@
 <template>
-    <span>
-        {{ sign }}
-        <span v-if="isValidNumber">
-            <animated-number v-if="value > 0.01" :value="value" :decimal-places="decimals" />
-            <span v-else>{{ formattedNumber }}</span>
-        </span>
-        <span v-else-if="value"> NaN </span>
-        <span class="uppercase"> {{ currency }}</span>
-    </span>
+    <span
+        >{{ sign
+        }}<span v-if="isValidNumber"
+            ><animated-number v-if="value > 0.01" :value="value" :decimal-places="decimals" /><span v-else>{{
+                formattedNumber
+            }}</span></span
+        ><span v-else-if="value"> NaN </span><span class="uppercase"> {{ currency }}</span></span
+    >
 </template>
 
 <script lang="ts">
