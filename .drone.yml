@@ -244,6 +244,8 @@ data:
             value: cache-test
           - key: botTwitter.deployment.tag
             value: pr-$DRONE_TAG
+          - key: ingress.contentCache.infuraKey
+            value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/bot-twitter/infura_project_id
 
   in_development_image_pipelines:
     - name: core-lint-build
