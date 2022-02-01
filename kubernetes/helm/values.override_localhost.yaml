@@ -1,5 +1,6 @@
 # Value overrides for the deployment to the following host:
-host: "localhost"
+hosts:
+- "localhost"
 
 ingress:
   isCertManagerActivated: false
