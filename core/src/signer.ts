@@ -4,7 +4,7 @@ import getProvider from './provider';
 
 const signers: Record<string, ethers.Wallet> = {};
 
-const getSigner = function (network: string): ethers.Wallet | undefined {
+const getSigner = function (network: string): ethers.Wallet {
     if (!NETWORKS[network]) {
         throw new Error(`The network "${network}" is not supported yet!`);
     }
