@@ -9,8 +9,6 @@ const NETWORKS: Record<string, NetworkConfig> = {
         gasPrice: undefined,
         url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://etherscan.io',
-        uniswapV2CalleeDaiAddress: '0x49399BB0Fcb52b32aB5A0909206BFf7B54FF80b3',
-        uniswapV2LpTokenCalleeDaiAddress: '0x74893C37beACf205507ea794470b13DE06294220',
     },
     kovan: {
         chainId: '0x2a',
@@ -18,8 +16,6 @@ const NETWORKS: Record<string, NetworkConfig> = {
         gasPrice: 2000000000,
         url: `https://kovan.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://kovan.etherscan.io',
-        uniswapV2CalleeDaiAddress: '0x5A40F810754f725DA93e2362775a0600468f7a83',
-        uniswapV2LpTokenCalleeDaiAddress: '0xDeC8b9c2829583A89f7F182DEeD7C12112dfAeD0',
     },
     goerli: {
         chainId: '0x5',
@@ -27,8 +23,6 @@ const NETWORKS: Record<string, NetworkConfig> = {
         gasPrice: 2000000000,
         url: `https://goerli.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://goerli.etherscan.io',
-        uniswapV2CalleeDaiAddress: '0x6d9139ac89ad2263f138633de20e47bcae253938',
-        uniswapV2LpTokenCalleeDaiAddress: '0x13eba3f2dd908e3624e9fb721ea9bd2f5d46f2c0',
     },
 };
 
