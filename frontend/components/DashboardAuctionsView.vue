@@ -20,11 +20,12 @@
         <div class="Block max-w-screen-lg">
             <CollateralTable :collaterals="collaterals" class="overflow-x-scroll" />
         </div>
-        <div class="Block max-w-screen-sm">
+        <div class="Block space-y-4 md:space-y-8 max-w-screen-sm">
             <TextBlock v-if="isExplanationsShown" title="Exchange Callee Contracts">
                 Exchange callee contracts are smart contracts that facilitate the interaction with the Maker Protocol
                 and decentralized exchanges. They are used in order to enable flash loan based auction participation.
             </TextBlock>
+            <CalleeTable />
         </div>
     </div>
 </template>
@@ -33,6 +34,7 @@
 import type { CollateralRow } from 'auctions-core/src/types';
 import Vue from 'vue';
 import CollateralTable from './CollateralTable.vue';
+import CalleeTable from './CalleeTable.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 
@@ -41,6 +43,7 @@ export default Vue.extend({
         LandingBlock,
         TextBlock,
         CollateralTable,
+        CalleeTable,
     },
     props: {
         isExplanationsShown: {
