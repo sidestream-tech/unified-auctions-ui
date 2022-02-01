@@ -56,24 +56,21 @@ export const calculateTransactionProfitDate = function (auction: Auction): Date 
         auction.secondsBetweenPriceDrops === undefined ||
         auction.secondsTillNextPriceDrop === undefined ||
         auction.marketUnitPrice === undefined ||
-        auction.priceDropRatio === undefined
+        auction.priceDropRatio === undefined ||
+        !auction.isActive ||
+        auction.isFinished
     ) {
         return undefined;
     }
 
     const isAlreadyProfitable = auction.approximateUnitPrice.isLessThan(auction.marketUnitPrice);
 
+    if (isAlreadyProfitable) {
+        return undefined;
+    }
+
     let steps = 0;
     let currentValue = new BigNumber(auction.approximateUnitPrice);
-
-    if (isAlreadyProfitable) {
-        while (currentValue.isLessThan(auction.marketUnitPrice)) {
-            steps -= 1;
-            currentValue = currentValue.multipliedBy(new BigNumber(1).minus(auction.priceDropRatio).plus(1));
-        }
-        const secondsTillProfitable = auction.secondsBetweenPriceDrops * steps + auction.secondsTillNextPriceDrop;
-        return addSeconds(new Date(), secondsTillProfitable);
-    }
 
     while (currentValue.isGreaterThan(auction.marketUnitPrice)) {
         steps += 1;
