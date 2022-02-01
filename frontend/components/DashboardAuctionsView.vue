@@ -6,7 +6,7 @@
                 Auctions Dashboard
             </h1>
         </LandingBlock>
-        <div class="mt-4 md:mt-8 px-4 space-y-4 md:space-y-8 w-full max-w-screen-sm">
+        <div class="mt-4 md:mt-8 px-4 w-full max-w-screen-sm">
             <TextBlock v-if="isExplanationsShown" title="Collateral auction parameters">
                 In the dutch-style auction system the step parameter defines for each collateral type the length of
                 time between price drops (e.g. {{ exampleCollateral.secondsBetweenPriceDrops }} sec for
@@ -17,8 +17,14 @@
                 auction price and the price for the collateral on another marketplace.
             </TextBlock>
         </div>
-        <div class="mt-4 md:mt-8 px-4 space-y-4 md:space-y-8 w-full max-w-screen-lg">
+        <div class="mt-4 md:mt-8 px-4 w-full max-w-screen-lg">
             <CollateralTable :collaterals="collaterals" class="overflow-x-scroll" />
+        </div>
+        <div class="mt-4 md:mt-8 px-4 w-full max-w-screen-sm">
+            <TextBlock v-if="isExplanationsShown" title="Exchange Callee Contracts">
+                Exchange callee contracts are smart contracts that facilitate the interaction with the Maker Protocol
+                and decentralized exchanges. They are used in order to enable flash loan based auction participation.
+            </TextBlock>
         </div>
     </div>
 </template>
