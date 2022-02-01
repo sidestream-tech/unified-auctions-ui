@@ -5,7 +5,12 @@ import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParameters
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
 import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
-import { calculateAuctionDropTime, calculateAuctionPrice, calculateTransactionProfit } from './price';
+import {
+    calculateAuctionDropTime,
+    calculateAuctionPrice,
+    calculateTransactionProfit,
+    calculateTransactionProfitDate,
+} from './price';
 import { getSupportedCollateralTypes } from './addresses';
 import { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
@@ -75,11 +80,13 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
     const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
     const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
     const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
+    const transactionProfitDate = calculateTransactionProfitDate(auctionWithParams);
     return {
         ...auctionWithParams,
         secondsTillNextPriceDrop,
         approximateUnitPrice,
         totalPrice,
+        transactionProfitDate,
     };
 };
 
