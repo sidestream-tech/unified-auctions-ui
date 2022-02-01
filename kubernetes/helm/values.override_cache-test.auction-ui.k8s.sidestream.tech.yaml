@@ -1,0 +1,21 @@
+# Value overrides for the deployment to the following host:
+hosts:
+  - "cache-test.auction-ui.k8s.sidestream.tech"
+
+ingress:
+  isCertManagerActivated: true
+  # We can only generate a TLS cert for our own domain,
+  # maker needs to take over their domains TLS termination
+  tls:
+    - hosts:
+        - "cache-test.auction-ui.k8s.sidestream.tech"
+      secretName: "auction-ui-tls-certificate-cache-test"
+
+frontend:
+  deployment:
+    # the frontend bakes in environment variables that need to be changed for makerdao,
+    # so we built a separate image just for that
+    image: "frontend"
+
+botTwitter:
+  secretChamberPath: "auction-ui/localhost/bot-twitter"

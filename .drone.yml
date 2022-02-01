@@ -67,6 +67,27 @@ data:
         event:
           - pull_request
 
+    # frontend:cache-test
+    - name: publish-frontend-cache-test
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend
+      tags:
+        - "cache-test"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/unified-auctions-ui
+      path_to_dockerfile: frontend/Dockerfile
+      path_to_context: ./
+      build_args:
+        - key: PRODUCTION_DOMAIN
+          value: "cache-test.auction-ui.k8s.sidestream.tech"
+        - key: CONTACT_EMAIL
+          value: "development@sidestream.tech"
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
+
     # frontend-makerdao:$RELEASE_TAG
     - name: publish-frontend-makerdao-on-tag
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend-makerdao
@@ -201,6 +222,28 @@ data:
             value: $DRONE_TAG
           - key: botTwitter.deployment.tag
             value: $DRONE_TAG
+
+    - name: deploy-cache-test.auction-ui.k8s.sidestream.tech
+      depends_on:
+        - publish-frontend-cache-test
+        - publish-bot-twitter-on-pr-push
+      trigger:
+        event:
+          - pull_request
+      settings:
+        helm_root_path: kubernetes/helm
+        aws_target_eks_cluster_name: eks-cluster-sidestream
+        aws_ssm_path_to_base64_encoded_secrets_yaml: auction-ui/secrets.yaml
+        value_files:
+        - values.yaml
+        - values.override_cache-test.auction-ui.k8s.sidestream.tech.yaml
+        target_namespace: "auction-ui-production"
+        release_name: "auction-ui"
+        values_to_set:
+          - key: frontend.deployment.tag
+            value: cache-test
+          - key: botTwitter.deployment.tag
+            value: pr-$DRONE_TAG
 
   in_development_image_pipelines:
     - name: core-lint-build
