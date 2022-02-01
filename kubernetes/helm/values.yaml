@@ -30,3 +30,7 @@ ingress:
   class: nginx
   isCertManagerActivated: false
   tls: null
+  contentCache:
+    infuraKey:
+    cacheValidDuration: "10m"
+    cacheMaxSize: "5g"

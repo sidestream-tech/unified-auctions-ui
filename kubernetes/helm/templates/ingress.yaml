@@ -5,6 +5,33 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.class }}
     nginx.ingress.kubernetes.io/rewrite-target: /$1
+    {{- if .Values.ingress.contentCache }}
+    {{- with .Values.ingress.contentCache }}
+    nginx.ingress.kubernetes.io/server-snippet: |
+        proxy_cache_path /cache levels=1:2 keys_zone=infura:1m max_size={{ required "Cache validity must be defined" .cacheMaxSize }}
+                  inactive={{ required "Cache validity must be defined" .cacheValidDuration }} use_temp_path=off;
+
+        location ~ ^/json-rpc/(.*)$ {
+
+            # Cache using the `infura` cache
+            proxy_cache infura;
+
+            # Only cache `POST` requests
+            proxy_cache_methods POST;
+
+            # Document the cache result (HIT, MISS, ...) to the end-client
+            add_header X-Cache-Status $upstream_cache_status;
+
+            # Cache `200`-responses for X minutes. This is necessary
+            # for responses that do not include `Cache-Control` headers
+            # that tell nginx how long they are valid for. Infura does
+            # not provide these headers.
+            proxy_cache_valid 200 {{ required "Cache validity must be defined" .cacheValidDuration }};
+
+            proxy_pass https://$1.infura.io/v3/{{ required "Infura key must be present if content caching is enabled" .infuraKey }};
+        }
+    {{- end }}
+    {{- end }}
     {{- if .Values.ingress.isCertManagerActivated }}
     cert-manager.io/cluster-issuer: "cloudflare-issuer"
     {{- end }}

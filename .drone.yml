@@ -175,8 +175,10 @@ data:
         target_namespace: "auction-ui-main"
         release_name: "auction-ui"
         values_to_set:
-          - frontend.deployment.tag=$DRONE_COMMIT_SHA
-          - botTwitter.deployment.tag=$DRONE_COMMIT_SHA
+          - key: frontend.deployment.tag
+            value: $DRONE_COMMIT_SHA
+          - key: botTwitter.deployment.tag
+            value: $DRONE_COMMIT_SHA
 
     - name: deploy-production.auction-ui.k8s.sidestream.tech
       depends_on:
@@ -195,8 +197,10 @@ data:
         target_namespace: "auction-ui-production"
         release_name: "auction-ui"
         values_to_set:
-          - frontend.deployment.tag=$DRONE_TAG
-          - botTwitter.deployment.tag=$DRONE_TAG
+          - key: frontend.deployment.tag
+            value: $DRONE_TAG
+          - key: botTwitter.deployment.tag
+            value: $DRONE_TAG
 
   in_development_image_pipelines:
     - name: core-lint-build
