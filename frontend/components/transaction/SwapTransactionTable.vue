@@ -41,6 +41,12 @@
             </div>
         </div>
         <div class="flex w-full justify-between">
+            <div>Estimated Profitability Time</div>
+            <div class="RightInfo">
+                <time-till-profitable :auction="auctionTransaction" />
+            </div>
+        </div>
+        <div class="flex w-full justify-between">
             <div>Potential Profit</div>
             <div class="RightInfo">
                 <FormatCurrency
@@ -92,6 +98,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import PriceDropAnimation from '../utils/PriceDropAnimation.vue';
+import TimeTillProfitable from '../utils/TimeTillProfitable.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
@@ -104,6 +111,7 @@ export default Vue.extend({
         TimeTill,
         FormatCurrency,
         FormatMarketValue,
+        TimeTillProfitable,
     },
     props: {
         auctionTransaction: {
