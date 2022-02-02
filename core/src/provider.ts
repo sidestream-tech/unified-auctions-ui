@@ -10,7 +10,7 @@ const getProvider = function (network: string): ethers.providers.BaseProvider {
 
     if (!providers[network]) {
         const networkUrl = NETWORKS[network].url;
-        providers[network] = new ethers.providers.JsonRpcProvider(networkUrl);
+        providers[network] = new ethers.providers.JsonRpcProvider({ url: networkUrl, timeout: 1000 }); // TODO: Increase timeout once finished with debugging
     }
     return providers[network];
 };
