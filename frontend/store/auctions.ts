@@ -1,4 +1,4 @@
-import type { Auction, AuctionTransaction, TransactionFees } from 'auctions-core/src/types';
+import type { Auction, AuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import {
@@ -8,7 +8,6 @@ import {
     enrichAuctionWithPriceDropAndMarketValue,
 } from 'auctions-core/src/auctions';
 import { checkAllExchangeRates } from 'auctions-core/src/uniswap';
-import { enrichAuctionWithTransactionFees } from 'auctions-core/src/fees';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import getWallet from '~/lib/wallet';
