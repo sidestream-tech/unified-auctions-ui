@@ -26,7 +26,7 @@ export const createSigner = async function (network: string, privateKey: string)
         const signer = new ethers.Wallet(privateKey, provider);
         setSigner(network, signer as any);
         const address = await signers[network].getAddress();
-        console.info(`Authenticated with wallet "${address}"`);
+        console.info(`Using wallet "${address}"`);
     } catch (error) {
         throw error;
     }
