@@ -31,6 +31,5 @@ ingress:
   isCertManagerActivated: false
   tls: null
   contentCache:
-    infuraKey:
+    infuraKey: null
     cacheValidDuration: "10m"
-    cacheMaxSize: "5g"
