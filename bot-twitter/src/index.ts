@@ -1,5 +1,5 @@
 import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
-import { setSigner } from 'auctions-core/src/signer';
+import { createSigner } from 'auctions-core/src/signer';
 import { getNewAuctions } from './auctions';
 import notify from './notify';
 import { setupWallet } from './authorizations';
@@ -26,7 +26,7 @@ const loop = async function (): Promise<void> {
 
 const setup = async function (): Promise<void> {
     if (process.env.WALLET_PRIVATE_KEY) {
-        await setSigner(NETWORK, process.env.WALLET_PRIVATE_KEY);
+        await createSigner(NETWORK, process.env.WALLET_PRIVATE_KEY);
         await setupWallet(NETWORK);
     }
     await loop();

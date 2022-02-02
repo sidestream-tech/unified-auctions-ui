@@ -15,11 +15,16 @@ const getSigner = function (network: string): ethers.Wallet {
     return signers[network];
 };
 
-export const setSigner = async function (network: string, privateKey: string) {
+export function setSigner(network: string, signer: ethers.Wallet) {
+    signers[network] = signer;
+}
+
+export const createSigner = async function (network: string, privateKey: string) {
     const provider = getProvider(network);
 
     try {
-        signers[network] = new ethers.Wallet(privateKey, provider);
+        const signer = new ethers.Wallet(privateKey, provider);
+        setSigner(network, signer as any);
         const address = await signers[network].getAddress();
         console.info(`Authenticated with wallet "${address}"`);
     } catch (error) {
