@@ -243,7 +243,7 @@ data:
           - key: frontend.deployment.tag
             value: cache-test
           - key: botTwitter.deployment.tag
-            value: pr-$DRONE_TAG
+            value: pr-$DRONE_PULL_REQUEST
           - key: ingress.contentCache.infuraKey
             value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/bot-twitter/infura_project_id
 
