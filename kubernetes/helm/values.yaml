@@ -32,4 +32,4 @@ ingress:
   tls: null
   contentCache:
     infuraKey: null
-    cacheValidDuration: "10m"
+    cacheValidDuration: "2m"
