@@ -6,7 +6,7 @@ import MCD_VAT from './abis/MCD_VAT.json';
 import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import MCD_CLIP from './abis/MCD_CLIP.json';
-import getSigner from "./signer";
+import getSigner from './signer';
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
     const suffix = collateralType.toUpperCase().replace('-', '_');
