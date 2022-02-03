@@ -46,7 +46,7 @@ const getContractInterfaceByName = async function (contractName: string): Promis
 const getContract = async function (network: string, contractName: string, useSigner = false): Promise<Contract> {
     const contractAddress = await getContractAddressByName(network, contractName);
     const contractInterface = await getContractInterfaceByName(contractName);
-    const signerOrProvider = useSigner ? getSigner(network) : getProvider(network);
+    const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
     const contract = await new ethers.Contract(contractAddress, contractInterface, signerOrProvider);
     return contract;
 };
