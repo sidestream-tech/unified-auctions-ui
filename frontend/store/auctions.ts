@@ -1,4 +1,4 @@
-import type { Auction, AuctionTransaction, TransactionFees } from 'auctions-core/src/types';
+import type { Auction, AuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import {
@@ -7,7 +7,6 @@ import {
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
 } from 'auctions-core/src/auctions';
-import { enrichAuctionWithTransactionFees } from 'auctions-core/src/fees';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import getWallet from '~/lib/wallet';
@@ -20,7 +19,7 @@ let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
 let updateAuctionsPricesIntervalId: ReturnType<typeof setInterval> | undefined;
 
 interface State {
-    auctionStorage: Record<string, Auction>;
+    auctionStorage: Record<string, AuctionTransaction>;
     isFetching: boolean;
     isBidding: boolean;
     error: string | null;
@@ -39,11 +38,8 @@ export const getters = {
     listAuctions(state: State) {
         return Object.values(state.auctionStorage);
     },
-    listAuctionTransactions(state: State, getters: any, _rootState: any, rootGetters: any): AuctionTransaction[] {
-        const fees: TransactionFees = rootGetters['fees/fees'];
-        const auctions = Object.values(state.auctionStorage).map(auction =>
-            enrichAuctionWithTransactionFees(auction, fees)
-        );
+    listAuctionTransactions(state: State, getters: any, _rootState: any): AuctionTransaction[] {
+        const auctions = Object.values(state.auctionStorage);
         auctions.forEach(auction => {
             auction.isRestarting = getters.isAuctionRestarting(auction.id);
         });
@@ -67,11 +63,14 @@ export const getters = {
 };
 
 export const mutations = {
-    setAuctions(state: State, auctions: Auction[]) {
-        const newAuctionStorage = auctions.reduce((auctionStorage: Record<string, Auction>, auction: Auction) => {
-            auctionStorage[auction.id] = auction;
-            return auctionStorage;
-        }, {});
+    setAuctions(state: State, auctions: AuctionTransaction[]) {
+        const newAuctionStorage = auctions.reduce(
+            (auctionStorage: Record<string, AuctionTransaction>, auction: AuctionTransaction) => {
+                auctionStorage[auction.id] = auction;
+                return auctionStorage;
+            },
+            {}
+        );
         const finishedAuctionIds = Object.keys(state.auctionStorage).filter(auctionID => {
             return !newAuctionStorage[auctionID];
         });
@@ -84,7 +83,7 @@ export const mutations = {
             ...newAuctionStorage,
         };
     },
-    setAuction(state: State, auction: Auction) {
+    setAuction(state: State, auction: AuctionTransaction) {
         state.auctionStorage[auction.id] = auction;
     },
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
