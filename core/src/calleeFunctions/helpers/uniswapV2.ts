@@ -97,24 +97,7 @@ export const getLpTokenTotalSupply = async function (network: string, symbol: st
     return new BigNumber(totalSupply.toString()).shiftedBy(-collateral.decimals);
 };
 
-export const getTotalPriceInDai = async function (
-    network: string,
-    reserve: TokenAmount,
-    portionOfTheTotalSupply: BigNumber
-): Promise<BigNumber> {
-    if (!reserve.token.symbol) {
-        throw new Error(`reserve.token.symbol is not defined`);
-    }
-    const amountInThePool = new BigNumber(reserve.toFixed(reserve.token.decimals));
-    const amountOwned = amountInThePool.multipliedBy(portionOfTheTotalSupply);
-    if (reserve.token.symbol === 'DAI') {
-        return amountOwned;
-    }
-    const tokenExchangeRate = await getRegularTokenExchangeRateBySymbol(network, reserve.token.symbol, amountOwned);
-    return tokenExchangeRate.multipliedBy(amountOwned);
-};
-
-const getRegularTokenExchangeRateBySymbol = async function (
+export const getRegularTokenExchangeRateBySymbol = async function (
     network: string,
     symbol: string,
     amount: BigNumber
@@ -134,4 +117,21 @@ const getRegularTokenExchangeRateBySymbol = async function (
         TradeType.EXACT_INPUT
     );
     return new BigNumber(uniswapTrade.executionPrice.toSignificant(collateral.decimals));
+};
+
+export const getTotalPriceInDai = async function (
+    network: string,
+    reserve: TokenAmount,
+    portionOfTheTotalSupply: BigNumber
+): Promise<BigNumber> {
+    if (!reserve.token.symbol) {
+        throw new Error(`reserve.token.symbol is not defined`);
+    }
+    const amountInThePool = new BigNumber(reserve.toFixed(reserve.token.decimals));
+    const amountOwned = amountInThePool.multipliedBy(portionOfTheTotalSupply);
+    if (reserve.token.symbol === 'DAI') {
+        return amountOwned;
+    }
+    const tokenExchangeRate = await getRegularTokenExchangeRateBySymbol(network, reserve.token.symbol, amountOwned);
+    return tokenExchangeRate.multipliedBy(amountOwned);
 };
