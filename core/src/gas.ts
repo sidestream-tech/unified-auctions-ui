@@ -7,7 +7,7 @@ import memoizee from 'memoizee';
 const API_URL = 'https://ethgasstation.info/json/ethgasAPI.json';
 const TRANSACTION_SPEED = 'fast';
 
-const GAS_CACHE = 30 * 1000;
+const GAS_CACHE = 10 * 1000;
 
 const _getCurrentGasPrice = async function (): Promise<BigNumber> {
     const gasData = await fetch(API_URL).then(r => r.json());
