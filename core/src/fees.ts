@@ -2,11 +2,8 @@ import type { Auction, AuctionTransaction, TransactionFees } from './types';
 import BigNumber from './bignumber';
 import { getExchangeRateBySymbol } from './uniswap';
 import { getGasPrice } from './gas';
-import memoizee from 'memoizee';
 
-const TRANSACTION_FEE_CACHE = 30 * 1000;
-
-const _getApproximateTransactionFees = async function (network: string): Promise<TransactionFees> {
+export const getApproximateTransactionFees = async function (network: string): Promise<TransactionFees> {
     const gasPrice = await getGasPrice(network);
     const exchangeRate = await getExchangeRateBySymbol(network, 'ETH');
     const convertETHtoDAI = function (eth: BigNumber) {
@@ -25,12 +22,6 @@ const _getApproximateTransactionFees = async function (network: string): Promise
         restartTransactionFeeETH,
     };
 };
-
-export const getApproximateTransactionFees = memoizee(_getApproximateTransactionFees, {
-    maxAge: TRANSACTION_FEE_CACHE,
-    promise: true,
-    length: 1,
-});
 
 export const enrichAuctionWithTransactionFees = function (
     auction: Auction,
