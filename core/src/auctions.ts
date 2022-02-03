@@ -1,4 +1,4 @@
-import type { Auction, AuctionInitialInfo, Notifier } from './types';
+import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier } from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
 import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
@@ -14,6 +14,7 @@ import {
 import { getSupportedCollateralTypes } from './addresses';
 import { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
+import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -107,7 +108,7 @@ export const fetchAllInitialAuctions = async function (network: string): Promise
     return auctionGroups.flat();
 };
 
-export const fetchAllAuctions = async function (network: string): Promise<Auction[]> {
+export const fetchAllAuctions = async function (network: string): Promise<AuctionTransaction[]> {
     const auctions = await fetchAllInitialAuctions(network);
 
     // enrich them with statuses
@@ -120,7 +121,13 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     const auctionsWithPriceDrop = await Promise.all(auctionsWithStatuses.map(enrichAuctionWithPriceDrop));
 
     // enrich them with market values
-    return await Promise.all(auctionsWithPriceDrop.map(a => enrichAuctionWithMarketValues(a, network)));
+    const auctionsWithMarketValue = await Promise.all(
+        auctionsWithPriceDrop.map(a => enrichAuctionWithMarketValues(a, network))
+    );
+
+    // enrich with profit and fee calculation
+    const fees = await getApproximateTransactionFees(network);
+    return await Promise.all(auctionsWithMarketValue.map(a => enrichAuctionWithTransactionFees(a, fees)));
 };
 
 export const restartAuction = async function (
