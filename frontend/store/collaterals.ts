@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import type { CollateralRow } from 'auctions-core/src/types';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
-import { getExchangeRateBySymbol } from 'auctions-core/src/uniswap';
+import { getMarketPrice } from 'auctions-core/src/calleeFunctions';
 import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
 import Vue from 'vue';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
@@ -48,7 +48,7 @@ export const actions = {
                 });
                 return undefined;
             });
-            const marketUnitPrice = await getExchangeRateBySymbol(network, collateral.symbol).catch(error => {
+            const marketUnitPrice = await getMarketPrice(network, collateral.symbol).catch(error => {
                 console.error(error);
                 return error.toString();
             });

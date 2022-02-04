@@ -7,7 +7,6 @@ import {
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
 } from 'auctions-core/src/auctions';
-import { checkAllExchangeRates } from 'auctions-core/src/uniswap';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import getWallet from '~/lib/wallet';
@@ -219,10 +218,6 @@ export const actions = {
                 error instanceof Error && error.message
             );
         }
-    },
-    async checkAllExchangeRates({ rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['network/getMakerNetwork'];
-        await checkAllExchangeRates(network);
     },
     async checkAllCalcParameters({ rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];

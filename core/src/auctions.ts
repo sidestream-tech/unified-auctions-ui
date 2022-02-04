@@ -1,10 +1,11 @@
 import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier } from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
-import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
+import { getCalleeData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
 import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
     calculateAuctionPrice,
@@ -41,11 +42,7 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
         return auction;
     }
     try {
-        const marketUnitPrice = await getExchangeRateBySymbol(
-            network,
-            auction.collateralSymbol,
-            auction.collateralAmount
-        );
+        const marketUnitPrice = await getMarketPrice(network, auction.collateralSymbol, auction.collateralAmount);
         const marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
             .minus(marketUnitPrice)
             .dividedBy(marketUnitPrice);
@@ -146,15 +143,15 @@ export const bidOnTheAuction = async function (
     profitAddress: string,
     notifier?: Notifier
 ): Promise<string> {
-    const calleeAddress = getUniswapCalleeBySymbol(network, auction.collateralSymbol);
-    const flashData = await getUniswapParametersByCollateral(network, auction.collateralType, profitAddress);
+    const calleeAddress = getCalleeAddressByCollateralType(network, auction.collateralType);
+    const calleeData = await getCalleeData(network, auction.collateralType, profitAddress);
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
         convertNumberTo32Bytes(auction.auctionId),
         auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
         auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(),
         calleeAddress,
-        flashData,
+        calleeData,
     ];
     return executeTransaction(network, contractName, 'take', contractParameters, notifier);
 };
