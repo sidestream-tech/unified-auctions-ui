@@ -93,7 +93,7 @@ const _getCachedUniswapPairBySymbols = async function (
     symbol1: string,
     symbol2: string
 ): Promise<Pair | undefined> {
-    const provider = getProvider(network);
+    const provider = await getProvider(network);
     const token1 = await getUniswapTokenBySymbol(network, symbol1);
     const token2 = await getUniswapTokenBySymbol(network, symbol2);
     try {
@@ -135,7 +135,7 @@ const splitArrayIntoPairs = function (array: string[]): string[][] {
 };
 
 const getLpTokenTotalSupply = async function (network: string, symbol: string): Promise<BigNumber> {
-    const provider = getProvider(network);
+    const provider = await getProvider(network);
     const address = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const contract = new ethers.Contract(address, uniswapV2PairABI, provider);
     const totalSupply = await contract.totalSupply();
