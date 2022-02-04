@@ -1,7 +1,7 @@
 import type { CalleeNames, CalleeFunctions } from '../types';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
-import UniswapV2LpTokenCalleeDai from './UniswapV2CalleeDai';
+import UniswapV2LpTokenCalleeDai from './UniswapV2LpTokenCalleeDai';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 
 const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
