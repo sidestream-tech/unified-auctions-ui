@@ -6,6 +6,7 @@ import MCD_VAT from './abis/MCD_VAT.json';
 import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import MCD_CLIP from './abis/MCD_CLIP.json';
+import getSigner from './signer';
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
     const suffix = collateralType.toUpperCase().replace('-', '_');
@@ -42,11 +43,11 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     throw new Error(`No contract interface found for "${contractName}"`);
 };
 
-const getContract = async function (network: string, contractName: string): Promise<Contract> {
+const getContract = async function (network: string, contractName: string, useSigner = false): Promise<Contract> {
     const contractAddress = await getContractAddressByName(network, contractName);
     const contractInterface = await getContractInterfaceByName(contractName);
-    const provider = getProvider(network);
-    const contract = await new ethers.Contract(contractAddress, contractInterface, provider);
+    const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
+    const contract = await new ethers.Contract(contractAddress, contractInterface, signerOrProvider);
     return contract;
 };
 

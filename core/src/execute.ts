@@ -12,7 +12,7 @@ const executeTransaction = async function (
     notifier?: Notifier,
     confirmTransaction?: boolean
 ): Promise<string> {
-    const contract = await getContract(network, contractName);
+    const contract = await getContract(network, contractName, true);
     const gasPrice = await getGasPrice(network);
     const transactionPromise = contract[contractMethod](...contractParameters, {
         gasPrice: gasPrice.shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(),

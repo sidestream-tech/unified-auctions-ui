@@ -9,7 +9,7 @@ import { CHAINLOG_ADDRESS } from './constants/NETWORKS';
 const CHAINLOG_CACHE = 24 * 60 * 60 * 1000;
 
 const getChainLogContract = async function (network: string): Promise<Contract> {
-    const provider = getProvider(network);
+    const provider = await getProvider(network);
     return await new ethers.Contract(CHAINLOG_ADDRESS, CHAINLOG, provider);
 };
 
