@@ -35,15 +35,18 @@ export const state = (): State => ({
 });
 
 export const getters = {
-    listAuctions(state: State) {
+    listAuctions(state: State): AuctionTransaction[] {
         return Object.values(state.auctionStorage);
     },
     listAuctionTransactions(state: State, getters: any, _rootState: any): AuctionTransaction[] {
         const auctions = Object.values(state.auctionStorage);
-        auctions.forEach(auction => {
-            auction.isRestarting = getters.isAuctionRestarting(auction.id);
+        return auctions.map(auction => {
+            const isRestarting = getters.isAuctionRestarting(auction.id);
+            return {
+                ...auction,
+                isRestarting,
+            };
         });
-        return auctions;
     },
     getAuctionById: (state: State) => (id: string) => {
         return state.auctionStorage[id];
@@ -136,7 +139,6 @@ export const actions = {
     async fetch({ commit, dispatch }: ActionContext<State, State>) {
         commit('setIsFetching', true);
         await dispatch('fetchWithoutLoading');
-        dispatch('fees/setup', null, { root: true });
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }
