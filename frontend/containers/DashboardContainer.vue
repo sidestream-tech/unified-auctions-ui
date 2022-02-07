@@ -30,10 +30,10 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
-        callees(): CalleeAddresses | undefined {
+        callees(): CalleeAddresses {
             const network = this.$store?.getters['network/getMakerNetwork'];
             if (!network) {
-                return undefined;
+                return {};
             }
             return getCalleesByNetworkType(network);
         },

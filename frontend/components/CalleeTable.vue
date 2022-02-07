@@ -5,7 +5,7 @@
                 <th class="Heading">Callee Contract</th>
                 <th class="Heading">Address</th>
             </tr>
-            <tbody v-if="callees">
+            <tbody v-if="!isCalleesEmpty">
                 <tr v-for="[callee, address] of Object.entries(callees)" :key="callee">
                     <td class="Body">
                         <span>{{ callee }}</span>
@@ -17,7 +17,7 @@
             </tbody>
         </table>
 
-        <div v-if="!callees" class="flex h-10 border-2 border-t-0 border-gray-300 dark:border-gray-600">
+        <div v-if="isCalleesEmpty" class="flex h-10 border-2 border-t-0 border-gray-300 dark:border-gray-600">
             <span class="NoContracts"> No Callee Contracts found for this network. </span>
         </div>
     </div>
@@ -32,11 +32,15 @@ export default Vue.extend({
     },
     props: {
         callees: {
-            type: Object as Vue.PropType<CalleeAddresses> | undefined,
-            required: true,
+            type: Object as Vue.PropType<CalleeAddresses>,
+            default: () => {},
         },
     },
-    computed: {},
+    computed: {
+        isCalleesEmpty() {
+            return Object.keys(this.callees).length === 0;
+        },
+    },
 });
 </script>
 
