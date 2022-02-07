@@ -36,10 +36,5 @@ storiesOf('CalleeTable', module)
     }))
     .add('No Callees for Network', () => ({
         ...common,
-        data() {
-            return {
-                callees: {},
-            };
-        },
-        template: '<CalleeTable :callees="callees" />',
+        template: '<CalleeTable />',
     }));

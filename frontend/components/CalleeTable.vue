@@ -33,7 +33,7 @@ export default Vue.extend({
     props: {
         callees: {
             type: Object as Vue.PropType<CalleeAddresses>,
-            default: () => {},
+            default: () => ({}),
         },
     },
     computed: {
