@@ -5,8 +5,8 @@
             'text-white bg-primary border-primary active:bg-primary-dark active:border-primary-dark  focus:bg-primary-light focus:border-primary-light hover:bg-primary-light hover:border-primary-light':
                 type === 'primary',
         }"
-        class="overflow-hidden"
         :type="type"
+        :html-type="htmlType"
         @click="$emit('click')"
     >
         <template v-if="isLoading">
@@ -30,6 +30,10 @@ export default Vue.extend({
         type: {
             type: String,
             default: '',
+        },
+        htmlType: {
+            type: String,
+            default: 'button',
         },
         disabled: {
             type: Boolean,

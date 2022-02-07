@@ -5,10 +5,12 @@ import {
     getNetworkTypeByChainId,
     getNetworkTitleByChainId,
 } from 'auctions-core/src/constants/NETWORKS';
+import { setProvider, createProviderByURL } from 'auctions-core/src/provider';
 import getWallet from '~/lib/wallet';
 
 const DEFAULT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
 export const FAKE_NETWORK_NAME = 'stub';
+export const CUSTOM_NETWORK_NAME = 'custom';
 
 interface State {
     walletChainId: string | undefined;
@@ -41,8 +43,14 @@ export const getters = {
     isPageNetworkFake(_state: State, getters: any) {
         return getters.getPageNetwork === FAKE_NETWORK_NAME;
     },
+    isPageNetworkCustom(_state: State, getters: any) {
+        return getters.getPageNetwork === CUSTOM_NETWORK_NAME;
+    },
     isPageNetworkValid(_state: State, getters: any) {
         if (getters.isPageNetworkFake) {
+            return true;
+        }
+        if (getters.isPageNetworkCustom) {
             return true;
         }
         try {
@@ -63,6 +71,9 @@ export const getters = {
     },
     getMakerNetwork(_state: State, getters: any) {
         if (getters.isPageNetworkFake) {
+            return;
+        }
+        if (getters.isPageNetworkCustom) {
             return;
         }
         if (!getters.isPageNetworkValid) {
@@ -119,5 +130,8 @@ export const actions = {
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
         }
+    },
+    setRPCurl(_: ActionContext<State, State>, url: string) {
+        setProvider('mainnet', createProviderByURL(url));
     },
 };

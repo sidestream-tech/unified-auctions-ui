@@ -18,6 +18,12 @@
             :invalid-network="getPageNetwork"
             @setPageNetwork="setPageNetwork"
         />
+        <CustomRPCModal
+            v-if="isPageNetworkCustom"
+            :access-token="chaoslabsAccessToken"
+            :simulation-ids="chaoslabsSimulationIds"
+            @url="setRPCurl"
+        />
         <ChangeWalletNetworkModal
             v-else-if="!isWalletNetworkValid"
             :invalid-network="getWalletNetworkTitle"
@@ -39,12 +45,14 @@ import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.v
 import ChangeWalletNetworkModal from '~/components/modals/ChangeWalletNetworkModal.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
 import WalletModal from '~/components/modals/WalletModal.vue';
+import CustomRPCModal from '~/components/modals/CustomRPCModal.vue';
 
 export default Vue.extend({
     components: {
         TermsModal,
         ChangePageNetworkModal,
         ChangeWalletNetworkModal,
+        CustomRPCModal,
         Header,
         WalletModal,
     },
@@ -64,6 +72,7 @@ export default Vue.extend({
             'getWalletNetworkTitle',
             'getPageNetwork',
             'isPageNetworkValid',
+            'isPageNetworkCustom',
             'isWalletNetworkValid',
         ]),
         isExplanationsShown: {
@@ -93,9 +102,15 @@ export default Vue.extend({
         stagingBannerURL() {
             return process.env.STAGING_BANNER_URL;
         },
+        chaoslabsAccessToken() {
+            return process.env.CHAOSLABS_ACCESS_TOKEN;
+        },
+        chaoslabsSimulationIds() {
+            return process.env.CHAOSLABS_SIMULATION_IDS;
+        },
     },
     methods: {
-        ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
+        ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork', 'setRPCurl']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
             this.$store.commit('preferences/setAcceptedTerms', true);

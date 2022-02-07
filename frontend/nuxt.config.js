@@ -15,6 +15,8 @@ export default {
         GITHUB_URL: pkg.repository.url,
         STAGING_BANNER_URL: process.env.STAGING_BANNER_URL || undefined,
         DEFAULT_ETHEREUM_NETWORK: process.env.DEFAULT_ETHEREUM_NETWORK || 'mainnet',
+        CHAOSLABS_ACCESS_TOKEN: process.env.CHAOSLABS_ACCESS_TOKEN,
+        CHAOSLABS_SIMULATION_IDS: process.env.CHAOSLABS_SIMULATION_IDS,
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head

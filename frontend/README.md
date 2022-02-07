@@ -39,4 +39,7 @@ Help on both things is given in the linked resources above.
 - `PRODUCTION_DOMAIN`: (optional) Required in order to enable [plausible.io statistics](https://github.com/moritzsternemann/vue-plausible#configuration). In addition to adding it here, the domain (e.g. `auctions.makerdao.network`) should also be registered within [plausible dashboard](https://plausible.io/).
 - `CONTACT_EMAIL`: (optional) Required in order to display contact link in the footer. This email should be able to accept and manage bug reports and other contact requests.
 - `STAGING_BANNER_URL`: (optional) When set a banner will be displayed, warning the user that they are using a staging version. The text will use `STAGING_BANNER_URL` as a link to production UI.
-- `DEFAULT_ETHEREUM_NETWORK`: (optional) Can be set to change the default ethereum network. Default is mainnet.
+- `DEFAULT_ETHEREUM_NETWORK`: (optional) Can be set to change the default ethereum network. Defaults to `mainnet` if no value provided.
+- `CHAOSLABS_*`: (optional) set of values required for manual testing of the UI using temporary RPC endpoint provided by [ChaosLabs](https://chaoslabs.co)
+    - `CHAOSLABS_ACCESS_TOKEN` - access token, required
+    - `CHAOSLABS_SIMULATION_IDS` – comma-separated list of simulation ids, at least one is required
