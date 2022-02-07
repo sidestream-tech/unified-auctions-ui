@@ -41,7 +41,9 @@
                 :class="(hoveredRowIndex === index && 'bg-primary text-white dark:bg-primary-dark') || 'text-primary'"
                 class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
             >
-                See details
+                <span v-if="record.isFinished">See details</span>
+                <span v-else-if="record.isActive">Participate</span>
+                <span v-else-if="!record.isActive">Restart auction</span>
             </nuxt-link>
         </div>
     </Table>
