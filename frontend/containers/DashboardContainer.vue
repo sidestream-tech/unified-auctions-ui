@@ -30,12 +30,12 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
-        callees(): CalleeAddresses {
-            const pageNetwork = this.$store?.getters['network/getPageNetwork'];
-            if (pageNetwork === 'stub') {
-                return {};
+        callees(): CalleeAddresses | undefined {
+            const network = this.$store?.getters['network/getMakerNetwork'];
+            if (!network) {
+                return undefined;
             }
-            return getCalleesByNetworkType(pageNetwork);
+            return getCalleesByNetworkType(network);
         },
     },
     async mounted() {

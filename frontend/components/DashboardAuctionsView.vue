@@ -55,8 +55,8 @@ export default Vue.extend({
             default: () => [],
         },
         callees: {
-            type: Object as Vue.PropType<CalleeAddresses>,
-            default: () => {},
+            type: Object as Vue.PropType<CalleeAddresses> | undefined,
+            default: undefined,
         },
     },
     computed: {
