@@ -13,6 +13,7 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0",
+    "debug": "node --inspect node_modules/.bin/nuxt",
     "test": "jest"
   },
   "repository": {

@@ -1,10 +1,11 @@
-import type { Auction, AuctionInitialInfo, Notifier } from './types';
+import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier } from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
-import { getExchangeRateBySymbol, getUniswapCalleeBySymbol, getUniswapParametersByCollateral } from './uniswap';
+import { getCalleeData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
 import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
     calculateAuctionPrice,
@@ -14,6 +15,7 @@ import {
 import { getSupportedCollateralTypes } from './addresses';
 import { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
+import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -40,11 +42,7 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
         return auction;
     }
     try {
-        const marketUnitPrice = await getExchangeRateBySymbol(
-            network,
-            auction.collateralSymbol,
-            auction.collateralAmount
-        );
+        const marketUnitPrice = await getMarketPrice(network, auction.collateralSymbol, auction.collateralAmount);
         const marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
             .minus(marketUnitPrice)
             .dividedBy(marketUnitPrice);
@@ -107,7 +105,7 @@ export const fetchAllInitialAuctions = async function (network: string): Promise
     return auctionGroups.flat();
 };
 
-export const fetchAllAuctions = async function (network: string): Promise<Auction[]> {
+export const fetchAllAuctions = async function (network: string): Promise<AuctionTransaction[]> {
     const auctions = await fetchAllInitialAuctions(network);
 
     // enrich them with statuses
@@ -120,7 +118,13 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     const auctionsWithPriceDrop = await Promise.all(auctionsWithStatuses.map(enrichAuctionWithPriceDrop));
 
     // enrich them with market values
-    return await Promise.all(auctionsWithPriceDrop.map(a => enrichAuctionWithMarketValues(a, network)));
+    const auctionsWithMarketValue = await Promise.all(
+        auctionsWithPriceDrop.map(a => enrichAuctionWithMarketValues(a, network))
+    );
+
+    // enrich with profit and fee calculation
+    const fees = await getApproximateTransactionFees(network);
+    return await Promise.all(auctionsWithMarketValue.map(a => enrichAuctionWithTransactionFees(a, fees)));
 };
 
 export const restartAuction = async function (
@@ -139,15 +143,15 @@ export const bidOnTheAuction = async function (
     profitAddress: string,
     notifier?: Notifier
 ): Promise<string> {
-    const calleeAddress = getUniswapCalleeBySymbol(network, auction.collateralSymbol);
-    const flashData = await getUniswapParametersByCollateral(network, auction.collateralType, profitAddress);
+    const calleeAddress = getCalleeAddressByCollateralType(network, auction.collateralType);
+    const calleeData = await getCalleeData(network, auction.collateralType, profitAddress);
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
         convertNumberTo32Bytes(auction.auctionId),
         auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
         auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(),
         calleeAddress,
-        flashData,
+        calleeData,
     ];
     return executeTransaction(network, contractName, 'take', contractParameters, notifier);
 };

@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { message } from 'ant-design-vue';
 import { getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/constants/NETWORKS';
-import { setProvider } from 'auctions-core/src/provider';
+import { setSigner } from 'auctions-core/src/signer';
 import MetaMaskLogo from '~/assets/icons/wallets/metamask.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
 
@@ -75,7 +75,7 @@ export default class MetaMask extends AbstractWallet {
         const networkType = getNetworkTypeByChainId(window.ethereum.chainId);
         const signer = await this.getSigner();
         if (networkType) {
-            setProvider(networkType, signer as any);
+            await setSigner(networkType, signer as any);
         }
         window.$nuxt.$store.dispatch('network/setWalletChainId', window.ethereum.chainId);
     }

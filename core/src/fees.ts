@@ -1,11 +1,11 @@
 import type { Auction, AuctionTransaction, TransactionFees } from './types';
 import BigNumber from './bignumber';
-import { getExchangeRateBySymbol } from './uniswap';
+import { getMarketPrice } from './calleeFunctions';
 import { getGasPrice } from './gas';
 
 export const getApproximateTransactionFees = async function (network: string): Promise<TransactionFees> {
     const gasPrice = await getGasPrice(network);
-    const exchangeRate = await getExchangeRateBySymbol(network, 'ETH');
+    const exchangeRate = await getMarketPrice(network, 'ETH');
     const convertETHtoDAI = function (eth: BigNumber) {
         return eth.multipliedBy(exchangeRate);
     };
