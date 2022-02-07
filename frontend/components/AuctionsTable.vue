@@ -27,7 +27,7 @@
                 v-if="record.isActive && record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
                 :value="marketUnitPriceToUnitPriceRatio"
             />
-            <span v-else class="opacity-50">Unknown</span>
+            <span v-else class="opacity-50">Not tradable</span>
         </div>
         <div slot="endDate" slot-scope="endDate, record" class="text-center">
             <span v-if="record.isFinished" class="opacity-50"> Finished </span>
