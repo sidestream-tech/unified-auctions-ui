@@ -12,10 +12,13 @@ import {
     calculateTransactionProfit,
     calculateTransactionProfitDate,
 } from './price';
-import { getSupportedCollateralTypes } from './addresses';
+import { fetchContractsAddressesByNetwork, getSupportedCollateralTypes } from './addresses';
 import { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
+import getProvider from './provider';
+import { Contract } from 'ethers';
+import { parseAuctionURL } from './helpers/parseAuctionURL';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -125,6 +128,20 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     // enrich with profit and fee calculation
     const fees = await getApproximateTransactionFees(network);
     return await Promise.all(auctionsWithMarketValue.map(a => enrichAuctionWithTransactionFees(a, fees)));
+};
+
+export const fetchFinishedAuction = async function (network: string, auctionURL: string) {
+    const parsedAuctionURL = parseAuctionURL(auctionURL);
+    const addresses: Record<string, any> = await fetchContractsAddressesByNetwork(network);
+    const address: string = addresses[`MCD_CLIP_${parsedAuctionURL.collateralType}`];
+    const provider = await getProvider(network);
+
+    if (!address) {
+        throw new Error(`No Clip contract could be found for "${parsedAuctionURL.collateralType}"`);
+    }
+
+    const abi = ['event Take(uint256,uint256,uint256,address,bytes)'];
+    new Contract(address, abi, provider);
 };
 
 export const restartAuction = async function (
