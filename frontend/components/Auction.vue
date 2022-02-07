@@ -82,19 +82,15 @@
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Auction Price Total</td>
                                 <td>
-                                    <format-currency
-                                        v-if="auction.isActive"
-                                        :value="auction.totalPrice"
-                                        currency="DAI"
-                                    />
                                     <Popover
-                                        v-else
+                                        v-if="!auction.isActive && !auction.isFinished"
                                         placement="top"
                                         content="Since the auction is not active, there is no total Auction Price for this auction."
                                         trigger="hover"
                                     >
                                         <span class="opacity-50">Unknown</span>
                                     </Popover>
+                                    <format-currency v-else :value="auction.totalPrice" currency="DAI" />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
