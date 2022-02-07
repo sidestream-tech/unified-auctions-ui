@@ -131,13 +131,13 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
 };
 
 export const fetchFinishedAuction = async function (network: string, auctionURL: string) {
-    const parsedAuctionURL = parseAuctionURL(auctionURL);
+    const { collateralType, auctionId } = parseAuctionURL(auctionURL);
     const addresses: Record<string, any> = await fetchContractsAddressesByNetwork(network);
-    const address: string = addresses[`MCD_CLIP_${parsedAuctionURL.collateralType}`];
+    const address: string = addresses[`MCD_CLIP_${collateralType}`];
     const provider = await getProvider(network);
 
     if (!address) {
-        throw new Error(`No Clip contract could be found for "${parsedAuctionURL.collateralType}"`);
+        throw new Error(`No Clip contract could be found for "${collateralType}"`);
     }
 
     const abi = ['event Take(uint256,uint256,uint256,address,bytes)'];
