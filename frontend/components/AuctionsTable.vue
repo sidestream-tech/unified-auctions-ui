@@ -43,7 +43,7 @@
             >
                 <span v-if="record.isFinished">See details</span>
                 <span v-else-if="record.isActive">Participate</span>
-                <span v-else-if="!record.isActive">Restart auction</span>
+                <span v-else-if="!record.isActive">Restart Auction</span>
             </nuxt-link>
         </div>
     </Table>
