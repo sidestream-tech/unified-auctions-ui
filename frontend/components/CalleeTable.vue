@@ -1,5 +1,5 @@
 <template>
-    <table v-if="callees" class="Table">
+    <table class="Table">
         <tr>
             <th class="Heading">Callee Contract</th>
             <th class="Heading">Address</th>
@@ -25,7 +25,7 @@ export default Vue.extend({
     props: {
         callees: {
             type: Object as Vue.PropType<CalleeAddresses>,
-            default: () => {},
+            required: true,
         },
     },
 });

@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import type { CollateralRow } from 'auctions-core/src/types';
+import type { CollateralRow, CalleeAddresses } from 'auctions-core/src/types';
 import Vue from 'vue';
 import CollateralTable from './CollateralTable.vue';
 import CalleeTable from './CalleeTable.vue';

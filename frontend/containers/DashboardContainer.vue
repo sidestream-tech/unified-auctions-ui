@@ -32,6 +32,9 @@ export default Vue.extend({
         },
         callees(): CalleeAddresses {
             const pageNetwork = this.$store?.getters['network/getPageNetwork'];
+            if (pageNetwork === 'stub') {
+                return {};
+            }
             return getCalleesByNetworkType(pageNetwork);
         },
     },
