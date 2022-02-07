@@ -1,23 +1,15 @@
 <template>
-    <table class="Table">
+    <table v-if="callees" class="Table">
         <tr>
             <th class="Heading">Callee Contract</th>
             <th class="Heading">Address</th>
         </tr>
-        <tr>
+        <tr v-for="[callee, address] of Object.entries(callees)" :key="callee">
             <td class="Body">
-                <span></span>
+                <span>{{ callee }}</span>
             </td>
             <td class="Body">
-                <format-address type="address" value="" />
-            </td>
-        </tr>
-        <tr>
-            <td class="Body">
-                <span></span>
-            </td>
-            <td class="Body">
-                <format-address type="address" value="" />
+                <format-address type="address" :value="address" />
             </td>
         </tr>
     </table>
@@ -29,6 +21,12 @@ import FormatAddress from '~/components/utils/FormatAddress.vue';
 export default Vue.extend({
     components: {
         FormatAddress,
+    },
+    props: {
+        callees: {
+            type: Object as Vue.PropType<CalleeAddresses>,
+            default: () => {},
+        },
     },
 });
 </script>

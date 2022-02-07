@@ -25,7 +25,7 @@
                 Exchange callee contracts are smart contracts that facilitate the interaction with the Maker Protocol
                 and decentralized exchanges. They are used in order to enable flash loan based auction participation.
             </TextBlock>
-            <CalleeTable />
+            <CalleeTable :callees="callees" />
         </div>
     </div>
 </template>
@@ -53,6 +53,10 @@ export default Vue.extend({
         collaterals: {
             type: Array as Vue.PropType<CollateralRow[]>,
             default: () => [],
+        },
+        callees: {
+            type: Object as Vue.PropType<CalleeAddresses>,
+            default: () => {},
         },
     },
     computed: {
