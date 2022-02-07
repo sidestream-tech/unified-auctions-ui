@@ -75,7 +75,19 @@
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Auction Price Total</td>
                                 <td>
-                                    <format-currency :value="auction.totalPrice" currency="DAI" />
+                                    <format-currency
+                                        v-if="auction.isActive"
+                                        :value="auction.totalPrice"
+                                        currency="DAI"
+                                    />
+                                    <Popover
+                                        v-else
+                                        placement="top"
+                                        content="Since the auction is not active, there is no total Auction Price for this auction."
+                                        trigger="hover"
+                                    >
+                                        <span class="opacity-50">Unknown</span>
+                                    </Popover>
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
@@ -216,7 +228,7 @@
 <script lang="ts">
 import type { AuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
-import { Alert, Tooltip } from 'ant-design-vue';
+import { Alert, Tooltip, Popover } from 'ant-design-vue';
 import PriceDropAnimation from './utils/PriceDropAnimation.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
@@ -245,6 +257,7 @@ export default Vue.extend({
         Alert,
         Tooltip,
         TimeTillProfitable,
+        Popover,
     },
     props: {
         auction: {
