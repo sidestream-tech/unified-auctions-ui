@@ -3,7 +3,6 @@
 ### Environment variables
 
 - `ALCHEMY_URL`: (required) [alchemy](https://www.alchemy.com) endpoint url (can be found in: apps table -> app -> view key)
-- `WALLET_PRIVATE_KEY`: (optional) – A private key of a wallet to which the money will be transferred on the test chain. If not present, a list of test accounts will be printed to the console upon starting the hardhat.
 
 ### Usage
 

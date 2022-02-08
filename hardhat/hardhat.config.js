@@ -8,18 +8,6 @@ if (!ALCHEMY_URL) {
     throw new Error('ALCHEMY_URL env variable not set, please check your `hardhat/.env` file');
 }
 
-const getAccounts = function () {
-    if (!WALLET_PRIVATE_KEY) {
-        return undefined;
-    }
-    return [
-        {
-            privateKey: WALLET_PRIVATE_KEY,
-            balance: '100000000000000000000000000',
-        },
-    ];
-};
-
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -34,7 +22,6 @@ module.exports = {
                 // https://etherscan.io/address/0x49a33a28c4c7d9576ab28898f4c9ac7e52ea457a
                 blockNumber: 14052140,
             },
-            accounts: getAccounts(),
         },
     },
 };
