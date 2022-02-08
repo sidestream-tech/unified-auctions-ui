@@ -2,7 +2,6 @@ require('dotenv').config();
 require('@nomiclabs/hardhat-waffle');
 
 const ALCHEMY_URL = process.env.ALCHEMY_URL;
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 
 if (!ALCHEMY_URL) {
     throw new Error('ALCHEMY_URL env variable not set, please check your `hardhat/.env` file');
