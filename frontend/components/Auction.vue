@@ -57,7 +57,17 @@
                                 <template v-if="auction.isActive && auction.marketUnitPriceToUnitPriceRatio">
                                     <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" />
                                 </template>
-                                <span v-else class="opacity-50">Not tradable</span>
+                                <span
+                                    v-else-if="
+                                        auction.isActive &&
+                                        !auction.marketUnitPriceToUnitPriceRatio &&
+                                        !auction.isFinished
+                                    "
+                                    class="opacity-50"
+                                >
+                                    Not tradable
+                                </span>
+                                <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
                         <tr>
