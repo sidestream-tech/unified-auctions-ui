@@ -2,13 +2,6 @@
     <TextBlock :title="`Auction #${auctionId}`">
         <Alert v-if="errorText" class="my-3" :message="errorText" type="error" />
         <div v-if="auction">
-            <WalletBlock
-                v-if="!auction.isActive && !auction.isFinished && !walletAddress"
-                class="my-4"
-                :wallet-address="walletAddress"
-                :is-explanations-shown="isExplanationsShown"
-                @connectWallet="$emit('connect')"
-            />
             <RestartBlock
                 v-if="errorText === 'This auction is inactive and must be restarted'"
                 :transaction-fee="auction.restartTransactionFeeETH"
@@ -16,6 +9,7 @@
                 :wallet-address="walletAddress"
                 :is-restarting="auction.isRestarting"
                 @restart="$emit('restart', auctionId)"
+                @connect="$emit('connect')"
             />
             <div class="relative mt-4">
                 <table class="w-full table-fixed border-collapse border">
@@ -243,7 +237,6 @@ import Loading from '~/components/common/Loading.vue';
 import Explain from '~/components/utils/Explain.vue';
 import RestartBlock from '~/components/transaction/RestartBlock.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
-import WalletBlock from '~/components/transaction/WalletBlock.vue';
 
 export default Vue.extend({
     name: 'Auction',
@@ -262,7 +255,6 @@ export default Vue.extend({
         Tooltip,
         TimeTillProfitable,
         Popover,
-        WalletBlock,
     },
     props: {
         auction: {

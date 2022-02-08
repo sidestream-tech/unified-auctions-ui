@@ -1,5 +1,12 @@
 <template>
     <div class="my-3">
+        <WalletBlock
+            v-if="!walletAddress"
+            class="mb-4"
+            :wallet-address="walletAddress"
+            :is-explanations-shown="isExplanationsShown"
+            @connectWallet="$emit('connect')"
+        />
         <TextBlock v-if="isExplanationsShown">
             Auction that either has experienced a too steep decrease in price or has reached its time limit becomes
             inactive and requires interaction to be restarted. When restarted, a new price is calculated and a fresh
@@ -60,6 +67,7 @@
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { Tooltip } from 'ant-design-vue';
+import WalletBlock from './WalletBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
@@ -67,7 +75,7 @@ import Explain from '~/components/utils/Explain.vue';
 
 export default Vue.extend({
     name: 'RestartBlock',
-    components: { TextBlock, BaseButton, FormatCurrency, Explain, Tooltip },
+    components: { TextBlock, BaseButton, FormatCurrency, Explain, Tooltip, WalletBlock },
     props: {
         transactionFee: {
             type: [Number, Object] as Vue.PropType<Number | BigNumber>,
