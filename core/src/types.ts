@@ -82,6 +82,7 @@ export declare interface NetworkConfig {
     url: string;
     gasPrice?: number;
     etherscanUrl: string;
+    isFork: boolean;
 }
 
 export declare interface CalleeAddresses {
