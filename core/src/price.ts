@@ -8,7 +8,6 @@ const checkAuctionStartDate = function (startDate: Date, currentDate: Date): voi
         throw new Error('Provided auction start time is invalid');
     }
     if (currentDate.getTime() < auctionStartTimestamp) {
-        console.error('checkAuctionStartDate', startDate, currentDate);
         throw new Error('Auction start time is bigger than current block time');
     }
 };
