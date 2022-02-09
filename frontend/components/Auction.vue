@@ -151,12 +151,15 @@
                         The auctioned vault
                         <format-address type="address" :value="auction.vaultAddress" shorten disable /> contains
                         <format-currency :value="auction.collateralAmount" :currency="auction.collateralSymbol" />.
-                        Currently, it is sold for <format-currency :value="auction.totalPrice" currency="DAI" />. This
-                        equals <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> per
-                        <format-currency :currency="auction.collateralSymbol" />, or approximately
-                        <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you buy
-                        <format-currency :currency="auction.collateralSymbol" /> on another exchange platform such as
-                        Uniswap.
+                        <span v-if="auction.isActive || auction.isFinished">
+                            Currently, it is sold for <format-currency :value="auction.totalPrice" currency="DAI" />.
+                            This equals <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> per
+                            <format-currency :currency="auction.collateralSymbol" />, or approximately
+                            <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you buy
+                            <format-currency :currency="auction.collateralSymbol" /> on another exchange platform such
+                            as Uniswap.
+                        </span>
+                        <span v-else>This auction requires restart in order to determine prices properly.</span>
                     </template>
                     <template v-else>
                         This auction was finished at {{ auction.endDate.toUTCString() }} at a closing auction price of
