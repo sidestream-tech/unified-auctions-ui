@@ -37,8 +37,6 @@ const getMarketPrice = async function (
     const collateralContract = await getContract(network, collateral.symbol);
     const collateralIntegerAmount = amount.shiftedBy(collateral.decimals).toFixed(0);
     const stethIntegerAmount = await collateralContract.getStETHByWstETH(collateralIntegerAmount);
-    const stethAmount = new BigNumber(stethIntegerAmount._hex).shiftedBy(-collateral.decimals);
-    console.log('wstETH into stETH', amount.toFixed(10), stethAmount.toFixed(10));
 
     // convert stETH into ETH
     const provider = await getProvider(network);
@@ -48,8 +46,6 @@ const getMarketPrice = async function (
         provider
     );
     const wethIntegerAmount = await curvePoolContract.get_dy(1, 0, stethIntegerAmount);
-    const wethAmount = new BigNumber(wethIntegerAmount._hex).shiftedBy(-collateral.decimals);
-    console.log('stETH into wETH', stethAmount.toFixed(10), wethAmount.toFixed(10));
 
     // get uniswap quotes
     const uniswapV3quoterContract = await new ethers.Contract(
@@ -65,7 +61,6 @@ const getMarketPrice = async function (
         0
     );
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
-    console.log('daiAmount', daiAmount.toFixed(10));
     return daiAmount.dividedBy(amount);
 };
 
