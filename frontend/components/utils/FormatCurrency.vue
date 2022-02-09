@@ -37,10 +37,6 @@ export default Vue.extend({
     },
     computed: {
         formattedNumber(): number {
-            if (!this.value.toFixed()) {
-                return this.value;
-            }
-
             if (this.value < 0.01) {
                 const decimalCutOff = Math.abs(Math.floor(Math.log10(Number(this.value)))) + 1;
                 return parseFloat(
