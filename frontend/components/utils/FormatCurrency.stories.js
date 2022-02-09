@@ -50,4 +50,22 @@ storiesOf('Utils/FormatCurrency', module)
     .add('Number under 0.000001', () => ({
         ...common,
         template: '<FormatCurrency :value="0.0000000000001" currency="dai" />',
+    }))
+    .add('Big Number under 0.01', () => ({
+        ...common,
+        data() {
+            return {
+                amount: BigNumber(0.0004547),
+            };
+        },
+        template: '<FormatCurrency :value="amount" currency="dai" />',
+    }))
+    .add('Big Number under 0.000001', () => ({
+        ...common,
+        data() {
+            return {
+                amount: BigNumber(0.0000000000001),
+            };
+        },
+        template: '<FormatCurrency :value="amount" currency="dai" />',
     }));
