@@ -4,14 +4,17 @@
             v-if="displayFullNumber"
             :value="formatValue(value)"
             :format-value="formatValue"
-            :duration="duration"
-        /><span v-else> under 0.00001 </span></span
-    >
+            :duration="duration" /><span v-else>
+            under <animated-number :value="0.00001" :format-value="formatValue" :duration="duration" /></span
+    ></span>
 </template>
 <script lang="ts">
 import AnimatedNumber from 'animated-number-vue';
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
+
+const DECIMAL_PLACES_MAX = 5;
+const DECIMAL_PLACES_DEFAULT = 2;
 
 export default Vue.extend({
     components: {
@@ -28,19 +31,19 @@ export default Vue.extend({
         },
         decimalPlaces: {
             type: Number,
-            default: 2,
+            default: DECIMAL_PLACES_DEFAULT,
         },
     },
     computed: {
         displayFullNumber(): boolean {
-            return this.decimals <= 5;
+            return this.decimals <= DECIMAL_PLACES_MAX || this.value < 0;
         },
         decimals(): number {
             if (this.isValidNumber) {
-                const decimalCutOff = Math.abs(Math.floor(Math.log10(Number(this.value))));
-                return decimalCutOff === Infinity ? this.decimalPlaces || 2 : decimalCutOff;
+                const decimalCutOff = Math.floor(Math.log10(Math.abs(Number(this.value))));
+                return decimalCutOff === Infinity ? this.decimalPlaces || DECIMAL_PLACES_DEFAULT : decimalCutOff;
             }
-            return this.decimalPlaces || 2;
+            return this.decimalPlaces || DECIMAL_PLACES_DEFAULT;
         },
         isValidNumber(): boolean {
             if (BigNumber.isBigNumber(this.value) && this.value.isNaN()) {
@@ -51,7 +54,10 @@ export default Vue.extend({
     },
     methods: {
         formatValue(value: number | BigNumber): string {
-            return value.toFixed(this.decimals);
+            if (this.displayFullNumber) {
+                return value.toFixed(this.decimals);
+            }
+            return value.toFixed(DECIMAL_PLACES_DEFAULT);
         },
     },
 });
