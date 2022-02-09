@@ -9,7 +9,7 @@ import { CHAINLOG_ADDRESS } from './constants/NETWORKS';
 const CHAINLOG_CACHE = 24 * 60 * 60 * 1000;
 
 const getChainLogContract = async function (network: string): Promise<Contract> {
-    const provider = getProvider(network);
+    const provider = await getProvider(network);
     return await new ethers.Contract(CHAINLOG_ADDRESS, CHAINLOG, provider);
 };
 
@@ -46,7 +46,8 @@ export const getSupportedCollateralTypes = async function (network: string): Pro
     const addresses = await fetchContractsAddressesByNetwork(network);
 
     return allCollateralTypes.filter(collateralType => {
-        return !!addresses[COLLATERALS[collateralType].symbol];
+        const suffix = collateralType.toUpperCase().replace('-', '_');
+        return !!addresses[COLLATERALS[collateralType].symbol] && !!addresses[`MCD_CLIP_${suffix}`];
     });
 };
 

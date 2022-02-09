@@ -21,6 +21,14 @@ export declare interface AuctionInitialInfo {
     initialPrice: BigNumber;
 }
 
+export declare interface AuctionStatus {
+    isActive: boolean;
+    debtDAI: BigNumber;
+    collateralAmount: BigNumber;
+    unitPrice: BigNumber;
+    totalPrice: BigNumber;
+}
+
 export declare interface Auction extends AuctionInitialInfo {
     unitPrice: BigNumber;
     totalPrice: BigNumber;
@@ -28,6 +36,7 @@ export declare interface Auction extends AuctionInitialInfo {
     secondsBetweenPriceDrops?: number;
     secondsTillNextPriceDrop?: number;
     priceDropRatio?: BigNumber;
+    transactionProfitDate?: Date;
 }
 
 export declare interface TransactionFees {
@@ -40,19 +49,21 @@ export declare interface TransactionFees {
 
 export declare interface CollateralRow extends CollateralConfig, Partial<MakerParams> {
     marketUnitPrice?: BigNumber | string;
+    tokenAddress?: string;
+    tokenAddressError?: string;
 }
 
 export declare interface AuctionTransaction extends Auction, TransactionFees {
     transactionProfitMinusFees: BigNumber;
 }
 
-export declare interface UniswapTokenConfig {
-    type: 'token';
+export declare interface UniswapV2CalleeConfig {
+    callee: 'UniswapV2CalleeDai';
     route: string[];
 }
 
-export declare interface UniswapLpTokenConfig {
-    type: 'lpToken';
+export declare interface UniswapV2LpTokenCalleeConfig {
+    callee: 'UniswapV2LpTokenCalleeDai';
     token0: string;
     token1: string;
 }
@@ -62,7 +73,7 @@ export declare interface CollateralConfig {
     ilk: string;
     symbol: string;
     decimals: number;
-    uniswap: UniswapTokenConfig | UniswapLpTokenConfig;
+    exchange: UniswapV2CalleeConfig | UniswapV2LpTokenCalleeConfig;
 }
 
 export declare interface NetworkConfig {
@@ -71,8 +82,19 @@ export declare interface NetworkConfig {
     url: string;
     gasPrice?: number;
     etherscanUrl: string;
-    uniswapV2CalleeDaiAddress: string;
-    uniswapV2LpTokenCalleeDaiAddress: string;
+    isFork: boolean;
+}
+
+export declare interface CalleeAddresses {
+    UniswapV2CalleeDai: string;
+    UniswapV2LpTokenCalleeDai: string;
+}
+
+export type CalleeNames = keyof CalleeAddresses;
+
+export declare interface CalleeFunctions {
+    getCalleeData: (network: string, collateral: CollateralConfig, profitAddress: string) => Promise<string>;
+    getMarketPrice: (network: string, collateral: CollateralConfig, amount: BigNumber) => Promise<BigNumber>;
 }
 
 export declare interface MakerParams {

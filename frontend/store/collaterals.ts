@@ -1,9 +1,10 @@
 import { ActionContext } from 'vuex';
 import type { CollateralRow } from 'auctions-core/src/types';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
-import { getExchangeRateBySymbol } from 'auctions-core/src/uniswap';
+import { getMarketPrice } from 'auctions-core/src/calleeFunctions';
 import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
 import Vue from 'vue';
+import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 
 interface State {
     collaterals: CollateralRow[];
@@ -33,14 +34,21 @@ export const mutations = {
 };
 
 export const actions = {
-    async fetchStepAndCut({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+    async fetchCoreValues({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        dispatch('setup');
         for (const collateral of Object.values(COLLATERALS)) {
-            const marketUnitPrice = await getExchangeRateBySymbol(network, collateral.symbol).catch(error => {
+            const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateral.symbol).catch(error => {
+                console.error(error);
+                commit('updateCollateral', {
+                    ilk: collateral.ilk,
+                    tokenAddressError: error.toString(),
+                });
+                return undefined;
+            });
+            const marketUnitPrice = await getMarketPrice(network, collateral.symbol).catch(error => {
                 console.error(error);
                 return error.toString();
             });
@@ -56,15 +64,18 @@ export const actions = {
                 marketUnitPrice,
                 secondsBetweenPriceDrops: calcParameters.secondsBetweenPriceDrops,
                 priceDropRatio: calcParameters.priceDropRatio,
+                tokenAddress,
             };
             commit('updateCollateral', updated);
         }
     },
-    setup({ commit }: ActionContext<State, State>) {
+    async setup({ commit, dispatch }: ActionContext<State, State>) {
         const collaterals = Object.values(COLLATERALS).map(collateral => ({
             ilk: collateral.ilk,
             symbol: collateral.symbol,
         }));
         commit('setCollaterals', collaterals);
+
+        await dispatch('fetchCoreValues');
     },
 };

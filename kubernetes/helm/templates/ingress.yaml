@@ -9,20 +9,21 @@ metadata:
     cert-manager.io/cluster-issuer: "cloudflare-issuer"
     {{- end }}
 spec:
-  {{- if .Values.ingress.isTlsActivated }}
+  {{- if .Values.ingress.tls }}
   tls:
-  - hosts:
-    - {{ .Values.host }}
-    secretName: {{ .Values.ingress.tlsSecretName }}
+    {{- .Values.ingress.tls | toYaml | nindent 4 }}
   {{- end }}
   rules:
-    - host: {{ required "A host is required for the ingress to work" .Values.host }}
+    {{- $frontendName := .Values.frontend.name }}
+    {{- range .Values.hosts }}
+    - host: {{ required "A host is required for the ingress to work" . }}
       http:
         paths:
         - path: /(.*)
           pathType: Prefix
           backend:
             service:
-              name: {{ .Values.frontend.name }}-service
+              name: {{ $frontendName }}-service
               port:
                 number: 80
+    {{- end }}

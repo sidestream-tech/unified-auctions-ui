@@ -1,22 +1,24 @@
 import { ethers } from 'ethers';
-import NETWORKS from './constants/NETWORKS';
+import { getNetworkConfigByType } from './constants/NETWORKS';
 
-const providers: Record<string, ethers.providers.BaseProvider> = {};
+const providers: Record<string, Promise<ethers.providers.BaseProvider>> = {};
 
-const getProvider = function (network: string): ethers.providers.BaseProvider {
-    if (!NETWORKS[network]) {
-        throw new Error(`The network "${network}" is not supported yet!`);
-    }
-
-    if (!providers[network]) {
-        const networkUrl = NETWORKS[network].url;
-        providers[network] = new ethers.providers.JsonRpcProvider(networkUrl);
-    }
-    return providers[network];
+export const createProvider = async function (network: string) {
+    const networkConfig = getNetworkConfigByType(network);
+    const provider = new ethers.providers.StaticJsonRpcProvider({ url: networkConfig.url });
+    await provider.ready;
+    return provider;
 };
 
-export const setProvider = function (network: string, provider: ethers.providers.BaseProvider) {
+export const setProvider = function (network: string, provider: Promise<ethers.providers.BaseProvider>) {
     providers[network] = provider;
+};
+
+const getProvider = function (network: string): Promise<ethers.providers.BaseProvider> {
+    if (!providers[network]) {
+        setProvider(network, createProvider(network));
+    }
+    return providers[network];
 };
 
 export default getProvider;

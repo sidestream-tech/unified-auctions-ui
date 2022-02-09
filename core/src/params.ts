@@ -25,7 +25,7 @@ const _fetchCalcParametersByCollateralType = async function (
     collateralType: string
 ): Promise<MakerParams> {
     const address = await getCalcAddressByCollateralType(network, collateralType);
-    const provider = getProvider(network);
+    const provider = await getProvider(network);
     const contract = await new ethers.Contract(address, MCD_CLIP_CALC, provider);
 
     const secondsBetweenPriceDrops = await contract.step();

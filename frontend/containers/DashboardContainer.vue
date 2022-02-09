@@ -1,12 +1,17 @@
 <template>
     <div class="DashboardContainer">
-        <DashboardAuctionsView :collaterals="collaterals" :is-explanations-shown.sync="isExplanationsShown" />
+        <DashboardAuctionsView
+            :collaterals="collaterals"
+            :callees="callees"
+            :is-explanations-shown.sync="isExplanationsShown"
+        />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
+import { getCalleesByNetworkType } from 'auctions-core/src/constants/CALLEES';
 import DashboardAuctionsView from '~/components/DashboardAuctionsView.vue';
 
 export default Vue.extend({
@@ -25,9 +30,16 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
+        callees(): CalleeAddresses {
+            const network = this.$store?.getters['network/getMakerNetwork'];
+            if (!network) {
+                return {};
+            }
+            return getCalleesByNetworkType(network);
+        },
     },
     async mounted() {
-        await this.$store.dispatch('collaterals/fetchStepAndCut');
+        await this.$store.dispatch('collaterals/setup');
     },
 });
 </script>

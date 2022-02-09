@@ -22,11 +22,9 @@
     }
   },
   "dependencies": {
-    "@makerdao/dai": "^0.32.12",
-    "@makerdao/dai-plugin-mcd": "^1.6.35",
-    "@sidestream/dai-plugin-liquidations": "^0.1.1",
     "@uniswap/sdk": "^3.0.3",
     "bignumber.js": "^9.0.1",
+    "date-fns": "^2.28.0",
     "ethers": "^5.4.6",
     "memoizee": "^0.4.15",
     "uuid": "^8.3.2"

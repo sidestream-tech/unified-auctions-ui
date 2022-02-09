@@ -6,7 +6,7 @@
                 Auctions Dashboard
             </h1>
         </LandingBlock>
-        <div class="mt-4 md:mt-8 px-4 space-y-4 md:space-y-8 w-full max-w-screen-sm">
+        <div class="Block max-w-screen-sm">
             <TextBlock v-if="isExplanationsShown" title="Collateral auction parameters">
                 In the dutch-style auction system the step parameter defines for each collateral type the length of
                 time between price drops (e.g. {{ exampleCollateral.secondsBetweenPriceDrops }} sec for
@@ -16,15 +16,25 @@
                 This arbitrage opportunity during an active auction is based on the price difference between the
                 auction price and the price for the collateral on another marketplace.
             </TextBlock>
+        </div>
+        <div class="Block max-w-screen-lg">
             <CollateralTable :collaterals="collaterals" class="overflow-x-scroll" />
+        </div>
+        <div class="Block space-y-4 md:space-y-8 max-w-screen-sm">
+            <TextBlock v-if="isExplanationsShown" title="Exchange Callee Contracts">
+                Exchange callee contracts are smart contracts that facilitate the interaction with the Maker Protocol
+                and decentralized exchanges. They are used in order to enable flash loan based auction participation.
+            </TextBlock>
+            <CalleeTable :callees="callees" />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import type { CollateralRow } from 'auctions-core/src/types';
+import type { CollateralRow, CalleeAddresses } from 'auctions-core/src/types';
 import Vue from 'vue';
 import CollateralTable from './CollateralTable.vue';
+import CalleeTable from './CalleeTable.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 
@@ -33,6 +43,7 @@ export default Vue.extend({
         LandingBlock,
         TextBlock,
         CollateralTable,
+        CalleeTable,
     },
     props: {
         isExplanationsShown: {
@@ -42,6 +53,10 @@ export default Vue.extend({
         collaterals: {
             type: Array as Vue.PropType<CollateralRow[]>,
             default: () => [],
+        },
+        callees: {
+            type: Object as Vue.PropType<CalleeAddresses>,
+            default: () => ({}),
         },
     },
     computed: {
@@ -62,5 +77,9 @@ export default Vue.extend({
     @apply w-full;
 
     min-height: 33vh;
+}
+
+.Block {
+    @apply mt-4 md:mt-8 px-4 w-full;
 }
 </style>
