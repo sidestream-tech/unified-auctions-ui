@@ -29,6 +29,7 @@
                         :is-auctions-loading="isAuctionsLoading"
                         @restart="$emit('restart', $event)"
                         @swap="step = 2"
+                        @fetchFinishedAuction="$emit('fetchFinishedAuction', $event)"
                     />
                 </div>
             </template>

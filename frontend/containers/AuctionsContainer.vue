@@ -18,6 +18,7 @@
             @authorizeCollateral="authorizeCollateral"
             @restart="restartAuction"
             @execute="bid"
+            @fetchFinishedAuction="fetchFinishedAuction"
         />
     </div>
 </template>
@@ -100,7 +101,7 @@ export default Vue.extend({
             'fetchWalletAuthorizationStatus',
             'fetchCollateralAuthorizationStatus',
         ]),
-        ...mapActions('auctions', ['bid', 'restart']),
+        ...mapActions('auctions', ['bid', 'restart', 'fetchFinishedAuction']),
         openWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);

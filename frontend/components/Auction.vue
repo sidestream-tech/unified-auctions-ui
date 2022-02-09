@@ -280,6 +280,7 @@ export default Vue.extend({
     computed: {
         errorText(): string | null {
             if (!this.isAuctionsLoading && !this.auction) {
+                this.$emit('fetchFinishedAuction', this.auctionId);
                 return 'This auction was not found';
             } else if (this.error) {
                 return this.error;
