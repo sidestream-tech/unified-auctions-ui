@@ -2,11 +2,13 @@ import type { CalleeNames, CalleeFunctions } from '../types';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
 import UniswapV2LpTokenCalleeDai from './UniswapV2LpTokenCalleeDai';
+import WstETHCurveUniv3Callee from './WstETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 
 const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV2CalleeDai,
     UniswapV2LpTokenCalleeDai,
+    WstETHCurveUniv3Callee,
 };
 
 export const getCalleeData = async function (

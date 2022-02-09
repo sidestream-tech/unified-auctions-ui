@@ -251,6 +251,16 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
     },
+    'WSTETH-A': {
+        title: 'Lido wstETH',
+        ilk: 'WSTETH-A',
+        symbol: 'WSTETH',
+        decimals: 18,
+        exchange: {
+            callee: 'WstETHCurveUniv3Callee',
+            route: [],
+        },
+    },
     'UNIV2DAIETH-A': {
         title: 'UNIV2DAIETH LP',
         ilk: 'UNIV2DAIETH-A',
