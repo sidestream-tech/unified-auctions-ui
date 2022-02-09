@@ -38,7 +38,7 @@ export default Vue.extend({
     computed: {
         formattedNumber(): number {
             if (!this.value.toFixed()) {
-                return 0;
+                return this.value;
             }
 
             if (this.value < 0.01) {
