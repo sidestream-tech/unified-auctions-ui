@@ -12,12 +12,10 @@ import {
     calculateTransactionProfit,
     calculateTransactionProfitDate,
 } from './price';
-import { fetchContractsAddressesByNetwork, getSupportedCollateralTypes } from './addresses';
+import { getSupportedCollateralTypes } from './addresses';
 import getContract, { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
-import getProvider from './provider';
-import { Contract } from 'ethers';
 import parseAuctionURL from './helpers/parseAuctionURL';
 
 const enrichAuctionWithActualNumbers = async function (
