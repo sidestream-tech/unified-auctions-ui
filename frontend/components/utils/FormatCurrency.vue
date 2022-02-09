@@ -2,8 +2,7 @@
     <span
         >{{ sign
         }}<span v-if="isValidNumber"
-            ><animated-number v-if="value > 0.00001 || value === 0" :value="value" :decimal-places="decimals" /><span
-                v-else
+            ><animated-number v-if="displayFullNumber" :value="value" :decimal-places="decimals" /><span v-else
                 >under 0.00001</span
             ></span
         ><span v-else-if="value"> NaN </span><span class="uppercase"> {{ currency }}</span></span
@@ -33,9 +32,15 @@ export default Vue.extend({
         },
     },
     computed: {
+        displayFullNumber(): boolean {
+            return this.value > 0.00001 || this.value === 0;
+        },
         decimals(): number {
-            const decimalCutOff = Math.abs(Math.floor(Math.log10(Number(this.value)))) + 1;
-            return decimalCutOff === Infinity ? 2 : decimalCutOff;
+            if (this.displayFullNumber) {
+                const decimalCutOff = Math.abs(Math.floor(Math.log10(Number(this.value)))) + 1;
+                return decimalCutOff === Infinity ? 2 : decimalCutOff;
+            }
+            return 0;
         },
         sign(): string {
             if (!this.showSign) {
