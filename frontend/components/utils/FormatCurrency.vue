@@ -2,7 +2,8 @@
     <span
         >{{ sign
         }}<span v-if="isValidNumber"
-            ><animated-number v-if="value > 0.00001" :value="value" :decimal-places="decimals" /><span v-else
+            ><animated-number v-if="value > 0.00001 || value === 0" :value="value" :decimal-places="decimals" /><span
+                v-else
                 >under 0.00001</span
             ></span
         ><span v-else-if="value"> NaN </span><span class="uppercase"> {{ currency }}</span></span
