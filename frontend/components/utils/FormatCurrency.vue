@@ -2,9 +2,9 @@
     <span
         >{{ sign
         }}<span v-if="isValidNumber"
-            ><animated-number v-if="value > 0.01" :value="value" :decimal-places="decimals" /><span v-else>{{
-                formattedNumber
-            }}</span></span
+            ><animated-number v-if="value > 0.00001" :value="value" :decimal-places="decimals" /><span v-else
+                >under 0.00001</span
+            ></span
         ><span v-else-if="value"> NaN </span><span class="uppercase"> {{ currency }}</span></span
     >
 </template>
@@ -30,20 +30,11 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        decimals: {
-            type: Number,
-            default: 2,
-        },
     },
     computed: {
-        formattedNumber(): number {
-            if (this.value < 0.01) {
-                const decimalCutOff = Math.abs(Math.floor(Math.log10(Number(this.value)))) + 1;
-                return parseFloat(
-                    parseFloat(this.value.toString()).toFixed(decimalCutOff === Infinity ? 0 : decimalCutOff)
-                );
-            }
-            return Number(this.value);
+        decimals(): number {
+            const decimalCutOff = Math.abs(Math.floor(Math.log10(Number(this.value)))) + 1;
+            return decimalCutOff === Infinity ? 2 : decimalCutOff;
         },
         sign(): string {
             if (!this.showSign) {
