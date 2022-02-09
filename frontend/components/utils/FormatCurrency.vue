@@ -1,9 +1,8 @@
 <template>
     <span>
-        {{ sign }}<animated-number v-if="isValidNumber" :value="value" :decimal-places="decimals" /><span
-            v-else-if="value"
-            >NaN</span
-        ><span class="uppercase"> {{ currency }}</span>
+        <span v-if="isNotANumber">NaN</span>
+        <span v-else> {{ sign }}<animated-number :value="value" :decimal-places="2" /> </span>
+        <span class="uppercase">{{ currency }}</span>
     </span>
 </template>
 
@@ -28,10 +27,6 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        decimals: {
-            type: Number,
-            default: 2,
-        },
     },
     computed: {
         sign(): string {
@@ -43,11 +38,14 @@ export default Vue.extend({
             }
             return this.value > 0 ? '+' : '';
         },
-        isValidNumber(): boolean {
+        isNotANumber(): boolean {
             if (BigNumber.isBigNumber(this.value) && this.value.isNaN()) {
-                return false;
+                return true;
             }
-            return !(this.value === undefined || this.value === null);
+            if (Number.isNaN(this.value)) {
+                return true;
+            }
+            return false;
         },
     },
 });
