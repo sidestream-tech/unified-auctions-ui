@@ -94,7 +94,7 @@
                                 <td>Auction Start</td>
                                 <td>
                                     <template v-if="auction.isActive">
-                                        {{ new Date(auction.startDate).toUTCString() }}
+                                        {{ auction.startDate.toUTCString() }}
                                     </template>
                                     <span v-else class="opacity-50">Unknown</span>
                                 </td>
@@ -103,7 +103,7 @@
                                 <td>Auction End</td>
                                 <td>
                                     <template v-if="auction.isActive">
-                                        {{ new Date(auction.endDate).toUTCString() }}
+                                        {{ auction.endDate.toUTCString() }}
                                     </template>
                                     <span v-else class="opacity-50">Unknown</span>
                                 </td>
