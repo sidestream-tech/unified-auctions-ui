@@ -4,9 +4,10 @@
         <animated-number :value="format(limitedValue)" :format-value="format" :duration="duration" />
     </span>
 </template>
+
 <script lang="ts">
-import AnimatedNumber from 'animated-number-vue';
 import Vue from 'vue';
+import AnimatedNumber from 'animated-number-vue';
 import BigNumber from 'bignumber.js';
 
 const DECIMAL_PLACES_DEFAULT = 2;
@@ -35,7 +36,10 @@ export default Vue.extend({
             if (BigNumber.isBigNumber(this.value) && this.value.isNaN()) {
                 return false;
             }
-            return !(this.value === undefined || this.value === null);
+            if (this.value === undefined || this.value === null || Number.isNaN(this.value)) {
+                return false;
+            }
+            return true;
         },
         dynamicDecimalPlaces(): number {
             if (!this.isValidNumber || this.value === 0) {
