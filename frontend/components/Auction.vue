@@ -159,7 +159,7 @@
                             <format-currency :currency="auction.collateralSymbol" /> on another exchange platform such
                             as Uniswap.
                         </span>
-                        <span v-else>This auction requires restart in order to determine prices properly.</span>
+                        <span v-else>This auction requires a restart in order to determine prices properly.</span>
                     </template>
                     <template v-else>
                         This auction was finished at {{ auction.endDate.toUTCString() }} at a closing auction price of
