@@ -9,7 +9,7 @@ import { DAI_NUMBER_OF_DIGITS } from '../constants/UNITS';
 
 const CURVE_POOL_ADDRESS = '0xDC24316b9AE028F1497c275EB9192a3Ea0f67022';
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
-const UNISWAP_FEE = 3000;
+const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
 
 const getCalleeData = async function (
     network: string,
@@ -61,6 +61,8 @@ const getMarketPrice = async function (
         0
     );
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+
+    // return price per unit
     return daiAmount.dividedBy(amount);
 };
 
