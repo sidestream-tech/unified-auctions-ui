@@ -40,8 +40,10 @@ export default Vue.extend({
         },
         decimals(): number {
             if (this.isValidNumber) {
-                const decimalCutOff = Math.floor(Math.log10(Math.abs(Number(this.value))));
-                return decimalCutOff === Infinity ? this.decimalPlaces || DECIMAL_PLACES_DEFAULT : decimalCutOff;
+                const decimalCutOff = Math.abs(Math.floor(Math.log10(Number(this.value))));
+                return decimalCutOff === Infinity
+                    ? this.decimalPlaces || DECIMAL_PLACES_DEFAULT
+                    : decimalCutOff || DECIMAL_PLACES_DEFAULT;
             }
             return this.decimalPlaces || DECIMAL_PLACES_DEFAULT;
         },
@@ -57,7 +59,7 @@ export default Vue.extend({
             if (this.displayFullNumber) {
                 return value.toFixed(this.decimals);
             }
-            return value.toFixed(DECIMAL_PLACES_DEFAULT);
+            return value.toFixed(DECIMAL_PLACES_MAX);
         },
     },
 });
