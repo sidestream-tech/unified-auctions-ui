@@ -17,6 +17,7 @@ import getContract, { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
 import parseAuctionURL from './helpers/parseAuctionURL';
+import { EventFilter } from 'ethers';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -135,8 +136,9 @@ export const fetchFinishedAuction = async function (network: string, auctionURL:
     const contractName = getClipperNameByCollateralType(collateralType);
     const contract = await getContract(network, contractName);
 
-    const auction = await contract.filters.Take(encodedAuctionId);
-    console.info(auction);
+    const eventFilters: EventFilter = contract.filters.Take(encodedAuctionId);
+    const events = await contract.queryFilter(eventFilters);
+    console.info(events);
 };
 
 export const restartAuction = async function (
