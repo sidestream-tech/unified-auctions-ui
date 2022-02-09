@@ -45,7 +45,7 @@ export default Vue.extend({
             if (!this.isValidNumber || this.value === 0) {
                 return this.decimalPlaces;
             }
-            if (!this.isValueSmallButNotZero) {
+            if (Math.abs(Number(this.value)) > 1) {
                 return this.decimalPlaces;
             }
             const amountOfZerosInValue = Math.abs(Math.floor(Math.log10(Math.abs(Number(this.value)))));
