@@ -1,8 +1,8 @@
 <template>
-    <span v-if="isValidNumber">
-        <span v-if="isValueSmallButNotZero">under </span>
-        <animated-number :value="format(limitedValue)" :format-value="format" :duration="duration" />
-    </span>
+    <span v-if="isValidNumber"
+        ><span v-if="isValueSmallButNotZero">under </span
+        ><animated-number :value="format(limitedValue)" :format-value="format" :duration="duration"
+    /></span>
 </template>
 
 <script lang="ts">
@@ -43,6 +43,9 @@ export default Vue.extend({
         },
         dynamicDecimalPlaces(): number {
             if (!this.isValidNumber || this.value === 0) {
+                return this.decimalPlaces;
+            }
+            if (!this.isValueSmallButNotZero) {
                 return this.decimalPlaces;
             }
             const amountOfZerosInValue = Math.abs(Math.floor(Math.log10(Math.abs(Number(this.value)))));
