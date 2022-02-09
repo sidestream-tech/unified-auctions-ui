@@ -6,6 +6,7 @@ import {
     bidOnTheAuction,
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
+    fetchFinishedAuction,
 } from 'auctions-core/src/auctions';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
@@ -226,5 +227,9 @@ export const actions = {
     async checkAllSupportedCollaterals({ rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         await checkAllSupportedCollaterals(network);
+    },
+    async fetchFinishedAuction({ rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        await fetchFinishedAuction(network, 'ETH-A:2');
     },
 };
