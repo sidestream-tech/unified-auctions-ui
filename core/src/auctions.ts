@@ -18,6 +18,7 @@ import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
 import parseAuctionURL from './helpers/parseAuctionURL';
 import { EventFilter } from 'ethers';
+import getNetworkDate from './date';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -76,11 +77,11 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
         secondsBetweenPriceDrops: params.secondsBetweenPriceDrops,
         priceDropRatio: params.priceDropRatio,
     };
-    const currentDate = new Date();
+    const currentDate = await getNetworkDate(auction.network);
     const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
     const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
     const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
-    const transactionProfitDate = calculateTransactionProfitDate(auctionWithParams);
+    const transactionProfitDate = calculateTransactionProfitDate(auctionWithParams, currentDate);
     return {
         ...auctionWithParams,
         secondsTillNextPriceDrop,

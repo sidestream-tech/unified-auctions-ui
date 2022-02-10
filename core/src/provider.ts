@@ -5,7 +5,7 @@ const providers: Record<string, Promise<ethers.providers.BaseProvider>> = {};
 
 export const createProvider = async function (network: string) {
     const networkConfig = getNetworkConfigByType(network);
-    const provider = new ethers.providers.JsonRpcProvider({ url: networkConfig.url });
+    const provider = new ethers.providers.StaticJsonRpcProvider({ url: networkConfig.url });
     await provider.ready;
     return provider;
 };

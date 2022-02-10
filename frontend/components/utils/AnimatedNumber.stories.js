@@ -36,6 +36,10 @@ storiesOf('Utils/AnimatedNumber', module)
         ...common,
         template: `<AnimatedNumber :value="0" />`,
     }))
+    .add('Negative Number', () => ({
+        ...common,
+        template: `<AnimatedNumber :value="-100.544" />`,
+    }))
     .add('Big Number', () => ({
         components: {
             AnimatedNumber,
