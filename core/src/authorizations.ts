@@ -2,6 +2,7 @@ import type { Notifier } from './types';
 import getContract, { getContractAddressByName, getClipperNameByCollateralType } from './contracts';
 import executeTransaction from './execute';
 
+// Make this memoizzed
 export const authorizeWallet = async function (
     network: string,
     revoke: boolean,
@@ -12,6 +13,7 @@ export const authorizeWallet = async function (
     return executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
 };
 
+// Make this memoizzed
 export const authorizeCollateral = async function (
     network: string,
     collateralType: string,

@@ -15,7 +15,9 @@ const loop = async function (): Promise<void> {
         clearInterval(refetchIntervalId);
     }
     try {
-        (await getNewAuctions(ETHEREUM_NETWORK)).map(notify);
+        const auctions = await getNewAuctions(ETHEREUM_NETWORK);
+        auctions.map(notify);
+        // auctions.map(participate);
     } catch (error) {
         console.error('loop error:', error);
     } finally {
