@@ -228,8 +228,9 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         await checkAllSupportedCollaterals(network);
     },
-    async fetchFinishedAuction({ rootGetters }: ActionContext<State, State>) {
+    async fetchFinishedAuction({ rootGetters, commit }: ActionContext<State, State>, url: string) {
         const network = rootGetters['network/getMakerNetwork'];
-        await fetchFinishedAuction(network, 'ETH-A:2');
+        const auction = await fetchFinishedAuction(network, url);
+        commit('setAuction', auction);
     },
 };

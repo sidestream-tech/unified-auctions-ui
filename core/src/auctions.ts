@@ -4,7 +4,7 @@ import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
 import { getCalleeData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
-import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { RAD, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from "./constants/UNITS";
 import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
@@ -17,8 +17,9 @@ import getContract, { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
 import parseAuctionURL from './helpers/parseAuctionURL';
-import { EventFilter } from 'ethers';
-import getNetworkDate from './date';
+import { Event, EventFilter } from 'ethers';
+import getNetworkDate, { fetchDateByBlockNumber } from './date';
+import { getCollateralConfigByType } from './constants/COLLATERALS';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -130,7 +131,41 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     return await Promise.all(auctionsWithMarketValue.map(a => enrichAuctionWithTransactionFees(a, fees)));
 };
 
-export const fetchFinishedAuction = async function (network: string, auctionURL: string) {
+const enrichFinishedAuctionWithNumbers = async function (
+    event: Event,
+    auctionURL: string,
+    network: string
+): Promise<AuctionTransaction> {
+    const { collateralType, auctionId } = parseAuctionURL(auctionURL);
+    const date = await fetchDateByBlockNumber(network, event.blockNumber);
+    return {
+        network: network,
+        id: auctionURL,
+        auctionId: auctionId,
+        collateralType: collateralType,
+        collateralSymbol: getCollateralConfigByType(collateralType).symbol,
+        collateralAmount: new BigNumber(event.args['lot']._hex).div(WAD),
+        debtDAI: new BigNumber(event.args['tab']._hex).div(RAD),
+        startDate: new Date(),
+        endDate: new Date(date),
+        vaultAddress: event.args['usr'],
+        isActive: false,
+        isFinished: true,
+        isRestarting: false,
+        initialPrice: new BigNumber(0),
+        biddingTransactionFeeETH: new BigNumber(0),
+        biddingTransactionFeeDAI: new BigNumber(0),
+        authTransactionFeeETH: new BigNumber(0),
+        authTransactionFeeDAI: new BigNumber(0),
+        restartTransactionFeeETH: new BigNumber(0),
+        transactionProfitMinusFees: new BigNumber(0),
+        unitPrice: new BigNumber(0),
+        totalPrice: new BigNumber(0),
+        approximateUnitPrice: new BigNumber(0),
+    };
+};
+
+export const fetchFinishedAuction = async function (network: string, auctionURL: string): Promise<AuctionTransaction> {
     const { collateralType, auctionId } = parseAuctionURL(auctionURL);
     const encodedAuctionId = convertNumberTo32Bytes(auctionId);
 
@@ -139,7 +174,8 @@ export const fetchFinishedAuction = async function (network: string, auctionURL:
 
     const eventFilters: EventFilter = contract.filters.Take(encodedAuctionId);
     const events = await contract.queryFilter(eventFilters);
-    console.info(events);
+
+    return enrichFinishedAuctionWithNumbers(events[0], auctionURL, network);
 };
 
 export const restartAuction = async function (

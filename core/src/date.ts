@@ -4,11 +4,16 @@ import { getNetworkConfigByType } from './constants/NETWORKS';
 
 const CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS = 60 * 1000;
 
+export const fetchDateByBlockNumber = async function (network: string, blockNumber: number): Promise<Date> {
+    const provider = await getProvider(network);
+    const block = await provider.getBlock(blockNumber);
+    return new Date(block.timestamp * 1000);
+};
+
 const fetchLatestBlockDate = async function (network: string): Promise<Date> {
     const provider = await getProvider(network);
     const blockNumber = await provider.getBlockNumber();
-    const block = await provider.getBlock(blockNumber);
-    return new Date(block.timestamp * 1000);
+    return fetchDateByBlockNumber(network, blockNumber);
 };
 
 const _fetchLatestBlockDateAndCacheDate = async function (
