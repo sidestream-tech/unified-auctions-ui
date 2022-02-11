@@ -143,7 +143,7 @@ const enrichFinishedAuctionWithNumbers = async function (
         throw new Error(`Could not format offline Auction "${auctionURL}"`);
     }
 
-    const collateralAmount = new BigNumber(event.args['1']._hex).div(WAD);
+    const collateralAmount = new BigNumber(event.args['lot']._hex).div(WAD);
     const unitPrice = new BigNumber(event.args['price']._hex).div(RAY);
 
     return {
@@ -185,7 +185,7 @@ export const fetchFinishedAuction = async function (network: string, auctionURL:
     const eventFilters: EventFilter = contract.filters.Take(encodedAuctionId);
     const events = await contract.queryFilter(eventFilters);
 
-    return enrichFinishedAuctionWithNumbers(events[0], auctionURL, network);
+    return await enrichFinishedAuctionWithNumbers(events[0], auctionURL, network);
 };
 
 export const restartAuction = async function (
