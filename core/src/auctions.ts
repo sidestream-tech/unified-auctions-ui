@@ -4,7 +4,7 @@ import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
 import { getCalleeData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
-import { RAD, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
@@ -143,20 +143,27 @@ const enrichFinishedAuctionWithNumbers = async function (
         throw new Error(`Could not format offline Auction "${auctionURL}"`);
     }
 
+    const collateralAmount = new BigNumber(event.args['1']._hex).div(WAD);
+    const unitPrice = new BigNumber(event.args['price']._hex).div(RAY);
+
     return {
         network: network,
         id: auctionURL,
         auctionId: auctionId,
         collateralType: collateralType,
         collateralSymbol: getCollateralConfigByType(collateralType).symbol,
-        collateralAmount: new BigNumber(event.args['lot']._hex || 0).div(WAD),
+        collateralAmount,
         debtDAI: new BigNumber(event.args['tab']._hex).div(RAD),
-        startDate: new Date(),
         endDate: new Date(date),
         vaultAddress: event.args['usr'],
         isActive: false,
         isFinished: true,
         isRestarting: false,
+        unitPrice,
+        totalPrice: collateralAmount.multipliedBy(unitPrice),
+
+        // The following Data cannot be fetched
+        startDate: new Date(),
         initialPrice: new BigNumber(0),
         biddingTransactionFeeETH: new BigNumber(0),
         biddingTransactionFeeDAI: new BigNumber(0),
@@ -164,8 +171,6 @@ const enrichFinishedAuctionWithNumbers = async function (
         authTransactionFeeDAI: new BigNumber(0),
         restartTransactionFeeETH: new BigNumber(0),
         transactionProfitMinusFees: new BigNumber(0),
-        unitPrice: new BigNumber(0),
-        totalPrice: new BigNumber(0),
         approximateUnitPrice: new BigNumber(0),
     };
 };
