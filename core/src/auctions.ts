@@ -4,7 +4,7 @@ import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
 import { getCalleeData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
-import { RAD, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from "./constants/UNITS";
+import { RAD, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
@@ -138,13 +138,18 @@ const enrichFinishedAuctionWithNumbers = async function (
 ): Promise<AuctionTransaction> {
     const { collateralType, auctionId } = parseAuctionURL(auctionURL);
     const date = await fetchDateByBlockNumber(network, event.blockNumber);
+
+    if (!event.args) {
+        throw new Error(`Could not format offline Auction "${auctionURL}"`);
+    }
+
     return {
         network: network,
         id: auctionURL,
         auctionId: auctionId,
         collateralType: collateralType,
         collateralSymbol: getCollateralConfigByType(collateralType).symbol,
-        collateralAmount: new BigNumber(event.args['lot']._hex).div(WAD),
+        collateralAmount: new BigNumber(event.args['lot']._hex || 0).div(WAD),
         debtDAI: new BigNumber(event.args['tab']._hex).div(RAD),
         startDate: new Date(),
         endDate: new Date(date),
