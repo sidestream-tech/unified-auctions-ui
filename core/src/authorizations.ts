@@ -4,6 +4,7 @@ import executeTransaction from './execute';
 import memoizee from 'memoizee';
 
 const AUTHORIZE_WALLET_CACHE_MS = 30 * 1000;
+const GET_AUTHORIZATION_STATUS_CACHE_MS = 30 * 1000;
 
 const _authorizeWallet = async function (network: string, revoke: boolean, notifier?: Notifier): Promise<string> {
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
@@ -35,14 +36,20 @@ export const authorizeCollateral = memoizee(_authorizeCollateral, {
     length: 4,
 });
 
-export const getWalletAuthorizationStatus = async function (network: string, walletAddress: string): Promise<boolean> {
+const _getWalletAuthorizationStatus = async function (network: string, walletAddress: string): Promise<boolean> {
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const contract = await getContract(network, 'MCD_VAT');
     const authorizationStatus = await contract.can(walletAddress, joinDaiAddress);
     return authorizationStatus.toNumber() === 1;
 };
 
-export const getCollateralAuthorizationStatus = async function (
+export const getWalletAuthorizationStatus = memoizee(_getWalletAuthorizationStatus, {
+    maxAge: GET_AUTHORIZATION_STATUS_CACHE_MS,
+    promise: true,
+    length: 2,
+});
+
+const _getCollateralAuthorizationStatus = async function (
     network: string,
     collateralType: string,
     walletAddress: string
@@ -53,3 +60,9 @@ export const getCollateralAuthorizationStatus = async function (
     const authorizationStatus = await contract.can(walletAddress, clipperAddress);
     return authorizationStatus.toNumber() === 1;
 };
+
+export const getCollateralAuthorizationStatus = memoizee(_getCollateralAuthorizationStatus, {
+    maxAge: GET_AUTHORIZATION_STATUS_CACHE_MS,
+    promise: true,
+    length: 3,
+});
