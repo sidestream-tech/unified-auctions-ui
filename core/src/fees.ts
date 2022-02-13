@@ -18,6 +18,8 @@ export const getApproximateTransactionFees = async function (network: string): P
     /* 
         To get total we have to check if the 2 auth steps were executed (memoizze the function that retrieves this)
         It then adds the bidding and 2x auth fees together
+
+        Get Wallet Address and Collateral Type to see if authorization was already conducted.
     */
     return {
         biddingTransactionFeeETH,
