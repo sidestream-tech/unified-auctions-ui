@@ -24,13 +24,13 @@
 
                     <div class="flex space-x-4">
                         <NetworkSelector
-                            v-if="!isUnifiedPage"
+                            v-if="!isUnifiedPage && !isFeaturesPage"
                             :network="network"
                             @update:network="$emit('update:network', $event)"
                         />
 
                         <WalletSelector
-                            v-if="!(isUnifiedPage || network === 'stub')"
+                            v-if="!(isUnifiedPage || network === 'stub') && !isFeaturesPage"
                             class="hidden sm:block"
                             :wallet-address="walletAddress"
                             :is-loading="isWalletLoading"
@@ -72,7 +72,7 @@ export default Vue.extend({
         type: {
             type: String,
             default: 'default',
-            validator: type => ['default', 'unified'].includes(type),
+            validator: type => ['default', 'unified', 'features'].includes(type),
         },
         isExplanationsShown: {
             type: Boolean,
@@ -110,6 +110,9 @@ export default Vue.extend({
     computed: {
         isUnifiedPage() {
             return this.type === 'unified';
+        },
+        isFeaturesPage() {
+            return this.type === 'features';
         },
     },
 });
