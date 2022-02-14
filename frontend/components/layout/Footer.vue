@@ -29,10 +29,10 @@
             </li>
             <li class="flex items-center space-x-4">
                 <span class="FooterLink">Keep in touch:</span>
-                <a href="https://github.com/sidestream-tech" target="_blank"><icon type="github" class="text-xl" /></a>
+                <a :href="githubURL" target="_blank"><icon type="github" class="text-xl" /></a>
                 <a href="https://twitter.com/MakerDAO_SAS" target="_blank"><icon type="twitter" class="text-xl" /></a>
                 <a href="https://forum.makerdao.com/c/core-units/sidestream-core-unit/58" target="_blank">
-                    <DiscourseIcon class="w-5 h-5 mt-0.5" />
+                    <DiscourseIcon class="w-5 h-5 mt-1" />
                 </a>
             </li>
         </ul>
