@@ -13,7 +13,10 @@
                 </nuxt-link>
 
                 <div class="flex-1 flex justify-end space-x-4 items-center">
-                    <label class="flex items-center space-x-2 cursor-pointer select-none pt-1 md:pt-0">
+                    <label
+                        v-if="!isFeaturesPage"
+                        class="flex items-center space-x-2 cursor-pointer select-none pt-1 md:pt-0"
+                    >
                         <BaseSwitch
                             :is-checked="isExplanationsShown"
                             class="mt-px"
