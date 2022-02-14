@@ -1,7 +1,7 @@
 <template>
     <div>
         <FeaturesContainer />
-        <Footer type="unified" />
+        <Footer />
     </div>
 </template>
 
