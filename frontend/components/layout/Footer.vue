@@ -27,6 +27,9 @@
             <li>
                 <NuxtLink class="FooterLink" :to="`/dashboard?network=${pageNetwork}`">Dashboard</NuxtLink>
             </li>
+            <li>
+                <NuxtLink class="FooterLink" to="/features">Features</NuxtLink>
+            </li>
             <li class="flex items-center space-x-4">
                 <span class="FooterLink">Keep in touch:</span>
                 <a href="https://github.com/sidestream-tech" target="_blank"><icon type="github" class="text-xl" /></a>
