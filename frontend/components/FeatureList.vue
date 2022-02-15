@@ -2,11 +2,11 @@
     <div class="flex flex-col w-full space-y-10">
         <div v-for="feature in features" :key="feature.name">
             <TextBlock :title="feature.title">
-                <p class="mb-4">
-                    URL:
+                <div class="mb-4">
+                    <span class="text-gray-700 dark:text-gray-200">URL:</span>
                     <a v-if="feature.url" :href="feature.url"> {{ feature.url }} </a>
                     <span v-else class="italic">Not yet implemented</span>
-                </p>
+                </div>
                 <h3 class="text-lg text-gray-700 font-semibold dark:text-gray-200 my-2">List of features:</h3>
                 <ul
                     v-for="point in feature.features"
@@ -266,10 +266,12 @@ export default Vue.extend({
 <style scoped>
 .Indent-1 {
     margin-left: 25px;
+    list-style-type: circle;
 }
 
 .Indent-2 {
     margin-left: 50px;
+    list-style-type: square;
 }
 
 .Indent-3 {
