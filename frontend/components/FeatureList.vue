@@ -9,8 +9,8 @@
                 </div>
                 <h3 class="text-lg text-gray-700 font-semibold dark:text-gray-200 my-2">List of features:</h3>
                 <ul
-                    v-for="point in feature.features"
-                    :key="point.text"
+                    v-for="(point, index) in feature.features"
+                    :key="index"
                     class="list-inside list-disc text-gray-700 dark:text-gray-200"
                 >
                     <li :class="`Indent-${point.indent}`">{{ point.text }}</li>
