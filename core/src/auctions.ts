@@ -125,7 +125,9 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
 
     // enrich with profit and fee calculation
     const fees = await getApproximateTransactionFees(network);
-    return await Promise.all(auctionsWithMarketValue.map(a => enrichAuctionWithTransactionFees(a, fees)));
+    return await Promise.all(
+        auctionsWithMarketValue.map(async a => await enrichAuctionWithTransactionFees(a, fees, network))
+    );
 };
 
 export const restartAuction = async function (

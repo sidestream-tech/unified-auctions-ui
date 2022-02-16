@@ -45,8 +45,6 @@ export declare interface TransactionFees {
     authTransactionFeeETH: BigNumber;
     authTransactionFeeDAI: BigNumber;
     restartTransactionFeeETH: BigNumber;
-    totalFeeDAI: BigNumber;
-    totalFeeETH: BigNumber;
 }
 
 export declare interface CollateralRow extends CollateralConfig, Partial<MakerParams> {
@@ -57,6 +55,8 @@ export declare interface CollateralRow extends CollateralConfig, Partial<MakerPa
 
 export declare interface AuctionTransaction extends Auction, TransactionFees {
     transactionProfitMinusFees: BigNumber;
+    totalFeeDAI: BigNumber;
+    totalFeeETH: BigNumber;
 }
 
 export declare interface UniswapV2CalleeConfig {

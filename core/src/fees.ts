@@ -2,6 +2,8 @@ import type { Auction, AuctionTransaction, TransactionFees } from './types';
 import BigNumber from './bignumber';
 import { getMarketPrice } from './calleeFunctions';
 import { getGasPrice } from './gas';
+import getSigner from './signer';
+import { getCollateralAuthorizationStatus, getWalletAuthorizationStatus } from './authorizations';
 
 export const getApproximateTransactionFees = async function (network: string): Promise<TransactionFees> {
     const gasPrice = await getGasPrice(network);
@@ -27,21 +29,45 @@ export const getApproximateTransactionFees = async function (network: string): P
         authTransactionFeeETH,
         authTransactionFeeDAI: convertETHtoDAI(authTransactionFeeETH),
         restartTransactionFeeETH,
-        totalFeeETH: new BigNumber(0),
-        totalFeeDAI: new BigNumber(0),
     };
 };
 
-export const enrichAuctionWithTransactionFees = function (
+export const enrichAuctionWithTransactionFees = async function (
     auction: Auction,
-    fees: TransactionFees
-): AuctionTransaction {
+    fees: TransactionFees,
+    network: string
+): Promise<AuctionTransaction> {
+    let totalFeeETH = new BigNumber(0);
+    let totalFeeDAI = new BigNumber(0);
+
+    try {
+        const signer = await getSigner(network);
+        const address = await signer.getAddress();
+        const isWalletAuthed = await getWalletAuthorizationStatus(network, address);
+        const isCollateralAuthed = await getCollateralAuthorizationStatus(network, auction.collateralType, address);
+
+        if (!isWalletAuthed) {
+            totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);
+            totalFeeDAI = totalFeeDAI.plus(fees.authTransactionFeeDAI);
+        }
+        if (!isCollateralAuthed) {
+            totalFeeETH = totalFeeETH.plus(fees.biddingTransactionFeeETH);
+            totalFeeDAI = totalFeeDAI.plus(fees.biddingTransactionFeeDAI);
+        }
+    } catch (e) {
+        console.error(e);
+        totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH).plus(fees.biddingTransactionFeeETH);
+        totalFeeDAI = totalFeeDAI.plus(fees.authTransactionFeeDAI).plus(fees.authTransactionFeeDAI);
+    }
+
     const auctionTransaction = {
         ...auction,
         ...fees,
+        totalFeeETH: totalFeeETH,
+        totalFeeDAI: totalFeeDAI,
     } as AuctionTransaction;
     if (auction.transactionProfit && fees.biddingTransactionFeeDAI) {
-        auctionTransaction.transactionProfitMinusFees = auction.transactionProfit.minus(fees.totalFeeDAI);
+        auctionTransaction.transactionProfitMinusFees = auction.transactionProfit.minus(totalFeeDAI);
     }
     return auctionTransaction;
 };
