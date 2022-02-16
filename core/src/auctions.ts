@@ -103,7 +103,7 @@ export const fetchAllInitialAuctions = async function (network: string): Promise
         return fetchAuctionsByCollateralType(network, collateralType);
     });
     const auctionGroups = await Promise.all(auctionGroupsPromises);
-    return auctionGroups.flat();
+    return auctionGroups.flat() as AuctionInitialInfo[];
 };
 
 export const fetchAllAuctions = async function (network: string): Promise<AuctionTransaction[]> {
