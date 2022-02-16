@@ -3,13 +3,11 @@ import { ActionContext } from 'vuex';
 interface State {
     isExplanationsShown: boolean;
     isDarkMode: boolean | undefined;
-    acceptedTerms: boolean;
 }
 
 export const state = (): State => ({
     isExplanationsShown: true,
     isDarkMode: undefined,
-    acceptedTerms: false,
 });
 
 export const getters = {
@@ -25,9 +23,6 @@ export const getters = {
         }
         return state.isDarkMode;
     },
-    getAcceptedTerms(state: State): boolean {
-        return state.acceptedTerms;
-    },
 };
 
 export const mutations = {
@@ -36,9 +31,6 @@ export const mutations = {
     },
     setIsDarkMode(state: State, isDarkMode: boolean): void {
         state.isDarkMode = isDarkMode;
-    },
-    setAcceptedTerms(state: State, accepted: boolean): void {
-        state.acceptedTerms = accepted;
     },
 };
 
