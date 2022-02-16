@@ -43,6 +43,7 @@
     "nuxt": "^2.15.7",
     "nuxt-vuex-router-sync": "^0.0.3",
     "uuid": "^8.3.2",
+    "vue-cookies": "^1.7.4",
     "vue-cryptoicon": "^0.18.0-a",
     "vue-plausible": "^1.2.1",
     "vuex-persist": "^3.1.3"
