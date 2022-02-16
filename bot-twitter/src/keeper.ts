@@ -1,6 +1,13 @@
-import { AuctionInitialInfo } from 'auctions-core/dist/src/types';
+import { AuctionInitialInfo } from 'auctions-core/src/types';
+import getSigner from 'auctions-core/src/signer';
+import { enrichAuction } from 'auctions-core/src/auctions';
+const ETHEREUM_NETWORK = process.env.ETHEREUM_NETWORK || 'kovan';
 
-function participate(auction: AuctionInitialInfo) {
+async function participate(auction: AuctionInitialInfo) {
+    const signer = getSigner(ETHEREUM_NETWORK);
+    console.info(signer);
+    const auctionTransaction = await enrichAuction(ETHEREUM_NETWORK, auction);
+    console.info(auctionTransaction);
     /*
       NOTE: Participate has to be able to be called multiple times even if the last execution might still be running without breaking anything!
 
