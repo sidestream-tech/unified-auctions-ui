@@ -3,6 +3,7 @@ import { createSigner, setSigner } from 'auctions-core/src/signer';
 import { getNewAuctions } from './auctions';
 import notify from './notify';
 import { setupWallet } from './authorizations';
+import participate from './keeper';
 
 const ETHEREUM_NETWORK = process.env.ETHEREUM_NETWORK || 'kovan';
 const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
@@ -17,7 +18,7 @@ const loop = async function (): Promise<void> {
     try {
         const auctions = await getNewAuctions(ETHEREUM_NETWORK);
         auctions.map(notify);
-        // auctions.map(participate);
+        auctions.map(participate);
     } catch (error) {
         console.error('loop error:', error);
     } finally {

@@ -1,30 +1,53 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import getSigner from 'auctions-core/src/signer';
 import { enrichAuction } from 'auctions-core/src/auctions';
+import {
+    authorizeCollateral,
+    authorizeWallet,
+    getCollateralAuthorizationStatus,
+    getWalletAuthorizationStatus,
+} from 'auctions-core/src/authorizations';
 
 const ETHEREUM_NETWORK = process.env.ETHEREUM_NETWORK || 'kovan';
 const MIN_PROFIT_DAI = process.env.MIN_PROFIT_DAI || 100;
 
 async function participate(auction: AuctionInitialInfo) {
-    const signer = getSigner(ETHEREUM_NETWORK);
-    console.info(signer);
+    console.info(`Checking Auction ${auction.id}`);
+    const signer = await getSigner(ETHEREUM_NETWORK);
+
+    // enrich the auction with more numbers
     const auctionTransaction = await enrichAuction(ETHEREUM_NETWORK, auction);
-    console.info(auctionTransaction);
-    console.info(MIN_PROFIT_DAI);
-    /*
-      NOTE: Participate has to be able to be called multiple times even if the last execution might still be running without breaking anything!
 
-      Check if we have a private key
-      enrich auction from AuctionInitalInfo to AuctionTransaction
-      check if profitMinusFees is bigger than AUCTION_MIN_PROFIT (env variable)
-      if yes process to the first authorisation, if no return
+    // check if the profit of the auction is worth executing
+    if (auctionTransaction.transactionProfitMinusFees.toNumber() < MIN_PROFIT_DAI) {
+        return;
+    }
 
-      if (!auth2) authorize auth2; (authorizeCollateral)
-      recall the function with fresh auction
+    // get wallet authorization status
+    const walletAddress = await signer.getAddress();
+    const isAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
 
-      check if the auction is already being executing
-      Execute auction (bidOnTheAuction)
-    */
+    // try to authorize the wallet then return
+    if (!isAuth) {
+        await authorizeWallet(ETHEREUM_NETWORK, true);
+        return;
+    }
+
+    // get collateral authorization status
+    const isCollateralAuth = await getCollateralAuthorizationStatus(
+        ETHEREUM_NETWORK,
+        auctionTransaction.collateralType,
+        walletAddress
+    );
+
+    // try to authorize the collateral then return
+    if (!isCollateralAuth) {
+        await authorizeCollateral(ETHEREUM_NETWORK, auctionTransaction.collateralType, true);
+        return;
+    }
+
+    // How can I add a check to test if the Auction is already being executed?
+    console.info('AUCTION SHOULD BE EXECUTED NOW!!!!');
 }
 
 export default participate;
