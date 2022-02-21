@@ -1,6 +1,6 @@
 import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 import { createSigner, setSigner } from 'auctions-core/src/signer';
-import { getNewAuctions } from './auctions';
+import { getAllActiveAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
 import notify from './notify';
 import { setupWallet } from './authorizations';
 import participate from './keeper';
@@ -16,9 +16,11 @@ const loop = async function (): Promise<void> {
         clearInterval(refetchIntervalId);
     }
     try {
-        const auctions = await getNewAuctions(ETHEREUM_NETWORK);
-        auctions.map(notify);
-        auctions.map(participate);
+        const activeAuctions = await getAllActiveAuctions(ETHEREUM_NETWORK);
+        const newAuctions = getNewAuctionsFromActiveAuctions(activeAuctions);
+
+        activeAuctions.map(participate);
+        newAuctions.map(notify);
     } catch (error) {
         console.error('loop error:', error);
     } finally {

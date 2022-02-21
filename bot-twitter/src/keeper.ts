@@ -13,6 +13,7 @@ const MIN_PROFIT_DAI = process.env.MIN_PROFIT_DAI || 100;
 
 async function participate(auction: AuctionInitialInfo) {
     console.info(`Checking Auction ${auction.id}`);
+
     const signer = await getSigner(ETHEREUM_NETWORK);
 
     // enrich the auction with more numbers
