@@ -41,14 +41,18 @@ export default Vue.extend({
             default: '',
         },
     },
-    data() {
-        return {
-            options: [
-                ...Object.entries(NETWORKS).map(([name, propeties]) => {
-                    return { label: propeties.title, value: name };
+    computed: {
+        options(): NetworkConfig[] {
+            const options = [
+                ...Object.entries(NETWORKS).map(([name, properties]) => {
+                    return { label: properties.title, value: name };
                 }),
-            ],
-        };
+            ];
+            if (process.env.NODE_ENV === 'production') {
+                return options.filter(option => option.value !== 'localhost');
+            }
+            return options;
+        },
     },
 });
 </script>
