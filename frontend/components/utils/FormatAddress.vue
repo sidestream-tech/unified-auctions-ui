@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import NETWORKS from 'auctions-core/src/constants/NETWORKS';
+import { getNetworks } from 'auctions-core/src/constants/NETWORKS';
 
 const TRIM_POSITION_FROM_START = 5;
 const TRIM_POSITION_FROM_END = 4;
@@ -60,8 +60,9 @@ export default Vue.extend({
                 return 'https://etherscan.io';
             }
             const network = this.$store.getters['network/getMakerNetwork'];
-            if (NETWORKS[network]) {
-                return NETWORKS[network].etherscanUrl;
+            const isDev = this.$nuxt.context.isDev;
+            if (getNetworks(isDev)[network]) {
+                return getNetworks(isDev)[network].etherscanUrl;
             }
             return 'https://etherscan.io';
         },

@@ -26,6 +26,7 @@
                         <NetworkSelector
                             v-if="!isUnifiedPage"
                             :network="network"
+                            :is-dev="isDev"
                             @update:network="$emit('update:network', $event)"
                         />
 
@@ -105,6 +106,10 @@ export default Vue.extend({
         stagingBannerUrl: {
             type: String,
             default: undefined,
+        },
+        isDev: {
+            type: Boolean,
+            default: false,
         },
     },
     computed: {

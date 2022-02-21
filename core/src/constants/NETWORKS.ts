@@ -81,4 +81,12 @@ export const getNetworkTitleByChainId = function (chainId: string | undefined) {
     return NETWORK_TITLES[chainId];
 };
 
-export default NETWORKS;
+export const getNetworks = function (isDev: boolean): Record<string, NetworkConfig> {
+    if (isDev) {
+        return NETWORKS;
+    } else {
+        const filtered = { ...NETWORKS };
+        delete filtered['localhost'];
+        return filtered;
+    }
+};

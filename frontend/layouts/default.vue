@@ -9,6 +9,7 @@
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
             :staging-banner-url="stagingBannerURL"
+            :is-dev="isDev"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
         />
@@ -16,12 +17,14 @@
         <ChangePageNetworkModal
             v-if="!isPageNetworkValid"
             :invalid-network="getPageNetwork"
+            :is-dev="isDev"
             @setPageNetwork="setPageNetwork"
         />
         <ChangeWalletNetworkModal
             v-else-if="!isWalletNetworkValid"
             :invalid-network="getWalletNetworkTitle"
             :page-network="network"
+            :is-dev="isDev"
             @setPageNetwork="setPageNetwork"
             @fixWalletNetwork="fixWalletNetwork"
         />
@@ -92,6 +95,9 @@ export default Vue.extend({
         },
         stagingBannerURL() {
             return process.env.STAGING_BANNER_URL;
+        },
+        isDev() {
+            return this.$nuxt?.context?.isDev || false;
         },
     },
     methods: {
