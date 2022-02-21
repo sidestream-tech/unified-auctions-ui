@@ -45,14 +45,14 @@ export default Vue.extend({
             default: false,
         },
     },
-    computed: {
-        options() {
-            return [
+    data() {
+        return {
+            options: [
                 ...Object.entries(getNetworks(this.isDev)).map(([name, propeties]) => {
                     return { label: propeties.title, value: name };
                 }),
-            ];
-        },
+            ],
+        };
     },
 });
 </script>
