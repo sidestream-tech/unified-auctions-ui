@@ -1,3 +1,5 @@
+import { ActionContext } from 'vuex';
+import Vue from 'vue';
 import Cookies from 'js-cookie';
 
 interface State {
@@ -14,8 +16,15 @@ export const getters = {
     },
 };
 
+export const mutations = {
+    setAcceptedTerms(state: State, hasAccepted: string | undefined) {
+        Vue.set(state, 'acceptedTerms', hasAccepted);
+    },
+};
+
 export const actions = {
-    acceptTerms() {
+    acceptTerms({ commit }: ActionContext<State, State>) {
         Cookies.set('terms-and-conditions', 'accepted');
+        commit('setAcceptedTerms', 'accepted');
     },
 };
