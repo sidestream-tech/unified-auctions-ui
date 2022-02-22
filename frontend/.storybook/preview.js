@@ -3,7 +3,6 @@ import { action } from '@storybook/addon-actions';
 import '~/assets/styles/index';
 import '~/plugins/antdesign.client';
 import '~/plugins/crypto-icons.client.js';
-import '~/plugins/vue-cookies.client.js';
 
 export const parameters = {
     actions: { argTypesRegex: '^on[A-Z].*' },

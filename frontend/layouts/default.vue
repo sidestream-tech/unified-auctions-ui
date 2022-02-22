@@ -57,6 +57,9 @@ export default Vue.extend({
             isTermsModalShown: 'getTermsModal',
             isWalletModalShown: 'getWalletModal',
         }),
+        ...mapGetters('cookies', {
+            hasAcceptedTerms: 'hasAcceptedTerms',
+        }),
         ...mapGetters('network', [
             'getWalletNetworkTitle',
             'getPageNetwork',
@@ -89,9 +92,6 @@ export default Vue.extend({
         },
         stagingBannerURL() {
             return process.env.STAGING_BANNER_URL;
-        },
-        hasAcceptedTerms(): boolean {
-            return this.$store.getters['cookies/hasAcceptedTerms'];
         },
     },
     methods: {
