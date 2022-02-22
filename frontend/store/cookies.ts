@@ -1,23 +1,19 @@
-import Vue from 'vue';
-import Cookies from 'js-cookie';
-
 interface State {
-    acceptedTerms: string | undefined;
+    acceptedTerms: boolean;
 }
 
 export const state = (): State => ({
-    acceptedTerms: Cookies.get('terms-and-conditions'),
+    acceptedTerms: false,
 });
 
 export const getters = {
     hasAcceptedTerms(state: State): boolean {
-        return state.acceptedTerms === 'accepted';
+        return state.acceptedTerms;
     },
 };
 
 export const mutations = {
     acceptTerms(state: State) {
-        Cookies.set('terms-and-conditions', 'accepted');
-        Vue.set(state, 'acceptedTerms', 'accepted');
+        state.acceptedTerms = true;
     },
 };
