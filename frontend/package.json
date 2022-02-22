@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@nuxtjs/dotenv": "^1.4.1",
+    "@types/js-cookie": "^3.0.1",
     "animated-number-vue": "^1.0.0",
     "ant-design-vue": "^1.7.6",
     "auctions-core": "file:../core",

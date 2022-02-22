@@ -35,12 +35,7 @@ export default {
     css: [],
 
     // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-    plugins: [
-        '~/plugins/vuex-persist.client.js',
-        '~/plugins/antdesign.client.js',
-        '~/plugins/crypto-icons.client.js',
-        '~/plugins/vue-cookies.client.js',
-    ],
+    plugins: ['~/plugins/vuex-persist.client.js', '~/plugins/antdesign.client.js', '~/plugins/crypto-icons.client.js'],
 
     // Auto import components: https://go.nuxtjs.dev/config-components
     components: false,
