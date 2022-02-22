@@ -7,9 +7,7 @@ import {
     getCollateralAuthorizationStatus,
     getWalletAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-
-const ETHEREUM_NETWORK = process.env.ETHEREUM_NETWORK || 'kovan';
-const MIN_PROFIT_DAI = process.env.MIN_PROFIT_DAI || 100;
+import { ETHEREUM_NETWORK, KEEPER_MIN_PROFIT_DAI } from './variables';
 
 async function participate(auction: AuctionInitialInfo) {
     console.info(`Checking Auction ${auction.id}`);
@@ -20,9 +18,15 @@ async function participate(auction: AuctionInitialInfo) {
     const auctionTransaction = await enrichAuction(ETHEREUM_NETWORK, auction);
 
     // check if the profit of the auction is worth executing
-    if (auctionTransaction.transactionProfitMinusFees.toNumber() < MIN_PROFIT_DAI) {
+    if (auctionTransaction.transactionProfitMinusFees.toNumber() < KEEPER_MIN_PROFIT_DAI) {
+        console.info(
+            `Auction ${
+                auction.id
+            }, is NOT profitable. Exiting now. [${auctionTransaction.transactionProfitMinusFees.toNumber()}/${KEEPER_MIN_PROFIT_DAI} DAI]`
+        );
         return;
     }
+    console.info(`Auction ${auction.id}, is profitable. Continuing now.`);
 
     // get wallet authorization status
     const walletAddress = await signer.getAddress();
@@ -30,7 +34,9 @@ async function participate(auction: AuctionInitialInfo) {
 
     // try to authorize the wallet then return
     if (!isAuth) {
-        await authorizeWallet(ETHEREUM_NETWORK, true);
+        console.info(`Wallet "${walletAddress}" has not been authorized yet. Attempting authorization now`);
+        const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, false);
+        console.info(`Wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
         return;
     }
 

@@ -3,7 +3,6 @@ import getContract, { getContractAddressByName, getClipperNameByCollateralType }
 import executeTransaction from './execute';
 import memoizee from 'memoizee';
 
-const AUTHORIZE_WALLET_CACHE_MS = 30 * 1000;
 const GET_AUTHORIZATION_STATUS_CACHE_MS = 30 * 1000;
 
 const _authorizeWallet = async function (network: string, revoke: boolean, notifier?: Notifier): Promise<string> {
@@ -13,7 +12,6 @@ const _authorizeWallet = async function (network: string, revoke: boolean, notif
 };
 
 export const authorizeWallet = memoizee(_authorizeWallet, {
-    maxAge: AUTHORIZE_WALLET_CACHE_MS,
     promise: true,
     length: 3,
 });
@@ -31,7 +29,6 @@ const _authorizeCollateral = async function (
 };
 
 export const authorizeCollateral = memoizee(_authorizeCollateral, {
-    maxAge: AUTHORIZE_WALLET_CACHE_MS,
     promise: true,
     length: 4,
 });

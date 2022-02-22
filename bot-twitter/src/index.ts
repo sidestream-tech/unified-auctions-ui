@@ -4,9 +4,9 @@ import { getAllActiveAuctions, getNewAuctionsFromActiveAuctions } from './auctio
 import notify from './notify';
 import { setupWallet } from './authorizations';
 import participate from './keeper';
+import { ETHEREUM_NETWORK } from './variables';
 
-const ETHEREUM_NETWORK = process.env.ETHEREUM_NETWORK || 'kovan';
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
+const KEEPER_WALLET_PRIVATE_KEY = process.env.KEEPER_WALLET_PRIVATE_KEY;
 const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
 const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL ?? '') || DEFAULT_REFETCH_INTERVAL;
 let refetchIntervalId: ReturnType<typeof setTimeout> | undefined;
@@ -30,8 +30,8 @@ const loop = async function (): Promise<void> {
 
 const setup = async function (): Promise<void> {
     getNetworkConfigByType(ETHEREUM_NETWORK);
-    if (WALLET_PRIVATE_KEY) {
-        setSigner(ETHEREUM_NETWORK, createSigner(ETHEREUM_NETWORK, WALLET_PRIVATE_KEY));
+    if (KEEPER_WALLET_PRIVATE_KEY) {
+        setSigner(ETHEREUM_NETWORK, createSigner(ETHEREUM_NETWORK, KEEPER_WALLET_PRIVATE_KEY));
         await setupWallet(ETHEREUM_NETWORK);
     }
     await loop();

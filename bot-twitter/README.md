@@ -20,8 +20,9 @@ $ npm run start
 - `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available options can be found in [constants/NETWORKS](../core/src/constants/NETWORKS.ts)
 - `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
 - `FRONTEND_ORIGIN`: (required) An origin to which the bot will redirect users (valid example: `https://auctions.makerdao.network`)
-- `WALLET_PRIVATE_KEY`: (required for server side execution) The secret key of the wallet (https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key)
-- `MIN_PROFIT_DAI`: (required for keeper) The minimum amount of profit an auction must yield before the keeper automatically bids on it
+- `KEEPER_*` variables - a set of set for the keeper
+    - `KEEPER_WALLET_PRIVATE_KEY`: (required for server side execution) The secret key of the wallet (https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key)
+    - `KEEPER_MIN_PROFIT_DAI`: (required for keeper) The minimum amount of profit an auction must yield before the keeper automatically bids on it
 - `TWITTER_*`: variables (optional for dev environment) – a set of secrets from twitter developer account with `OAuth 1.0a` `Elevated` access and `Read and Write` permissions:
     - `TWITTER_API_KEY`: (required)
     - `TWITTER_API_SECRET`: (required)
