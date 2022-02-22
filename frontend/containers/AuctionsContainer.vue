@@ -77,6 +77,9 @@ export default Vue.extend({
         fetchedSelectedAuctionId(): string | undefined {
             return this.selectedAuction && this.selectedAuction.id;
         },
+        hasAcceptedTerms(): boolean {
+            return this.$store.getters['cookies/hasAcceptedTerms'];
+        },
     },
     watch: {
         fetchedSelectedAuctionId: {
@@ -99,7 +102,7 @@ export default Vue.extend({
         ]),
         ...mapActions('auctions', ['bid', 'restart']),
         openWalletModal(): void {
-            if (!this.hasAcceptedTerms()) {
+            if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);
                 return;
             }
@@ -110,9 +113,6 @@ export default Vue.extend({
         },
         restartAuction(auctionId: string): void {
             this.restart(auctionId);
-        },
-        hasAcceptedTerms(): boolean {
-            return this.$cookies.get('terms-and-conditions') === 'accepted';
         },
     },
 });

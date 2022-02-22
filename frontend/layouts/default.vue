@@ -7,7 +7,7 @@
             :dark-mode.sync="isDarkMode"
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
-            :has-accepted-terms="hasAcceptedTerms()"
+            :has-accepted-terms="hasAcceptedTerms"
             :staging-banner-url="stagingBannerURL"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
@@ -90,12 +90,15 @@ export default Vue.extend({
         stagingBannerURL() {
             return process.env.STAGING_BANNER_URL;
         },
+        hasAcceptedTerms(): boolean {
+            return this.$store.getters['cookies/hasAcceptedTerms'];
+        },
     },
     methods: {
         ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
-            this.$cookies.set('terms-and-conditions', 'accepted', 0);
+            this.$store.dispatch('cookies/acceptTerms');
             this.$store.commit('modals/setTermsModal', false);
             this.$store.commit('modals/setWalletModal', true);
         },
@@ -104,9 +107,6 @@ export default Vue.extend({
         },
         setWalletModal(open: boolean): void {
             this.$store.commit('modals/setWalletModal', open);
-        },
-        hasAcceptedTerms(): boolean {
-            return this.$cookies.get('terms-and-conditions') === 'accepted';
         },
     },
 });
