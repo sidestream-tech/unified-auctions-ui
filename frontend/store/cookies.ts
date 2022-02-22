@@ -1,4 +1,3 @@
-import { ActionContext } from 'vuex';
 import Vue from 'vue';
 import Cookies from 'js-cookie';
 
