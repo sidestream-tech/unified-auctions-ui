@@ -11,7 +11,7 @@
             "
         >
             <li>
-                <NuxtLink class="FooterLink" to="/terms"> Terms & Conditions </NuxtLink>
+                <a class="FooterLink" :href="tacPath" target="_blank"> Terms & Conditions </a>
             </li>
             <li v-if="!isUnified">
                 <a class="FooterLink" :href="githubURL" target="_blank">Source Code</a>
@@ -53,6 +53,11 @@ export default Vue.extend({
             default: 'default',
             validator: type => ['default', 'unified'].includes(type),
         },
+    },
+    data() {
+        return {
+            tacPath: './pdf/Unified-Auction-UI_Terms.Conditions.pdf',
+        };
     },
     computed: {
         contactEmail(): string | undefined {
