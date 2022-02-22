@@ -42,7 +42,7 @@ export default Vue.extend({
     },
     computed: {
         termsAndConditionsURL(): string {
-            return this.$config.TERMS_AND_CONDITIONS_URL;
+            return this.$config?.TERMS_AND_CONDITIONS_URL || '';
         },
     },
     methods: {

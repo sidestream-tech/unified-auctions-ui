@@ -70,7 +70,7 @@ export default Vue.extend({
             return this.$store?.getters['network/getPageNetwork'];
         },
         termsAndConditionsURL(): string {
-            return this.$config.TERMS_AND_CONDITIONS_URL;
+            return this.$config?.TERMS_AND_CONDITIONS_URL || '';
         },
     },
 });
