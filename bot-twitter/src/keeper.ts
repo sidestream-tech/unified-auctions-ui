@@ -10,8 +10,6 @@ import {
 import { ETHEREUM_NETWORK, KEEPER_MIN_PROFIT_DAI } from './variables';
 
 async function participate(auction: AuctionInitialInfo) {
-    console.info(`Checking Auction ${auction.id}`);
-
     const signer = await getSigner(ETHEREUM_NETWORK);
 
     // enrich the auction with more numbers
@@ -49,7 +47,17 @@ async function participate(auction: AuctionInitialInfo) {
 
     // try to authorize the collateral then return
     if (!isCollateralAuth) {
-        await authorizeCollateral(ETHEREUM_NETWORK, auctionTransaction.collateralType, true);
+        console.info(
+            `Collateral "${auctionTransaction.collateralType}" has not been authorized on wallet "${walletAddress}" yet. Attempting authorization now`
+        );
+        const collateralTransactionHash = await authorizeCollateral(
+            ETHEREUM_NETWORK,
+            auctionTransaction.collateralType,
+            true
+        );
+        console.info(
+            `Collateral "${auctionTransaction.collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
+        );
         return;
     }
 
