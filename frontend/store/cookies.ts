@@ -18,7 +18,7 @@ export const getters = {
 
 export const mutations = {
     acceptTerms(state: State) {
-        Cookies.set('terms-and-conditions-accepted', 'accepted');
+        Cookies.set('terms-and-conditions', 'accepted');
         Vue.set(state, 'acceptedTerms', 'accepted');
     },
 };
