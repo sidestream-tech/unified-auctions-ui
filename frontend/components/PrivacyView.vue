@@ -5,7 +5,7 @@
                 <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">
                     Privacy Policy for Sidestream Auction Services Core Unit
                 </h1>
-                <TextBlock class="TextBlock">
+                <TextBlock>
                     <p>
                         At Maker Protocol - Unified Auctions, accessible from auctions.makerdao.network, one of our
                         main priorities is the privacy of our visitors. This Privacy Policy document contains types of
@@ -29,7 +29,7 @@
                 <TextBlock title="Consent">
                     By using our website, you hereby consent to our Privacy Policy and agree to its terms.
                 </TextBlock>
-                <TextBlock title="Information we collect" class="TextBlock">
+                <TextBlock title="Information we collect">
                     <p>
                         The personal information that you are asked to provide, and the reasons why you are asked to
                         provide it, will be made clear to you at the point we ask you to provide your personal
@@ -45,7 +45,7 @@
                         as name, company name, address, email address, and telephone number.
                     </p>
                 </TextBlock>
-                <TextBlock title="How we use your information" class="TextBlock">
+                <TextBlock title="How we use your information">
                     <p>We use the information we collect in various ways, including to:</p>
                     <ul class="ml-8 list-disc">
                         <li>Provide, operate, and maintain our website</li>
@@ -70,7 +70,7 @@
                     purpose of the information is for analyzing trends, administering the site, tracking users'
                     movement on the website, and gathering demographic information.
                 </TextBlock>
-                <TextBlock title="Cookies and Web Beacons" class="TextBlock">
+                <TextBlock title="Cookies and Web Beacons">
                     <p>
                         Like any other website, Maker Protocol - Unified Auctions uses 'cookies'. These cookies are
                         used to store information including visitors' preferences, and the pages on the website that
@@ -84,7 +84,7 @@
                         </a>
                     </p>
                 </TextBlock>
-                <TextBlock title="Advertising Partners Privacy Policies" class="TextBlock">
+                <TextBlock title="Advertising Partners Privacy Policies">
                     <p>
                         You may consult this list to find the Privacy Policy for each of the advertising partners of
                         Maker Protocol - Unified Auctions.
@@ -102,7 +102,7 @@
                         are used by third-party advertisers.
                     </p>
                 </TextBlock>
-                <TextBlock title="Third Party Privacy Policies" class="TextBlock">
+                <TextBlock title="Third Party Privacy Policies">
                     <p>
                         Maker Protocol - Unified Auctions's Privacy Policy does not apply to other advertisers or
                         websites. Thus, we are advising you to consult the respective Privacy Policies of these
@@ -115,7 +115,7 @@
                         browsers' respective websites.
                     </p>
                 </TextBlock>
-                <TextBlock title="CCPA Privacy Rights (Do Not Sell My Personal Information)" class="TextBlock">
+                <TextBlock title="CCPA Privacy Rights (Do Not Sell My Personal Information)">
                     <p>Under the CCPA, among other rights, California consumers have the right to:</p>
                     <p>
                         Request that a business that collects a consumer's personal data disclose the categories and
@@ -134,7 +134,7 @@
                         of these rights, please contact us.
                     </p>
                 </TextBlock>
-                <TextBlock title="GDPR Data Protection Rights" class="TextBlock">
+                <TextBlock title="GDPR Data Protection Rights">
                     <p>
                         We would like to make sure you are fully aware of all of your data protection rights. Every
                         user is entitled to the following:
@@ -169,7 +169,7 @@
                         of these rights, please contact us.
                     </p>
                 </TextBlock>
-                <TextBlock title="Children's Information" class="TextBlock">
+                <TextBlock title="Children's Information">
                     <p>
                         Another part of our priority is adding protection for children while using the internet. We
                         encourage parents and guardians to observe, participate in, and/or monitor and guide their
@@ -199,7 +199,7 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.TextBlock {
-    @apply flex-col space-y-2;
+p + p {
+    @apply mt-2;
 }
 </style>
