@@ -11,7 +11,9 @@
             "
         >
             <li>
-                <a class="FooterLink" :href="tacPath" target="_blank"> Terms & Conditions </a>
+                <NuxtLink class="FooterLink" :to="termsAndConditionsURL" target="_blank">
+                    Terms & Conditions
+                </NuxtLink>
             </li>
             <li v-if="!isUnified">
                 <a class="FooterLink" :href="githubURL" target="_blank">Source Code</a>
@@ -54,11 +56,6 @@ export default Vue.extend({
             validator: type => ['default', 'unified'].includes(type),
         },
     },
-    data() {
-        return {
-            tacPath: './pdf/Unified-Auction-UI_Terms.Conditions.pdf',
-        };
-    },
     computed: {
         contactEmail(): string | undefined {
             return process.env.CONTACT_EMAIL;
@@ -71,6 +68,9 @@ export default Vue.extend({
         },
         pageNetwork(): string {
             return this.$store?.getters['network/getPageNetwork'];
+        },
+        termsAndConditionsURL(): string {
+            return this.$config.TERMS_AND_CONDITIONS_URL;
         },
     },
 });
