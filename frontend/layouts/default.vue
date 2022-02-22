@@ -98,7 +98,7 @@ export default Vue.extend({
         ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
-            this.$store.dispatch('cookies/acceptTerms');
+            this.$store.commit('cookies/acceptTerms');
             this.$store.commit('modals/setTermsModal', false);
             this.$store.commit('modals/setWalletModal', true);
         },

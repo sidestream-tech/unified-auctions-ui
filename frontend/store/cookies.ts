@@ -17,14 +17,8 @@ export const getters = {
 };
 
 export const mutations = {
-    setAcceptedTerms(state: State, hasAccepted: string | undefined) {
-        Vue.set(state, 'acceptedTerms', hasAccepted);
-    },
-};
-
-export const actions = {
-    acceptTerms({ commit }: ActionContext<State, State>) {
-        Cookies.set('terms-and-conditions', 'accepted');
-        commit('setAcceptedTerms', 'accepted');
+    acceptTerms(state: State) {
+        Cookies.set('terms-and-conditions-accepted', 'accepted');
+        Vue.set(state, 'acceptedTerms', 'accepted');
     },
 };
