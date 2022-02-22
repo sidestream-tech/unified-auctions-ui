@@ -13,6 +13,9 @@
             <li>
                 <NuxtLink class="FooterLink" to="/terms"> Terms & Conditions </NuxtLink>
             </li>
+            <li>
+                <NuxtLink class="FooterLink" to="/privacy">Privacy</NuxtLink>
+            </li>
             <li v-if="!isUnified">
                 <a class="FooterLink" :href="githubURL" target="_blank">Source Code</a>
             </li>
