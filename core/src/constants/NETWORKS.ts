@@ -85,7 +85,6 @@ export const getNetworks = function (isDev: boolean): Record<string, NetworkConf
     if (isDev) {
         return NETWORKS;
     }
-    const filtered = { ...NETWORKS };
-    delete filtered['localhost'];
-    return filtered;
+    const { localhost, ...otherNetworks } = NETWORKS;
+    return otherNetworks;
 };
