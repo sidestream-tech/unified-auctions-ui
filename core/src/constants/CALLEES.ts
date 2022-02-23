@@ -6,6 +6,7 @@ const CALLEES: Record<string, CalleeAddresses | undefined> = {
     '0x1': {
         UniswapV2CalleeDai: '0x49399BB0Fcb52b32aB5A0909206BFf7B54FF80b3',
         UniswapV2LpTokenCalleeDai: '0x74893C37beACf205507ea794470b13DE06294220',
+        WstETHCurveUniv3Callee: '0xC2D837173592194131827775a6Cd88322a98C825',
     },
     '0x5': {
         UniswapV2CalleeDai: '0x6d9139ac89ad2263f138633de20e47bcae253938',
@@ -30,5 +31,9 @@ export const getCalleesByNetworkType = function (network: string): CalleeAddress
 export const getCalleeAddressByCollateralType = function (network: string, collateralType: string): string {
     const networkCallees = getCalleesByNetworkType(network);
     const collateral = getCollateralConfigByType(collateralType);
-    return networkCallees[collateral.exchange.callee];
+    const calleeAddress = networkCallees[collateral.exchange.callee];
+    if (!calleeAddress) {
+        throw new Error(`No callee address found for the "${collateralType}" collateral on "${network}" network`);
+    }
+    return calleeAddress;
 };

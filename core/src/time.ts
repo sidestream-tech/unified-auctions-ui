@@ -27,7 +27,7 @@ const fetchLatestBlockDateAndCacheDate = memoizee(_fetchLatestBlockDateAndCacheD
     length: 1,
 });
 
-const getNetworkDate = async function (network: string): Promise<Date> {
+const getCurrentDate = async function (network: string): Promise<Date> {
     const networkConfig = getNetworkConfigByType(network);
     if (!networkConfig.isFork) {
         return new Date();
@@ -36,4 +36,4 @@ const getNetworkDate = async function (network: string): Promise<Date> {
     return new Date(Date.now() - cacheDate.getTime() + blockDate.getTime());
 };
 
-export default getNetworkDate;
+export default getCurrentDate;
