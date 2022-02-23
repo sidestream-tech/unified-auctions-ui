@@ -11,7 +11,9 @@
             "
         >
             <li>
-                <NuxtLink class="FooterLink" to="/terms"> Terms & Conditions </NuxtLink>
+                <NuxtLink class="FooterLink" :to="termsAndConditionsURL" target="_blank">
+                    Terms & Conditions
+                </NuxtLink>
             </li>
             <li>
                 <NuxtLink class="FooterLink" to="/privacy">Privacy</NuxtLink>
@@ -69,6 +71,9 @@ export default Vue.extend({
         },
         pageNetwork(): string {
             return this.$store?.getters['network/getPageNetwork'];
+        },
+        termsAndConditionsURL(): string {
+            return this.$config?.TERMS_AND_CONDITIONS_URL || '';
         },
     },
 });

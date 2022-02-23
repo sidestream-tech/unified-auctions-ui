@@ -17,6 +17,10 @@ export default {
         DEFAULT_ETHEREUM_NETWORK: process.env.DEFAULT_ETHEREUM_NETWORK || 'mainnet',
     },
 
+    publicRuntimeConfig: {
+        TERMS_AND_CONDITIONS_URL: '/pdf/Unified-Auction-UI_Terms.Conditions.pdf',
+    },
+
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
         title: 'Auctions UI',
