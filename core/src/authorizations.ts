@@ -43,7 +43,7 @@ const cachedGetWalletAuthorizationStatus = memoizee(_getWalletAuthorizationStatu
 export const getWalletAuthorizationStatus = async function (
     network: string,
     walletAddress: string,
-    clearCache = false
+    clearCache = true
 ): Promise<boolean> {
     if (clearCache) {
         await cachedGetWalletAuthorizationStatus.delete(network, walletAddress);
@@ -73,7 +73,7 @@ export const getCollateralAuthorizationStatus = async function (
     network: string,
     collateralType: string,
     walletAddress: string,
-    clearCache = false
+    clearCache = true
 ): Promise<boolean> {
     if (clearCache) {
         await cachedGetCollateralAuthorizationStatus.delete(network, collateralType, walletAddress);
