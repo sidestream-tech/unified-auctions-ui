@@ -9,7 +9,10 @@ import {
 } from 'auctions-core/src/authorizations';
 import { ETHEREUM_NETWORK, KEEPER_MIN_PROFIT_DAI } from './variables';
 
-async function participate(auction: AuctionInitialInfo, clearCache = false) {
+async function participate(auction: AuctionInitialInfo) {
+    if (KEEPER_MIN_PROFIT_DAI === undefined) {
+        return;
+    }
     const signer = await getSigner(ETHEREUM_NETWORK);
 
     // enrich the auction with more numbers
@@ -18,23 +21,23 @@ async function participate(auction: AuctionInitialInfo, clearCache = false) {
     // check if the profit of the auction is worth executing
     if (auctionTransaction.transactionProfitMinusFees.toNumber() < KEEPER_MIN_PROFIT_DAI) {
         console.info(
-            `Auction ${
+            `Auction "${
                 auction.id
-            }, is NOT profitable. Exiting now. [${auctionTransaction.transactionProfitMinusFees.toNumber()}/${KEEPER_MIN_PROFIT_DAI} DAI]`
+            }" clear profit is smaller than min profit (${auctionTransaction.transactionProfitMinusFees.toFixed()} < ${KEEPER_MIN_PROFIT_DAI})`
         );
         return;
     }
 
     // get wallet authorization status
     const walletAddress = await signer.getAddress();
-    const isAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress, clearCache);
+    const isAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
 
     // try to authorize the wallet then return
     if (!isAuth) {
         console.info(`Wallet "${walletAddress}" has not been authorized yet. Attempting authorization now`);
         const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, false);
         console.info(`Wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
-        await participate(auction, true);
+        await participate(auction);
         return;
     }
 
@@ -42,8 +45,7 @@ async function participate(auction: AuctionInitialInfo, clearCache = false) {
     const isCollateralAuth = await getCollateralAuthorizationStatus(
         ETHEREUM_NETWORK,
         auctionTransaction.collateralType,
-        walletAddress,
-        clearCache
+        walletAddress
     );
 
     // try to authorize the collateral then return
@@ -59,7 +61,7 @@ async function participate(auction: AuctionInitialInfo, clearCache = false) {
         console.info(
             `Collateral "${auctionTransaction.collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
         );
-        await participate(auction, true);
+        await participate(auction);
         return;
     }
 

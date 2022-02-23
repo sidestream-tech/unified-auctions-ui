@@ -2,16 +2,17 @@ import type { Notifier } from './types';
 import getContract, { getContractAddressByName, getClipperNameByCollateralType } from './contracts';
 import executeTransaction from './execute';
 import memoizee from 'memoizee';
-
-const AUTH_STATUS_CACHE = 30 * 1000;
+import getSigner from './signer';
 
 export const authorizeWallet = async function (
     network: string,
     revoke: boolean,
     notifier?: Notifier
 ): Promise<string> {
+    const signer = await getSigner(network);
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const contractMethod = revoke ? 'nope' : 'hope';
+    await getWalletAuthorizationStatus.delete(network, await signer.getAddress());
     return executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
 };
 
@@ -21,9 +22,11 @@ export const authorizeCollateral = async function (
     revoke: boolean,
     notifier?: Notifier
 ): Promise<string> {
+    const signer = await getSigner(network);
     const contractName = getClipperNameByCollateralType(collateralType);
     const clipperAddress = await getContractAddressByName(network, contractName);
     const contractMethod = revoke ? 'nope' : 'hope';
+    await getCollateralAuthorizationStatus.delete(network, collateralType, await signer.getAddress());
     return executeTransaction(network, 'MCD_VAT', contractMethod, [clipperAddress], notifier);
 };
 
@@ -34,22 +37,10 @@ const _getWalletAuthorizationStatus = async function (network: string, walletAdd
     return authorizationStatus.toNumber() === 1;
 };
 
-const cachedGetWalletAuthorizationStatus = memoizee(_getWalletAuthorizationStatus, {
-    maxAge: AUTH_STATUS_CACHE,
+export const getWalletAuthorizationStatus = memoizee(_getWalletAuthorizationStatus, {
     promise: true,
     length: 2,
 });
-
-export const getWalletAuthorizationStatus = async function (
-    network: string,
-    walletAddress: string,
-    clearCache = true
-): Promise<boolean> {
-    if (clearCache) {
-        await cachedGetWalletAuthorizationStatus.delete(network, walletAddress);
-    }
-    return await cachedGetWalletAuthorizationStatus(network, walletAddress);
-};
 
 const _getCollateralAuthorizationStatus = async function (
     network: string,
@@ -63,20 +54,7 @@ const _getCollateralAuthorizationStatus = async function (
     return authorizationStatus.toNumber() === 1;
 };
 
-const cachedGetCollateralAuthorizationStatus = memoizee(_getCollateralAuthorizationStatus, {
-    maxAge: AUTH_STATUS_CACHE,
+export const getCollateralAuthorizationStatus = memoizee(_getCollateralAuthorizationStatus, {
     promise: true,
     length: 3,
 });
-
-export const getCollateralAuthorizationStatus = async function (
-    network: string,
-    collateralType: string,
-    walletAddress: string,
-    clearCache = true
-): Promise<boolean> {
-    if (clearCache) {
-        await cachedGetCollateralAuthorizationStatus.delete(network, collateralType, walletAddress);
-    }
-    return await cachedGetCollateralAuthorizationStatus(network, collateralType, walletAddress);
-};
