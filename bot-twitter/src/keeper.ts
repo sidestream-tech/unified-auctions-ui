@@ -34,6 +34,7 @@ async function participate(auction: AuctionInitialInfo) {
         console.info(`Wallet "${walletAddress}" has not been authorized yet. Attempting authorization now`);
         const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, false);
         console.info(`Wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
+        await participate(auction);
         return;
     }
 
@@ -57,6 +58,7 @@ async function participate(auction: AuctionInitialInfo) {
         console.info(
             `Collateral "${auctionTransaction.collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
         );
+        await participate(auction);
         return;
     }
 

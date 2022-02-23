@@ -5,12 +5,14 @@ import { getGasPrice } from './gas';
 import getSigner from './signer';
 import { getCollateralAuthorizationStatus, getWalletAuthorizationStatus } from './authorizations';
 
+export const convertETHtoDAI = async function (network: string, eth: BigNumber): Promise<BigNumber> {
+    const exchangeRate = await getMarketPrice(network, 'ETH');
+    return eth.multipliedBy(exchangeRate);
+};
+
 export const getApproximateTransactionFees = async function (network: string): Promise<TransactionFees> {
     const gasPrice = await getGasPrice(network);
-    const exchangeRate = await getMarketPrice(network, 'ETH');
-    const convertETHtoDAI = function (eth: BigNumber) {
-        return eth.multipliedBy(exchangeRate);
-    };
+
     // TODO: figure out a way to properly estimate gas
     // for each transaction when no wallet is connected
     const biddingTransactionFeeETH = gasPrice.multipliedBy(647053);
@@ -19,9 +21,9 @@ export const getApproximateTransactionFees = async function (network: string): P
 
     return {
         biddingTransactionFeeETH,
-        biddingTransactionFeeDAI: convertETHtoDAI(biddingTransactionFeeETH),
+        biddingTransactionFeeDAI: await convertETHtoDAI(network, biddingTransactionFeeETH),
         authTransactionFeeETH,
-        authTransactionFeeDAI: convertETHtoDAI(authTransactionFeeETH),
+        authTransactionFeeDAI: await convertETHtoDAI(network, authTransactionFeeETH),
         restartTransactionFeeETH,
     };
 };
@@ -31,8 +33,7 @@ export const enrichAuctionWithTransactionFees = async function (
     fees: TransactionFees,
     network: string
 ): Promise<AuctionTransaction> {
-    let totalFeeETH = new BigNumber(0);
-    let totalFeeDAI = new BigNumber(0);
+    let totalFeeETH = fees.biddingTransactionFeeETH;
 
     try {
         const signer = await getSigner(network);
@@ -42,18 +43,16 @@ export const enrichAuctionWithTransactionFees = async function (
 
         if (!isWalletAuthed) {
             totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);
-            totalFeeDAI = totalFeeDAI.plus(fees.authTransactionFeeDAI);
         }
         if (!isCollateralAuthed) {
-            totalFeeETH = totalFeeETH.plus(fees.biddingTransactionFeeETH);
-            totalFeeDAI = totalFeeDAI.plus(fees.biddingTransactionFeeETH);
+            totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);
         }
     } catch (e) {
         console.error(e);
-        totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH).plus(fees.biddingTransactionFeeETH);
-        totalFeeDAI = totalFeeDAI.plus(fees.authTransactionFeeDAI).plus(fees.authTransactionFeeDAI);
+        totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH).plus(fees.authTransactionFeeETH);
     }
 
+    const totalFeeDAI = await convertETHtoDAI(network, totalFeeETH);
     const auctionTransaction = {
         ...auction,
         ...fees,
