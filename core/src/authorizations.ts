@@ -1,20 +1,18 @@
 import type { Notifier } from './types';
 import getContract, { getContractAddressByName, getClipperNameByCollateralType } from './contracts';
 import executeTransaction from './execute';
-import memoizee from 'memoizee';
 
-const _authorizeWallet = async function (network: string, revoke: boolean, notifier?: Notifier): Promise<string> {
+export const authorizeWallet = async function (
+    network: string,
+    revoke: boolean,
+    notifier?: Notifier
+): Promise<string> {
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const contractMethod = revoke ? 'nope' : 'hope';
     return executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
 };
 
-export const authorizeWallet = memoizee(_authorizeWallet, {
-    promise: true,
-    length: 3,
-});
-
-const _authorizeCollateral = async function (
+export const authorizeCollateral = async function (
     network: string,
     collateralType: string,
     revoke: boolean,
@@ -25,11 +23,6 @@ const _authorizeCollateral = async function (
     const contractMethod = revoke ? 'nope' : 'hope';
     return executeTransaction(network, 'MCD_VAT', contractMethod, [clipperAddress], notifier);
 };
-
-export const authorizeCollateral = memoizee(_authorizeCollateral, {
-    promise: true,
-    length: 4,
-});
 
 export const getWalletAuthorizationStatus = async function (network: string, walletAddress: string): Promise<boolean> {
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');

@@ -41,12 +41,10 @@ export const enrichAuctionWithTransactionFees = async function (
         const isCollateralAuthed = await getCollateralAuthorizationStatus(network, auction.collateralType, address);
 
         if (!isWalletAuthed) {
-            console.info(`AuthFee: ${fees.authTransactionFeeDAI.toNumber()}`);
             totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);
             totalFeeDAI = totalFeeDAI.plus(fees.authTransactionFeeDAI);
         }
         if (!isCollateralAuthed) {
-            console.info(`BidFee: ${fees.biddingTransactionFeeETH.toNumber()}`);
             totalFeeETH = totalFeeETH.plus(fees.biddingTransactionFeeETH);
             totalFeeDAI = totalFeeDAI.plus(fees.biddingTransactionFeeETH);
         }

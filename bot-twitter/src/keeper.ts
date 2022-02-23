@@ -1,6 +1,6 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import getSigner from 'auctions-core/src/signer';
-import { enrichAuction } from 'auctions-core/src/auctions';
+import { bidOnTheAuction, enrichAuction } from 'auctions-core/src/auctions';
 import {
     authorizeCollateral,
     authorizeWallet,
@@ -24,7 +24,6 @@ async function participate(auction: AuctionInitialInfo) {
         );
         return;
     }
-    console.info(`Auction ${auction.id}, is profitable. Continuing now.`);
 
     // get wallet authorization status
     const walletAddress = await signer.getAddress();
@@ -53,7 +52,7 @@ async function participate(auction: AuctionInitialInfo) {
         const collateralTransactionHash = await authorizeCollateral(
             ETHEREUM_NETWORK,
             auctionTransaction.collateralType,
-            true
+            false
         );
         console.info(
             `Collateral "${auctionTransaction.collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
@@ -61,8 +60,9 @@ async function participate(auction: AuctionInitialInfo) {
         return;
     }
 
-    // How can I add a check to test if the Auction is already being executed?
-    console.info('AUCTION SHOULD BE EXECUTED NOW!!!!');
+    // Bid on the Auction
+    const bidHash = await bidOnTheAuction(ETHEREUM_NETWORK, auctionTransaction, walletAddress);
+    console.info(`Auction "${auctionTransaction.id}" was executed via ${bidHash} "transaction"`);
 }
 
 export default participate;
