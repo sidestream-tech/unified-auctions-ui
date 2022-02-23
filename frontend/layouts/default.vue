@@ -57,8 +57,8 @@ export default Vue.extend({
             isTermsModalShown: 'getTermsModal',
             isWalletModalShown: 'getWalletModal',
         }),
-        ...mapGetters('preferences', {
-            hasAcceptedTerms: 'getAcceptedTerms',
+        ...mapGetters('cookies', {
+            hasAcceptedTerms: 'hasAcceptedTerms',
         }),
         ...mapGetters('network', [
             'getWalletNetworkTitle',
@@ -98,7 +98,7 @@ export default Vue.extend({
         ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
-            this.$store.commit('preferences/setAcceptedTerms', true);
+            this.$store.commit('cookies/acceptTerms');
             this.$store.commit('modals/setTermsModal', false);
             this.$store.commit('modals/setWalletModal', true);
         },
