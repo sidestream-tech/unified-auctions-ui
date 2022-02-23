@@ -27,7 +27,7 @@ async function participate(auction: AuctionInitialInfo) {
 
     // get wallet authorization status
     const walletAddress = await signer.getAddress();
-    const isAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
+    const isAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress, true);
 
     // try to authorize the wallet then return
     if (!isAuth) {
@@ -42,7 +42,8 @@ async function participate(auction: AuctionInitialInfo) {
     const isCollateralAuth = await getCollateralAuthorizationStatus(
         ETHEREUM_NETWORK,
         auctionTransaction.collateralType,
-        walletAddress
+        walletAddress,
+        true
     );
 
     // try to authorize the collateral then return
