@@ -42,7 +42,7 @@ export default Vue.extend({
             return true;
         },
         dynamicDecimalPlaces(): number {
-            if (!this.isValidNumber || this.value === 0) {
+            if (!this.isValidNumber || this.isZero) {
                 return this.decimalPlaces;
             }
             if (Math.abs(Number(this.value)) > 1) {
@@ -60,8 +60,17 @@ export default Vue.extend({
         smallestVisibleNumber(): BigNumber {
             return new BigNumber(1).shiftedBy(-DECIMAL_PLACES_MAX);
         },
-        isValueSmallButNotZero(): boolean {
+        isZero() {
             if (this.value === 0) {
+                return true;
+            }
+            if (BigNumber.isBigNumber(this.value) && this.value.isEqualTo(0)) {
+                return true;
+            }
+            return false;
+        },
+        isValueSmallButNotZero(): boolean {
+            if (this.isZero) {
                 return false;
             }
             return new BigNumber(this.value).abs().isLessThan(this.smallestVisibleNumber);

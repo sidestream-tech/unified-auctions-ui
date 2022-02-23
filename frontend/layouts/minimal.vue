@@ -15,7 +15,6 @@
 import Vue from 'vue';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
-
 export default Vue.extend({
     components: {
         Header,
