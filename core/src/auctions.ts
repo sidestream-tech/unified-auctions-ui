@@ -108,7 +108,7 @@ export const fetchAllInitialAuctions = async function (network: string): Promise
 
 export const fetchAllAuctions = async function (network: string): Promise<AuctionTransaction[]> {
     const auctions = await fetchAllInitialAuctions(network);
-    return await Promise.all(auctions.map(async a => await enrichAuction(network, a)));
+    return await Promise.all(auctions.map(a => enrichAuction(network, a)));
 };
 
 export const enrichAuction = async function (
@@ -116,10 +116,10 @@ export const enrichAuction = async function (
     auction: AuctionInitialInfo
 ): Promise<AuctionTransaction> {
     // enrich them with statuses
-    const auctionWithStatusPromise = await enrichAuctionWithActualNumbers(network, auction);
+    const auctionWithStatus = await enrichAuctionWithActualNumbers(network, auction);
 
     // enrich them with price drop
-    const auctionWithPriceDrop = await enrichAuctionWithPriceDrop(auctionWithStatusPromise);
+    const auctionWithPriceDrop = await enrichAuctionWithPriceDrop(auctionWithStatus);
 
     // enrich them with market values
     const auctionWithMarketValue = await enrichAuctionWithMarketValues(auctionWithPriceDrop, network);

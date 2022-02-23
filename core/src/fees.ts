@@ -48,7 +48,6 @@ export const enrichAuctionWithTransactionFees = async function (
             totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);
         }
     } catch (e) {
-        console.error(e);
         totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH).plus(fees.authTransactionFeeETH);
     }
 
