@@ -10,6 +10,6 @@ export async function setupWallet(network: string) {
         return;
     }
     console.info(`Wallet "${walletAddress}" has not been authorized yet. Attempting authorization now`);
-    const transactionHash = await authorizeWallet(network, false, walletAddress);
+    const transactionHash = await authorizeWallet(network, false);
     console.info(`Wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
 }
