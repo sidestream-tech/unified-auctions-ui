@@ -85,6 +85,7 @@ export const getNetworks = function (isDev: boolean): Record<string, NetworkConf
     if (isDev) {
         return NETWORKS;
     }
-    const { localhost, ...otherNetworks } = NETWORKS; //eslint-disable-line
+    //eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { localhost, ...otherNetworks } = NETWORKS;
     return otherNetworks;
 };

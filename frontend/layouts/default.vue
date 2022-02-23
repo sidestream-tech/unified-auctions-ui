@@ -97,7 +97,7 @@ export default Vue.extend({
             return process.env.STAGING_BANNER_URL;
         },
         isDev() {
-            return this.$nuxt?.context?.isDev || false;
+            return this.$nuxt?.context?.isDev;
         },
     },
     methods: {
