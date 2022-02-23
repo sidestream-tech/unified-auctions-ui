@@ -3,14 +3,14 @@
         <div class="flex flex-col w-full items-center space-y-4 md:space-y-8 mt-4 md:mt-8 mb-4 px-4">
             <div class="max-w-screen-sm space-y-6">
                 <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-100">
-                    Privacy Policy for Sidestream Auction Services Core Unit
+                    Privacy Policy for Unified Auctions UI
                 </h1>
                 <TextBlock>
                     <p>
-                        At Maker Protocol - Unified Auctions, accessible from auctions.makerdao.network, one of our
-                        main priorities is the privacy of our visitors. This Privacy Policy document contains types of
-                        information that is collected and recorded by Maker Protocol - Unified Auctions and how we use
-                        it.
+                        At Unified Auctions UI, accessible from
+                        <a href="https://auctions.makerdao.network">auctions.makerdao.network</a>, one of our main
+                        priorities is the privacy of our visitors. This Privacy Policy document contains types of
+                        information that is collected and recorded by Unified Auctions UI and how we use it.
                     </p>
                     <p>
                         If you have additional questions or require more information about our Privacy Policy, do not
@@ -62,20 +62,20 @@
                     </ul>
                 </TextBlock>
                 <TextBlock title="Log Files">
-                    Maker Protocol - Unified Auctions follows a standard procedure of using log files. These files log
-                    visitors when they visit websites. All hosting companies do this and a part of hosting services'
-                    analytics. The information collected by log files include internet protocol (IP) addresses, browser
-                    type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the
-                    number of clicks. These are not linked to any information that is personally identifiable. The
-                    purpose of the information is for analyzing trends, administering the site, tracking users'
-                    movement on the website, and gathering demographic information.
+                    Unified Auctions UI follows a standard procedure of using log files. These files log visitors when
+                    they visit websites. All hosting companies do this and a part of hosting services' analytics. The
+                    information collected by log files include internet protocol (IP) addresses, browser type, Internet
+                    Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of
+                    clicks. These are not linked to any information that is personally identifiable. The purpose of the
+                    information is for analyzing trends, administering the site, tracking users' movement on the
+                    website, and gathering demographic information.
                 </TextBlock>
                 <TextBlock title="Cookies and Web Beacons">
                     <p>
-                        Like any other website, Maker Protocol - Unified Auctions uses 'cookies'. These cookies are
-                        used to store information including visitors' preferences, and the pages on the website that
-                        the visitor accessed or visited. The information is used to optimize the users' experience by
-                        customizing our web page content based on visitors' browser type and/or other information.
+                        Like any other website, Unified Auctions UI uses 'cookies'. These cookies are used to store
+                        information including visitors' preferences, and the pages on the website that the visitor
+                        accessed or visited. The information is used to optimize the users' experience by customizing
+                        our web page content based on visitors' browser type and/or other information.
                     </p>
                     <p>
                         For more general information on cookies, please read
@@ -87,7 +87,7 @@
                 <TextBlock title="Advertising Partners Privacy Policies">
                     <p>
                         You may consult this list to find the Privacy Policy for each of the advertising partners of
-                        Maker Protocol - Unified Auctions.
+                        Unified Auctions UI.
                     </p>
                     <p>
                         Third-party ad servers or ad networks uses technologies like cookies, JavaScript, or Web
@@ -98,16 +98,16 @@
                         you see on websites that you visit.
                     </p>
                     <p>
-                        Note that Maker Protocol - Unified Auctions has no access to or control over these cookies that
-                        are used by third-party advertisers.
+                        Note that Unified Auctions UI has no access to or control over these cookies that are used by
+                        third-party advertisers.
                     </p>
                 </TextBlock>
                 <TextBlock title="Third Party Privacy Policies">
                     <p>
-                        Maker Protocol - Unified Auctions's Privacy Policy does not apply to other advertisers or
-                        websites. Thus, we are advising you to consult the respective Privacy Policies of these
-                        third-party ad servers for more detailed information. It may include their practices and
-                        instructions about how to opt-out of certain options.
+                        Unified Auctions UI's Privacy Policy does not apply to other advertisers or websites. Thus, we
+                        are advising you to consult the respective Privacy Policies of these third-party ad servers for
+                        more detailed information. It may include their practices and instructions about how to opt-out
+                        of certain options.
                     </p>
                     <p>
                         You can choose to disable cookies through your individual browser options. To know more
@@ -176,10 +176,10 @@
                         online activity.
                     </p>
                     <p>
-                        Maker Protocol - Unified Auctions does not knowingly collect any Personal Identifiable
-                        Information from children under the age of 13. If you think that your child provided this kind
-                        of information on our website, we strongly encourage you to contact us immediately and we will
-                        do our best efforts to promptly remove such information from our records.
+                        Unified Auctions UI does not knowingly collect any Personal Identifiable Information from
+                        children under the age of 13. If you think that your child provided this kind of information on
+                        our website, we strongly encourage you to contact us immediately and we will do our best
+                        efforts to promptly remove such information from our records.
                     </p>
                 </TextBlock>
             </div>
