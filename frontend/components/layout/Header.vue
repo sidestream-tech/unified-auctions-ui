@@ -14,7 +14,7 @@
 
                 <div class="flex-1 flex justify-end space-x-4 items-center">
                     <label
-                        v-if="!isFeaturesPage"
+                        v-if="!isMinimal"
                         class="flex items-center space-x-2 cursor-pointer select-none pt-1 md:pt-0"
                     >
                         <BaseSwitch
@@ -27,13 +27,13 @@
 
                     <div class="flex space-x-4">
                         <NetworkSelector
-                            v-if="!isUnifiedPage && !isFeaturesPage"
+                            v-if="!isUnifiedPage && !isMinimal"
                             :network="network"
                             @update:network="$emit('update:network', $event)"
                         />
 
                         <WalletSelector
-                            v-if="!(isUnifiedPage || network === 'stub') && !isFeaturesPage"
+                            v-if="!(isUnifiedPage || network === 'stub') && !isMinimal"
                             class="hidden sm:block"
                             :wallet-address="walletAddress"
                             :is-loading="isWalletLoading"
@@ -75,7 +75,7 @@ export default Vue.extend({
         type: {
             type: String,
             default: 'default',
-            validator: type => ['default', 'unified', 'features'].includes(type),
+            validator: type => ['default', 'unified', 'minimal'].includes(type),
         },
         isExplanationsShown: {
             type: Boolean,
@@ -114,8 +114,8 @@ export default Vue.extend({
         isUnifiedPage() {
             return this.type === 'unified';
         },
-        isFeaturesPage() {
-            return this.type === 'features';
+        isMinimal() {
+            return this.type === 'minimal';
         },
     },
 });

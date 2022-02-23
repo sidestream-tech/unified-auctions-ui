@@ -29,11 +29,11 @@ declare interface SelectOption {
 
 declare interface FeatureItem {
     text: string;
-    indent: number;
+    items?: FeatureItem[];
 }
 
 declare interface FeatureList {
     title: string;
     url: string | undefined;
-    features: FeatureItem[];
+    items: FeatureItem[];
 }

@@ -8,13 +8,7 @@
                     <span v-else class="italic">Not yet implemented</span>
                 </div>
                 <h3 class="text-lg text-gray-700 font-semibold dark:text-gray-200 my-2">List of features:</h3>
-                <ul
-                    v-for="(point, index) in feature.features"
-                    :key="index"
-                    class="list-inside list-disc text-gray-700 dark:text-gray-200"
-                >
-                    <li :class="`Indent-${point.indent}`">{{ point.text }}</li>
-                </ul>
+                <feature-items :items="feature.items" />
             </TextBlock>
         </div>
     </div>
@@ -22,12 +16,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import FeatureItems from '~/components/utils/FeatureItems.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import features from '~/data/FeatureTexts';
 
 export default Vue.extend({
     components: {
         TextBlock,
+        FeatureItems,
     },
     data() {
         return {
@@ -38,17 +34,17 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.Indent-1 {
-    margin-left: 25px;
+ul >>> ul > ul {
+    @apply ml-8;
+
     list-style-type: circle;
 }
 
-.Indent-2 {
-    margin-left: 50px;
+ul >>> ul ul ul {
     list-style-type: square;
 }
 
-.Indent-3 {
-    margin-left: 75px;
+ul >>> ul ul ul ul {
+    list-style-type: disc;
 }
 </style>

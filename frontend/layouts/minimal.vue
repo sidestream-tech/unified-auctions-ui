@@ -2,7 +2,7 @@
     <div :class="isDarkMode && 'dark bg-gray-900'">
         <Header
             class="sticky top-0 z-50 w-full h-16"
-            type="features"
+            type="minimal"
             :is-explanations-shown.sync="isExplanationsShown"
             :dark-mode.sync="isDarkMode"
             :staging-banner-url="stagingBannerURL"

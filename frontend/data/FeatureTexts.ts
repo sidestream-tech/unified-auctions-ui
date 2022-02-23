@@ -2,73 +2,63 @@ const features: FeatureList[] = [
     {
         title: 'Collateral Auctions UI',
         url: 'https://auctions.makerdao.network/collateral',
-        features: [
+        items: [
             {
                 text: `The tool shows explanatory texts on different Maker Protocol related topics (e.g.
                 What is the Maker Protocol, What are collateral auctions, Why a user should participate,
                 What’s the catch of participation)`,
-                indent: 0,
             },
             {
                 text: `The tool enables the user to see detailed metrics of collateral auctions`,
-                indent: 0,
-            },
-            {
-                text: `Basic auction information is fetched from the blockchain via the Infura API and
-                displayed in a structured way in the UI`,
-                indent: 1,
-            },
-            {
-                text: `For the following metrics computations are being made from the tool based on the fetched input parameters`,
-                indent: 1,
-            },
-            {
-                text: `Time till auction ends`,
-                indent: 2,
-            },
-            {
-                text: `Current auction price per collateral in DAI`,
-                indent: 2,
-            },
-            {
-                text: `Time till the next price drop`,
-                indent: 2,
-            },
-            {
-                text: `Estimated time till profitability`,
-                indent: 2,
-            },
-            {
-                text: `Current price on Uniswap per collateral in DAI`,
-                indent: 2,
-            },
-            {
-                text: `The price on Uniswap per collateral is determined via the Uniswap v2 SDK / Uniswap v3 SDK`,
-                indent: 3,
-            },
-            {
-                text: `Market difference between auction price and price on uniswap`,
-                indent: 2,
-            },
-            {
-                text: `Auction price total`,
-                indent: 2,
-            },
-            {
-                text: `Auction End (datetime)`,
-                indent: 2,
-            },
-            {
-                text: `Potential profit in DAI`,
-                indent: 2,
-            },
-            {
-                text: `Indicator on transaction fees (in ETH and DAI)`,
-                indent: 2,
-            },
-            {
-                text: `Transaction outcome in DAI`,
-                indent: 2,
+                items: [
+                    {
+                        text: `Basic auction information is fetched from the blockchain via the Infura API and
+                        displayed in a structured way in the UI`,
+                    },
+                    {
+                        text: `For the following metrics computations are being made from the tool based on the fetched input parameters`,
+                        items: [
+                            {
+                                text: `Time till auction ends`,
+                            },
+                            {
+                                text: `Current auction price per collateral in DAI`,
+                            },
+                            {
+                                text: `Time till the next price drop`,
+                            },
+                            {
+                                text: `Estimated time till profitability`,
+                            },
+                            {
+                                text: `Current price on Uniswap per collateral in DAI`,
+                                items: [
+                                    {
+                                        text: `The price on Uniswap per collateral is determined via the Uniswap v2 SDK / Uniswap v3 SDK`,
+                                    },
+                                ],
+                            },
+                            {
+                                text: `Market difference between auction price and price on uniswap`,
+                            },
+                            {
+                                text: `Auction price total`,
+                            },
+                            {
+                                text: `Auction End (datetime)`,
+                            },
+                            {
+                                text: `Potential profit in DAI`,
+                            },
+                            {
+                                text: `Indicator on transaction fees (in ETH and DAI)`,
+                            },
+                            {
+                                text: `Transaction outcome in DAI`,
+                            },
+                        ],
+                    },
+                ],
             },
             {
                 text: `The tool provides a graphical user interface (GUI) to interact with smart contracts.
@@ -77,151 +67,136 @@ const features: FeatureList[] = [
                 transaction that is prepared  via the tool from within the wallet. Final execution happens
                 from within the wallet and incurs transaction fees. The tool itself cannot be used to execute
                 transactions. The tool enables the user to engage in the following blockchain based actions:`,
-                indent: 0,
-            },
-            {
-                text: `Prepare the restart of an expired auction`,
-                indent: 1,
-            },
-            {
-                text: `Prepare authorisation of DaiJoin contract`,
-                indent: 1,
-            },
-            {
-                text: `This is an authorisation step needs to be executed before being able to participate in auctions`,
-                indent: 2,
-            },
-            {
-                text: `It needs to be done once per wallet`,
-                indent: 2,
-            },
-            {
-                text: `Prepare authorisation of Clipper contract`,
-                indent: 1,
-            },
-            {
-                text: `This is an authorisation step needs to be executed before being able to participate in auctions`,
-                indent: 2,
-            },
-            {
-                text: `It needs to be done once per wallet for each collateral type`,
-                indent: 2,
-            },
-            {
-                text: `Prepare participation in an auction via flash lending functionality`,
-                indent: 1,
-            },
-            {
-                text: `Note that the underlying mechanics of the flash lending are not provided by the tool
-                but facilitated through a smart contract not controlled by us (ie. exchange-callee contract)`,
-                indent: 2,
-            },
-            {
-                text: `High level explainer on flash lending: The auctioned collateral is swapped for DAI
-                using a decentralized exchange, DAI is returned to the auction to cover the debt and spread
-                in DAI is collected as a profit - all in one transaction. The transaction fees are the only
-                capital requirement for the execution`,
-                indent: 2,
-            },
-            {
-                text: `Specify an outcome wallet other than the one connected to UI (ie. other than the one
-                executing the transaction)`,
-                indent: 1,
+                items: [
+                    {
+                        text: `Prepare the restart of an expired auction`,
+                    },
+                    {
+                        text: `Prepare authorisation of DaiJoin contract`,
+                        items: [
+                            {
+                                text: `This is an authorisation step needs to be executed before being able to participate in auctions`,
+                            },
+                            {
+                                text: `It needs to be done once per wallet`,
+                            },
+                        ],
+                    },
+                    {
+                        text: `Prepare authorisation of Clipper contract`,
+                        items: [
+                            {
+                                text: `This is an authorisation step needs to be executed before being able to participate in auctions`,
+                            },
+                            {
+                                text: `It needs to be done once per wallet for each collateral type`,
+                            },
+                        ],
+                    },
+                    {
+                        text: `Prepare participation in an auction via flash lending functionality`,
+                        items: [
+                            {
+                                text: `Note that the underlying mechanics of the flash lending are not provided by the tool
+                                but facilitated through a smart contract not controlled by us (ie. exchange-callee contract)`,
+                            },
+                            {
+                                text: `High level explainer on flash lending: The auctioned collateral is swapped for DAI
+                                using a decentralized exchange, DAI is returned to the auction to cover the debt and spread
+                                in DAI is collected as a profit - all in one transaction. The transaction fees are the only
+                                capital requirement for the execution`,
+                            },
+                        ],
+                    },
+                    {
+                        text: `Specify an outcome wallet other than the one connected to UI (ie. other than the one
+                        executing the transaction)`,
+                    },
+                ],
             },
             {
                 text: `After successful auction participation through the user’s wallet, the tool provides a
                 link to the respective transaction on etherscan`,
-                indent: 0,
             },
         ],
     },
     {
         title: `Unified auctions portal`,
         url: 'https://auctions.makerdao.network',
-        features: [
+        items: [
             {
                 text: `The tool provides an overview on different services related to the three core auction
                 types (collateral auctions, surplus auctions, debt auctions) provided by the Maker protocol`,
-                indent: 0,
             },
             {
                 text: `The tool redirects the user to indicated services or github repos of indicated services`,
-                indent: 0,
             },
         ],
     },
     {
         title: `Collateral auctions - dashboard page`,
         url: `https://auctions.makerdao.network/dashboard`,
-        features: [
+        items: [
             {
                 text: `The tools shows a list of supported collateral types with auction related parameters`,
-                indent: 0,
-            },
-            {
-                text: `Uniswap price`,
-                indent: 1,
-            },
-            {
-                text: `step parameter`,
-                indent: 1,
-            },
-            {
-                text: `cut parameter`,
-                indent: 1,
-            },
-            {
-                text: `Token icon`,
-                indent: 1,
-            },
-            {
-                text: `Link to token contract on etherscan`,
-                indent: 1,
+                items: [
+                    {
+                        text: `Uniswap price`,
+                    },
+                    {
+                        text: `step parameter`,
+                    },
+                    {
+                        text: `cut parameter`,
+                    },
+                    {
+                        text: `Token icon`,
+                    },
+                    {
+                        text: `Link to token contract on etherscan`,
+                    },
+                ],
             },
         ],
     },
     {
         title: `Twitter Bot`,
         url: `https://twitter.com/MakerDAO_SAS`,
-        features: [
+        items: [
             {
                 text: `The bot informs via a tweet about each new started collateral auction`,
-                indent: 0,
-            },
-            {
-                text: `The message indicates the amount of collateral that is auctioned off`,
-                indent: 1,
-            },
-            {
-                text: `The message includes a link to the respective auction in the tool (ie. 
-                Collateral Auction UI)`,
-                indent: 1,
+                items: [
+                    {
+                        text: `The message indicates the amount of collateral that is auctioned off`,
+                    },
+                    {
+                        text: `The message includes a link to the respective auction in the tool (ie. 
+                        Collateral Auction UI)`,
+                    },
+                ],
             },
         ],
     },
     {
         title: 'Auction Keeper',
         url: undefined,
-        features: [
+        items: [
             {
                 text: `The auction keeper is an open source tool provided by us for download`,
-                indent: 0,
             },
             {
                 text: `The keeper is not operated by us for or on behalf of the user`,
-                indent: 0,
             },
             {
                 text: `A user is able to download the code and run it themself`,
-                indent: 0,
-            },
-            {
-                text: `When a user runs the keeper it will read and write data via an RPC endpoint of the user`,
-                indent: 1,
-            },
-            {
-                text: `The code requires access to the private keys of a user`,
-                indent: 1,
+                items: [
+                    {
+                        text: `When a user runs the keeper it will read and write data via an RPC endpoint of the user`,
+                    },
+                    {
+                        text: `The code requires access to the private keys of a user`,
+                    },
+                ],
             },
         ],
     },
