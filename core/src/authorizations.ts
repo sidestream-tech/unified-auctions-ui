@@ -12,7 +12,7 @@ export const authorizeWallet = async function (
     const signer = await getSigner(network);
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const contractMethod = revoke ? 'nope' : 'hope';
-    const transaction = executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
+    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
     await getWalletAuthorizationStatus.delete(network, await signer.getAddress());
     return transaction;
 };
@@ -27,7 +27,7 @@ export const authorizeCollateral = async function (
     const contractName = getClipperNameByCollateralType(collateralType);
     const clipperAddress = await getContractAddressByName(network, contractName);
     const contractMethod = revoke ? 'nope' : 'hope';
-    const transaction = executeTransaction(network, 'MCD_VAT', contractMethod, [clipperAddress], notifier);
+    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [clipperAddress], notifier);
     await getCollateralAuthorizationStatus.delete(network, collateralType, await signer.getAddress());
     return transaction;
 };
