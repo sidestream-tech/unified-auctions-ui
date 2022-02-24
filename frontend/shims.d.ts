@@ -26,3 +26,14 @@ declare interface SelectOption {
     value: string;
     icon?: object;
 }
+
+declare interface FeatureItem {
+    text: string;
+    items?: FeatureItem[];
+}
+
+declare interface FeatureList {
+    title: string;
+    url: string | undefined;
+    items: FeatureItem[];
+}
