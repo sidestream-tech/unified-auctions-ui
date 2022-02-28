@@ -7,10 +7,10 @@
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
             <BaseButton :disabled="disabled" :is-loading="isLoading" type="primary">
-                <span
-                    >Bid <format-currency :value="totalPrice" currency="DAI" /> for
-                    <format-currency :value="collateralAmount" :currency="collateralSymbol"
-                /></span>
+                <span>
+                    Bid <format-currency :value="totalPrice" currency="DAI" /> for
+                    <format-currency :value="collateralAmount" :currency="collateralSymbol" />
+                </span>
             </BaseButton>
         </div>
     </div>
