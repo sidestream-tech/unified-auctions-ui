@@ -115,6 +115,10 @@ export const enrichAuction = async function (
     network: string,
     auction: AuctionInitialInfo
 ): Promise<AuctionTransaction> {
+    if (auction.debtDAI.toNumber() === 0) {
+        throw new Error(`Auction "${auction.id}" is already finished.`);
+    }
+
     // enrich them with statuses
     const auctionWithStatus = await enrichAuctionWithActualNumbers(network, auction);
 
