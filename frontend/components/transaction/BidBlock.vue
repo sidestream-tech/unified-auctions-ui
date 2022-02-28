@@ -6,12 +6,13 @@
             confirmation from within the wallet is necessary and will be prompted.
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
-            <BaseButton :disabled="disabled" :is-loading="isLoading" type="primary">
+            <BaseButton v-if="!isLoading" :disabled="disabled" type="primary">
                 <span>
-                    Bid <format-currency :value="totalPrice" currency="DAI" /> for
-                    <format-currency :value="collateralAmount" :currency="collateralSymbol" />
+                    Bid <format-currency :value="auction.totalPrice" currency="DAI" /> for
+                    <format-currency :value="auction.collateralAmount" :currency="auction.collateralSymbol" />
                 </span>
             </BaseButton>
+            <BaseButton v-else is-loading disabled>Bidding...</BaseButton>
         </div>
     </div>
 </template>
@@ -21,6 +22,7 @@ import Vue from 'vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
     components: {
@@ -41,17 +43,9 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        totalPrice: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        collateralAmount: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        collateralSymbol: {
-            type: String,
-            default: '',
+        auction: {
+            type: Object as Vue.PropType<AuctionTransaction>,
+            default: null,
         },
     },
 });

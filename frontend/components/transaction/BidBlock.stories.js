@@ -1,8 +1,8 @@
 import { storiesOf } from '@storybook/vue';
 import BidBlock from './BidBlock';
-import { generateFakeAuction } from '~/helpers/generateFakeAuction';
+import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 
-const fakeAuction = generateFakeAuction();
+const fakeAuction = generateFakeAuctionTransaction();
 
 const common = {
     components: { BidBlock },
@@ -16,40 +16,17 @@ const common = {
 storiesOf('Transaction/BidBlock', module)
     .add('Default', () => ({
         ...common,
-        template: `
-    <BidBlock 
-        :totalPrice="auction.totalPrice"
-        :collateralAmount="auction.collateralAmount"
-        :collateralSymbol="auction.collateralSymbol"
-    />`,
+        template: '<BidBlock :auction="auction" />',
     }))
     .add('Disabled', () => ({
         ...common,
-        template: `
-    <BidBlock 
-        :totalPrice="auction.totalPrice"
-        :collateralAmount="auction.collateralAmount"
-        :collateralSymbol="auction.collateralSymbol"
-        disabled
-    />`,
+        template: '<BidBlock :auction="auction" disabled />',
     }))
     .add('Loading', () => ({
         ...common,
-        template: `
-        <BidBlock 
-            :totalPrice="auction.totalPrice"
-            :collateralAmount="auction.collateralAmount"
-            :collateralSymbol="auction.collateralSymbol"
-            is-loading
-        />`,
+        template: '<BidBlock :auction="auction" is-loading />',
     }))
     .add('Expert Mode', () => ({
         ...common,
-        template: `
-        <BidBlock 
-            :totalPrice="auction.totalPrice"
-            :collateralAmount="auction.collateralAmount"
-            :collateralSymbol="auction.collateralSymbol"
-            :is-explanations-shown="false"
-        />`,
+        template: '<BidBlock :auction="auction" :is-explanations-shown="false" />',
     }));
