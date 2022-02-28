@@ -25,7 +25,7 @@
             >
                 Allow access to DAI
             </BaseButton>
-            <BaseButton v-else>Access to DAI was granted</BaseButton>
+            <BaseButton v-else disabled>Access to DAI was granted</BaseButton>
         </div>
     </div>
 </template>
