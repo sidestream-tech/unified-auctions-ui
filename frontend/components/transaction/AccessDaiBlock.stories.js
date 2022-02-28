@@ -24,5 +24,5 @@ storiesOf('Transaction/AccessDaiBlock', module)
     }))
     .add('Expert Mode', () => ({
         ...common,
-        template: '<AccessDaiBlock :is-explanations-shown="false" />',
+        template: '<AccessDaiBlock is-explanations-shown="false" />',
     }));

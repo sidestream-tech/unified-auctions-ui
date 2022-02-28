@@ -21,11 +21,11 @@
                 type="primary"
                 :disabled="disabled"
                 :is-loading="isLoading"
-                @click="$emit('grantDaiAccess')"
+                @click="$emit('grantAccess')"
             >
                 Allow access to DAI
             </BaseButton>
-            <BaseButton v-else>Access to Dai was granted</BaseButton>
+            <BaseButton v-else>Access to DAI was granted</BaseButton>
         </div>
     </div>
 </template>
