@@ -19,7 +19,10 @@ async function participate(auction: AuctionInitialInfo) {
     const auctionTransaction = await enrichAuction(ETHEREUM_NETWORK, auction);
 
     // check if the profit of the auction is worth executing
-    if (auctionTransaction.transactionProfitMinusFees.toNumber() < KEEPER_MIN_PROFIT_DAI) {
+    if (
+        auctionTransaction.transactionProfitMinusFees &&
+        auctionTransaction.transactionProfitMinusFees.toNumber() < KEEPER_MIN_PROFIT_DAI
+    ) {
         console.info(
             `Auction "${
                 auction.id
