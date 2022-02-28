@@ -18,6 +18,11 @@ async function participate(auction: AuctionInitialInfo) {
     // enrich the auction with more numbers
     const auctionTransaction = await enrichAuction(ETHEREUM_NETWORK, auction);
 
+    if (auctionTransaction.isFinished || !auctionTransaction.isActive) {
+        console.info(`Auction "${auction.id}" is not active or has already finished.`);
+        return;
+    }
+
     // check if the profit of the auction is worth executing
     if (
         auctionTransaction.transactionProfitMinusFees &&

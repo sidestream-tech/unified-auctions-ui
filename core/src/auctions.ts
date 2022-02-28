@@ -115,10 +115,6 @@ export const enrichAuction = async function (
     network: string,
     auction: AuctionInitialInfo
 ): Promise<AuctionTransaction> {
-    if (auction.debtDAI.toNumber() === 0) {
-        throw new Error(`Auction "${auction.id}" is already finished.`);
-    }
-
     // enrich them with statuses
     const auctionWithStatus = await enrichAuctionWithActualNumbers(network, auction);
 
@@ -130,7 +126,16 @@ export const enrichAuction = async function (
 
     // enrich with profit and fee calculation
     const fees = await getApproximateTransactionFees(network);
-    return await enrichAuctionWithTransactionFees(auctionWithMarketValue, fees, network);
+    const auctionWithFees = await enrichAuctionWithTransactionFees(auctionWithMarketValue, fees, network);
+
+    if (auction.debtDAI.toNumber() === 0) {
+        return {
+            ...auctionWithFees,
+            isFinished: true,
+            isActive: false,
+        };
+    }
+    return auctionWithFees;
 };
 
 export const restartAuction = async function (
