@@ -1,6 +1,6 @@
 <template>
     <div>
-        <TextBlock v-if="isExplanationsShown" title="Made a bid">
+        <TextBlock v-if="isExplanationsShown" title="Make a bid">
             Auction bidding incurs transaction fee of approximately
             <FormatCurrency :value="auctionTransaction.biddingTransactionFeeETH" :decimals="5" currency="ETH" />,
             hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is a
