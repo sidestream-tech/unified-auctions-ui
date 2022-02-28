@@ -14,7 +14,15 @@ storiesOf('Transaction/AccessDaiBlock', module)
         ...common,
         template: '<AccessDaiBlock disabled />',
     }))
+    .add('Loading', () => ({
+        ...common,
+        template: '<AccessDaiBlock is-loading />',
+    }))
     .add('Access Granted', () => ({
         ...common,
         template: '<AccessDaiBlock is-dai-access-granted />',
+    }))
+    .add('Expert Mode', () => ({
+        ...common,
+        template: '<AccessDaiBlock :is-explanations-shown="false" />',
     }));

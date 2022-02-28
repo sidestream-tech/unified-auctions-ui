@@ -1,6 +1,6 @@
 <template>
     <div>
-        <TextBlock title="Allow access to DAI">
+        <TextBlock v-if="isExplanationsShown" title="Allow access to DAI">
             This action allows you to deposit DAI into the
             <Explain text="VAT">
                 The
@@ -20,6 +20,7 @@
                 v-if="!isDaiAccessGranted"
                 type="primary"
                 :disabled="disabled"
+                :is-loading="isLoading"
                 @click="$emit('grantDaiAccess')"
             >
                 Allow access to DAI
@@ -46,9 +47,17 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isLoading: {
+            type: Boolean,
+            default: false,
+        },
         isDaiAccessGranted: {
             type: Boolean,
             required: false,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
     },
 });
