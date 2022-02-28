@@ -1,15 +1,29 @@
 <template>
     <div>
         <TextBlock v-if="isExplanationsShown" title="Made a bid">
-            Auction participation incurs transaction fees (paid in ETH). Hence the connected wallet needs to hold
-            enough funds to cover these fees. Whenever a transaction that incurs such fees needs to be processed a
-            confirmation from within the wallet is necessary and will be prompted.
+            Auction bidding incurs transaction fee of approximately
+            <FormatCurrency :value="auctionTransaction.biddingTransactionFeeETH" :decimals="5" currency="ETH" />,
+            hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is a
+            recommended value and based on the
+            <Explain text="average fast fee">
+                <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
+                    Gas Prices can change
+                </a>
+                due to changing busyness of the Ethereum network. However, you can look up the current average gas
+                price
+                <a href="https://ethgasstation.info/" target="_blank"> here </a> </Explain
+            >. The amount can be edited by the participant to influence the speed of the transaction. <br /><br />
+            By default, the profit from a successful bidding will be sent to the same wallet which executed the
+            transaction. However, you can provide a different address which will receive the transaction profit.
         </TextBlock>
         <div class="flex flex-row-reverse mt-3">
             <BaseButton v-if="!isLoading" :disabled="disabled" type="primary">
                 <span>
-                    Bid <format-currency :value="auction.totalPrice" currency="DAI" /> for
-                    <format-currency :value="auction.collateralAmount" :currency="auction.collateralSymbol" />
+                    Bid <format-currency :value="auctionTransaction.totalPrice" currency="DAI" /> for
+                    <format-currency
+                        :value="auctionTransaction.collateralAmount"
+                        :currency="auctionTransaction.collateralSymbol"
+                    />
                 </span>
             </BaseButton>
             <BaseButton v-else is-loading disabled>Bidding...</BaseButton>
@@ -22,6 +36,7 @@ import Vue from 'vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+import Explain from '~/components/utils/Explain.vue';
 import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
@@ -29,6 +44,7 @@ export default Vue.extend({
         TextBlock,
         BaseButton,
         FormatCurrency,
+        Explain,
     },
     props: {
         isExplanationsShown: {
@@ -43,7 +59,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        auction: {
+        auctionTransaction: {
             type: Object as Vue.PropType<AuctionTransaction>,
             default: null,
         },

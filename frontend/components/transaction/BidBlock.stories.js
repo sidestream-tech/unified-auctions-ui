@@ -16,17 +16,17 @@ const common = {
 storiesOf('Transaction/BidBlock', module)
     .add('Default', () => ({
         ...common,
-        template: '<BidBlock :auction="auction" />',
+        template: '<BidBlock :auctionTransaction="auction" />',
     }))
     .add('Disabled', () => ({
         ...common,
-        template: '<BidBlock :auction="auction" disabled />',
+        template: '<BidBlock :auctionTransaction="auction" disabled />',
     }))
     .add('Loading', () => ({
         ...common,
-        template: '<BidBlock :auction="auction" is-loading />',
+        template: '<BidBlock :auctionTransaction="auction" is-loading />',
     }))
     .add('Expert Mode', () => ({
         ...common,
-        template: '<BidBlock :auction="auction" :is-explanations-shown="false" />',
+        template: '<BidBlock :auctionTransaction="auction" :is-explanations-shown="false" />',
     }));
