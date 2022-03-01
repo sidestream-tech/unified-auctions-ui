@@ -4,7 +4,7 @@
             :is-explanations-shown="isExplanationsShown"
             :is-finished="state === 'executed'"
             :transaction-address="auctionTransaction.transactionAddress"
-            :transaction-fee="auctionTransaction.transactionFee"
+            :transaction-fee="auctionTransaction.biddingTransactionFeeETH"
         />
         <div class="flex flex-row-reverse mt-3">
             <BaseButton
