@@ -10,7 +10,7 @@ const common = {
     data() {
         return {
             transactionAmountDAI,
-            vatDAI: new BigNumber(faker.finance.amount(0, transactionAmountDAI.toNumber())),
+            walletVatDAI: new BigNumber(faker.finance.amount(0, transactionAmountDAI.toNumber())),
             walletDAI: new BigNumber(faker.finance.amount()),
         };
     },
@@ -22,7 +22,7 @@ storiesOf('Transaction/DepositBlock', module)
         template: `
     <DepositBlock 
         :walletDAI="walletDAI"
-        :vatDAI="vatDAI"
+        :walletVatDAI="walletVatDAI"
         :transactionAmountDAI="transactionAmountDAI"
     />`,
     }))
@@ -31,12 +31,12 @@ storiesOf('Transaction/DepositBlock', module)
         template: `
     <DepositBlock 
         :walletDAI="walletDAI"
-        :vatDAI="vatDAI"
+        :walletVatDAI="walletVatDAI"
         :transactionAmountDAI="transactionAmountDAI"
         disabled
     />`,
     }))
-    .add('Disabled and missing walletDAI and vatDAI', () => ({
+    .add('Disabled and missing walletDAI and walletVatDAI', () => ({
         ...common,
         template: `
         <DepositBlock
@@ -49,7 +49,7 @@ storiesOf('Transaction/DepositBlock', module)
         template: `
         <DepositBlock 
             :walletDAI="walletDAI"
-            :vatDAI="vatDAI"
+            :walletVatDAI="walletVatDAI"
             :transactionAmountDAI="transactionAmountDAI"
             is-loading
         />`,
@@ -59,12 +59,12 @@ storiesOf('Transaction/DepositBlock', module)
         template: `
         <DepositBlock 
             :walletDAI="walletDAI"
-            :vatDAI="vatDAI"
+            :walletVatDAI="walletVatDAI"
             :transactionAmountDAI="transactionAmountDAI"
             :is-explanations-shown="false"
         />`,
     }))
-    .add('Missing walletDAI and vatDAI', () => ({
+    .add('Missing walletDAI and walletVatDAI', () => ({
         ...common,
         template: `
         <DepositBlock 
@@ -76,14 +76,14 @@ storiesOf('Transaction/DepositBlock', module)
         data() {
             return {
                 walletDAI: new BigNumber(faker.finance.amount()),
-                vatDAI: new BigNumber(100),
+                walletVatDAI: new BigNumber(100),
                 transactionAmountDAI: new BigNumber(100),
             };
         },
         template: `
         <DepositBlock 
             :walletDAI="walletDAI"
-            :vatDAI="vatDAI"
+            :walletVatDAI="walletVatDAI"
             :transactionAmountDAI="transactionAmountDAI"
         />`,
     }));
