@@ -33,4 +33,16 @@ storiesOf('Transaction/BidBlock', module)
         ...common,
         template:
             '<BidBlock :auctionTransaction="auction" :transactionAmountDAI="transactionAmountDAI" :is-explanations-shown="false" />',
+    }))
+    .add('Finished', () => ({
+        ...common,
+        computed: {
+            finishedAuction() {
+                return {
+                    ...fakeAuction,
+                    transactionAddress: faker.finance.ethereumAddress(),
+                };
+            },
+        },
+        template: '<BidBlock :auctionTransaction="finishedAuction" :transactionAmountDAI="transactionAmountDAI" />',
     }));

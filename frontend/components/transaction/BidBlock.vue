@@ -1,24 +1,19 @@
 <template>
     <div>
-        <TextBlock v-if="isExplanationsShown" title="Make a bid">
-            Auction bidding incurs transaction fee of approximately
-            <FormatCurrency :value="transactionAmountDAI" :decimals="5" currency="ETH" />, hence, the connected wallet
-            needs to hold enough funds to cover these fees. The transaction fee is a recommended value and based on the
-            <Explain text="average fast fee">
-                <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
-                    Gas Prices can change
-                </a>
-                due to changing busyness of the Ethereum network. However, you can look up the current average gas
-                price
-                <a href="https://ethgasstation.info/" target="_blank"> here </a> </Explain
-            >. The amount can be edited by the participant to influence the speed of the transaction. <br /><br />
-            By default, the profit from a successful bidding will be sent to the same wallet which executed the
-            transaction. However, you can provide a different address which will receive the transaction profit.
-        </TextBlock>
+        <TransactionMessage
+            :is-explanations-shown="isExplanationsShown"
+            :is-finished="state === 'executed'"
+            :transaction-address="auctionTransaction.transactionAddress"
+            :transaction-fee="auctionTransaction.transactionFee"
+        />
         <div class="flex flex-row-reverse mt-3">
-            <BaseButton v-if="!isLoading" :disabled="disabled" type="primary">
+            <BaseButton
+                v-if="state !== 'loading'"
+                :disabled="state === 'disabled' || state === 'executed'"
+                type="primary"
+            >
                 <span>
-                    Bid <format-currency :value="auctionTransaction.totalPrice" currency="DAI" /> for
+                    Bid <format-currency :value="transactionAmountDAI" currency="DAI" /> for
                     <format-currency
                         :value="auctionTransaction.collateralAmount"
                         :currency="auctionTransaction.collateralSymbol"
@@ -32,18 +27,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import Explain from '~/components/utils/Explain.vue';
+import TransactionMessage from '~/components/transaction/TransactionMessage.vue';
 import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
     components: {
-        TextBlock,
         BaseButton,
         FormatCurrency,
-        Explain,
+        TransactionMessage,
     },
     props: {
         isExplanationsShown: {
@@ -65,6 +58,23 @@ export default Vue.extend({
         transactionAmountDAI: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
+        },
+    },
+    computed: {
+        state(): string {
+            if (this.isLoading) {
+                return 'loading';
+            }
+            if (this.disabled) {
+                return 'disabled';
+            }
+            if (this.auctionTransaction.transactionProfit?.isLessThan(0)) {
+                return 'notProfitable';
+            }
+            if (!this.auctionTransaction.transactionAddress) {
+                return 'notExecuted';
+            }
+            return 'executed';
         },
     },
 });
