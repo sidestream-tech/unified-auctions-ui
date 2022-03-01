@@ -1,10 +1,12 @@
 <template>
     <div>
-        <TextBlock v-if="isExplanationsShown" title="Deposit">
-            To participate in auctions you need to sign the approval transactions below and move DAI that will be used
-            for bidding to the VAT. This action allows the VAT to use the DAI you have deposited.
+        <TextBlock v-if="isExplanationsShown" title="Deposit" class="mb-1">
+            To participate in the auction you need to deposit enough DAI to the VAT. Below is an overview on the
+            current DAI balance in your wallet that can be used to make a deposit; the amount already deposited; and
+            the minimum amount to deposit in order to participate in the auction based on the bid you want to make. You
+            can directly deposit the minimum required amount of DAI if you don't have sufficient deposits yet.
         </TextBlock>
-        <div class="text-base font-medium mt-1">
+        <div class="text-base font-medium">
             <div class="flex justify-between">
                 <span>Amount available in the wallet</span>
                 <format-currency v-if="walletDAI" :value="walletDAI" currency="DAI" />
@@ -15,7 +17,7 @@
             </div>
             <div class="flex justify-between">
                 <span>Currently deposited amount</span>
-                <format-currency v-if="vatDAI" :value="vatDAI" currency="DAI" />
+                <format-currency v-if="walletVatDAI" :value="walletVatDAI" currency="DAI" />
                 <div v-else>
                     <span class="opacity-75">Unknown</span>
                     <span>DAI</span>
@@ -31,9 +33,11 @@
             </div>
         </div>
         <div class="flex space-x-4 justify-end flex-wrap mt-3">
-            <BaseButton :disabled="isDisabled" :is-loading="isLoading" class="w-60 mb-2" @click="$emit('manageVat')">
+            <!--
+            <BaseButton :disabled="isDisabled || isLoading" class="w-60 mb-2" @click="$emit('manageVat')">
                 Manage VAT
             </BaseButton>
+            -->
             <BaseButton v-if="minimumDepositDAI && minimumDepositDAI.isZero()" disabled class="w-60">
                 Enough DAI is available
             </BaseButton>
@@ -81,7 +85,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        vatDAI: {
+        walletVatDAI: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
@@ -92,13 +96,13 @@ export default Vue.extend({
     },
     computed: {
         minimumDepositDAI(): BigNumber | undefined {
-            if (!this.transactionAmountDAI || !this.vatDAI) {
+            if (!this.transactionAmountDAI || !this.walletVatDAI) {
                 return undefined;
             }
-            return BigNumber.maximum(0, this.transactionAmountDAI.minus(this.vatDAI));
+            return BigNumber.maximum(0, this.transactionAmountDAI.minus(this.walletVatDAI));
         },
         isDisabled(): Boolean {
-            return this.disabled || (!this.vatDAI && !this.walletDAI);
+            return this.disabled || (!this.walletVatDAI && !this.walletDAI);
         },
     },
 });
