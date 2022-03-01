@@ -52,7 +52,6 @@ const fetchAuctionByCollateralTypeAndAuctionId = async function (
     const auctionData = await contract.sales(auctionId);
     const startTimestamp = new BigNumber(auctionData.tic._hex).times(1000).toNumber();
     const endDate = new Date(startTimestamp + maximumAuctionDurationInSeconds * 1000);
-    const isActive = endDate > new Date();
     return {
         network,
         id: `${collateralType}:${auctionId}`,
@@ -65,7 +64,7 @@ const fetchAuctionByCollateralTypeAndAuctionId = async function (
         debtDAI: new BigNumber(auctionData.tab._hex).div(RAD),
         startDate: new Date(startTimestamp),
         endDate,
-        isActive,
+        isActive: true,
         isFinished: false,
         isRestarting: false,
     };

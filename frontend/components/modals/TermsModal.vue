@@ -1,14 +1,16 @@
 <template>
     <modal :visible="isShown" :footer="null" class="my-0" title="Acceptance of Terms" @cancel="close">
         <TextBlock class="py-3 px-6">
-            Please read these <a href="/terms" target="_blank">Terms of Service</a> (this “Agreement”) carefully. Your
-            use or access of the Site or the Services (as defined below) constitutes your consent to this Agreement.
+            Please read these <a :href="termsAndConditionsURL" target="_blank">Terms and Conditions </a> (this
+            “Agreement”) carefully. Your use or access of the Site or the Services (as defined below) constitutes your
+            consent to this Agreement.
 
             <div class="flex flex-col space-y-3 mt-5 mb-2">
                 <checkbox v-model="checked">
-                    <span class="font-bold"
-                        >I have read and accept the <a href="/terms" target="_blank">Terms of Service</a>.</span
-                    >
+                    <span class="font-bold">
+                        I have read and accept the
+                        <a :href="termsAndConditionsURL" target="_blank">Terms and Conditions</a>.
+                    </span>
                 </checkbox>
                 <BaseButton type="primary" class="w-full" :disabled="!checked" @click="$emit('accept')">
                     Accept and continue
@@ -37,6 +39,11 @@ export default Vue.extend({
         return {
             checked: false,
         };
+    },
+    computed: {
+        termsAndConditionsURL(): string {
+            return this.$config?.TERMS_AND_CONDITIONS_URL || '';
+        },
     },
     methods: {
         close() {

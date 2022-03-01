@@ -8,38 +8,72 @@ const common = {
 };
 
 storiesOf('Utils/FormatCurrency', module)
-    .add('Default', () => ({
+    .add('Empty / No value', () => ({
         ...common,
-        data() {
-            return {
-                amount: Number(faker.finance.amount()),
-            };
-        },
+        template: '<FormatCurrency currency="dai" />',
+    }))
+    .add('Number', () => ({
+        ...common,
+        data: () => ({ amount: Number(faker.finance.amount()) }),
         template: '<FormatCurrency :value="amount" currency="dai" />',
     }))
-    .add('Big Number', () => ({
+    .add('BigNumber', () => ({
         ...common,
-        data() {
-            return {
-                amount: BigNumber(faker.finance.amount()),
-            };
-        },
+        data: () => ({ amount: new BigNumber(faker.finance.amount()) }),
         template: '<FormatCurrency :value="amount" currency="dai" />',
     }))
-    .add('Big Number NaN', () => ({
+    .add('Number NaN', () => ({
         ...common,
-        data() {
-            return {
-                amount: BigNumber('NaN'),
-            };
-        },
+        data: () => ({ amount: NaN }),
         template: '<FormatCurrency :value="amount" currency="dai" />',
     }))
-    .add('With Zero', () => ({
+    .add('BigNumber NaN', () => ({
+        ...common,
+        data: () => ({ amount: new BigNumber('NaN') }),
+        template: '<FormatCurrency :value="amount" currency="dai" />',
+    }))
+    .add('Number 0', () => ({
         ...common,
         template: '<FormatCurrency :value="0" currency="dai" />',
     }))
-    .add('No value', () => ({
+    .add('BigNumber 0', () => ({
         ...common,
-        template: '<FormatCurrency currency="dai" />',
+        data: () => ({ amount: new BigNumber(0.0) }),
+        template: '<FormatCurrency :value="amount" currency="dai" />',
+    }))
+    .add('Number 0.000454786546', () => ({
+        ...common,
+        template: '<FormatCurrency :value="0.000454786546" currency="dai" />',
+    }))
+    .add('BigNumber 0.000454786546', () => ({
+        ...common,
+        data: () => ({ amount: new BigNumber(0.000454786546) }),
+        template: '<FormatCurrency :value="amount" currency="dai" />',
+    }))
+    .add('Number 0.0000000000001', () => ({
+        ...common,
+        template: '<FormatCurrency :value="0.0000000000001" currency="dai" />',
+    }))
+    .add('BigNumber 0.0000000000001', () => ({
+        ...common,
+        data: () => ({ amount: new BigNumber(0.0000000000001) }),
+        template: '<FormatCurrency :value="amount" currency="dai" />',
+    }))
+    .add('Number -0.0000000000001', () => ({
+        ...common,
+        template: '<FormatCurrency :value="-0.0000000000001" currency="dai" />',
+    }))
+    .add('BigNumber -0.0000000000001', () => ({
+        ...common,
+        data: () => ({ amount: new BigNumber(-0.0000000000001) }),
+        template: '<FormatCurrency :value="amount" currency="dai" />',
+    }))
+    .add('Number -10', () => ({
+        ...common,
+        template: '<FormatCurrency :value="-10" currency="dai" />',
+    }))
+    .add('BigNumber -10', () => ({
+        ...common,
+        data: () => ({ amount: new BigNumber(-10) }),
+        template: '<FormatCurrency :value="amount" currency="dai" />',
     }));

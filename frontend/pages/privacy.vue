@@ -1,20 +1,20 @@
 <template>
     <div>
-        <TermsText />
+        <PrivacyContainer />
         <Footer />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import TermsText from '~/components/TermsText.vue';
+import PrivacyContainer from '~/containers/PrivacyContainer.vue';
 import Footer from '~/components/layout/Footer.vue';
 
 export default Vue.extend({
     components: {
-        TermsText,
+        PrivacyContainer,
         Footer,
     },
-    layout: process.env.DEMO_MODE ? 'demoMode' : 'default',
+    layout: process.env.DEMO_MODE ? 'demoMode' : 'minimal',
 });
 </script>

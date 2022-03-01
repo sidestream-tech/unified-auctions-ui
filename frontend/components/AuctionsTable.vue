@@ -27,6 +27,12 @@
                 v-if="record.isActive && record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
                 :value="marketUnitPriceToUnitPriceRatio"
             />
+            <span
+                v-else-if="record.isActive && !record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
+                class="opacity-50"
+            >
+                Not tradable
+            </span>
             <span v-else class="opacity-50">Unknown</span>
         </div>
         <div slot="endDate" slot-scope="endDate, record" class="text-center">
@@ -41,7 +47,9 @@
                 :class="(hoveredRowIndex === index && 'bg-primary text-white dark:bg-primary-dark') || 'text-primary'"
                 class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
             >
-                See details
+                <span v-if="record.isFinished">See details</span>
+                <span v-else-if="record.isActive">Participate</span>
+                <span v-else-if="!record.isActive">Restart Auction</span>
             </nuxt-link>
         </div>
     </Table>

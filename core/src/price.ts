@@ -4,8 +4,11 @@ import { addSeconds } from 'date-fns';
 
 const checkAuctionStartDate = function (startDate: Date, currentDate: Date): void {
     const auctionStartTimestamp = startDate.getTime();
-    if (Number.isNaN(auctionStartTimestamp) || currentDate.getTime() < auctionStartTimestamp) {
-        throw new Error('The provided Auction Start time is invalid');
+    if (Number.isNaN(auctionStartTimestamp)) {
+        throw new Error('Provided auction start time is invalid');
+    }
+    if (currentDate.getTime() < auctionStartTimestamp) {
+        throw new Error('Auction start time is bigger than current block time');
     }
 };
 
@@ -51,7 +54,7 @@ export const calculateTransactionProfit = function (auction: Auction): BigNumber
     return totalMarketPriceLimitedByDebt.minus(auction.debtDAI);
 };
 
-export const calculateTransactionProfitDate = function (auction: Auction): Date | undefined {
+export const calculateTransactionProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
     if (
         auction.secondsBetweenPriceDrops === undefined ||
         auction.secondsTillNextPriceDrop === undefined ||
@@ -78,5 +81,5 @@ export const calculateTransactionProfitDate = function (auction: Auction): Date 
     }
     const secondsSinceLastPriceDrop = auction.secondsBetweenPriceDrops - auction.secondsTillNextPriceDrop;
     const secondsTillProfitable = auction.secondsBetweenPriceDrops * steps - secondsSinceLastPriceDrop;
-    return addSeconds(new Date(), secondsTillProfitable);
+    return addSeconds(currentDate, secondsTillProfitable);
 };

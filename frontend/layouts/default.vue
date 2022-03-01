@@ -9,6 +9,7 @@
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
             :staging-banner-url="stagingBannerURL"
+            :is-dev="isDev"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
         />
@@ -16,6 +17,7 @@
         <ChangePageNetworkModal
             v-if="!isPageNetworkValid"
             :invalid-network="getPageNetwork"
+            :is-dev="isDev"
             @setPageNetwork="setPageNetwork"
         />
         <CustomRPCModal
@@ -28,6 +30,7 @@
             v-else-if="!isWalletNetworkValid"
             :invalid-network="getWalletNetworkTitle"
             :page-network="network"
+            :is-dev="isDev"
             @setPageNetwork="setPageNetwork"
             @fixWalletNetwork="fixWalletNetwork"
         />
@@ -65,8 +68,8 @@ export default Vue.extend({
             isTermsModalShown: 'getTermsModal',
             isWalletModalShown: 'getWalletModal',
         }),
-        ...mapGetters('preferences', {
-            hasAcceptedTerms: 'getAcceptedTerms',
+        ...mapGetters('cookies', {
+            hasAcceptedTerms: 'hasAcceptedTerms',
         }),
         ...mapGetters('network', [
             'getWalletNetworkTitle',
@@ -108,12 +111,15 @@ export default Vue.extend({
         chaoslabsSimulationIds() {
             return process.env.CHAOSLABS_SIMULATION_IDS;
         },
+        isDev() {
+            return this.$nuxt?.context?.isDev;
+        },
     },
     methods: {
         ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork', 'setRPCurl']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
-            this.$store.commit('preferences/setAcceptedTerms', true);
+            this.$store.commit('cookies/acceptTerms');
             this.$store.commit('modals/setTermsModal', false);
             this.$store.commit('modals/setWalletModal', true);
         },

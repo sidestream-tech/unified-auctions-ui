@@ -24,6 +24,16 @@ storiesOf('Layout/Header', module)
         @update:isExplanationsShown="updateIsExplanationsShown"
     />`,
     }))
+    .add('Dev Mode', () => ({
+        ...common,
+        template: `<Header
+        :network.sync="network"
+        :isExplanationsShown.sync="isExplanationsShown"
+        @update:network="updateNetwork"
+        @update:isExplanationsShown="updateIsExplanationsShown"
+        is-dev
+    />`,
+    }))
     .add('Unified Auctions Page', () => ({
         ...common,
         template: `<Header

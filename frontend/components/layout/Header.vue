@@ -13,7 +13,10 @@
                 </nuxt-link>
 
                 <div class="flex-1 flex justify-end space-x-4 items-center">
-                    <label class="flex items-center space-x-2 cursor-pointer select-none pt-1 md:pt-0">
+                    <label
+                        v-if="!isMinimal"
+                        class="flex items-center space-x-2 cursor-pointer select-none pt-1 md:pt-0"
+                    >
                         <BaseSwitch
                             :is-checked="isExplanationsShown"
                             class="mt-px"
@@ -24,13 +27,14 @@
 
                     <div class="flex space-x-4">
                         <NetworkSelector
-                            v-if="!isUnifiedPage"
+                            v-if="!isUnifiedPage && !isMinimal"
                             :network="network"
+                            :is-dev="isDev"
                             @update:network="$emit('update:network', $event)"
                         />
 
                         <WalletSelector
-                            v-if="!(isUnifiedPage || network === 'stub')"
+                            v-if="!(isUnifiedPage || network === 'stub') && !isMinimal"
                             class="hidden sm:block"
                             :wallet-address="walletAddress"
                             :is-loading="isWalletLoading"
@@ -72,7 +76,7 @@ export default Vue.extend({
         type: {
             type: String,
             default: 'default',
-            validator: type => ['default', 'unified'].includes(type),
+            validator: type => ['default', 'unified', 'minimal'].includes(type),
         },
         isExplanationsShown: {
             type: Boolean,
@@ -106,10 +110,17 @@ export default Vue.extend({
             type: String,
             default: undefined,
         },
+        isDev: {
+            type: Boolean,
+            default: false,
+        },
     },
     computed: {
         isUnifiedPage() {
             return this.type === 'unified';
+        },
+        isMinimal() {
+            return this.type === 'minimal';
         },
     },
 });

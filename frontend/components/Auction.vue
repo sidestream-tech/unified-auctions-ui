@@ -9,6 +9,7 @@
                 :wallet-address="walletAddress"
                 :is-restarting="auction.isRestarting"
                 @restart="$emit('restart', auctionId)"
+                @connect="$emit('connect')"
             />
             <div class="relative mt-4">
                 <table class="w-full table-fixed border-collapse border">
@@ -56,6 +57,16 @@
                                 <template v-if="auction.isActive && auction.marketUnitPriceToUnitPriceRatio">
                                     <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" />
                                 </template>
+                                <span
+                                    v-else-if="
+                                        auction.isActive &&
+                                        !auction.marketUnitPriceToUnitPriceRatio &&
+                                        !auction.isFinished
+                                    "
+                                    class="opacity-50"
+                                >
+                                    Not tradable
+                                </span>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
@@ -75,7 +86,15 @@
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Auction Price Total</td>
                                 <td>
-                                    <format-currency :value="auction.totalPrice" currency="DAI" />
+                                    <Popover
+                                        v-if="!auction.isActive && !auction.isFinished"
+                                        placement="top"
+                                        content="Since the auction is not active, there is no total Auction Price for this auction."
+                                        trigger="hover"
+                                    >
+                                        <span class="opacity-50">Unknown</span>
+                                    </Popover>
+                                    <format-currency v-else :value="auction.totalPrice" currency="DAI" />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
@@ -94,7 +113,7 @@
                                 <td>Auction Start</td>
                                 <td>
                                     <template v-if="auction.isActive">
-                                        {{ new Date(auction.startDate).toUTCString() }}
+                                        {{ auction.startDate.toUTCString() }}
                                     </template>
                                     <span v-else class="opacity-50">Unknown</span>
                                 </td>
@@ -103,7 +122,7 @@
                                 <td>Auction End</td>
                                 <td>
                                     <template v-if="auction.isActive">
-                                        {{ new Date(auction.endDate).toUTCString() }}
+                                        {{ auction.endDate.toUTCString() }}
                                     </template>
                                     <span v-else class="opacity-50">Unknown</span>
                                 </td>
@@ -132,12 +151,17 @@
                         The auctioned vault
                         <format-address type="address" :value="auction.vaultAddress" shorten disable /> contains
                         <format-currency :value="auction.collateralAmount" :currency="auction.collateralSymbol" />.
-                        Currently, it is sold for <format-currency :value="auction.totalPrice" currency="DAI" />. This
-                        equals <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> per
-                        <format-currency :currency="auction.collateralSymbol" />, or approximately
-                        <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you buy
-                        <format-currency :currency="auction.collateralSymbol" /> on another exchange platform such as
-                        Uniswap.
+                        <span v-if="auction.isActive || auction.isFinished">
+                            Currently, it is sold for <format-currency :value="auction.totalPrice" currency="DAI" />.
+                            This equals <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> per
+                            <format-currency :currency="auction.collateralSymbol" />, or approximately
+                            <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you buy
+                            <format-currency :currency="auction.collateralSymbol" /> on another exchange platform such
+                            as Uniswap.
+                        </span>
+                        <span v-else>
+                            This auction requires to be restarted in order to determine prices properly.
+                        </span>
                     </template>
                     <template v-else>
                         This auction was finished at {{ auction.endDate.toUTCString() }} at a closing auction price of
@@ -216,7 +240,7 @@
 <script lang="ts">
 import type { AuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
-import { Alert, Tooltip } from 'ant-design-vue';
+import { Alert, Tooltip, Popover } from 'ant-design-vue';
 import PriceDropAnimation from './utils/PriceDropAnimation.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
@@ -245,6 +269,7 @@ export default Vue.extend({
         Alert,
         Tooltip,
         TimeTillProfitable,
+        Popover,
     },
     props: {
         auction: {

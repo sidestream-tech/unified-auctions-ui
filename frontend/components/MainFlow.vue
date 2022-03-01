@@ -28,6 +28,7 @@
                         :auction-id="selectedAuctionId"
                         :is-auctions-loading="isAuctionsLoading"
                         @restart="$emit('restart', $event)"
+                        @connect="$emit('connect')"
                         @swap="step = 2"
                     />
                 </div>

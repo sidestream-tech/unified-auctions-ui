@@ -78,7 +78,7 @@ export default Vue.extend({
             return this.selectedAuction && this.selectedAuction.id;
         },
         hasAcceptedTerms(): boolean {
-            return this.$store.getters['preferences/getAcceptedTerms'];
+            return this.$store.getters['cookies/hasAcceptedTerms'];
         },
     },
     watch: {

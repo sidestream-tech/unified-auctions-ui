@@ -9,6 +9,7 @@ const NETWORKS: Record<string, NetworkConfig> = {
         gasPrice: undefined,
         url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://etherscan.io',
+        isFork: false,
     },
     kovan: {
         chainId: '0x2a',
@@ -16,6 +17,7 @@ const NETWORKS: Record<string, NetworkConfig> = {
         gasPrice: 2000000000,
         url: `https://kovan.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://kovan.etherscan.io',
+        isFork: false,
     },
     goerli: {
         chainId: '0x5',
@@ -23,6 +25,15 @@ const NETWORKS: Record<string, NetworkConfig> = {
         gasPrice: 2000000000,
         url: `https://goerli.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://goerli.etherscan.io',
+        isFork: false,
+    },
+    localhost: {
+        chainId: '0x539',
+        title: 'Localhost:8545',
+        gasPrice: 2000000000000,
+        url: `http://127.0.0.1:8545`,
+        etherscanUrl: '',
+        isFork: true,
     },
 };
 
@@ -70,4 +81,11 @@ export const getNetworkTitleByChainId = function (chainId: string | undefined) {
     return NETWORK_TITLES[chainId];
 };
 
-export default NETWORKS;
+export const getNetworks = function (isDev: boolean): Record<string, NetworkConfig> {
+    if (isDev) {
+        return NETWORKS;
+    }
+    //eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { localhost, ...otherNetworks } = NETWORKS;
+    return otherNetworks;
+};
