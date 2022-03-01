@@ -54,6 +54,16 @@ storiesOf('Transaction/DepositBlock', module)
             is-loading
         />`,
     }))
+    .add('Expert Mode', () => ({
+        ...common,
+        template: `
+        <DepositBlock 
+            :walletDAI="walletDAI"
+            :vatDAI="vatDAI"
+            :transactionAmountDAI="transactionAmountDAI"
+            :is-explanations-shown="false"
+        />`,
+    }))
     .add('Missing walletDAI and vatDAI', () => ({
         ...common,
         template: `
