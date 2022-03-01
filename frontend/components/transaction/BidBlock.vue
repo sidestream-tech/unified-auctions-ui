@@ -2,9 +2,8 @@
     <div>
         <TextBlock v-if="isExplanationsShown" title="Make a bid">
             Auction bidding incurs transaction fee of approximately
-            <FormatCurrency :value="auctionTransaction.biddingTransactionFeeETH" :decimals="5" currency="ETH" />,
-            hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is a
-            recommended value and based on the
+            <FormatCurrency :value="transactionAmountDAI" :decimals="5" currency="ETH" />, hence, the connected wallet
+            needs to hold enough funds to cover these fees. The transaction fee is a recommended value and based on the
             <Explain text="average fast fee">
                 <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
                     Gas Prices can change
@@ -62,6 +61,10 @@ export default Vue.extend({
         auctionTransaction: {
             type: Object as Vue.PropType<AuctionTransaction>,
             default: null,
+        },
+        transactionAmountDAI: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
     },
 });
