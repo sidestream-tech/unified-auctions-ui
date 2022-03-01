@@ -53,7 +53,7 @@ export default Vue.extend({
         },
         isDaiAccessGranted: {
             type: Boolean,
-            required: false,
+            required: true,
         },
         isExplanationsShown: {
             type: Boolean,

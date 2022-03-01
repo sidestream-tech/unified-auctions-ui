@@ -8,15 +8,15 @@ const common = {
 storiesOf('Transaction/AccessDaiBlock', module)
     .add('Default', () => ({
         ...common,
-        template: '<AccessDaiBlock />',
+        template: '<AccessDaiBlock :is-dai-access-granted="false"/>',
     }))
     .add('Disabled', () => ({
         ...common,
-        template: '<AccessDaiBlock disabled />',
+        template: '<AccessDaiBlock :is-dai-access-granted="false" disabled />',
     }))
     .add('Loading', () => ({
         ...common,
-        template: '<AccessDaiBlock is-loading />',
+        template: '<AccessDaiBlock :is-dai-access-granted="false" is-loading />',
     }))
     .add('Access Granted', () => ({
         ...common,
@@ -24,5 +24,5 @@ storiesOf('Transaction/AccessDaiBlock', module)
     }))
     .add('Expert Mode', () => ({
         ...common,
-        template: '<AccessDaiBlock :is-explanations-shown="false" />',
+        template: '<AccessDaiBlock :is-dai-access-granted="false" :is-explanations-shown="false" />',
     }));
