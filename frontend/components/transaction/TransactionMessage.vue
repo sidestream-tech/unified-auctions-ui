@@ -1,6 +1,6 @@
 <template>
     <TextBlock :title="isExplanationsShown ? 'Make a bid' : ''">
-        <div v-if="isFinished">
+        <div v-if="transactionAddress">
             Transaction <format-address shorten :value="transactionAddress" /> was successfully executed.
             <format-address explicit :value="transactionAddress" />
         </div>
@@ -40,10 +40,6 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
-        },
-        isFinished: {
-            type: Boolean,
-            default: false,
         },
         transactionAddress: {
             type: String,

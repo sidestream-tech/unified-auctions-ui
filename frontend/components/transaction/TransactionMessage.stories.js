@@ -18,5 +18,5 @@ storiesOf('Transaction/TransactionMessage', module)
                 transactionAddress: faker.finance.ethereumAddress(),
             };
         },
-        template: '<TransactionMessage is-finished :transaction-address="transactionAddress" />',
+        template: '<TransactionMessage :transaction-address="transactionAddress" />',
     }));

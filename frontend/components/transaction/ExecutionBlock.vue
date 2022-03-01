@@ -2,7 +2,6 @@
     <div>
         <TransactionMessage
             :is-explanations-shown="isExplanationsShown"
-            :is-finished="state === 'executed'"
             :transaction-address="transactionAddress"
             :transaction-fee="transactionFee"
         />
@@ -106,9 +105,6 @@ export default Vue.extend({
                 return 'notExecuted';
             }
             return 'executed';
-        },
-        transactionURL(): string {
-            return `https://kovan.etherscan.io/address/${this.transactionAddress}`;
         },
     },
     methods: {

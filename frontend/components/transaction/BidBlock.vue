@@ -2,7 +2,6 @@
     <div>
         <TransactionMessage
             :is-explanations-shown="isExplanationsShown"
-            :is-finished="state === 'executed'"
             :transaction-address="auctionTransaction.transactionAddress"
             :transaction-fee="auctionTransaction.biddingTransactionFeeETH"
         />
@@ -67,9 +66,6 @@ export default Vue.extend({
             }
             if (this.disabled) {
                 return 'disabled';
-            }
-            if (this.auctionTransaction.transactionProfit?.isLessThan(0)) {
-                return 'notProfitable';
             }
             if (!this.auctionTransaction.transactionAddress) {
                 return 'notExecuted';
