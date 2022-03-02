@@ -1,7 +1,7 @@
 <template>
     <div>
         <TextBlock v-if="isExplanationsShown" title="Allow access to DAI">
-            This action allows you to deposit DAI into the
+            To bid on an auction with Dai, first funds need to be deposited to the
             <Explain text="VAT">
                 The
                 <a
