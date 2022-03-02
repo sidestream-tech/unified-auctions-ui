@@ -8,25 +8,30 @@ import {
     getWalletAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
 import { ETHEREUM_NETWORK, KEEPER_MIN_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
-import { setupWallet } from '~/src/authorizations';
+
 let isSetupCompleted = false;
 
-function checkKeeperSetup() {
-    if (!KEEPER_WALLET_PRIVATE_KEY || !Number.isNaN(KEEPER_MIN_PROFIT_DAI)) {
-        throw new Error('keeper: keeper variables are not set. Please check configuration.');
+export const setupKeeper = async function () {
+    if (!KEEPER_WALLET_PRIVATE_KEY) {
+        console.warn('keeper: KEEPER_WALLET_PRIVATE_KEY variable is not set, keeper will not run');
+        return;
     }
-}
-
-export async function setupKeeper() {
-    if (KEEPER_WALLET_PRIVATE_KEY) {
+    if (Number.isNaN(KEEPER_MIN_PROFIT_DAI)) {
+        console.warn('keeper: KEEPER_MIN_PROFIT_DAI is not set or not a number, keeper will not run');
+        return;
+    }
+    try {
         setSigner(ETHEREUM_NETWORK, createSigner(ETHEREUM_NETWORK, KEEPER_WALLET_PRIVATE_KEY));
-        await setupWallet(ETHEREUM_NETWORK);
+        const signer = await getSigner(ETHEREUM_NETWORK);
+        const address = await signer.getAddress();
         isSetupCompleted = true;
+        console.info(`keeper: setup complete: using wallet with address "${address}" as a signer`);
+    } catch (error) {
+        console.warn('keeper: setup error, keeper will not run, please check that KEEPER_WALLET_PRIVATE_KEY is valid');
     }
-}
+};
 
-async function participate(auction: AuctionInitialInfo) {
-    checkKeeperSetup();
+const participate = async function (auction: AuctionInitialInfo) {
     if (!isSetupCompleted) {
         return;
     }
@@ -34,8 +39,21 @@ async function participate(auction: AuctionInitialInfo) {
     // enrich the auction with more numbers
     const auctionTransaction = await enrichAuction(ETHEREUM_NETWORK, auction);
 
-    if (auctionTransaction.isFinished || !auctionTransaction.isActive) {
-        console.info(`Auction "${auction.id}" is not active or has already finished.`);
+    if (auctionTransaction.isFinished) {
+        console.info(`keeper: auction "${auction.id}" has already finished`);
+        return;
+    }
+
+    if (!auctionTransaction.isActive) {
+        console.info(`keeper: auction "${auction.id}" is inactive`);
+        return;
+    }
+
+    if (!auctionTransaction.transactionProfit || auctionTransaction.transactionProfit.isLessThan(0)) {
+        const profit = auctionTransaction.transactionProfit
+            ? `${auctionTransaction.transactionProfit.toFixed(0)} DAI`
+            : 'unknown';
+        console.info(`keeper: auction "${auction.id}" is not profitable (${profit})`);
         return;
     }
 
@@ -45,22 +63,32 @@ async function participate(auction: AuctionInitialInfo) {
         auctionTransaction.transactionProfitMinusFees.toNumber() < KEEPER_MIN_PROFIT_DAI
     ) {
         console.info(
-            `Auction "${
+            `keeper: auction "${
                 auction.id
-            }" clear profit is smaller than min profit (${auctionTransaction.transactionProfitMinusFees.toFixed()} < ${KEEPER_MIN_PROFIT_DAI})`
+            }" clear profit is smaller than min profit (${auctionTransaction.transactionProfitMinusFees.toFixed(
+                0
+            )} < ${KEEPER_MIN_PROFIT_DAI})`
         );
         return;
+    } else {
+        console.info(
+            `keeper: auction "${
+                auction.id
+            }" is profitable with ${auctionTransaction.transactionProfitMinusFees.toFixed(
+                0
+            )} DAI after transaction fees, moving on to the execution`
+        );
     }
 
     // get wallet authorization status
     const walletAddress = await signer.getAddress();
-    const isAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
+    const isWalletAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
 
     // try to authorize the wallet then return
-    if (!isAuth) {
-        console.info(`Wallet "${walletAddress}" has not been authorized yet. Attempting authorization now`);
+    if (!isWalletAuth) {
+        console.info(`keeper: wallet "${walletAddress}" has not been authorized yet. Attempting authorization now`);
         const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, false);
-        console.info(`Wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
+        console.info(`keeper: wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
         await participate(auction);
         return;
     }
@@ -75,7 +103,7 @@ async function participate(auction: AuctionInitialInfo) {
     // try to authorize the collateral then return
     if (!isCollateralAuth) {
         console.info(
-            `Collateral "${auctionTransaction.collateralType}" has not been authorized on wallet "${walletAddress}" yet. Attempting authorization now`
+            `keeper: collateral "${auctionTransaction.collateralType}" has not been authorized on wallet "${walletAddress}" yet. Attempting authorization now`
         );
         const collateralTransactionHash = await authorizeCollateral(
             ETHEREUM_NETWORK,
@@ -83,15 +111,16 @@ async function participate(auction: AuctionInitialInfo) {
             false
         );
         console.info(
-            `Collateral "${auctionTransaction.collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
+            `keeper: collateral "${auctionTransaction.collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
         );
         await participate(auction);
         return;
     }
 
     // Bid on the Auction
+    console.info(`keeper: attempting swap execution on the auction "${auctionTransaction.id}"`);
     const bidHash = await bidOnTheAuction(ETHEREUM_NETWORK, auctionTransaction, walletAddress);
-    console.info(`Auction "${auctionTransaction.id}" was executed via "${bidHash}" transaction`);
-}
+    console.info(`keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`);
+};
 
 export default participate;
