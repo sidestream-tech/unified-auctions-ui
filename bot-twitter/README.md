@@ -1,5 +1,20 @@
 # Auctions twitter bot
 
+## What is our "Unified Auctions Bot"?
+Our "Unified Auctions Bot", is a server side application, with a collection of tools 
+for interacting with the blockchain and participating in MakerDAO collateral Auctions. 
+The bot can be hosted by any user, provided, they configure the bot properly over the environment variables.
+
+The bot currently has two main features. The first is the ability to tweet about new auctions, quickly alerting
+users about new auctions. We are hosting our own version of this Twitter Bot. You can find its account [here](https://twitter.com/MakerDaiBot).
+
+The second feature is the "Keeper". This is an automated system for bidding on certain auctions. Through configuration in the environment variables, you can 
+provide a wallet secret key as well as a minimum profitability (in DAI). Once this profitability threshold is reached
+the bot will automatically bid on the Auction for you.
+
+In order to use the bot please fill out all required [environment variables](#environment-variables) below. You can skip all optional variables, or those
+that are not required for the feature you want to use. Afterwards follow our Setup guides.
+
 ## Setup
 
 ```bash
