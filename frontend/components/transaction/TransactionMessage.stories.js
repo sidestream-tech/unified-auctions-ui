@@ -11,6 +11,10 @@ storiesOf('Transaction/TransactionMessage', module)
         ...common,
         template: '<TransactionMessage />',
     }))
+    .add('Show "Different Wallet" Info Message', () => ({
+        ...common,
+        template: '<TransactionMessage show-different-wallet-info />',
+    }))
     .add('Finished', () => ({
         ...common,
         data() {

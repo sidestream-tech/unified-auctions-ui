@@ -4,6 +4,7 @@
             :is-explanations-shown="isExplanationsShown"
             :transaction-address="transactionAddress"
             :transaction-fee="transactionFee"
+            show-different-wallet-info
         />
         <div class="flex flex-col space-y-3 my-3 md:mb-0">
             <Alert
