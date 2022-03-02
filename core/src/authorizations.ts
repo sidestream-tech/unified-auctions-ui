@@ -4,11 +4,7 @@ import executeTransaction from './execute';
 import memoizee from 'memoizee';
 import getSigner from './signer';
 
-export const authorizeWallet = async function (
-    network: string,
-    revoke: boolean,
-    notifier?: Notifier
-): Promise<string> {
+const _authorizeWallet = async function (network: string, revoke: boolean, notifier?: Notifier): Promise<string> {
     const signer = await getSigner(network);
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const contractMethod = revoke ? 'nope' : 'hope';
@@ -17,7 +13,12 @@ export const authorizeWallet = async function (
     return transaction;
 };
 
-export const authorizeCollateral = async function (
+export const authorizeWallet = memoizee(_authorizeWallet, {
+    promise: true,
+    length: 3,
+});
+
+const _authorizeCollateral = async function (
     network: string,
     collateralType: string,
     revoke: boolean,
@@ -31,6 +32,11 @@ export const authorizeCollateral = async function (
     await getCollateralAuthorizationStatus.delete(network, collateralType, await signer.getAddress());
     return transaction;
 };
+
+export const authorizeCollateral = memoizee(_authorizeCollateral, {
+    promise: true,
+    length: 4,
+});
 
 const _getWalletAuthorizationStatus = async function (network: string, walletAddress: string): Promise<boolean> {
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');

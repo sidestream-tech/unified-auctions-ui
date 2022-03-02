@@ -4,6 +4,7 @@ import trackTransaction from './tracker';
 import { getGasPrice } from './gas';
 import { ETH_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { getNetworkConfigByType } from './constants/NETWORKS';
+import memoizee from 'memoizee';
 
 const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
     const networkConfig = getNetworkConfigByType(network);
@@ -13,7 +14,7 @@ const canTransactionBeConfirmed = function (network: string, confirmTransaction?
     return confirmTransaction;
 };
 
-const executeTransaction = async function (
+const _executeTransaction = async function (
     network: string,
     contractName: string,
     contractMethod: string,
@@ -28,5 +29,10 @@ const executeTransaction = async function (
     });
     return trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network, confirmTransaction));
 };
+
+const executeTransaction = memoizee(_executeTransaction, {
+    promise: true,
+    length: 6,
+});
 
 export default executeTransaction;
