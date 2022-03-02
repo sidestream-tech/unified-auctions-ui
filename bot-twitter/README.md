@@ -31,6 +31,10 @@ $ npm run start
 
 ## Environment variables
 
+In order to configure you bot, you must create a `.env` file in the root of `/bot-twitter`.
+Below you can find a list of all available environment variables, along with an explanation of 
+what each variable determines. If not all parts of the bot are needed, you can leave some variables undefined.
+
 - `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum -> create new project -> settings -> keys). Note: this project can not be restricted by the origin.
 - `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available options can be found in [constants/NETWORKS](../core/src/constants/NETWORKS.ts)
 - `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
