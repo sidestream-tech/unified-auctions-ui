@@ -5,9 +5,10 @@
 Unified Auctions Bot" is a server-side application with two distinct functionalities:
 
 - `Twitter bot` – a script that periodically fetches collateral auctions and publish a tweet if it finds a new auction
-- `Keeper bot` – a script that periodically fetches collateral auctions, and their market values, and if find that any
-  of them are profitable, executes respective transactions (authorisations and bidding)
-  The bot can be hosted by any user, provided, they configure related environment variables. For more details, please
+- `Keeper bot` – a script that periodically fetches collateral auctions and their market values, and if it finds that any
+  of them are profitable, executes respective transactions (authorizations and bidding)
+  
+The bots can be hosted by any user, provided, they configure related environment variables. For more details, please
   refer to [`Environment variables`](#environment-variables) section below.
 
 ## Setup
