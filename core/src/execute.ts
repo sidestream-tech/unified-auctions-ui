@@ -32,7 +32,7 @@ const _executeTransaction = async function (
 
 const executeTransaction = memoizee(_executeTransaction, {
     promise: true,
-    length: 6,
+    length: 4,
 });
 
 export default executeTransaction;

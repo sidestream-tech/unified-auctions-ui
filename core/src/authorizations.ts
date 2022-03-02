@@ -15,7 +15,7 @@ const _authorizeWallet = async function (network: string, revoke: boolean, notif
 
 export const authorizeWallet = memoizee(_authorizeWallet, {
     promise: true,
-    length: 3,
+    length: 2,
 });
 
 const _authorizeCollateral = async function (
@@ -35,7 +35,7 @@ const _authorizeCollateral = async function (
 
 export const authorizeCollateral = memoizee(_authorizeCollateral, {
     promise: true,
-    length: 4,
+    length: 3,
 });
 
 const _getWalletAuthorizationStatus = async function (network: string, walletAddress: string): Promise<boolean> {

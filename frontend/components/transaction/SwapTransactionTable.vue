@@ -60,7 +60,7 @@
         </div>
         <div class="flex w-full justify-between">
             <div>
-                Fees
+                Transaction Fees
                 <span class="text-gray-300"
                     >(~<FormatCurrency
                         v-if="auctionTransaction.totalFeeETH"

@@ -1,5 +1,5 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
-import getSigner from 'auctions-core/src/signer';
+import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
 import { bidOnTheAuction, enrichAuction } from 'auctions-core/src/auctions';
 import {
     authorizeCollateral,
@@ -8,21 +8,28 @@ import {
     getWalletAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
 import { ETHEREUM_NETWORK, KEEPER_MIN_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
+import { setupWallet } from '~/src/authorizations';
 
-export function setupKeeper() {
-    if (Number.isNaN(KEEPER_MIN_PROFIT_DAI)) {
-        console.warn('keeper: no min profit was set. Keeper will not run');
-    }
+function areKeeperVariablesSet(): boolean {
     if (!KEEPER_WALLET_PRIVATE_KEY) {
-        console.warn('keeper: no private key was set. Keeper will not run');
+        return false;
+    }
+    return Number.isNaN(KEEPER_MIN_PROFIT_DAI);
+}
+
+export async function setupKeeper() {
+    if (!areKeeperVariablesSet()) {
+        console.warn('keeper: keeper variables are not set. Please check configuration.');
+        return;
+    }
+    if (KEEPER_WALLET_PRIVATE_KEY) {
+        setSigner(ETHEREUM_NETWORK, createSigner(ETHEREUM_NETWORK, KEEPER_WALLET_PRIVATE_KEY));
+        await setupWallet(ETHEREUM_NETWORK);
     }
 }
 
 async function participate(auction: AuctionInitialInfo) {
-    if (!Number.isNaN(KEEPER_MIN_PROFIT_DAI)) {
-        return;
-    }
-    if (!KEEPER_WALLET_PRIVATE_KEY) {
+    if (!areKeeperVariablesSet()) {
         return;
     }
     const signer = await getSigner(ETHEREUM_NETWORK);
@@ -87,7 +94,7 @@ async function participate(auction: AuctionInitialInfo) {
 
     // Bid on the Auction
     const bidHash = await bidOnTheAuction(ETHEREUM_NETWORK, auctionTransaction, walletAddress);
-    console.info(`Auction "${auctionTransaction.id}" was executed via ${bidHash} "transaction"`);
+    console.info(`Auction "${auctionTransaction.id}" was executed via "${bidHash}" transaction`);
 }
 
 export default participate;

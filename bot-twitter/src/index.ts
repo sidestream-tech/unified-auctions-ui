@@ -1,10 +1,8 @@
 import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
-import { createSigner, setSigner } from 'auctions-core/src/signer';
 import { getAllActiveAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
 import notify from './notify';
-import { setupWallet } from './authorizations';
 import participate, { setupKeeper } from './keeper';
-import { ETHEREUM_NETWORK, KEEPER_WALLET_PRIVATE_KEY } from './variables';
+import { ETHEREUM_NETWORK } from './variables';
 
 const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
 const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL ?? '') || DEFAULT_REFETCH_INTERVAL;
@@ -29,11 +27,7 @@ const loop = async function (): Promise<void> {
 
 const setup = async function (): Promise<void> {
     getNetworkConfigByType(ETHEREUM_NETWORK);
-    if (KEEPER_WALLET_PRIVATE_KEY) {
-        setSigner(ETHEREUM_NETWORK, createSigner(ETHEREUM_NETWORK, KEEPER_WALLET_PRIVATE_KEY));
-        await setupWallet(ETHEREUM_NETWORK);
-    }
-    setupKeeper();
+    await setupKeeper();
     await loop();
 };
 
