@@ -16,7 +16,9 @@ const loop = async function (): Promise<void> {
         const activeAuctions = await getAllActiveAuctions(ETHEREUM_NETWORK);
         const newAuctions = getNewAuctionsFromActiveAuctions(activeAuctions);
 
-        activeAuctions.map(auction => participate(auction));
+        activeAuctions.map(auction =>
+            participate(auction).catch(error => console.error(`participation error: ${error.message}`))
+        );
         newAuctions.map(notify);
     } catch (error) {
         console.error('loop error:', error);
