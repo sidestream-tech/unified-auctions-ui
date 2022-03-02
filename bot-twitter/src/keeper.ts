@@ -7,10 +7,22 @@ import {
     getCollateralAuthorizationStatus,
     getWalletAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-import { ETHEREUM_NETWORK, KEEPER_MIN_PROFIT_DAI } from './variables';
+import { ETHEREUM_NETWORK, KEEPER_MIN_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
+
+export function setupKeeper() {
+    if (Number.isNaN(KEEPER_MIN_PROFIT_DAI)) {
+        console.warn('keeper: no min profit was set. Keeper will not run');
+    }
+    if (!KEEPER_WALLET_PRIVATE_KEY) {
+        console.warn('keeper: no private key was set. Keeper will not run');
+    }
+}
 
 async function participate(auction: AuctionInitialInfo) {
-    if (KEEPER_MIN_PROFIT_DAI === undefined) {
+    if (!Number.isNaN(KEEPER_MIN_PROFIT_DAI)) {
+        return;
+    }
+    if (!KEEPER_WALLET_PRIVATE_KEY) {
         return;
     }
     const signer = await getSigner(ETHEREUM_NETWORK);

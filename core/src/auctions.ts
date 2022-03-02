@@ -128,7 +128,7 @@ export const enrichAuction = async function (
     const fees = await getApproximateTransactionFees(network);
     const auctionWithFees = await enrichAuctionWithTransactionFees(auctionWithMarketValue, fees, network);
 
-    if (auction.debtDAI.toNumber() === 0) {
+    if (auction.debtDAI.isEqualTo(0)) {
         return {
             ...auctionWithFees,
             isFinished: true,

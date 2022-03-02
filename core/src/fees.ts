@@ -37,9 +37,13 @@ export const enrichAuctionWithTransactionFees = async function (
 
     try {
         const signer = await getSigner(network);
-        const address = await signer.getAddress();
-        const isWalletAuthed = await getWalletAuthorizationStatus(network, address);
-        const isCollateralAuthed = await getCollateralAuthorizationStatus(network, auction.collateralType, address);
+        const walletAddress = await signer.getAddress();
+        const isWalletAuthed = await getWalletAuthorizationStatus(network, walletAddress);
+        const isCollateralAuthed = await getCollateralAuthorizationStatus(
+            network,
+            auction.collateralType,
+            walletAddress
+        );
 
         if (!isWalletAuthed) {
             totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);

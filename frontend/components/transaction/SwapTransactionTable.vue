@@ -60,11 +60,11 @@
         </div>
         <div class="flex w-full justify-between">
             <div>
-                Transaction Fee
+                Fees
                 <span class="text-gray-300"
                     >(~<FormatCurrency
-                        v-if="auctionTransaction.biddingTransactionFeeETH"
-                        :value="auctionTransaction.biddingTransactionFeeETH"
+                        v-if="auctionTransaction.totalFeeETH"
+                        :value="auctionTransaction.totalFeeETH"
                         :decimals="5"
                     />
                     <span v-else>Unknown</span>
@@ -73,8 +73,8 @@
             </div>
             <div class="RightInfo">
                 <FormatCurrency
-                    v-if="auctionTransaction.biddingTransactionFeeDAI"
-                    :value="auctionTransaction.biddingTransactionFeeDAI * -1"
+                    v-if="auctionTransaction.totalFeeDAI"
+                    :value="auctionTransaction.totalFeeDAI * -1"
                     currency="DAI"
                 />
                 <span v-else class="opacity-50">Unknown</span>
