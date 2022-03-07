@@ -10,6 +10,7 @@ import {
 } from 'auctions-core/src/auctions';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
+import parseAuctionURL from 'auctions-core/dist/src/helpers/parseAuctionURL';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
@@ -21,6 +22,7 @@ let updateAuctionsPricesIntervalId: ReturnType<typeof setInterval> | undefined;
 
 interface State {
     auctionStorage: Record<string, AuctionTransaction>;
+    eventStorage: Record<string, Event[]>;
     isFetching: boolean;
     isBidding: boolean;
     error: string | null;
@@ -29,6 +31,7 @@ interface State {
 
 export const state = (): State => ({
     auctionStorage: {},
+    eventStorage: {},
     isFetching: false,
     isBidding: false,
     error: null,
@@ -51,6 +54,9 @@ export const getters = {
     },
     getAuctionById: (state: State) => (id: string) => {
         return state.auctionStorage[id];
+    },
+    getEventsByID: (state: State) => (id: string) => {
+        return state.eventStorage[id];
     },
     getIsFetching(state: State) {
         return state.isFetching;
@@ -89,6 +95,9 @@ export const mutations = {
     },
     setAuction(state: State, auction: AuctionTransaction) {
         state.auctionStorage[auction.id] = auction;
+    },
+    setEvents(state: State, { id, events }: { id: string; events: Event[] }) {
+        state.eventStorage[id] = events;
     },
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
         state.auctionStorage[id].transactionAddress = transactionAddress;
@@ -230,7 +239,10 @@ export const actions = {
     },
     async fetchFinishedAuction({ rootGetters, commit }: ActionContext<State, State>, url: string) {
         const network = rootGetters['network/getMakerNetwork'];
-        const auction = await fetchFinishedAuction(network, url);
-        commit('setAuction', auction);
+        const { auctionId } = parseAuctionURL(url);
+
+        const events = await fetchFinishedAuction(network, url);
+        console.info(events);
+        commit('setEvents', { id: auctionId, events });
     },
 };

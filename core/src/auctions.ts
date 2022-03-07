@@ -4,7 +4,7 @@ import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
 import { getCalleeData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
-import { RAD, RAY, RAY_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
@@ -18,8 +18,7 @@ import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
 import parseAuctionURL from './helpers/parseAuctionURL';
 import { Event, EventFilter } from 'ethers';
-import getNetworkDate, { fetchDateByBlockNumber } from './date';
-import { getCollateralConfigByType } from './constants/COLLATERALS';
+import getNetworkDate from './date';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -131,51 +130,7 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     return await Promise.all(auctionsWithMarketValue.map(a => enrichAuctionWithTransactionFees(a, fees)));
 };
 
-const enrichFinishedAuctionWithNumbers = async function (
-    event: Event,
-    auctionURL: string,
-    network: string
-): Promise<AuctionTransaction> {
-    const { collateralType, auctionId } = parseAuctionURL(auctionURL);
-    const date = await fetchDateByBlockNumber(network, event.blockNumber);
-
-    if (!event.args) {
-        throw new Error(`Could not format offline Auction "${auctionURL}"`);
-    }
-
-    const collateralAmount = new BigNumber(event.args['lot']._hex).div(WAD);
-    const unitPrice = new BigNumber(event.args['price']._hex).div(RAY);
-
-    return {
-        network: network,
-        id: auctionURL,
-        auctionId: auctionId,
-        collateralType: collateralType,
-        collateralSymbol: getCollateralConfigByType(collateralType).symbol,
-        collateralAmount,
-        debtDAI: new BigNumber(event.args['tab']._hex).div(RAD),
-        endDate: new Date(date),
-        vaultAddress: event.args['usr'],
-        isActive: false,
-        isFinished: true,
-        isRestarting: false,
-        unitPrice,
-        totalPrice: collateralAmount.multipliedBy(unitPrice),
-
-        // The following Data cannot be fetched
-        startDate: new Date(),
-        initialPrice: new BigNumber(0),
-        biddingTransactionFeeETH: new BigNumber(0),
-        biddingTransactionFeeDAI: new BigNumber(0),
-        authTransactionFeeETH: new BigNumber(0),
-        authTransactionFeeDAI: new BigNumber(0),
-        restartTransactionFeeETH: new BigNumber(0),
-        transactionProfitMinusFees: new BigNumber(0),
-        approximateUnitPrice: new BigNumber(0),
-    };
-};
-
-export const fetchFinishedAuction = async function (network: string, auctionURL: string): Promise<AuctionTransaction> {
+export const fetchFinishedAuction = async function (network: string, auctionURL: string): Promise<Array<Event>> {
     const { collateralType, auctionId } = parseAuctionURL(auctionURL);
     const encodedAuctionId = convertNumberTo32Bytes(auctionId);
 
@@ -183,9 +138,7 @@ export const fetchFinishedAuction = async function (network: string, auctionURL:
     const contract = await getContract(network, contractName);
 
     const eventFilters: EventFilter = contract.filters.Take(encodedAuctionId);
-    const events = await contract.queryFilter(eventFilters);
-
-    return await enrichFinishedAuctionWithNumbers(events[0], auctionURL, network);
+    return await contract.queryFilter(eventFilters);
 };
 
 export const restartAuction = async function (
