@@ -26,8 +26,5 @@ export const getNewAuctionsFromActiveAuctions = function (activeActions: Auction
 export const getAllActiveAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
     const auctions = await fetchAllInitialAuctions(network);
     console.info(`auctions: found "${auctions.length}" on "${network}" network`);
-
-    const activeActions = auctions.filter(auction => auction.isActive);
-    console.info(`auctions: "${activeActions.length}" of "${auctions.length}" are active`);
-    return activeActions;
+    return auctions;
 };

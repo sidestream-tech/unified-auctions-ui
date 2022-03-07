@@ -13,49 +13,59 @@ const getChainLogContract = async function (network: string): Promise<Contract> 
     return await new ethers.Contract(CHAINLOG_ADDRESS, CHAINLOG, provider);
 };
 
-const _fetchContractsAddressesByNetwork = async function (
-    network: string
-): Promise<Record<string, string | undefined>> {
+export const fetchContractsNamesByNetwork = async function (network: string): Promise<string[]> {
     const contract = await getChainLogContract(network);
-
-    const contractNames: string[] = await contract.list();
-    const contracts: Record<string, string | undefined> = {};
-
-    await Promise.all(
-        contractNames.map(async contractName => {
-            const key = ethers.utils.parseBytes32String(contractName);
-            contracts[key] = await contract.getAddress(contractName);
-        })
-    );
-    return contracts;
+    const encodedContractNames: string[] = await contract.list();
+    return encodedContractNames.map(ethers.utils.parseBytes32String);
 };
 
-export const fetchContractsAddressesByNetwork = memoizee(_fetchContractsAddressesByNetwork, {
+export const _fetchContractAddressByNetwork = async function (network: string, contractName: string): Promise<string> {
+    const chainLogContract = await getChainLogContract(network);
+    try {
+        const encodedContractName = ethers.utils.formatBytes32String(contractName);
+        return await chainLogContract.getAddress(encodedContractName);
+    } catch (error) {
+        throw new Error(`No contract address found for "${contractName}"`);
+    }
+};
+
+export const fetchContractAddressByNetwork = memoizee(_fetchContractAddressByNetwork, {
     maxAge: CHAINLOG_CACHE,
     promise: true,
-    length: 1,
+    length: 2,
 });
 
-export const isCollateralSupported = async function (network: string, collateral: string): Promise<boolean> {
-    const addresses = await fetchContractsAddressesByNetwork(network);
-    return !!addresses[collateral];
+export const isCollateralSymbolSupported = async function (
+    network: string,
+    collateralSymbol: string
+): Promise<boolean> {
+    const collateralAddress = await fetchContractAddressByNetwork(network, collateralSymbol);
+    return !!collateralAddress;
+};
+
+export const isCollateralTypeSupported = async function (network: string, collateralType: string): Promise<boolean> {
+    const suffix = collateralType.toUpperCase().replace('-', '_');
+    const clipContractName = `MCD_CLIP_${suffix}`;
+    const collateralAddress = await fetchContractAddressByNetwork(network, clipContractName);
+    return !!collateralAddress;
 };
 
 export const getSupportedCollateralTypes = async function (network: string): Promise<string[]> {
     const allCollateralTypes = getAllCollateralTypes();
-    const addresses = await fetchContractsAddressesByNetwork(network);
-
-    return allCollateralTypes.filter(collateralType => {
-        const suffix = collateralType.toUpperCase().replace('-', '_');
-        return !!addresses[COLLATERALS[collateralType].symbol] && !!addresses[`MCD_CLIP_${suffix}`];
+    const supportedCollateralsPromises = allCollateralTypes.map(async collateralType => {
+        if (await isCollateralTypeSupported(network, collateralType)) {
+            return collateralType;
+        }
     });
+    const supportedCollaterals = await Promise.all(supportedCollateralsPromises);
+    return supportedCollaterals.filter((collateralType): collateralType is string => !!collateralType);
 };
 
 export const checkAllSupportedCollaterals = async function (network: string): Promise<void> {
     const errors = [];
     const successes = [];
     for (const collateral of getAllCollateralTypes()) {
-        const isSupported = await isCollateralSupported(network, COLLATERALS[collateral].symbol);
+        const isSupported = await isCollateralSymbolSupported(network, COLLATERALS[collateral].symbol);
 
         if (isSupported) {
             successes.push(collateral);

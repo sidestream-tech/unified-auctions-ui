@@ -1,7 +1,7 @@
 import type { Contract, ContractInterface } from 'ethers';
 import { ethers } from 'ethers';
 import getProvider from './provider';
-import { fetchContractsAddressesByNetwork } from './addresses';
+import { fetchContractAddressByNetwork } from './addresses';
 import MCD_VAT from './abis/MCD_VAT.json';
 import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
@@ -20,12 +20,7 @@ export const getJoinNameByCollateralType = function (collateralType: string): st
 };
 
 export const getContractAddressByName = async function (network: string, contractName: string): Promise<string> {
-    const contractAddresses = await fetchContractsAddressesByNetwork(network);
-    const contractAddress = contractAddresses[contractName];
-    if (!contractAddress) {
-        throw new Error(`No contract address found for "${contractName}"`);
-    }
-    return contractAddress;
+    return await fetchContractAddressByNetwork(network, contractName);
 };
 
 const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {

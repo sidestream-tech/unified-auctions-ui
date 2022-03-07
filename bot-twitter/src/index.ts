@@ -26,6 +26,7 @@ const start = async function (): Promise<void> {
     getNetworkConfigByType(ETHEREUM_NETWORK);
     await setupTwitter();
     await setupKeeper();
+    loop();
     setInterval(loop, REFETCH_INTERVAL);
 };
 
