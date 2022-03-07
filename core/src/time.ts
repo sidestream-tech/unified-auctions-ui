@@ -4,16 +4,11 @@ import { getNetworkConfigByType } from './constants/NETWORKS';
 
 const CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS = 60 * 1000;
 
-export const fetchDateByBlockNumber = async function (network: string, blockNumber: number): Promise<Date> {
-    const provider = await getProvider(network);
-    const block = await provider.getBlock(blockNumber);
-    return new Date(block.timestamp * 1000);
-};
-
 const fetchLatestBlockDate = async function (network: string): Promise<Date> {
     const provider = await getProvider(network);
     const blockNumber = await provider.getBlockNumber();
-    return fetchDateByBlockNumber(network, blockNumber);
+    const block = await provider.getBlock(blockNumber);
+    return new Date(block.timestamp * 1000);
 };
 
 const _fetchLatestBlockDateAndCacheDate = async function (
@@ -32,7 +27,7 @@ const fetchLatestBlockDateAndCacheDate = memoizee(_fetchLatestBlockDateAndCacheD
     length: 1,
 });
 
-const getNetworkDate = async function (network: string): Promise<Date> {
+const getCurrentDate = async function (network: string): Promise<Date> {
     const networkConfig = getNetworkConfigByType(network);
     if (!networkConfig.isFork) {
         return new Date();
@@ -41,4 +36,4 @@ const getNetworkDate = async function (network: string): Promise<Date> {
     return new Date(Date.now() - cacheDate.getTime() + blockDate.getTime());
 };
 
-export default getNetworkDate;
+export default getCurrentDate;

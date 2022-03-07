@@ -9,7 +9,12 @@ const common = {
     },
 };
 
-storiesOf('Utils/NetworkSelector', module).add('Default', () => ({
-    ...common,
-    template: '<network-selector @select="select"/>',
-}));
+storiesOf('Utils/NetworkSelector', module)
+    .add('Default', () => ({
+        ...common,
+        template: '<network-selector @select="select"/>',
+    }))
+    .add('Dev Mode', () => ({
+        ...common,
+        template: '<network-selector @select="select" is-dev />',
+    }));

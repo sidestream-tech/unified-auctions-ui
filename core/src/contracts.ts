@@ -6,6 +6,7 @@ import MCD_VAT from './abis/MCD_VAT.json';
 import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import MCD_CLIP from './abis/MCD_CLIP.json';
+import WSTETH from './abis/WSTETH.json';
 import getSigner from './signer';
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
@@ -30,6 +31,9 @@ export const getContractAddressByName = async function (network: string, contrac
 const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {
     if (contractName === 'MCD_VAT') {
         return MCD_VAT;
+    }
+    if (contractName === 'WSTETH') {
+        return WSTETH;
     }
     if (contractName === 'MCD_JOIN_DAI') {
         return MCD_JOIN_DAI;

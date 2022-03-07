@@ -81,4 +81,11 @@ export const getNetworkTitleByChainId = function (chainId: string | undefined) {
     return NETWORK_TITLES[chainId];
 };
 
-export default NETWORKS;
+export const getNetworks = function (isDev: boolean): Record<string, NetworkConfig> {
+    if (isDev) {
+        return NETWORKS;
+    }
+    //eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { localhost, ...otherNetworks } = NETWORKS;
+    return otherNetworks;
+};

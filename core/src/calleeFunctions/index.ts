@@ -1,12 +1,17 @@
 import type { CalleeNames, CalleeFunctions } from '../types';
+import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
 import UniswapV2LpTokenCalleeDai from './UniswapV2LpTokenCalleeDai';
+import WstETHCurveUniv3Callee from './WstETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
+
+const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
 const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV2CalleeDai,
     UniswapV2LpTokenCalleeDai,
+    WstETHCurveUniv3Callee,
 };
 
 export const getCalleeData = async function (
@@ -22,7 +27,7 @@ export const getCalleeData = async function (
     return await calleeFuctions.getCalleeData(network, collateral, profitAddress);
 };
 
-export const getMarketPrice = async function (
+const _getMarketPrice = async function (
     network: string,
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
@@ -34,5 +39,11 @@ export const getMarketPrice = async function (
     }
     return await calleeFuctions.getMarketPrice(network, collateral, amount);
 };
+
+export const getMarketPrice = memoizee(_getMarketPrice, {
+    maxAge: MARKET_PRICE_CACHE_MS,
+    promise: true,
+    length: 3,
+});
 
 export default allCalleeFunctions;

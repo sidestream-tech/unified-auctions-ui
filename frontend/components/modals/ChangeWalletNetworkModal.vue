@@ -32,7 +32,7 @@
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
 import Vue from 'vue';
-import NETWORKS from 'auctions-core/src/constants/NETWORKS';
+import { getNetworks } from 'auctions-core/src/constants/NETWORKS';
 import BaseButton from '~/components/common/BaseButton';
 
 export default Vue.extend({
@@ -47,19 +47,23 @@ export default Vue.extend({
             type: String,
             required: true,
         },
+        isDev: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
             options: [
-                ...Object.entries(NETWORKS).map(([name, propeties]) => {
+                ...Object.entries(getNetworks(this.isDev)).map(([name, propeties]) => {
                     return { label: propeties.title, value: name };
                 }),
             ],
         };
     },
     computed: {
-        isWalletNetworkSuppotedByTheWebsite(): string {
-            return !!NETWORKS[this.invalidNetwork];
+        isWalletNetworkSuppotedByTheWebsite(): boolean {
+            return !!getNetworks(this.isDev)[this.invalidNetwork];
         },
     },
 });

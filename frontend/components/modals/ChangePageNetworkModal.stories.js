@@ -12,7 +12,12 @@ const common = {
     },
 };
 
-storiesOf('Modals/ChangePageNetworkModal', module).add('Default', () => ({
-    ...common,
-    template: '<ChangePageNetworkModal :invalid-network="chainId" @setNetwork="setNetwork" />',
-}));
+storiesOf('Modals/ChangePageNetworkModal', module)
+    .add('Default', () => ({
+        ...common,
+        template: '<ChangePageNetworkModal :invalid-network="chainId" @setNetwork="setNetwork" />',
+    }))
+    .add('Dev Mode', () => ({
+        ...common,
+        template: '<ChangePageNetworkModal :invalid-network="chainId" @setNetwork="setNetwork" is-dev />',
+    }));
