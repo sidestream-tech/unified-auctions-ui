@@ -57,10 +57,8 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
             transactionProfit: calculateTransactionProfit(auctionWithMarketValues),
         };
     } catch (error) {
-        console.warn(
-            `Fetching exchange rates from UniSwap failed for ${auction.id} with error:`,
-            error instanceof Error && error.message
-        );
+        // since it's expected that some collaterals are not tradable on some networks
+        // we should just ignore this error
         return auction;
     }
 };

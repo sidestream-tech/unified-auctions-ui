@@ -6,8 +6,8 @@ import truncateText from './helpers/truncateText';
 const DEFAULT_NOTIFICATION_DURATION = 3;
 const NUMBER_OF_BLOCKS_TO_CONFIRM = 5;
 
-const defaultNotifier = function (messageType: string, messageContent: MessageContent) {
-    console.info(`transaction: ${messageType}: ${messageContent.content}`);
+const defaultNotifier = function (_: string, messageContent: MessageContent) {
+    console.info(`transaction: ${messageContent.content}`);
 };
 
 const trackTransaction = async function (

@@ -31,7 +31,7 @@ export const setupKeeper = async function () {
     }
 };
 
-const participate = async function (auction: AuctionInitialInfo) {
+const checkAndParticipateIfPossible = async function (auction: AuctionInitialInfo) {
     if (!isSetupCompleted) {
         return;
     }
@@ -50,10 +50,12 @@ const participate = async function (auction: AuctionInitialInfo) {
     }
 
     if (!auctionTransaction.transactionProfit || auctionTransaction.transactionProfit.isLessThan(0)) {
-        const profit = auctionTransaction.transactionProfit
-            ? `${auctionTransaction.transactionProfit.toFixed(0)} DAI`
-            : 'unknown';
-        console.info(`keeper: auction "${auction.id}" is not profitable (${profit})`);
+        if (auctionTransaction.transactionProfit) {
+            const profit = `${auctionTransaction.transactionProfit.toFixed(0)} DAI`;
+            console.info(`keeper: auction "${auction.id}" is not yet profitable (current profit: ${profit})`);
+        } else {
+            console.info(`keeper: auction "${auction.id}" is not tradable`);
+        }
         return;
     }
 
@@ -72,9 +74,7 @@ const participate = async function (auction: AuctionInitialInfo) {
         return;
     } else {
         console.info(
-            `keeper: auction "${
-                auction.id
-            }" is profitable with ${auctionTransaction.transactionProfitMinusFees.toFixed(
+            `keeper: auction "${auction.id}" clear profit is ${auctionTransaction.transactionProfitMinusFees.toFixed(
                 0
             )} DAI after transaction fees, moving on to the execution`
         );
@@ -121,6 +121,14 @@ const participate = async function (auction: AuctionInitialInfo) {
     console.info(`keeper: attempting swap execution on the auction "${auctionTransaction.id}"`);
     const bidHash = await bidOnTheAuction(ETHEREUM_NETWORK, auctionTransaction, walletAddress);
     console.info(`keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`);
+};
+
+const participate = async function (auction: AuctionInitialInfo) {
+    try {
+        await checkAndParticipateIfPossible(auction);
+    } catch (error) {
+        console.error(`keeper: unexpected error: ${(error instanceof Error && error.message) || 'unknown'}`);
+    }
 };
 
 export default participate;
