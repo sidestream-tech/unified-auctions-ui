@@ -24,6 +24,7 @@
                         :is-explanations-shown="isExplanationsShown"
                         class="mt-6 mb-8 mx-8"
                         :auction="selectedAuction"
+                        :take-events="selectedTakeEvents"
                         :wallet-address="walletAddress"
                         :auction-id="selectedAuctionId"
                         :is-auctions-loading="isAuctionsLoading"
@@ -118,6 +119,9 @@ export default Vue.extend({
     computed: {
         selectedAuction(): AuctionTransaction | null {
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
+        },
+        selectedTakeEvents(): Event[] | null {
+            return this.$store.getters['auctions/getTakeEventsByID'](this.selectedAuctionId);
         },
         isStagingEnvironment(): boolean {
             return !!process.env.STAGING_BANNER_URL;

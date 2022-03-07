@@ -233,6 +233,9 @@
                 </div>
             </TextBlock>
         </div>
+        <div v-if="takeEvents">
+            {{ takeEvents }}
+        </div>
         <Loading v-else-if="isAuctionsLoading" is-loading class="w-full self-center Loading h-48" />
     </TextBlock>
 </template>
@@ -280,6 +283,10 @@ export default Vue.extend({
             type: String,
             required: true,
         },
+        takeEvents: {
+            type: Array as Vue.PropType<Event>,
+            default: null,
+        },
         error: {
             type: String,
             default: '',
@@ -306,7 +313,9 @@ export default Vue.extend({
         errorText(): string | null {
             if (!this.isAuctionsLoading && !this.auction) {
                 this.$emit('fetchFinishedAuction', this.auctionId);
-                return 'This auction was not found';
+                if (!this.takeEvents) {
+                    return 'This auction was not found';
+                }
             } else if (this.error) {
                 return this.error;
             } else if (this.auction?.isFinished) {

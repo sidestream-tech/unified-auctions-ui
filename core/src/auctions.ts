@@ -130,7 +130,7 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     return await Promise.all(auctionsWithMarketValue.map(a => enrichAuctionWithTransactionFees(a, fees)));
 };
 
-export const fetchFinishedAuction = async function (network: string, auctionURL: string): Promise<Array<Event>> {
+export const fetchTakeEvents = async function (network: string, auctionURL: string): Promise<Array<Event>> {
     const { collateralType, auctionId } = parseAuctionURL(auctionURL);
     const encodedAuctionId = convertNumberTo32Bytes(auctionId);
 
