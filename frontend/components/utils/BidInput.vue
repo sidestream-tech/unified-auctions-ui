@@ -56,6 +56,9 @@ export default Vue.extend({
         showErrorPopup(): boolean {
             return !!this.error;
         },
+        maximumBid(): BigNumber {
+            return this.totalPrice.minus(this.minimumDepositDai);
+        },
     },
     watch: {
         value(newVal: BigNumber | undefined): void {
@@ -76,6 +79,11 @@ export default Vue.extend({
         userInput(newVal, oldVal) {
             this.validateInput(newVal, oldVal);
         },
+        totalPrice(newVal: BigNumber | undefined) {
+            if (newVal && newVal.minus(this.minimumDepositDai).isLessThan(this.value)) {
+                this.error = `The bidding amount can not be greater than ${this.maximumBid.toFixed(2)} DAI`;
+            }
+        },
     },
     methods: {
         validateInput(newVal: string, oldVal: string): void {
@@ -86,8 +94,8 @@ export default Vue.extend({
             const value = new BigNumber(newVal);
             if (isNaN(value.toNumber())) {
                 this.userInput = oldVal;
-            } else if (value.isGreaterThan(this.totalPrice)) {
-                this.error = `The bidding amount can not be greater than ${this.totalPrice.toFixed(2)} DAI`;
+            } else if (value.isGreaterThan(this.maximumBid)) {
+                this.error = `The bidding amount can not be greater than ${this.maximumBid.toFixed(2)} DAI`;
             } else if (value.isLessThan(this.minimumDepositDai)) {
                 this.error = `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
             } else {
