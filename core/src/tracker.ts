@@ -39,7 +39,7 @@ const trackTransaction = async function (
             key: messageId,
             duration: DEFAULT_NOTIFICATION_DURATION,
         });
-        throw new Error(error);
+        throw error;
     }
 
     try {
@@ -76,7 +76,7 @@ const trackTransaction = async function (
             key: messageId,
             duration: DEFAULT_NOTIFICATION_DURATION,
         });
-        throw new Error(error);
+        throw error;
     }
 };
 

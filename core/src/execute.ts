@@ -1,10 +1,10 @@
 import type { Notifier } from './types';
+import memoizee from 'memoizee';
 import getContract from './contracts';
 import trackTransaction from './tracker';
 import { getGasPrice } from './gas';
 import { ETH_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { getNetworkConfigByType } from './constants/NETWORKS';
-import memoizee from 'memoizee';
 
 const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
     const networkConfig = getNetworkConfigByType(network);
@@ -30,7 +30,20 @@ const _executeTransaction = async function (
     return trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network, confirmTransaction));
 };
 
-const executeTransaction = memoizee(_executeTransaction, {
+const retriableExecuteTransaction: typeof _executeTransaction = async function (...args): Promise<string> {
+    try {
+        return await _executeTransaction(...args);
+    } catch (error) {
+        // retry only nonce-related errors
+        if (error instanceof Error && error?.message?.startsWith('nonce has already been used')) {
+            console.info('execute: retrying nonce-rejected transaction');
+            return retriableExecuteTransaction(...args);
+        }
+        throw error;
+    }
+};
+
+const executeTransaction = memoizee(retriableExecuteTransaction, {
     promise: true,
     length: 4,
 });
