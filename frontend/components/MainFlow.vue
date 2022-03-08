@@ -31,7 +31,7 @@
                         @restart="$emit('restart', $event)"
                         @connect="$emit('connect')"
                         @swap="step = 2"
-                        @fetchFinishedAuction="$emit('fetchFinishedAuction', $event)"
+                        @fetchTakeEventsFromAuction="$emit('fetchTakeEventsFromAuction', $event)"
                     />
                 </div>
             </template>
@@ -71,6 +71,10 @@ export default Vue.extend({
         auctions: {
             type: Array as Vue.PropType<AuctionTransaction[]>,
             default: () => [],
+        },
+        takeEvents: {
+            type: Object as Vue.PropType<string, Event>,
+            default: () => {},
         },
         isAuctionsLoading: {
             type: Boolean,
@@ -121,7 +125,10 @@ export default Vue.extend({
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
         },
         selectedTakeEvents(): Event[] | null {
-            return this.$store.getters['auctions/getTakeEventsByID'](this.selectedAuctionId);
+            if (this.selectedAuction === null) {
+                return this.takeEvents[this.selectedAuctionId] || null;
+            }
+            return null;
         },
         isStagingEnvironment(): boolean {
             return !!process.env.STAGING_BANNER_URL;

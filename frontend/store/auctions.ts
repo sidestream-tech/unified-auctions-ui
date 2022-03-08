@@ -98,7 +98,7 @@ export const mutations = {
     setAuction(state: State, auction: AuctionTransaction) {
         state.auctionStorage[auction.id] = auction;
     },
-    setEvents(state: State, { id, events }: { id: string; events: Event[] }) {
+    setTakeEvents(state: State, { id, events }: { id: string; events: Event[] }) {
         state.takeEventStorage[id] = events;
     },
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
@@ -239,10 +239,10 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         await checkAllSupportedCollaterals(network);
     },
-    async fetchFinishedAuction({ rootGetters, commit }: ActionContext<State, State>, url: string) {
+    async fetchTakeEventsFromAuction({ rootGetters, commit }: ActionContext<State, State>, url: string) {
         const network = rootGetters['network/getMakerNetwork'];
 
         const events = await fetchTakeEvents(network, url);
-        commit('setEvents', { id: url, events });
+        commit('setTakeEvents', { id: url, events });
     },
 };

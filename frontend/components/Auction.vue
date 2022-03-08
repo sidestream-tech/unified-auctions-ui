@@ -233,8 +233,13 @@
                 </div>
             </TextBlock>
         </div>
-        <div v-if="takeEvents">
-            {{ takeEvents }}
+        <div v-if="takeEvents" class="mt-5">
+            <p class="mb-2">The auction was taken via {{ takeEvents.length }} transactions.</p>
+            <ul class="list-disc list-inside">
+                <li v-for="(event, index) of takeEvents" :key="index">
+                    Transaction <FormatAddress :value="event.transactionHash" :shorten="true" />
+                </li>
+            </ul>
         </div>
         <Loading v-else-if="isAuctionsLoading" is-loading class="w-full self-center Loading h-48" />
     </TextBlock>
@@ -284,7 +289,7 @@ export default Vue.extend({
             required: true,
         },
         takeEvents: {
-            type: Array as Vue.PropType<Event>,
+            type: Array as Vue.PropType<Event[]>,
             default: null,
         },
         error: {
@@ -312,10 +317,11 @@ export default Vue.extend({
     computed: {
         errorText(): string | null {
             if (!this.isAuctionsLoading && !this.auction) {
-                this.$emit('fetchFinishedAuction', this.auctionId);
-                if (!this.takeEvents) {
-                    return 'This auction was not found';
+                this.$emit('fetchTakeEventsFromAuction', this.auctionId);
+                if (this.takeEvents) {
+                    return 'This auction is finished';
                 }
+                return 'This auction was not found';
             } else if (this.error) {
                 return this.error;
             } else if (this.auction?.isFinished) {
