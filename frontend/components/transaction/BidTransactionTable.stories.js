@@ -35,10 +35,11 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isFinished: true,
                     totalPrice: null,
                 },
+                minimumDepositDAI: new BigNumber(faker.finance.amount(0, 50)),
             };
         },
         template:
-            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDAI="minimumDepositDAI" />',
+            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
     }))
     .add('Inactive', () => ({
         ...common,
@@ -50,8 +51,9 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isFinished: false,
                     totalPrice: null,
                 },
+                minimumDepositDAI: new BigNumber(faker.finance.amount(0, 50)),
             };
         },
         template:
-            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDAI="minimumDepositDAI" />',
+            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
     }));
