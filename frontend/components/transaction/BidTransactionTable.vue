@@ -55,15 +55,15 @@
         >
             <div class="underline">Auction total price</div>
             <div>
-                <Popover
-                    v-if="!auctionTransaction.isActive && !auctionTransaction.isFinished"
-                    placement="topRight"
-                    content="Since the auction is not active, there is no total Auction Price for this auction."
-                    trigger="hover"
-                >
-                    <span class="opacity-50">Unknown</span>
-                </Popover>
-                <format-currency v-else :value="auctionTransaction.totalPrice" currency="DAI" />
+                <span v-if="!auctionTransaction.isActive && !auctionTransaction.isFinished" class="opacity-50">
+                    Unknown
+                </span>
+                <format-currency
+                    v-else-if="auctionTransaction.totalPrice"
+                    :value="auctionTransaction.totalPrice"
+                    currency="DAI"
+                />
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
         <div
@@ -107,7 +107,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { Popover } from 'ant-design-vue';
 import BidInput from '../utils/BidInput.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
@@ -119,7 +118,6 @@ export default Vue.extend({
         FormatCurrency,
         PriceDropAnimation,
         BidInput,
-        Popover,
     },
     props: {
         auctionTransaction: {
@@ -139,7 +137,7 @@ export default Vue.extend({
     computed: {
         amountToReceive(): BigNumber | undefined {
             if (!this.amountToBid || !this.auctionTransaction.approximateUnitPrice) {
-                return this.auctionTransaction.totalPrice;
+                return this.auctionTransaction.totalPrice || undefined;
             }
             return this.amountToBid.dividedBy(this.auctionTransaction.approximateUnitPrice);
         },

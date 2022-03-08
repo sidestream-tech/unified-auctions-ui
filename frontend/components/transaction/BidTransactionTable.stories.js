@@ -33,6 +33,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                 auctionTransaction: {
                     ...fakeAuction,
                     isFinished: true,
+                    totalPrice: null,
                 },
             };
         },
@@ -47,6 +48,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                     ...fakeAuction,
                     isActive: false,
                     isFinished: false,
+                    totalPrice: null,
                 },
             };
         },
