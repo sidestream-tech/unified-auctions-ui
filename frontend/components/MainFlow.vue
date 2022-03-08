@@ -125,7 +125,7 @@ export default Vue.extend({
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
         },
         selectedTakeEvents(): Event[] | null {
-            if (this.selectedAuction === null) {
+            if (this.selectedAuction === null && this.takeEvents) {
                 return this.takeEvents[this.selectedAuctionId] || null;
             }
             return null;
