@@ -14,10 +14,18 @@ const common = {
     },
 };
 
-storiesOf('Utils/BidInput', module).add('Default', () => ({
-    ...common,
-    template: `
+storiesOf('Utils/BidInput', module)
+    .add('Default', () => ({
+        ...common,
+        template: `
     <div class="w-80">
         <BidInput class="ml-24" v-model="value" :totalPrice="totalPrice" :minimumAmountDAI="minimumAmountDAI" />
     </div>`,
-}));
+    }))
+    .add('Disabled', () => ({
+        ...common,
+        template: `
+    <div class="w-80">
+        <BidInput class="ml-24" v-model="value" :totalPrice="totalPrice" :minimumAmountDAI="minimumAmountDAI" disabled />
+    </div>`,
+    }));

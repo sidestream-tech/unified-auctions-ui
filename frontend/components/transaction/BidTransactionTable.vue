@@ -57,7 +57,7 @@
             <div>
                 <Popover
                     v-if="!auctionTransaction.isActive && !auctionTransaction.isFinished"
-                    placement="top"
+                    placement="topRight"
                     content="Since the auction is not active, there is no total Auction Price for this auction."
                     trigger="hover"
                 >
@@ -68,11 +68,11 @@
         </div>
         <div
             class="flex justify-between text-primary hover:text-primary-light cursor-pointer"
-            @click="amountToBid = minimumDepositDAI"
+            @click="amountToBid = minimumDepositDai"
         >
             <div class="underline">Auction minimum bid</div>
             <div>
-                <format-currency v-if="minimumDepositDAI" :value="minimumDepositDAI" currency="DAI" />
+                <format-currency v-if="minimumDepositDai" :value="minimumDepositDai" currency="DAI" />
                 <div v-else class="opacity-50">Unknown</div>
             </div>
         </div>
@@ -81,8 +81,9 @@
             <div class="w-2/5">
                 <bid-input
                     v-model="amountToBid"
-                    :minimum-deposit-dai="minimumDepositDAI"
+                    :minimum-deposit-dai="minimumDepositDai"
                     :total-price="auctionTransaction.totalPrice"
+                    :disabled="auctionTransaction.isFinished || !auctionTransaction.isActive"
                 />
             </div>
         </div>
@@ -125,7 +126,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
         },
-        minimumDepositDAI: {
+        minimumDepositDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },

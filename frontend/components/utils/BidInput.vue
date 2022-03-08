@@ -7,13 +7,15 @@
             <Tooltip :visible="!!error" placement="topLeft" :title="error">
                 <label>
                     <div v-if="!value" class="absolute text-right right-8 top-1">
-                        <format-currency :value="totalPrice" />
+                        <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
+                        <span v-else class="opacity-50">UNKNOWN</span>
                     </div>
                     <span class="absolute right-1 top-1">DAI</span>
                     <input
                         v-model="userInput"
                         class="Input"
                         :class="{ Error: error }"
+                        :disabled="disabled"
                         @focus="hideTotalPrice()"
                         @blur="validateFinished()"
                     />
@@ -43,6 +45,10 @@ export default Vue.extend({
         value: {
             type: Object as Vue.PropType<BigNumber> | undefined,
             default: undefined,
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {
