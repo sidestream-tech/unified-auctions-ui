@@ -1,6 +1,6 @@
 import { setTimeout as delay } from 'timers/promises';
 import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
-import { getAllActiveAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
+import { getAllAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
 import notify from './notify';
 import participate, { setupKeeper } from './keeper';
 import { ETHEREUM_NETWORK } from './variables';
@@ -12,7 +12,10 @@ const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL ?? '') || DEFAULT
 
 const loop = async function (): Promise<void> {
     try {
-        const activeAuctions = await getAllActiveAuctions(ETHEREUM_NETWORK);
+        const activeAuctions = await getAllAuctions(ETHEREUM_NETWORK);
+        if (activeAuctions.length === 0) {
+            return;
+        }
         const newAuctions = getNewAuctionsFromActiveAuctions(activeAuctions);
         newAuctions.map(notify);
         activeAuctions.map(participate);

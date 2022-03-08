@@ -2,14 +2,12 @@ import type { Notifier } from './types';
 import getContract, { getContractAddressByName, getClipperNameByCollateralType } from './contracts';
 import executeTransaction from './execute';
 import memoizee from 'memoizee';
-import getSigner from './signer';
 
 const _authorizeWallet = async function (network: string, revoke: boolean, notifier?: Notifier): Promise<string> {
-    const signer = await getSigner(network);
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const contractMethod = revoke ? 'nope' : 'hope';
     const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
-    await getWalletAuthorizationStatus.delete(network, await signer.getAddress());
+    await getWalletAuthorizationStatus.clear();
     return transaction;
 };
 
@@ -24,12 +22,11 @@ const _authorizeCollateral = async function (
     revoke: boolean,
     notifier?: Notifier
 ): Promise<string> {
-    const signer = await getSigner(network);
     const contractName = getClipperNameByCollateralType(collateralType);
     const clipperAddress = await getContractAddressByName(network, contractName);
     const contractMethod = revoke ? 'nope' : 'hope';
     const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [clipperAddress], notifier);
-    await getCollateralAuthorizationStatus.delete(network, collateralType, await signer.getAddress());
+    await getCollateralAuthorizationStatus.clear();
     return transaction;
 };
 

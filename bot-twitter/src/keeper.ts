@@ -26,7 +26,9 @@ export const setupKeeper = async function () {
         const signer = await getSigner(ETHEREUM_NETWORK);
         const address = await signer.getAddress();
         isSetupCompleted = true;
-        console.info(`keeper: setup complete: using wallet with address "${address}" as a signer`);
+        console.info(
+            `keeper: setup complete: using wallet "${address}", looking for minimum clear profit of "${KEEPER_MIN_PROFIT_DAI}" DAI`
+        );
     } catch (error) {
         console.warn('keeper: setup error, keeper will not run, please check that KEEPER_WALLET_PRIVATE_KEY is valid');
     }

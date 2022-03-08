@@ -23,8 +23,9 @@ export const getNewAuctionsFromActiveAuctions = function (activeActions: Auction
     return newAuctions;
 };
 
-export const getAllActiveAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
+export const getAllAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
     const auctions = await fetchAllInitialAuctions(network);
-    console.info(`auctions: found "${auctions.length}" on "${network}" network`);
+    const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
+    console.info(`auctions: found "${auctions.length}" auctions (${auctionIds}) on "${network}" network`);
     return auctions;
 };
