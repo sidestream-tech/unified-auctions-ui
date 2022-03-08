@@ -137,7 +137,7 @@ export default Vue.extend({
     computed: {
         amountToReceive(): BigNumber | undefined {
             if (!this.amountToBid || !this.auctionTransaction.approximateUnitPrice) {
-                return this.auctionTransaction.totalPrice || undefined;
+                return this.auctionTransaction.collateralAmount;
             }
             return this.amountToBid.dividedBy(this.auctionTransaction.approximateUnitPrice);
         },

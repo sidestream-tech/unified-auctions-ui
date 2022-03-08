@@ -64,9 +64,12 @@ export default Vue.extend({
     },
     watch: {
         value(newVal: BigNumber | undefined): void {
-            if (!newVal || newVal.isEqualTo(this.totalPrice)) {
+            if (!newVal) {
                 this.resetToTotal();
                 return;
+            }
+            if (newVal.isEqualTo(this.totalPrice)) {
+                this.resetToTotal();
             }
             if (newVal.isEqualTo(this.minimumDepositDai)) {
                 this.userInput = newVal.toString();
@@ -105,7 +108,7 @@ export default Vue.extend({
             if (!this.userInput) {
                 this.userInput = '0';
             }
-            if (this.value.isEqualTo(this.totalPrice)) {
+            if (!this.value || this.value.isEqualTo(this.totalPrice)) {
                 this.resetToTotal();
             }
         },
