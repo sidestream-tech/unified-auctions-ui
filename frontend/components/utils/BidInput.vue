@@ -10,7 +10,7 @@
                 <input
                     v-model="userInput"
                     class="Input"
-                    :class="{ Error: error }"
+                    :class="{ Error: error, Inactive: disabled }"
                     :disabled="disabled"
                     @focus="hideTotalPrice()"
                     @blur="validateFinished()"
@@ -133,5 +133,9 @@ export default Vue.extend({
 
 .Error:focus {
     @apply border-red-500;
+}
+
+.Inactive {
+    @apply border-gray-400 hover:border-gray-400;
 }
 </style>

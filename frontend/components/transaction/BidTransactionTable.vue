@@ -50,16 +50,14 @@
             </div>
         </div>
         <div
-            class="flex justify-between text-primary hover:text-primary-light cursor-pointer"
-            @click="amountToBid = auctionTransaction.totalPrice"
+            class="flex justify-between"
+            :class="{ ClickableText: isActive && auctionTransaction.totalPrice }"
+            @click="setAmountToBid(auctionTransaction.totalPrice)"
         >
-            <div class="underline">Auction total price</div>
+            <div :class="{ underline: isActive && auctionTransaction.totalPrice }">Auction total price</div>
             <div>
-                <span v-if="!auctionTransaction.isActive && !auctionTransaction.isFinished" class="opacity-50">
-                    Unknown
-                </span>
                 <format-currency
-                    v-else-if="auctionTransaction.totalPrice"
+                    v-if="auctionTransaction.totalPrice && isActive"
                     :value="auctionTransaction.totalPrice"
                     currency="DAI"
                 />
@@ -67,12 +65,13 @@
             </div>
         </div>
         <div
-            class="flex justify-between text-primary hover:text-primary-light cursor-pointer"
-            @click="amountToBid = minimumDepositDai"
+            class="flex justify-between"
+            :class="{ ClickableText: isActive && minimumDepositDai }"
+            @click="setAmountToBid(minimumDepositDai)"
         >
-            <div class="underline">Auction minimum bid</div>
+            <div :class="{ underline: isActive && minimumDepositDai }">Auction minimum bid</div>
             <div>
-                <format-currency v-if="minimumDepositDai" :value="minimumDepositDai" currency="DAI" />
+                <format-currency v-if="minimumDepositDai && isActive" :value="minimumDepositDai" currency="DAI" />
                 <div v-else class="opacity-50">Unknown</div>
             </div>
         </div>
@@ -91,7 +90,7 @@
             <div>The amount to receive</div>
             <div>
                 <format-currency
-                    v-if="amountToReceive"
+                    v-if="amountToReceive && isActive"
                     :value="amountToReceive"
                     :currency="auctionTransaction.collateralSymbol"
                 />
@@ -141,6 +140,22 @@ export default Vue.extend({
             }
             return this.amountToBid.dividedBy(this.auctionTransaction.approximateUnitPrice);
         },
+        isActive(): boolean {
+            return this.auctionTransaction.isActive && !this.auctionTransaction.isFinished;
+        },
+    },
+    methods: {
+        setAmountToBid(value: BigNumber | undefined) {
+            if (this.isActive) {
+                this.amountToBid = value;
+            }
+        },
     },
 });
 </script>
+
+<style scoped>
+.ClickableText {
+    @apply text-primary hover:text-primary-light cursor-pointer;
+}
+</style>
