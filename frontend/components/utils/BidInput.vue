@@ -15,7 +15,6 @@
                         class="Input"
                         :class="{ Error: error }"
                         @focus="hideTotalPrice()"
-                        @input="validateInput()"
                         @blur="validateFinished()"
                     />
                 </label>
@@ -57,26 +56,38 @@ export default Vue.extend({
             return !!this.error;
         },
     },
-    methods: {
-        validateInput(): void {
-            this.error = undefined;
-
-            if (!this.userInput) {
+    watch: {
+        value(newVal: BigNumber | undefined): void {
+            if (!newVal || newVal.isEqualTo(this.totalPrice)) {
+                this.resetToTotal();
                 return;
             }
-            const value = new BigNumber(this.userInput);
-            if (isNaN(value.toNumber())) {
-                this.userInput = this.value?.toString();
+            if (newVal.isEqualTo(this.minimumDepositDAI)) {
+                this.userInput = newVal.toString();
+            }
+        },
+        error(newVal): void {
+            this.$emit('error', newVal);
+        },
+        userInput(newVal, oldVal) {
+            this.validateInput(newVal, oldVal);
+        },
+    },
+    methods: {
+        validateInput(newVal: string, oldVal: string): void {
+            this.error = undefined;
+            if (!newVal) {
                 return;
+            }
+            const value = new BigNumber(newVal);
+            if (isNaN(value.toNumber())) {
+                this.userInput = oldVal;
             } else if (value.isGreaterThan(this.totalPrice)) {
                 this.error = `The bidding amount can not be greater than ${this.totalPrice} DAI`;
             } else if (value.isLessThan(this.minimumDepositDAI)) {
                 this.error = `The bidding amount can not be smaller than ${this.minimumDepositDAI} DAI`;
             } else {
                 this.setValue(value);
-            }
-            if (this.error && this.value) {
-                this.userInput = this.value.toString();
             }
         },
         hideTotalPrice(): void {
@@ -85,11 +96,10 @@ export default Vue.extend({
             }
         },
         validateFinished() {
-            this.error = undefined;
             if (!this.userInput) {
                 this.userInput = '0';
             }
-            if (this.value?.isEqualTo(this.totalPrice)) {
+            if (this.value.isEqualTo(this.totalPrice)) {
                 this.resetToTotal();
             }
         },

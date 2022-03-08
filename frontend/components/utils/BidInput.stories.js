@@ -8,11 +8,16 @@ const common = {
     data() {
         return {
             totalPrice: new BigNumber(faker.finance.amount()),
+            minimumAmountDAI: new BigNumber(faker.finance.amount(0, 20)),
+            value: undefined,
         };
     },
 };
 
 storiesOf('Utils/BidInput', module).add('Default', () => ({
     ...common,
-    template: '<div class="w-80"><BidInput :totalPrice="totalPrice" /></div>',
+    template: `
+    <div class="w-80">
+        <BidInput class="ml-24" v-model="value" :totalPrice="totalPrice" :minimumAmountDAI="minimumAmountDAI" />
+    </div>`,
 }));
