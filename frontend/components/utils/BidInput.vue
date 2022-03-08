@@ -36,7 +36,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        minimumDepositDAI: {
+        minimumDepositDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
@@ -62,7 +62,7 @@ export default Vue.extend({
                 this.resetToTotal();
                 return;
             }
-            if (newVal.isEqualTo(this.minimumDepositDAI)) {
+            if (newVal.isEqualTo(this.minimumDepositDai)) {
                 this.userInput = newVal.toString();
             }
         },
@@ -84,8 +84,8 @@ export default Vue.extend({
                 this.userInput = oldVal;
             } else if (value.isGreaterThan(this.totalPrice)) {
                 this.error = `The bidding amount can not be greater than ${this.totalPrice} DAI`;
-            } else if (value.isLessThan(this.minimumDepositDAI)) {
-                this.error = `The bidding amount can not be smaller than ${this.minimumDepositDAI} DAI`;
+            } else if (value.isLessThan(this.minimumDepositDai)) {
+                this.error = `The bidding amount can not be smaller than ${this.minimumDepositDai} DAI`;
             } else {
                 this.setValue(value);
             }

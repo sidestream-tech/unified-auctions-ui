@@ -18,23 +18,27 @@
         <div class="flex justify-between">
             <div>Auction Price</div>
             <div>
-                <PriceDropAnimation :auction="auctionTransaction" class="mr-1" />
-                <FormatCurrency :value="auctionTransaction.approximateUnitPrice" currency="DAI" /> per
-                <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                <template v-if="auctionTransaction.isActive">
+                    <PriceDropAnimation :auction="auctionTransaction" class="mr-1" />
+                    <FormatCurrency :value="auctionTransaction.approximateUnitPrice" currency="DAI" /> per
+                    <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                </template>
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
         <div class="flex justify-between">
             <div>
                 Transaction Fee
-                <span class="text-gray-300"
-                    >(~<FormatCurrency
+                <span class="text-gray-300">
+                    (~
+                    <FormatCurrency
                         v-if="auctionTransaction.biddingTransactionFeeETH"
                         :value="auctionTransaction.biddingTransactionFeeETH"
                         :decimals="5"
                     />
                     <span v-else>Unknown</span>
-                    ETH)</span
-                >
+                    ETH)
+                </span>
             </div>
             <div>
                 <FormatCurrency
@@ -45,22 +49,42 @@
                 <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
-        <div class="flex justify-between text-primary hover:text-primary-light cursor-pointer">
+        <div
+            class="flex justify-between text-primary hover:text-primary-light cursor-pointer"
+            @click="amountToBid = auctionTransaction.totalPrice"
+        >
             <div class="underline">Auction total price</div>
             <div>
-                <format-currency :value="auctionTransaction.totalPrice" currency="DAI" />
+                <Popover
+                    v-if="!auctionTransaction.isActive && !auctionTransaction.isFinished"
+                    placement="top"
+                    content="Since the auction is not active, there is no total Auction Price for this auction."
+                    trigger="hover"
+                >
+                    <span class="opacity-50">Unknown</span>
+                </Popover>
+                <format-currency v-else :value="auctionTransaction.totalPrice" currency="DAI" />
             </div>
         </div>
-        <div class="flex justify-between text-primary hover:text-primary-light cursor-pointer">
+        <div
+            class="flex justify-between text-primary hover:text-primary-light cursor-pointer"
+            @click="amountToBid = minimumDepositDAI"
+        >
             <div class="underline">Auction minimum bid</div>
             <div>
                 <format-currency v-if="minimumDepositDAI" :value="minimumDepositDAI" currency="DAI" />
                 <div v-else class="opacity-50">Unknown</div>
             </div>
         </div>
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
             <div>The amount to bid</div>
-            <div></div>
+            <div class="w-2/5">
+                <bid-input
+                    v-model="amountToBid"
+                    :minimum-deposit-dai="minimumDepositDAI"
+                    :total-price="auctionTransaction.totalPrice"
+                />
+            </div>
         </div>
         <div class="flex justify-between font-bold">
             <div>The amount to receive</div>
@@ -82,6 +106,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
+import { Popover } from 'ant-design-vue';
+import BidInput from '../utils/BidInput.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import PriceDropAnimation from '~/components/utils/PriceDropAnimation.vue';
@@ -91,6 +117,8 @@ export default Vue.extend({
         TimeTill,
         FormatCurrency,
         PriceDropAnimation,
+        BidInput,
+        Popover,
     },
     props: {
         auctionTransaction: {
@@ -101,22 +129,16 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        isFinished: {
-            type: Boolean,
-            default: false,
-        },
-        isActive: {
-            type: Boolean,
-            default: false,
-        },
+    },
+    data() {
+        return {
+            amountToBid: undefined as BigNumber | undefined,
+        };
     },
     computed: {
-        amountToBid(): BigNumber | undefined {
-            return undefined;
-        },
         amountToReceive(): BigNumber | undefined {
             if (!this.amountToBid || !this.auctionTransaction.approximateUnitPrice) {
-                return undefined;
+                return this.auctionTransaction.totalPrice;
             }
             return this.amountToBid.dividedBy(this.auctionTransaction.approximateUnitPrice);
         },
