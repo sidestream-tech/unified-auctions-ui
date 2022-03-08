@@ -87,9 +87,9 @@ export default Vue.extend({
             if (isNaN(value.toNumber())) {
                 this.userInput = oldVal;
             } else if (value.isGreaterThan(this.totalPrice)) {
-                this.error = `The bidding amount can not be greater than ${this.totalPrice} DAI`;
+                this.error = `The bidding amount can not be greater than ${this.totalPrice.toFixed(2)} DAI`;
             } else if (value.isLessThan(this.minimumDepositDai)) {
-                this.error = `The bidding amount can not be smaller than ${this.minimumDepositDai} DAI`;
+                this.error = `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
             } else {
                 this.setValue(value);
             }
