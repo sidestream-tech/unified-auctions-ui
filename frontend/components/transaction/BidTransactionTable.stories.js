@@ -71,7 +71,7 @@ storiesOf('Transaction/BidTransactionTable', module)
         },
         created() {
             setInterval(() => {
-                this.auctionTransaction.totalPrice = this.auctionTransaction.totalPrice * 0.99;
+                this.auctionTransaction.totalPrice = this.auctionTransaction.totalPrice.multipliedBy(0.99);
             }, 5000);
         },
         template:
