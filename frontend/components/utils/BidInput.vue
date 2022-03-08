@@ -1,27 +1,22 @@
 <template>
-    <div class="flex w-full items-center space-x-2 justify-end">
-        <div v-if="value" class="text-primary hover:text-primary-light whitespace-nowrap" @click="resetToTotal()">
-            Reset to Total
-        </div>
-        <div class="w-full inline-block relative flex-shrink-0">
-            <Tooltip :visible="!!error" placement="topLeft" :title="error">
-                <label>
-                    <div v-if="!value" class="absolute text-right right-8 top-1">
-                        <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
-                        <span v-else class="opacity-50">UNKNOWN</span>
-                    </div>
-                    <span class="absolute right-1 top-1">DAI</span>
-                    <input
-                        v-model="userInput"
-                        class="Input"
-                        :class="{ Error: error }"
-                        :disabled="disabled"
-                        @focus="hideTotalPrice()"
-                        @blur="validateFinished()"
-                    />
-                </label>
-            </Tooltip>
-        </div>
+    <div class="w-full inline-block relative flex-shrink-0">
+        <Tooltip :visible="!!error" placement="topLeft" :title="error">
+            <label>
+                <div v-if="!value" class="absolute text-right right-8 top-1">
+                    <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
+                    <span v-else class="opacity-50">UNKNOWN</span>
+                </div>
+                <span class="absolute right-1 top-1">DAI</span>
+                <input
+                    v-model="userInput"
+                    class="Input"
+                    :class="{ Error: error }"
+                    :disabled="disabled"
+                    @focus="hideTotalPrice()"
+                    @blur="validateFinished()"
+                />
+            </label>
+        </Tooltip>
     </div>
 </template>
 

@@ -78,7 +78,7 @@
         </div>
         <div class="flex justify-between items-center">
             <div>The amount to bid</div>
-            <div class="w-2/5">
+            <div class="w-1/2">
                 <bid-input
                     v-model="amountToBid"
                     :minimum-deposit-dai="minimumDepositDai"

@@ -19,13 +19,13 @@ storiesOf('Utils/BidInput', module)
         ...common,
         template: `
     <div class="w-80">
-        <BidInput class="ml-24" v-model="value" :totalPrice="totalPrice" :minimumDepositDAI="minimumDepositDAI" />
+        <BidInput v-model="value" :totalPrice="totalPrice" :minimumDepositDAI="minimumDepositDAI" />
     </div>`,
     }))
     .add('Disabled', () => ({
         ...common,
         template: `
     <div class="w-80">
-        <BidInput class="ml-24" v-model="value" :totalPrice="totalPrice" :minimumDepositDAI="minimumDepositDAI" disabled />
+        <BidInput v-model="value" :totalPrice="totalPrice" :minimumDepositDAI="minimumDepositDAI" disabled />
     </div>`,
     }));
