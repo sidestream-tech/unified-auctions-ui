@@ -1,4 +1,4 @@
-import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier } from './types';
+import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier, TakeEvent } from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
 import { getCalleeData, getMarketPrice } from './calleeFunctions';
@@ -17,8 +17,8 @@ import getContract, { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
 import parseAuctionURL from './helpers/parseAuctionURL';
-import { Event, EventFilter } from 'ethers';
-import getNetworkDate from './date';
+import { EventFilter } from 'ethers';
+import getNetworkDate, { fetchDateByBlockNumber } from './date';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -130,7 +130,15 @@ export const fetchAllAuctions = async function (network: string): Promise<Auctio
     return await Promise.all(auctionsWithMarketValue.map(a => enrichAuctionWithTransactionFees(a, fees)));
 };
 
-export const fetchTakeEvents = async function (network: string, auctionURL: string): Promise<Array<Event>> {
+const enrichTakeEventWithDate = async function (network: string, takeEvent: TakeEvent): Promise<TakeEvent> {
+    const date = await fetchDateByBlockNumber(network, takeEvent.blockNumber);
+    return {
+        ...takeEvent,
+        date,
+    };
+};
+
+export const fetchTakeEvents = async function (network: string, auctionURL: string): Promise<Array<TakeEvent>> {
     const { collateralType, auctionId } = parseAuctionURL(auctionURL);
     const encodedAuctionId = convertNumberTo32Bytes(auctionId);
 
@@ -138,7 +146,16 @@ export const fetchTakeEvents = async function (network: string, auctionURL: stri
     const contract = await getContract(network, contractName);
 
     const eventFilters: EventFilter = contract.filters.Take(encodedAuctionId);
-    return await contract.queryFilter(eventFilters);
+    const events = await contract.queryFilter(eventFilters);
+
+    return await Promise.all(
+        events.map(event =>
+            enrichTakeEventWithDate(network, {
+                transactionHash: event.transactionHash,
+                blockNumber: event.blockNumber,
+            })
+        )
+    );
 };
 
 export const restartAuction = async function (

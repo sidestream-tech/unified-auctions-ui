@@ -1,4 +1,4 @@
-import type { Auction, AuctionTransaction } from 'auctions-core/src/types';
+import type { Auction, AuctionTransaction, TakeEvent } from "auctions-core/src/types";
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import {
@@ -21,7 +21,7 @@ let updateAuctionsPricesIntervalId: ReturnType<typeof setInterval> | undefined;
 
 interface State {
     auctionStorage: Record<string, AuctionTransaction>;
-    takeEventStorage: Record<string, Event[]>;
+    takeEventStorage: Record<string, TakeEvent[]>;
     isFetching: boolean;
     isBidding: boolean;
     error: string | null;
@@ -51,7 +51,7 @@ export const getters = {
             };
         });
     },
-    listTakeEvents(state: State): Record<string, Event[]> {
+    listTakeEvents(state: State): Record<string, TakeEvent[]> {
         return state.takeEventStorage;
     },
     getAuctionById: (state: State) => (id: string) => {
@@ -98,7 +98,7 @@ export const mutations = {
     setAuction(state: State, auction: AuctionTransaction) {
         state.auctionStorage[auction.id] = auction;
     },
-    setTakeEvents(state: State, { id, events }: { id: string; events: Event[] }) {
+    setTakeEvents(state: State, { id, events }: { id: string; events: TakeEvent[] }) {
         state.takeEventStorage[id] = events;
     },
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
@@ -239,10 +239,11 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         await checkAllSupportedCollaterals(network);
     },
-    async fetchTakeEventsFromAuction({ rootGetters, commit }: ActionContext<State, State>, url: string) {
+    async fetchTakeEventsFromAuction({ rootGetters, commit }: ActionContext<State, State>, auctionId: string) {
         const network = rootGetters['network/getMakerNetwork'];
 
-        const events = await fetchTakeEvents(network, url);
-        commit('setTakeEvents', { id: url, events });
+        const events = await fetchTakeEvents(network, auctionId);
+        console.info(events);
+        commit('setTakeEvents', { id: auctionId, events });
     },
 };

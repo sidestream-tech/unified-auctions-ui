@@ -59,6 +59,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
+import { TakeEvent } from 'auctions-core/dist/src/types';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import MainText from '~/components/MainText.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
@@ -73,7 +74,7 @@ export default Vue.extend({
             default: () => [],
         },
         takeEvents: {
-            type: Object as Vue.PropType<string, Event>,
+            type: Object as Vue.PropType<string, TakeEvent[]>,
             default: () => {},
         },
         isAuctionsLoading: {
@@ -124,7 +125,7 @@ export default Vue.extend({
         selectedAuction(): AuctionTransaction | null {
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
         },
-        selectedTakeEvents(): Event[] | null {
+        selectedTakeEvents(): TakeEvent[] | null {
             if (this.selectedAuction === null && this.takeEvents) {
                 return this.takeEvents[this.selectedAuctionId] || null;
             }

@@ -112,3 +112,9 @@ export declare interface MessageContent {
 export declare interface Notifier {
     (messageType: 'loading' | 'error' | 'success' | 'info', messageContent: MessageContent): void;
 }
+
+export declare interface TakeEvent {
+    transactionHash: string;
+    blockNumber: number;
+    date?: Date;
+}

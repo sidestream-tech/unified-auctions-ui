@@ -234,7 +234,12 @@
             </TextBlock>
         </div>
         <div v-if="takeEvents" class="mt-5">
-            <p class="mb-2">The auction was taken via {{ takeEvents.length }} transactions.</p>
+            <p class="mb-2">
+                The auction was taken via {{ takeEvents.length }} transaction<span v-if="takeEvents.length !== 1"
+                    >s</span
+                >
+                at {{ takeEvents[takeEvents.length - 1].date.toDateString() }}.
+            </p>
             <ul class="list-disc list-inside">
                 <li v-for="(event, index) of takeEvents" :key="index">
                     Transaction <FormatAddress :value="event.transactionHash" :shorten="true" />
@@ -246,7 +251,7 @@
 </template>
 
 <script lang="ts">
-import type { AuctionTransaction } from 'auctions-core/src/types';
+import type { AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert, Tooltip, Popover } from 'ant-design-vue';
 import PriceDropAnimation from './utils/PriceDropAnimation.vue';
@@ -289,7 +294,7 @@ export default Vue.extend({
             required: true,
         },
         takeEvents: {
-            type: Array as Vue.PropType<Event[]>,
+            type: Array as Vue.PropType<TakeEvent[]>,
             default: null,
         },
         error: {
@@ -317,7 +322,6 @@ export default Vue.extend({
     computed: {
         errorText(): string | null {
             if (!this.isAuctionsLoading && !this.auction) {
-                this.$emit('fetchTakeEventsFromAuction', this.auctionId);
                 if (this.takeEvents) {
                     return 'This auction is finished';
                 }
@@ -344,6 +348,14 @@ export default Vue.extend({
             handler(newIsExplanationsShown) {
                 if (!newIsExplanationsShown) {
                     this.isTableExpanded = true;
+                }
+            },
+        },
+        fetchTakeEvents: {
+            immediate: true,
+            handler() {
+                if (!this.isAuctionsLoading && !this.auction) {
+                    this.$emit('fetchTakeEventsFromAuction', this.auctionId);
                 }
             },
         },
