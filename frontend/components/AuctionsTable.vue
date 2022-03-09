@@ -126,7 +126,7 @@ export default Vue.extend({
                 {
                     title: 'Index',
                     dataIndex: 'index',
-                    sorter: compareBy('auctionId'),
+                    sorter: compareBy('index'),
                 },
                 {
                     title: 'Auction Amount',
