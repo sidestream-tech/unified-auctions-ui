@@ -116,5 +116,5 @@ export declare interface Notifier {
 export declare interface TakeEvent {
     transactionHash: string;
     blockNumber: number;
-    date?: Date;
+    transactionDate?: Date;
 }

@@ -252,8 +252,13 @@ export const actions = {
 
         const network = rootGetters['network/getMakerNetwork'];
 
-        const events = await fetchTakeEvents(network, auctionId);
-        commit('setTakeEvents', { id: auctionId, events });
-        commit('setAreTakeEventsFetching', false);
+        try {
+            const events = await fetchTakeEvents(network, auctionId);
+            commit('setTakeEvents', { id: auctionId, events });
+        } catch (error) {
+            console.error(error);
+        } finally {
+            commit('setAreTakeEventsFetching', false);
+        }
     },
 };

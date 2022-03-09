@@ -134,7 +134,7 @@ const enrichTakeEventWithDate = async function (network: string, takeEvent: Take
     const date = await fetchDateByBlockNumber(network, takeEvent.blockNumber);
     return {
         ...takeEvent,
-        date,
+        transactionDate: date,
     };
 };
 

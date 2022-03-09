@@ -238,13 +238,12 @@
                 The auction was taken via {{ takeEvents.length }} transaction<span v-if="takeEvents.length !== 1"
                     >s</span
                 >
-                at {{ takeEvents[takeEvents.length - 1].date.toISOString() }}.
+                at {{ takeEvents[takeEvents.length - 1].transactionDate.toISOString() }}.
             </p>
             <ul class="list-disc list-inside">
                 <li v-for="(event, index) of takeEvents" :key="index">
-                    Transaction <FormatAddress :value="event.transactionHash" :shorten="true" /> (<TimeTill
-                        :date="event.date"
-                    />)
+                    Transaction <FormatAddress :value="event.transactionHash" :shorten="true" />
+                    <span v-if="event.transactionDate"> executed <TimeTill :date="event.transactionDate" /> </span>
                 </li>
             </ul>
         </div>
@@ -358,13 +357,10 @@ export default Vue.extend({
                 }
             },
         },
-        fetchTakeEvents: {
-            immediate: true,
-            handler() {
-                if (!this.areAuctionsFetching && !this.auction) {
-                    this.$emit('fetchTakeEventsFromAuction', this.auctionId);
-                }
-            },
+        areAuctionsFetching(areAuctionsFetching) {
+            if (!areAuctionsFetching && !this.auction) {
+                this.$emit('fetchTakeEventsFromAuction', this.auctionId);
+            }
         },
     },
     methods: {
