@@ -10,9 +10,9 @@ import {
 } from 'auctions-core/src/auctions';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
+import Vue from 'vue';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
-import Vue from "vue";
 
 const REFETCH_INTERVAL = 30 * 1000;
 const TIMER_INTERVAL = 1000;
