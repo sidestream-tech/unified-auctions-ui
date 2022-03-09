@@ -46,8 +46,12 @@ export const isCollateralSymbolSupported = async function (
 export const isCollateralTypeSupported = async function (network: string, collateralType: string): Promise<boolean> {
     const suffix = collateralType.toUpperCase().replace('-', '_');
     const clipContractName = `MCD_CLIP_${suffix}`;
-    const collateralAddress = await fetchContractAddressByNetwork(network, clipContractName);
-    return !!collateralAddress;
+    try {
+        const collateralAddress = await fetchContractAddressByNetwork(network, clipContractName);
+        return !!collateralAddress;
+    } catch {
+        return false;
+    }
 };
 
 export const getSupportedCollateralTypes = async function (network: string): Promise<string[]> {
