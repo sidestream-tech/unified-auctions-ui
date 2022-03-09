@@ -52,7 +52,7 @@
         <div
             class="flex justify-between"
             :class="{ ClickableText: isActive && auctionTransaction.totalPrice }"
-            @click="setAmountToBid(auctionTransaction.totalPrice)"
+            @click="setAmountToBid(undefined)"
         >
             <div :class="{ underline: isActive && auctionTransaction.totalPrice }">Auction total price</div>
             <div>
@@ -90,7 +90,7 @@
             <div>The amount to receive</div>
             <div>
                 <format-currency
-                    v-if="amountToReceive && isActive"
+                    v-if="amountToReceive && isActive && !isBidAmountNaN"
                     :value="amountToReceive"
                     :currency="auctionTransaction.collateralSymbol"
                 />
@@ -125,7 +125,7 @@ export default Vue.extend({
         },
         minimumDepositDai: {
             type: Object as Vue.PropType<BigNumber>,
-            default: null,
+            required: true,
         },
     },
     data() {
@@ -142,6 +142,9 @@ export default Vue.extend({
         },
         isActive(): boolean {
             return this.auctionTransaction.isActive && !this.auctionTransaction.isFinished;
+        },
+        isBidAmountNaN(): boolean {
+            return this.amountToBid?.isNaN() || false;
         },
     },
     methods: {

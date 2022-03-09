@@ -35,7 +35,7 @@ export default Vue.extend({
         },
         minimumDepositDai: {
             type: Object as Vue.PropType<BigNumber>,
-            default: null,
+            required: true,
         },
         value: {
             type: Object as Vue.PropType<BigNumber> | undefined,
@@ -49,7 +49,6 @@ export default Vue.extend({
     data() {
         return {
             userInput: undefined as string | undefined,
-            error: undefined as string | undefined,
         };
     },
     computed: {
@@ -59,46 +58,54 @@ export default Vue.extend({
         maximumBid(): BigNumber {
             return this.totalPrice.minus(this.minimumDepositDai);
         },
+        error(): string | undefined {
+            if (!this.userInput) {
+                return undefined;
+            }
+            const value = new BigNumber(this.userInput);
+            if (value.isGreaterThan(this.maximumBid)) {
+                return `The bidding amount can not be greater than ${this.maximumBid.toFixed(2)} DAI`;
+            }
+            if (value.isLessThan(this.minimumDepositDai)) {
+                return `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
+            }
+            return undefined;
+        },
     },
     watch: {
         value(newVal: BigNumber | undefined): void {
             if (!newVal) {
-                this.resetToTotal();
+                this.setValue(undefined);
                 return;
             }
             if (newVal.isEqualTo(this.totalPrice)) {
-                this.resetToTotal();
+                this.setValue(undefined);
             }
             if (newVal.isEqualTo(this.minimumDepositDai)) {
                 this.userInput = newVal.toString();
             }
         },
         error(newVal): void {
+            if (newVal) {
+                this.setValue(new BigNumber(NaN));
+            }
             this.$emit('error', newVal);
         },
         userInput(newVal, oldVal) {
             this.validateInput(newVal, oldVal);
         },
-        totalPrice(newVal: BigNumber | undefined) {
-            if (newVal && newVal.minus(this.minimumDepositDai).isLessThan(this.value)) {
-                this.error = `The bidding amount can not be greater than ${this.maximumBid.toFixed(2)} DAI`;
-            }
-        },
     },
     methods: {
         validateInput(newVal: string, oldVal: string): void {
-            this.error = undefined;
             if (!newVal) {
                 return;
             }
             const value = new BigNumber(newVal);
-            if (isNaN(value.toNumber())) {
+            if (value.isNaN()) {
                 this.userInput = oldVal;
-            } else if (value.isGreaterThan(this.maximumBid)) {
-                this.error = `The bidding amount can not be greater than ${this.maximumBid.toFixed(2)} DAI`;
-            } else if (value.isLessThan(this.minimumDepositDai)) {
-                this.error = `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
-            } else {
+                return;
+            }
+            if (!this.error) {
                 this.setValue(value);
             }
         },
@@ -109,17 +116,16 @@ export default Vue.extend({
         },
         validateFinished() {
             if (!this.userInput) {
-                this.userInput = '0';
+                this.setValue(undefined);
             }
             if (!this.value || this.value.isEqualTo(this.totalPrice)) {
-                this.resetToTotal();
+                this.setValue(undefined);
             }
         },
-        resetToTotal() {
-            this.userInput = undefined;
-            this.setValue(undefined);
-        },
         setValue(value: BigNumber | undefined) {
+            if (!value) {
+                this.userInput = undefined;
+            }
             this.$emit('input', value);
         },
     },
