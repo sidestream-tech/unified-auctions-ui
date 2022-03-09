@@ -325,10 +325,11 @@ export default Vue.extend({
                 return this.error;
             } else if (this.auction?.isFinished || (!this.auction && this.takeEvents)) {
                 return 'This auction is finished';
-            } else if (!this.auction?.isActive && !this.areAuctionsFetching) {
+            } else if (!this.auction?.isActive && !this.areAuctionsFetching && !this.areTakeEventsFetching) {
                 return 'This auction is inactive and must be restarted';
             } else if (
                 !this.areAuctionsFetching &&
+                !this.areTakeEventsFetching &&
                 typeof this.auction?.marketUnitPriceToUnitPriceRatio === 'undefined'
             ) {
                 return `Swap transaction is not possible,
