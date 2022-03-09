@@ -12,19 +12,20 @@ const markAuctionAsKnown = function (auction: AuctionInitialInfo): void {
     knownAuctionIds.add(auction.id);
 };
 
-export const getNewAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
-    const auctions = await fetchAllInitialAuctions(network);
-    console.info(`auctions: found "${auctions.length}" on "${network}" network`);
-
-    const activeActions = auctions.filter(auction => auction.isActive);
-    console.info(`auctions: "${activeActions.length}" of "${auctions.length}" are active`);
-
+export const getNewAuctionsFromActiveAuctions = function (activeActions: AuctionInitialInfo[]): AuctionInitialInfo[] {
     const newAuctions = activeActions.filter(activeAction => {
         const isNew = activeAction.startDate > new Date(Date.now() - THRESHOLD_FOR_NEW_AUCTIONS);
         return isNew && checkIfAuctionIsAlreadyKnown(activeAction);
     });
-    console.info(`auctions: "${newAuctions.length}" of "${activeActions.length}" are new`);
+    console.info(`auctions: "${newAuctions.length}" of "${activeActions.length}" auctions are new`);
 
     newAuctions.map(markAuctionAsKnown);
     return newAuctions;
+};
+
+export const getAllAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
+    const auctions = await fetchAllInitialAuctions(network);
+    const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
+    console.info(`auctions: found "${auctions.length}" auctions (${auctionIds}) on "${network}" network`);
+    return auctions;
 };

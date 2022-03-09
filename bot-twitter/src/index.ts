@@ -1,37 +1,40 @@
+import { setTimeout as delay } from 'timers/promises';
 import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
-import { createSigner, setSigner } from 'auctions-core/src/signer';
-import { getNewAuctions } from './auctions';
+import { getAllAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
 import notify from './notify';
-import { setupWallet } from './authorizations';
+import participate, { setupKeeper } from './keeper';
+import { ETHEREUM_NETWORK } from './variables';
+import { setupTwitter } from './twitter';
 
-const ETHEREUM_NETWORK = process.env.ETHEREUM_NETWORK || 'kovan';
-const WALLET_PRIVATE_KEY = process.env.WALLET_PRIVATE_KEY;
 const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
+const SETUP_DELAY = 3 * 1000;
 const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL ?? '') || DEFAULT_REFETCH_INTERVAL;
-let refetchIntervalId: ReturnType<typeof setTimeout> | undefined;
 
 const loop = async function (): Promise<void> {
-    if (refetchIntervalId) {
-        clearInterval(refetchIntervalId);
-    }
     try {
-        (await getNewAuctions(ETHEREUM_NETWORK)).map(notify);
+        const activeAuctions = await getAllAuctions(ETHEREUM_NETWORK);
+        if (activeAuctions.length === 0) {
+            return;
+        }
+        const newAuctions = getNewAuctionsFromActiveAuctions(activeAuctions);
+        newAuctions.map(notify);
+        activeAuctions.map(participate);
     } catch (error) {
         console.error('loop error:', error);
-    } finally {
-        refetchIntervalId = setTimeout(loop, REFETCH_INTERVAL);
     }
 };
 
-const setup = async function (): Promise<void> {
+const start = async function (): Promise<void> {
+    await delay(SETUP_DELAY);
     getNetworkConfigByType(ETHEREUM_NETWORK);
-    if (WALLET_PRIVATE_KEY) {
-        setSigner(ETHEREUM_NETWORK, createSigner(ETHEREUM_NETWORK, WALLET_PRIVATE_KEY));
-        await setupWallet(ETHEREUM_NETWORK);
-    }
-    await loop();
+    await setupTwitter();
+    await setupKeeper();
+    loop();
+    setInterval(loop, REFETCH_INTERVAL);
 };
 
-setup().catch(error => {
+start().catch(error => {
     throw error;
 });
+
+export default function () {} // required by nuxt

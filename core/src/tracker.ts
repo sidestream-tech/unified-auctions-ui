@@ -1,4 +1,4 @@
-import type { Notifier } from './types';
+import type { Notifier, MessageContent } from './types';
 import { ethers } from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
 import truncateText from './helpers/truncateText';
@@ -6,9 +6,13 @@ import truncateText from './helpers/truncateText';
 const DEFAULT_NOTIFICATION_DURATION = 3;
 const NUMBER_OF_BLOCKS_TO_CONFIRM = 5;
 
+const defaultNotifier = function (_: string, messageContent: MessageContent) {
+    console.info(`transaction ${messageContent.key}: ${messageContent.content}`);
+};
+
 const trackTransaction = async function (
     transactionPromise: Promise<ethers.ContractTransaction>,
-    notifier: Notifier = console.info,
+    notifier: Notifier = defaultNotifier,
     confirmTransaction = true
 ): Promise<string> {
     const messageId = uuidv4();
@@ -35,7 +39,7 @@ const trackTransaction = async function (
             key: messageId,
             duration: DEFAULT_NOTIFICATION_DURATION,
         });
-        throw new Error(error);
+        throw error;
     }
 
     try {
@@ -72,7 +76,7 @@ const trackTransaction = async function (
             key: messageId,
             duration: DEFAULT_NOTIFICATION_DURATION,
         });
-        throw new Error(error);
+        throw error;
     }
 };
 

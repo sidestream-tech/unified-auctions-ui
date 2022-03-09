@@ -2,37 +2,68 @@ import type { Auction, AuctionTransaction, TransactionFees } from './types';
 import BigNumber from './bignumber';
 import { getMarketPrice } from './calleeFunctions';
 import { getGasPrice } from './gas';
+import getSigner from './signer';
+import { getCollateralAuthorizationStatus, getWalletAuthorizationStatus } from './authorizations';
+
+export const convertETHtoDAI = async function (network: string, eth: BigNumber): Promise<BigNumber> {
+    const exchangeRate = await getMarketPrice(network, 'ETH');
+    return eth.multipliedBy(exchangeRate);
+};
 
 export const getApproximateTransactionFees = async function (network: string): Promise<TransactionFees> {
     const gasPrice = await getGasPrice(network);
-    const exchangeRate = await getMarketPrice(network, 'ETH');
-    const convertETHtoDAI = function (eth: BigNumber) {
-        return eth.multipliedBy(exchangeRate);
-    };
+
     // TODO: figure out a way to properly estimate gas
     // for each transaction when no wallet is connected
     const biddingTransactionFeeETH = gasPrice.multipliedBy(647053);
     const authTransactionFeeETH = gasPrice.multipliedBy(74951);
     const restartTransactionFeeETH = gasPrice.multipliedBy(209182);
+
     return {
         biddingTransactionFeeETH,
-        biddingTransactionFeeDAI: convertETHtoDAI(biddingTransactionFeeETH),
+        biddingTransactionFeeDAI: await convertETHtoDAI(network, biddingTransactionFeeETH),
         authTransactionFeeETH,
-        authTransactionFeeDAI: convertETHtoDAI(authTransactionFeeETH),
+        authTransactionFeeDAI: await convertETHtoDAI(network, authTransactionFeeETH),
         restartTransactionFeeETH,
     };
 };
 
-export const enrichAuctionWithTransactionFees = function (
+export const enrichAuctionWithTransactionFees = async function (
     auction: Auction,
-    fees: TransactionFees
-): AuctionTransaction {
+    fees: TransactionFees,
+    network: string
+): Promise<AuctionTransaction> {
+    let totalFeeETH = fees.biddingTransactionFeeETH;
+
+    try {
+        const signer = await getSigner(network);
+        const walletAddress = await signer.getAddress();
+        const isWalletAuthed = await getWalletAuthorizationStatus(network, walletAddress);
+        const isCollateralAuthed = await getCollateralAuthorizationStatus(
+            network,
+            auction.collateralType,
+            walletAddress
+        );
+
+        if (!isWalletAuthed) {
+            totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);
+        }
+        if (!isCollateralAuthed) {
+            totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);
+        }
+    } catch (e) {
+        totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH).plus(fees.authTransactionFeeETH);
+    }
+
+    const totalFeeDAI = await convertETHtoDAI(network, totalFeeETH);
     const auctionTransaction = {
         ...auction,
         ...fees,
+        totalFeeETH: totalFeeETH,
+        totalFeeDAI: totalFeeDAI,
     } as AuctionTransaction;
-    if (auction.transactionProfit && fees.biddingTransactionFeeDAI) {
-        auctionTransaction.transactionProfitMinusFees = auction.transactionProfit.minus(fees.biddingTransactionFeeDAI);
+    if (auction.transactionGrossProfit && fees.biddingTransactionFeeDAI) {
+        auctionTransaction.transactionNetProfit = auction.transactionGrossProfit.minus(totalFeeDAI);
     }
     return auctionTransaction;
 };

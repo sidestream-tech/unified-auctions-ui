@@ -82,7 +82,7 @@ export default Vue.extend({
             type: String,
             required: true,
         },
-        transactionProfit: {
+        transactionGrossProfit: {
             type: [Number, Object] as Vue.PropType<Number | BigNumber>,
             default: null,
         },
@@ -99,7 +99,7 @@ export default Vue.extend({
             if (this.disabled) {
                 return 'disabled';
             }
-            if (this.transactionProfit < 0) {
+            if (this.transactionGrossProfit < 0) {
                 return 'notProfitable';
             }
             if (!this.transactionAddress) {

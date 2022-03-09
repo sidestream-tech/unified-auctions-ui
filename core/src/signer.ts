@@ -7,8 +7,6 @@ const signers: Record<string, Promise<ethers.Signer>> = {};
 export const createSigner = async function (network: string, privateKey: string): Promise<ethers.Signer> {
     const provider = await createProvider(network);
     const signer = new ethers.Wallet(privateKey, provider);
-    const address = await signer.getAddress();
-    console.info(`Using wallet with address "${address}" as a signer`);
     return signer;
 };
 

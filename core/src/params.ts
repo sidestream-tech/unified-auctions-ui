@@ -5,15 +5,13 @@ import BigNumber from './bignumber';
 import getProvider from './provider';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import { RAY_NUMBER_OF_DIGITS } from './constants/UNITS';
-import { fetchContractsAddressesByNetwork, getSupportedCollateralTypes } from './addresses';
+import { fetchContractAddressByNetwork, getSupportedCollateralTypes } from './addresses';
 
 const PARAMS_CACHE = 24 * 60 * 60 * 1000;
 
 const getCalcAddressByCollateralType = async function (network: string, collateralType: string): Promise<string> {
     const suffix = collateralType.replace('-', '_');
-    const contracts = await fetchContractsAddressesByNetwork(network);
-    const calcAddress = contracts[`MCD_CLIP_CALC_${suffix}`];
-
+    const calcAddress = await fetchContractAddressByNetwork(network, `MCD_CLIP_CALC_${suffix}`);
     if (!calcAddress) {
         throw new Error(`"${collateralType}" contract is not found on the "${network}" network`);
     }

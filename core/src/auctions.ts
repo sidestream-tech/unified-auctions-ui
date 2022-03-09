@@ -9,8 +9,8 @@ import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
     calculateAuctionPrice,
-    calculateTransactionProfit,
-    calculateTransactionProfitDate,
+    calculateTransactionGrossProfit,
+    calculateTransactionGrossProfitDate,
 } from './price';
 import { getSupportedCollateralTypes } from './addresses';
 import { getClipperNameByCollateralType } from './contracts';
@@ -54,13 +54,11 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
         };
         return {
             ...auctionWithMarketValues,
-            transactionProfit: calculateTransactionProfit(auctionWithMarketValues),
+            transactionGrossProfit: calculateTransactionGrossProfit(auctionWithMarketValues),
         };
     } catch (error) {
-        console.warn(
-            `Fetching exchange rates from UniSwap failed for ${auction.id} with error:`,
-            error instanceof Error && error.message
-        );
+        // since it's expected that some collaterals are not tradable on some networks
+        // we should just ignore this error
         return auction;
     }
 };
@@ -79,13 +77,13 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
     const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
     const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
     const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
-    const transactionProfitDate = calculateTransactionProfitDate(auctionWithParams, currentDate);
+    const transactionGrossProfitDate = calculateTransactionGrossProfitDate(auctionWithParams, currentDate);
     return {
         ...auctionWithParams,
         secondsTillNextPriceDrop,
         approximateUnitPrice,
         totalPrice,
-        transactionProfitDate,
+        transactionGrossProfitDate,
     };
 };
 
@@ -108,24 +106,34 @@ export const fetchAllInitialAuctions = async function (network: string): Promise
 
 export const fetchAllAuctions = async function (network: string): Promise<AuctionTransaction[]> {
     const auctions = await fetchAllInitialAuctions(network);
+    return await Promise.all(auctions.map(a => enrichAuction(network, a)));
+};
 
+export const enrichAuction = async function (
+    network: string,
+    auction: AuctionInitialInfo
+): Promise<AuctionTransaction> {
     // enrich them with statuses
-    const auctionsWithStatusesPromises = auctions.map((auction: AuctionInitialInfo) =>
-        enrichAuctionWithActualNumbers(network, auction)
-    );
-    const auctionsWithStatuses = await Promise.all(auctionsWithStatusesPromises);
+    const auctionWithStatus = await enrichAuctionWithActualNumbers(network, auction);
 
     // enrich them with price drop
-    const auctionsWithPriceDrop = await Promise.all(auctionsWithStatuses.map(enrichAuctionWithPriceDrop));
+    const auctionWithPriceDrop = await enrichAuctionWithPriceDrop(auctionWithStatus);
 
     // enrich them with market values
-    const auctionsWithMarketValue = await Promise.all(
-        auctionsWithPriceDrop.map(a => enrichAuctionWithMarketValues(a, network))
-    );
+    const auctionWithMarketValue = await enrichAuctionWithMarketValues(auctionWithPriceDrop, network);
 
     // enrich with profit and fee calculation
     const fees = await getApproximateTransactionFees(network);
-    return await Promise.all(auctionsWithMarketValue.map(a => enrichAuctionWithTransactionFees(a, fees)));
+    const auctionWithFees = await enrichAuctionWithTransactionFees(auctionWithMarketValue, fees, network);
+
+    if (auction.debtDAI.isEqualTo(0)) {
+        return {
+            ...auctionWithFees,
+            isFinished: true,
+            isActive: false,
+        };
+    }
+    return auctionWithFees;
 };
 
 export const restartAuction = async function (
