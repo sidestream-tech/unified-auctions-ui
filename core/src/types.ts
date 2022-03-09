@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 export declare interface AuctionInitialInfo {
     network: string;
     id: string;
-    auctionId: number;
+    index: number;
     collateralType: string;
     collateralSymbol: string;
     collateralAmount: BigNumber;

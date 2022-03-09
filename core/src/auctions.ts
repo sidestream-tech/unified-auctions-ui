@@ -16,7 +16,7 @@ import { getSupportedCollateralTypes } from './addresses';
 import getContract, { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
-import parseAuctionURL from './helpers/parseAuctionURL';
+import parseAuctionId from './helpers/parseAuctionId';
 import { EventFilter } from 'ethers';
 import getNetworkDate, { fetchDateByBlockNumber } from './date';
 
@@ -32,7 +32,7 @@ const enrichAuctionWithActualNumbers = async function (
             totalPrice: new BigNumber(0),
         };
     }
-    const auctionStatus = await fetchAuctionStatus(network, auction.collateralType, auction.auctionId);
+    const auctionStatus = await fetchAuctionStatus(network, auction.collateralType, auction.index);
     return {
         ...auction,
         ...auctionStatus,
@@ -139,13 +139,13 @@ const enrichTakeEventWithDate = async function (network: string, takeEvent: Take
 };
 
 export const fetchTakeEvents = async function (network: string, auctionURL: string): Promise<Array<TakeEvent>> {
-    const { collateralType, auctionId } = parseAuctionURL(auctionURL);
-    const encodedAuctionId = convertNumberTo32Bytes(auctionId);
+    const { collateralType, index } = parseAuctionId(auctionURL);
+    const encodedAuctionIndex = convertNumberTo32Bytes(index);
 
     const contractName = getClipperNameByCollateralType(collateralType);
     const contract = await getContract(network, contractName);
 
-    const eventFilters: EventFilter = contract.filters.Take(encodedAuctionId);
+    const eventFilters: EventFilter = contract.filters.Take(encodedAuctionIndex);
     const events = await contract.queryFilter(eventFilters);
 
     return await Promise.all(
@@ -165,7 +165,7 @@ export const restartAuction = async function (
     notifier?: Notifier
 ): Promise<string> {
     const contractName = getClipperNameByCollateralType(auction.collateralType);
-    return executeTransaction(network, contractName, 'redo', [auction.auctionId, profitAddress], notifier, false);
+    return executeTransaction(network, contractName, 'redo', [auction.index, profitAddress], notifier, false);
 };
 
 export const bidOnTheAuction = async function (
@@ -178,7 +178,7 @@ export const bidOnTheAuction = async function (
     const calleeData = await getCalleeData(network, auction.collateralType, profitAddress);
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
-        convertNumberTo32Bytes(auction.auctionId),
+        convertNumberTo32Bytes(auction.index),
         auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
         auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(),
         calleeAddress,

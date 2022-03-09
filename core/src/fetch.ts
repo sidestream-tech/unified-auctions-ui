@@ -45,17 +45,17 @@ export const fetchAuctionStatus = async function (
 const fetchAuctionByCollateralTypeAndAuctionId = async function (
     network: string,
     collateralType: string,
-    auctionId: number
+    auctionIndex: number
 ): Promise<AuctionInitialInfo> {
     const maximumAuctionDurationInSeconds = await fetchMaximumAuctionDurationInSeconds(network, collateralType);
     const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
-    const auctionData = await contract.sales(auctionId);
+    const auctionData = await contract.sales(auctionIndex);
     const startTimestamp = new BigNumber(auctionData.tic._hex).times(1000).toNumber();
     const endDate = new Date(startTimestamp + maximumAuctionDurationInSeconds * 1000);
     return {
         network,
-        id: `${collateralType}:${auctionId}`,
-        auctionId,
+        id: `${collateralType}:${auctionIndex}`,
+        index: auctionIndex,
         collateralType,
         collateralSymbol: getCollateralConfigByType(collateralType).symbol,
         collateralAmount: new BigNumber(auctionData.lot._hex).div(WAD),
@@ -72,9 +72,9 @@ const fetchAuctionByCollateralTypeAndAuctionId = async function (
 
 const fetchAuctionsByCollateralType = async function (network: string, collateralType: string) {
     const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
-    const activeAuctionIds = await contract.list();
-    const activeAuctionPromises = activeAuctionIds.map((auctionId: BigNumber) => {
-        return fetchAuctionByCollateralTypeAndAuctionId(network, collateralType, auctionId.toNumber());
+    const activeAuctionIndexes = await contract.list();
+    const activeAuctionPromises = activeAuctionIndexes.map((auctionIndex: BigNumber) => {
+        return fetchAuctionByCollateralTypeAndAuctionId(network, collateralType, auctionIndex.toNumber());
     });
     return await Promise.all(activeAuctionPromises);
 };
