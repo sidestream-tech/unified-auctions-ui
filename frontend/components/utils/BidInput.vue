@@ -63,13 +63,18 @@ export default Vue.extend({
                 return undefined;
             }
             const value = new BigNumber(this.userInput);
+            let error = undefined as string | undefined;
             if (value.isGreaterThan(this.maximumBid)) {
-                return `The bidding amount can not be greater than ${this.maximumBid.toFixed(2)} DAI`;
+                error = `The bidding amount can not be greater than ${this.maximumBid.toFixed(2)} DAI`;
             }
             if (value.isLessThan(this.minimumDepositDai)) {
-                return `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
+                error = `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
             }
-            return undefined;
+            if (!error) {
+                return undefined;
+            }
+            this.setValue(new BigNumber(NaN));
+            return error;
         },
     },
     watch: {
@@ -84,12 +89,6 @@ export default Vue.extend({
             if (newVal.isEqualTo(this.minimumDepositDai)) {
                 this.userInput = newVal.toString();
             }
-        },
-        error(newVal): void {
-            if (newVal) {
-                this.setValue(new BigNumber(NaN));
-            }
-            this.$emit('error', newVal);
         },
         userInput(newVal, oldVal) {
             this.validateInput(newVal, oldVal);
