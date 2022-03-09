@@ -60,8 +60,12 @@ export default Vue.extend({
                 return 'https://etherscan.io';
             }
             const network = this.$store.getters['network/getMakerNetwork'];
-            if (getNetworkConfigByType(network)) {
-                return getNetworkConfigByType(network).etherscanUrl;
+            try {
+                if (getNetworkConfigByType(network)) {
+                    return getNetworkConfigByType(network).etherscanUrl;
+                }
+            } catch (error) {
+                console.error(`Network Config error: ${error}`);
             }
             return 'https://etherscan.io';
         },
