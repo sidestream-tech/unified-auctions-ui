@@ -16,7 +16,7 @@ export const generateFakeAuction = function () {
         : undefined;
     const collateralObject = faker.helpers.randomize(Object.values(COLLATERALS));
     const marketUnitPrice = approximateUnitPrice.multipliedBy(1 - marketUnitPriceToUnitPriceRatio);
-    const transactionProfit = marketUnitPrice
+    const transactionGrossProfit = marketUnitPrice
         .multipliedBy(collateralAmount)
         .minus(approximateUnitPrice.multipliedBy(collateralAmount));
     const secondsBetweenPriceDrops = faker.datatype.number(120);
@@ -38,7 +38,7 @@ export const generateFakeAuction = function () {
         unitPrice: approximateUnitPrice,
         marketUnitPrice,
         isActive,
-        transactionProfit,
+        transactionGrossProfit,
         isFinished,
         startDate: faker.date.recent(),
         isRestarting: false,
@@ -46,7 +46,7 @@ export const generateFakeAuction = function () {
         secondsBetweenPriceDrops,
         secondsTillNextPriceDrop,
         priceDropRatio: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
-        transactionProfitDate: faker.date.future(),
+        transactionGrossProfitDate: faker.date.future(),
     };
 };
 
@@ -57,7 +57,7 @@ export const generateFakeAuctionTransaction = function () {
     const authTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
     const authTransactionFeeDAI = authTransactionFeeETH * 1000;
     const restartTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
-    const transactionProfitMinusFees = auction.transactionProfit - biddingTransactionFeeDAI;
+    const transactionNetProfit = auction.transactionGrossProfit - biddingTransactionFeeDAI;
     return {
         ...auction,
         biddingTransactionFeeETH,
@@ -65,7 +65,7 @@ export const generateFakeAuctionTransaction = function () {
         authTransactionFeeETH,
         authTransactionFeeDAI,
         restartTransactionFeeETH,
-        transactionProfitMinusFees,
+        transactionNetProfit,
     };
 };
 

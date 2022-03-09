@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div v-if="auction.transactionProfitDate">
-            <time-till v-if="isProfitableBeforeEnding" :date="auction.transactionProfitDate" />
+        <div v-if="auction.transactionGrossProfitDate">
+            <time-till v-if="isProfitableBeforeEnding" :date="auction.transactionGrossProfitDate" />
             <div v-else>Likely will not be profitable</div>
         </div>
         <div v-else-if="isAlreadyProfitable">Auction is profitable</div>
@@ -26,10 +26,10 @@ export default Vue.extend({
     },
     computed: {
         isProfitableBeforeEnding(): boolean {
-            if (!this.auction.transactionProfitDate) {
+            if (!this.auction.transactionGrossProfitDate) {
                 return false;
             }
-            return this.auction.endDate > this.auction.transactionProfitDate;
+            return this.auction.endDate > this.auction.transactionGrossProfitDate;
         },
         isAlreadyProfitable(): boolean {
             if (!this.auction.marketUnitPrice) {

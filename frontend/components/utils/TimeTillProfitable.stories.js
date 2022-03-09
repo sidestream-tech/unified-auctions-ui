@@ -17,7 +17,7 @@ storiesOf('Utils/TimeTillProfitable', module)
             return {
                 auction: {
                     ...auction,
-                    transactionProfitDate: faker.date.soon(),
+                    transactionGrossProfitDate: faker.date.soon(),
                 },
             };
         },
@@ -29,7 +29,7 @@ storiesOf('Utils/TimeTillProfitable', module)
             return {
                 auction: {
                     ...auction,
-                    transactionProfitDate: faker.date.future(),
+                    transactionGrossProfitDate: faker.date.future(),
                     endDate: faker.date.soon(),
                 },
             };
@@ -44,7 +44,7 @@ storiesOf('Utils/TimeTillProfitable', module)
                     ...auction,
                     marketUnitPrice: new BigNumber(faker.finance.amount(50, 150)),
                     approximateUnitPrice: new BigNumber(faker.finance.amount(0, 50)),
-                    transactionProfitDate: undefined,
+                    transactionGrossProfitDate: undefined,
                 },
             };
         },
@@ -57,7 +57,7 @@ storiesOf('Utils/TimeTillProfitable', module)
                 auction: {
                     ...auction,
                     isActive: false,
-                    transactionProfitDate: undefined,
+                    transactionGrossProfitDate: undefined,
                 },
             };
         },
@@ -70,7 +70,7 @@ storiesOf('Utils/TimeTillProfitable', module)
                 auction: {
                     ...auction,
                     isFinished: true,
-                    transactionProfitDate: undefined,
+                    transactionGrossProfitDate: undefined,
                 },
             };
         },

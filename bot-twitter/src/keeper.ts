@@ -7,7 +7,7 @@ import {
     getCollateralAuthorizationStatus,
     getWalletAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-import { ETHEREUM_NETWORK, KEEPER_MIN_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
+import { ETHEREUM_NETWORK, KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
 
 let isSetupCompleted = false;
 const currentlyExecutedAuctions = new Set();
@@ -17,8 +17,8 @@ export const setupKeeper = async function () {
         console.warn('keeper: KEEPER_WALLET_PRIVATE_KEY variable is not set, keeper will not run');
         return;
     }
-    if (Number.isNaN(KEEPER_MIN_PROFIT_DAI)) {
-        console.warn('keeper: KEEPER_MIN_PROFIT_DAI is not set or not a number, keeper will not run');
+    if (Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI)) {
+        console.warn('keeper: KEEPER_MINIMUM_NET_PROFIT_DAI is not set or not a number, keeper will not run');
         return;
     }
     try {
@@ -27,7 +27,7 @@ export const setupKeeper = async function () {
         const address = await signer.getAddress();
         isSetupCompleted = true;
         console.info(
-            `keeper: setup complete: using wallet "${address}", looking for minimum clear profit of "${KEEPER_MIN_PROFIT_DAI}" DAI`
+            `keeper: setup complete: using wallet "${address}", looking for minimum clear profit of "${KEEPER_MINIMUM_NET_PROFIT_DAI}" DAI`
         );
     } catch (error) {
         console.warn('keeper: setup error, keeper will not run, please check that KEEPER_WALLET_PRIVATE_KEY is valid');
@@ -56,9 +56,9 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
     }
 
     // check auction's profit
-    if (!auctionTransaction.transactionProfit || auctionTransaction.transactionProfit.isLessThan(0)) {
-        if (auctionTransaction.transactionProfit) {
-            const profit = `${auctionTransaction.transactionProfit.toFixed(0)} DAI`;
+    if (!auctionTransaction.transactionGrossProfit || auctionTransaction.transactionGrossProfit.isLessThan(0)) {
+        if (auctionTransaction.transactionGrossProfit) {
+            const profit = `${auctionTransaction.transactionGrossProfit.toFixed(0)} DAI`;
             console.info(`keeper: auction "${auction.id}" is not yet profitable (current profit: ${profit})`);
         } else {
             console.info(`keeper: auction "${auction.id}" is not tradable`);
@@ -68,20 +68,20 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
 
     // check auction's clear profit – profit without transaction fees
     if (
-        auctionTransaction.transactionProfitMinusFees &&
-        auctionTransaction.transactionProfitMinusFees.toNumber() < KEEPER_MIN_PROFIT_DAI
+        auctionTransaction.transactionNetProfit &&
+        auctionTransaction.transactionNetProfit.toNumber() < KEEPER_MINIMUM_NET_PROFIT_DAI
     ) {
         console.info(
             `keeper: auction "${
                 auction.id
-            }" clear profit is smaller than min profit (${auctionTransaction.transactionProfitMinusFees.toFixed(
+            }" clear profit is smaller than min profit (${auctionTransaction.transactionNetProfit.toFixed(
                 0
-            )} < ${KEEPER_MIN_PROFIT_DAI})`
+            )} < ${KEEPER_MINIMUM_NET_PROFIT_DAI})`
         );
         return;
     } else {
         console.info(
-            `keeper: auction "${auction.id}" clear profit is ${auctionTransaction.transactionProfitMinusFees.toFixed(
+            `keeper: auction "${auction.id}" clear profit is ${auctionTransaction.transactionNetProfit.toFixed(
                 0
             )} DAI after transaction fees, moving on to the execution`
         );

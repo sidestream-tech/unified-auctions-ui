@@ -62,8 +62,8 @@ export const enrichAuctionWithTransactionFees = async function (
         totalFeeETH: totalFeeETH,
         totalFeeDAI: totalFeeDAI,
     } as AuctionTransaction;
-    if (auction.transactionProfit && fees.biddingTransactionFeeDAI) {
-        auctionTransaction.transactionProfitMinusFees = auction.transactionProfit.minus(totalFeeDAI);
+    if (auction.transactionGrossProfit && fees.biddingTransactionFeeDAI) {
+        auctionTransaction.transactionNetProfit = auction.transactionGrossProfit.minus(totalFeeDAI);
     }
     return auctionTransaction;
 };

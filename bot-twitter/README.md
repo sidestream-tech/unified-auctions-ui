@@ -34,10 +34,10 @@ $ npm run start
 - `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
 - `FRONTEND_ORIGIN`: (required) An origin to which the bot will redirect users (valid
   example: `https://auctions.makerdao.network`)
-- `KEEPER_*` variables - a set of set for the keeper
+- `KEEPER_*`: (optional) set of env variables to enable keeper bot:
     - `KEEPER_WALLET_PRIVATE_KEY`: (required) The wallet private key (https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key)
-    - `KEEPER_MIN_PROFIT_DAI`: (required) The minimum amount of DAI an auction must yield before the keeper automatically bids on it
-- `TWITTER_*`: variables (optional for dev environment) – a set of secrets from twitter developer account
+    - `KEEPER_MINIMUM_NET_PROFIT_DAI`: (required) The minimum amount of DAI an auction must yield (substracted the transaction fees) before the keeper automatically bids on it. Can be negative if one is willing to spend to keep
+- `TWITTER_*`: (optional) set of env variables to enable twitter bot. Created via twitter developer account
   with `OAuth 1.0a` `Elevated` access and `Read and Write` permissions:
     - `TWITTER_API_KEY`: (required)
     - `TWITTER_API_SECRET`: (required)

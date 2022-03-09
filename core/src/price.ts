@@ -41,7 +41,7 @@ export const calculateAuctionDropTime = function (auction: Auction, currentDate:
     return auction.secondsBetweenPriceDrops - (elapsedTime % auction.secondsBetweenPriceDrops);
 };
 
-export const calculateTransactionProfit = function (auction: Auction): BigNumber {
+export const calculateTransactionGrossProfit = function (auction: Auction): BigNumber {
     if (!auction.marketUnitPrice) {
         return new BigNumber(0);
     }
@@ -54,7 +54,7 @@ export const calculateTransactionProfit = function (auction: Auction): BigNumber
     return totalMarketPriceLimitedByDebt.minus(auction.debtDAI);
 };
 
-export const calculateTransactionProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
+export const calculateTransactionGrossProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
     if (
         auction.secondsBetweenPriceDrops === undefined ||
         auction.secondsTillNextPriceDrop === undefined ||

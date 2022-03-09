@@ -9,8 +9,8 @@ import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
     calculateAuctionPrice,
-    calculateTransactionProfit,
-    calculateTransactionProfitDate,
+    calculateTransactionGrossProfit,
+    calculateTransactionGrossProfitDate,
 } from './price';
 import { getSupportedCollateralTypes } from './addresses';
 import { getClipperNameByCollateralType } from './contracts';
@@ -54,7 +54,7 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
         };
         return {
             ...auctionWithMarketValues,
-            transactionProfit: calculateTransactionProfit(auctionWithMarketValues),
+            transactionGrossProfit: calculateTransactionGrossProfit(auctionWithMarketValues),
         };
     } catch (error) {
         // since it's expected that some collaterals are not tradable on some networks
@@ -77,13 +77,13 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
     const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
     const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
     const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
-    const transactionProfitDate = calculateTransactionProfitDate(auctionWithParams, currentDate);
+    const transactionGrossProfitDate = calculateTransactionGrossProfitDate(auctionWithParams, currentDate);
     return {
         ...auctionWithParams,
         secondsTillNextPriceDrop,
         approximateUnitPrice,
         totalPrice,
-        transactionProfitDate,
+        transactionGrossProfitDate,
     };
 };
 

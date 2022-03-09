@@ -10,7 +10,7 @@
         <SwapTransactionTable :auction-transaction="auctionTransaction" class="mt-4" />
         <TextBlock class="TextBlock mt-4 mb-8">
             Please note, the transaction fee is a suggested value based on the current gas prices on the market; the
-            transaction outcome is also approximate, since it is extrapolated from the exchange rates and may change
+            Transaction Net Profit is also approximate, since it is extrapolated from the exchange rates and may change
             during the transaction. If you’re bidding with other participants at the same time, the one who pays a
             higher transaction fee has
             <Explain text="more chances to win">
@@ -62,7 +62,7 @@
             :is-explanations-shown="isExplanationsShown"
             :collateral-type="auctionTransaction.collateralType"
             :transaction-fee="auctionTransaction.biddingTransactionFeeETH"
-            :transaction-profit="auctionTransaction.transactionProfit"
+            :transaction-profit="auctionTransaction.transactionGrossProfit"
             @execute="$emit('execute', { id: auctionTransaction.id, alternativeDestinationAddress: $event })"
         />
         <TextBlock v-if="auctionTransaction.transactionAddress" class="flex w-full justify-end mt-4">

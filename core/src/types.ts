@@ -16,7 +16,7 @@ export declare interface AuctionInitialInfo {
     isRestarting: boolean;
     marketUnitPrice?: BigNumber;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
-    transactionProfit?: BigNumber;
+    transactionGrossProfit?: BigNumber;
     transactionAddress?: string;
     initialPrice: BigNumber;
 }
@@ -36,7 +36,7 @@ export declare interface Auction extends AuctionInitialInfo {
     secondsBetweenPriceDrops?: number;
     secondsTillNextPriceDrop?: number;
     priceDropRatio?: BigNumber;
-    transactionProfitDate?: Date;
+    transactionGrossProfitDate?: Date;
 }
 
 export declare interface TransactionFees {
@@ -54,7 +54,7 @@ export declare interface CollateralRow extends CollateralConfig, Partial<MakerPa
 }
 
 export declare interface AuctionTransaction extends Auction, TransactionFees {
-    transactionProfitMinusFees: BigNumber;
+    transactionNetProfit: BigNumber;
     totalFeeDAI: BigNumber;
     totalFeeETH: BigNumber;
 }
