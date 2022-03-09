@@ -33,7 +33,7 @@ storiesOf('Main Flow', module)
             MainFlow,
         },
         data: () => ({ fakeAuctions, randomSelectedAuctionId }),
-        template: `<MainFlow :auctions="[]" is-auctions-loading :selectedAuctionId.sync="randomSelectedAuctionId" />`,
+        template: `<MainFlow :auctions="[]" :are-auctions-fetching="true" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
     }))
     .add('Selected Auction Expert', () => ({
         components: {
@@ -68,5 +68,5 @@ storiesOf('Main Flow', module)
             MainFlow,
         },
         data: () => ({ fakeAuctions: [], randomSelectedAuctionId }),
-        template: `<MainFlow :isExplanationsShown="false" />`,
+        template: `<MainFlow :isExplanationsShown="false"  />`,
     }));

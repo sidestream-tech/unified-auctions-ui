@@ -2,7 +2,8 @@
     <div>
         <MainFlow
             :auctions="auctions"
-            :is-auctions-loading="isAuctionsFetching"
+            :are-auctions-fetching="areAuctionsFetching"
+            :are-take-events-fetching="areTakeEventsFetching"
             :auctions-error="auctionsError"
             :selected-auction-id.sync="selectedAuctionId"
             :is-explanations-shown.sync="isExplanationsShown"
@@ -12,12 +13,14 @@
             :is-wallet-authorised="isWalletAuthorised"
             :authorised-collaterals="authorisedCollaterals"
             :is-executing="isAuctionBidding"
+            :take-event-storage="takeEvents"
             @connect="openWalletModal"
             @disconnect="disconnect"
             @authorizeWallet="authorizeWallet"
             @authorizeCollateral="authorizeCollateral"
             @restart="restartAuction"
             @execute="bid"
+            @fetchTakeEventsFromAuction="fetchTakeEventsByAuctionId"
         />
     </div>
 </template>
@@ -34,7 +37,9 @@ export default Vue.extend({
     computed: {
         ...mapGetters('auctions', {
             auctions: 'listAuctionTransactions',
-            isAuctionsFetching: 'getIsFetching',
+            takeEvents: 'getTakeEventStorage',
+            areAuctionsFetching: 'getAreAuctionsFetching',
+            areTakeEventsFetching: 'getAreTakeEventsFetching',
             isAuctionBidding: 'getIsBidding',
             auctionsError: 'getError',
         }),
@@ -100,7 +105,7 @@ export default Vue.extend({
             'fetchWalletAuthorizationStatus',
             'fetchCollateralAuthorizationStatus',
         ]),
-        ...mapActions('auctions', ['bid', 'restart']),
+        ...mapActions('auctions', ['bid', 'restart', 'fetchTakeEventsByAuctionId']),
         openWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);

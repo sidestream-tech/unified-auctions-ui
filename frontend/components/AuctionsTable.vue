@@ -124,9 +124,9 @@ export default Vue.extend({
 
             return [
                 {
-                    title: 'ID',
-                    dataIndex: 'auctionId',
-                    sorter: compareBy('auctionId'),
+                    title: 'Index',
+                    dataIndex: 'index',
+                    sorter: compareBy('index'),
                 },
                 {
                     title: 'Auction Amount',

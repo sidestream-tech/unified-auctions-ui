@@ -233,12 +233,17 @@
                 </div>
             </TextBlock>
         </div>
-        <Loading v-else-if="isAuctionsLoading" is-loading class="w-full self-center Loading h-48" />
+        <AuctionEventsBlock v-else-if="takeEvents && takeEvents.length > 0" :take-events="takeEvents" />
+        <Loading
+            v-else-if="areAuctionsFetching || areTakeEventsFetching"
+            is-loading
+            class="w-full self-center Loading h-48"
+        />
     </TextBlock>
 </template>
 
 <script lang="ts">
-import type { AuctionTransaction } from 'auctions-core/src/types';
+import type { AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert, Tooltip, Popover } from 'ant-design-vue';
 import PriceDropAnimation from './utils/PriceDropAnimation.vue';
@@ -252,10 +257,12 @@ import Loading from '~/components/common/Loading.vue';
 import Explain from '~/components/utils/Explain.vue';
 import RestartBlock from '~/components/transaction/RestartBlock.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
+import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
 
 export default Vue.extend({
     name: 'Auction',
     components: {
+        AuctionEventsBlock,
         PriceDropAnimation,
         RestartBlock,
         Explain,
@@ -280,6 +287,10 @@ export default Vue.extend({
             type: String,
             required: true,
         },
+        takeEvents: {
+            type: Array as Vue.PropType<TakeEvent[]>,
+            default: null,
+        },
         error: {
             type: String,
             default: '',
@@ -288,7 +299,11 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isAuctionsLoading: {
+        areAuctionsFetching: {
+            type: Boolean,
+            default: false,
+        },
+        areTakeEventsFetching: {
             type: Boolean,
             default: false,
         },
@@ -304,16 +319,17 @@ export default Vue.extend({
     },
     computed: {
         errorText(): string | null {
-            if (!this.isAuctionsLoading && !this.auction) {
+            if (!this.areAuctionsFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
                 return 'This auction was not found';
             } else if (this.error) {
                 return this.error;
-            } else if (this.auction?.isFinished) {
+            } else if (this.auction?.isFinished || (!this.auction && this.takeEvents)) {
                 return 'This auction is finished';
-            } else if (!this.auction?.isActive && !this.isAuctionsLoading) {
+            } else if (!this.auction?.isActive && !this.areAuctionsFetching && !this.areTakeEventsFetching) {
                 return 'This auction is inactive and must be restarted';
             } else if (
-                !this.isAuctionsLoading &&
+                !this.areAuctionsFetching &&
+                !this.areTakeEventsFetching &&
                 typeof this.auction?.marketUnitPriceToUnitPriceRatio === 'undefined'
             ) {
                 return `Swap transaction is not possible,
@@ -330,6 +346,11 @@ export default Vue.extend({
                     this.isTableExpanded = true;
                 }
             },
+        },
+        areAuctionsFetching(areAuctionsFetching) {
+            if (!areAuctionsFetching && !this.auction) {
+                this.$emit('fetchTakeEventsFromAuction', this.auctionId);
+            }
         },
     },
     methods: {

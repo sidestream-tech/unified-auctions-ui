@@ -10,7 +10,7 @@
                         ref="mainText"
                         :auctions="auctions"
                         :auctions-error="auctionsError"
-                        :is-auctions-loading="isAuctionsLoading"
+                        :is-auctions-loading="areAuctionsFetching"
                         :selected-auction-id="selectedAuctionId"
                         :is-explanations-shown="isExplanationsShown"
                         @selectedAuctionId:update="$emit('selectedAuctionId:update', $event)"
@@ -24,12 +24,15 @@
                         :is-explanations-shown="isExplanationsShown"
                         class="mt-6 mb-8 mx-8"
                         :auction="selectedAuction"
+                        :take-events="selectedTakeEvents"
                         :wallet-address="walletAddress"
                         :auction-id="selectedAuctionId"
-                        :is-auctions-loading="isAuctionsLoading"
+                        :are-auctions-fetching="areAuctionsFetching"
+                        :are-take-events-fetching="areTakeEventsFetching"
                         @restart="$emit('restart', $event)"
                         @connect="$emit('connect')"
                         @swap="step = 2"
+                        @fetchTakeEventsFromAuction="$emit('fetchTakeEventsFromAuction', $event)"
                     />
                 </div>
             </template>
@@ -57,6 +60,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
+import { TakeEvent } from 'auctions-core/dist/src/types';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import MainText from '~/components/MainText.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
@@ -70,7 +74,15 @@ export default Vue.extend({
             type: Array as Vue.PropType<AuctionTransaction[]>,
             default: () => [],
         },
-        isAuctionsLoading: {
+        takeEventStorage: {
+            type: Object as Vue.PropType<string, TakeEvent[]>,
+            default: () => ({}),
+        },
+        areAuctionsFetching: {
+            type: Boolean,
+            default: false,
+        },
+        areTakeEventsFetching: {
             type: Boolean,
             default: false,
         },
@@ -117,6 +129,12 @@ export default Vue.extend({
     computed: {
         selectedAuction(): AuctionTransaction | null {
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
+        },
+        selectedTakeEvents(): TakeEvent[] | null {
+            if (this.selectedAuction === null && this.takeEventStorage) {
+                return this.takeEventStorage[this.selectedAuctionId] || null;
+            }
+            return null;
         },
         isStagingEnvironment(): boolean {
             return !!process.env.STAGING_BANNER_URL;

@@ -1,4 +1,4 @@
-import type { Auction, AuctionTransaction } from 'auctions-core/src/types';
+import type { Auction, AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import {
@@ -6,9 +6,11 @@ import {
     bidOnTheAuction,
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
+    fetchTakeEvents,
 } from 'auctions-core/src/auctions';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
+import Vue from 'vue';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
@@ -20,7 +22,9 @@ let updateAuctionsPricesIntervalId: ReturnType<typeof setInterval> | undefined;
 
 interface State {
     auctionStorage: Record<string, AuctionTransaction>;
-    isFetching: boolean;
+    takeEventStorage: Record<string, TakeEvent[]>;
+    areAuctionsFetching: boolean;
+    areTakeEventsFetching: boolean;
     isBidding: boolean;
     error: string | null;
     restartingAuctionsIds: string[];
@@ -28,7 +32,9 @@ interface State {
 
 export const state = (): State => ({
     auctionStorage: {},
-    isFetching: false,
+    takeEventStorage: {},
+    areAuctionsFetching: false,
+    areTakeEventsFetching: false,
     isBidding: false,
     error: null,
     restartingAuctionsIds: [],
@@ -48,11 +54,20 @@ export const getters = {
             };
         });
     },
+    getTakeEventStorage(state: State): Record<string, TakeEvent[]> {
+        return state.takeEventStorage;
+    },
     getAuctionById: (state: State) => (id: string) => {
         return state.auctionStorage[id];
     },
-    getIsFetching(state: State) {
-        return state.isFetching;
+    getTakeEventsByAuctionId: (state: State) => (id: string) => {
+        return state.takeEventStorage[id];
+    },
+    getAreAuctionsFetching(state: State) {
+        return state.areAuctionsFetching;
+    },
+    getAreTakeEventsFetching(state: State) {
+        return state.areTakeEventsFetching;
     },
     getIsBidding(state: State) {
         return state.isBidding;
@@ -87,7 +102,10 @@ export const mutations = {
         };
     },
     setAuction(state: State, auction: AuctionTransaction) {
-        state.auctionStorage[auction.id] = auction;
+        Vue.set(state.auctionStorage, auction.id, auction);
+    },
+    setTakeEvents(state: State, { id, events }: { id: string; events: TakeEvent[] }) {
+        Vue.set(state.takeEventStorage, id, events);
     },
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
         state.auctionStorage[id].transactionAddress = transactionAddress;
@@ -104,8 +122,11 @@ export const mutations = {
             state.restartingAuctionsIds = state.restartingAuctionsIds.filter(auctionId => auctionId !== id);
         }
     },
-    setIsFetching(state: State, isFetching: boolean) {
-        state.isFetching = isFetching;
+    setAreAuctionsFetching(state: State, areFetching: boolean) {
+        state.areAuctionsFetching = areFetching;
+    },
+    setAreTakeEventsFetching(state: State, areFetching: boolean) {
+        state.areTakeEventsFetching = areFetching;
     },
     setIsBidding(state: State, isBidding: boolean) {
         state.isBidding = isBidding;
@@ -133,11 +154,11 @@ export const actions = {
             console.error('fetch auction error', error);
             commit('setError', error.message);
         } finally {
-            commit('setIsFetching', false);
+            commit('setAreAuctionsFetching', false);
         }
     },
     async fetch({ commit, dispatch }: ActionContext<State, State>) {
-        commit('setIsFetching', true);
+        commit('setAreAuctionsFetching', true);
         await dispatch('fetchWithoutLoading');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
@@ -226,5 +247,19 @@ export const actions = {
     async checkAllSupportedCollaterals({ rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         await checkAllSupportedCollaterals(network);
+    },
+    async fetchTakeEventsByAuctionId({ rootGetters, commit }: ActionContext<State, State>, auctionId: string) {
+        commit('setAreTakeEventsFetching', true);
+
+        const network = rootGetters['network/getMakerNetwork'];
+
+        try {
+            const events = await fetchTakeEvents(network, auctionId);
+            commit('setTakeEvents', { id: auctionId, events });
+        } catch (error) {
+            console.error('fetch take events error', error);
+        } finally {
+            commit('setAreTakeEventsFetching', false);
+        }
     },
 };

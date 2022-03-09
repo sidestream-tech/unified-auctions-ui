@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 export declare interface AuctionInitialInfo {
     network: string;
     id: string;
-    auctionId: number;
+    index: number;
     collateralType: string;
     collateralSymbol: string;
     collateralAmount: BigNumber;
@@ -113,4 +113,10 @@ export declare interface MessageContent {
 
 export declare interface Notifier {
     (messageType: 'loading' | 'error' | 'success' | 'info', messageContent: MessageContent): void;
+}
+
+export declare interface TakeEvent {
+    transactionHash: string;
+    blockNumber: number;
+    transactionDate?: Date;
 }
