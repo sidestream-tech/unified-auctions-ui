@@ -233,20 +233,7 @@
                 </div>
             </TextBlock>
         </div>
-        <div v-else-if="takeEvents" class="mt-5">
-            <p class="mb-2">
-                The auction was taken via {{ takeEvents.length }} transaction<span v-if="takeEvents.length !== 1"
-                    >s</span
-                >
-                at {{ takeEvents[takeEvents.length - 1].transactionDate.toISOString() }}.
-            </p>
-            <ul class="list-disc list-inside">
-                <li v-for="(event, index) of takeEvents" :key="index">
-                    Transaction <FormatAddress :value="event.transactionHash" :shorten="true" />
-                    <span v-if="event.transactionDate"> executed <TimeTill :date="event.transactionDate" /> </span>
-                </li>
-            </ul>
-        </div>
+        <AuctionEventsBlock v-else-if="takeEvents" :take-events="takeEvents" />
         <Loading
             v-else-if="areAuctionsFetching || areTakeEventsFetching"
             is-loading
@@ -270,10 +257,12 @@ import Loading from '~/components/common/Loading.vue';
 import Explain from '~/components/utils/Explain.vue';
 import RestartBlock from '~/components/transaction/RestartBlock.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
+import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
 
 export default Vue.extend({
     name: 'Auction',
     components: {
+        AuctionEventsBlock,
         PriceDropAnimation,
         RestartBlock,
         Explain,

@@ -12,6 +12,7 @@ import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
+import Vue from "vue";
 
 const REFETCH_INTERVAL = 30 * 1000;
 const TIMER_INTERVAL = 1000;
@@ -53,13 +54,13 @@ export const getters = {
             };
         });
     },
-    listTakeEvents(state: State): Record<string, TakeEvent[]> {
+    getTakeEventStorage(state: State): Record<string, TakeEvent[]> {
         return state.takeEventStorage;
     },
     getAuctionById: (state: State) => (id: string) => {
         return state.auctionStorage[id];
     },
-    getTakeEventsByID: (state: State) => (id: string) => {
+    getTakeEventsByAuctionId: (state: State) => (id: string) => {
         return state.takeEventStorage[id];
     },
     getAreAuctionsFetching(state: State) {
@@ -101,10 +102,10 @@ export const mutations = {
         };
     },
     setAuction(state: State, auction: AuctionTransaction) {
-        state.auctionStorage[auction.id] = auction;
+        Vue.set(state.auctionStorage, auction.id, auction);
     },
     setTakeEvents(state: State, { id, events }: { id: string; events: TakeEvent[] }) {
-        state.takeEventStorage[id] = events;
+        Vue.set(state.takeEventStorage, id, events);
     },
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
         state.auctionStorage[id].transactionAddress = transactionAddress;
@@ -247,7 +248,7 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         await checkAllSupportedCollaterals(network);
     },
-    async fetchTakeEventsFromAuction({ rootGetters, commit }: ActionContext<State, State>, auctionId: string) {
+    async fetchTakeEventsByAuctionId({ rootGetters, commit }: ActionContext<State, State>, auctionId: string) {
         commit('setAreTakeEventsFetching', true);
 
         const network = rootGetters['network/getMakerNetwork'];
@@ -256,7 +257,7 @@ export const actions = {
             const events = await fetchTakeEvents(network, auctionId);
             commit('setTakeEvents', { id: auctionId, events });
         } catch (error) {
-            console.error(error);
+            console.error('fetch take events error', error);
         } finally {
             commit('setAreTakeEventsFetching', false);
         }

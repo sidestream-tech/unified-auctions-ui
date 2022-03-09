@@ -13,14 +13,14 @@
             :is-wallet-authorised="isWalletAuthorised"
             :authorised-collaterals="authorisedCollaterals"
             :is-executing="isAuctionBidding"
-            :take-events="takeEvents"
+            :take-event-storage="takeEvents"
             @connect="openWalletModal"
             @disconnect="disconnect"
             @authorizeWallet="authorizeWallet"
             @authorizeCollateral="authorizeCollateral"
             @restart="restartAuction"
             @execute="bid"
-            @fetchTakeEventsFromAuction="fetchTakeEventsFromAuction"
+            @fetchTakeEventsFromAuction="fetchTakeEventsByAuctionId"
         />
     </div>
 </template>
@@ -37,7 +37,7 @@ export default Vue.extend({
     computed: {
         ...mapGetters('auctions', {
             auctions: 'listAuctionTransactions',
-            takeEvents: 'listTakeEvents',
+            takeEvents: 'getTakeEventStorage',
             areAuctionsFetching: 'getAreAuctionsFetching',
             areTakeEventsFetching: 'getAreTakeEventsFetching',
             isAuctionBidding: 'getIsBidding',
@@ -105,7 +105,7 @@ export default Vue.extend({
             'fetchWalletAuthorizationStatus',
             'fetchCollateralAuthorizationStatus',
         ]),
-        ...mapActions('auctions', ['bid', 'restart', 'fetchTakeEventsFromAuction']),
+        ...mapActions('auctions', ['bid', 'restart', 'fetchTakeEventsByAuctionId']),
         openWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);

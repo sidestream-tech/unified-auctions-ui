@@ -74,7 +74,7 @@ export default Vue.extend({
             type: Array as Vue.PropType<AuctionTransaction[]>,
             default: () => [],
         },
-        takeEvents: {
+        takeEventStorage: {
             type: Object as Vue.PropType<string, TakeEvent[]>,
             default: () => {},
         },
@@ -131,8 +131,8 @@ export default Vue.extend({
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
         },
         selectedTakeEvents(): TakeEvent[] | null {
-            if (this.selectedAuction === null && this.takeEvents) {
-                return this.takeEvents[this.selectedAuctionId] || null;
+            if (this.selectedAuction === null && this.takeEventStorage) {
+                return this.takeEventStorage[this.selectedAuctionId] || null;
             }
             return null;
         },
