@@ -24,7 +24,7 @@ export const generateFakeAuction = function () {
     return {
         network: 'stub',
         id: `${collateralObject.ilk}:${auctionId}`,
-        auctionId,
+        index: auctionId,
         collateralType: collateralObject.ilk,
         collateralSymbol: collateralObject.symbol,
         collateralAmount,
