@@ -32,17 +32,17 @@ $ npm run start
 - `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
   options can be found in [constants/NETWORKS](../core/src/constants/NETWORKS.ts)
 - `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
-- `FRONTEND_ORIGIN`: (required) An origin to which the bot will redirect users (valid
-  example: `https://auctions.makerdao.network`)
 - `KEEPER_*`: (optional) set of env variables to enable keeper bot:
     - `KEEPER_WALLET_PRIVATE_KEY`: (required) The wallet private key (https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key)
-    - `KEEPER_MINIMUM_NET_PROFIT_DAI`: (required) The minimum amount of DAI an auction must yield (substracted the transaction fees) before the keeper automatically bids on it. Can be negative if one is willing to spend to keep
+    - `KEEPER_MINIMUM_NET_PROFIT_DAI`: (required) The minimum net profit an auction must yield before the keeper automatically bids on it. Can be negative if one is willing to spend ETH on transaction fees to keep DAI stable
 - `TWITTER_*`: (optional) set of env variables to enable twitter bot. Created via twitter developer account
   with `OAuth 1.0a` `Elevated` access and `Read and Write` permissions:
     - `TWITTER_API_KEY`: (required)
     - `TWITTER_API_SECRET`: (required)
     - `TWITTER_ACCESS_TOKEN`: (required)
     - `TWITTER_ACCESS_SECRET`: (required)
+    - `FRONTEND_ORIGIN`: (required) The auction UI origin for the tweet (valid
+  example: `https://auctions.makerdao.network`)
 
 Note: env variables are accessible via the `secret` command under `auction-ui/bot/${environment}`.
 
@@ -71,7 +71,6 @@ Using the `Dockerfile`:
 Run the following commands:
 
 ```sh
-
 # 1. Build the docker image
 > docker build -t auction-ui-bot -f Dockerfile ..
 
