@@ -10,7 +10,7 @@
                         ref="mainText"
                         :auctions="auctions"
                         :auctions-error="auctionsError"
-                        :is-auctions-loading="isAuctionsLoading"
+                        :is-auctions-loading="!!isFetching.auctions"
                         :selected-auction-id="selectedAuctionId"
                         :is-explanations-shown="isExplanationsShown"
                         @selectedAuctionId:update="$emit('selectedAuctionId:update', $event)"
@@ -27,7 +27,7 @@
                         :take-events="selectedTakeEvents"
                         :wallet-address="walletAddress"
                         :auction-id="selectedAuctionId"
-                        :is-auctions-loading="isAuctionsLoading"
+                        :is-fetching="isFetching"
                         @restart="$emit('restart', $event)"
                         @connect="$emit('connect')"
                         @swap="step = 2"
@@ -77,9 +77,9 @@ export default Vue.extend({
             type: Object as Vue.PropType<string, TakeEvent[]>,
             default: () => {},
         },
-        isAuctionsLoading: {
-            type: Boolean,
-            default: false,
+        isFetching: {
+            type: Object as Vue.PropType<string, boolean>,
+            default: () => {},
         },
         auctionsError: {
             type: String,

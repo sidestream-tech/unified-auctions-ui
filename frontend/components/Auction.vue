@@ -233,20 +233,26 @@
                 </div>
             </TextBlock>
         </div>
-        <div v-if="takeEvents" class="mt-5">
+        <div v-else-if="takeEvents" class="mt-5">
             <p class="mb-2">
                 The auction was taken via {{ takeEvents.length }} transaction<span v-if="takeEvents.length !== 1"
                     >s</span
                 >
-                at {{ takeEvents[takeEvents.length - 1].date.toDateString() }}.
+                at {{ takeEvents[takeEvents.length - 1].date.toISOString() }}.
             </p>
             <ul class="list-disc list-inside">
                 <li v-for="(event, index) of takeEvents" :key="index">
-                    Transaction <FormatAddress :value="event.transactionHash" :shorten="true" />
+                    Transaction <FormatAddress :value="event.transactionHash" :shorten="true" /> (<TimeTill
+                        :date="event.date"
+                    />)
                 </li>
             </ul>
         </div>
-        <Loading v-else-if="isAuctionsLoading" is-loading class="w-full self-center Loading h-48" />
+        <Loading
+            v-else-if="isAuctionFetching || areTakeEventsFetching"
+            is-loading
+            class="w-full self-center Loading h-48"
+        />
     </TextBlock>
 </template>
 
@@ -305,9 +311,9 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isAuctionsLoading: {
-            type: Boolean,
-            default: false,
+        isFetching: {
+            type: Object as Vue.PropType<Record<string, boolean>>,
+            default: () => {},
         },
         walletAddress: {
             type: String,
@@ -320,20 +326,29 @@ export default Vue.extend({
         };
     },
     computed: {
+        isAuctionFetching(): boolean {
+            if (!this.isFetching) {
+                return true;
+            }
+            return !!this.isFetching.auctions;
+        },
+        areTakeEventsFetching(): boolean {
+            if (!this.isFetching) {
+                return true;
+            }
+            return !!this.isFetching.takeEvents;
+        },
         errorText(): string | null {
-            if (!this.isAuctionsLoading && !this.auction) {
-                if (this.takeEvents) {
-                    return 'This auction is finished';
-                }
+            if (!this.isAuctionFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
                 return 'This auction was not found';
             } else if (this.error) {
                 return this.error;
-            } else if (this.auction?.isFinished) {
+            } else if (this.auction?.isFinished || (!this.auction && this.takeEvents)) {
                 return 'This auction is finished';
-            } else if (!this.auction?.isActive && !this.isAuctionsLoading) {
+            } else if (!this.auction?.isActive && !this.isAuctionFetching) {
                 return 'This auction is inactive and must be restarted';
             } else if (
-                !this.isAuctionsLoading &&
+                !this.isAuctionFetching &&
                 typeof this.auction?.marketUnitPriceToUnitPriceRatio === 'undefined'
             ) {
                 return `Swap transaction is not possible,
@@ -354,7 +369,7 @@ export default Vue.extend({
         fetchTakeEvents: {
             immediate: true,
             handler() {
-                if (!this.isAuctionsLoading && !this.auction) {
+                if (!this.isAuctionFetching && !this.auction) {
                     this.$emit('fetchTakeEventsFromAuction', this.auctionId);
                 }
             },
