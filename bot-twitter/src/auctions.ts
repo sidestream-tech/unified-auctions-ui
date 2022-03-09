@@ -17,7 +17,7 @@ export const getNewAuctionsFromActiveAuctions = function (activeActions: Auction
         const isNew = activeAction.startDate > new Date(Date.now() - THRESHOLD_FOR_NEW_AUCTIONS);
         return isNew && checkIfAuctionIsAlreadyKnown(activeAction);
     });
-    console.info(`auctions: "${newAuctions.length}" of "${activeActions.length}" are new`);
+    console.info(`auctions: "${newAuctions.length}" of "${activeActions.length}" auctions are new`);
 
     newAuctions.map(markAuctionAsKnown);
     return newAuctions;

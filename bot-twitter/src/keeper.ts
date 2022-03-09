@@ -125,7 +125,7 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
     }
 
     // bid on the Auction
-    console.info(`keeper: attempting swap execution on the auction "${auctionTransaction.id}"`);
+    console.info(`keeper: auction "${auctionTransaction.id}": attempting swap execution`);
     const bidHash = await bidOnTheAuction(ETHEREUM_NETWORK, auctionTransaction, walletAddress);
     console.info(`keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`);
 };

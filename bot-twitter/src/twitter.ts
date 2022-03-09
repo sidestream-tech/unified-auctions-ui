@@ -6,7 +6,7 @@ let twitterClient: TwitterApi | undefined;
 
 export const setupTwitter = function (): void {
     if (isDev) {
-        console.warn('twitter: skipping twitter setup due to development mode');
+        console.warn('twitter: skipping twitter setup due to the dev mode');
         return;
     }
     try {
@@ -30,7 +30,7 @@ export const setupTwitter = function (): void {
 
 export const sendNotification = async function (message: string) {
     if (isDev) {
-        console.warn(`twitter: tweet is skipped due to development mode: "${message}"`);
+        console.warn(`twitter: tweet is skipped due to the dev mode: "${message}"`);
         return;
     }
     if (!twitterClient) {
