@@ -249,7 +249,7 @@
             </ul>
         </div>
         <Loading
-            v-else-if="isAuctionFetching || areTakeEventsFetching"
+            v-else-if="areAuctionsFetching || areTakeEventsFetching"
             is-loading
             class="w-full self-center Loading h-48"
         />
@@ -311,9 +311,13 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isFetching: {
-            type: Object as Vue.PropType<Record<string, boolean>>,
-            default: () => {},
+        areAuctionsFetching: {
+            type: Boolean,
+            default: false,
+        },
+        areTakeEventsFetching: {
+            type: Boolean,
+            default: false,
         },
         walletAddress: {
             type: String,
@@ -326,29 +330,17 @@ export default Vue.extend({
         };
     },
     computed: {
-        isAuctionFetching(): boolean {
-            if (!this.isFetching) {
-                return true;
-            }
-            return !!this.isFetching.auctions;
-        },
-        areTakeEventsFetching(): boolean {
-            if (!this.isFetching) {
-                return true;
-            }
-            return !!this.isFetching.takeEvents;
-        },
         errorText(): string | null {
-            if (!this.isAuctionFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
+            if (!this.areAuctionsFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
                 return 'This auction was not found';
             } else if (this.error) {
                 return this.error;
             } else if (this.auction?.isFinished || (!this.auction && this.takeEvents)) {
                 return 'This auction is finished';
-            } else if (!this.auction?.isActive && !this.isAuctionFetching) {
+            } else if (!this.auction?.isActive && !this.areAuctionsFetching) {
                 return 'This auction is inactive and must be restarted';
             } else if (
-                !this.isAuctionFetching &&
+                !this.areAuctionsFetching &&
                 typeof this.auction?.marketUnitPriceToUnitPriceRatio === 'undefined'
             ) {
                 return `Swap transaction is not possible,
@@ -369,7 +361,7 @@ export default Vue.extend({
         fetchTakeEvents: {
             immediate: true,
             handler() {
-                if (!this.isAuctionFetching && !this.auction) {
+                if (!this.areAuctionsFetching && !this.auction) {
                     this.$emit('fetchTakeEventsFromAuction', this.auctionId);
                 }
             },

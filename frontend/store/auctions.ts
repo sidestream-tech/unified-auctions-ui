@@ -22,7 +22,8 @@ let updateAuctionsPricesIntervalId: ReturnType<typeof setInterval> | undefined;
 interface State {
     auctionStorage: Record<string, AuctionTransaction>;
     takeEventStorage: Record<string, TakeEvent[]>;
-    fetching: Record<string, boolean>;
+    areAuctionsFetching: boolean;
+    areTakeEventsFetching: boolean;
     isBidding: boolean;
     error: string | null;
     restartingAuctionsIds: string[];
@@ -31,7 +32,8 @@ interface State {
 export const state = (): State => ({
     auctionStorage: {},
     takeEventStorage: {},
-    fetching: {},
+    areAuctionsFetching: false,
+    areTakeEventsFetching: false,
     isBidding: false,
     error: null,
     restartingAuctionsIds: [],
@@ -60,8 +62,11 @@ export const getters = {
     getTakeEventsByID: (state: State) => (id: string) => {
         return state.takeEventStorage[id];
     },
-    getIsFetching(state: State) {
-        return state.fetching;
+    getAreAuctionsFetching(state: State) {
+        return state.areAuctionsFetching;
+    },
+    getAreTakeEventsFetching(state: State) {
+        return state.areTakeEventsFetching;
     },
     getIsBidding(state: State) {
         return state.isBidding;
@@ -116,8 +121,11 @@ export const mutations = {
             state.restartingAuctionsIds = state.restartingAuctionsIds.filter(auctionId => auctionId !== id);
         }
     },
-    setIsFetching(state: State, { type, isFetching }: { type: string; isFetching: boolean }) {
-        state.fetching[type] = isFetching;
+    setAreAuctionsFetching(state: State, areFetching: boolean) {
+        state.areAuctionsFetching = areFetching;
+    },
+    setAreTakeEventsFetching(state: State, areFetching: boolean) {
+        state.areTakeEventsFetching = areFetching;
     },
     setIsBidding(state: State, isBidding: boolean) {
         state.isBidding = isBidding;
@@ -145,11 +153,11 @@ export const actions = {
             console.error('fetch auction error', error);
             commit('setError', error.message);
         } finally {
-            commit('setIsFetching', { type: 'auctions', isFetching: false });
+            commit('setAreAuctionsFetching', false);
         }
     },
     async fetch({ commit, dispatch }: ActionContext<State, State>) {
-        commit('setIsFetching', { type: 'auctions', isFetching: true });
+        commit('setAreAuctionsFetching', true);
         await dispatch('fetchWithoutLoading');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
@@ -240,12 +248,12 @@ export const actions = {
         await checkAllSupportedCollaterals(network);
     },
     async fetchTakeEventsFromAuction({ rootGetters, commit }: ActionContext<State, State>, auctionId: string) {
-        commit('setIsFetching', { type: 'takeEvents', isFetching: true });
+        commit('setAreTakeEventsFetching', true);
 
         const network = rootGetters['network/getMakerNetwork'];
 
         const events = await fetchTakeEvents(network, auctionId);
         commit('setTakeEvents', { id: auctionId, events });
-        commit('setIsFetching', { type: 'takeEvents', isFetching: false });
+        commit('setAreTakeEventsFetching', false);
     },
 };

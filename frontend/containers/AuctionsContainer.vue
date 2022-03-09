@@ -2,7 +2,8 @@
     <div>
         <MainFlow
             :auctions="auctions"
-            :is-fetching="isFetching"
+            :are-auctions-fetching="areAuctionsFetching"
+            :are-take-events-fetching="areTakeEventsFetching"
             :auctions-error="auctionsError"
             :selected-auction-id.sync="selectedAuctionId"
             :is-explanations-shown.sync="isExplanationsShown"
@@ -37,7 +38,8 @@ export default Vue.extend({
         ...mapGetters('auctions', {
             auctions: 'listAuctionTransactions',
             takeEvents: 'listTakeEvents',
-            isFetching: 'getIsFetching',
+            areAuctionsFetching: 'getAreAuctionsFetching',
+            areTakeEventsFetching: 'getAreTakeEventsFetching',
             isAuctionBidding: 'getIsBidding',
             auctionsError: 'getError',
         }),
