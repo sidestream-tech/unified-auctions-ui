@@ -233,7 +233,7 @@
                 </div>
             </TextBlock>
         </div>
-        <AuctionEventsBlock v-else-if="takeEvents" :take-events="takeEvents" />
+        <AuctionEventsBlock v-else-if="takeEvents && takeEvents.length > 0" :take-events="takeEvents" />
         <Loading
             v-else-if="areAuctionsFetching || areTakeEventsFetching"
             is-loading
