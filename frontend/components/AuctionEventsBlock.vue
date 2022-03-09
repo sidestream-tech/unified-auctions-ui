@@ -2,7 +2,7 @@
     <div class="mt-5">
         <p class="mb-2">
             The auction was taken via {{ takeEvents.length }} transaction<span v-if="takeEvents.length !== 1">s</span>
-            at {{ takeEvents[takeEvents.length - 1].transactionDate.toISOString() }}.
+            at {{ takeEvents[takeEvents.length - 1].transactionDate.toUTCString() }}.
         </p>
         <ul class="list-disc list-inside">
             <li v-for="event of takeEvents" :key="event.transactionHash">
