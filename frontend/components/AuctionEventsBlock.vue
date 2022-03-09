@@ -5,7 +5,7 @@
             at {{ takeEvents[takeEvents.length - 1].transactionDate.toISOString() }}.
         </p>
         <ul class="list-disc list-inside">
-            <li v-for="(event, index) of takeEvents" :key="index">
+            <li v-for="event of takeEvents" :key="event.transactionHash">
                 Transaction <FormatAddress :value="event.transactionHash" :shorten="true" />
                 <span v-if="event.transactionDate"> executed <TimeTill :date="event.transactionDate" /> </span>
             </li>
@@ -25,7 +25,7 @@ export default Vue.extend({
     props: {
         takeEvents: {
             type: Array as Vue.PropType<TakeEvent[]>,
-            default: null,
+            required: true,
         },
     },
 });

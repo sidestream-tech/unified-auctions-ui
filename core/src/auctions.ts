@@ -138,8 +138,8 @@ const enrichTakeEventWithDate = async function (network: string, takeEvent: Take
     };
 };
 
-export const fetchTakeEvents = async function (network: string, auctionURL: string): Promise<Array<TakeEvent>> {
-    const { collateralType, index } = parseAuctionId(auctionURL);
+export const fetchTakeEvents = async function (network: string, auctionId: string): Promise<Array<TakeEvent>> {
+    const { collateralType, index } = parseAuctionId(auctionId);
     const encodedAuctionIndex = convertNumberTo32Bytes(index);
 
     const contractName = getClipperNameByCollateralType(collateralType);

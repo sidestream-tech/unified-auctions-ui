@@ -76,7 +76,7 @@ export default Vue.extend({
         },
         takeEventStorage: {
             type: Object as Vue.PropType<string, TakeEvent[]>,
-            default: () => {},
+            default: () => ({}),
         },
         areAuctionsFetching: {
             type: Boolean,

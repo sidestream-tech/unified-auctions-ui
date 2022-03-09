@@ -42,7 +42,7 @@ export const fetchAuctionStatus = async function (
     };
 };
 
-const fetchAuctionByCollateralTypeAndAuctionId = async function (
+const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
     network: string,
     collateralType: string,
     auctionIndex: number
@@ -74,7 +74,7 @@ const fetchAuctionsByCollateralType = async function (network: string, collatera
     const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
     const activeAuctionIndexes = await contract.list();
     const activeAuctionPromises = activeAuctionIndexes.map((auctionIndex: BigNumber) => {
-        return fetchAuctionByCollateralTypeAndAuctionId(network, collateralType, auctionIndex.toNumber());
+        return fetchAuctionByCollateralTypeAndAuctionIndex(network, collateralType, auctionIndex.toNumber());
     });
     return await Promise.all(activeAuctionPromises);
 };
