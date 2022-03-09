@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 
 export const generateFakeAuction = function () {
-    const auctionId = faker.datatype.number();
+    const index = faker.datatype.number();
     const collateralAmount = new BigNumber(parseFloat(faker.finance.amount()));
     const totalPrice = new BigNumber(parseFloat(faker.finance.amount()));
     const debtDAI = totalPrice.multipliedBy(faker.datatype.number({ min: 0.1, max: 0.5, precision: 0.001 }));
@@ -23,7 +23,7 @@ export const generateFakeAuction = function () {
     const secondsTillNextPriceDrop = faker.datatype.number(secondsBetweenPriceDrops);
     return {
         network: 'stub',
-        id: `${collateralObject.ilk}:${auctionId}`,
+        id: `${collateralObject.ilk}:${index}`,
         index,
         collateralType: collateralObject.ilk,
         collateralSymbol: collateralObject.symbol,
