@@ -21,11 +21,9 @@ const common = {
 storiesOf('Wallet/WalletTable', module)
     .add('Default', () => ({
         ...common,
-        template:
-            '<WalletTable :walletAddress="walletAddress" :walletETH="walletETH" :walletDAI="walletDAI" :walletVatDAI="walletVatDAI" :walletLastUpdatedDate="walletLastUpdatedDate" @refresh="refresh" />',
+        template: '<WalletTable v-bind="$data" @refresh="refresh" />',
     }))
     .add('Loading', () => ({
         ...common,
-        template:
-            '<WalletTable :is-loading="true" :walletAddress="walletAddress" :walletETH="walletETH" :walletDAI="walletDAI" :walletVatDAI="walletVatDAI" :walletLastUpdatedDate="walletLastUpdatedDate" @refresh="refresh" />',
+        template: '<WalletTable :is-loading="true" v-bind="$data" />',
     }));

@@ -20,6 +20,12 @@ storiesOf('common/BaseButton', module)
         },
         template: '<BaseButton type="danger">I am a button!</BaseButton>',
     }))
+    .add('Link', () => ({
+        components: {
+            BaseButton,
+        },
+        template: '<BaseButton type="link">I am a button!</BaseButton>',
+    }))
     .add('Disabled', () => ({
         components: {
             BaseButton,
@@ -30,5 +36,5 @@ storiesOf('common/BaseButton', module)
         components: {
             BaseButton,
         },
-        template: '<BaseButton loading type="danger">I am a button!</BaseButton>',
+        template: '<BaseButton is-loading type="danger">I am a button!</BaseButton>',
     }));

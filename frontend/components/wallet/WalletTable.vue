@@ -30,9 +30,7 @@
                     <td>Last updated</td>
                     <td>
                         <TimeTill :date="walletLastUpdatedDate" />
-                        <button class="text-green-600 hover:text-green-400 underline ml-1" @click="$emit('refresh')">
-                            Refresh
-                        </button>
+                        <BaseButton type="link" @click="$emit('refresh')"> Refresh </BaseButton>
                     </td>
                 </tr>
             </tbody>
@@ -47,10 +45,11 @@ import FormatAddress from '../utils/FormatAddress.vue';
 import FormatCurrency from '../utils/FormatCurrency.vue';
 import TimeTill from '../common/TimeTill.vue';
 import Loading from '../common/Loading.vue';
+import BaseButton from '../common/BaseButton.vue';
 
 export default Vue.extend({
     name: 'WalletTable',
-    components: { Loading, TimeTill, FormatCurrency, FormatAddress },
+    components: { BaseButton, Loading, TimeTill, FormatCurrency, FormatAddress },
     props: {
         walletAddress: {
             type: String,
