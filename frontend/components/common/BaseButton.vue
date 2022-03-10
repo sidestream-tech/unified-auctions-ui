@@ -61,10 +61,10 @@ export default Vue.extend({
 }
 
 .Button-Link span {
-    @apply text-green-600 underline overflow-auto transition-colors;
+    @apply text-primary underline overflow-auto transition-colors;
 }
 
 .Button-Link:hover span {
-    @apply text-green-400;
+    @apply text-primary-light no-underline;
 }
 </style>
