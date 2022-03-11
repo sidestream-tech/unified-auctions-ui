@@ -79,7 +79,7 @@
             <div>The amount to bid</div>
             <div class="w-1/2">
                 <bid-input
-                    v-model="amountToBid"
+                    :amount-to-bid.sync="amountToBid"
                     :minimum-deposit-dai="minimumDepositDai"
                     :total-price="auctionTransaction.totalPrice"
                     :disabled="auctionTransaction.isFinished || !auctionTransaction.isActive"

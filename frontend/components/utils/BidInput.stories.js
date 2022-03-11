@@ -9,7 +9,7 @@ const common = {
         return {
             totalPrice: new BigNumber(faker.finance.amount()),
             minimumDepositDAI: new BigNumber(faker.finance.amount(0, 20)),
-            value: undefined,
+            amountToBid: undefined,
         };
     },
 };
@@ -19,13 +19,13 @@ storiesOf('Utils/BidInput', module)
         ...common,
         template: `
     <div class="w-80">
-        <BidInput v-model="value" :totalPrice="totalPrice" :minimumDepositDai="minimumDepositDAI" />
+        <BidInput :amountToBid.sync="amountToBid" :totalPrice="totalPrice" :minimumDepositDai="minimumDepositDAI" />
     </div>`,
     }))
     .add('Disabled', () => ({
         ...common,
         template: `
     <div class="w-80">
-        <BidInput v-model="value" :totalPrice="totalPrice" :minimumDepositDai="minimumDepositDAI" disabled />
+        <BidInput :amountToBid.sync="amountToBid" :totalPrice="totalPrice" :minimumDepositDai="minimumDepositDAI" disabled />
     </div>`,
     }));

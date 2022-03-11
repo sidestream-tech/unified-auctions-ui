@@ -2,18 +2,18 @@
     <div class="w-full inline-block relative flex-shrink-0">
         <Tooltip :visible="!!error" placement="topLeft" :title="error">
             <label>
-                <div v-if="!value" class="absolute text-right right-8 top-1">
+                <div v-if="!amountToBid" class="absolute text-right right-8 top-1">
                     <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
                     <span v-else class="opacity-50">UNKNOWN</span>
                 </div>
                 <span class="absolute right-1 top-1">DAI</span>
                 <input
-                    v-model="userInput"
+                    v-model="amountToBidInput"
                     class="Input"
                     :class="{ Error: error, Inactive: disabled }"
                     :disabled="disabled"
                     @focus="hideTotalPrice()"
-                    @blur="validateFinished()"
+                    @blur="showTotalPriceIfEmpty()"
                 />
             </label>
         </Tooltip>
@@ -37,7 +37,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             required: true,
         },
-        value: {
+        amountToBid: {
             type: Object as Vue.PropType<BigNumber> | undefined,
             default: undefined,
         },
@@ -48,84 +48,55 @@ export default Vue.extend({
     },
     data() {
         return {
-            userInput: undefined as string | undefined,
+            amountToBidInput: '' as string,
         };
     },
     computed: {
-        showErrorPopup(): boolean {
-            return !!this.error;
-        },
-        maximumBid(): BigNumber {
-            return this.totalPrice.minus(this.minimumDepositDai);
+        amountToBidInputParsed(): BigNumber | undefined {
+            if (!this.amountToBidInput) {
+                return undefined;
+            }
+            const amountToBid = new BigNumber(this.amountToBidInput);
+            return amountToBid;
         },
         error(): string | undefined {
-            if (!this.userInput) {
+            if (!this.amountToBidInputParsed) {
                 return undefined;
             }
-            const value = new BigNumber(this.userInput);
+            const maximumBid = this.totalPrice.minus(this.minimumDepositDai);
             let error = undefined as string | undefined;
-            if (value.isGreaterThan(this.maximumBid)) {
-                error = `The bidding amount can not be greater than ${this.maximumBid.toFixed(2)} DAI`;
+            if (this.amountToBidInputParsed.isGreaterThan(maximumBid)) {
+                error = `The bidding amount can not be greater than ${maximumBid.toFixed(2)} DAI`;
             }
-            if (value.isLessThan(this.minimumDepositDai)) {
+            if (this.amountToBidInputParsed.isLessThan(this.minimumDepositDai)) {
                 error = `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
             }
-            if (!error) {
-                return undefined;
-            }
-            this.setValue(new BigNumber(NaN));
             return error;
         },
     },
     watch: {
-        value(newVal: BigNumber | undefined): void {
-            if (!newVal) {
-                this.setValue(undefined);
+        amountToBidInputParsed(newVal, oldVal) {
+            if (this.error) {
+                this.$emit('update:amountToBid', new BigNumber(NaN));
                 return;
             }
-            if (newVal.isEqualTo(this.totalPrice)) {
-                this.setValue(undefined);
+            if (newVal && newVal.isNaN()) {
+                this.amountToBidInput = oldVal;
+                return;
             }
-            if (newVal.isEqualTo(this.minimumDepositDai)) {
-                this.userInput = newVal.toString();
-            }
-        },
-        userInput(newVal, oldVal) {
-            this.validateInput(newVal, oldVal);
+            this.$emit('update:amountToBid', newVal);
         },
     },
     methods: {
-        validateInput(newVal: string, oldVal: string): void {
-            if (!newVal) {
-                return;
-            }
-            const value = new BigNumber(newVal);
-            if (value.isNaN()) {
-                this.userInput = oldVal;
-                return;
-            }
-            if (!this.error) {
-                this.setValue(value);
-            }
-        },
         hideTotalPrice(): void {
-            if (!this.value) {
-                this.setValue(new BigNumber(0));
+            if (!this.amountToBid) {
+                this.$emit('update:amountToBid', new BigNumber(0));
             }
         },
-        validateFinished() {
-            if (!this.userInput) {
-                this.setValue(undefined);
+        showTotalPriceIfEmpty(): void {
+            if (!this.amountToBidInput) {
+                this.$emit('update:amountToBid', undefined);
             }
-            if (!this.value || this.value.isEqualTo(this.totalPrice)) {
-                this.setValue(undefined);
-            }
-        },
-        setValue(value: BigNumber | undefined) {
-            if (!value) {
-                this.userInput = undefined;
-            }
-            this.$emit('input', value);
         },
     },
 });
