@@ -86,6 +86,19 @@ export default Vue.extend({
             }
             this.$emit('update:amountToBid', newVal);
         },
+        amountToBid(newVal: BigNumber | undefined) {
+            if (this.error) {
+                return;
+            }
+            if (!newVal) {
+                this.amountToBidInput = '';
+                return;
+            }
+            const currentAmount = this.amountToBidInputParsed || new BigNumber(0);
+            if (!newVal.isEqualTo(currentAmount)) {
+                this.amountToBidInput = newVal.toString();
+            }
+        },
     },
     methods: {
         hideTotalPrice(): void {
