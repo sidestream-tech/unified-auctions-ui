@@ -87,11 +87,11 @@ export default Vue.extend({
             this.$emit('update:amountToBid', newVal);
         },
         amountToBid(newVal: BigNumber | undefined) {
-            if (this.error) {
-                return;
-            }
             if (!newVal) {
                 this.amountToBidInput = '';
+                return;
+            }
+            if (this.error) {
                 return;
             }
             const currentAmount = this.amountToBidInputParsed || new BigNumber(0);
