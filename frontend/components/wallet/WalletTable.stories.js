@@ -26,4 +26,8 @@ storiesOf('Wallet/WalletTable', module)
     .add('Loading', () => ({
         ...common,
         template: '<WalletTable :is-loading="true" v-bind="$data" />',
+    }))
+    .add('No Values', () => ({
+        ...common,
+        template: '<WalletTable @refresh="refresh" />',
     }));

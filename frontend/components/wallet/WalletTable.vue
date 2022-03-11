@@ -6,31 +6,41 @@
                     <tr>
                         <td>Wallet Address</td>
                         <td>
-                            <FormatAddress :value="walletAddress" :shorten="true" />
+                            <FormatAddress
+                                v-if="walletAddress"
+                                type="address"
+                                :value="walletAddress"
+                                :shorten="true"
+                            />
+                            <span v-else class="opacity-50">Unknown</span>
                         </td>
                     </tr>
                     <tr>
                         <td>ETH amount in wallet</td>
                         <td>
-                            <FormatCurrency :value="walletETH" currency="ETH" />
+                            <FormatCurrency v-if="walletETH" :value="walletETH" currency="ETH" />
+                            <span v-else class="opacity-50">Unknown</span>
                         </td>
                     </tr>
                     <tr>
                         <td>DAI amount in wallet</td>
                         <td>
-                            <FormatCurrency :value="walletDAI" currency="DAI" />
+                            <FormatCurrency v-if="walletDAI" :value="walletDAI" currency="DAI" />
+                            <span v-else class="opacity-50">Unknown</span>
                         </td>
                     </tr>
                     <tr>
                         <td>Currently deposited in VAT</td>
                         <td>
-                            <FormatCurrency :value="walletVatDAI" currency="DAI" />
+                            <FormatCurrency v-if="walletVatDAI" :value="walletVatDAI" currency="DAI" />
+                            <span v-else class="opacity-50">Unknown</span>
                         </td>
                     </tr>
                     <tr>
                         <td>Last updated</td>
                         <td>
-                            <TimeTill :date="walletLastUpdatedDate" />
+                            <TimeTill v-if="walletLastUpdatedDate" :date="walletLastUpdatedDate" />
+                            <span v-else class="opacity-50">Unknown</span>
                             <BaseButton type="link" @click="$emit('refresh')"> Refresh </BaseButton>
                         </td>
                     </tr>
@@ -56,23 +66,23 @@ export default Vue.extend({
     props: {
         walletAddress: {
             type: String,
-            required: true,
+            default: null,
         },
         walletETH: {
             type: Object as Vue.PropType<BigNumber>,
-            required: true,
+            default: null,
         },
         walletDAI: {
             type: Object as Vue.PropType<BigNumber>,
-            required: true,
+            default: null,
         },
         walletVatDAI: {
             type: Object as Vue.PropType<BigNumber>,
-            required: true,
+            default: null,
         },
         walletLastUpdatedDate: {
             type: [String, Number, Date],
-            required: true,
+            default: null,
         },
         isLoading: {
             type: Boolean,
