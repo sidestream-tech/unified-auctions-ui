@@ -144,7 +144,7 @@ export default Vue.extend({
             return this.auctionTransaction.isActive && !this.auctionTransaction.isFinished;
         },
         isBidAmountNaN(): boolean {
-            return this.amountToBid?.isNaN() || this.amountToBid?.isEqualTo(0) || false;
+            return this.amountToBid?.isNaN() || false;
         },
     },
     methods: {
