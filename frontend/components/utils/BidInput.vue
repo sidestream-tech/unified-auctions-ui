@@ -91,11 +91,7 @@ export default Vue.extend({
                 this.amountToBidInput = '';
                 return;
             }
-            if (this.error) {
-                return;
-            }
-            const currentAmount = this.amountToBidInputParsed || new BigNumber(0);
-            if (!newVal.isEqualTo(currentAmount)) {
+            if (newVal.isEqualTo(this.minimumDepositDai)) {
                 this.amountToBidInput = newVal.toString();
             }
         },
