@@ -63,7 +63,7 @@ export default Vue.extend({
             return amountToBid;
         },
         error(): string | undefined {
-            const maximumBid = this.totalPrice.minus(this.minimumDepositDai);
+            const maximumBid = this.totalPrice?.minus(this.minimumDepositDai) || new BigNumber(0);
             if (this.amountToBidInputParsed?.isGreaterThan(maximumBid)) {
                 return `The bidding amount can not be greater than ${maximumBid.toFixed(2)} DAI`;
             }
