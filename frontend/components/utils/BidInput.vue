@@ -1,21 +1,19 @@
 <template>
     <div class="w-full inline-block relative flex-shrink-0">
         <Tooltip :visible="!!error" placement="topLeft" :title="error">
-            <label>
-                <div v-if="!amountToBid" class="absolute text-right right-8 top-1">
-                    <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
-                    <span v-else class="opacity-50">UNKNOWN</span>
-                </div>
-                <span class="absolute right-1 top-1">DAI</span>
-                <input
-                    v-model="amountToBidInput"
-                    class="Input"
-                    :class="{ Error: error, Inactive: disabled }"
-                    :disabled="disabled"
-                    @focus="hideTotalPrice()"
-                    @blur="showTotalPriceIfEmpty()"
-                />
-            </label>
+            <div v-if="!amountToBid" class="absolute text-right right-8 top-1.5 z-10 pointer-events-none">
+                <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
+                <span v-else class="opacity-50">UNKNOWN</span>
+            </div>
+            <span class="absolute right-1 top-1.5 z-10 pointer-events-none">DAI</span>
+            <Input
+                v-model="amountToBidInput"
+                :disabled="disabled"
+                class="text-right pr-8"
+                :class="{ Error: error }"
+                @focus="hideTotalPrice()"
+                @blur="showTotalPriceIfEmpty()"
+            />
         </Tooltip>
     </div>
 </template>
@@ -23,11 +21,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { Tooltip } from 'ant-design-vue';
+import { Input, Tooltip } from 'ant-design-vue';
 import FormatCurrency from './FormatCurrency.vue';
-
 export default Vue.extend({
-    components: { FormatCurrency, Tooltip },
+    components: { FormatCurrency, Tooltip, Input },
     props: {
         totalPrice: {
             type: Object as Vue.PropType<BigNumber>,
@@ -113,23 +110,11 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.Input {
-    @apply border border-primary rounded-sm text-right w-full h-7 pr-8 hover:border-primary-light;
-}
-
 .Error {
     @apply border-red-500 hover:border-red-400;
 }
 
-.Input:focus {
-    @apply outline-none border-2 border-primary-dark;
-}
-
 .Error:focus {
-    @apply border-red-500;
-}
-
-.Inactive {
-    @apply border-gray-400 hover:border-gray-400;
+    box-shadow: 0 0 3px rgb(239, 68, 68);
 }
 </style>
