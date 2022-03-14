@@ -52,26 +52,25 @@ export default Vue.extend({
         };
     },
     computed: {
+        isInputEmpty(): boolean {
+            return this.amountToBidInput.trim() === '';
+        },
         amountToBidInputParsed(): BigNumber | undefined {
-            if (!this.amountToBidInput) {
+            if (this.isInputEmpty) {
                 return undefined;
             }
             const amountToBid = new BigNumber(this.amountToBidInput);
             return amountToBid;
         },
         error(): string | undefined {
-            if (!this.amountToBidInputParsed) {
-                return undefined;
-            }
             const maximumBid = this.totalPrice.minus(this.minimumDepositDai);
-            let error = undefined as string | undefined;
-            if (this.amountToBidInputParsed.isGreaterThan(maximumBid)) {
-                error = `The bidding amount can not be greater than ${maximumBid.toFixed(2)} DAI`;
+            if (this.amountToBidInputParsed?.isGreaterThan(maximumBid)) {
+                return `The bidding amount can not be greater than ${maximumBid.toFixed(2)} DAI`;
             }
-            if (this.amountToBidInputParsed.isLessThan(this.minimumDepositDai)) {
-                error = `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
+            if (this.amountToBidInputParsed?.isLessThan(this.minimumDepositDai)) {
+                return `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
             }
-            return error;
+            return undefined;
         },
     },
     watch: {
@@ -81,7 +80,7 @@ export default Vue.extend({
                 return;
             }
             if (newVal && newVal.isNaN()) {
-                this.amountToBidInput = oldVal;
+                this.amountToBidInput = oldVal?.toFixed() || '';
                 return;
             }
             if (newVal) {
@@ -94,18 +93,18 @@ export default Vue.extend({
                 return;
             }
             if (newVal.isEqualTo(this.minimumDepositDai)) {
-                this.amountToBidInput = newVal.toString();
+                this.amountToBidInput = newVal.toFixed();
             }
         },
     },
     methods: {
         hideTotalPrice(): void {
             if (!this.amountToBid) {
-                this.$emit('update:amountToBid', new BigNumber(0));
+                this.$emit('update:amountToBid', new BigNumber(NaN));
             }
         },
         showTotalPriceIfEmpty(): void {
-            if (!this.amountToBidInput) {
+            if (this.isInputEmpty) {
                 this.$emit('update:amountToBid', undefined);
             }
         },
