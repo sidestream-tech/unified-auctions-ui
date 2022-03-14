@@ -84,6 +84,10 @@ export default Vue.extend({
                 this.amountToBidInput = oldVal;
                 return;
             }
+            if (newVal === undefined) {
+                this.amountToBidInput = '';
+                return;
+            }
             this.$emit('update:amountToBid', newVal);
         },
         amountToBid(newVal: BigNumber | undefined) {
