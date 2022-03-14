@@ -54,36 +54,58 @@
             :class="{ ClickableText: isActive && auctionTransaction.totalPrice }"
             @click="setAmountToBid(undefined)"
         >
-            <div :class="{ underline: isActive && auctionTransaction.totalPrice }">Auction total price</div>
-            <div>
+            <button
+                :class="{ 'ClickableText underline': isActive && auctionTransaction.totalPrice }"
+                @click="setAmountToBid(undefined)"
+            >
+                Buy all collateral
+            </button>
+            <button
+                :class="{ ClickableText: isActive && auctionTransaction.totalPrice }"
+                @click="setAmountToBid(undefined)"
+            >
                 <format-currency
                     v-if="auctionTransaction.totalPrice && isActive"
                     :value="auctionTransaction.totalPrice"
                     currency="DAI"
                 />
                 <span v-else class="opacity-50">Unknown</span>
-            </div>
+            </button>
         </div>
-        <div
-            class="flex justify-between"
-            :class="{ ClickableText: isActive && minimumDepositDai }"
-            @click="setAmountToBid(minimumDepositDai)"
-        >
-            <div :class="{ underline: isActive && minimumDepositDai }">Auction minimum bid</div>
-            <div>
+        <div class="flex justify-between">
+            <button
+                :class="{ 'ClickableText underline': isActive && minimumDepositDai }"
+                @click="setAmountToBid(minimumDepositDai)"
+            >
+                Set minimum bid
+            </button>
+            <button
+                :class="{ ClickableText: isActive && minimumDepositDai }"
+                @click="setAmountToBid(minimumDepositDai)"
+            >
                 <format-currency v-if="minimumDepositDai && isActive" :value="minimumDepositDai" currency="DAI" />
                 <div v-else class="opacity-50">Unknown</div>
-            </div>
+            </button>
         </div>
         <div class="flex justify-between items-center">
             <div>The amount to bid</div>
-            <div class="w-1/2">
-                <bid-input
-                    :amount-to-bid.sync="amountToBid"
-                    :minimum-deposit-dai="minimumDepositDai"
-                    :total-price="auctionTransaction.totalPrice"
-                    :disabled="auctionTransaction.isFinished || !auctionTransaction.isActive"
-                />
+            <div class="flex w-1/2 items-center space-x-2 justify-end -mr-1">
+                <div v-if="amountToBid">
+                    <button
+                        class="text-primary hover:text-primary-light whitespace-nowrap"
+                        @click="setAmountToBid(undefined)"
+                    >
+                        Reset To Total
+                    </button>
+                </div>
+                <div class="w-full flex-shrink-0">
+                    <bid-input
+                        :amount-to-bid.sync="amountToBid"
+                        :minimum-deposit-dai="minimumDepositDai"
+                        :total-price="auctionTransaction.totalPrice"
+                        :disabled="auctionTransaction.isFinished || !auctionTransaction.isActive"
+                    />
+                </div>
             </div>
         </div>
         <div class="flex justify-between font-bold">
