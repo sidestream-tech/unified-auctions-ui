@@ -84,7 +84,7 @@ export default Vue.extend({
                 this.amountToBidInput = oldVal;
                 return;
             }
-            if (newVal === undefined) {
+            if (!newVal) {
                 this.amountToBidInput = '';
                 return;
             }
