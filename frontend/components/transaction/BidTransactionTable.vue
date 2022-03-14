@@ -49,11 +49,7 @@
                 <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
-        <div
-            class="flex justify-between"
-            :class="{ ClickableText: isActive && auctionTransaction.totalPrice }"
-            @click="setAmountToBid(undefined)"
-        >
+        <div class="flex justify-between">
             <button
                 :class="{ 'ClickableText underline': isActive && auctionTransaction.totalPrice }"
                 @click="setAmountToBid(undefined)"
