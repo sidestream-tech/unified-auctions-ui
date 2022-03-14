@@ -19,6 +19,10 @@ storiesOf('Wallet/WalletDepositWithdrawBlock', module)
         ...common,
         template: '<WalletDepositWithdrawBlock v-bind="$data" @submit="submit" />',
     }))
+    .add('Default Expert Mode', () => ({
+        ...common,
+        template: '<WalletDepositWithdrawBlock v-bind="$data" @submit="submit" :isExplanationsShown="false" />',
+    }))
     .add('Loading', () => ({
         ...common,
         template: '<WalletDepositWithdrawBlock :is-loading="true" v-bind="$data" @submit="submit"  />',

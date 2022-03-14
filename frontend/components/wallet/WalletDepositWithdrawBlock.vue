@@ -1,6 +1,6 @@
 <template>
     <div class="WalletDepositWithDrawBlock">
-        <TextBlock title="Moving funds">
+        <TextBlock v-if="isExplanationsShown" title="Moving funds">
             The DAI funds can be moved freely between VAT and your wallet without any extra conversion. You only need
             to be aware that each transfer incurs transaction fees. Also, if you do not have DAI funds to deposit yet,
             there are several ways to obtain it:
@@ -77,6 +77,10 @@ export default Vue.extend({
         maxWithdraw: {
             type: Number,
             default: 0,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
     },
     data() {
