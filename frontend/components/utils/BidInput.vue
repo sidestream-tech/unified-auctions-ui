@@ -1,15 +1,15 @@
 <template>
     <div class="w-full inline-block relative flex-shrink-0">
-        <Tooltip :visible="!!error" placement="topLeft" :title="error">
-            <div v-if="!amountToBid" class="absolute text-right right-8 top-1.5 z-10 pointer-events-none">
+        <Tooltip :visible="!!error" placement="topLeft" :title="error" class="items-center">
+            <div v-if="!amountToBid" class="Overlay TotalPrice">
                 <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
                 <span v-else class="opacity-50">UNKNOWN</span>
             </div>
-            <span class="absolute right-1 top-1.5 z-10 pointer-events-none">DAI</span>
+            <span class="Overlay right-1">DAI</span>
             <Input
                 v-model="amountToBidInput"
                 :disabled="disabled"
-                class="text-right pr-8"
+                class="Input"
                 :class="{ Error: error }"
                 @focus="hideTotalPrice()"
                 @blur="showTotalPriceIfEmpty()"
@@ -110,11 +110,27 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.Input {
+    @apply text-right;
+
+    padding-right: 30px;
+}
+
 .Error {
     @apply border-red-500 hover:border-red-400;
 }
 
 .Error:focus {
     box-shadow: 0 0 3px rgb(239, 68, 68);
+}
+
+.Overlay {
+    @apply absolute pointer-events-none z-10;
+
+    top: 5.5px;
+}
+
+.TotalPrice {
+    right: 30px;
 }
 </style>
