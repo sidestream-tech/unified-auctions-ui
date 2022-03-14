@@ -43,7 +43,7 @@ export const mutations = {
     setWalletType(state: State, walletType: string): void {
         state.walletType = walletType;
     },
-    setisConnecting(state: State, isConnecting: boolean): void {
+    setIsConnecting(state: State, isConnecting: boolean): void {
         state.isConnecting = isConnecting;
     },
     setAddress(state: State, address: string): void {
@@ -84,7 +84,7 @@ export const actions = {
     },
     async connect({ commit, dispatch }: ActionContext<State, State>, walletType: string): Promise<void> {
         dispatch('authorizations/reset', undefined, { root: true });
-        commit('setisConnecting', true);
+        commit('setIsConnecting', true);
         try {
             const wallet = getWallet(walletType);
             await wallet.connect();
@@ -93,16 +93,16 @@ export const actions = {
         } catch (error) {
             message.error(`Wallet connection error: ${error.message}`);
         } finally {
-            commit('setisConnecting', false);
+            commit('setIsConnecting', false);
         }
     },
     async disconnect({ getters, commit, dispatch }: ActionContext<State, State>): Promise<void> {
-        commit('setisConnecting', true);
+        commit('setIsConnecting', true);
         try {
             const wallet = getWallet(getters.getWallet);
             await wallet.disconnect();
         } finally {
-            commit('setisConnecting', false);
+            commit('setIsConnecting', false);
         }
         commit('setWalletType', undefined);
         commit('setAddress', undefined);
