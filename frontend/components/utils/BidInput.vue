@@ -3,7 +3,7 @@
         <Tooltip :visible="!!error" placement="topLeft" :title="error" class="items-center">
             <div v-if="!amountToBid" class="Overlay TotalPrice">
                 <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
-                <span v-else class="opacity-50">UNKNOWN</span>
+                <span v-else class="opacity-50">Unknown</span>
             </div>
             <span class="Overlay right-1">DAI</span>
             <Input

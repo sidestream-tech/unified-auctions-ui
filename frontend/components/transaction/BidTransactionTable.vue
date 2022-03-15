@@ -51,13 +51,15 @@
         </div>
         <div class="flex justify-between">
             <button
-                :class="{ 'ClickableText underline': isActive && auctionTransaction.totalPrice }"
+                class="ClickableText"
+                :disabled="!isActive || !auctionTransaction.totalPrice"
                 @click="setAmountToBid(undefined)"
             >
                 Buy all collateral
             </button>
             <button
-                :class="{ ClickableText: isActive && auctionTransaction.totalPrice }"
+                class="ClickableText"
+                :disabled="!isActive || !auctionTransaction.totalPrice"
                 @click="setAmountToBid(undefined)"
             >
                 <format-currency
@@ -70,13 +72,15 @@
         </div>
         <div class="flex justify-between">
             <button
-                :class="{ 'ClickableText underline': isActive && minimumDepositDai }"
+                class="ClickableText"
+                :disabled="!isActive || !minimumDepositDai"
                 @click="setAmountToBid(minimumDepositDai)"
             >
                 Set minimum bid
             </button>
             <button
-                :class="{ ClickableText: isActive && minimumDepositDai }"
+                class="ClickableText"
+                :disabled="!isActive || !minimumDepositDai"
                 @click="setAmountToBid(minimumDepositDai)"
             >
                 <format-currency v-if="minimumDepositDai && isActive" :value="minimumDepositDai" currency="DAI" />
@@ -113,7 +117,7 @@
                     :currency="auctionTransaction.collateralSymbol"
                 />
                 <div v-else>
-                    <span class="opacity-50">UNKNOWN</span>
+                    <span class="opacity-50">Unknown</span>
                     <span class="font-bold">{{ auctionTransaction.collateralSymbol }}</span>
                 </div>
             </div>
@@ -176,7 +180,11 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.ClickableText {
-    @apply text-primary hover:text-primary-light cursor-pointer;
+.ClickableText:enabled {
+    @apply text-primary hover:text-primary-light;
+}
+
+.ClickableText:enabled:first-of-type {
+    @apply underline;
 }
 </style>
