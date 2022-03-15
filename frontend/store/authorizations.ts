@@ -192,22 +192,18 @@ export const actions = {
             commit('setIsCollateralAuthorizationLoading', false);
         }
     },
-    async setAllowanceAmount(
-        { commit, rootGetters }: ActionContext<State, State> // amount?: BigNumber | string
-    ) {
+    async setAllowanceAmount({ commit, rootGetters }: ActionContext<State, State>, amount?: BigNumber | string) {
         commit('setIsAllowanceAmountLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
         try {
-            await setAllowanceAmount(network, undefined, notifier);
+            await setAllowanceAmount(network, amount, notifier);
         } catch (error) {
             console.error(`Setting allowance amount error: ${error.message}`);
         } finally {
             commit('setIsAllowanceAmountLoading', false);
         }
     },
-    async fetchAllowanceAmount(
-        { commit, dispatch, rootGetters }: ActionContext<State, State> // amount?: BigNumber | string
-    ) {
+    async fetchAllowanceAmount({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         commit('setIsAllowanceAmountLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
