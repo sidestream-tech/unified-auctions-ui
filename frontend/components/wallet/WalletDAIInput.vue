@@ -2,7 +2,9 @@
     <div>
         <Tooltip placement="topRight" :visible="showError">
             <div slot="title">
-                <span class="text-red-400"> The amount cannot be above {{ max }} or below 0 DAI. </span>
+                <span class="text-red-400">
+                    The amount cannot be above <animated-number :value="max" :decimals="2" /> or below 0 DAI.
+                </span>
             </div>
             <div class="relative">
                 <InputNumber
@@ -23,10 +25,11 @@
 <script lang="ts">
 import { InputNumber, Tooltip } from 'ant-design-vue';
 import Vue from 'vue';
+import AnimatedNumber from '~/components/utils/AnimatedNumber.vue';
 
 export default Vue.extend({
     name: 'WalletDAIInput',
-    components: { InputNumber, Tooltip },
+    components: { InputNumber, Tooltip, AnimatedNumber },
     props: {
         value: {
             type: Number,
