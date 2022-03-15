@@ -1,10 +1,7 @@
 <template>
     <Button
         :disabled="disabled || isLoading"
-        :class="{
-            'text-white bg-primary border-primary active:bg-primary-dark active:border-primary-dark  focus:bg-primary-light focus:border-primary-light hover:bg-primary-light hover:border-primary-light':
-                type === 'primary',
-        }"
+        :class="buttonStyles"
         class="overflow-hidden"
         :type="type"
         @click="$emit('click')"
@@ -40,5 +37,34 @@ export default Vue.extend({
             default: false,
         },
     },
+    computed: {
+        buttonStyles() {
+            if (this.type === 'primary') {
+                return 'Button-Primary';
+            }
+            if (this.type === 'link') {
+                return 'Button-Link';
+            }
+            return '';
+        },
+    },
 });
 </script>
+
+<style>
+.Button-Primary {
+    @apply text-white bg-primary border-primary focus:bg-primary-light focus:border-primary-light hover:bg-primary-light hover:border-primary-light;
+}
+
+.Button-Link {
+    @apply inline-flex items-center p-1;
+}
+
+.Button-Link span {
+    @apply text-primary underline overflow-auto transition-colors;
+}
+
+.Button-Link:hover span {
+    @apply text-primary-light no-underline;
+}
+</style>
