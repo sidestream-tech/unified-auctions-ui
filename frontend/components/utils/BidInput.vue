@@ -1,11 +1,6 @@
 <template>
     <div class="w-full inline-block relative flex-shrink-0">
         <Tooltip :visible="!!error" placement="topLeft" :title="error" class="items-center">
-            <div v-if="!amountToBid" class="Overlay TotalPrice">
-                <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
-                <span v-else class="opacity-50">Unknown</span>
-            </div>
-            <span class="Overlay right-1">DAI</span>
             <Input
                 v-model="amountToBidInput"
                 :disabled="disabled"
@@ -14,6 +9,11 @@
                 @focus="hideTotalPrice()"
                 @blur="showTotalPriceIfEmpty()"
             />
+            <div v-if="!amountToBid" class="Overlay TotalPrice">
+                <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
+                <span v-else class="opacity-50">Unknown</span>
+            </div>
+            <span class="Overlay right-1">DAI</span>
         </Tooltip>
     </div>
 </template>
@@ -60,7 +60,7 @@ export default Vue.extend({
             return amountToBid;
         },
         error(): string | undefined {
-            const maximumBid = this.totalPrice?.minus(this.minimumDepositDai) || new BigNumber(0);
+            const maximumBid = this.totalPrice?.minus(this.minimumDepositDai);
             if (this.amountToBidInputParsed?.isGreaterThan(maximumBid)) {
                 return `The bidding amount can not be greater than ${maximumBid.toFixed(2)} DAI`;
             }
@@ -125,7 +125,7 @@ export default Vue.extend({
 }
 
 .Overlay {
-    @apply absolute pointer-events-none z-10;
+    @apply absolute pointer-events-none;
 
     top: 5.5px;
 }
