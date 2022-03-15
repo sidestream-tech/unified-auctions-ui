@@ -8,7 +8,6 @@ import {
     setAllowanceAmount,
     fetchAllowanceAmount,
 } from 'auctions-core/src/authorizations';
-import { setDate } from 'date-fns';
 import notifier from '~/lib/notifier';
 
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
