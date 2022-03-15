@@ -2,6 +2,7 @@ import type { Contract, ContractInterface } from 'ethers';
 import { ethers } from 'ethers';
 import getProvider from './provider';
 import { fetchContractAddressByNetwork } from './addresses';
+import MCD_DAI from './abis/MCD_DAI.json';
 import MCD_VAT from './abis/MCD_VAT.json';
 import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
@@ -24,6 +25,9 @@ export const getContractAddressByName = async function (network: string, contrac
 };
 
 const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {
+    if (contractName === 'MCD_DAI') {
+        return MCD_DAI;
+    }
     if (contractName === 'MCD_VAT') {
         return MCD_VAT;
     }

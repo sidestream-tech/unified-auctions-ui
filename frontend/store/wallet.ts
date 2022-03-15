@@ -1,17 +1,27 @@
+import type { WalletBalances } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
+import BigNumber from 'bignumber.js';
+import { fetchWalletBalances, depositToVAT, withdrawFromVAT } from 'auctions-core/src/wallet';
 import getWallet, { WALLETS } from '~/lib/wallet';
+import notifier from '~/lib/notifier';
 
 interface State {
     walletType?: string;
     address?: string;
-    isLoading: boolean;
+    isConnecting: boolean;
+    walletBalances?: WalletBalances;
+    isFetchingBalances: boolean;
+    isDepositingOrWithdrawing: boolean;
 }
 
 export const state = (): State => ({
     address: undefined,
     walletType: undefined,
-    isLoading: false,
+    isConnecting: false,
+    walletBalances: undefined,
+    isFetchingBalances: false,
+    isDepositingOrWithdrawing: false,
 });
 
 export const getters = {
@@ -22,7 +32,7 @@ export const getters = {
         return !!state.address;
     },
     isLoading(state: State) {
-        return state.isLoading;
+        return state.isConnecting;
     },
     getWalletType(state: State) {
         return state.walletType;
@@ -33,11 +43,23 @@ export const mutations = {
     setWalletType(state: State, walletType: string): void {
         state.walletType = walletType;
     },
-    setIsLoading(state: State, isLoading: boolean): void {
-        state.isLoading = isLoading;
+    setIsConnecting(state: State, isConnecting: boolean): void {
+        state.isConnecting = isConnecting;
     },
     setAddress(state: State, address: string): void {
         state.address = address;
+    },
+    setWalletBalances(state: State, walletBalances: WalletBalances): void {
+        state.walletBalances = { ...walletBalances };
+    },
+    clearWalletBalances(state: State): void {
+        state.walletBalances = undefined;
+    },
+    setIsFetchingBalances(state: State, isFetchingBalances: boolean): void {
+        state.isFetchingBalances = isFetchingBalances;
+    },
+    setIsDepositingOrWithdrawing(state: State, isDepositingOrWithdrawing: boolean): void {
+        state.isDepositingOrWithdrawing = isDepositingOrWithdrawing;
     },
 };
 
@@ -62,7 +84,7 @@ export const actions = {
     },
     async connect({ commit, dispatch }: ActionContext<State, State>, walletType: string): Promise<void> {
         dispatch('authorizations/reset', undefined, { root: true });
-        commit('setIsLoading', true);
+        commit('setIsConnecting', true);
         try {
             const wallet = getWallet(walletType);
             await wallet.connect();
@@ -71,16 +93,16 @@ export const actions = {
         } catch (error) {
             message.error(`Wallet connection error: ${error.message}`);
         } finally {
-            commit('setIsLoading', false);
+            commit('setIsConnecting', false);
         }
     },
     async disconnect({ getters, commit, dispatch }: ActionContext<State, State>): Promise<void> {
-        commit('setIsLoading', true);
+        commit('setIsConnecting', true);
         try {
             const wallet = getWallet(getters.getWallet);
             await wallet.disconnect();
         } finally {
-            commit('setIsLoading', false);
+            commit('setIsConnecting', false);
         }
         commit('setWalletType', undefined);
         commit('setAddress', undefined);
@@ -90,6 +112,43 @@ export const actions = {
         commit('setAddress', address);
         if (!address) {
             commit('setWalletType', undefined);
+        }
+    },
+    async fetchWalletBalances({ commit, getters, rootGetters }: ActionContext<State, State>): Promise<void> {
+        const network = rootGetters['network/getMakerNetwork'];
+        commit('setIsFetchingBalances', true);
+        try {
+            const walletBalances = await fetchWalletBalances(network, getters.getAddress);
+            commit('setWalletBalances', walletBalances);
+        } catch (error) {
+            commit('clearWalletBalances');
+            message.error(`Error while fetching wallet balances: ${error.message}`);
+        } finally {
+            commit('setIsFetchingBalances', false);
+        }
+    },
+    async depositToVAT(
+        { commit, getters, rootGetters }: ActionContext<State, State>,
+        amount: BigNumber | string
+    ): Promise<void> {
+        const network = rootGetters['network/getMakerNetwork'];
+        commit('setIsDepositingOrWithdrawing', true);
+        try {
+            await depositToVAT(network, getters.getAddress, new BigNumber(amount), notifier);
+        } finally {
+            commit('setIsDepositingOrWithdrawing', false);
+        }
+    },
+    async withdrawFromVAT(
+        { commit, getters, rootGetters }: ActionContext<State, State>,
+        amount: BigNumber | string
+    ): Promise<void> {
+        const network = rootGetters['network/getMakerNetwork'];
+        commit('setIsDepositingOrWithdrawing', true);
+        try {
+            await withdrawFromVAT(network, getters.getAddress, new BigNumber(amount), notifier);
+        } finally {
+            commit('setIsDepositingOrWithdrawing', false);
         }
     },
 };
