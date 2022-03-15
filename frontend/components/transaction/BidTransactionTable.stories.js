@@ -57,6 +57,22 @@ storiesOf('Transaction/BidTransactionTable', module)
         template:
             '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
     }))
+    .add('Total < Minimum x 2', () => ({
+        ...common,
+        data() {
+            return {
+                auctionTransaction: {
+                    ...fakeAuction,
+                    isActive: true,
+                    isFinished: false,
+                    totalPrice: new BigNumber(faker.finance.amount(60, 99)),
+                },
+                minimumDepositDAI: new BigNumber(faker.finance.amount(50, 60)),
+            };
+        },
+        template:
+            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
+    }))
     .add('Decreasing Price', () => ({
         ...common,
         data() {

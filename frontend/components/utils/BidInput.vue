@@ -3,7 +3,7 @@
         <Tooltip :visible="!!error" placement="topLeft" :title="error" class="items-center">
             <Input
                 v-model="amountToBidInput"
-                :disabled="disabled"
+                :disabled="isDisabled"
                 class="Input"
                 :class="{ Error: error }"
                 @focus="hideTotalPrice()"
@@ -13,7 +13,7 @@
                 <format-currency v-if="totalPrice && !disabled" :value="totalPrice" />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <span class="Overlay right-1">DAI</span>
+            <span class="Overlay right-1" :class="{ 'opacity-50': isDisabled }">DAI</span>
         </Tooltip>
     </div>
 </template>
@@ -61,13 +61,17 @@ export default Vue.extend({
         },
         error(): string | undefined {
             const maximumBid = this.totalPrice?.minus(this.minimumDepositDai);
-            if (this.amountToBidInputParsed?.isGreaterThan(maximumBid)) {
-                return `The bidding amount can not be greater than ${maximumBid.toFixed(2)} DAI`;
-            }
-            if (this.amountToBidInputParsed?.isLessThan(this.minimumDepositDai)) {
-                return `The bidding amount can not be smaller than ${this.minimumDepositDai.toFixed(2)} DAI`;
+            if (
+                this.amountToBidInputParsed?.isGreaterThan(maximumBid) ||
+                this.amountToBidInputParsed?.isLessThan(this.minimumDepositDai)
+            ) {
+                return `The value can only be between ${this.minimumDepositDai.toFixed(2)} and ${maximumBid.toFixed(2)}
+                or the total price`;
             }
             return undefined;
+        },
+        isDisabled(): boolean {
+            return this.disabled || this.totalPrice.isLessThan(this.minimumDepositDai.multipliedBy(2));
         },
     },
     watch: {
