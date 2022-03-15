@@ -2,7 +2,7 @@
     <div>
         <Tooltip placement="topRight" :visible="showError">
             <div slot="title">
-                <span class="text-red-400"> Your vault does not contain enough DAI. </span>
+                <span class="text-red-400"> The amount cannot be above {{ max }} or below 0 DAI. </span>
             </div>
             <div class="relative">
                 <InputNumber
@@ -17,20 +17,16 @@
                 </div>
             </div>
         </Tooltip>
-        <div class="text-right">
-            <BaseButton :disabled="disabled" type="link" @click="onChange(max)"> Max </BaseButton>
-        </div>
     </div>
 </template>
 
 <script lang="ts">
 import { InputNumber, Tooltip } from 'ant-design-vue';
 import Vue from 'vue';
-import BaseButton from '../common/BaseButton.vue';
 
 export default Vue.extend({
     name: 'WalletDAIInput',
-    components: { BaseButton, InputNumber, Tooltip },
+    components: { InputNumber, Tooltip },
     props: {
         value: {
             type: Number,

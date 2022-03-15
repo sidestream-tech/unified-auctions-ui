@@ -50,6 +50,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Radio } from 'ant-design-vue';
+import BigNumber from 'bignumber.js';
 import TextBlock from '../common/TextBlock.vue';
 import FormatAddress from '../utils/FormatAddress.vue';
 import BaseButton from '../common/BaseButton.vue';
@@ -86,8 +87,8 @@ export default Vue.extend({
     data() {
         return {
             selectedMethod: 'deposit',
-            depositAmount: 0,
-            withDrawAmount: 0,
+            depositAmount: this.maxDeposit,
+            withDrawAmount: this.maxWithdraw,
         };
     },
     computed: {
@@ -113,10 +114,10 @@ export default Vue.extend({
         },
         submit() {
             if (this.selectedMethod === 'deposit') {
-                this.$emit('submit', { type: this.selectedMethod, amount: this.depositAmount });
+                this.$emit('deposit', new BigNumber(this.depositAmount));
             }
             if (this.selectedMethod === 'withdraw') {
-                this.$emit('submit', { type: this.selectedMethod, amount: this.withDrawAmount });
+                this.$emit('withdraw', new BigNumber(this.withDrawAmount));
             }
         },
     },

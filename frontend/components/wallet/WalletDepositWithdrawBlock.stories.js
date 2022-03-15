@@ -10,24 +10,27 @@ const common = {
         maxWithdraw: faker.datatype.number({ min: 50, max: 500 }),
     }),
     methods: {
-        submit: action('submit'),
+        deposit: action('deposit'),
+        withdraw: action('withdraw'),
     },
 };
 
 storiesOf('Wallet/WalletDepositWithdrawBlock', module)
     .add('Default', () => ({
         ...common,
-        template: '<WalletDepositWithdrawBlock v-bind="$data" @submit="submit" />',
+        template: '<WalletDepositWithdrawBlock v-bind="$data" @deposit="deposit" @withdraw="withdraw" />',
     }))
     .add('Default Expert Mode', () => ({
         ...common,
-        template: '<WalletDepositWithdrawBlock v-bind="$data" @submit="submit" :isExplanationsShown="false" />',
+        template:
+            '<WalletDepositWithdrawBlock v-bind="$data" @deposit="deposit" @withdraw="withdraw" :isExplanationsShown="false" />',
     }))
     .add('Loading', () => ({
         ...common,
-        template: '<WalletDepositWithdrawBlock :is-loading="true" v-bind="$data" @submit="submit"  />',
+        template:
+            '<WalletDepositWithdrawBlock :is-loading="true" v-bind="$data" @deposit="deposit" @withdraw="withdraw"  />',
     }))
     .add('No Values', () => ({
         ...common,
-        template: '<WalletDepositWithdrawBlock @submit="submit"  />',
+        template: '<WalletDepositWithdrawBlock @deposit="deposit" @withdraw="withdraw"  />',
     }));
