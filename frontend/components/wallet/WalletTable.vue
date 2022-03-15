@@ -1,6 +1,6 @@
 <template>
     <TextBlock>
-        <Loading :is-loading="isLoading">
+        <Loading v-if="isLoading || walletAddress" :is-loading="isLoading">
             <table class="w-full table-fixed border-collapse border">
                 <tbody>
                     <tr>
@@ -47,6 +47,13 @@
                 </tbody>
             </table>
         </Loading>
+        <WalletBlock
+            v-else
+            :wallet-address="walletAddress"
+            :is-explanations-shown="isExplanationsShown"
+            :is-loading="isWalletLoading"
+            @connectWallet="$emit('connectWallet')"
+        />
     </TextBlock>
 </template>
 
@@ -59,10 +66,11 @@ import TimeTill from '../common/TimeTill.vue';
 import Loading from '../common/Loading.vue';
 import BaseButton from '../common/BaseButton.vue';
 import TextBlock from '../common/TextBlock.vue';
+import WalletBlock from '../transaction/WalletBlock.vue';
 
 export default Vue.extend({
     name: 'WalletTable',
-    components: { TextBlock, BaseButton, Loading, TimeTill, FormatCurrency, FormatAddress },
+    components: { WalletBlock, TextBlock, BaseButton, Loading, TimeTill, FormatCurrency, FormatAddress },
     props: {
         walletAddress: {
             type: String,
@@ -87,6 +95,14 @@ export default Vue.extend({
         isLoading: {
             type: Boolean,
             default: false,
+        },
+        isWalletLoading: {
+            type: Boolean,
+            default: false,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
     },
 });

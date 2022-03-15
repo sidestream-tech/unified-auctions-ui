@@ -12,9 +12,11 @@ const common = {
         walletDAI: new BigNumber(faker.finance.amount()),
         walletVatDAI: new BigNumber(faker.finance.amount()),
         walletLastUpdatedDate: faker.date.recent(),
+        isWalletLoading: false,
     }),
     methods: {
         refresh: action('refresh'),
+        connectWallet: action('connectWallet'),
     },
 };
 
@@ -27,7 +29,11 @@ storiesOf('Wallet/WalletTable', module)
         ...common,
         template: '<WalletTable :is-loading="true" v-bind="$data" />',
     }))
-    .add('No Values', () => ({
+    .add('No Wallet connected', () => ({
         ...common,
-        template: '<WalletTable @refresh="refresh" />',
+        template: '<WalletTable @connectWallet="connectWallet" />',
+    }))
+    .add('Loading Wallet', () => ({
+        ...common,
+        template: '<WalletTable @refresh="refresh" :is-wallet-loading="true" />',
     }));
