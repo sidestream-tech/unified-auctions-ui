@@ -151,7 +151,6 @@ export default Vue.extend({
 });
 </script>
 
-
 <style>
 .WalletDepositWithDrawBlock {
     @apply flex flex-col gap-4;
