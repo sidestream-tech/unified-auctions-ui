@@ -120,3 +120,9 @@ export declare interface TakeEvent {
     blockNumber: number;
     transactionDate?: Date;
 }
+
+export declare interface WalletBalances {
+    walletETH: BigNumber;
+    walletDAI: BigNumber;
+    walletVatDAI: BigNumber;
+}
