@@ -84,7 +84,7 @@ export default Vue.extend({
         },
         isTooSmallToPartiallyTakeTooltipContent(): string {
             if (this.isTooSmallToPartiallyTake) {
-                return 'The value can not be changed since the the leftover part will be too small';
+                return 'The value can not be changed since the leftover part will be too small';
             }
             return '';
         },
