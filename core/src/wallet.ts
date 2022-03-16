@@ -28,6 +28,7 @@ export const fetchWalletBalances = async function (network: string, walletAddres
         walletETH: await fetchBalanceETH(network, walletAddress),
         walletDAI: await fetchBalanceDAI(network, walletAddress),
         walletVatDAI: await fetchVATbalanceDAI(network, walletAddress),
+        walletLastUpdatedDate: new Date(),
     };
 };
 

@@ -37,6 +37,15 @@ export const getters = {
     getWalletType(state: State) {
         return state.walletType;
     },
+    walletBalances(state: State) {
+        return state.walletBalances;
+    },
+    isFetchingBalances(state: State) {
+        return state.isFetchingBalances;
+    },
+    isDepositingOrWithdrawing(state: State) {
+        return state.isDepositingOrWithdrawing;
+    },
 };
 
 export const mutations = {
