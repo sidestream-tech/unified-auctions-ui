@@ -29,7 +29,7 @@
                 v-if="selectedMethod === 'deposit'"
                 key="depositInput"
                 :amount-to-bid.sync="depositAmount"
-                :disabled="isLoading"
+                :disabled="isLoading || !isDepositingAllowed"
                 :total-price="maxDeposit"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
