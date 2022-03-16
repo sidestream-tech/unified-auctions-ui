@@ -37,7 +37,7 @@
                 v-else
                 key="withdrawInput"
                 :amount-to-bid.sync="withDrawAmount"
-                :disabled="isLoading"
+                :disabled="isLoading || !isWithdrawingAllowed"
                 :total-price="maxWithdraw"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
