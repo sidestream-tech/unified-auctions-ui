@@ -92,4 +92,25 @@ storiesOf('Transaction/BidTransactionTable', module)
         },
         template:
             '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
+    }))
+    .add('Decreasing Into Disabled Input', () => ({
+        ...common,
+        data() {
+            return {
+                auctionTransaction: {
+                    ...fakeAuction,
+                    isActive: true,
+                    isFinished: false,
+                    totalPrice: new BigNumber(faker.finance.amount(50, 55)),
+                },
+                minimumDepositDAI: new BigNumber(faker.finance.amount(25, 25)),
+            };
+        },
+        created() {
+            setInterval(() => {
+                this.auctionTransaction.totalPrice = this.auctionTransaction.totalPrice.multipliedBy(0.99);
+            }, 5000);
+        },
+        template:
+            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
     }));

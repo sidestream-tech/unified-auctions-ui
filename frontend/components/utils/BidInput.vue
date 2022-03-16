@@ -1,23 +1,25 @@
 <template>
-    <div class="w-full inline-block relative flex-shrink-0">
-        <Tooltip :visible="!!error" placement="topLeft" :title="error" class="items-center">
-            <Input
-                v-model="amountToBidInput"
-                :disabled="isDisabled"
-                class="Input"
-                :class="{ Error: error }"
-                @focus="hideTotalPrice()"
-                @blur="showTotalPriceIfEmpty()"
-            />
-            <div v-if="!amountToBid" class="Overlay TotalPrice">
-                <format-currency
-                    v-if="totalPrice && !disabled"
-                    :value="totalPrice"
-                    :class="{ 'opacity-50': isDisabled }"
+    <div class="w-full relative">
+        <Tooltip :visible="!!error" placement="topLeft" :title="error">
+            <Tooltip placement="topLeft" :title="isTooSmallToPartiallyTakeTooltipContent">
+                <Input
+                    v-model="amountToBidInput"
+                    :disabled="isDisabled"
+                    class="Input"
+                    :class="{ Error: error }"
+                    @focus="hideTotalPrice()"
+                    @blur="showTotalPriceIfEmpty()"
                 />
-                <span v-else class="opacity-50">Unknown</span>
-            </div>
-            <span class="Overlay right-1" :class="{ 'opacity-50': isDisabled }">DAI</span>
+                <div v-if="!amountToBid" class="Overlay TotalPrice">
+                    <format-currency
+                        v-if="totalPrice && !disabled"
+                        :value="totalPrice"
+                        :class="{ 'opacity-50': isDisabled }"
+                    />
+                    <span v-else class="opacity-50">Unknown</span>
+                </div>
+                <span class="Overlay right-1" :class="{ 'opacity-50': isDisabled }">DAI</span>
+            </Tooltip>
         </Tooltip>
     </div>
 </template>
@@ -74,8 +76,17 @@ export default Vue.extend({
             }
             return undefined;
         },
+        isTooSmallToPartiallyTake(): boolean {
+            return this.totalPrice?.isLessThan(this.minimumDepositDai.multipliedBy(2));
+        },
         isDisabled(): boolean {
-            return this.disabled || this.totalPrice.isLessThan(this.minimumDepositDai.multipliedBy(2));
+            return this.disabled || this.isTooSmallToPartiallyTake;
+        },
+        isTooSmallToPartiallyTakeTooltipContent(): string {
+            if (this.isTooSmallToPartiallyTake) {
+                return 'The value can not be changed since the the leftover part will be too small';
+            }
+            return '';
         },
     },
     watch: {
@@ -99,6 +110,11 @@ export default Vue.extend({
             }
             if (newVal.isEqualTo(this.minimumDepositDai)) {
                 this.amountToBidInput = newVal.toFixed();
+            }
+        },
+        isTooSmallToPartiallyTake(newVal) {
+            if (newVal) {
+                this.$emit('update:amountToBid', undefined);
             }
         },
     },
