@@ -12,7 +12,7 @@
                 type="primary"
             >
                 <span>
-                    Bid <format-currency :value="transactionAmountDAI" currency="DAI" /> for
+                    Bid <format-currency :value="transactionAmountDai" currency="DAI" /> for
                     <format-currency
                         :value="auctionTransaction.collateralAmount"
                         :currency="auctionTransaction.collateralSymbol"
@@ -54,7 +54,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<AuctionTransaction>,
             default: null,
         },
-        transactionAmountDAI: {
+        transactionAmountDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },

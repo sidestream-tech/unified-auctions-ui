@@ -9,7 +9,7 @@
         <div class="text-base font-medium">
             <div class="flex justify-between">
                 <span>Amount available in the wallet</span>
-                <format-currency v-if="walletDAI" :value="walletDAI" currency="DAI" />
+                <format-currency v-if="walletDai" :value="walletDai" currency="DAI" />
                 <div v-else>
                     <span class="opacity-75">Unknown</span>
                     <span>DAI</span>
@@ -17,7 +17,7 @@
             </div>
             <div class="flex justify-between">
                 <span>Currently deposited amount</span>
-                <format-currency v-if="walletVatDAI" :value="walletVatDAI" currency="DAI" />
+                <format-currency v-if="walletVatDai" :value="walletVatDai" currency="DAI" />
                 <div v-else>
                     <span class="opacity-75">Unknown</span>
                     <span>DAI</span>
@@ -25,7 +25,7 @@
             </div>
             <div class="flex justify-between">
                 <span>Minimum to deposit</span>
-                <format-currency v-if="minimumDepositDAI" :value="minimumDepositDAI" currency="DAI" />
+                <format-currency v-if="minimumDepositDai" :value="minimumDepositDai" currency="DAI" />
                 <div v-else>
                     <span class="opacity-75">Unknown</span>
                     <span>DAI</span>
@@ -38,7 +38,7 @@
                 Manage VAT
             </BaseButton>
             -->
-            <BaseButton v-if="minimumDepositDAI && minimumDepositDAI.isZero()" disabled class="w-60">
+            <BaseButton v-if="minimumDepositDai && minimumDepositDai.isZero()" disabled class="w-60">
                 Enough DAI is available
             </BaseButton>
             <BaseButton
@@ -47,7 +47,7 @@
                 :disabled="isDisabled"
                 :is-loading="isLoading"
                 class="w-60"
-                @click="$emit('deposit', minimumDepositDAI)"
+                @click="$emit('deposit', minimumDepositDai)"
             >
                 Deposit minimum amount
             </BaseButton>
@@ -81,28 +81,28 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        walletDAI: {
+        walletDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        walletVatDAI: {
+        walletVatDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        transactionAmountDAI: {
+        transactionAmountDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
     },
     computed: {
-        minimumDepositDAI(): BigNumber | undefined {
-            if (!this.transactionAmountDAI || !this.walletVatDAI) {
+        minimumDepositDai(): BigNumber | undefined {
+            if (!this.transactionAmountDai || !this.walletVatDai) {
                 return undefined;
             }
-            return BigNumber.maximum(0, this.transactionAmountDAI.minus(this.walletVatDAI));
+            return BigNumber.maximum(0, this.transactionAmountDai.minus(this.walletVatDai));
         },
         isDisabled(): Boolean {
-            return this.disabled || (!this.walletVatDAI && !this.walletDAI);
+            return this.disabled || (!this.walletVatDai && !this.walletDai);
         },
     },
 });
