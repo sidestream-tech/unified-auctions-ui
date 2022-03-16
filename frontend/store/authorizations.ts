@@ -1,9 +1,12 @@
 import { ActionContext } from 'vuex';
+import BigNumber from 'bignumber.js';
 import {
     getWalletAuthorizationStatus,
     authorizeWallet,
     getCollateralAuthorizationStatus,
     authorizeCollateral,
+    setAllowanceAmount,
+    fetchAllowanceAmount,
 } from 'auctions-core/src/authorizations';
 import notifier from '~/lib/notifier';
 
@@ -14,6 +17,8 @@ interface State {
     isWalletAuthorizationDone: boolean;
     isCollateralAuthorizationLoading: boolean;
     collateralAuthorizations: string[];
+    isAllowanceAmountLoading: boolean;
+    allowanceAmount?: BigNumber;
 }
 
 const getInitialState = (): State => ({
@@ -21,6 +26,8 @@ const getInitialState = (): State => ({
     isWalletAuthorizationDone: false,
     isCollateralAuthorizationLoading: false,
     collateralAuthorizations: [],
+    isAllowanceAmountLoading: false,
+    allowanceAmount: undefined,
 });
 
 export const state = () => getInitialState();
@@ -35,6 +42,9 @@ export const getters = {
     collateralAuthorizations(state: State) {
         return state.collateralAuthorizations;
     },
+    allowanceAmount(state: State) {
+        return state.allowanceAmount ?? new BigNumber(0);
+    },
 };
 
 export const mutations = {
@@ -46,6 +56,12 @@ export const mutations = {
     },
     setIsCollateralAuthorizationLoading(state: State, isLoading: boolean) {
         state.isCollateralAuthorizationLoading = isLoading;
+    },
+    setIsAllowanceAmountLoading(state: State, isAllowanceAmountLoading: boolean) {
+        state.isAllowanceAmountLoading = isAllowanceAmountLoading;
+    },
+    setAllowanceAmount(state: State, allowanceAmount: BigNumber) {
+        state.allowanceAmount = allowanceAmount;
     },
     addCollateralAuthorization(state: State, collateralType: string) {
         if (!state.collateralAuthorizations.includes(collateralType)) {
@@ -173,6 +189,31 @@ export const actions = {
             console.error(`Collateral authorization error: ${error.message}`);
         } finally {
             commit('setIsCollateralAuthorizationLoading', false);
+        }
+    },
+    async setAllowanceAmount({ commit, rootGetters }: ActionContext<State, State>, amount?: BigNumber | string) {
+        commit('setIsAllowanceAmountLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
+        try {
+            await setAllowanceAmount(network, amount, notifier);
+        } catch (error) {
+            console.error(`Setting allowance amount error: ${error.message}`);
+        } finally {
+            commit('setIsAllowanceAmountLoading', false);
+        }
+    },
+    async fetchAllowanceAmount({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+        commit('setIsAllowanceAmountLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = rootGetters['wallet/getAddress'];
+        try {
+            const allowanceAmount = await fetchAllowanceAmount(network, walletAddress);
+            commit('setAllowanceAmount', allowanceAmount);
+        } catch (error) {
+            console.error(`Fetching allowance amount error: ${error.message}`);
+            setTimeout(() => dispatch('fetchAllowanceAmount'), AUTHORIZATION_STATUS_RETRY_DELAY);
+        } finally {
+            commit('setIsAllowanceAmountLoading', false);
         }
     },
 };

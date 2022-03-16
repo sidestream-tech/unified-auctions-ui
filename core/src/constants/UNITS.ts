@@ -7,6 +7,7 @@ import BigNumber from 'bignumber.js';
 export const WAD = new BigNumber('1e18');
 export const RAD = new BigNumber('1e45');
 export const RAY = new BigNumber('1e27');
+export const MAX = new BigNumber('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
 export const WAD_NUMBER_OF_DIGITS = 18;
 export const RAD_NUMBER_OF_DIGITS = 45;
 export const RAY_NUMBER_OF_DIGITS = 27;
