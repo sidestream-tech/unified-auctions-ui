@@ -42,7 +42,13 @@
                 :minimum-deposit-dai="minimumDaiAmount"
             />
 
-            <BaseButton type="primary" class="capitalize" :disabled="isLoading || !canSubmit" html-type="submit">
+            <BaseButton
+                type="primary"
+                class="capitalize"
+                :is-loading="isLoading"
+                :disabled="!canSubmit"
+                html-type="submit"
+            >
                 {{ selectedMethod }}
             </BaseButton>
         </form>
@@ -89,6 +95,14 @@ export default Vue.extend({
             type: String,
             required: true,
         },
+        isDepositingAllowed: {
+            type: Boolean,
+            required: true,
+        },
+        isWithdrawingAllowed: {
+            type: Boolean,
+            required: true,
+        },
     },
     data() {
         return {
@@ -101,12 +115,18 @@ export default Vue.extend({
     computed: {
         canSubmit(): boolean {
             if (this.selectedMethod === 'deposit') {
+                if (!this.isDepositingAllowed) {
+                    return false;
+                }
                 if (this.depositAmount === undefined) {
                     return true;
                 }
                 return !this.depositAmount.isNaN();
             }
             if (this.selectedMethod === 'withdraw') {
+                if (!this.isWithdrawingAllowed) {
+                    return false;
+                }
                 if (this.withDrawAmount === undefined) {
                     return true;
                 }
