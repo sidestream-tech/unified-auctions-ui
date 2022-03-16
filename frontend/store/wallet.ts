@@ -59,7 +59,7 @@ export const mutations = {
         state.address = address;
     },
     setWalletBalances(state: State, walletBalances: WalletBalances): void {
-        state.walletBalances = walletBalances;
+        state.walletBalances = { ...walletBalances };
     },
     clearWalletBalances(state: State): void {
         state.walletBalances = undefined;
