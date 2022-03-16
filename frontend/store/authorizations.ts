@@ -10,6 +10,7 @@ import {
 } from 'auctions-core/src/authorizations';
 import notifier from '~/lib/notifier';
 
+const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
 
 interface State {
@@ -106,7 +107,8 @@ export const actions = {
         } catch (error) {
             commit('setIsWalletAuthorizationDone', false);
             console.error(`Wallet authorization status error: ${error.message}`);
-            setTimeout(() => dispatch('fetchWalletAuthorizationStatus'), AUTHORIZATION_STATUS_RETRY_DELAY);
+            await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
+            await dispatch('fetchWalletAuthorizationStatus');
         } finally {
             commit('setIsWalletAuthorizationLoading', false);
         }
@@ -116,7 +118,7 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         try {
             await authorizeWallet(network, false, notifier);
-            dispatch('fetchWalletAuthorizationStatus');
+            await dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
         } finally {
@@ -128,7 +130,7 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         try {
             await authorizeWallet(network, true, notifier);
-            dispatch('fetchWalletAuthorizationStatus');
+            await dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
         } finally {
@@ -156,10 +158,8 @@ export const actions = {
             return isAuthorized;
         } catch (error) {
             console.error(`Collateral authorization status error: ${error.message}`);
-            setTimeout(
-                () => dispatch('fetchCollateralAuthorizationStatus', collateralType),
-                AUTHORIZATION_STATUS_RETRY_DELAY
-            );
+            await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
+            await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } finally {
             commit('setIsCollateralAuthorizationLoading', false);
         }
@@ -169,7 +169,7 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         try {
             await authorizeCollateral(network, collateralType, false, notifier);
-            dispatch('fetchCollateralAuthorizationStatus', collateralType);
+            await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
         } finally {
@@ -184,18 +184,22 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         try {
             await authorizeCollateral(network, collateralType, true, notifier);
-            dispatch('fetchCollateralAuthorizationStatus', collateralType);
+            await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
         } finally {
             commit('setIsCollateralAuthorizationLoading', false);
         }
     },
-    async setAllowanceAmount({ commit, rootGetters }: ActionContext<State, State>, amount?: BigNumber | string) {
+    async setAllowanceAmount(
+        { commit, dispatch, rootGetters }: ActionContext<State, State>,
+        amount?: BigNumber | string
+    ) {
         commit('setIsAllowanceAmountLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
         try {
             await setAllowanceAmount(network, amount, notifier);
+            await dispatch('fetchAllowanceAmount');
         } catch (error) {
             console.error(`Setting allowance amount error: ${error.message}`);
         } finally {
@@ -211,7 +215,8 @@ export const actions = {
             commit('setAllowanceAmount', allowanceAmount);
         } catch (error) {
             console.error(`Fetching allowance amount error: ${error.message}`);
-            setTimeout(() => dispatch('fetchAllowanceAmount'), AUTHORIZATION_STATUS_RETRY_DELAY);
+            await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
+            await dispatch('fetchAllowanceAmount');
         } finally {
             commit('setIsAllowanceAmountLoading', false);
         }
