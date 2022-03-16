@@ -13,7 +13,7 @@
                 </li>
             </ul>
         </TextBlock>
-        <div>
+        <form class="flex flex-col gap-4" @submit.prevent="submit">
             <RadioGroup
                 :disabled="isLoading"
                 :value="selectedMethod"
@@ -24,26 +24,28 @@
                 <RadioButton value="deposit" class="w-full text-center"> Deposit </RadioButton>
                 <RadioButton value="withdraw" class="w-full text-center"> Withdraw </RadioButton>
             </RadioGroup>
-        </div>
 
-        <BidInput
-            v-if="selectedMethod === 'deposit'"
-            :amount-to-bid.sync="depositAmount"
-            :disabled="isLoading"
-            :total-price="maxDeposit"
-            :minimum-deposit-dai="minimumDaiAmount"
-        />
-        <BidInput
-            v-else
-            :amount-to-bid.sync="withDrawAmount"
-            :disabled="isLoading"
-            :total-price="maxWithdraw"
-            :minimum-deposit-dai="minimumDaiAmount"
-        />
+            <BidInput
+                v-if="selectedMethod === 'deposit'"
+                key="depositInput"
+                :amount-to-bid.sync="depositAmount"
+                :disabled="isLoading"
+                :total-price="maxDeposit"
+                :minimum-deposit-dai="minimumDaiAmount"
+            />
+            <BidInput
+                v-else
+                key="withdrawInput"
+                :amount-to-bid.sync="withDrawAmount"
+                :disabled="isLoading"
+                :total-price="maxWithdraw"
+                :minimum-deposit-dai="minimumDaiAmount"
+            />
 
-        <BaseButton type="primary" class="capitalize" :disabled="isLoading || !canSubmit" @click="submit">
-            {{ selectedMethod }}
-        </BaseButton>
+            <BaseButton type="primary" class="capitalize" :disabled="isLoading || !canSubmit" html-type="submit">
+                {{ selectedMethod }}
+            </BaseButton>
+        </form>
     </div>
 </template>
 
@@ -71,10 +73,6 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        minimumDaiAmount: {
-            type: Object as Vue.PropType<BigNumber>,
-            required: true,
-        },
         maxDeposit: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
@@ -94,6 +92,7 @@ export default Vue.extend({
     },
     data() {
         return {
+            minimumDaiAmount: new BigNumber(0),
             selectedMethod: 'deposit',
             depositAmount: undefined,
             withDrawAmount: undefined,
@@ -122,10 +121,10 @@ export default Vue.extend({
         },
         submit() {
             if (this.selectedMethod === 'deposit') {
-                this.$emit('deposit', this.depositAmount ? this.depositAmount : this.maxDeposit);
+                this.$emit('deposit', this.depositAmount ?? this.maxDeposit);
             }
             if (this.selectedMethod === 'withdraw') {
-                this.$emit('withdraw', this.withDrawAmount ? this.withDrawAmount : this.maxWithdraw);
+                this.$emit('withdraw', this.withDrawAmount ?? this.maxWithdraw);
             }
         },
     },
