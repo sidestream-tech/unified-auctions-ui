@@ -101,7 +101,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                     ...fakeAuction,
                     isActive: true,
                     isFinished: false,
-                    totalPrice: new BigNumber(faker.finance.amount(50, 55)),
+                    totalPrice: new BigNumber(faker.finance.amount(50, 51)),
                 },
                 minimumDepositDAI: new BigNumber(faker.finance.amount(25, 25)),
             };
