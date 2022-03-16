@@ -72,7 +72,7 @@ export const setAllowanceAmount = async function (
     notifier?: Notifier
 ): Promise<string> {
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
-    const amountRaw = amount ? new BigNumber(amount).shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0) : MAX;
+    const amountRaw = amount ? new BigNumber(amount).shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0) : MAX.toFixed(0);
     return await executeTransaction(network, 'MCD_DAI', 'approve', [joinDaiAddress, amountRaw], notifier);
 };
 
