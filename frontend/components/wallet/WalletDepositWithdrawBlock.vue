@@ -9,7 +9,7 @@
                 <li>
                     By purchasing it on a decentralized exchange like uniswap.org (correct DAI token address used on
                     the “mainnet” network is
-                    <FormatAddress type="address" value="0x6b175474e89094c44da98b954eedeac495271d0f" shorten />)
+                    <FormatAddress type="address" :value="tokenAddressDAI" shorten />)
                 </li>
             </ul>
         </TextBlock>
@@ -26,19 +26,19 @@
             </RadioGroup>
         </div>
 
-        <WalletDAIInput
+        <BidInput
             v-if="selectedMethod === 'deposit'"
-            :value="depositAmount"
+            :amount-to-bid.sync="depositAmount"
             :disabled="isLoading"
-            :max="maxDeposit"
-            @update="setDepositAmount"
+            :total-price="maxDeposit"
+            :minimum-deposit-dai="minimumDaiAmount"
         />
-        <WalletDAIInput
+        <BidInput
             v-else
-            :value="withDrawAmount"
+            :amount-to-bid.sync="withDrawAmount"
             :disabled="isLoading"
-            :max="maxWithdraw"
-            @update="setWithdrawAmount"
+            :total-price="maxWithdraw"
+            :minimum-deposit-dai="minimumDaiAmount"
         />
 
         <BaseButton type="primary" class="capitalize" :disabled="isLoading || !canSubmit" @click="submit">
@@ -54,12 +54,12 @@ import BigNumber from 'bignumber.js';
 import TextBlock from '../common/TextBlock.vue';
 import FormatAddress from '../utils/FormatAddress.vue';
 import BaseButton from '../common/BaseButton.vue';
-import WalletDAIInput from './WalletDAIInput.vue';
+import BidInput from '../utils/BidInput';
 
 export default Vue.extend({
     name: 'WalletDepositWithdrawBlock',
     components: {
-        WalletDAIInput,
+        BidInput,
         BaseButton,
         FormatAddress,
         TextBlock,
@@ -71,33 +71,47 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        minimumDaiAmount: {
+            type: Object as Vue.PropType<BigNumber>,
+            required: true,
+        },
         maxDeposit: {
-            type: Number,
-            default: 0,
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
         maxWithdraw: {
-            type: Number,
-            default: 0,
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
         isExplanationsShown: {
             type: Boolean,
             default: true,
         },
+        tokenAddressDAI: {
+            type: String,
+            required: true,
+        },
     },
     data() {
         return {
             selectedMethod: 'deposit',
-            depositAmount: this.maxDeposit,
-            withDrawAmount: this.maxWithdraw,
+            depositAmount: undefined,
+            withDrawAmount: undefined,
         };
     },
     computed: {
         canSubmit(): boolean {
             if (this.selectedMethod === 'deposit') {
-                return this.depositAmount > 0 && this.depositAmount <= this.maxDeposit;
+                if (this.depositAmount === undefined) {
+                    return true;
+                }
+                return !this.depositAmount.isNaN();
             }
             if (this.selectedMethod === 'withdraw') {
-                return this.withDrawAmount > 0 && this.withDrawAmount <= this.maxWithdraw;
+                if (this.withDrawAmount === undefined) {
+                    return true;
+                }
+                return !this.withDrawAmount.isNaN();
             }
             return false;
         },
@@ -106,18 +120,12 @@ export default Vue.extend({
         handleMethodChange(e) {
             this.selectedMethod = e.target.value;
         },
-        setDepositAmount(amount) {
-            this.depositAmount = amount;
-        },
-        setWithdrawAmount(amount) {
-            this.withDrawAmount = amount;
-        },
         submit() {
             if (this.selectedMethod === 'deposit') {
-                this.$emit('deposit', new BigNumber(this.depositAmount));
+                this.$emit('deposit', this.depositAmount ? this.depositAmount : this.maxDeposit);
             }
             if (this.selectedMethod === 'withdraw') {
-                this.$emit('withdraw', new BigNumber(this.withDrawAmount));
+                this.$emit('withdraw', this.withDrawAmount ? this.withDrawAmount : this.maxWithdraw);
             }
         },
     },

@@ -1,13 +1,16 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import { action } from '@storybook/addon-actions';
+import BigNumber from 'bignumber.js';
 import WalletDepositWithdrawBlock from '~/components/wallet/WalletDepositWithdrawBlock';
 
 const common = {
     components: { WalletDepositWithdrawBlock },
     data: () => ({
-        maxDeposit: faker.datatype.number({ min: 50, max: 500 }),
-        maxWithdraw: faker.datatype.number({ min: 50, max: 500 }),
+        maxDeposit: new BigNumber(faker.datatype.number({ min: 50, max: 500 })),
+        maxWithdraw: new BigNumber(faker.datatype.number({ min: 50, max: 500 })),
+        minimumDaiAmount: new BigNumber(0),
+        tokenAddressDAI: faker.finance.ethereumAddress(),
     }),
     methods: {
         deposit: action('deposit'),
@@ -28,9 +31,5 @@ storiesOf('Wallet/WalletDepositWithdrawBlock', module)
     .add('Loading', () => ({
         ...common,
         template:
-            '<WalletDepositWithdrawBlock :is-loading="true" v-bind="$data" @deposit="deposit" @withdraw="withdraw"  />',
-    }))
-    .add('No Values', () => ({
-        ...common,
-        template: '<WalletDepositWithdrawBlock @deposit="deposit" @withdraw="withdraw"  />',
+            '<WalletDepositWithdrawBlock v-bind="$data" :is-loading="true" @deposit="deposit" @withdraw="withdraw"  />',
     }));
