@@ -10,6 +10,8 @@ const common = {
         maxDeposit: new BigNumber(faker.datatype.number({ min: 50, max: 500 })),
         maxWithdraw: new BigNumber(faker.datatype.number({ min: 50, max: 500 })),
         tokenAddressDAI: faker.finance.ethereumAddress(),
+        isDepositingAllowed: true,
+        isWithdrawingAllowed: true,
     }),
     methods: {
         deposit: action('deposit'),
