@@ -9,8 +9,9 @@
         <Alert v-if="auctionTransaction.isFinished" message="This auction is finished" type="error" />
         <BidTransactionTable
             :auction-transaction="auctionTransaction"
-            :minimum-deposit-dai="minimumDepositDai"
+            :minimum-deposit-dai="minimumBidDai"
             class="mt-4 mb-6"
+            @inputBidAmount="$emit('inputBidAmount', $event)"
         />
         <WalletBlock
             class="mb-6 lg:mb-0"
@@ -34,20 +35,20 @@
             :disabled="!auctionTransaction.isActive || !isDaiAccessGranted"
             :transaction-amount-dai="transactionAmountDai"
             :is-loading="isDepositing"
-            :wallet-dai="test"
-            :wallet-vat-dai="test"
+            :wallet-dai="walletDai"
+            :wallet-vat-dai="walletVatDai"
             @deposit="$emit('deposit', $event)"
         />
         <AuthorisationBlock
             class="mb-6 lg:mb-0"
-            :disabled="!transactionAmountDai || !auctionTransaction.isActive"
+            :disabled="!isEnoughDeposited || !auctionTransaction.isActive || !isDaiAccessGranted"
             :auction-transaction="auctionTransaction"
             :is-loading="isAuthorizing"
             :is-wallet-authorised="isWalletAuthorised"
             :is-collateral-authorised="isCollateralAuthorised"
             :is-explanations-shown="isExplanationsShown"
             @authorizeWallet="$emit('authorizeWallet')"
-            @authorizeCollateral="$emit('authorizeCollateral')"
+            @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
         />
         <BidBlock
             :auction-transaction="auctionTransaction"
@@ -55,6 +56,7 @@
             :disabled="!auctionTransaction.isActive || !isWalletAuthorised || !isCollateralAuthorised"
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
+            @execute="$emit('execute')"
         />
     </div>
 </template>
@@ -109,35 +111,42 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        authorisedCollaterals: {
-            type: Array as Vue.PropType<string[]>,
-            default: () => [],
-        },
         isDaiAccessGranted: {
             type: Boolean,
             default: false,
         },
+        authorisedCollaterals: {
+            type: Array as Vue.PropType<string[]>,
+            default: () => [],
+        },
         walletAddress: {
             type: String,
+            default: null,
+        },
+        walletDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: null,
+        },
+        walletVatDai: {
+            type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
         isExplanationsShown: {
             type: Boolean,
             default: true,
         },
-        minimumDepositDai: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: new BigNumber(0),
-        },
         transactionAmountDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-    },
-    data() {
-        return {
-            test: new BigNumber(10),
-        };
+        minimumDepositDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: null,
+        },
+        minimumBidDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: null,
+        },
     },
     computed: {
         isConnected(): boolean {
@@ -145,6 +154,9 @@ export default Vue.extend({
         },
         isCollateralAuthorised(): boolean {
             return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
+        },
+        isEnoughDeposited(): boolean {
+            return this.walletVatDai.isGreaterThanOrEqualTo(this.transactionAmountDai);
         },
     },
 });

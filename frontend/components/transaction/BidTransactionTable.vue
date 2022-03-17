@@ -169,6 +169,11 @@ export default Vue.extend({
             return !!this.amountToBid?.isNaN();
         },
     },
+    watch: {
+        amountToBid(newVal) {
+            this.$emit('inputBidAmount', newVal);
+        },
+    },
     methods: {
         setAmountToBid(value: BigNumber | undefined) {
             if (this.isActive) {

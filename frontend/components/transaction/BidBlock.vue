@@ -10,6 +10,7 @@
                 v-if="state !== 'loading'"
                 :disabled="state === 'disabled' || state === 'executed'"
                 type="primary"
+                @click="$emit('execute')"
             >
                 <span>
                     Bid <format-currency :value="transactionAmountDai" currency="DAI" /> for
