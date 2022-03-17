@@ -173,6 +173,9 @@ export default Vue.extend({
         amountToBid(newVal) {
             this.$emit('inputBidAmount', newVal);
         },
+        amountToReceive(newVal) {
+            this.$emit('amountToReceive', newVal);
+        },
     },
     methods: {
         setAmountToBid(value: BigNumber | undefined) {

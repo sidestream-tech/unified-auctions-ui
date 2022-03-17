@@ -12,6 +12,7 @@
             :minimum-deposit-dai="minimumBidDai"
             class="mt-4 mb-6"
             @inputBidAmount="$emit('inputBidAmount', $event)"
+            @amountToReceive="setAmountToReceive"
         />
         <WalletBlock
             class="mb-6 lg:mb-0"
@@ -53,10 +54,11 @@
         <BidBlock
             :auction-transaction="auctionTransaction"
             :transaction-amount-dai="transactionAmountDai"
+            :amount-to-receive="amountToReceive"
             :disabled="!auctionTransaction.isActive || !isWalletAuthorised || !isCollateralAuthorised"
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
-            @execute="$emit('execute')"
+            @execute="$emit('execute', { id: auctionTransaction.id })"
         />
     </div>
 </template>
@@ -139,14 +141,15 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        minimumDepositDai: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
         minimumBidDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
+    },
+    data() {
+        return {
+            amountToReceive: undefined as BigNumber | undefined,
+        };
     },
     computed: {
         isConnected(): boolean {
@@ -157,6 +160,11 @@ export default Vue.extend({
         },
         isEnoughDeposited(): boolean {
             return this.walletVatDai.isGreaterThanOrEqualTo(this.transactionAmountDai);
+        },
+    },
+    methods: {
+        setAmountToReceive(amount: BigNumber | undefined) {
+            this.amountToReceive = amount;
         },
     },
 });

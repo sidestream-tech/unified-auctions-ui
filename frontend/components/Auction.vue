@@ -211,7 +211,12 @@
                             >
                         </div>
                         <div>
-                            <Button disabled type="secondary" class="w-60 mb-4" @click="$emit('purchase')">
+                            <Button
+                                :disabled="!!errorText"
+                                type="secondary"
+                                class="w-60 mb-4"
+                                @click="$emit('purchase')"
+                            >
                                 Bid with DAI
                             </Button>
                         </div>

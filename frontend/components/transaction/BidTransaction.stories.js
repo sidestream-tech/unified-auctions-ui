@@ -31,7 +31,6 @@ const common = {
             transactionAddress: null,
             transactionAmountDai: fakeAuctionTransaction.totalPrice,
             minimumBidDai: new BigNumber(faker.finance.amount()),
-            minimumDepositDai: null,
         };
     },
     methods: {
@@ -64,7 +63,6 @@ const common = {
             setTimeout(() => {
                 this.walletDai = this.walletDai?.minus(new BigNumber(amount));
                 this.walletVatDai = this.walletVatDai.plus(new BigNumber(amount));
-                this.minimumDepositDai = new BigNumber(amount);
                 this.isDepositing = false;
             }, 1000);
         },
@@ -114,7 +112,6 @@ storiesOf('Transaction/BidTransaction', module).add('Default', () => ({
         :walletVatDai="walletVatDai"
         :transactionAmountDai="transactionAmountDai"
         :minimumBidDai="minimumBidDai"
-        :minimumDepositDai="minimumDepositDai"
         @inputBidAmount="setTransactionAmountDAI($event)"
         @connect="connect()"
         @disconnect="disconnect()"

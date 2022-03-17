@@ -31,14 +31,15 @@
                         :are-take-events-fetching="areTakeEventsFetching"
                         @restart="$emit('restart', $event)"
                         @connect="$emit('connect')"
-                        @swap="step = 2"
+                        @swap="swap()"
+                        @purchase="purchase()"
                         @fetchTakeEventsFromAuction="$emit('fetchTakeEventsFromAuction', $event)"
                     />
                 </div>
             </template>
             <template #step2>
                 <SwapTransaction
-                    v-if="selectedAuction"
+                    v-if="selectedAuction && secondStep === 'swap'"
                     class="mt-6 mb-8 mx-8"
                     :auction-transaction="selectedAuction"
                     :is-connecting="isConnecting"
@@ -54,6 +55,32 @@
                     @authorizeCollateral="$emit('authorizeCollateral', $event)"
                     @execute="$emit('execute', $event)"
                 />
+                <BidTransaction
+                    v-if="selectedAuction && secondStep === 'purchase'"
+                    class="mt-6 mb-8 mx-8"
+                    :auction-transaction="selectedAuction"
+                    :is-connecting="isConnecting"
+                    :is-granting-access="isGrantingAccess"
+                    :is-depositing="isDepositingDai"
+                    :is-authorizing="isAuthorizing"
+                    :is-executing="isExecuting"
+                    :is-wallet-authorised="isWalletAuthorised"
+                    :is-dai-access-granted="isDaiAccessGranted"
+                    :authorised-collaterals="authorisedCollaterals"
+                    :wallet-address="walletAddress"
+                    :wallet-dai="walletDai"
+                    :wallet-vat-dai="walletVatDai"
+                    :transaction-amount-dai="transactionAmountDai"
+                    :minimum-bid-dai="minimumBidDai"
+                    @inputBidAmount="$emit('inputBidAmount', $event)"
+                    @connect="$emit('connect')"
+                    @disconnect="$emit('disconnect')"
+                    @grantDaiAccess="$emit('grantDaiAccess')"
+                    @deposit="$emit('deposit', $event)"
+                    @authorizeWallet="$emit('authorizeWallet')"
+                    @authorizeCollateral="$emit('authorizeCollateral', $event)"
+                    @execute="$emit('execute', $event)"
+                />
             </template>
         </SplitLayout>
     </div>
@@ -61,14 +88,16 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TakeEvent } from 'auctions-core/dist/src/types';
+import BigNumber from 'bignumber.js';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import MainText from '~/components/MainText.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import Auction from '~/components/Auction.vue';
 import SwapTransaction from '~/components/transaction/SwapTransaction.vue';
+import BidTransaction from '~/components/transaction/BidTransaction.vue';
 
 export default Vue.extend({
-    components: { SplitLayout, MainText, Auction, SwapTransaction, LandingBlock },
+    components: { SplitLayout, MainText, Auction, SwapTransaction, LandingBlock, BidTransaction },
     props: {
         auctions: {
             type: Array as Vue.PropType<AuctionTransaction[]>,
@@ -98,6 +127,14 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isGrantingAccess: {
+            type: Boolean,
+            default: false,
+        },
+        isDepositingDai: {
+            type: Boolean,
+            default: false,
+        },
         isAuthorizing: {
             type: Boolean,
             default: false,
@@ -110,6 +147,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isDaiAccessGranted: {
+            type: Boolean,
+            default: false,
+        },
         authorisedCollaterals: {
             type: Array as Vue.PropType<string[]>,
             default: () => [],
@@ -118,13 +159,31 @@ export default Vue.extend({
             type: String,
             default: null,
         },
+        walletDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: null,
+        },
+        walletVatDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: null,
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
         },
+        transactionAmountDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: null,
+        },
+        minimumBidDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: new BigNumber(0),
+        },
     },
     data: () => ({
         step: 0,
+        isPurchasing: false,
+        secondStep: '',
     }),
     computed: {
         selectedAuction(): AuctionTransaction | null {
@@ -166,6 +225,14 @@ export default Vue.extend({
                 (this.$refs.mainText as Vue).$el.scrollIntoView({ block: 'start', behavior: 'smooth' });
             }
             this.$emit('update:isExplanationsShown', event);
+        },
+        swap() {
+            this.step = 2;
+            this.secondStep = 'swap';
+        },
+        purchase() {
+            this.step = 2;
+            this.secondStep = 'purchase';
         },
     },
 });
