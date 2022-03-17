@@ -125,4 +125,5 @@ export declare interface WalletBalances {
     walletETH: BigNumber;
     walletDAI: BigNumber;
     walletVatDAI: BigNumber;
+    walletLastUpdatedDate: Date;
 }

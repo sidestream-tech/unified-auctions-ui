@@ -97,6 +97,15 @@ export default Vue.extend({
                 this.fetchCollateralAuthorizationStatus(this.selectedAuction.collateralType);
             },
         },
+        walletAddress(newWalletAddress) {
+            if (!newWalletAddress) {
+                return;
+            }
+            this.fetchWalletAuthorizationStatus();
+            if (this.selectedAuction) {
+                this.fetchCollateralAuthorizationStatus(this.selectedAuction.collateralType);
+            }
+        },
     },
     methods: {
         ...mapActions('authorizations', [
