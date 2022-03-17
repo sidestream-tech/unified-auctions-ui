@@ -4,6 +4,7 @@
         :class="buttonStyles"
         class="overflow-hidden"
         :type="type"
+        :html-type="htmlType"
         @click="$emit('click')"
     >
         <template v-if="isLoading">
@@ -35,6 +36,10 @@ export default Vue.extend({
         isLoading: {
             type: Boolean,
             default: false,
+        },
+        htmlType: {
+            type: String,
+            default: 'button',
         },
     },
     computed: {
