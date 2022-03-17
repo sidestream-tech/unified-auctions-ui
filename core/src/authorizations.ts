@@ -5,7 +5,13 @@ import executeTransaction from './execute';
 import BigNumber from './bignumber';
 import { DAI_NUMBER_OF_DIGITS, MAX } from './constants/UNITS';
 
-const _authorizeWallet = async function (network: string, revoke: boolean, notifier?: Notifier): Promise<string> {
+const _authorizeWallet = async function (
+    network: string,
+    walletAddress: string,
+    revoke: boolean,
+    notifier?: Notifier
+): Promise<string> {
+    walletAddress; // so the memoizee cache is invalidated if another address is used
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const contractMethod = revoke ? 'nope' : 'hope';
     const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
@@ -15,15 +21,17 @@ const _authorizeWallet = async function (network: string, revoke: boolean, notif
 
 export const authorizeWallet = memoizee(_authorizeWallet, {
     promise: true,
-    length: 2,
+    length: 3,
 });
 
 const _authorizeCollateral = async function (
     network: string,
+    walletAddress: string,
     collateralType: string,
     revoke: boolean,
     notifier?: Notifier
 ): Promise<string> {
+    walletAddress; // so the memoizee cache is invalidated if another address is used
     const contractName = getClipperNameByCollateralType(collateralType);
     const clipperAddress = await getContractAddressByName(network, contractName);
     const contractMethod = revoke ? 'nope' : 'hope';
@@ -34,7 +42,7 @@ const _authorizeCollateral = async function (
 
 export const authorizeCollateral = memoizee(_authorizeCollateral, {
     promise: true,
-    length: 3,
+    length: 4,
 });
 
 const _getWalletAuthorizationStatus = async function (network: string, walletAddress: string): Promise<boolean> {
@@ -68,9 +76,11 @@ export const getCollateralAuthorizationStatus = memoizee(_getCollateralAuthoriza
 
 export const setAllowanceAmount = async function (
     network: string,
+    walletAddress: string,
     amount?: BigNumber | string,
     notifier?: Notifier
 ): Promise<string> {
+    walletAddress; // so the memoizee cache is invalidated if another address is used
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const amountRaw = amount ? new BigNumber(amount).shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0) : MAX.toFixed(0);
     return await executeTransaction(network, 'MCD_DAI', 'approve', [joinDaiAddress, amountRaw], notifier);
