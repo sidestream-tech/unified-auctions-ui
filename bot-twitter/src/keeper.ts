@@ -114,6 +114,7 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
         );
         const collateralTransactionHash = await authorizeCollateral(
             ETHEREUM_NETWORK,
+            walletAddress,
             auctionTransaction.collateralType,
             false
         );
