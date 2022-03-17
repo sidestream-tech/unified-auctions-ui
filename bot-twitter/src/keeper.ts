@@ -94,7 +94,7 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
     // try to authorize the wallet then return
     if (!isWalletAuth) {
         console.info(`keeper: wallet "${walletAddress}" has not been authorized yet. Attempting authorization now...`);
-        const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, false);
+        const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, walletAddress, false);
         console.info(`keeper: wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
         await checkAndParticipateIfPossible(auction);
         return;

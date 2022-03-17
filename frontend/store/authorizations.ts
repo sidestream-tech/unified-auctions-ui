@@ -116,8 +116,9 @@ export const actions = {
     async authorizeWallet({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = rootGetters['wallet/getAddress'];
         try {
-            await authorizeWallet(network, false, notifier);
+            await authorizeWallet(network, walletAddress, false, notifier);
             await dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
@@ -128,8 +129,9 @@ export const actions = {
     async deauthorizeWallet({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = rootGetters['wallet/getAddress'];
         try {
-            await authorizeWallet(network, true, notifier);
+            await authorizeWallet(network, walletAddress, true, notifier);
             await dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
@@ -167,8 +169,9 @@ export const actions = {
     async authorizeCollateral({ commit, dispatch, rootGetters }: ActionContext<State, State>, collateralType: string) {
         commit('setIsCollateralAuthorizationLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = rootGetters['wallet/getAddress'];
         try {
-            await authorizeCollateral(network, collateralType, false, notifier);
+            await authorizeCollateral(network, walletAddress, collateralType, false, notifier);
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
@@ -182,8 +185,9 @@ export const actions = {
     ) {
         commit('setIsCollateralAuthorizationLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = rootGetters['wallet/getAddress'];
         try {
-            await authorizeCollateral(network, collateralType, true, notifier);
+            await authorizeCollateral(network, walletAddress, collateralType, true, notifier);
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
@@ -197,8 +201,9 @@ export const actions = {
     ) {
         commit('setIsAllowanceAmountLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = rootGetters['wallet/getAddress'];
         try {
-            await setAllowanceAmount(network, amount, notifier);
+            await setAllowanceAmount(network, walletAddress, amount, notifier);
             await dispatch('fetchAllowanceAmount');
         } catch (error) {
             console.error(`Setting allowance amount error: ${error.message}`);
