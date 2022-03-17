@@ -29,7 +29,7 @@
                 v-if="selectedMethod === 'deposit'"
                 key="depositInput"
                 :amount-to-bid.sync="depositAmount"
-                :disabled="isLoading || !isDepositingAllowed"
+                :disabled="isLoading || !isDepositingAllowed || isSubmitting"
                 :total-price="maxDeposit"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
@@ -37,7 +37,7 @@
                 v-else
                 key="withdrawInput"
                 :amount-to-bid.sync="withDrawAmount"
-                :disabled="isLoading || !isWithdrawingAllowed"
+                :disabled="isLoading || !isWithdrawingAllowed || isSubmitting"
                 :total-price="maxWithdraw"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
@@ -45,8 +45,8 @@
             <BaseButton
                 type="primary"
                 class="capitalize"
-                :is-loading="isLoading"
-                :disabled="!canSubmit"
+                :is-loading="isSubmitting"
+                :disabled="!canSubmit || isLoading"
                 html-type="submit"
             >
                 {{ selectedMethod }}
@@ -76,6 +76,10 @@ export default Vue.extend({
     },
     props: {
         isLoading: {
+            type: Boolean,
+            default: false,
+        },
+        isSubmitting: {
             type: Boolean,
             default: false,
         },
