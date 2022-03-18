@@ -16,7 +16,7 @@
         />
         <WalletBlock
             class="mb-6 lg:mb-0"
-            :disabled="!auctionTransaction.isActive"
+            :disabled="!auctionTransaction.isActive || auctionTransaction.isFinished"
             :is-loading="isConnecting"
             :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
@@ -65,6 +65,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import AuthorisationBlock from './AuthorisationBlock.vue';
 import BidTransactionTable from './BidTransactionTable.vue';
@@ -83,6 +84,7 @@ export default Vue.extend({
         AccessDaiBlock,
         DepositBlock,
         BidBlock,
+        Alert,
     },
     props: {
         auctionTransaction: {
