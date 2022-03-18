@@ -52,14 +52,14 @@
         <div class="flex justify-between">
             <button
                 class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.totalPrice"
+                :disabled="!isActive || !auctionTransaction.totalPrice || !isTooSmallToPartiallyTake"
                 @click="setAmountToBid(undefined)"
             >
                 Buy all collateral
             </button>
             <button
                 class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.totalPrice"
+                :disabled="!isActive || !auctionTransaction.totalPrice || !isTooSmallToPartiallyTake"
                 @click="setAmountToBid(undefined)"
             >
                 <format-currency
@@ -73,14 +73,14 @@
         <div class="flex justify-between">
             <button
                 class="ClickableText"
-                :disabled="!isActive || !minimumDepositDai"
+                :disabled="!isActive || !minimumDepositDai || !isTooSmallToPartiallyTake"
                 @click="setAmountToBid(minimumDepositDai)"
             >
                 Set minimum bid
             </button>
             <button
                 class="ClickableText"
-                :disabled="!isActive || !minimumDepositDai"
+                :disabled="!isActive || !minimumDepositDai || !isTooSmallToPartiallyTake"
                 @click="setAmountToBid(minimumDepositDai)"
             >
                 <format-currency v-if="minimumDepositDai && isActive" :value="minimumDepositDai" currency="DAI" />
@@ -167,6 +167,9 @@ export default Vue.extend({
         },
         isBidAmountNaN(): boolean {
             return !!this.amountToBid?.isNaN();
+        },
+        isTooSmallToPartiallyTake(): boolean {
+            return this.auctionTransaction?.totalPrice.isGreaterThanOrEqualTo(this.minimumDepositDai?.multipliedBy(2));
         },
     },
     watch: {
