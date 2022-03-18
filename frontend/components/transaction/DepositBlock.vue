@@ -25,7 +25,11 @@
             </div>
             <div class="flex justify-between">
                 <span>Minimum to deposit</span>
-                <format-currency v-if="minimumDepositDai" :value="minimumDepositDai" currency="DAI" />
+                <format-currency
+                    v-if="minimumDepositDai && !transactionAmountDai.isNaN()"
+                    :value="minimumDepositDai"
+                    currency="DAI"
+                />
                 <div v-else>
                     <span class="opacity-75">Unknown</span>
                     <span>DAI</span>
