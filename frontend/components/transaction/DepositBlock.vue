@@ -41,6 +41,9 @@
             <BaseButton v-if="minimumDepositDai && minimumDepositDai.isZero()" disabled class="w-60">
                 Enough DAI is available
             </BaseButton>
+            <BaseButton v-else-if="minimumDepositDai && !isEnoughDaiInWallet" disabled class="w-60">
+                Not Enough DAI in wallet
+            </BaseButton>
             <BaseButton
                 v-else
                 type="primary"
@@ -103,6 +106,12 @@ export default Vue.extend({
         },
         isDisabled(): Boolean {
             return this.disabled || (!this.walletVatDai && !this.walletDai);
+        },
+        isEnoughDaiInWallet(): Boolean {
+            if (this.minimumDepositDai) {
+                return this.walletDai.isGreaterThanOrEqualTo(this.minimumDepositDai);
+            }
+            return true;
         },
     },
 });
