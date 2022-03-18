@@ -17,7 +17,7 @@
         :transaction-amount-dai="transactionAmountDai"
         :minimum-bid-dai="minimumBidDai"
         :is-explanations-shown.sync="isExplanationsShown"
-        @inputBidAmount="setBidAmount"
+        @inputBidAmount="setTransactionAmountDai"
         @connect="connect"
         @disconnect="disconnect"
         @grantDaiAccess="grantDaiAccess"
@@ -58,7 +58,7 @@ export default Vue.extend({
             walletDai: new BigNumber(faker.finance.amount()),
             walletVatDai: new BigNumber(faker.finance.amount()),
             minimumBidDai: new BigNumber(faker.finance.amount(0, 100)),
-            bidAmount: undefined as BigNumber | undefined,
+            transactionAmountDai: undefined as BigNumber | undefined,
         };
     },
     computed: {
@@ -73,9 +73,6 @@ export default Vue.extend({
         selectedAuction(): AuctionTransaction | null {
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
         },
-        transactionAmountDai(): BigNumber {
-            return this.bidAmount || this.selectedAuction?.totalPrice || new BigNumber(0);
-        },
     },
     watch: {
         selectedAuctionId: {
@@ -84,6 +81,7 @@ export default Vue.extend({
                     const network = this.$route.query.network;
                     this.$router.push({ query: { network } });
                 }
+                this.transactionAmountDai = this.selectedAuction?.totalPrice;
             },
         },
         '$route.query.auction': {
@@ -96,6 +94,11 @@ export default Vue.extend({
                     this.selectedAuctionId = auctionParam;
                 }
             },
+        },
+        transactionAmountDai(newAmount) {
+            if (newAmount === undefined) {
+                this.transactionAmountDai = this.selectedAuction?.totalPrice || undefined;
+            }
         },
     },
     created() {
@@ -157,6 +160,8 @@ export default Vue.extend({
                     this.selectedAuction.isFinished = true;
                     this.selectedAuction.endDate = new Date();
                     this.selectedAuction.transactionAddress = faker.finance.ethereumAddress();
+                    this.walletVatDai = this.walletVatDai.minus(this.transactionAmountDai!!);
+                    this.transactionAmountDai = new BigNumber(NaN);
                 }
                 this.isExecuting = false;
             }, 1000);
@@ -167,8 +172,8 @@ export default Vue.extend({
                 message.success('The auction has been restarted!');
             }
         },
-        setBidAmount(amount: BigNumber | undefined) {
-            this.bidAmount = amount;
+        setTransactionAmountDai(amount: BigNumber | undefined) {
+            this.transactionAmountDai = amount;
         },
     },
 });
