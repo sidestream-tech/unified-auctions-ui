@@ -203,13 +203,13 @@
             <TextBlock>
                 <div class="flex w-full justify-end flex-wrap mt-4">
                     <Tooltip placement="top">
-                        <div slot="title">
+                        <!--<div slot="title">
                             This website does not yet support bidding on the auction with your own DAI. In the
                             meantime, you can use
                             <a href="https://liquidations.makerdao.com/" target="_blank" class="underline text-primary"
                                 >Liquidation Portal</a
                             >
-                        </div>
+                        </div>-->
                         <div>
                             <Button
                                 :disabled="!!errorText"
