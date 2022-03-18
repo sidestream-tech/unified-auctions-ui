@@ -38,10 +38,10 @@
                 Manage VAT
             </BaseButton>
             -->
-            <BaseButton v-if="minimumDepositDai && minimumDepositDai.isZero()" disabled class="w-60">
+            <BaseButton v-if="minimumDepositDai && minimumDepositDai.isZero()" disabled class="w-full md:w-80">
                 Enough DAI is available
             </BaseButton>
-            <BaseButton v-else-if="minimumDepositDai && !isEnoughDaiInWallet" disabled class="w-60">
+            <BaseButton v-else-if="minimumDepositDai && !isEnoughDaiInWallet" disabled class="w-full md:w-80">
                 Not Enough DAI in wallet
             </BaseButton>
             <BaseButton
@@ -49,7 +49,7 @@
                 type="primary"
                 :disabled="isDisabled"
                 :is-loading="isLoading"
-                class="w-60"
+                class="w-full md:w-80"
                 @click="$emit('deposit', minimumDepositDai)"
             >
                 Deposit minimum amount

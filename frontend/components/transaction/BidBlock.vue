@@ -8,6 +8,7 @@
         <div class="flex flex-row-reverse mt-3">
             <BaseButton
                 v-if="state !== 'loading'"
+                class="w-full md:w-80"
                 :disabled="state === 'disabled' || state === 'executed'"
                 type="primary"
                 @click="$emit('execute')"
@@ -20,7 +21,7 @@
                     />
                 </span>
             </BaseButton>
-            <BaseButton v-else is-loading disabled>Bidding...</BaseButton>
+            <BaseButton v-else is-loading disabled class="w-full md:w-80">Bidding...</BaseButton>
         </div>
     </div>
 </template>

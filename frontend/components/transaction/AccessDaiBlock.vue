@@ -18,6 +18,7 @@
         <div class="flex flex-row-reverse mt-3">
             <BaseButton
                 v-if="!isDaiAccessGranted"
+                class="w-full md:w-80"
                 type="primary"
                 :disabled="disabled"
                 :is-loading="isLoading"
@@ -25,7 +26,7 @@
             >
                 Allow access to DAI
             </BaseButton>
-            <BaseButton v-else disabled>Access to DAI was granted</BaseButton>
+            <BaseButton v-else disabled class="w-full md:w-80">Access to DAI was granted</BaseButton>
         </div>
     </div>
 </template>
