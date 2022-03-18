@@ -195,6 +195,10 @@ export default Vue.extend({
     @apply text-primary hover:text-primary-light;
 }
 
+.ClickableText:disabled {
+    @apply pointer-events-none;
+}
+
 .ClickableText:enabled:first-of-type {
     @apply underline;
 }
