@@ -173,11 +173,11 @@ export default Vue.extend({
         },
         transactionAmountDai: {
             type: Object as Vue.PropType<BigNumber>,
-            default: null,
+            default: undefined,
         },
         minimumBidDai: {
             type: Object as Vue.PropType<BigNumber>,
-            default: new BigNumber(0),
+            default: null,
         },
     },
     data: () => ({
