@@ -33,11 +33,9 @@
             </div>
         </div>
         <div class="flex space-x-4 justify-end flex-wrap mt-3">
-            <!--
             <BaseButton :disabled="isDisabled || isLoading" class="w-60 mb-2" @click="$emit('manageVat')">
-                Manage VAT
+                Manage DAI in VAT
             </BaseButton>
-            -->
             <BaseButton v-if="minimumDepositDAI && minimumDepositDAI.isZero()" disabled class="w-60">
                 Enough DAI is available
             </BaseButton>

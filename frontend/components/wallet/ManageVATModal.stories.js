@@ -2,10 +2,10 @@ import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import { action } from '@storybook/addon-actions';
 import BigNumber from 'bignumber.js';
-import WalletPopup from '~/components/wallet/WalletPopup';
+import ManageVATModal from '~/components/wallet/ManageVATModal';
 
 const common = {
-    components: { WalletPopup },
+    components: { ManageVATModal },
     data: () => ({
         maxDeposit: new BigNumber(faker.datatype.number({ min: 50, max: 500 })),
         maxWithdraw: new BigNumber(faker.datatype.number({ min: 50, max: 500 })),
@@ -27,29 +27,29 @@ const common = {
     },
 };
 
-storiesOf('Wallet/WalletPopup', module)
+storiesOf('Wallet/ManageVATModal', module)
     .add('Default', () => ({
         ...common,
         template:
-            '<WalletPopup v-bind="$data" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
+            '<ManageVATModal v-bind="$data" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
     }))
     .add('Default Expert Mode', () => ({
         ...common,
         template:
-            '<WalletPopup v-bind="$data" :isExplanationsShown="false" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
+            '<ManageVATModal v-bind="$data" :isExplanationsShown="false" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
     }))
     .add('Loading', () => ({
         ...common,
         template:
-            '<WalletPopup v-bind="$data" :is-loading="true" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
+            '<ManageVATModal v-bind="$data" :is-loading="true" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
     }))
     .add('Submitting', () => ({
         ...common,
         template:
-            '<WalletPopup v-bind="$data" :is-submitting="true" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
+            '<ManageVATModal v-bind="$data" :is-submitting="true" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
     }))
     .add('No Wallet Connected', () => ({
-        components: { WalletPopup },
+        components: { ManageVATModal },
         data: () => ({
             tokenAddressDAI: faker.finance.ethereumAddress(),
             isDepositingAllowed: false,
@@ -62,10 +62,10 @@ storiesOf('Wallet/WalletPopup', module)
             withdraw: action('withdraw'),
         },
         template:
-            '<WalletPopup v-bind="$data" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
+            '<ManageVATModal v-bind="$data" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
     }))
     .add('Wallet connecting', () => ({
-        components: { WalletPopup },
+        components: { ManageVATModal },
         data: () => ({
             tokenAddressDAI: faker.finance.ethereumAddress(),
             isDepositingAllowed: false,
@@ -79,5 +79,5 @@ storiesOf('Wallet/WalletPopup', module)
             withdraw: action('withdraw'),
         },
         template:
-            '<WalletPopup v-bind="$data" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
+            '<ManageVATModal v-bind="$data" @deposit="deposit" @withdraw="withdraw" @refresh="refresh" @connectWallet="connectWallet" />',
     }));

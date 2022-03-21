@@ -1,5 +1,5 @@
 <template>
-    <div class="w-full relative">
+    <div class="w-full relative dark:text-gray-300">
         <Tooltip :visible="!!error" placement="topLeft" :title="error">
             <Tooltip placement="topLeft" :title="isTooSmallToPartiallyTakeTooltipContent">
                 <Input

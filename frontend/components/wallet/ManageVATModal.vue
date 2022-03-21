@@ -1,5 +1,13 @@
 <template>
-    <modal :visible="true" title="Withdraw or Deposit VAT" :footer="null" :dialog-style="{ top: '60px' }">
+    <modal
+        :visible="isShown"
+        title="Withdraw or Deposit VAT"
+        :footer="null"
+        :dialog-style="{ top: '60px' }"
+        :width="620"
+        :class="isDarkMode && 'dark'"
+        @cancel="$emit('cancel')"
+    >
         <div class="flex flex-col gap-4 p-4">
             <WalletTable
                 :wallet-address="walletAddress"
@@ -48,9 +56,17 @@ import WalletTable from './WalletTable.vue';
 import WalletDepositWithdrawBlock from './WalletDepositWithdrawBlock.vue';
 
 export default Vue.extend({
-    name: 'WalletPopup',
+    name: 'ManageVATModal',
     components: { TextBlock, WalletDepositWithdrawBlock, WalletTable, Modal },
     props: {
+        isShown: {
+            type: Boolean,
+            default: false,
+        },
+        isDarkMode: {
+            type: Boolean,
+            default: false,
+        },
         walletAddress: {
             type: String,
             default: null,
