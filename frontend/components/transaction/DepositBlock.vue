@@ -6,7 +6,7 @@
             the minimum amount to deposit in order to participate in the auction based on the bid you want to make. You
             can directly deposit the minimum required amount of DAI if you don't have sufficient deposits yet.
         </TextBlock>
-        <div class="text-base font-medium">
+        <div class="text-base font-medium text-gray-700 dark:text-gray-100">
             <div class="flex justify-between">
                 <span>Amount available in the wallet</span>
                 <format-currency v-if="walletDai" :value="walletDai" currency="DAI" />

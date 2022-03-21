@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col space-y-1">
+    <div class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100">
         <div class="flex justify-between">
             <div>Auction Ends</div>
             <div>
