@@ -145,6 +145,8 @@ export default Vue.extend({
 }
 
 .Error:focus {
+    @apply border-red-400;
+
     box-shadow: 0 0 3px rgb(239, 68, 68);
 }
 
