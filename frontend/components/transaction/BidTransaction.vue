@@ -34,6 +34,7 @@
         <DepositBlock
             class="mb-6 lg:mb-0"
             :disabled="!auctionTransaction.isActive || !isDaiAccessGranted"
+            :is-explanations-shown="isExplanationsShown"
             :transaction-amount-dai="transactionAmountDai"
             :is-loading="isDepositing"
             :wallet-dai="walletDai"
