@@ -210,9 +210,12 @@
                                 >Liquidation Portal</a
                             >
                         </div>-->
+                        <div v-if="!isPageNetworkFake" slot="title">
+                            This feature is currently only supported for stub data.
+                        </div>
                         <div>
                             <Button
-                                :disabled="!!errorText"
+                                :disabled="!isPageNetworkFake"
                                 type="secondary"
                                 class="w-60 mb-4"
                                 @click="$emit('purchase')"
@@ -341,6 +344,9 @@ export default Vue.extend({
                 because we can't get value of ${this.auction?.collateralSymbol} on UniSwap`;
             }
             return null;
+        },
+        isPageNetworkFake(): Boolean {
+            return this.$store.getters['network/isPageNetworkFake'];
         },
     },
     watch: {
