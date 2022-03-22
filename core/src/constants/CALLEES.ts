@@ -7,6 +7,7 @@ const CALLEES: Record<string, CalleeAddresses | undefined> = {
         UniswapV2CalleeDai: '0x49399BB0Fcb52b32aB5A0909206BFf7B54FF80b3',
         UniswapV2LpTokenCalleeDai: '0x74893C37beACf205507ea794470b13DE06294220',
         WstETHCurveUniv3Callee: '0xC2D837173592194131827775a6Cd88322a98C825',
+        CurveLpTokenUniv3Callee: '0x71f2198849F3B1372EA90c079BD634928583f2d2',
     },
     '0x5': {
         UniswapV2CalleeDai: '0x6d9139ac89ad2263f138633de20e47bcae253938',

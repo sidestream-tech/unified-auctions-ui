@@ -1,44 +1,41 @@
 import type { CalleeFunctions, CollateralConfig } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
-import getContract, { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { ETH_NUMBER_OF_DIGITS } from '../constants/UNITS';
-import { convertStethToETH } from './helpers/curve';
-import { convertCollateralToDAI, UNISWAP_FEE } from './helpers/uniswapV3';
+import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
+import { convertStethToETH, CURVE_COIN_INDEX, CURVE_POOL_ADDRESS } from './helpers/curve';
+import { encodeRoute } from './helpers/uniswapV3';
+import { convertCollateralToDAI } from './helpers/uniswapV3';
 
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     profitAddress: string
 ): Promise<string> {
+    const route = encodeRoute(network, collateral);
+    const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 0;
-    const typesArray = ['address', 'address', 'uint256', 'uint24', 'address'];
+    const typesArray = ['address', 'address', 'uint256', 'bytes', 'address', 'tuple(address,uint256)'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,
         joinAdapterAddress,
         minProfit,
-        UNISWAP_FEE,
+        route,
         ethers.constants.AddressZero,
+        curveData,
     ]);
 };
 
 const getMarketPrice = async function (
     network: string,
-    collateral: CollateralConfig,
+    _collateral: CollateralConfig,
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
-    // convert wstETH into stETH
-    const collateralContract = await getContract(network, collateral.symbol);
-    const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
-    const stethIntegerAmount = await collateralContract.getStETHByWstETH(collateralIntegerAmount);
-    const stethAmount = new BigNumber(stethIntegerAmount._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
-
     // convert stETH into ETH
-    const ethAmount = await convertStethToETH(network, stethAmount);
+    const wethAmount = await convertStethToETH(network, collateralAmount);
 
     // convert ETH into DAI
-    const daiAmount = await convertCollateralToDAI(network, 'ETH', ethAmount);
+    const daiAmount = await convertCollateralToDAI(network, 'ETH', wethAmount);
 
     // return price per unit
     return daiAmount.dividedBy(collateralAmount);

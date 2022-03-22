@@ -1,6 +1,16 @@
 import type { CollateralConfig } from '../types';
 
 const COLLATERALS: Record<string, CollateralConfig> = {
+    'CRVV1ETHSTETH-A': {
+        title: 'Curve stETH',
+        ilk: 'CRVV1ETHSTETH-A',
+        symbol: 'CRVV1ETHSTETH',
+        decimals: 18,
+        exchange: {
+            callee: 'CurveLpTokenUniv3Callee',
+            route: ['ETH'],
+        },
+    },
     'AAVE-A': {
         title: 'AAVE',
         ilk: 'AAVE-A',
