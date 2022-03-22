@@ -264,6 +264,7 @@ import Explain from '~/components/utils/Explain.vue';
 import RestartBlock from '~/components/transaction/RestartBlock.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
+import { FAKE_NETWORK_NAME } from '~/store/network';
 
 export default Vue.extend({
     name: 'Auction',
@@ -351,7 +352,7 @@ export default Vue.extend({
             return null;
         },
         isPageNetworkFake(): Boolean {
-            return this.$store?.getters['network/isPageNetworkFake'];
+            return this.auction?.network === FAKE_NETWORK_NAME;
         },
     },
     watch: {
