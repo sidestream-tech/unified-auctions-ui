@@ -158,6 +158,7 @@ storiesOf('Transaction/BidTransaction', module)
                     ...fakeAuctionTransaction,
                     isFinished: true,
                     isActive: true,
+                    transactionAddress: faker.finance.ethereumAddress(),
                 },
                 transactionAmountDai: undefined,
             };
