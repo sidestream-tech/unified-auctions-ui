@@ -97,7 +97,7 @@ export default Vue.extend({
         },
         transactionAmountDai(newAmount) {
             if (newAmount === undefined) {
-                this.transactionAmountDai = this.selectedAuction?.totalPrice || undefined;
+                this.transactionAmountDai = this.selectedAuction?.totalPrice ?? undefined;
             }
         },
     },
@@ -160,8 +160,7 @@ export default Vue.extend({
                     this.selectedAuction.isFinished = true;
                     this.selectedAuction.endDate = new Date();
                     this.selectedAuction.transactionAddress = faker.finance.ethereumAddress();
-                    this.walletVatDai = this.walletVatDai.minus(this.transactionAmountDai!!);
-                    this.transactionAmountDai = new BigNumber(NaN);
+                    this.walletVatDai = this.walletVatDai.minus(this.transactionAmountDai!);
                 }
                 this.isExecuting = false;
             }, 1000);

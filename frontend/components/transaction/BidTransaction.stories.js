@@ -90,7 +90,6 @@ const common = {
                 this.auctionTransaction.endDate = new Date();
                 this.auctionTransaction.transactionAddress = faker.finance.ethereumAddress();
                 this.walletVatDai = this.walletVatDai.minus(this.transactionAmountDai);
-                this.transactionAmountDai = new BigNumber(NaN);
                 this.isExecuting = false;
             }, 1000);
         },
