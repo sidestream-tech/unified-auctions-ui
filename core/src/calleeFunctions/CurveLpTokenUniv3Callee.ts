@@ -2,9 +2,8 @@ import type { CalleeFunctions, CollateralConfig } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { convertStethToETH, CURVE_COIN_INDEX, CURVE_POOL_ADDRESS } from './helpers/curve';
-import { encodeRoute } from './helpers/uniswapV3';
-import { convertCollateralToDAI } from './helpers/uniswapV3';
+import { convertCrvethToEth, CURVE_COIN_INDEX, CURVE_POOL_ADDRESS } from './helpers/curve';
+import { encodeRoute, convertCollateralToDai } from './helpers/uniswapV3';
 
 const getCalleeData = async function (
     network: string,
@@ -32,10 +31,10 @@ const getMarketPrice = async function (
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     // convert stETH into ETH
-    const wethAmount = await convertStethToETH(network, collateralAmount);
+    const wethAmount = await convertCrvethToEth(network, collateralAmount);
 
     // convert ETH into DAI
-    const daiAmount = await convertCollateralToDAI(network, 'ETH', wethAmount);
+    const daiAmount = await convertCollateralToDai(network, 'ETH', wethAmount);
 
     // return price per unit
     return daiAmount.dividedBy(collateralAmount);

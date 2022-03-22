@@ -3,8 +3,8 @@ import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import getContract, { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { ETH_NUMBER_OF_DIGITS } from '../constants/UNITS';
-import { convertStethToETH } from './helpers/curve';
-import { convertCollateralToDAI, UNISWAP_FEE } from './helpers/uniswapV3';
+import { convertStethToEth } from './helpers/curve';
+import { convertCollateralToDai, UNISWAP_FEE } from './helpers/uniswapV3';
 
 const getCalleeData = async function (
     network: string,
@@ -35,10 +35,10 @@ const getMarketPrice = async function (
     const stethAmount = new BigNumber(stethIntegerAmount._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
 
     // convert stETH into ETH
-    const ethAmount = await convertStethToETH(network, stethAmount);
+    const ethAmount = await convertStethToEth(network, stethAmount);
 
     // convert ETH into DAI
-    const daiAmount = await convertCollateralToDAI(network, 'ETH', ethAmount);
+    const daiAmount = await convertCollateralToDai(network, 'ETH', ethAmount);
 
     // return price per unit
     return daiAmount.dividedBy(collateralAmount);

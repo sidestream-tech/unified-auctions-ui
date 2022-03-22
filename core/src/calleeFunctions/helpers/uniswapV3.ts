@@ -27,7 +27,7 @@ export const encodeRoute = async function (network: string, collateral: Collater
     return ethers.utils.solidityPack(types, values);
 };
 
-export const convertCollateralToDAI = async function (
+export const convertCollateralToDai = async function (
     network: string,
     collateralSymbol: string,
     collateralAmount: BigNumber
