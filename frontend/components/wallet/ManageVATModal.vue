@@ -51,6 +51,7 @@
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { Modal } from 'ant-design-vue';
+import { WalletBalances } from 'auctions-core/dist/src/types';
 import TextBlock from '../common/TextBlock.vue';
 import WalletTable from './WalletTable.vue';
 import WalletDepositWithdrawBlock from './WalletDepositWithdrawBlock.vue';
@@ -69,6 +70,10 @@ export default Vue.extend({
         },
         walletAddress: {
             type: String,
+            default: null,
+        },
+        walletBalances: {
+            type: Object as Vue.PropType<WalletBalances>,
             default: null,
         },
         walletETH: {

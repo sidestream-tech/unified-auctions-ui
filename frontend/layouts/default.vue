@@ -30,23 +30,6 @@
         />
         <TermsModal :is-shown="isTermsModalShown" @accept="acceptTerms" @close="setTermsModal(false)" />
         <WalletModal :is-shown="isWalletModalShown" @connect="changeWalletType" @close="setWalletModal(false)" />
-        <ManageVATModal
-            :is-shown="isManageVATModalShown"
-            :is-dark-mode="isDarkMode"
-            token-address-d-a-i="0x6b175474e89094c44da98b954eedeac495271d0f"
-            :max-deposit="walletBalances ? walletBalances.walletDAI : undefined"
-            :max-withdraw="walletBalances ? walletBalances.walletVatDAI : undefined"
-            :wallet-address="walletAddress"
-            :wallet-e-t-h="walletBalances ? walletBalances.walletETH : undefined"
-            :wallet-vat-d-a-i="walletBalances ? walletBalances.walletVatDAI : undefined"
-            :wallet-d-a-i="walletBalances ? walletBalances.walletDAI : undefined"
-            :is-submitting="isSubmitting"
-            :is-wallet-loading="isWalletLoading"
-            :is-depositing-allowed="false"
-            :is-withdrawing-allowed="false"
-            @cancel="setManageVATModal(false)"
-            @connectWallet="openWalletModalFromManageVatModal()"
-        />
     </div>
 </template>
 
@@ -58,12 +41,10 @@ import '~/assets/styles/index';
 import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.vue';
 import ChangeWalletNetworkModal from '~/components/modals/ChangeWalletNetworkModal.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
-import ManageVATModal from '~/components/wallet/ManageVATModal.vue';
 import WalletModal from '~/components/modals/WalletModal.vue';
 
 export default Vue.extend({
     components: {
-        ManageVATModal,
         TermsModal,
         ChangePageNetworkModal,
         ChangeWalletNetworkModal,
@@ -74,13 +55,10 @@ export default Vue.extend({
         ...mapGetters('wallet', {
             isWalletLoading: 'isLoading',
             walletAddress: 'getAddress',
-            walletBalances: 'walletBalances',
-            isSubmitting: 'isDepositingOrWithdrawing',
         }),
         ...mapGetters('modals', {
             isTermsModalShown: 'getTermsModal',
             isWalletModalShown: 'getWalletModal',
-            isManageVATModalShown: 'getManageVATModal',
         }),
         ...mapGetters('cookies', {
             hasAcceptedTerms: 'hasAcceptedTerms',
@@ -133,19 +111,8 @@ export default Vue.extend({
         setTermsModal(open: boolean): void {
             this.$store.commit('modals/setTermsModal', open);
         },
-        openWalletModalFromManageVatModal(): void {
-            this.setManageVATModal(false);
-            if (!this.hasAcceptedTerms) {
-                this.$store.commit('modals/setTermsModal', true);
-                return;
-            }
-            this.$store.commit('modals/setWalletModal', true);
-        },
         setWalletModal(open: boolean): void {
             this.$store.commit('modals/setWalletModal', open);
-        },
-        setManageVATModal(open: boolean): void {
-            this.$store.commit('modals/setManageVATModal', open);
         },
     },
 });
