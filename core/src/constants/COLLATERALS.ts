@@ -1,16 +1,6 @@
 import type { CollateralConfig } from '../types';
 
 const COLLATERALS: Record<string, CollateralConfig> = {
-    'CRVV1ETHSTETH-A': {
-        title: 'Curve stETH',
-        ilk: 'CRVV1ETHSTETH-A',
-        symbol: 'CRVV1ETHSTETH',
-        decimals: 18,
-        exchange: {
-            callee: 'CurveLpTokenUniv3Callee',
-            route: ['ETH'],
-        },
-    },
     'AAVE-A': {
         title: 'AAVE',
         ilk: 'AAVE-A',
@@ -211,6 +201,26 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
     },
+    'WBTC-B': {
+        title: 'Wrapped BTC',
+        ilk: 'WBTC-B',
+        symbol: 'WBTC',
+        decimals: 8,
+        exchange: {
+            callee: 'UniswapV2CalleeDai',
+            route: ['ETH'],
+        },
+    },
+    'WBTC-C': {
+        title: 'Wrapped BTC',
+        ilk: 'WBTC-C',
+        symbol: 'WBTC',
+        decimals: 8,
+        exchange: {
+            callee: 'UniswapV2CalleeDai',
+            route: ['ETH'],
+        },
+    },
     'YFI-A': {
         title: 'yearn.finance',
         ilk: 'YFI-A',
@@ -241,26 +251,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
     },
-    'WBTC-B': {
-        title: 'Wrapped BTC',
-        ilk: 'WBTC-B',
-        symbol: 'WBTC',
-        decimals: 8,
-        exchange: {
-            callee: 'UniswapV2CalleeDai',
-            route: ['ETH'],
-        },
-    },
-    'WBTC-C': {
-        title: 'Wrapped BTC',
-        ilk: 'WBTC-C',
-        symbol: 'WBTC',
-        decimals: 8,
-        exchange: {
-            callee: 'UniswapV2CalleeDai',
-            route: ['ETH'],
-        },
-    },
     'WSTETH-A': {
         title: 'Lido wstETH',
         ilk: 'WSTETH-A',
@@ -269,6 +259,16 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         exchange: {
             callee: 'WstETHCurveUniv3Callee',
             route: [],
+        },
+    },
+    'CRVV1ETHSTETH-A': {
+        title: 'Curve stETH',
+        ilk: 'CRVV1ETHSTETH-A',
+        symbol: 'CRVV1ETHSTETH',
+        decimals: 18,
+        exchange: {
+            callee: 'CurveLpTokenUniv3Callee',
+            route: ['ETH'],
         },
     },
     'UNIV2DAIETH-A': {
