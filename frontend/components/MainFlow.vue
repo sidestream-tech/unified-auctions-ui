@@ -182,7 +182,6 @@ export default Vue.extend({
     },
     data: () => ({
         step: 0,
-        isPurchasing: false,
         secondStep: '',
     }),
     computed: {
