@@ -65,13 +65,6 @@
             :transaction-profit="auctionTransaction.transactionGrossProfit"
             @execute="$emit('execute', { id: auctionTransaction.id, alternativeDestinationAddress: $event })"
         />
-        <TextBlock v-if="auctionTransaction.transactionAddress" class="flex w-full justify-end mt-4">
-            <span>
-                Transaction <format-address shorten :value="auctionTransaction.transactionAddress" /> was successfully
-                executed.
-                <format-address explicit :value="auctionTransaction.transactionAddress" />
-            </span>
-        </TextBlock>
     </div>
 </template>
 
@@ -84,7 +77,6 @@ import ExecutionBlock from '~/components/transaction/ExecutionBlock.vue';
 import SwapTransactionTable from '~/components/transaction/SwapTransactionTable.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import Explain from '~/components/utils/Explain.vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
 
 export default Vue.extend({
     name: 'SwapTransaction',
@@ -96,7 +88,6 @@ export default Vue.extend({
         AuthorisationBlock,
         ExecutionBlock,
         Alert,
-        FormatAddress,
     },
     props: {
         auctionTransaction: {
