@@ -106,6 +106,10 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
+        isWithdrawingAllowed: {
+            type: Boolean,
+            required: true,
+        },
     },
     data() {
         return {
