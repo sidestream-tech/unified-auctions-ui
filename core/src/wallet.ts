@@ -38,7 +38,7 @@ export const depositToVAT = async function (
     amount: BigNumber,
     notifier?: Notifier
 ): Promise<void> {
-    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed();
+    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
     await executeTransaction(network, 'MCD_JOIN_DAI', 'join', [walletAddress, wadAmount], notifier, true);
 };
 
@@ -48,6 +48,6 @@ export const withdrawFromVAT = async function (
     amount: BigNumber,
     notifier?: Notifier
 ): Promise<void> {
-    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed();
+    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
     await executeTransaction(network, 'MCD_JOIN_DAI', 'exit', [walletAddress, wadAmount], notifier, true);
 };

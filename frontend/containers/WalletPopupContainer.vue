@@ -11,14 +11,13 @@
         :is-submitting="isDepositingOrWithdrawing"
         :is-wallet-loading="isFetchingBalances"
         :is-loading="isFetchingBalances"
-        :is-connecting="isConnecting"
-        :is-connected="isConnected"
+        :is-allowance-amount-loading="isAllowanceAmountLoading"
         @cancel="setWalletModal(false)"
-        @connect="connect"
         @refresh="refresh()"
         @connectWallet="openSelectWalletModal()"
         @deposit="depositToVAT"
         @withdraw="withdrawFromVAT"
+        @grantAccess="grantAccess"
     />
 </template>
 
@@ -45,6 +44,7 @@ export default Vue.extend({
         ...mapGetters('authorizations', {
             isWalletAuthorizationDone: 'isWalletAuthorizationDone',
             allowanceAmount: 'allowanceAmount',
+            isAllowanceAmountLoading: 'isAllowanceAmountLoading',
         }),
         ...mapGetters('cookies', {
             hasAcceptedTerms: 'hasAcceptedTerms',
@@ -71,7 +71,6 @@ export default Vue.extend({
             refresh: 'fetchWalletBalances',
             depositToVAT: 'depositToVAT',
             withdrawFromVAT: 'withdrawFromVAT',
-            connect: 'connect',
         }),
         openSelectWalletModal(): void {
             this.setWalletModal(false);
@@ -83,6 +82,9 @@ export default Vue.extend({
         },
         setWalletModal(open: boolean): void {
             this.$store.commit('modals/setWalletModal', open);
+        },
+        grantAccess(): void {
+            this.$store.dispatch('authorizations/setAllowanceAmount');
         },
     },
 });

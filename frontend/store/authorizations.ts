@@ -46,6 +46,9 @@ export const getters = {
     allowanceAmount(state: State) {
         return state.allowanceAmount ?? new BigNumber(0);
     },
+    isAllowanceAmountLoading(state: State) {
+        return state.isAllowanceAmountLoading;
+    },
 };
 
 export const mutations = {

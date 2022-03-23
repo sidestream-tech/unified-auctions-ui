@@ -144,6 +144,8 @@ export const actions = {
         commit('setIsDepositingOrWithdrawing', true);
         try {
             await depositToVAT(network, getters.getAddress, new BigNumber(amount), notifier);
+        } catch (error) {
+            message.error(`Error while depositing to VAT: ${error.message}`);
         } finally {
             commit('setIsDepositingOrWithdrawing', false);
         }
@@ -156,6 +158,8 @@ export const actions = {
         commit('setIsDepositingOrWithdrawing', true);
         try {
             await withdrawFromVAT(network, getters.getAddress, new BigNumber(amount), notifier);
+        } catch (error) {
+            message.error(`Error while withdrawing from VAT: ${error.message}`);
         } finally {
             commit('setIsDepositingOrWithdrawing', false);
         }

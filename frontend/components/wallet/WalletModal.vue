@@ -18,12 +18,6 @@
                 @refresh="$emit('refresh')"
                 @connectWallet="$emit('connectWallet')"
             />
-            <AccessDaiBlock
-                :is-loading="isConnecting"
-                :is-explanations-shown="isExplanationsShown"
-                :is-dai-access-granted="isConnected"
-                @grantAccess="$emit('connect')"
-            />
             <TextBlock v-if="isExplanationsShown" title="What is VAT?">
                 The VAT balance is the balance of DAI tokens owned by your wallet inside of the MakerDAO protocol.
                 <a
@@ -34,14 +28,22 @@
                 is the set of immutable rules for managing DAI and collaterals which constitutes the core of the
                 MakerDAO.
             </TextBlock>
+            <AccessDaiBlock
+                :is-loading="isAllowanceAmountLoading"
+                :is-explanations-shown="isExplanationsShown"
+                :is-dai-access-granted="
+                    allowanceAmount.isGreaterThanOrEqualTo(walletBalances ? walletBalances.walletDAI : 0)
+                "
+                @grantAccess="$emit('grantAccess')"
+            />
             <WalletDepositWithdrawBlock
                 :is-loading="isLoading"
                 :is-submitting="isSubmitting"
                 :is-explanations-shown="isExplanationsShown"
                 :allowance-amount="allowanceAmount"
                 :is-withdrawing-allowed="isWithdrawingAllowed"
-                :max-deposit="walletBalances ? walletBalances.walletDAI : undefined"
-                :max-withdraw="walletBalances ? walletBalances.walletVatDAI : undefined"
+                :max-deposit="walletBalances && walletBalances.walletDAI"
+                :max-withdraw="walletBalances && walletBalances.walletVatDAI"
                 :token-address-d-a-i="tokenAddressDAI"
                 @deposit="value => $emit('deposit', value)"
                 @withdraw="value => $emit('withdraw', value)"
@@ -108,11 +110,7 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isConnecting: {
-            type: Boolean,
-            default: false,
-        },
-        isConnected: {
+        isAllowanceAmountLoading: {
             type: Boolean,
             default: false,
         },
