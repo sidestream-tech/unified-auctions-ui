@@ -32,15 +32,15 @@
                 v-if="selectedMethod === 'deposit'"
                 key="depositInput"
                 :amount-to-bid.sync="depositAmount"
-                :disabled="isLoading || !isDepositingAllowed || isSubmitting"
-                :total-price="maxDeposit"
+                :disabled="isLoading || isSubmitting || maxDeposit === undefined || allowanceAmount === undefined"
+                :total-price="maxAllowedDeposit"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
             <BidInput
                 v-else
                 key="withdrawInput"
                 :amount-to-bid.sync="withDrawAmount"
-                :disabled="isLoading || !isWithdrawingAllowed || isSubmitting"
+                :disabled="isLoading || !isWithdrawingAllowed || isSubmitting || maxWithdraw === undefined"
                 :total-price="maxWithdraw"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
@@ -102,9 +102,9 @@ export default Vue.extend({
             type: String,
             required: true,
         },
-        isDepositingAllowed: {
-            type: Boolean,
-            required: true,
+        allowanceAmount: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
         isWithdrawingAllowed: {
             type: Boolean,
@@ -122,7 +122,7 @@ export default Vue.extend({
     computed: {
         canSubmit(): boolean {
             if (this.selectedMethod === 'deposit') {
-                if (!this.isDepositingAllowed) {
+                if (this.maxDeposit === undefined || this.allowanceAmount === undefined) {
                     return false;
                 }
                 if (this.depositAmount === undefined) {
@@ -131,6 +131,9 @@ export default Vue.extend({
                 return !this.depositAmount.isNaN();
             }
             if (this.selectedMethod === 'withdraw') {
+                if (this.maxWithdraw === undefined) {
+                    return false;
+                }
                 if (!this.isWithdrawingAllowed) {
                     return false;
                 }
@@ -141,6 +144,12 @@ export default Vue.extend({
             }
             return false;
         },
+        maxAllowedDeposit(): BigNumber {
+            if (this.allowanceAmount.isGreaterThan(this.maxDeposit)) {
+                return this.maxDeposit;
+            }
+            return this.allowanceAmount;
+        },
     },
     methods: {
         handleMethodChange(e) {
@@ -148,7 +157,7 @@ export default Vue.extend({
         },
         submit() {
             if (this.selectedMethod === 'deposit') {
-                this.$emit('deposit', this.depositAmount ?? this.maxDeposit);
+                this.$emit('deposit', this.depositAmount ?? this.maxAllowedDeposit);
             }
             if (this.selectedMethod === 'withdraw') {
                 this.$emit('withdraw', this.withDrawAmount ?? this.maxWithdraw);

@@ -1,41 +1,41 @@
 <template>
-    <ManageVATModal
-        :is-shown="isManageVATModalShown"
+    <WalletModal
+        :is-shown="isWalletModalShown"
         :is-dark-mode="isDarkMode"
         :is-explanations-shown="isExplanationsShown"
         token-address-d-a-i="0x6b175474e89094c44da98b954eedeac495271d0f"
-        :max-deposit="walletBalances ? walletBalances.walletDAI : undefined"
-        :max-withdraw="walletBalances ? walletBalances.walletVatDAI : undefined"
         :wallet-address="walletAddress"
-        :wallet-e-t-h="walletBalances ? walletBalances.walletETH : undefined"
-        :wallet-vat-d-a-i="walletBalances ? walletBalances.walletVatDAI : undefined"
-        :wallet-d-a-i="walletBalances ? walletBalances.walletDAI : undefined"
-        :is-submitting="isSubmitting"
-        :is-wallet-loading="isWalletLoading"
-        :is-depositing-allowed="false"
-        :is-withdrawing-allowed="false"
-        @cancel="setManageVATModal(false)"
-        @connectWallet="openWalletModalFromManageVatModal()"
+        :wallet-balances="walletBalances"
+        :allowance-amount="allowanceAmount"
+        :is-withdrawing-allowed="isWalletAuthorizationDone"
+        :is-submitting="isDepositingOrWithdrawing"
+        :is-wallet-loading="isFetchingBalances"
+        @cancel="setWalletModal(false)"
+        @connectWallet="openSelectWalletModal()"
     />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
-import ManageVATModal from '~/components/wallet/ManageVATModal.vue';
+import WalletModal from '../components/wallet/WalletModal.vue';
 
 export default Vue.extend({
     name: 'WalletPopupContainer',
-    components: { ManageVATModal },
+    components: { WalletModal },
     computed: {
         ...mapGetters('wallet', {
-            isWalletLoading: 'isLoading',
+            isFetchingBalances: 'isFetchingBalances',
             walletAddress: 'getAddress',
             walletBalances: 'walletBalances',
-            isSubmitting: 'isDepositingOrWithdrawing',
+            isDepositingOrWithdrawing: 'isDepositingOrWithdrawing',
         }),
         ...mapGetters('modals', {
-            isManageVATModalShown: 'getManageVATModal',
+            isWalletModalShown: 'getWalletModal',
+        }),
+        ...mapGetters('authorizations', {
+            isWalletAuthorizationDone: 'isWalletAuthorizationDone',
+            allowanceAmount: 'allowanceAmount',
         }),
         ...mapGetters('cookies', {
             hasAcceptedTerms: 'hasAcceptedTerms',
@@ -58,16 +58,16 @@ export default Vue.extend({
         },
     },
     methods: {
-        openWalletModalFromManageVatModal(): void {
-            this.setManageVATModal(false);
+        openSelectWalletModal(): void {
+            this.setWalletModal(false);
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);
                 return;
             }
-            this.$store.commit('modals/setWalletModal', true);
+            this.$store.commit('modals/setSelectWalletModal', true);
         },
-        setManageVATModal(open: boolean): void {
-            this.$store.commit('modals/setManageVATModal', open);
+        setWalletModal(open: boolean): void {
+            this.$store.commit('modals/setWalletModal', open);
         },
     },
 });

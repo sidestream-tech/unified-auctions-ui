@@ -14,10 +14,7 @@
                 :is-explanations-shown="isExplanationsShown"
                 :is-loading="isLoading"
                 :is-wallet-loading="isWalletLoading"
-                :wallet-d-a-i="walletDAI"
-                :wallet-e-t-h="walletETH"
-                :wallet-last-updated-date="walletLastUpdatedDate"
-                :wallet-vat-d-a-i="walletVatDAI"
+                :wallet-balances="walletBalances"
                 @refresh="$emit('refresh')"
                 @connectWallet="$emit('connectWallet')"
             />
@@ -35,10 +32,10 @@
                 :is-loading="isLoading"
                 :is-submitting="isSubmitting"
                 :is-explanations-shown="isExplanationsShown"
-                :is-depositing-allowed="isDepositingAllowed"
+                :allowance-amount="allowanceAmount"
                 :is-withdrawing-allowed="isWithdrawingAllowed"
-                :max-deposit="maxDeposit"
-                :max-withdraw="maxWithdraw"
+                :max-deposit="walletBalances ? walletBalances.walletDAI : undefined"
+                :max-withdraw="walletBalances ? walletBalances.walletVatDAI : undefined"
                 :token-address-d-a-i="tokenAddressDAI"
                 @deposit="value => $emit('deposit', value)"
                 @withdraw="value => $emit('withdraw', value)"
@@ -49,9 +46,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
 import { Modal } from 'ant-design-vue';
 import { WalletBalances } from 'auctions-core/dist/src/types';
+import BigNumber from 'bignumber.js';
 import TextBlock from '../common/TextBlock.vue';
 import WalletTable from './WalletTable.vue';
 import WalletDepositWithdrawBlock from './WalletDepositWithdrawBlock.vue';
@@ -76,37 +73,13 @@ export default Vue.extend({
             type: Object as Vue.PropType<WalletBalances>,
             default: null,
         },
-        walletETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
-        walletDAI: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
-        walletVatDAI: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
-        walletLastUpdatedDate: {
-            type: [String, Number, Date],
-            default: null,
-        },
-        maxDeposit: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        maxWithdraw: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
         tokenAddressDAI: {
             type: String,
             required: true,
         },
-        isDepositingAllowed: {
-            type: Boolean,
-            required: true,
+        allowanceAmount: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
         isWithdrawingAllowed: {
             type: Boolean,

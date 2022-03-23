@@ -1,24 +1,24 @@
 interface State {
     termsModal: boolean;
+    selectWalletModal: boolean;
     walletModal: boolean;
-    manageVATModal: boolean;
 }
 
 export const state = (): State => ({
     termsModal: false,
     walletModal: false,
-    manageVATModal: false,
+    selectWalletModal: false,
 });
 
 export const getters = {
     getTermsModal(state: State) {
         return state.termsModal;
     },
+    getSelectWalletModal(state: State) {
+        return state.selectWalletModal;
+    },
     getWalletModal(state: State) {
         return state.walletModal;
-    },
-    getManageVATModal(state: State) {
-        return state.manageVATModal;
     },
 };
 
@@ -29,7 +29,7 @@ export const mutations = {
     setWalletModal(state: State, open: boolean): void {
         state.walletModal = open;
     },
-    setManageVATModal(state: State, open: boolean): void {
-        state.manageVATModal = open;
+    setSelectWalletModal(state: State, open: boolean): void {
+        state.selectWalletModal = open;
     },
 };

@@ -27,7 +27,7 @@ import { Modal } from 'ant-design-vue';
 import { WALLETS } from '~/lib/wallet';
 
 export default Vue.extend({
-    name: 'WalletModal',
+    name: 'WalletSelectModal',
     components: {
         Modal,
     },
