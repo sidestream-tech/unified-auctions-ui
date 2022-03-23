@@ -11,7 +11,10 @@
         :is-submitting="isDepositingOrWithdrawing"
         :is-wallet-loading="isFetchingBalances"
         :is-loading="isFetchingBalances"
+        :is-connecting="isConnecting"
+        :is-connected="isConnected"
         @cancel="setWalletModal(false)"
+        @connect="connect"
         @refresh="refresh()"
         @connectWallet="openSelectWalletModal()"
         @deposit="depositToVAT"
@@ -33,6 +36,8 @@ export default Vue.extend({
             walletAddress: 'getAddress',
             walletBalances: 'walletBalances',
             isDepositingOrWithdrawing: 'isDepositingOrWithdrawing',
+            isConnecting: 'isLoading',
+            isConnected: 'isConnected',
         }),
         ...mapGetters('modals', {
             isWalletModalShown: 'getWalletModal',
@@ -66,6 +71,7 @@ export default Vue.extend({
             refresh: 'fetchWalletBalances',
             depositToVAT: 'depositToVAT',
             withdrawFromVAT: 'withdrawFromVAT',
+            connect: 'connect',
         }),
         openSelectWalletModal(): void {
             this.setWalletModal(false);

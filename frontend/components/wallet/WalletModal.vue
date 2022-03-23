@@ -18,6 +18,12 @@
                 @refresh="$emit('refresh')"
                 @connectWallet="$emit('connectWallet')"
             />
+            <AccessDaiBlock
+                :is-loading="isConnecting"
+                :is-explanations-shown="isExplanationsShown"
+                :is-dai-access-granted="isConnected"
+                @grantAccess="$emit('connect')"
+            />
             <TextBlock v-if="isExplanationsShown" title="What is VAT?">
                 The VAT balance is the balance of DAI tokens owned by your wallet inside of the MakerDAO protocol.
                 <a
@@ -50,12 +56,13 @@ import { Modal } from 'ant-design-vue';
 import { WalletBalances } from 'auctions-core/dist/src/types';
 import BigNumber from 'bignumber.js';
 import TextBlock from '../common/TextBlock.vue';
+import AccessDaiBlock from '../transaction/AccessDaiBlock.vue';
 import WalletTable from './WalletTable.vue';
 import WalletDepositWithdrawBlock from './WalletDepositWithdrawBlock.vue';
 
 export default Vue.extend({
     name: 'ManageVATModal',
-    components: { TextBlock, WalletDepositWithdrawBlock, WalletTable, Modal },
+    components: { AccessDaiBlock, TextBlock, WalletDepositWithdrawBlock, WalletTable, Modal },
     props: {
         isShown: {
             type: Boolean,
@@ -100,6 +107,14 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        isConnecting: {
+            type: Boolean,
+            default: false,
+        },
+        isConnected: {
+            type: Boolean,
+            default: false,
         },
     },
 });
