@@ -11,13 +11,17 @@
         :is-submitting="isDepositingOrWithdrawing"
         :is-wallet-loading="isFetchingBalances"
         @cancel="setWalletModal(false)"
+        @refresh="refresh()"
         @connectWallet="openSelectWalletModal()"
+        @deposit="depositToVAT"
+        @withdraw="withdrawFromVAT"
     />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import WalletModal from '../components/wallet/WalletModal.vue';
 
 export default Vue.extend({
@@ -68,6 +72,15 @@ export default Vue.extend({
         },
         setWalletModal(open: boolean): void {
             this.$store.commit('modals/setWalletModal', open);
+        },
+        refresh(): void {
+            this.$store.dispatch('wallet/fetchWalletBalances');
+        },
+        depositToVAT(amount: BigNumber) {
+            this.$store.dispatch('wallet/depositToVAT', amount);
+        },
+        withdrawFromVAT(amount: BigNumber) {
+            this.$store.dispatch('wallet/withdrawFromVAT', amount);
         },
     },
 });

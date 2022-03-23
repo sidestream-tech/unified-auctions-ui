@@ -1,3 +1,5 @@
+import { ActionContext } from 'vuex';
+
 interface State {
     termsModal: boolean;
     selectWalletModal: boolean;
@@ -31,5 +33,14 @@ export const mutations = {
     },
     setSelectWalletModal(state: State, open: boolean): void {
         state.selectWalletModal = open;
+    },
+};
+
+export const actions = {
+    async setWalletModalAndFetchData({ dispatch, commit }: ActionContext<State, State>, open: boolean) {
+        commit('setWalletModal', open);
+        if (open) {
+            await dispatch('wallet/fetchWalletBalances', undefined, { root: true });
+        }
     },
 };
