@@ -5,11 +5,14 @@
             to be aware that each transfer incurs transaction fees. Also, if you do not have DAI funds to deposit yet,
             there are several ways to obtain it:
             <ul class="list-disc list-inside">
-                <li>By borrowing DAI against a collateral in the oasis.app</li>
                 <li>
-                    By purchasing it on a decentralized exchange like uniswap.org (correct DAI token address used on
-                    the “mainnet” network is
-                    <FormatAddress type="address" :value="tokenAddressDAI" shorten />)
+                    By borrowing DAI against a collateral in the
+                    <a href="https://oasis.app/" target="_blank">oasis.app</a>
+                </li>
+                <li>
+                    By purchasing it on a decentralized exchange like
+                    <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct DAI token address used on
+                    the “mainnet” network is <FormatAddress type="address" :value="tokenAddressDAI" shorten />)
                 </li>
             </ul>
         </TextBlock>

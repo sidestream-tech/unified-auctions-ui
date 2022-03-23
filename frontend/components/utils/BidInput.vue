@@ -71,8 +71,9 @@ export default Vue.extend({
                 this.amountToBidInputParsed?.isGreaterThan(maximumBid) ||
                 this.amountToBidInputParsed?.isLessThan(this.minimumDepositDai)
             ) {
-                return `The value can only be between ${this.minimumDepositDai.toFixed(2)} and ${maximumBid.toFixed(2)}
-                or the total price`;
+                return `The value can only be between ${this.minimumDepositDai.toFixed(2)} and ${maximumBid.toFixed(
+                    2
+                )}`;
             }
             return undefined;
         },
