@@ -10,6 +10,7 @@
         :is-withdrawing-allowed="isWalletAuthorizationDone"
         :is-submitting="isDepositingOrWithdrawing"
         :is-wallet-loading="isFetchingBalances"
+        :is-loading="isFetchingBalances"
         @cancel="setWalletModal(false)"
         @refresh="refresh()"
         @connectWallet="openSelectWalletModal()"
