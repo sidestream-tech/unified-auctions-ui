@@ -1,4 +1,3 @@
-// import { action } from '@storybook/addon-actions';
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import BasePanel from '~/components/common/BasePanel';
