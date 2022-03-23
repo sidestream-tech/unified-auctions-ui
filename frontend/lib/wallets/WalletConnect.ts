@@ -26,6 +26,10 @@ export default class WalletConnect extends AbstractWallet {
         throw new Error(`${WalletConnect.title} network switching is not yet implemented`);
     }
 
+    addNewNetwork(): Promise<void> {
+        throw new Error(`${WalletConnect.title} network adding is not yet implemented`);
+    }
+
     setup() {}
 
     teardown() {}

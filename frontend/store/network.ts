@@ -112,6 +112,14 @@ export const actions = {
             await wallet.switchNetwork(newNetwork);
         }
     },
+    async addNewNetwork(_: ActionContext<State, State>, rpcUrl: string): Promise<void> {
+        try {
+            const wallet = getWallet();
+            await wallet.addNewNetwork(rpcUrl);
+        } catch (error) {
+            message.error(`Network addding error: ${error.message}`);
+        }
+    },
     async fixWalletNetwork({ dispatch, getters }: ActionContext<State, State>): Promise<void> {
         try {
             await dispatch('setWalletNetwork', getters.getPageNetwork);

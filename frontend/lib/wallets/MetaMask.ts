@@ -71,6 +71,25 @@ export default class MetaMask extends AbstractWallet {
         await provider.send('wallet_switchEthereumChain', [{ chainId }]);
     }
 
+    public async addNewNetwork(rpcUrl: string): Promise<void> {
+        const constructor = this.constructor as typeof MetaMask;
+        if (!constructor.isConnected) {
+            message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
+            return;
+        }
+        if (!rpcUrl) {
+            throw new Error('no RPC url was provided');
+        }
+        const provider = this.getProvider();
+        await provider.send('wallet_addEthereumChain', [
+            {
+                chainId: '0x539',
+                chainName: 'Test 123',
+                rpcUrls: [rpcUrl],
+            },
+        ]);
+    }
+
     public async networkChangedHandler() {
         const networkType = getNetworkTypeByChainId(window.ethereum.chainId);
         const signer = await this.getSigner();
