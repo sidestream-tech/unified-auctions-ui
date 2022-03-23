@@ -41,7 +41,7 @@
                 key="withdrawInput"
                 :amount-to-bid.sync="withDrawAmount"
                 :disabled="isLoading || !isWithdrawingAllowed || isSubmitting || maxWithdraw === undefined"
-                :total-price="Math.floor(maxWithdraw)"
+                :total-price="maxWithdraw"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
 
