@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col space-y-1">
+    <div class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100">
         <div class="flex justify-between">
             <div>Auction Ends</div>
             <div>
@@ -52,14 +52,14 @@
         <div class="flex justify-between">
             <button
                 class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.totalPrice"
+                :disabled="!isActive || !auctionTransaction.totalPrice || !isTooSmallToPartiallyTake"
                 @click="setAmountToBid(undefined)"
             >
                 Buy all collateral
             </button>
             <button
                 class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.totalPrice"
+                :disabled="!isActive || !auctionTransaction.totalPrice || !isTooSmallToPartiallyTake"
                 @click="setAmountToBid(undefined)"
             >
                 <format-currency
@@ -73,14 +73,14 @@
         <div class="flex justify-between">
             <button
                 class="ClickableText"
-                :disabled="!isActive || !minimumDepositDai"
+                :disabled="!isActive || !minimumDepositDai || !isTooSmallToPartiallyTake"
                 @click="setAmountToBid(minimumDepositDai)"
             >
                 Set minimum bid
             </button>
             <button
                 class="ClickableText"
-                :disabled="!isActive || !minimumDepositDai"
+                :disabled="!isActive || !minimumDepositDai || !isTooSmallToPartiallyTake"
                 @click="setAmountToBid(minimumDepositDai)"
             >
                 <format-currency v-if="minimumDepositDai && isActive" :value="minimumDepositDai" currency="DAI" />
@@ -168,6 +168,17 @@ export default Vue.extend({
         isBidAmountNaN(): boolean {
             return !!this.amountToBid?.isNaN();
         },
+        isTooSmallToPartiallyTake(): boolean {
+            return this.auctionTransaction?.totalPrice.isGreaterThanOrEqualTo(this.minimumDepositDai?.multipliedBy(2));
+        },
+    },
+    watch: {
+        amountToBid(newVal) {
+            this.$emit('inputBidAmount', newVal);
+        },
+        amountToReceive(newVal) {
+            this.$emit('amountToReceive', newVal);
+        },
     },
     methods: {
         setAmountToBid(value: BigNumber | undefined) {
@@ -182,6 +193,10 @@ export default Vue.extend({
 <style scoped>
 .ClickableText:enabled {
     @apply text-primary hover:text-primary-light;
+}
+
+.ClickableText:disabled {
+    @apply pointer-events-none;
 }
 
 .ClickableText:enabled:first-of-type {

@@ -1,15 +1,15 @@
 <template>
     <div>
-        <TextBlock v-if="isExplanationsShown" title="Deposit" class="mb-1">
+        <TextBlock v-if="isExplanationsShown" title="Deposit">
             To participate in the auction you need to deposit enough DAI to the VAT. Below is an overview on the
             current DAI balance in your wallet that can be used to make a deposit; the amount already deposited; and
             the minimum amount to deposit in order to participate in the auction based on the bid you want to make. You
             can directly deposit the minimum required amount of DAI if you don't have sufficient deposits yet.
         </TextBlock>
-        <div class="text-base font-medium">
+        <div class="text-base font-medium text-gray-700 dark:text-gray-100 mt-1">
             <div class="flex justify-between">
                 <span>Amount available in the wallet</span>
-                <format-currency v-if="walletDAI" :value="walletDAI" currency="DAI" />
+                <format-currency v-if="walletDai" :value="walletDai" currency="DAI" />
                 <div v-else>
                     <span class="opacity-75">Unknown</span>
                     <span>DAI</span>
@@ -17,7 +17,7 @@
             </div>
             <div class="flex justify-between">
                 <span>Currently deposited amount</span>
-                <format-currency v-if="walletVatDAI" :value="walletVatDAI" currency="DAI" />
+                <format-currency v-if="walletVatDai" :value="walletVatDai" currency="DAI" />
                 <div v-else>
                     <span class="opacity-75">Unknown</span>
                     <span>DAI</span>
@@ -25,7 +25,11 @@
             </div>
             <div class="flex justify-between">
                 <span>Minimum to deposit</span>
-                <format-currency v-if="minimumDepositDAI" :value="minimumDepositDAI" currency="DAI" />
+                <format-currency
+                    v-if="minimumDepositDai && !transactionAmountDai.isNaN()"
+                    :value="minimumDepositDai"
+                    currency="DAI"
+                />
                 <div v-else>
                     <span class="opacity-75">Unknown</span>
                     <span>DAI</span>
@@ -38,16 +42,19 @@
                 Manage VAT
             </BaseButton>
             -->
-            <BaseButton v-if="minimumDepositDAI && minimumDepositDAI.isZero()" disabled class="w-60">
+            <BaseButton v-if="minimumDepositDai && minimumDepositDai.isZero()" disabled class="w-full md:w-80">
                 Enough DAI is available
+            </BaseButton>
+            <BaseButton v-else-if="minimumDepositDai && !isEnoughDaiInWallet" disabled class="w-full md:w-80">
+                Not Enough DAI in wallet
             </BaseButton>
             <BaseButton
                 v-else
                 type="primary"
                 :disabled="isDisabled"
                 :is-loading="isLoading"
-                class="w-60"
-                @click="$emit('deposit', minimumDepositDAI)"
+                class="w-full md:w-80"
+                @click="$emit('deposit', minimumDepositDai)"
             >
                 Deposit minimum amount
             </BaseButton>
@@ -81,28 +88,34 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        walletDAI: {
+        walletDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        walletVatDAI: {
+        walletVatDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        transactionAmountDAI: {
+        transactionAmountDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
     },
     computed: {
-        minimumDepositDAI(): BigNumber | undefined {
-            if (!this.transactionAmountDAI || !this.walletVatDAI) {
+        minimumDepositDai(): BigNumber | undefined {
+            if (!this.transactionAmountDai || !this.walletVatDai) {
                 return undefined;
             }
-            return BigNumber.maximum(0, this.transactionAmountDAI.minus(this.walletVatDAI));
+            return BigNumber.maximum(0, this.transactionAmountDai.minus(this.walletVatDai));
         },
         isDisabled(): Boolean {
-            return this.disabled || (!this.walletVatDAI && !this.walletDAI);
+            return this.disabled || (!this.walletVatDai && !this.walletDai);
+        },
+        isEnoughDaiInWallet(): Boolean {
+            if (this.minimumDepositDai) {
+                return this.walletDai.isGreaterThanOrEqualTo(this.minimumDepositDai);
+            }
+            return true;
         },
     },
 });
