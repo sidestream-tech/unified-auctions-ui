@@ -20,8 +20,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters } from 'vuex';
-import BigNumber from 'bignumber.js';
+import { mapActions, mapGetters } from 'vuex';
 import WalletModal from '../components/wallet/WalletModal.vue';
 
 export default Vue.extend({
@@ -62,6 +61,11 @@ export default Vue.extend({
         },
     },
     methods: {
+        ...mapActions('wallet', {
+            refresh: 'fetchWalletBalances',
+            depositToVAT: 'depositToVAT',
+            withdrawFromVAT: 'withdrawFromVAT',
+        }),
         openSelectWalletModal(): void {
             this.setWalletModal(false);
             if (!this.hasAcceptedTerms) {
@@ -72,15 +76,6 @@ export default Vue.extend({
         },
         setWalletModal(open: boolean): void {
             this.$store.commit('modals/setWalletModal', open);
-        },
-        refresh(): void {
-            this.$store.dispatch('wallet/fetchWalletBalances');
-        },
-        depositToVAT(amount: BigNumber) {
-            this.$store.dispatch('wallet/depositToVAT', amount);
-        },
-        withdrawFromVAT(amount: BigNumber) {
-            this.$store.dispatch('wallet/withdrawFromVAT', amount);
         },
     },
 });
