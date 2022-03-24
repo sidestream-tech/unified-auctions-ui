@@ -7,6 +7,7 @@ import MCD_VAT from './abis/MCD_VAT.json';
 import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import MCD_CLIP from './abis/MCD_CLIP.json';
+import MCD_DOG from './abis/MCD_DOG.json';
 import WSTETH from './abis/WSTETH.json';
 import getSigner from './signer';
 
@@ -30,6 +31,9 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     }
     if (contractName === 'MCD_VAT') {
         return MCD_VAT;
+    }
+    if (contractName === 'MCD_DOG') {
+        return MCD_DOG;
     }
     if (contractName === 'WSTETH') {
         return WSTETH;

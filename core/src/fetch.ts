@@ -1,4 +1,5 @@
 import type { AuctionInitialInfo, AuctionStatus } from './types';
+import { ethers } from 'ethers';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import getContract, { getClipperNameByCollateralType } from './contracts';
@@ -6,7 +7,7 @@ import { RAD, RAY, WAD } from './constants/UNITS';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 
-const AUCTION_DURATION_CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
+const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
 const _fetchMaximumAuctionDurationInSeconds = async function (
     network: string,
@@ -18,7 +19,21 @@ const _fetchMaximumAuctionDurationInSeconds = async function (
 };
 
 const fetchMaximumAuctionDurationInSeconds = memoizee(_fetchMaximumAuctionDurationInSeconds, {
-    maxAge: AUCTION_DURATION_CACHE_EXPIRY_MS,
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
+
+const _fetchMinimumBidDAI = async function (network: string, collateralType: string): Promise<BigNumber> {
+    const dogContract = await getContract(network, 'MCD_DOG');
+    const encodedCollateralType = ethers.utils.formatBytes32String(collateralType);
+    const collateralParameters = await dogContract.ilks(encodedCollateralType);
+    const minimumBidDAI = new BigNumber(collateralParameters.dirt._hex).div(RAD);
+    return minimumBidDAI;
+};
+
+export const fetchMinimumBidDAI = memoizee(_fetchMinimumBidDAI, {
+    maxAge: CACHE_EXPIRY_MS,
     promise: true,
     length: 2,
 });
@@ -26,10 +41,10 @@ const fetchMaximumAuctionDurationInSeconds = memoizee(_fetchMaximumAuctionDurati
 export const fetchAuctionStatus = async function (
     network: string,
     collateralType: string,
-    auctionId: number
+    auctionIndex: number
 ): Promise<AuctionStatus> {
     const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
-    const statusData = await contract.getStatus(convertNumberTo32Bytes(auctionId));
+    const statusData = await contract.getStatus(convertNumberTo32Bytes(auctionIndex));
     const unitPrice = new BigNumber(statusData.price._hex).div(RAY);
     const collateralAmount = new BigNumber(statusData.lot._hex).div(WAD);
     const debtDAI = new BigNumber(statusData.tab._hex).div(RAD);
