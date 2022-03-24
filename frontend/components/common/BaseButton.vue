@@ -62,7 +62,7 @@ export default Vue.extend({
 }
 
 .Button-Link {
-    @apply inline-flex items-center p-1;
+    @apply inline-flex items-center p-0 h-auto;
 }
 
 .Button-Link span {

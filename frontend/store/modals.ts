@@ -37,10 +37,7 @@ export const mutations = {
 };
 
 export const actions = {
-    async setWalletModalAndFetchData({ dispatch, commit }: ActionContext<State, State>, open: boolean) {
+    setWalletModalAndFetchData({ commit }: ActionContext<State, State>, open: boolean) {
         commit('setWalletModal', open);
-        if (open) {
-            await dispatch('wallet/fetchWalletBalances', undefined, { root: true });
-        }
     },
 };

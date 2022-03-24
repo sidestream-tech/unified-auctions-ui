@@ -12,7 +12,7 @@
                 <li>
                     By purchasing it on a decentralized exchange like
                     <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct DAI token address used on
-                    the “mainnet” network is <FormatAddress type="address" :value="tokenAddressDAI" shorten />)
+                    the “mainnet” network is <FormatAddress type="address" :value="tokenAddressDai || ''" shorten />)
                 </li>
             </ul>
         </TextBlock>
@@ -29,30 +29,27 @@
             </RadioGroup>
 
             <BidInput
-                v-if="selectedMethod === 'deposit'"
-                key="depositInput"
+                v-show="selectedMethod === 'deposit'"
                 :amount-to-bid.sync="depositAmount"
-                :disabled="isLoading || isSubmitting || maxDeposit === undefined || allowanceAmount === undefined"
+                :disabled="!canDeposit"
                 :total-price="maxAllowedDeposit"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
             <BidInput
-                v-else
-                key="withdrawInput"
+                v-show="selectedMethod === 'withdraw'"
                 :amount-to-bid.sync="withDrawAmount"
-                :disabled="isLoading || !isWithdrawingAllowed || isSubmitting || maxWithdraw === undefined"
+                :disabled="!canWithdraw"
                 :total-price="maxWithdraw"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
 
             <BaseButton
                 type="primary"
-                class="capitalize"
                 :is-loading="isSubmitting"
                 :disabled="!canSubmit || isLoading"
                 html-type="submit"
             >
-                {{ selectedMethod }}
+                <span class="capitalize">{{ selectedMethod }}</span>
             </BaseButton>
         </form>
     </div>
@@ -98,9 +95,9 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        tokenAddressDAI: {
+        tokenAddressDai: {
             type: String,
-            required: true,
+            default: undefined,
         },
         allowanceAmount: {
             type: Object as Vue.PropType<BigNumber>,
@@ -120,9 +117,27 @@ export default Vue.extend({
         };
     },
     computed: {
+        canDeposit() {
+            return (
+                !this.isLoading &&
+                !this.isSubmitting &&
+                this.maxDeposit !== undefined &&
+                this.allowanceAmount !== undefined &&
+                !this.maxDeposit.isEqualTo(0)
+            );
+        },
+        canWithdraw() {
+            return (
+                !this.isLoading &&
+                !this.isSubmitting &&
+                this.isWithdrawingAllowed &&
+                this.maxWithdraw !== undefined &&
+                !this.maxWithdraw.isEqualTo(0)
+            );
+        },
         canSubmit(): boolean {
             if (this.selectedMethod === 'deposit') {
-                if (this.maxDeposit === undefined || this.allowanceAmount === undefined) {
+                if (!this.canDeposit) {
                     return false;
                 }
                 if (this.depositAmount === undefined) {
@@ -131,10 +146,7 @@ export default Vue.extend({
                 return !this.depositAmount.isNaN();
             }
             if (this.selectedMethod === 'withdraw') {
-                if (this.maxWithdraw === undefined) {
-                    return false;
-                }
-                if (!this.isWithdrawingAllowed) {
+                if (!this.canWithdraw) {
                     return false;
                 }
                 if (this.withDrawAmount === undefined) {

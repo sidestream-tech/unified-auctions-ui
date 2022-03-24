@@ -1,9 +1,14 @@
 import type { Notifier, WalletBalances } from './types';
 import getProvider from './provider';
 import BigNumber from './bignumber';
-import getContract from './contracts';
+import getContract, { getContractAddressByName } from './contracts';
 import executeTransaction from './execute';
-import { DAI_NUMBER_OF_DIGITS, ETH_NUMBER_OF_DIGITS, RAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import {
+    DAI_NUMBER_OF_DIGITS,
+    ETH_NUMBER_OF_DIGITS,
+    RAD_NUMBER_OF_DIGITS,
+    WAD_NUMBER_OF_DIGITS,
+} from './constants/UNITS';
 
 export const fetchBalanceETH = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const provider = await getProvider(network);
@@ -20,7 +25,7 @@ export const fetchBalanceDAI = async function (network: string, walletAddress: s
 export const fetchVATbalanceDAI = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const contract = await getContract(network, 'MCD_VAT');
     const radAmount = await contract.dai(walletAddress);
-    return new BigNumber(radAmount._hex).div(RAD);
+    return new BigNumber(radAmount._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
 };
 
 export const fetchWalletBalances = async function (network: string, walletAddress: string): Promise<WalletBalances> {
@@ -29,6 +34,7 @@ export const fetchWalletBalances = async function (network: string, walletAddres
         walletDAI: await fetchBalanceDAI(network, walletAddress),
         walletVatDAI: await fetchVATbalanceDAI(network, walletAddress),
         walletLastUpdatedDate: new Date(),
+        tokenAddressDai: await getContractAddressByName(network, 'MCD_DAI'),
     };
 };
 
@@ -38,7 +44,7 @@ export const depositToVAT = async function (
     amount: BigNumber,
     notifier?: Notifier
 ): Promise<void> {
-    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
+    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
     await executeTransaction(network, 'MCD_JOIN_DAI', 'join', [walletAddress, wadAmount], notifier, true);
 };
 
@@ -48,6 +54,6 @@ export const withdrawFromVAT = async function (
     amount: BigNumber,
     notifier?: Notifier
 ): Promise<void> {
-    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
+    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
     await executeTransaction(network, 'MCD_JOIN_DAI', 'exit', [walletAddress, wadAmount], notifier, true);
 };

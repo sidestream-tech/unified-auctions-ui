@@ -20,7 +20,6 @@ export const getJoinNameByCollateralType = function (collateralType: string): st
     return `MCD_JOIN_${suffix}`;
 };
 
-// TODO: Use this one for fetching of DAI address
 export const getContractAddressByName = async function (network: string, contractName: string): Promise<string> {
     return await fetchContractAddressByNetwork(network, contractName);
 };

@@ -126,5 +126,5 @@ export declare interface WalletBalances {
     walletDAI: BigNumber;
     walletVatDAI: BigNumber;
     walletLastUpdatedDate: Date;
-    daiTokenAddress?: string; //TODO: Fetch this
+    tokenAddressDai: string;
 }

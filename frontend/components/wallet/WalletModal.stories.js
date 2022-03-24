@@ -14,7 +14,7 @@ const common = {
             walletVatDAI: new BigNumber(faker.finance.amount()),
             walletLastUpdatedDate: faker.date.recent(),
         },
-        tokenAddressDAI: faker.finance.ethereumAddress(),
+        tokenAddressDai: faker.finance.ethereumAddress(),
         allowanceAmount: new BigNumber(faker.datatype.number({ min: 50, max: 500 })),
         isWithdrawingAllowed: true,
         walletAddress: faker.finance.ethereumAddress(),
@@ -53,7 +53,7 @@ storiesOf('Wallet/WalletModal', module)
         components: { WalletModal },
         data: () => ({
             isShown: true,
-            tokenAddressDAI: faker.finance.ethereumAddress(),
+            tokenAddressDai: faker.finance.ethereumAddress(),
             allowanceAmount: new BigNumber(faker.datatype.number({ min: 50, max: 500 })),
             isWithdrawingAllowed: false,
         }),
@@ -66,7 +66,7 @@ storiesOf('Wallet/WalletModal', module)
         components: { WalletModal },
         data: () => ({
             isShown: true,
-            tokenAddressDAI: faker.finance.ethereumAddress(),
+            tokenAddressDai: faker.finance.ethereumAddress(),
             allowanceAmount: new BigNumber(faker.datatype.number({ min: 50, max: 500 })),
             isWithdrawingAllowed: false,
             isWalletLoading: true,

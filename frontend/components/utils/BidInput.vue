@@ -11,12 +11,7 @@
                     @blur="showTotalPriceIfEmpty()"
                 />
                 <div v-if="!amountToBid" class="Overlay TotalPrice">
-                    <format-currency
-                        v-if="totalPrice && !disabled"
-                        :value="totalPrice"
-                        :class="{ 'opacity-50': isDisabled }"
-                    />
-                    <span v-else class="opacity-50">Unknown</span>
+                    <format-currency v-if="totalPrice" :value="totalPrice" :class="{ 'opacity-50': isDisabled }" />
                 </div>
                 <span class="Overlay right-1" :class="{ 'opacity-50': isDisabled }">DAI</span>
             </Tooltip>

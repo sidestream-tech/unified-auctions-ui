@@ -34,7 +34,7 @@
             @connect="changeWalletType"
             @close="setSelectWalletModal(false)"
         />
-        <WalletPopupContainer />
+        <WalletModalContainer />
     </div>
 </template>
 
@@ -46,12 +46,12 @@ import '~/assets/styles/index';
 import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.vue';
 import ChangeWalletNetworkModal from '~/components/modals/ChangeWalletNetworkModal.vue';
 import WalletSelectModal from '~/components/modals/WalletSelectModal.vue';
-import WalletPopupContainer from '~/containers/WalletPopupContainer.vue';
+import WalletModalContainer from '~/containers/WalletModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
 
 export default Vue.extend({
     components: {
-        WalletPopupContainer,
+        WalletModalContainer,
         TermsModal,
         ChangePageNetworkModal,
         ChangeWalletNetworkModal,

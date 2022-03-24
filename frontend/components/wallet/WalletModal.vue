@@ -1,11 +1,11 @@
 <template>
     <modal
         :visible="isShown"
-        title="Withdraw or Deposit VAT"
+        title="Manage DAI in VAT"
         :footer="null"
         :dialog-style="{ top: '60px' }"
         :width="620"
-        :class="isDarkMode && 'dark'"
+        :class="{ dark: isDarkMode }"
         @cancel="$emit('cancel')"
     >
         <div class="flex flex-col gap-4 p-4">
@@ -31,6 +31,7 @@
             <AccessDaiBlock
                 :is-loading="isAllowanceAmountLoading"
                 :is-explanations-shown="isExplanationsShown"
+                :allowance-amount="allowanceAmount"
                 :is-dai-access-granted="
                     allowanceAmount.isGreaterThanOrEqualTo(walletBalances ? walletBalances.walletDAI : 0)
                 "
@@ -44,7 +45,7 @@
                 :is-withdrawing-allowed="isWithdrawingAllowed"
                 :max-deposit="walletBalances && walletBalances.walletDAI"
                 :max-withdraw="walletBalances && walletBalances.walletVatDAI"
-                :token-address-d-a-i="tokenAddressDAI"
+                :token-address-dai="walletBalances && walletBalances.tokenAddressDai"
                 @deposit="value => $emit('deposit', value)"
                 @withdraw="value => $emit('withdraw', value)"
             />
@@ -81,10 +82,6 @@ export default Vue.extend({
         walletBalances: {
             type: Object as Vue.PropType<WalletBalances>,
             default: null,
-        },
-        tokenAddressDAI: {
-            type: String,
-            required: true,
         },
         allowanceAmount: {
             type: Object as Vue.PropType<BigNumber>,

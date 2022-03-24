@@ -137,13 +137,14 @@ export const actions = {
         }
     },
     async depositToVAT(
-        { commit, getters, rootGetters }: ActionContext<State, State>,
+        { commit, dispatch, getters, rootGetters }: ActionContext<State, State>,
         amount: BigNumber | string
     ): Promise<void> {
         const network = rootGetters['network/getMakerNetwork'];
         commit('setIsDepositingOrWithdrawing', true);
         try {
             await depositToVAT(network, getters.getAddress, new BigNumber(amount), notifier);
+            await dispatch('fetchWalletBalances');
         } catch (error) {
             message.error(`Error while depositing to VAT: ${error.message}`);
         } finally {
@@ -151,13 +152,14 @@ export const actions = {
         }
     },
     async withdrawFromVAT(
-        { commit, getters, rootGetters }: ActionContext<State, State>,
+        { commit, dispatch, getters, rootGetters }: ActionContext<State, State>,
         amount: BigNumber | string
     ): Promise<void> {
         const network = rootGetters['network/getMakerNetwork'];
         commit('setIsDepositingOrWithdrawing', true);
         try {
             await withdrawFromVAT(network, getters.getAddress, new BigNumber(amount), notifier);
+            await dispatch('fetchWalletBalances');
         } catch (error) {
             message.error(`Error while withdrawing from VAT: ${error.message}`);
         } finally {

@@ -3,7 +3,6 @@
         :is-shown="isWalletModalShown"
         :is-dark-mode="isDarkMode"
         :is-explanations-shown="isExplanationsShown"
-        token-address-d-a-i="0x6b175474e89094c44da98b954eedeac495271d0f"
         :wallet-address="walletAddress"
         :wallet-balances="walletBalances"
         :allowance-amount="allowanceAmount"
@@ -27,7 +26,7 @@ import { mapActions, mapGetters } from 'vuex';
 import WalletModal from '../components/wallet/WalletModal.vue';
 
 export default Vue.extend({
-    name: 'WalletPopupContainer',
+    name: 'WalletModalContainer',
     components: { WalletModal },
     computed: {
         ...mapGetters('wallet', {
@@ -63,6 +62,17 @@ export default Vue.extend({
             },
             set(newIsDarkMode) {
                 this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
+            },
+        },
+    },
+    watch: {
+        isWalletModalShown: {
+            immediate: true,
+            handler(isShown) {
+                if (isShown) {
+                    this.$store.dispatch('wallet/fetchWalletBalances');
+                    this.$store.dispatch('authorizations/fetchAllowanceAmount');
+                }
             },
         },
     },
