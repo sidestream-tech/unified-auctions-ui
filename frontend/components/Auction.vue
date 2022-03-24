@@ -202,7 +202,7 @@
             </template>
             <TextBlock>
                 <div class="flex w-full justify-end flex-wrap mt-4">
-                    <Tooltip placement="top">
+                    <Tooltip :title="auctionError" placement="top">
                         <div>
                             <Button
                                 :disabled="!!auctionError"
