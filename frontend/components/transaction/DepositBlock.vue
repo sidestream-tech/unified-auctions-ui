@@ -6,7 +6,7 @@
             the minimum amount to deposit in order to participate in the auction based on the bid you want to make. You
             can directly deposit the minimum required amount of DAI if you don't have sufficient deposits yet.
         </TextBlock>
-        <div class="text-base font-medium text-gray-700 dark:text-gray-100 mt-1">
+        <div class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100 mt-2">
             <div class="flex justify-between">
                 <span>Amount available in the wallet</span>
                 <format-currency v-if="walletDai" :value="walletDai" currency="DAI" />
@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="flex justify-between">
-                <span>Currently deposited amount</span>
+                <span>Amount available in the VAT</span>
                 <format-currency v-if="walletVatDai" :value="walletVatDai" currency="DAI" />
                 <div v-else>
                     <span class="opacity-75">Unknown</span>
@@ -46,7 +46,7 @@
                 Enough DAI is available
             </BaseButton>
             <BaseButton v-else-if="minimumDepositDai && !isEnoughDaiInWallet" disabled class="w-full md:w-80">
-                Not Enough DAI in wallet
+                Not Enough DAI in the wallet
             </BaseButton>
             <BaseButton
                 v-else
@@ -90,15 +90,15 @@ export default Vue.extend({
         },
         walletDai: {
             type: Object as Vue.PropType<BigNumber>,
-            default: null,
+            default: undefined,
         },
         walletVatDai: {
             type: Object as Vue.PropType<BigNumber>,
-            default: null,
+            default: undefined,
         },
         transactionAmountDai: {
             type: Object as Vue.PropType<BigNumber>,
-            default: null,
+            default: undefined,
         },
     },
     computed: {

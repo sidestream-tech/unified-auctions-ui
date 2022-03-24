@@ -34,7 +34,7 @@
                 :amount-to-bid.sync="depositAmount"
                 :disabled="isLoading || !isDepositingAllowed"
                 :total-price="maxDeposit"
-                :minimum-deposit-dai="minimumDaiAmount"
+                :minimum-bid-dai="minimumDaiAmount"
             />
             <BidInput
                 v-else
@@ -42,7 +42,7 @@
                 :amount-to-bid.sync="withDrawAmount"
                 :disabled="isLoading || !isWithdrawingAllowed"
                 :total-price="maxWithdraw"
-                :minimum-deposit-dai="minimumDaiAmount"
+                :minimum-bid-dai="minimumDaiAmount"
             />
 
             <BaseButton

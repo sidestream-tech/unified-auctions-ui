@@ -50,13 +50,8 @@
             </div>
         </div>
         <div class="flex justify-between">
-            <button
-                class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.totalPrice || !isTooSmallToPartiallyTake"
-                @click="setAmountToBid(undefined)"
-            >
-                Buy all collateral
-            </button>
+            <span v-if="!isActive || !auctionTransaction.totalPrice || !isTooSmallToPartiallyTake">Total price</span>
+            <button v-else class="ClickableText" @click="setAmountToBid(undefined)">Buy all collateral</button>
             <button
                 class="ClickableText"
                 :disabled="!isActive || !auctionTransaction.totalPrice || !isTooSmallToPartiallyTake"
@@ -71,19 +66,22 @@
             </button>
         </div>
         <div class="flex justify-between">
-            <button
-                class="ClickableText"
-                :disabled="!isActive || !minimumDepositDai || !isTooSmallToPartiallyTake"
-                @click="setAmountToBid(minimumDepositDai)"
+            <span v-if="!isActive || !auctionTransaction.minimumBidDai || !isTooSmallToPartiallyTake"
+                >Minimum bid</span
             >
+            <button v-else class="ClickableText" @click="setAmountToBid(auctionTransaction.minimumBidDai)">
                 Set minimum bid
             </button>
             <button
                 class="ClickableText"
-                :disabled="!isActive || !minimumDepositDai || !isTooSmallToPartiallyTake"
-                @click="setAmountToBid(minimumDepositDai)"
+                :disabled="!isActive || !auctionTransaction.minimumBidDai || !isTooSmallToPartiallyTake"
+                @click="setAmountToBid(auctionTransaction.minimumBidDai)"
             >
-                <format-currency v-if="minimumDepositDai && isActive" :value="minimumDepositDai" currency="DAI" />
+                <format-currency
+                    v-if="auctionTransaction.minimumBidDai && isActive"
+                    :value="auctionTransaction.minimumBidDai"
+                    currency="DAI"
+                />
                 <div v-else class="opacity-50">Unknown</div>
             </button>
         </div>
@@ -101,7 +99,7 @@
                 <div class="w-full flex-shrink-0">
                     <bid-input
                         :amount-to-bid.sync="amountToBid"
-                        :minimum-deposit-dai="minimumDepositDai"
+                        :minimum-bid-dai="auctionTransaction.minimumBidDai"
                         :total-price="auctionTransaction.totalPrice"
                         :disabled="auctionTransaction.isFinished || !auctionTransaction.isActive"
                     />
@@ -126,6 +124,7 @@
 </template>
 
 <script lang="ts">
+import type { AuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import BidInput from '../utils/BidInput.vue';
@@ -143,10 +142,6 @@ export default Vue.extend({
     props: {
         auctionTransaction: {
             type: Object as Vue.PropType<AuctionTransaction>,
-            required: true,
-        },
-        minimumDepositDai: {
-            type: Object as Vue.PropType<BigNumber>,
             required: true,
         },
     },
@@ -169,15 +164,23 @@ export default Vue.extend({
             return !!this.amountToBid?.isNaN();
         },
         isTooSmallToPartiallyTake(): boolean {
-            return this.auctionTransaction?.totalPrice.isGreaterThanOrEqualTo(this.minimumDepositDai?.multipliedBy(2));
+            return this.auctionTransaction.totalPrice.isGreaterThanOrEqualTo(
+                this.auctionTransaction.minimumBidDai.multipliedBy(2)
+            );
         },
     },
     watch: {
-        amountToBid(newVal) {
-            this.$emit('inputBidAmount', newVal);
+        amountToBid: {
+            immediate: true,
+            handler(amountToBid) {
+                this.$emit('inputBidAmount', amountToBid ?? this.auctionTransaction.totalPrice);
+            },
         },
-        amountToReceive(newVal) {
-            this.$emit('amountToReceive', newVal);
+        amountToReceive: {
+            immediate: true,
+            handler(amountToReceive) {
+                this.$emit('amountToReceive', amountToReceive);
+            },
         },
     },
     methods: {

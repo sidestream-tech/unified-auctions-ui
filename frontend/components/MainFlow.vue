@@ -72,8 +72,6 @@
                     :wallet-dai="walletDai"
                     :wallet-vat-dai="walletVatDai"
                     :transaction-amount-dai="transactionAmountDai"
-                    :minimum-bid-dai="minimumBidDai"
-                    @inputBidAmount="$emit('inputBidAmount', $event)"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
                     @grantDaiAccess="$emit('grantDaiAccess')"
@@ -175,10 +173,6 @@ export default Vue.extend({
         transactionAmountDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
-        },
-        minimumBidDai: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
         },
     },
     data: () => ({

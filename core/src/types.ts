@@ -37,7 +37,7 @@ export declare interface Auction extends AuctionInitialInfo {
     secondsTillNextPriceDrop?: number;
     priceDropRatio?: BigNumber;
     transactionGrossProfitDate?: Date;
-    minimumBidDAI: BigNumber;
+    minimumBidDai: BigNumber;
 }
 
 export declare interface TransactionFees {

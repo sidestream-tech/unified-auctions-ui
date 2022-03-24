@@ -8,10 +8,9 @@
         />
         <Alert v-if="auctionTransaction.isFinished" message="This auction is finished" type="error" />
         <BidTransactionTable
-            :auction-transaction="auctionTransaction"
-            :minimum-deposit-dai="minimumBidDai"
             class="mt-4 mb-6"
-            @inputBidAmount="$emit('inputBidAmount', $event)"
+            :auction-transaction="auctionTransaction"
+            @inputBidAmount="transactionAmountDai = $event"
             @amountToReceive="setAmountToReceive"
         />
         <WalletBlock
@@ -140,17 +139,10 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        transactionAmountDai: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
-        minimumBidDai: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
     },
     data() {
         return {
+            transactionAmountDai: undefined as BigNumber | undefined,
             amountToReceive: undefined as BigNumber | undefined,
         };
     },

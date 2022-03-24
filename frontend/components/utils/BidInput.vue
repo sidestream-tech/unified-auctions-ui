@@ -36,7 +36,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        minimumDepositDai: {
+        minimumBidDai: {
             type: Object as Vue.PropType<BigNumber>,
             required: true,
         },
@@ -66,19 +66,17 @@ export default Vue.extend({
             return amountToBid;
         },
         error(): string | undefined {
-            const maximumBid = this.totalPrice?.minus(this.minimumDepositDai);
+            const maximumBid = this.totalPrice?.minus(this.minimumBidDai);
             if (
                 this.amountToBidInputParsed?.isGreaterThan(maximumBid) ||
-                this.amountToBidInputParsed?.isLessThan(this.minimumDepositDai)
+                this.amountToBidInputParsed?.isLessThan(this.minimumBidDai)
             ) {
-                return `The value can only be between ${this.minimumDepositDai.toFixed(2)} and ${maximumBid.toFixed(
-                    2
-                )}`;
+                return `The value can only be between ${this.minimumBidDai.toFixed(2)} and ${maximumBid.toFixed(2)}`;
             }
             return undefined;
         },
         isTooSmallToPartiallyTake(): boolean {
-            return this.totalPrice?.isLessThan(this.minimumDepositDai.multipliedBy(2));
+            return this.totalPrice?.isLessThan(this.minimumBidDai.multipliedBy(2));
         },
         isDisabled(): boolean {
             return this.disabled || this.isTooSmallToPartiallyTake;
@@ -109,7 +107,7 @@ export default Vue.extend({
                 this.amountToBidInput = '';
                 return;
             }
-            if (newVal.isEqualTo(this.minimumDepositDai)) {
+            if (newVal.isEqualTo(this.minimumBidDai)) {
                 this.amountToBidInput = newVal.toFixed();
             }
         },

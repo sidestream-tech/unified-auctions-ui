@@ -93,16 +93,6 @@ const common = {
                 this.isExecuting = false;
             }, 1000);
         },
-        setTransactionAmountDAI(amount) {
-            this.transactionAmountDai = amount;
-        },
-    },
-    watch: {
-        transactionAmountDai(newAmount) {
-            if (newAmount === undefined) {
-                this.transactionAmountDai = this.auctionTransaction.totalPrice;
-            }
-        },
     },
     template: `
     <BidTransaction
@@ -118,9 +108,6 @@ const common = {
         :walletAddress="walletAddress"
         :walletDai="walletDai"
         :walletVatDai="walletVatDai"
-        :transactionAmountDai="transactionAmountDai"
-        :minimumBidDai="minimumBidDai"
-        @inputBidAmount="setTransactionAmountDAI($event)"
         @connect="connect()"
         @disconnect="disconnect()"
         @grantDaiAccess="grantDaiAccess()"

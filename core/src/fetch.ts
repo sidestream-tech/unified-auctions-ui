@@ -24,15 +24,15 @@ const fetchMaximumAuctionDurationInSeconds = memoizee(_fetchMaximumAuctionDurati
     length: 2,
 });
 
-const _fetchMinimumBidDAI = async function (network: string, collateralType: string): Promise<BigNumber> {
+const _fetchMinimumBidDai = async function (network: string, collateralType: string): Promise<BigNumber> {
     const dogContract = await getContract(network, 'MCD_DOG');
     const encodedCollateralType = ethers.utils.formatBytes32String(collateralType);
     const collateralParameters = await dogContract.ilks(encodedCollateralType);
-    const minimumBidDAI = new BigNumber(collateralParameters.dirt._hex).div(RAD);
-    return minimumBidDAI;
+    const minimumBidDai = new BigNumber(collateralParameters.dirt._hex).div(RAD);
+    return minimumBidDai;
 };
 
-export const fetchMinimumBidDAI = memoizee(_fetchMinimumBidDAI, {
+export const fetchMinimumBidDai = memoizee(_fetchMinimumBidDai, {
     maxAge: CACHE_EXPIRY_MS,
     promise: true,
     length: 2,
