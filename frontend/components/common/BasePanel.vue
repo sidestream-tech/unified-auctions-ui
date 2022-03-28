@@ -1,0 +1,113 @@
+<template>
+    <div class="BasePanel">
+        <button class="Title" :class="titleClass" @click="isExpanded = !isExpanded">
+            <div class="Icon" :class="iconClass">
+                <Icon v-if="currentState === 'inactive'" type="close" />
+                <Icon v-else-if="currentState === 'incorrect'" type="warning" theme="filled" />
+                <Icon v-else-if="currentState === 'correct'" type="check" />
+                <Icon v-else-if="currentState === 'notice'" type="warning" theme="filled" />
+            </div>
+            <slot :name="currentState">{{ $props[currentState] }}</slot>
+        </button>
+        <div v-show="isExpanded" class="Content">
+            <slot />
+        </div>
+    </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import { Icon } from 'ant-design-vue';
+
+const STATES = [
+    {
+        name: 'inactive',
+        titleClass: 'text-gray-400',
+        iconClass: 'text-gray-400',
+        isExpanded: false,
+    },
+    {
+        name: 'incorrect',
+        titleClass: 'text-red-500',
+        iconClass: 'text-red-500',
+        isExpanded: true,
+    },
+    {
+        name: 'correct',
+        titleClass: 'text-gray-400',
+        iconClass: 'text-green-500',
+        isExpanded: false,
+    },
+    {
+        name: 'notice',
+        titleClass: 'text-yellow-500',
+        iconClass: 'text-yellow-500',
+        isExpanded: true,
+    },
+];
+
+export default Vue.extend({
+    components: {
+        Icon,
+    },
+    props: {
+        currentState: {
+            type: String,
+            required: true,
+            validator: (value: string) => STATES.map(s => s.name).includes(value),
+        },
+        ...STATES.reduce(
+            (props, state) => ({
+                ...props,
+                [state.name]: {
+                    type: String,
+                    default: '',
+                },
+            }),
+            {}
+        ),
+    },
+    data() {
+        return {
+            isExpanded: false,
+        };
+    },
+    computed: {
+        titleClass() {
+            return STATES.find(s => s.name === this.currentState)?.titleClass;
+        },
+        iconClass() {
+            return STATES.find(s => s.name === this.currentState)?.iconClass;
+        },
+    },
+    watch: {
+        currentState: {
+            immediate: true,
+            handler(newState: string) {
+                this.isExpanded = STATES.filter(s => s.isExpanded)
+                    .map(s => s.name)
+                    .includes(newState);
+            },
+        },
+    },
+});
+</script>
+
+<style scoped>
+.BasePanel {
+    @apply flex flex-col;
+    @apply border-2 border-gray-300 dark:border-gray-600 dark:text-gray-200;
+}
+.BasePanel + .BasePanel {
+    margin-top: -2px;
+}
+.Title {
+    @apply px-2 py-1 text-left;
+}
+.Icon {
+    @apply inline;
+}
+.Content {
+    @apply px-2 py-1;
+}
+</style>
