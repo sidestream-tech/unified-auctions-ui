@@ -27,10 +27,9 @@
             :disabled="!auctionTransaction.isActive || !isConnected"
             :is-explanations-shown="isExplanationsShown"
             :transaction-amount-dai="transactionAmountDai"
-            :is-loading="isDepositing"
             :wallet-dai="walletDai"
             :wallet-vat-dai="walletVatDai"
-            @manageWallet="$emit('manageWallet')"
+            @manageVat="$emit('manageVat')"
         />
         <AuthorisationBlock
             class="mb-6 lg:mb-0"
@@ -82,10 +81,6 @@ export default Vue.extend({
             required: true,
         },
         isConnecting: {
-            type: Boolean,
-            default: false,
-        },
-        isDepositing: {
             type: Boolean,
             default: false,
         },

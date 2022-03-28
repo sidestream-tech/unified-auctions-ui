@@ -16,12 +16,11 @@
             :take-event-storage="takeEvents"
             :wallet-dai="walletDai"
             :wallet-vat-dai="walletVatDai"
-            @manageWallet="openWalletModal"
+            @manageVat="openWalletModal"
             @connect="openWalletModal"
             @disconnect="disconnect"
             @authorizeWallet="authorizeWallet"
             @authorizeCollateral="authorizeCollateral"
-            @deposit="depositToVAT"
             @restart="restartAuction"
             @execute="bid"
             @fetchTakeEventsFromAuction="fetchTakeEventsByAuctionId"
@@ -51,7 +50,6 @@ export default Vue.extend({
             isWalletLoading: 'isLoading',
             walletAddress: 'getAddress',
             walletBalances: 'walletBalances',
-            isDepositingOrWithdrawing: 'isDepositingOrWithdrawing',
         }),
         ...mapGetters('authorizations', {
             isAuthorizing: 'isAuthorizationLoading',
@@ -130,7 +128,7 @@ export default Vue.extend({
             'fetchCollateralAuthorizationStatus',
         ]),
         ...mapActions('auctions', ['bid', 'restart', 'fetchTakeEventsByAuctionId']),
-        ...mapActions('wallet', ['depositToVAT', 'fetchWalletBalances']),
+        ...mapActions('wallet', ['fetchWalletBalances']),
         openWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);

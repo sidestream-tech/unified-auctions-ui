@@ -14,18 +14,15 @@ const data = {
         isFinished: false,
     },
     isConnecting: false,
-    isDepositing: false,
     isAuthorizing: false,
     isExecuting: false,
     isWalletAuthorised: false,
-    isDeposited: false,
     authorisedCollaterals: [],
     walletAddress: null,
     walletDai: new BigNumber(faker.finance.amount()),
     walletVatDai: new BigNumber(faker.finance.amount()),
     transactionAddress: null,
     transactionAmountDai: fakeAuctionTransaction.totalPrice,
-    minimumBidDai: new BigNumber(faker.finance.amount(0, 100)),
 };
 
 const common = {
@@ -49,14 +46,6 @@ const common = {
                 this.authorisedCollaterals = [];
                 this.transactionAddress = null;
                 this.isConnecting = false;
-            }, 1000);
-        },
-        deposit(amount) {
-            this.isDepositing = true;
-            setTimeout(() => {
-                this.walletDai = this.walletDai?.minus(new BigNumber(amount));
-                this.walletVatDai = this.walletVatDai.plus(new BigNumber(amount));
-                this.isDepositing = false;
             }, 1000);
         },
         authorizeWallet() {
@@ -89,7 +78,6 @@ const common = {
     <BidTransaction
         :auctionTransaction="auctionTransaction"
         :isConnecting="isConnecting"
-        :isDepositing="isDepositing"
         :isAuthorizing="isAuthorizing"
         :isExecuting="isExecuting"
         :isWalletAuthorised="isWalletAuthorised"
@@ -99,7 +87,6 @@ const common = {
         :walletVatDai="walletVatDai"
         @connect="connect()"
         @disconnect="disconnect()"
-        @deposit="deposit($event)"
         @authorizeWallet="authorizeWallet()"
         @authorizeCollateral="authorizeCollateral($event)"
         @execute="execute()"

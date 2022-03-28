@@ -15,7 +15,6 @@ const common = {
                 isFinished: false,
                 isActive: true,
             },
-            minimumBidDai: new BigNumber(faker.finance.amount(0, 50)),
         };
     },
 };
@@ -34,7 +33,6 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isFinished: true,
                     totalPrice: null,
                 },
-                minimumBidDai: new BigNumber(faker.finance.amount(0, 50)),
             };
         },
         template: '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumBidDai="minimumBidDai" />',
@@ -49,7 +47,6 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isFinished: false,
                     totalPrice: null,
                 },
-                minimumBidDai: new BigNumber(faker.finance.amount(0, 50)),
             };
         },
         template: '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumBidDai="minimumBidDai" />',
@@ -63,8 +60,8 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isActive: true,
                     isFinished: false,
                     totalPrice: new BigNumber(faker.finance.amount(60, 99)),
+                    minimumBidDai: new BigNumber(faker.finance.amount(50, 60)),
                 },
-                minimumBidDai: new BigNumber(faker.finance.amount(50, 60)),
             };
         },
         template: '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumBidDai="minimumBidDai" />',
@@ -78,7 +75,6 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isActive: true,
                     isFinished: false,
                 },
-                minimumBidDai: new BigNumber(faker.finance.amount(0, 50)),
             };
         },
         created() {
@@ -97,8 +93,8 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isActive: true,
                     isFinished: false,
                     totalPrice: new BigNumber(faker.finance.amount(50, 51)),
+                    minimumBidDai: new BigNumber(faker.finance.amount(25, 25)),
                 },
-                minimumBidDai: new BigNumber(faker.finance.amount(25, 25)),
             };
         },
         created() {

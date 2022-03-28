@@ -3,7 +3,6 @@
         :auctions="auctions"
         :selected-auction-id.sync="selectedAuctionId"
         :is-connecting="isConnecting"
-        :is-depositing-dai="isDepositingDai"
         :is-authorizing="isAuthorizing"
         :is-wallet-authorised="isWalletAuthorised"
         :authorised-collaterals="authorisedCollaterals"
@@ -13,12 +12,11 @@
         :wallet-vat-dai="walletVatDai"
         :transaction-address="selectedAuction && selectedAuction.transactionAddress"
         :transaction-amount-dai="transactionAmountDai"
-        :minimum-bid-dai="minimumBidDai"
         :is-explanations-shown.sync="isExplanationsShown"
         @inputBidAmount="setTransactionAmountDai"
         @connect="connect"
         @disconnect="disconnect"
-        @manageWallet="openWalletModal"
+        @manageVat="openWalletModal"
         @authorizeWallet="authorizeWallet"
         @authorizeCollateral="authorizeCollateral"
         @restart="restart"
@@ -43,16 +41,13 @@ export default Vue.extend({
             auctions: [] as AuctionTransaction[],
             selectedAuctionId: '',
             isConnecting: false,
-            isDepositingDai: false,
             isAuthorizing: false,
             isExecuting: false,
             isWalletAuthorised: false,
-            isDeposited: false,
             authorisedCollaterals: [] as string[],
             walletAddress: null as string | null,
             walletDai: new BigNumber(faker.finance.amount()),
             walletVatDai: new BigNumber(faker.finance.amount()),
-            minimumBidDai: new BigNumber(faker.finance.amount(0, 100)),
             transactionAmountDai: undefined as BigNumber | undefined,
         };
     },
@@ -117,14 +112,6 @@ export default Vue.extend({
                     this.selectedAuction.transactionAddress = undefined;
                 }
                 this.isConnecting = false;
-            }, 1000);
-        },
-        deposit(amount: BigNumber) {
-            this.isDepositingDai = true;
-            setTimeout(() => {
-                this.walletDai = this.walletDai.minus(amount);
-                this.walletVatDai = this.walletVatDai.plus(amount);
-                this.isDepositingDai = false;
             }, 1000);
         },
         authorizeWallet() {

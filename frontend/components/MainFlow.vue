@@ -60,7 +60,6 @@
                     class="mt-6 mb-8 mx-8"
                     :auction-transaction="selectedAuction"
                     :is-connecting="isConnecting"
-                    :is-depositing="isDepositingDai"
                     :is-authorizing="isAuthorizing"
                     :is-executing="isExecuting"
                     :is-wallet-authorised="isWalletAuthorised"
@@ -72,7 +71,7 @@
                     :transaction-amount-dai="transactionAmountDai"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
-                    @manageWallet="$emit('manageWallet')"
+                    @manageVat="$emit('manageVat')"
                     @authorizeWallet="$emit('authorizeWallet')"
                     @authorizeCollateral="$emit('authorizeCollateral', $event)"
                     @execute="$emit('execute', $event)"
@@ -120,10 +119,6 @@ export default Vue.extend({
             default: null,
         },
         isConnecting: {
-            type: Boolean,
-            default: false,
-        },
-        isDepositingDai: {
             type: Boolean,
             default: false,
         },
