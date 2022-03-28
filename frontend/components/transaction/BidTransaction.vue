@@ -131,7 +131,7 @@ export default Vue.extend({
             return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
         },
         isEnoughDeposited(): boolean {
-            return this.walletVatDai.isGreaterThanOrEqualTo(this.transactionAmountDai);
+            return this.walletVatDai?.isGreaterThanOrEqualTo(this.transactionAmountDai);
         },
     },
     methods: {

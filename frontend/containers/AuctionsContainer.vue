@@ -17,7 +17,7 @@
             :wallet-dai="walletDai"
             :wallet-vat-dai="walletVatDai"
             @manageVat="openWalletModal"
-            @connect="openWalletModal"
+            @connect="openSelectWalletModal"
             @disconnect="disconnect"
             @authorizeWallet="authorizeWallet"
             @authorizeCollateral="authorizeCollateral"
@@ -129,12 +129,15 @@ export default Vue.extend({
         ]),
         ...mapActions('auctions', ['bid', 'restart', 'fetchTakeEventsByAuctionId']),
         ...mapActions('wallet', ['fetchWalletBalances']),
-        openWalletModal(): void {
+        openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);
                 return;
             }
             this.$store.commit('modals/setSelectWalletModal', true);
+        },
+        openWalletModal(): void {
+            this.$store.commit('modals/setWalletModal', true);
         },
         disconnect(): void {
             this.$store.dispatch('wallet/disconnect');

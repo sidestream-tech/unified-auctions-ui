@@ -33,7 +33,7 @@
                 :amount-to-bid.sync="depositAmount"
                 :disabled="!canDeposit"
                 :total-price="maxAllowedDeposit"
-                :minimum-deposit-dai="minimumDaiAmount"
+                :minimum-bid-dai="minimumDaiAmount"
             />
             <BidInput
                 v-show="selectedMethod === 'withdraw'"
