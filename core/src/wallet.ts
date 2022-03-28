@@ -1,7 +1,7 @@
 import type { Notifier, WalletBalances } from './types';
 import getProvider from './provider';
 import BigNumber from './bignumber';
-import getContract, { getContractAddressByName } from './contracts';
+import getContract from './contracts';
 import executeTransaction from './execute';
 import {
     DAI_NUMBER_OF_DIGITS,
