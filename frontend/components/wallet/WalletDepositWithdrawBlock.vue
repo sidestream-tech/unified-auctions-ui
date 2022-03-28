@@ -121,9 +121,9 @@ export default Vue.extend({
             return (
                 !this.isLoading &&
                 !this.isSubmitting &&
-                this.maxDeposit !== undefined &&
                 this.allowanceAmount !== undefined &&
-                !this.maxDeposit.isEqualTo(0)
+                BigNumber.isBigNumber(this.maxDeposit) &&
+                !this.maxDeposit.isZero()
             );
         },
         canWithdraw() {
@@ -131,8 +131,8 @@ export default Vue.extend({
                 !this.isLoading &&
                 !this.isSubmitting &&
                 this.isWithdrawingAllowed &&
-                this.maxWithdraw !== undefined &&
-                !this.maxWithdraw.isEqualTo(0)
+                BigNumber.isBigNumber(this.maxWithdraw) &&
+                !this.maxWithdraw.isZero()
             );
         },
         canSubmit(): boolean {

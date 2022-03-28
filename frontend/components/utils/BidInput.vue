@@ -86,22 +86,22 @@ export default Vue.extend({
         },
     },
     watch: {
-        amountToBidInput(_newAmountToBidInput, oldAmountToBidInput) {
+        amountToBidInput(_newAmountToBidInput: string, oldAmountToBidInput: string) {
             if (this.error) {
                 this.$emit('update:amountToBid', new BigNumber(NaN));
+                return;
+            }
+            if (!this.amountToBidInputParsed) {
                 return;
             }
             if (this.amountToBidInputParsed?.isNaN()) {
                 this.amountToBidInput = oldAmountToBidInput || '';
                 return;
             }
-            if (this.amountToBidInputParsed === undefined) {
-                return;
-            }
             this.$emit('update:amountToBid', this.amountToBidInputParsed);
         },
         amountToBid(newAmountToBid: BigNumber | undefined) {
-            if (newAmountToBid === undefined) {
+            if (!newAmountToBid) {
                 this.amountToBidInput = '';
                 return;
             }
