@@ -22,14 +22,6 @@
             @connectWallet="$emit('connect')"
             @disconnectWallet="$emit('disconnect')"
         />
-        <AccessDaiBlock
-            class="mb-6 lg:mb-0"
-            :disabled="!auctionTransaction.isActive || !isConnected"
-            :is-loading="isGrantingAccess"
-            :is-dai-access-granted="isDaiAccessGranted"
-            :is-explanations-shown="isExplanationsShown"
-            @grantAccess="$emit('grantDaiAccess')"
-        />
         <DepositBlock
             class="mb-6 lg:mb-0"
             :disabled="!auctionTransaction.isActive || !isDaiAccessGranted"
@@ -70,7 +62,6 @@ import BigNumber from 'bignumber.js';
 import AuthorisationBlock from './AuthorisationBlock.vue';
 import BidTransactionTable from './BidTransactionTable.vue';
 import WalletBlock from './WalletBlock.vue';
-import AccessDaiBlock from './AccessDaiBlock.vue';
 import DepositBlock from './DepositBlock.vue';
 import BidBlock from './BidBlock.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
@@ -81,7 +72,6 @@ export default Vue.extend({
         BidTransactionTable,
         AuthorisationBlock,
         WalletBlock,
-        AccessDaiBlock,
         DepositBlock,
         BidBlock,
         Alert,
@@ -92,10 +82,6 @@ export default Vue.extend({
             required: true,
         },
         isConnecting: {
-            type: Boolean,
-            default: false,
-        },
-        isGrantingAccess: {
             type: Boolean,
             default: false,
         },
@@ -112,10 +98,6 @@ export default Vue.extend({
             default: false,
         },
         isWalletAuthorised: {
-            type: Boolean,
-            default: false,
-        },
-        isDaiAccessGranted: {
             type: Boolean,
             default: false,
         },

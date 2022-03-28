@@ -14,12 +14,10 @@ const data = {
         isFinished: false,
     },
     isConnecting: false,
-    isGrantingAccess: false,
     isDepositing: false,
     isAuthorizing: false,
     isExecuting: false,
     isWalletAuthorised: false,
-    isDaiAccessGranted: false,
     isDeposited: false,
     authorisedCollaterals: [],
     walletAddress: null,
@@ -51,13 +49,6 @@ const common = {
                 this.authorisedCollaterals = [];
                 this.transactionAddress = null;
                 this.isConnecting = false;
-            }, 1000);
-        },
-        grantDaiAccess() {
-            this.isGrantingAccess = true;
-            setTimeout(() => {
-                this.isDaiAccessGranted = true;
-                this.isGrantingAccess = false;
             }, 1000);
         },
         deposit(amount) {
@@ -98,12 +89,10 @@ const common = {
     <BidTransaction
         :auctionTransaction="auctionTransaction"
         :isConnecting="isConnecting"
-        :isGrantingAccess="isGrantingAccess"
         :isDepositing="isDepositing"
         :isAuthorizing="isAuthorizing"
         :isExecuting="isExecuting"
         :isWalletAuthorised="isWalletAuthorised"
-        :isDaiAccessGranted="isDaiAccessGranted"
         :authorisedCollaterals="authorisedCollaterals"
         :walletAddress="walletAddress"
         :walletDai="walletDai"

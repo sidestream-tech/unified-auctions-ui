@@ -60,12 +60,10 @@
                     class="mt-6 mb-8 mx-8"
                     :auction-transaction="selectedAuction"
                     :is-connecting="isConnecting"
-                    :is-granting-access="isGrantingAccess"
                     :is-depositing="isDepositingDai"
                     :is-authorizing="isAuthorizing"
                     :is-executing="isExecuting"
                     :is-wallet-authorised="isWalletAuthorised"
-                    :is-dai-access-granted="isDaiAccessGranted"
                     :is-explanations-shown="isExplanationsShown"
                     :authorised-collaterals="authorisedCollaterals"
                     :wallet-address="walletAddress"
@@ -126,10 +124,6 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isGrantingAccess: {
-            type: Boolean,
-            default: false,
-        },
         isDepositingDai: {
             type: Boolean,
             default: false,
@@ -143,10 +137,6 @@ export default Vue.extend({
             default: false,
         },
         isWalletAuthorised: {
-            type: Boolean,
-            default: false,
-        },
-        isDaiAccessGranted: {
             type: Boolean,
             default: false,
         },
