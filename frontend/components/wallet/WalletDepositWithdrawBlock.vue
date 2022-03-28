@@ -12,7 +12,8 @@
                 <li>
                     By purchasing it on a decentralized exchange like
                     <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct DAI token address used on
-                    the “mainnet” network is <FormatAddress type="address" :value="tokenAddressDai || ''" shorten />)
+                    the “{{ networkTitle }}” network is
+                    <FormatAddress type="address" :value="tokenAddressDai || ''" shorten />)
                 </li>
             </ul>
         </TextBlock>
@@ -43,13 +44,8 @@
                 :minimum-deposit-dai="minimumDaiAmount"
             />
 
-            <BaseButton
-                type="primary"
-                :is-loading="isSubmitting"
-                :disabled="!canSubmit || isLoading"
-                html-type="submit"
-            >
-                <span class="capitalize">{{ selectedMethod }}</span>
+            <BaseButton type="primary" :is-loading="isSubmitting" :disabled="!canSubmit" html-type="submit">
+                <span class="capitalize">{{ selectedMethod }}{{ isSubmitting ? 'ing...' : '' }}</span>
             </BaseButton>
         </form>
     </div>
@@ -59,6 +55,7 @@
 import Vue from 'vue';
 import { Radio } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
+import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 import TextBlock from '../common/TextBlock.vue';
 import FormatAddress from '../utils/FormatAddress.vue';
 import BaseButton from '../common/BaseButton.vue';
@@ -75,6 +72,10 @@ export default Vue.extend({
         RadioButton: Radio.Button,
     },
     props: {
+        network: {
+            type: String,
+            required: true,
+        },
         isLoading: {
             type: Boolean,
             default: false,
@@ -161,6 +162,13 @@ export default Vue.extend({
                 return this.maxDeposit;
             }
             return this.allowanceAmount;
+        },
+        networkTitle(): string {
+            try {
+                return getNetworkConfigByType(this.network).title;
+            } catch {
+                return this.network;
+            }
         },
     },
     methods: {

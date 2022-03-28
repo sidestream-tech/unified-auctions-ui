@@ -19,6 +19,7 @@ const common = {
         isWithdrawingAllowed: true,
         walletAddress: faker.finance.ethereumAddress(),
         isWalletLoading: false,
+        network: 'kovan',
     }),
     methods: {
         refresh: action('refresh'),

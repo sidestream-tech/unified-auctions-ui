@@ -12,6 +12,7 @@ const common = {
         tokenAddressDai: faker.finance.ethereumAddress(),
         isDepositingAllowed: true,
         isWithdrawingAllowed: true,
+        network: 'mainnet',
     }),
     methods: {
         deposit: action('deposit'),

@@ -1,5 +1,6 @@
 <template>
     <WalletModal
+        :network="network"
         :is-shown="isWalletModalShown"
         :is-dark-mode="isDarkMode"
         :is-explanations-shown="isExplanationsShown"
@@ -29,6 +30,9 @@ export default Vue.extend({
     name: 'WalletModalContainer',
     components: { WalletModal },
     computed: {
+        ...mapGetters('network', {
+            network: 'getMakerNetwork',
+        }),
         ...mapGetters('wallet', {
             isFetchingBalances: 'isFetchingBalances',
             walletAddress: 'getAddress',
