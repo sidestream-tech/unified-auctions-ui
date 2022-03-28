@@ -90,7 +90,6 @@ export default Vue.extend({
             withdrawFromVAT: 'withdrawFromVAT',
         }),
         openSelectWalletModal(): void {
-            this.setWalletModal(false);
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);
                 return;
