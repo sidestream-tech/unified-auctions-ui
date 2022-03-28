@@ -68,11 +68,21 @@ export default Vue.extend({
     watch: {
         isWalletModalShown: {
             immediate: true,
-            handler(isShown) {
-                if (isShown) {
-                    this.$store.dispatch('wallet/fetchWalletBalances');
-                    this.$store.dispatch('authorizations/fetchAllowanceAmount');
+            handler(isWalletModalShown: boolean) {
+                if (!isWalletModalShown || !this.walletAddress) {
+                    return;
                 }
+                this.$store.dispatch('wallet/fetchWalletBalances');
+                this.$store.dispatch('authorizations/fetchAllowanceAmount');
+            },
+        },
+        walletAddress: {
+            handler(walletAddress: string | undefined) {
+                if (!this.isWalletModalShown || !walletAddress) {
+                    return;
+                }
+                this.$store.dispatch('wallet/fetchWalletBalances');
+                this.$store.dispatch('authorizations/fetchAllowanceAmount');
             },
         },
     },
