@@ -21,7 +21,6 @@
             <RadioGroup
                 :disabled="isLoading"
                 :value="selectedMethod"
-                button-style="solid"
                 class="flex items-center w-full"
                 @change="handleMethodChange"
             >

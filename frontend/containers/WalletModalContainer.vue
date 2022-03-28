@@ -13,7 +13,7 @@
         :is-loading="isFetchingBalances"
         :is-allowance-amount-loading="isAllowanceAmountLoading"
         @cancel="setWalletModal(false)"
-        @refresh="refresh()"
+        @refresh="fetchRelatedData()"
         @connectWallet="openSelectWalletModal()"
         @deposit="depositToVAT"
         @withdraw="withdrawFromVAT"
@@ -72,27 +72,18 @@ export default Vue.extend({
     watch: {
         isWalletModalShown: {
             immediate: true,
-            handler(isWalletModalShown: boolean) {
-                if (!isWalletModalShown || !this.walletAddress) {
-                    return;
-                }
-                this.$store.dispatch('wallet/fetchWalletBalances');
-                this.$store.dispatch('authorizations/fetchAllowanceAmount');
+            handler() {
+                this.fetchRelatedData();
             },
         },
         walletAddress: {
-            handler(walletAddress: string | undefined) {
-                if (!this.isWalletModalShown || !walletAddress) {
-                    return;
-                }
-                this.$store.dispatch('wallet/fetchWalletBalances');
-                this.$store.dispatch('authorizations/fetchAllowanceAmount');
+            handler() {
+                this.fetchRelatedData();
             },
         },
     },
     methods: {
         ...mapActions('wallet', {
-            refresh: 'fetchWalletBalances',
             depositToVAT: 'depositToVAT',
             withdrawFromVAT: 'withdrawFromVAT',
         }),
@@ -109,6 +100,14 @@ export default Vue.extend({
         },
         grantAccess(): void {
             this.$store.dispatch('authorizations/setAllowanceAmount');
+        },
+        fetchRelatedData(): void {
+            if (!this.isWalletModalShown || !this.walletAddress) {
+                return;
+            }
+            this.$store.dispatch('wallet/fetchWalletBalances');
+            this.$store.dispatch('authorizations/fetchAllowanceAmount');
+            this.$store.dispatch('authorizations/fetchWalletAuthorizationStatus');
         },
     },
 });
