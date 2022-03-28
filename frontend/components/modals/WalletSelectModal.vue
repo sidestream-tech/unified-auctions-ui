@@ -5,6 +5,7 @@
         title="Connect a Wallet"
         :footer="null"
         :dialog-style="{ top: '60px' }"
+        destroy-on-close
         @cancel="close"
     >
         <ul>

@@ -6,6 +6,7 @@
         :dialog-style="{ top: '60px' }"
         :width="620"
         :class="{ dark: isDarkMode }"
+        destroy-on-close
         @cancel="$emit('cancel')"
     >
         <div class="flex flex-col gap-4 p-4">
