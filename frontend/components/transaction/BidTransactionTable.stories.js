@@ -22,7 +22,7 @@ const common = {
 storiesOf('Transaction/BidTransactionTable', module)
     .add('Default', () => ({
         ...common,
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumBidDai="minimumBidDai" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Finished', () => ({
         ...common,
@@ -35,7 +35,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                 },
             };
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumBidDai="minimumBidDai" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Inactive', () => ({
         ...common,
@@ -49,7 +49,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                 },
             };
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumBidDai="minimumBidDai" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Total < Minimum x 2', () => ({
         ...common,
@@ -64,7 +64,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                 },
             };
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumBidDai="minimumBidDai" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Decreasing Price', () => ({
         ...common,
@@ -82,7 +82,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                 this.auctionTransaction.totalPrice = this.auctionTransaction.totalPrice.multipliedBy(0.99);
             }, 5000);
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumBidDai="minimumBidDai" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Decreasing Into Disabled Input', () => ({
         ...common,
@@ -102,5 +102,5 @@ storiesOf('Transaction/BidTransactionTable', module)
                 this.auctionTransaction.totalPrice = this.auctionTransaction.totalPrice.multipliedBy(0.99);
             }, 5000);
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumBidDai="minimumBidDai" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }));
