@@ -6,16 +6,34 @@
             the minimum amount to deposit in order to participate in the auction based on the bid you want to make. You
             can directly deposit the minimum required amount of DAI if you don't have sufficient deposits yet.
         </TextBlock>
-        <div class="flex justify-between text-gray-700 dark:text-gray-100 text-base mt-2">
-            <span>Minimum to deposit</span>
-            <format-currency
-                v-if="minimumDepositDai && !transactionAmountDai.isNaN()"
-                :value="minimumDepositDai"
-                currency="DAI"
-            />
-            <div v-else>
-                <span class="opacity-75">Unknown</span>
-                <span>DAI</span>
+        <div class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100 mt-2 text-base">
+            <div class="flex justify-between">
+                <span>Amount available in the wallet</span>
+                <format-currency v-if="walletDai" :value="walletDai" currency="DAI" />
+                <div v-else>
+                    <span class="opacity-75">Unknown</span>
+                    <span>DAI</span>
+                </div>
+            </div>
+            <div class="flex justify-between">
+                <span>Amount available in the VAT</span>
+                <format-currency v-if="walletVatDai" :value="walletVatDai" currency="DAI" />
+                <div v-else>
+                    <span class="opacity-75">Unknown</span>
+                    <span>DAI</span>
+                </div>
+            </div>
+            <div class="flex justify-between">
+                <span>Minimum to deposit</span>
+                <format-currency
+                    v-if="minimumDepositDai && !transactionAmountDai.isNaN()"
+                    :value="minimumDepositDai"
+                    currency="DAI"
+                />
+                <div v-else>
+                    <span class="opacity-75">Unknown</span>
+                    <span>DAI</span>
+                </div>
             </div>
         </div>
         <div class="flex space-x-4 justify-end flex-wrap mt-3">
