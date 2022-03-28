@@ -29,7 +29,12 @@
             @fixWalletNetwork="fixWalletNetwork"
         />
         <TermsModal :is-shown="isTermsModalShown" @accept="acceptTerms" @close="setTermsModal(false)" />
-        <WalletModal :is-shown="isWalletModalShown" @connect="changeWalletType" @close="setWalletModal(false)" />
+        <WalletSelectModal
+            :is-shown="isSelectWalletModalShown"
+            @connect="changeWalletType"
+            @close="setSelectWalletModal(false)"
+        />
+        <WalletModalContainer />
     </div>
 </template>
 
@@ -40,16 +45,18 @@ import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.vue';
 import ChangeWalletNetworkModal from '~/components/modals/ChangeWalletNetworkModal.vue';
+import WalletSelectModal from '~/components/modals/WalletSelectModal.vue';
+import WalletModalContainer from '~/containers/WalletModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
-import WalletModal from '~/components/modals/WalletModal.vue';
 
 export default Vue.extend({
     components: {
+        WalletModalContainer,
         TermsModal,
         ChangePageNetworkModal,
         ChangeWalletNetworkModal,
         Header,
-        WalletModal,
+        WalletSelectModal,
     },
     computed: {
         ...mapGetters('wallet', {
@@ -58,7 +65,7 @@ export default Vue.extend({
         }),
         ...mapGetters('modals', {
             isTermsModalShown: 'getTermsModal',
-            isWalletModalShown: 'getWalletModal',
+            isSelectWalletModalShown: 'getSelectWalletModal',
         }),
         ...mapGetters('cookies', {
             hasAcceptedTerms: 'hasAcceptedTerms',
@@ -106,13 +113,13 @@ export default Vue.extend({
         acceptTerms(): void {
             this.$store.commit('cookies/acceptTerms');
             this.$store.commit('modals/setTermsModal', false);
-            this.$store.commit('modals/setWalletModal', true);
+            this.$store.commit('modals/setSelectWalletModal', true);
         },
         setTermsModal(open: boolean): void {
             this.$store.commit('modals/setTermsModal', open);
         },
-        setWalletModal(open: boolean): void {
-            this.$store.commit('modals/setWalletModal', open);
+        setSelectWalletModal(open: boolean): void {
+            this.$store.commit('modals/setSelectWalletModal', open);
         },
     },
 });

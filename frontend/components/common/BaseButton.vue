@@ -57,12 +57,14 @@ export default Vue.extend({
 </script>
 
 <style>
-.Button-Primary {
+.Button-Primary,
+.dark .Button-Primary {
     @apply text-white bg-primary border-primary focus:bg-primary-light focus:border-primary-light hover:bg-primary-light hover:border-primary-light;
 }
 
-.Button-Link {
-    @apply inline-flex items-center p-1;
+.Button-Link,
+.dark .Button-Link {
+    @apply inline-flex items-center p-0 h-auto;
 }
 
 .Button-Link span {

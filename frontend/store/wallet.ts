@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import { fetchWalletBalances, depositToVAT, withdrawFromVAT } from 'auctions-core/src/wallet';
 import getWallet, { WALLETS } from '~/lib/wallet';
 import notifier from '~/lib/notifier';
+import { getContractAddressByName } from '~/../core/src/contracts';
 
 interface State {
     walletType?: string;
@@ -13,6 +14,7 @@ interface State {
     walletBalances?: WalletBalances;
     isFetchingBalances: boolean;
     isDepositingOrWithdrawing: boolean;
+    tokenAddressDai: string | undefined;
 }
 
 export const state = (): State => ({
@@ -22,6 +24,7 @@ export const state = (): State => ({
     walletBalances: undefined,
     isFetchingBalances: false,
     isDepositingOrWithdrawing: false,
+    tokenAddressDai: undefined,
 });
 
 export const getters = {
@@ -46,6 +49,9 @@ export const getters = {
     isDepositingOrWithdrawing(state: State) {
         return state.isDepositingOrWithdrawing;
     },
+    tokenAddressDai(state: State) {
+        return state.tokenAddressDai;
+    },
 };
 
 export const mutations = {
@@ -69,6 +75,9 @@ export const mutations = {
     },
     setIsDepositingOrWithdrawing(state: State, isDepositingOrWithdrawing: boolean): void {
         state.isDepositingOrWithdrawing = isDepositingOrWithdrawing;
+    },
+    setTokenAddressDai(state: State, tokenAddressDai: string): void {
+        state.tokenAddressDai = tokenAddressDai;
     },
 };
 
@@ -125,9 +134,14 @@ export const actions = {
     },
     async fetchWalletBalances({ commit, getters, rootGetters }: ActionContext<State, State>): Promise<void> {
         const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = getters.getAddress;
+        if (!walletAddress) {
+            commit('clearWalletBalances');
+            return;
+        }
         commit('setIsFetchingBalances', true);
         try {
-            const walletBalances = await fetchWalletBalances(network, getters.getAddress);
+            const walletBalances = await fetchWalletBalances(network, walletAddress);
             commit('setWalletBalances', walletBalances);
         } catch (error) {
             commit('clearWalletBalances');
@@ -137,27 +151,43 @@ export const actions = {
         }
     },
     async depositToVAT(
-        { commit, getters, rootGetters }: ActionContext<State, State>,
+        { commit, dispatch, getters, rootGetters }: ActionContext<State, State>,
         amount: BigNumber | string
     ): Promise<void> {
         const network = rootGetters['network/getMakerNetwork'];
         commit('setIsDepositingOrWithdrawing', true);
         try {
             await depositToVAT(network, getters.getAddress, new BigNumber(amount), notifier);
+            await dispatch('fetchWalletBalances');
+        } catch (error) {
+            message.error(`Error while depositing to VAT: ${error.message}`);
         } finally {
             commit('setIsDepositingOrWithdrawing', false);
         }
     },
     async withdrawFromVAT(
-        { commit, getters, rootGetters }: ActionContext<State, State>,
+        { commit, dispatch, getters, rootGetters }: ActionContext<State, State>,
         amount: BigNumber | string
     ): Promise<void> {
         const network = rootGetters['network/getMakerNetwork'];
         commit('setIsDepositingOrWithdrawing', true);
         try {
             await withdrawFromVAT(network, getters.getAddress, new BigNumber(amount), notifier);
+            await dispatch('fetchWalletBalances');
+        } catch (error) {
+            message.error(`Error while withdrawing from VAT: ${error.message}`);
         } finally {
             commit('setIsDepositingOrWithdrawing', false);
+        }
+    },
+    async fetchTokenAddressDai({ commit, rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        try {
+            const tokenAddressDai = await getContractAddressByName(network, 'MCD_DAI');
+            await commit('setTokenAddressDai', tokenAddressDai);
+        } catch (error) {
+            await commit('setTokenAddressDai', undefined);
+            message.error(`Error while fetching tokenAddressDai: ${error.message}`);
         }
     },
 };

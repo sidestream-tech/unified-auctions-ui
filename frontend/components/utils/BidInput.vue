@@ -11,12 +11,7 @@
                     @blur="showTotalPriceIfEmpty()"
                 />
                 <div v-if="!amountToBid" class="Overlay TotalPrice">
-                    <format-currency
-                        v-if="totalPrice && !disabled"
-                        :value="totalPrice"
-                        :class="{ 'opacity-50': isDisabled }"
-                    />
-                    <span v-else class="opacity-50">Unknown</span>
+                    <format-currency v-if="totalPrice" :value="totalPrice" :class="{ 'opacity-50': isDisabled }" />
                 </div>
                 <span class="Overlay right-1" :class="{ 'opacity-50': isDisabled }">DAI</span>
             </Tooltip>
@@ -89,26 +84,27 @@ export default Vue.extend({
         },
     },
     watch: {
-        amountToBidInputParsed(newVal, oldVal) {
+        amountToBidInput(_newAmountToBidInput: string, oldAmountToBidInput: string) {
             if (this.error) {
                 this.$emit('update:amountToBid', new BigNumber(NaN));
                 return;
             }
-            if (newVal && newVal.isNaN()) {
-                this.amountToBidInput = oldVal?.toFixed() || '';
+            if (!this.amountToBidInputParsed) {
                 return;
             }
-            if (newVal) {
-                this.$emit('update:amountToBid', newVal);
+            if (this.amountToBidInputParsed?.isNaN()) {
+                this.amountToBidInput = oldAmountToBidInput || '';
+                return;
             }
+            this.$emit('update:amountToBid', this.amountToBidInputParsed);
         },
-        amountToBid(newVal: BigNumber | undefined) {
-            if (!newVal) {
+        amountToBid(newAmountToBid: BigNumber | undefined) {
+            if (!newAmountToBid) {
                 this.amountToBidInput = '';
                 return;
             }
-            if (newVal.isEqualTo(this.minimumBidDai)) {
-                this.amountToBidInput = newVal.toFixed();
+            if (newAmountToBid.isEqualTo(this.minimumDepositDai) && !newAmountToBid.isZero()) {
+                this.amountToBidInput = newAmountToBid.toFixed();
             }
         },
         isTooSmallToPartiallyTake(newVal) {

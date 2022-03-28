@@ -134,7 +134,7 @@ export default Vue.extend({
                 this.$store.commit('modals/setTermsModal', true);
                 return;
             }
-            this.$store.commit('modals/setWalletModal', true);
+            this.$store.commit('modals/setSelectWalletModal', true);
         },
         disconnect(): void {
             this.$store.dispatch('wallet/disconnect');
