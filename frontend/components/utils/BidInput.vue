@@ -86,26 +86,27 @@ export default Vue.extend({
         },
     },
     watch: {
-        amountToBidInputParsed(newVal, oldVal) {
+        amountToBidInput(_newAmountToBidInput, oldAmountToBidInput) {
             if (this.error) {
                 this.$emit('update:amountToBid', new BigNumber(NaN));
                 return;
             }
-            if (newVal && newVal.isNaN()) {
-                this.amountToBidInput = oldVal?.toFixed() || '';
+            if (this.amountToBidInputParsed?.isNaN()) {
+                this.amountToBidInput = oldAmountToBidInput || '';
                 return;
             }
-            if (newVal) {
-                this.$emit('update:amountToBid', newVal);
+            if (this.amountToBidInputParsed === undefined) {
+                return;
             }
+            this.$emit('update:amountToBid', this.amountToBidInputParsed);
         },
-        amountToBid(newVal: BigNumber | undefined) {
-            if (!newVal) {
+        amountToBid(newAmountToBid: BigNumber | undefined) {
+            if (newAmountToBid === undefined) {
                 this.amountToBidInput = '';
                 return;
             }
-            if (newVal.isEqualTo(this.minimumDepositDai)) {
-                this.amountToBidInput = newVal.toFixed();
+            if (newAmountToBid.isEqualTo(this.minimumDepositDai) && !newAmountToBid.isZero()) {
+                this.amountToBidInput = newAmountToBid.toFixed();
             }
         },
         isTooSmallToPartiallyTake(newVal) {
