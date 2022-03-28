@@ -218,6 +218,10 @@ export const actions = {
         commit('setIsAllowanceAmountLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
+        if (!walletAddress) {
+            commit('setAllowanceAmount', undefined);
+            return;
+        }
         try {
             const allowanceAmount = await fetchAllowanceAmount(network, walletAddress);
             commit('setAllowanceAmount', allowanceAmount);

@@ -12,6 +12,7 @@
         :is-wallet-loading="isFetchingBalances"
         :is-loading="isFetchingBalances"
         :is-allowance-amount-loading="isAllowanceAmountLoading"
+        :token-address-dai="tokenAddressDai"
         @cancel="setWalletModal(false)"
         @refresh="fetchRelatedData()"
         @connectWallet="openSelectWalletModal()"
@@ -40,6 +41,7 @@ export default Vue.extend({
             isDepositingOrWithdrawing: 'isDepositingOrWithdrawing',
             isConnecting: 'isLoading',
             isConnected: 'isConnected',
+            tokenAddressDai: 'tokenAddressDai',
         }),
         ...mapGetters('modals', {
             isWalletModalShown: 'getWalletModal',
@@ -102,10 +104,8 @@ export default Vue.extend({
             this.$store.dispatch('authorizations/setAllowanceAmount');
         },
         fetchRelatedData(): void {
-            if (!this.isWalletModalShown || !this.walletAddress) {
-                return;
-            }
             this.$store.dispatch('wallet/fetchWalletBalances');
+            this.$store.dispatch('wallet/fetchTokenAddressDai');
             this.$store.dispatch('authorizations/fetchAllowanceAmount');
             this.$store.dispatch('authorizations/fetchWalletAuthorizationStatus');
         },

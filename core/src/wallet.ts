@@ -37,7 +37,6 @@ export const fetchWalletBalances = async function (network: string, walletAddres
         walletDAI: await fetchBalanceDAI(network, walletAddress),
         walletVatDAI: await fetchVATbalanceDAI(network, walletAddress),
         walletLastUpdatedDate: new Date(),
-        tokenAddressDai: await getContractAddressByName(network, 'MCD_DAI'),
     };
 };
 

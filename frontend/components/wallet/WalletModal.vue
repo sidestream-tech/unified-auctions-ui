@@ -46,7 +46,7 @@
                 :is-withdrawing-allowed="isWithdrawingAllowed"
                 :max-deposit="walletBalances && walletBalances.walletDAI"
                 :max-withdraw="walletBalances && walletBalances.walletVatDAI"
-                :token-address-dai="walletBalances && walletBalances.tokenAddressDai"
+                :token-address-dai="tokenAddressDai"
                 @deposit="value => $emit('deposit', value)"
                 @withdraw="value => $emit('withdraw', value)"
             />
@@ -68,6 +68,10 @@ export default Vue.extend({
     components: { AccessDaiBlock, TextBlock, WalletDepositWithdrawBlock, WalletTable, Modal },
     props: {
         network: {
+            type: String,
+            default: undefined,
+        },
+        tokenAddressDai: {
             type: String,
             default: undefined,
         },
