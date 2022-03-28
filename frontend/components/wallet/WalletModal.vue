@@ -65,12 +65,11 @@ import WalletTable from './WalletTable.vue';
 import WalletDepositWithdrawBlock from './WalletDepositWithdrawBlock.vue';
 
 export default Vue.extend({
-    name: 'ManageVATModal',
     components: { AccessDaiBlock, TextBlock, WalletDepositWithdrawBlock, WalletTable, Modal },
     props: {
         network: {
             type: String,
-            required: true,
+            default: undefined,
         },
         isShown: {
             type: Boolean,

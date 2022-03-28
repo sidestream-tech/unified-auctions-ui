@@ -73,7 +73,7 @@ export default Vue.extend({
     props: {
         network: {
             type: String,
-            required: true,
+            default: undefined,
         },
         isLoading: {
             type: Boolean,
