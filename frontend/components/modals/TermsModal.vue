@@ -1,5 +1,5 @@
 <template>
-    <modal :visible="isShown" :footer="null" class="my-0" title="Acceptance of Terms" @cancel="close">
+    <modal :visible="isShown" :footer="null" class="my-0" title="Acceptance of Terms" destroy-on-close @cancel="close">
         <TextBlock class="py-3 px-6">
             Please read these <a :href="termsAndConditionsURL" target="_blank">Terms and Conditions </a> (this
             “Agreement”) carefully. Your use or access of the Site or the Services (as defined below) constitutes your

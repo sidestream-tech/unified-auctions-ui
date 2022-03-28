@@ -18,28 +18,32 @@
                     <tr>
                         <td>ETH amount in wallet</td>
                         <td>
-                            <FormatCurrency v-if="walletETH" :value="walletETH" currency="ETH" />
+                            <FormatCurrency v-if="walletBalances" :value="walletBalances.walletETH" currency="ETH" />
                             <span v-else class="opacity-50">Unknown</span>
                         </td>
                     </tr>
                     <tr>
                         <td>DAI amount in wallet</td>
                         <td>
-                            <FormatCurrency v-if="walletDAI" :value="walletDAI" currency="DAI" />
+                            <FormatCurrency v-if="walletBalances" :value="walletBalances.walletDAI" currency="DAI" />
                             <span v-else class="opacity-50">Unknown</span>
                         </td>
                     </tr>
                     <tr>
                         <td>Currently deposited in VAT</td>
                         <td>
-                            <FormatCurrency v-if="walletVatDAI" :value="walletVatDAI" currency="DAI" />
+                            <FormatCurrency
+                                v-if="walletBalances"
+                                :value="walletBalances.walletVatDAI"
+                                currency="DAI"
+                            />
                             <span v-else class="opacity-50">Unknown</span>
                         </td>
                     </tr>
                     <tr>
                         <td>Last updated</td>
                         <td>
-                            <TimeTill v-if="walletLastUpdatedDate" :date="walletLastUpdatedDate" />
+                            <TimeTill v-if="walletBalances" :date="walletBalances.walletLastUpdatedDate" />
                             <span v-else class="opacity-50">Unknown</span>
                             <BaseButton type="link" @click="$emit('refresh')"> Refresh </BaseButton>
                         </td>
@@ -59,7 +63,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { WalletBalances } from 'auctions-core/dist/src/types';
 import FormatAddress from '../utils/FormatAddress.vue';
 import FormatCurrency from '../utils/FormatCurrency.vue';
 import TimeTill from '../common/TimeTill.vue';
@@ -76,20 +80,8 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        walletETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
-        walletDAI: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
-        walletVatDAI: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
-        walletLastUpdatedDate: {
-            type: [String, Number, Date],
+        walletBalances: {
+            type: Object as Vue.PropType<WalletBalances>,
             default: null,
         },
         isLoading: {

@@ -3,7 +3,12 @@ import getProvider from './provider';
 import BigNumber from './bignumber';
 import getContract from './contracts';
 import executeTransaction from './execute';
-import { DAI_NUMBER_OF_DIGITS, ETH_NUMBER_OF_DIGITS, RAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import {
+    DAI_NUMBER_OF_DIGITS,
+    ETH_NUMBER_OF_DIGITS,
+    RAD_NUMBER_OF_DIGITS,
+    WAD_NUMBER_OF_DIGITS,
+} from './constants/UNITS';
 
 export const fetchBalanceETH = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const provider = await getProvider(network);
@@ -20,7 +25,10 @@ export const fetchBalanceDAI = async function (network: string, walletAddress: s
 export const fetchVATbalanceDAI = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const contract = await getContract(network, 'MCD_VAT');
     const radAmount = await contract.dai(walletAddress);
-    return new BigNumber(radAmount._hex).div(RAD);
+    const walletVatDAI = new BigNumber(radAmount._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
+    // Since withdrawal only accepts WAD numbers, we round balance to avoid confusion, more info:
+    // https://github.com/sidestream-tech/unified-auctions-ui/pull/149/#issuecomment-1077844563
+    return walletVatDAI.decimalPlaces(WAD_NUMBER_OF_DIGITS, BigNumber.ROUND_DOWN);
 };
 
 export const fetchWalletBalances = async function (network: string, walletAddress: string): Promise<WalletBalances> {
@@ -38,7 +46,7 @@ export const depositToVAT = async function (
     amount: BigNumber,
     notifier?: Notifier
 ): Promise<void> {
-    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed();
+    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
     await executeTransaction(network, 'MCD_JOIN_DAI', 'join', [walletAddress, wadAmount], notifier, true);
 };
 
@@ -48,6 +56,6 @@ export const withdrawFromVAT = async function (
     amount: BigNumber,
     notifier?: Notifier
 ): Promise<void> {
-    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed();
+    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
     await executeTransaction(network, 'MCD_JOIN_DAI', 'exit', [walletAddress, wadAmount], notifier, true);
 };

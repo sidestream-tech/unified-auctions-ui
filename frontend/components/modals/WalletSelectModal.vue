@@ -5,6 +5,7 @@
         title="Connect a Wallet"
         :footer="null"
         :dialog-style="{ top: '60px' }"
+        destroy-on-close
         @cancel="close"
     >
         <ul>
@@ -27,7 +28,7 @@ import { Modal } from 'ant-design-vue';
 import { WALLETS } from '~/lib/wallet';
 
 export default Vue.extend({
-    name: 'WalletModal',
+    name: 'WalletSelectModal',
     components: {
         Modal,
     },

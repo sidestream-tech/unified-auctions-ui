@@ -12,7 +12,8 @@
                 <li>
                     By purchasing it on a decentralized exchange like
                     <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct DAI token address used on
-                    the “mainnet” network is <FormatAddress type="address" :value="tokenAddressDAI" shorten />)
+                    the “{{ networkTitle }}” network is
+                    <FormatAddress type="address" :value="tokenAddressDai || ''" shorten />)
                 </li>
             </ul>
         </TextBlock>
@@ -20,7 +21,6 @@
             <RadioGroup
                 :disabled="isLoading"
                 :value="selectedMethod"
-                button-style="solid"
                 class="flex items-center w-full"
                 @change="handleMethodChange"
             >
@@ -29,30 +29,22 @@
             </RadioGroup>
 
             <BidInput
-                v-if="selectedMethod === 'deposit'"
-                key="depositInput"
+                v-show="selectedMethod === 'deposit'"
                 :amount-to-bid.sync="depositAmount"
-                :disabled="isLoading || !isDepositingAllowed"
-                :total-price="maxDeposit"
+                :disabled="!canDeposit"
+                :total-price="maxAllowedDeposit"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
             <BidInput
-                v-else
-                key="withdrawInput"
+                v-show="selectedMethod === 'withdraw'"
                 :amount-to-bid.sync="withDrawAmount"
-                :disabled="isLoading || !isWithdrawingAllowed"
+                :disabled="!canWithdraw"
                 :total-price="maxWithdraw"
                 :minimum-deposit-dai="minimumDaiAmount"
             />
 
-            <BaseButton
-                type="primary"
-                class="capitalize"
-                :is-loading="isLoading"
-                :disabled="!canSubmit"
-                html-type="submit"
-            >
-                {{ selectedMethod }}
+            <BaseButton type="primary" :is-loading="isSubmitting" :disabled="!canSubmit" html-type="submit">
+                <span class="capitalize">{{ selectedMethod }}{{ isSubmitting ? 'ing...' : '' }}</span>
             </BaseButton>
         </form>
     </div>
@@ -62,6 +54,7 @@
 import Vue from 'vue';
 import { Radio } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
+import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 import TextBlock from '../common/TextBlock.vue';
 import FormatAddress from '../utils/FormatAddress.vue';
 import BaseButton from '../common/BaseButton.vue';
@@ -78,7 +71,15 @@ export default Vue.extend({
         RadioButton: Radio.Button,
     },
     props: {
+        network: {
+            type: String,
+            default: undefined,
+        },
         isLoading: {
+            type: Boolean,
+            default: false,
+        },
+        isSubmitting: {
             type: Boolean,
             default: false,
         },
@@ -94,13 +95,13 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        tokenAddressDAI: {
+        tokenAddressDai: {
             type: String,
-            required: true,
+            default: undefined,
         },
-        isDepositingAllowed: {
-            type: Boolean,
-            required: true,
+        allowanceAmount: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
         isWithdrawingAllowed: {
             type: Boolean,
@@ -116,9 +117,27 @@ export default Vue.extend({
         };
     },
     computed: {
+        canDeposit() {
+            return (
+                !this.isLoading &&
+                !this.isSubmitting &&
+                this.allowanceAmount !== undefined &&
+                BigNumber.isBigNumber(this.maxDeposit) &&
+                !this.maxDeposit.isZero()
+            );
+        },
+        canWithdraw() {
+            return (
+                !this.isLoading &&
+                !this.isSubmitting &&
+                this.isWithdrawingAllowed &&
+                BigNumber.isBigNumber(this.maxWithdraw) &&
+                !this.maxWithdraw.isZero()
+            );
+        },
         canSubmit(): boolean {
             if (this.selectedMethod === 'deposit') {
-                if (!this.isDepositingAllowed) {
+                if (!this.canDeposit) {
                     return false;
                 }
                 if (this.depositAmount === undefined) {
@@ -127,7 +146,7 @@ export default Vue.extend({
                 return !this.depositAmount.isNaN();
             }
             if (this.selectedMethod === 'withdraw') {
-                if (!this.isWithdrawingAllowed) {
+                if (!this.canWithdraw) {
                     return false;
                 }
                 if (this.withDrawAmount === undefined) {
@@ -137,6 +156,19 @@ export default Vue.extend({
             }
             return false;
         },
+        maxAllowedDeposit(): BigNumber {
+            if (this.allowanceAmount.isGreaterThan(this.maxDeposit)) {
+                return this.maxDeposit;
+            }
+            return this.allowanceAmount;
+        },
+        networkTitle(): string {
+            try {
+                return getNetworkConfigByType(this.network).title;
+            } catch {
+                return this.network;
+            }
+        },
     },
     methods: {
         handleMethodChange(e) {
@@ -144,7 +176,7 @@ export default Vue.extend({
         },
         submit() {
             if (this.selectedMethod === 'deposit') {
-                this.$emit('deposit', this.depositAmount ?? this.maxDeposit);
+                this.$emit('deposit', this.depositAmount ?? this.maxAllowedDeposit);
             }
             if (this.selectedMethod === 'withdraw') {
                 this.$emit('withdraw', this.withDrawAmount ?? this.maxWithdraw);

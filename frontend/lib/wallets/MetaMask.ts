@@ -32,10 +32,9 @@ export default class MetaMask extends AbstractWallet {
     }
 
     public get address() {
-        if (!this.addresses) {
-            return undefined;
+        if (Array.isArray(this.addresses) && this.addresses[0]) {
+            return this.addresses[0].toLowerCase();
         }
-        return this.addresses[0].toLowerCase();
     }
 
     getProvider(): ethers.providers.JsonRpcProvider {

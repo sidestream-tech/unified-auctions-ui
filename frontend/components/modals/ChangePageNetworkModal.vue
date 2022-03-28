@@ -6,6 +6,7 @@
         :footer="null"
         class="my-0"
         title="Unsupported network type"
+        destroy-on-close
     >
         <Alert type="error" banner>
             <template #message>
