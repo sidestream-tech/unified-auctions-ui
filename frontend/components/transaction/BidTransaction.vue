@@ -24,17 +24,17 @@
         />
         <DepositBlock
             class="mb-6 lg:mb-0"
-            :disabled="!auctionTransaction.isActive || !isDaiAccessGranted"
+            :disabled="!auctionTransaction.isActive || !isConnected"
             :is-explanations-shown="isExplanationsShown"
             :transaction-amount-dai="transactionAmountDai"
             :is-loading="isDepositing"
             :wallet-dai="walletDai"
             :wallet-vat-dai="walletVatDai"
-            @deposit="$emit('deposit', $event)"
+            @manageWallet="$emit('manageWallet')"
         />
         <AuthorisationBlock
             class="mb-6 lg:mb-0"
-            :disabled="!isEnoughDeposited || !auctionTransaction.isActive || !isDaiAccessGranted"
+            :disabled="!isEnoughDeposited || !auctionTransaction.isActive || !isConnected"
             :auction-transaction="auctionTransaction"
             :is-loading="isAuthorizing"
             :is-wallet-authorised="isWalletAuthorised"

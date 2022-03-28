@@ -6,47 +6,21 @@
             the minimum amount to deposit in order to participate in the auction based on the bid you want to make. You
             can directly deposit the minimum required amount of DAI if you don't have sufficient deposits yet.
         </TextBlock>
-        <div class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100 mt-2">
-            <div class="flex justify-between">
-                <span>Amount available in the wallet</span>
-                <format-currency v-if="walletDai" :value="walletDai" currency="DAI" />
-                <div v-else>
-                    <span class="opacity-75">Unknown</span>
-                    <span>DAI</span>
-                </div>
-            </div>
-            <div class="flex justify-between">
-                <span>Amount available in the VAT</span>
-                <format-currency v-if="walletVatDai" :value="walletVatDai" currency="DAI" />
-                <div v-else>
-                    <span class="opacity-75">Unknown</span>
-                    <span>DAI</span>
-                </div>
-            </div>
-            <div class="flex justify-between">
-                <span>Minimum to deposit</span>
-                <format-currency
-                    v-if="minimumDepositDai && !transactionAmountDai.isNaN()"
-                    :value="minimumDepositDai"
-                    currency="DAI"
-                />
-                <div v-else>
-                    <span class="opacity-75">Unknown</span>
-                    <span>DAI</span>
-                </div>
+        <div class="flex justify-between text-gray-700 dark:text-gray-100 text-base mt-2">
+            <span>Minimum to deposit</span>
+            <format-currency
+                v-if="minimumDepositDai && !transactionAmountDai.isNaN()"
+                :value="minimumDepositDai"
+                currency="DAI"
+            />
+            <div v-else>
+                <span class="opacity-75">Unknown</span>
+                <span>DAI</span>
             </div>
         </div>
         <div class="flex space-x-4 justify-end flex-wrap mt-3">
-            <!--
-            <BaseButton :disabled="isDisabled || isLoading" class="w-60 mb-2" @click="$emit('manageVat')">
-                Manage VAT
-            </BaseButton>
-            -->
             <BaseButton v-if="minimumDepositDai && minimumDepositDai.isZero()" disabled class="w-full md:w-80">
                 Enough DAI is available
-            </BaseButton>
-            <BaseButton v-else-if="minimumDepositDai && !isEnoughDaiInWallet" disabled class="w-full md:w-80">
-                Not Enough DAI in the wallet
             </BaseButton>
             <BaseButton
                 v-else
@@ -54,9 +28,9 @@
                 :disabled="isDisabled"
                 :is-loading="isLoading"
                 class="w-full md:w-80"
-                @click="$emit('deposit', minimumDepositDai)"
+                @click="$emit('manageWallet')"
             >
-                Deposit minimum amount
+                Manage DAI in VAT
             </BaseButton>
         </div>
     </div>
@@ -110,12 +84,6 @@ export default Vue.extend({
         },
         isDisabled(): Boolean {
             return this.disabled || (!this.walletVatDai && !this.walletDai);
-        },
-        isEnoughDaiInWallet(): Boolean {
-            if (this.minimumDepositDai) {
-                return this.walletDai.isGreaterThanOrEqualTo(this.minimumDepositDai);
-            }
-            return true;
         },
     },
 });

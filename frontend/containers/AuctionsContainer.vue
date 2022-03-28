@@ -16,6 +16,7 @@
             :take-event-storage="takeEvents"
             :wallet-dai="walletDai"
             :wallet-vat-dai="walletVatDai"
+            @manageWallet="openWalletModal"
             @connect="openWalletModal"
             @disconnect="disconnect"
             @authorizeWallet="authorizeWallet"

@@ -99,7 +99,6 @@ const common = {
         :walletVatDai="walletVatDai"
         @connect="connect()"
         @disconnect="disconnect()"
-        @grantDaiAccess="grantDaiAccess()"
         @deposit="deposit($event)"
         @authorizeWallet="authorizeWallet()"
         @authorizeCollateral="authorizeCollateral($event)"
