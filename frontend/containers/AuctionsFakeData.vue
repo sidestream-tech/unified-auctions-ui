@@ -16,7 +16,7 @@
         @inputBidAmount="setTransactionAmountDai"
         @connect="connect"
         @disconnect="disconnect"
-        @manageVat="openWalletModal"
+        @manageVat="deposit"
         @authorizeWallet="authorizeWallet"
         @authorizeCollateral="authorizeCollateral"
         @restart="restart"
@@ -149,8 +149,8 @@ export default Vue.extend({
         setTransactionAmountDai(amount: BigNumber | undefined) {
             this.transactionAmountDai = amount;
         },
-        openWalletModal(): void {
-            this.$store.commit('modals/setWalletModal', true);
+        deposit(): void {
+            this.walletVatDai = this.transactionAmountDai!;
         },
     },
 });

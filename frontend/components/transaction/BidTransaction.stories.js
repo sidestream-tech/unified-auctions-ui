@@ -73,6 +73,9 @@ const common = {
                 this.isExecuting = false;
             }, 1000);
         },
+        deposit() {
+            this.walletVatDai = this.transactionAmountDai;
+        },
     },
     template: `
     <BidTransaction
@@ -90,6 +93,7 @@ const common = {
         @authorizeWallet="authorizeWallet()"
         @authorizeCollateral="authorizeCollateral($event)"
         @execute="execute()"
+        @manageVat="deposit()"
     />`,
 };
 
