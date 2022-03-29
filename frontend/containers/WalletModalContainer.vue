@@ -18,7 +18,7 @@
         @connectWallet="openSelectWalletModal()"
         @deposit="depositToVAT"
         @withdraw="withdrawFromVAT"
-        @grantAccess="grantAccess"
+        @setAllowanceAmount="setAllowanceAmount"
     />
 </template>
 
@@ -85,10 +85,8 @@ export default Vue.extend({
         },
     },
     methods: {
-        ...mapActions('wallet', {
-            depositToVAT: 'depositToVAT',
-            withdrawFromVAT: 'withdrawFromVAT',
-        }),
+        ...mapActions('wallet', ['depositToVAT', 'withdrawFromVAT']),
+        ...mapActions('authorizations', ['setAllowanceAmount']),
         openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);
@@ -98,9 +96,6 @@ export default Vue.extend({
         },
         setWalletModal(open: boolean): void {
             this.$store.commit('modals/setWalletModal', open);
-        },
-        grantAccess(): void {
-            this.$store.dispatch('authorizations/setAllowanceAmount');
         },
         fetchRelatedData(): void {
             this.$store.dispatch('wallet/fetchWalletBalances');

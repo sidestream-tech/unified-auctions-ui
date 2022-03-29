@@ -113,7 +113,7 @@ export default Vue.extend({
     @apply rounded;
 }
 .BasePanel + .BasePanel {
-    margin-top: -1px;
+    margin-top: -2px;
 }
 .Title {
     @apply px-2 py-1 text-left;
@@ -122,6 +122,6 @@ export default Vue.extend({
     @apply inline;
 }
 .Content {
-    @apply px-3 py-1;
+    @apply px-3 pt-1 pb-3;
 }
 </style>

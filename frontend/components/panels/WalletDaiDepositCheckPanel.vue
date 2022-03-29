@@ -1,5 +1,5 @@
 <template>
-    <BasePanel class="WalletDaiCheckPanel">
+    <BasePanel class="WalletDaiDepositCheckPanel">
         <template #[currentStateAndTitle.name]>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
             If you do not have DAI funds to deposit yet, there are several ways to obtain them:
@@ -16,8 +16,10 @@
                 </li>
             </ul>
         </TextBlock>
-        <div class="flex justify-end my-2">
-            <BaseButton @click="$emit('refresh')">Refresh wallet balance</BaseButton>
+        <div class="flex justify-end mt-2">
+            <BaseButton :disabled="disabled" :is-loading="isLoading" @click="$emit('refresh')"
+                >Refresh wallet balance</BaseButton
+            >
         </div>
     </BasePanel>
 </template>
@@ -43,7 +45,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        wantToDepositDai: {
+        desiredAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
@@ -54,6 +56,14 @@ export default Vue.extend({
         tokenAddressDai: {
             type: String,
             default: undefined,
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
+        isLoading: {
+            type: Boolean,
+            default: false,
         },
         isExplanationsShown: {
             type: Boolean,
@@ -68,13 +78,19 @@ export default Vue.extend({
                     title: 'Please connect a wallet',
                 };
             }
-            if (!this.wantToDepositDai) {
+            if (!this.desiredAmount) {
                 return {
                     name: 'inactive',
                     title: 'Please enter the value to deposit first',
                 };
             }
-            const isTooSmall = this.wantToDepositDai?.isGreaterThan(this.walletDai || new BigNumber(0));
+            if (this.desiredAmount.isLessThan(0)) {
+                return {
+                    name: 'incorrect',
+                    title: 'The amount can not be negative',
+                };
+            }
+            const isTooSmall = this.desiredAmount?.isGreaterThan(this.walletDai || new BigNumber(0));
             if (isTooSmall) {
                 return {
                     name: 'incorrect',

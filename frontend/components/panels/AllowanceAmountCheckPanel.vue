@@ -1,62 +1,107 @@
 <template>
-    <BasePanel class="WalletDaiCheckPanel">
+    <BasePanel class="WalletDaiDepositCheckPanel">
         <template #[currentStateAndTitle.name]>{{ currentStateAndTitle.title }}</template>
-        <TextBlock>
-            If you do not have DAI funds to deposit yet, there are several ways to obtain them:
-            <ul class="list-disc list-inside">
-                <li>
-                    By borrowing DAI against a collateral in the
-                    <a href="https://oasis.app/" target="_blank">oasis.app</a>
-                </li>
-                <li>
-                    By purchasing it on a decentralized exchange like
-                    <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct DAI token address used on
-                    the “{{ networkTitle }}” network is
-                    <FormatAddress type="address" :value="tokenAddressDai" shorten />)
-                </li>
-            </ul>
-            <div class="flex justify-end my-2">
-                <BaseButton @click="$emit('refresh')">Refresh wallet balance</BaseButton>
-            </div>
+        <TextBlock v-if="isExplanationsShown">
+            To bid on an auction with Dai, first funds need to be deposited to the
+            <Explain text="VAT">
+                The
+                <a
+                    href="https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation#2-contract-details"
+                    >VAT contract</a
+                >
+                is the core vault engine of the Maker Protocol and manages the central accounting invariants of DAI.
+                Depositing and interacting with the VAT is necessary in order to participate in auctions. </Explain
+            >. The following transaction authorizes the wallet address to deposit into the VAT. It is a prerequisite to
+            participate in the auction.
         </TextBlock>
+        <div class="my-2 flex justify-between">
+            <div>Current allowance</div>
+            <div>
+                <span v-if="isUnlimitedAllowance">Unlimited DAI</span>
+                <FormatCurrency v-else :value="allowanceAmount" currency="DAI" />
+            </div>
+        </div>
+        <div class="flex justify-end mt-2 gap-5">
+            <BaseButton
+                class="w-full md:w-80"
+                :disabled="disabled"
+                :is-loading="isLoading"
+                @click="$emit('setAllowanceAmount', alwaysValidDesiredAmount)"
+            >
+                <span>Allow access to&nbsp;</span>
+                <FormatCurrency :value="alwaysValidDesiredAmount" currency="DAI" />
+            </BaseButton>
+            <BaseButton
+                class="w-full md:w-80"
+                :type="!isEnough ? 'primary' : ''"
+                :disabled="disabled"
+                :is-loading="isLoading"
+                @click="$emit('setAllowanceAmount')"
+            >
+                Allow unlimited access to DAI
+            </BaseButton>
+        </div>
     </BasePanel>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
+import FormatCurrency from '../utils/FormatCurrency.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import BasePanel from '~/components/common/BasePanel.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
+import Explain from '~/components/utils/Explain.vue';
 
 export default Vue.extend({
     components: {
         BaseButton,
         BasePanel,
         TextBlock,
-        FormatAddress,
+        Explain,
+        FormatCurrency,
     },
     props: {
-        walletDai: {
+        allowanceAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        wantToDepositDai: {
+        desiredAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        network: {
-            type: String,
-            default: undefined,
+        isLoading: {
+            type: Boolean,
+            default: false,
         },
-        tokenAddressDai: {
-            type: String,
-            default: undefined,
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
     },
     computed: {
+        isEnough(): boolean {
+            if (!this.desiredAmount || !this.allowanceAmount) {
+                return false;
+            }
+            return !this.desiredAmount.isGreaterThan(this.allowanceAmount);
+        },
+        isUnlimitedAllowance(): boolean {
+            return this.allowanceAmount?.toFixed(0).length > 50 ?? false;
+        },
+        isInvalidDesiredAmount(): boolean {
+            return !this.desiredAmount || this.desiredAmount.isNaN() || this.desiredAmount.isLessThan(0);
+        },
+        alwaysValidDesiredAmount(): BigNumber {
+            if (this.isInvalidDesiredAmount) {
+                return new BigNumber(0);
+            }
+            return this.desiredAmount;
+        },
         currentStateAndTitle(): PanelProps {
             if (!this.allowanceAmount) {
                 return {
@@ -64,30 +109,30 @@ export default Vue.extend({
                     title: 'Please connect a wallet',
                 };
             }
-            if (!this.wantToDepositDai) {
+            if (!this.desiredAmount) {
                 return {
                     name: 'inactive',
-                    title: 'Please enter the value to deposit first',
+                    title: 'Please enter the desired value first',
                 };
             }
-            const isTooSmall = this.wantToDepositDai?.isGreaterThan(this.walletDai || new BigNumber(0));
-            if (isTooSmall) {
+            if (!this.isEnough) {
                 return {
                     name: 'incorrect',
-                    title: 'The sufficient amount of DAI is not present in the connected wallet',
+                    title: 'The desired amount exceeds DAI allowance',
                 };
             }
             return {
                 name: 'correct',
-                title: 'The sufficient amount of DAI is present in the connected wallet',
+                title: 'The desired amount is within DAI allowance',
             };
         },
-        networkTitle(): string {
-            try {
-                return getNetworkConfigByType(this.network).title;
-            } catch {
-                return this.network;
-            }
+    },
+    watch: {
+        currentStateAndTitle: {
+            immediate: true,
+            handler(newCurrentStateAndTitle) {
+                this.$emit('update:isCorrect', newCurrentStateAndTitle.name === 'correct');
+            },
         },
     },
 });

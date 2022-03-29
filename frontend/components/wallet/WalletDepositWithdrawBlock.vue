@@ -6,7 +6,7 @@
         </TextBlock>
         <form class="flex flex-col gap-4" @submit.prevent="submit">
             <RadioGroup
-                :disabled="isLoading"
+                :disabled="isLoading || isSubmitting"
                 :value="selectedMethod"
                 class="flex items-center w-full"
                 @change="handleMethodChange"
@@ -18,7 +18,7 @@
             <BaseValueInput
                 v-show="selectedMethod === 'deposit'"
                 :input-value.sync="depositAmount"
-                :max-value="maxAllowedDeposit"
+                :max-value="maxDeposit"
                 :min-value="minimumDaiAmount"
                 :disabled="!canDeposit"
             />
@@ -31,14 +31,25 @@
             />
 
             <div v-if="selectedMethod === 'deposit'">
-                <WalletDaiCheckPanel
+                <WalletDaiDepositCheckPanel
                     :is-correct.sync="isWalletDaiCheckPassed"
                     :wallet-dai="maxDeposit"
-                    :want-to-deposit-dai="depositAmount || maxDeposit"
+                    :desired-amount="depositAmount || maxDeposit"
                     :token-address-dai="tokenAddressDai"
                     :network="network"
+                    :is-loading="isLoading"
                     :is-explanations-shown="isExplanationsShown"
+                    :disabled="isLoading || isSubmitting"
                     @refresh="$emit('refresh')"
+                />
+                <AllowanceAmountCheckPanel
+                    :is-correct.sync="isAllowanceAmountCheckPassed"
+                    :allowance-amount="allowanceAmount"
+                    :desired-amount="depositAmount || maxDeposit"
+                    :is-loading="isAllowanceAmountLoading"
+                    :is-explanations-shown="isExplanationsShown"
+                    :disabled="isLoading || isSubmitting"
+                    @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
                 />
             </div>
 
@@ -57,7 +68,8 @@ import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import BaseValueInput from '~/components/common/BaseValueInput.vue';
-import WalletDaiCheckPanel from '~/components/panels/WalletDaiCheckPanel.vue';
+import WalletDaiDepositCheckPanel from '~/components/panels/WalletDaiDepositCheckPanel.vue';
+import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
 
 export default Vue.extend({
     name: 'WalletDepositWithdrawBlock',
@@ -67,7 +79,8 @@ export default Vue.extend({
         TextBlock,
         RadioGroup: Radio.Group,
         RadioButton: Radio.Button,
-        WalletDaiCheckPanel,
+        WalletDaiDepositCheckPanel,
+        AllowanceAmountCheckPanel,
     },
     props: {
         network: {
@@ -102,9 +115,9 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        isWithdrawingAllowed: {
+        isAllowanceAmountLoading: {
             type: Boolean,
-            required: true,
+            default: false,
         },
     },
     data() {
@@ -114,6 +127,7 @@ export default Vue.extend({
             depositAmount: undefined,
             withDrawAmount: undefined,
             isWalletDaiCheckPassed: false,
+            isAllowanceAmountCheckPassed: false,
         };
     },
     computed: {
@@ -130,7 +144,6 @@ export default Vue.extend({
             return (
                 !this.isLoading &&
                 !this.isSubmitting &&
-                this.isWithdrawingAllowed &&
                 BigNumber.isBigNumber(this.maxWithdraw) &&
                 !this.maxWithdraw.isZero()
             );
@@ -140,7 +153,7 @@ export default Vue.extend({
                 if (!this.canDeposit) {
                     return false;
                 }
-                if (!this.isWalletDaiCheckPassed) {
+                if (!this.isWalletDaiCheckPassed || !this.isAllowanceAmountCheckPassed) {
                     return false;
                 }
                 if (this.depositAmount === undefined) {
@@ -159,12 +172,6 @@ export default Vue.extend({
             }
             return false;
         },
-        maxAllowedDeposit(): BigNumber {
-            if (this.allowanceAmount.isGreaterThan(this.maxDeposit)) {
-                return this.maxDeposit;
-            }
-            return this.allowanceAmount;
-        },
         networkTitle(): string {
             try {
                 return getNetworkConfigByType(this.network).title;
@@ -179,7 +186,7 @@ export default Vue.extend({
         },
         submit() {
             if (this.selectedMethod === 'deposit') {
-                this.$emit('deposit', this.depositAmount ?? this.maxAllowedDeposit);
+                this.$emit('deposit', this.depositAmount ?? this.maxDeposit);
             }
             if (this.selectedMethod === 'withdraw') {
                 this.$emit('withdraw', this.withDrawAmount ?? this.maxWithdraw);

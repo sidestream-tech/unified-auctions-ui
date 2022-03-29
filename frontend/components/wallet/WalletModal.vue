@@ -29,15 +29,6 @@
                 is the set of immutable rules for managing DAI and collaterals which constitutes the core of the Maker
                 Protocol.
             </TextBlock>
-            <!-- <AccessDaiBlock
-                :is-loading="isAllowanceAmountLoading"
-                :is-explanations-shown="isExplanationsShown"
-                :allowance-amount="allowanceAmount"
-                :is-dai-access-granted="
-                    allowanceAmount.isGreaterThanOrEqualTo(walletBalances ? walletBalances.walletDAI : 0)
-                "
-                @grantAccess="$emit('grantAccess')"
-            /> -->
             <WalletDepositWithdrawBlock
                 :network="network"
                 :is-loading="isLoading"
@@ -48,9 +39,11 @@
                 :max-deposit="walletBalances && walletBalances.walletDAI"
                 :max-withdraw="walletBalances && walletBalances.walletVatDAI"
                 :token-address-dai="tokenAddressDai"
+                :is-allowance-amount-loading="isAllowanceAmountLoading"
                 @refresh="$emit('refresh')"
-                @deposit="value => $emit('deposit', value)"
-                @withdraw="value => $emit('withdraw', value)"
+                @deposit="$emit('deposit', $event)"
+                @withdraw="$emit('withdraw', $event)"
+                @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
             />
         </div>
     </modal>
