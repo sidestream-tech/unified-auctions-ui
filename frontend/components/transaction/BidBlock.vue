@@ -11,7 +11,7 @@
                 class="w-full md:w-80"
                 :disabled="state === 'disabled' || state === 'executed'"
                 type="primary"
-                @click="$emit('execute')"
+                @click="$emit('bidWithDai')"
             >
                 <span>
                     Bid <format-currency :value="transactionBidAmount" currency="DAI" /> for

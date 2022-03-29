@@ -75,7 +75,7 @@
                     @manageVat="$emit('manageVat')"
                     @authorizeWallet="$emit('authorizeWallet')"
                     @authorizeCollateral="$emit('authorizeCollateral', $event)"
-                    @execute="$emit('execute', $event)"
+                    @bidWithDai="$emit('bidWithDai', $event)"
                 />
             </template>
         </SplitLayout>

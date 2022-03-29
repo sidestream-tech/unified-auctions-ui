@@ -22,6 +22,7 @@
         @authorizeCollateral="authorizeCollateral"
         @restart="restart"
         @execute="execute"
+        @bidWithDai="execute"
     />
 </template>
 

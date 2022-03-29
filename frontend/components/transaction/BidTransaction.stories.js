@@ -98,7 +98,7 @@ const common = {
         @disconnect="disconnect()"
         @authorizeWallet="authorizeWallet()"
         @authorizeCollateral="authorizeCollateral($event)"
-        @execute="execute()"
+        @bidWithDai="execute()"
         @manageVat="deposit()"
     />`,
 };

@@ -10,7 +10,7 @@
         <BidTransactionTable
             class="mt-4 mb-6"
             :auction-transaction="auctionTransaction"
-            @inputBidAmount="transactionAmountDai = $event"
+            @inputBidAmount="transactionBidAmount = $event"
             @amountToReceive="setAmountToReceive"
         />
         <WalletBlock
@@ -27,7 +27,7 @@
             :disabled="!auctionTransaction.isActive || !isConnected"
             :is-loading="isDepositingOrWithdrawing"
             :is-explanations-shown="isExplanationsShown"
-            :transaction-bid-amount="transactionAmountDai"
+            :transaction-bid-amount="transactionBidAmount"
             :wallet-dai="walletDai"
             :wallet-vat-dai="walletVatDai"
             @manageVat="$emit('manageVat')"
@@ -45,14 +45,14 @@
         />
         <BidBlock
             :auction-transaction="auctionTransaction"
-            :transaction-bid-amount="transactionAmountDai"
+            :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
             :disabled="
                 !auctionTransaction.isActive || !isWalletAuthorised || !isCollateralAuthorised || !isEnoughDeposited
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
-            @execute="$emit('execute', { id: auctionTransaction.id, transactionAmountDai })"
+            @bidWithDai="$emit('bidWithDai', { id: auctionTransaction.id, bidAmountDai: transactionBidAmount })"
         />
     </div>
 </template>
@@ -126,7 +126,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            transactionAmountDai: undefined as BigNumber | undefined,
+            transactionBidAmount: undefined as BigNumber | undefined,
             amountToReceive: undefined as BigNumber | undefined,
         };
     },
@@ -138,7 +138,7 @@ export default Vue.extend({
             return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
         },
         isEnoughDeposited(): boolean {
-            return this.walletVatDai?.isGreaterThanOrEqualTo(this.transactionAmountDai);
+            return this.walletVatDai?.isGreaterThanOrEqualTo(this.transactionBidAmount);
         },
     },
     methods: {
