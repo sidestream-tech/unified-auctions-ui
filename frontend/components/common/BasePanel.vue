@@ -1,14 +1,23 @@
 <template>
     <div class="BasePanel">
-        <button class="Title" :class="titleClass" @click="isExpanded = !isExpanded">
-            <div class="Icon" :class="iconClass">
-                <Icon v-if="currentState === 'inactive'" type="close" />
-                <Icon v-else-if="currentState === 'incorrect'" type="warning" theme="filled" />
-                <Icon v-else-if="currentState === 'correct'" type="check" />
-                <Icon v-else-if="currentState === 'notice'" type="warning" theme="filled" />
-            </div>
-            <slot :name="currentState">{{ $props[currentState] }}</slot>
-        </button>
+        <template v-for="state of STATES">
+            <button
+                v-if="$slots[state.name]"
+                :key="state.name"
+                class="Title"
+                type="button"
+                :class="titleClass(state.name)"
+                @click="isExpanded = !isExpanded"
+            >
+                <div class="Icon" :class="iconClass(state.name)">
+                    <Icon v-if="state.name === 'inactive'" type="close" />
+                    <Icon v-else-if="state.name === 'incorrect'" type="warning" theme="filled" />
+                    <Icon v-else-if="state.name === 'correct'" type="check" />
+                    <Icon v-else-if="state.name === 'notice'" type="warning" theme="filled" />
+                </div>
+                <slot :name="state.name">{{ $props[state.name] }}</slot>
+            </button>
+        </template>
         <div v-show="isExpanded" class="Content">
             <slot />
         </div>
@@ -51,11 +60,6 @@ export default Vue.extend({
         Icon,
     },
     props: {
-        currentState: {
-            type: String,
-            required: true,
-            validator: (value: string) => STATES.map(s => s.name).includes(value),
-        },
         ...STATES.reduce(
             (props, state) => ({
                 ...props,
@@ -69,25 +73,26 @@ export default Vue.extend({
     },
     data() {
         return {
+            STATES,
             isExpanded: false,
         };
-    },
-    computed: {
-        titleClass() {
-            return STATES.find(s => s.name === this.currentState)?.titleClass;
-        },
-        iconClass() {
-            return STATES.find(s => s.name === this.currentState)?.iconClass;
-        },
     },
     watch: {
         currentState: {
             immediate: true,
-            handler(newState: string) {
+            handler(newState: string): void {
                 this.isExpanded = STATES.filter(s => s.isExpanded)
                     .map(s => s.name)
                     .includes(newState);
             },
+        },
+    },
+    methods: {
+        titleClass(stateName: string): string | undefined {
+            return STATES.find(s => s.name === stateName)?.titleClass;
+        },
+        iconClass(stateName: string): string | undefined {
+            return STATES.find(s => s.name === stateName)?.iconClass;
         },
     },
 });
@@ -98,8 +103,17 @@ export default Vue.extend({
     @apply flex flex-col;
     @apply border-2 border-gray-300 dark:border-gray-600 dark:text-gray-200;
 }
+.BasePanel:first-child {
+    @apply rounded-t;
+}
+.BasePanel:last-child {
+    @apply rounded-b;
+}
+.BasePanel:only-child {
+    @apply rounded;
+}
 .BasePanel + .BasePanel {
-    margin-top: -2px;
+    margin-top: -1px;
 }
 .Title {
     @apply px-2 py-1 text-left;
@@ -108,6 +122,6 @@ export default Vue.extend({
     @apply inline;
 }
 .Content {
-    @apply px-2 py-1;
+    @apply px-3 py-1;
 }
 </style>

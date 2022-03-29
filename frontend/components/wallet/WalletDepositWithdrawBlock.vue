@@ -2,20 +2,7 @@
     <div class="WalletDepositWithDrawBlock">
         <TextBlock v-if="isExplanationsShown" title="Moving funds">
             The DAI funds can be moved freely between VAT and your wallet without any extra conversion. You only need
-            to be aware that each transfer incurs transaction fees. Also, if you do not have DAI funds to deposit yet,
-            there are several ways to obtain it:
-            <ul class="list-disc list-inside">
-                <li>
-                    By borrowing DAI against a collateral in the
-                    <a href="https://oasis.app/" target="_blank">oasis.app</a>
-                </li>
-                <li>
-                    By purchasing it on a decentralized exchange like
-                    <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct DAI token address used on
-                    the “{{ networkTitle }}” network is
-                    <FormatAddress type="address" :value="tokenAddressDai || ''" shorten />)
-                </li>
-            </ul>
+            to be aware that each transfer incurs transaction fees.
         </TextBlock>
         <form class="flex flex-col gap-4" @submit.prevent="submit">
             <RadioGroup
@@ -28,20 +15,30 @@
                 <RadioButton value="withdraw" class="w-full text-center"> Withdraw </RadioButton>
             </RadioGroup>
 
-            <BidInput
+            <BaseValueInput
                 v-show="selectedMethod === 'deposit'"
-                :amount-to-bid.sync="depositAmount"
+                :input-value.sync="depositAmount"
+                :max-value="maxAllowedDeposit"
+                :min-value="minimumDaiAmount"
                 :disabled="!canDeposit"
-                :total-price="maxAllowedDeposit"
-                :minimum-deposit-dai="minimumDaiAmount"
             />
-            <BidInput
+            <BaseValueInput
                 v-show="selectedMethod === 'withdraw'"
-                :amount-to-bid.sync="withDrawAmount"
+                :input-value.sync="withDrawAmount"
+                :max-value="maxWithdraw"
+                :min-value="minimumDaiAmount"
                 :disabled="!canWithdraw"
-                :total-price="maxWithdraw"
-                :minimum-deposit-dai="minimumDaiAmount"
             />
+
+            <div v-if="selectedMethod === 'deposit'">
+                <WalletDaiCheckPanel
+                    :wallet-dai="maxDeposit"
+                    :want-to-deposit-dai="depositAmount || maxDeposit"
+                    :token-address-dai="tokenAddressDai"
+                    :network="network"
+                    @refresh="$emit('refresh')"
+                />
+            </div>
 
             <BaseButton type="primary" :is-loading="isSubmitting" :disabled="!canSubmit" html-type="submit">
                 <span class="capitalize">{{ selectedMethod }}{{ isSubmitting ? 'ing...' : '' }}</span>
@@ -55,20 +52,20 @@ import Vue from 'vue';
 import { Radio } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
-import TextBlock from '../common/TextBlock.vue';
-import FormatAddress from '../utils/FormatAddress.vue';
-import BaseButton from '../common/BaseButton.vue';
-import BidInput from '../utils/BidInput';
+import TextBlock from '~/components/common/TextBlock.vue';
+import BaseButton from '~/components/common/BaseButton.vue';
+import BaseValueInput from '~/components/common/BaseValueInput.vue';
+import WalletDaiCheckPanel from '~/components/panels/WalletDaiCheckPanel.vue';
 
 export default Vue.extend({
     name: 'WalletDepositWithdrawBlock',
     components: {
-        BidInput,
+        BaseValueInput,
         BaseButton,
-        FormatAddress,
         TextBlock,
         RadioGroup: Radio.Group,
         RadioButton: Radio.Button,
+        WalletDaiCheckPanel,
     },
     props: {
         network: {
@@ -186,7 +183,7 @@ export default Vue.extend({
 });
 </script>
 
-<style>
+<style scoped>
 .WalletDepositWithDrawBlock {
     @apply flex flex-col gap-4;
 }
