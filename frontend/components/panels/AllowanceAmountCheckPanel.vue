@@ -1,8 +1,8 @@
 <template>
-    <BasePanel class="WalletDaiDepositCheckPanel">
-        <template #[currentStateAndTitle.name]>{{ currentStateAndTitle.title }}</template>
+    <BasePanel :current-state="currentStateAndTitle.name" class="WalletDaiDepositCheckPanel">
+        <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
-            To bid on an auction with Dai, first funds need to be deposited to the
+            To bid on an auction with DAI, first funds need to be deposited to the
             <Explain text="VAT">
                 The
                 <a
@@ -34,7 +34,7 @@
             <BaseButton
                 class="w-full md:w-80"
                 :type="!isEnough ? 'primary' : ''"
-                :disabled="disabled"
+                :disabled="disabled || isUnlimitedAllowance"
                 :is-loading="isLoading"
                 @click="$emit('setAllowanceAmount')"
             >

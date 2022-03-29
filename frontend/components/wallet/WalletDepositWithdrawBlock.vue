@@ -6,7 +6,7 @@
         </TextBlock>
         <form class="flex flex-col gap-4" @submit.prevent="submit">
             <RadioGroup
-                :disabled="isLoading || isSubmitting"
+                :disabled="isLoading || isSubmitting || isAllowanceAmountLoading"
                 :value="selectedMethod"
                 class="flex items-center w-full"
                 @change="handleMethodChange"
@@ -20,14 +20,14 @@
                 :input-value.sync="depositAmount"
                 :max-value="maxDeposit"
                 :min-value="minimumDaiAmount"
-                :disabled="!canDeposit"
+                :disabled="!canDeposit || isAllowanceAmountLoading"
             />
             <BaseValueInput
                 v-show="selectedMethod === 'withdraw'"
-                :input-value.sync="withDrawAmount"
+                :input-value.sync="withdrawAmount"
                 :max-value="maxWithdraw"
                 :min-value="minimumDaiAmount"
-                :disabled="!canWithdraw"
+                :disabled="!canWithdraw || isAllowanceAmountLoading"
             />
 
             <div v-if="selectedMethod === 'deposit'">
@@ -39,7 +39,7 @@
                     :network="network"
                     :is-loading="isLoading"
                     :is-explanations-shown="isExplanationsShown"
-                    :disabled="isLoading || isSubmitting"
+                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading"
                     @refresh="$emit('refresh')"
                 />
                 <AllowanceAmountCheckPanel
@@ -125,7 +125,7 @@ export default Vue.extend({
             minimumDaiAmount: new BigNumber(0),
             selectedMethod: 'deposit',
             depositAmount: undefined,
-            withDrawAmount: undefined,
+            withdrawAmount: undefined,
             isWalletDaiCheckPassed: false,
             isAllowanceAmountCheckPassed: false,
         };
@@ -165,10 +165,10 @@ export default Vue.extend({
                 if (!this.canWithdraw) {
                     return false;
                 }
-                if (this.withDrawAmount === undefined) {
+                if (this.withdrawAmount === undefined) {
                     return true;
                 }
-                return !this.withDrawAmount.isNaN();
+                return !this.withdrawAmount.isNaN();
             }
             return false;
         },
@@ -189,7 +189,7 @@ export default Vue.extend({
                 this.$emit('deposit', this.depositAmount ?? this.maxDeposit);
             }
             if (this.selectedMethod === 'withdraw') {
-                this.$emit('withdraw', this.withDrawAmount ?? this.maxWithdraw);
+                this.$emit('withdraw', this.withdrawAmount ?? this.maxWithdraw);
             }
         },
     },

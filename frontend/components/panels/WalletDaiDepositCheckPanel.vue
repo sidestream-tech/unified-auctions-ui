@@ -1,6 +1,6 @@
 <template>
-    <BasePanel class="WalletDaiDepositCheckPanel">
-        <template #[currentStateAndTitle.name]>{{ currentStateAndTitle.title }}</template>
+    <BasePanel :current-state="currentStateAndTitle.name" class="WalletDaiDepositCheckPanel">
+        <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
             If you do not have DAI funds to deposit yet, there are several ways to obtain them:
             <ul class="list-disc list-inside">

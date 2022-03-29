@@ -1,23 +1,14 @@
 <template>
     <div class="BasePanel">
-        <template v-for="state of STATES">
-            <button
-                v-if="$slots[state.name]"
-                :key="state.name"
-                class="Title"
-                type="button"
-                :class="titleClass(state.name)"
-                @click="isExpanded = !isExpanded"
-            >
-                <div class="Icon" :class="iconClass(state.name)">
-                    <Icon v-if="state.name === 'inactive'" type="close" />
-                    <Icon v-else-if="state.name === 'incorrect'" type="warning" theme="filled" />
-                    <Icon v-else-if="state.name === 'correct'" type="check" />
-                    <Icon v-else-if="state.name === 'notice'" type="warning" theme="filled" />
-                </div>
-                <slot :name="state.name">{{ $props[state.name] }}</slot>
-            </button>
-        </template>
+        <button class="Title" type="button" :class="titleClass" @click="isExpanded = !isExpanded">
+            <div class="Icon" :class="iconClass">
+                <Icon v-if="currentState === 'inactive'" type="close" />
+                <Icon v-else-if="currentState === 'incorrect'" type="warning" theme="filled" />
+                <Icon v-else-if="currentState === 'correct'" type="check" />
+                <Icon v-else-if="currentState === 'notice'" type="warning" theme="filled" />
+            </div>
+            <slot name="title" />
+        </button>
         <div v-show="isExpanded" class="Content">
             <slot />
         </div>
@@ -60,22 +51,24 @@ export default Vue.extend({
         Icon,
     },
     props: {
-        ...STATES.reduce(
-            (props, state) => ({
-                ...props,
-                [state.name]: {
-                    type: String,
-                    default: '',
-                },
-            }),
-            {}
-        ),
+        currentState: {
+            type: String,
+            required: true,
+            validator: (value: string) => STATES.map(s => s.name).includes(value),
+        },
     },
     data() {
         return {
-            STATES,
             isExpanded: false,
         };
+    },
+    computed: {
+        titleClass(): string | undefined {
+            return STATES.find(s => s.name === this.currentState)?.titleClass;
+        },
+        iconClass(): string | undefined {
+            return STATES.find(s => s.name === this.currentState)?.iconClass;
+        },
     },
     watch: {
         currentState: {
@@ -85,14 +78,6 @@ export default Vue.extend({
                     .map(s => s.name)
                     .includes(newState);
             },
-        },
-    },
-    methods: {
-        titleClass(stateName: string): string | undefined {
-            return STATES.find(s => s.name === stateName)?.titleClass;
-        },
-        iconClass(stateName: string): string | undefined {
-            return STATES.find(s => s.name === stateName)?.iconClass;
         },
     },
 });

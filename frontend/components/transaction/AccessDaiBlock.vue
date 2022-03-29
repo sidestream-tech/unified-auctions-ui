@@ -1,7 +1,7 @@
 <template>
     <div>
         <TextBlock v-if="isExplanationsShown" title="Access to DAI">
-            To bid on an auction with Dai, first funds need to be deposited to the
+            To bid on an auction with DAI, first funds need to be deposited to the
             <Explain text="VAT">
                 The
                 <a
