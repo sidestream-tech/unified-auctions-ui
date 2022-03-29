@@ -46,10 +46,12 @@
             :auction-transaction="auctionTransaction"
             :transaction-amount-dai="transactionAmountDai"
             :amount-to-receive="amountToReceive"
-            :disabled="!auctionTransaction.isActive || !isWalletAuthorised || !isCollateralAuthorised"
+            :disabled="
+                !auctionTransaction.isActive || !isWalletAuthorised || !isCollateralAuthorised || !isEnoughDeposited
+            "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
-            @execute="$emit('execute', { id: auctionTransaction.id })"
+            @execute="$emit('execute', { id: auctionTransaction.id, transactionAmountDai })"
         />
     </div>
 </template>
