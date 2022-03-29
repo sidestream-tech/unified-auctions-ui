@@ -23,7 +23,7 @@
             @authorizeWallet="authorizeWallet"
             @authorizeCollateral="authorizeCollateral"
             @restart="restartAuction"
-            @execute="bid"
+            @execute="bidWithCallee"
             @fetchTakeEventsFromAuction="fetchTakeEventsByAuctionId"
         />
     </div>
@@ -129,7 +129,7 @@ export default Vue.extend({
             'fetchWalletAuthorizationStatus',
             'fetchCollateralAuthorizationStatus',
         ]),
-        ...mapActions('auctions', ['bid', 'restart', 'fetchTakeEventsByAuctionId']),
+        ...mapActions('auctions', ['bidWithCallee', 'restart', 'fetchTakeEventsByAuctionId']),
         ...mapActions('wallet', ['fetchWalletBalances']),
         openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {

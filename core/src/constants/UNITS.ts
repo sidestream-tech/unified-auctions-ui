@@ -1,5 +1,7 @@
 import BigNumber from 'bignumber.js';
 
+export const NULL_BYTES = '0x';
+
 // Common Maker Units https://github.com/makerdao/dss/blob/master/DEVELOPING.md#units
 // WAD: fixed point decimal with 18 decimals (for basic quantities, e.g. balances)
 // RAY: fixed point decimal with 27 decimals (for precise quantites, e.g. ratios)
