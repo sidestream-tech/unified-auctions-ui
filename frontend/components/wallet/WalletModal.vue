@@ -35,15 +35,18 @@
                 :is-submitting="isSubmitting"
                 :is-explanations-shown="isExplanationsShown"
                 :allowance-amount="allowanceAmount"
-                :is-withdrawing-allowed="isWithdrawingAllowed"
                 :max-deposit="walletBalances && walletBalances.walletDAI"
                 :max-withdraw="walletBalances && walletBalances.walletVatDAI"
                 :token-address-dai="tokenAddressDai"
+                :wallet-address="walletAddress"
                 :is-allowance-amount-loading="isAllowanceAmountLoading"
+                :is-wallet-authorized="isWalletAuthorized"
+                :is-authorization-loading="isAuthorizationLoading"
                 @refresh="$emit('refresh')"
                 @deposit="$emit('deposit', $event)"
                 @withdraw="$emit('withdraw', $event)"
                 @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
+                @authorizeWallet="$emit('authorizeWallet')"
             />
         </div>
     </modal>
@@ -84,7 +87,7 @@ export default Vue.extend({
         },
         walletAddress: {
             type: String,
-            default: null,
+            default: '',
         },
         walletBalances: {
             type: Object as Vue.PropType<WalletBalances>,
@@ -93,10 +96,6 @@ export default Vue.extend({
         allowanceAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
-        },
-        isWithdrawingAllowed: {
-            type: Boolean,
-            required: true,
         },
         isLoading: {
             type: Boolean,
@@ -115,6 +114,14 @@ export default Vue.extend({
             default: true,
         },
         isAllowanceAmountLoading: {
+            type: Boolean,
+            default: false,
+        },
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isAuthorizationLoading: {
             type: Boolean,
             default: false,
         },

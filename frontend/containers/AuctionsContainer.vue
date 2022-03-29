@@ -10,7 +10,7 @@
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
             :is-authorizing="isAuthorizing"
-            :is-wallet-authorised="isWalletAuthorised"
+            :is-wallet-authorized="isWalletAuthorized"
             :authorised-collaterals="authorisedCollaterals"
             :is-executing="isAuctionBidding"
             :take-event-storage="takeEvents"
@@ -49,7 +49,7 @@ export default Vue.extend({
         }),
         ...mapGetters('authorizations', {
             isAuthorizing: 'isAuthorizationLoading',
-            isWalletAuthorised: 'isWalletAuthorizationDone',
+            isWalletAuthorized: 'isWalletAuthorizationDone',
             authorisedCollaterals: 'collateralAuthorizations',
         }),
         selectedAuctionId: {

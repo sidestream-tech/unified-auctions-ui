@@ -6,7 +6,7 @@
         </TextBlock>
         <form class="flex flex-col gap-4" @submit.prevent="submit">
             <RadioGroup
-                :disabled="isLoading || isSubmitting || isAllowanceAmountLoading"
+                :disabled="isLoading || isSubmitting || isAllowanceAmountLoading || isAuthorizationLoading"
                 :value="selectedMethod"
                 class="flex items-center w-full"
                 @change="handleMethodChange"
@@ -31,7 +31,7 @@
                     :network="network"
                     :is-loading="isLoading"
                     :is-explanations-shown="isExplanationsShown"
-                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading"
+                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading || isAuthorizationLoading"
                     @refresh="$emit('refresh')"
                 />
                 <AllowanceAmountCheckPanel
@@ -50,17 +50,26 @@
                 :input-value.sync="withdrawAmount"
                 :max-value="maxWithdraw"
                 :min-value="minimumDaiAmount"
-                :disabled="!canWithdraw || isAllowanceAmountLoading"
+                :disabled="!canWithdraw || isAllowanceAmountLoading || isAuthorizationLoading"
             />
             <div v-if="selectedMethod === 'withdraw'">
                 <WalletVatDaiWithdrawCheckPanel
-                    :is-correct.sync="isWalletDaiCheckPassed"
+                    :is-correct.sync="isWalletVatDaiCheckPassed"
                     :wallet-vat-dai="maxWithdraw"
                     :desired-amount="withdrawAmount || maxWithdraw"
                     :is-loading="isLoading"
                     :is-explanations-shown="isExplanationsShown"
-                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading"
+                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading || isAuthorizationLoading"
                     @refresh="$emit('refresh')"
+                />
+                <WalletAuthorizationCheckPanel
+                    :is-correct.sync="isWalletAuthorizationsCheckPassed"
+                    :wallet-address="walletAddress"
+                    :is-wallet-authorized="isWalletAuthorized"
+                    :is-loading="isAuthorizationLoading"
+                    :is-explanations-shown="isExplanationsShown"
+                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading || isAuthorizationLoading"
+                    @authorizeWallet="$emit('authorizeWallet')"
                 />
             </div>
 
@@ -82,6 +91,7 @@ import BaseValueInput from '~/components/common/BaseValueInput.vue';
 import WalletDaiDepositCheckPanel from '~/components/panels/WalletDaiDepositCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
 import WalletVatDaiWithdrawCheckPanel from '~/components/panels/WalletVatDaiWithdrawCheckPanel.vue';
+import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
 
 export default Vue.extend({
     name: 'WalletDepositWithdrawBlock',
@@ -94,11 +104,16 @@ export default Vue.extend({
         WalletDaiDepositCheckPanel,
         AllowanceAmountCheckPanel,
         WalletVatDaiWithdrawCheckPanel,
+        WalletAuthorizationCheckPanel,
     },
     props: {
         network: {
             type: String,
             default: undefined,
+        },
+        walletAddress: {
+            type: String,
+            default: '',
         },
         isLoading: {
             type: Boolean,
@@ -132,6 +147,14 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isAuthorizationLoading: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -141,6 +164,8 @@ export default Vue.extend({
             withdrawAmount: undefined,
             isWalletDaiCheckPassed: false,
             isAllowanceAmountCheckPassed: false,
+            isWalletVatDaiCheckPassed: false,
+            isWalletAuthorizationsCheckPassed: false,
         };
     },
     computed: {
@@ -176,6 +201,9 @@ export default Vue.extend({
             }
             if (this.selectedMethod === 'withdraw') {
                 if (!this.canWithdraw) {
+                    return false;
+                }
+                if (!this.isWalletVatDaiCheckPassed || !this.isWalletAuthorizationsCheckPassed) {
                     return false;
                 }
                 if (this.withdrawAmount === undefined) {

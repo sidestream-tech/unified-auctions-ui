@@ -55,7 +55,7 @@ export default Vue.extend({
         },
         tokenAddressDai: {
             type: String,
-            default: undefined,
+            default: '',
         },
         disabled: {
             type: Boolean,

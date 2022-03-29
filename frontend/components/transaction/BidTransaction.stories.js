@@ -18,7 +18,7 @@ const data = {
     isDepositing: false,
     isAuthorizing: false,
     isExecuting: false,
-    isWalletAuthorised: false,
+    isWalletAuthorized: false,
     isDaiAccessGranted: false,
     isDeposited: false,
     authorisedCollaterals: [],
@@ -47,7 +47,7 @@ const common = {
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = null;
-                this.isWalletAuthorised = false;
+                this.isWalletAuthorized = false;
                 this.authorisedCollaterals = [];
                 this.transactionAddress = null;
                 this.isConnecting = false;
@@ -71,7 +71,7 @@ const common = {
         authorizeWallet() {
             this.isAuthorizing = true;
             setTimeout(() => {
-                this.isWalletAuthorised = true;
+                this.isWalletAuthorized = true;
                 this.isAuthorizing = false;
             }, 1000);
         },
@@ -112,7 +112,7 @@ const common = {
         :isDepositing="isDepositing"
         :isAuthorizing="isAuthorizing"
         :isExecuting="isExecuting"
-        :isWalletAuthorised="isWalletAuthorised"
+        :isWalletAuthorized="isWalletAuthorized"
         :isDaiAccessGranted="isDaiAccessGranted"
         :authorisedCollaterals="authorisedCollaterals"
         :walletAddress="walletAddress"

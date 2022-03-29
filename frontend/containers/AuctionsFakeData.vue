@@ -6,7 +6,7 @@
         :is-granting-access="isGrantingAccess"
         :is-depositing-dai="isDepositingDai"
         :is-authorizing="isAuthorizing"
-        :is-wallet-authorised="isWalletAuthorised"
+        :is-wallet-authorized="isWalletAuthorized"
         :is-dai-access-granted="isDaiAccessGranted"
         :authorised-collaterals="authorisedCollaterals"
         :is-executing="isExecuting"
@@ -50,7 +50,7 @@ export default Vue.extend({
             isDepositingDai: false,
             isAuthorizing: false,
             isExecuting: false,
-            isWalletAuthorised: false,
+            isWalletAuthorized: false,
             isDaiAccessGranted: false,
             isDeposited: false,
             authorisedCollaterals: [] as string[],
@@ -116,7 +116,7 @@ export default Vue.extend({
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = null;
-                this.isWalletAuthorised = false;
+                this.isWalletAuthorized = false;
                 this.authorisedCollaterals = [];
                 if (this.selectedAuction) {
                     this.selectedAuction.transactionAddress = undefined;
@@ -142,7 +142,7 @@ export default Vue.extend({
         authorizeWallet() {
             this.isAuthorizing = true;
             setTimeout(() => {
-                this.isWalletAuthorised = true;
+                this.isWalletAuthorized = true;
                 this.isAuthorizing = false;
             }, 1000);
         },
