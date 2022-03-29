@@ -14,6 +14,7 @@ const data = {
         isFinished: false,
     },
     isConnecting: false,
+    isDepositingOrWithdrawing: false,
     isAuthorizing: false,
     isExecuting: false,
     isWalletAuthorised: false,
@@ -22,7 +23,7 @@ const data = {
     walletDai: new BigNumber(faker.finance.amount()),
     walletVatDai: new BigNumber(faker.finance.amount()),
     transactionAddress: null,
-    transactionBidAmount: fakeAuctionTransaction.totalPrice,
+    transactionAmountDai: fakeAuctionTransaction.totalPrice,
 };
 
 const common = {
@@ -69,18 +70,23 @@ const common = {
                 this.auctionTransaction.isFinished = true;
                 this.auctionTransaction.endDate = new Date();
                 this.auctionTransaction.transactionAddress = faker.finance.ethereumAddress();
-                this.walletVatDai = this.walletVatDai.minus(this.transactionBidAmount);
+                this.walletVatDai = this.walletVatDai.minus(this.transactionAmountDai);
                 this.isExecuting = false;
             }, 1000);
         },
         deposit() {
-            this.walletVatDai = this.transactionBidAmount;
+            this.isDepositingOrWithdrawing = true;
+            setTimeout(() => {
+                this.walletVatDai = this.transactionAmountDai;
+                this.isDepositingOrWithdrawing = false;
+            }, 1000);
         },
     },
     template: `
     <BidTransaction
         :auctionTransaction="auctionTransaction"
         :isConnecting="isConnecting"
+        :isDepositingOrWithdrawing="isDepositingOrWithdrawing"
         :isAuthorizing="isAuthorizing"
         :isExecuting="isExecuting"
         :isWalletAuthorised="isWalletAuthorised"
@@ -111,7 +117,7 @@ storiesOf('Transaction/BidTransaction', module)
                     isActive: false,
                     isFinished: false,
                 },
-                transactionBidAmount: undefined,
+                transactionAmountDai: undefined,
             };
         },
     }))
@@ -126,7 +132,7 @@ storiesOf('Transaction/BidTransaction', module)
                     isActive: true,
                     transactionAddress: faker.finance.ethereumAddress(),
                 },
-                transactionBidAmount: undefined,
+                transactionAmountDai: undefined,
             };
         },
     }));

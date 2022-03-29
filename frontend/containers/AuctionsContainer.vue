@@ -9,6 +9,7 @@
             :is-explanations-shown.sync="isExplanationsShown"
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
+            :is-depositing-or-withdrawing="isDepositingOrWithdrawing"
             :is-authorizing="isAuthorizing"
             :is-wallet-authorised="isWalletAuthorised"
             :authorised-collaterals="authorisedCollaterals"
@@ -50,6 +51,7 @@ export default Vue.extend({
             isWalletLoading: 'isLoading',
             walletAddress: 'getAddress',
             walletBalances: 'walletBalances',
+            isDepositingOrWithdrawing: 'isDepositingOrWithdrawing',
         }),
         ...mapGetters('authorizations', {
             isAuthorizing: 'isAuthorizationLoading',

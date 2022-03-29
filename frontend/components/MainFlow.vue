@@ -61,6 +61,7 @@
                     :auction-transaction="selectedAuction"
                     :is-connecting="isConnecting"
                     :is-authorizing="isAuthorizing"
+                    :is-depositing-or-withdrawing="isDepositingOrWithdrawing"
                     :is-executing="isExecuting"
                     :is-wallet-authorised="isWalletAuthorised"
                     :is-explanations-shown="isExplanationsShown"
@@ -68,7 +69,7 @@
                     :wallet-address="walletAddress"
                     :wallet-dai="walletDai"
                     :wallet-vat-dai="walletVatDai"
-                    :transaction-bid-amount="transactionBidAmount"
+                    :transaction-bid-amount="transactionAmountDai"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
                     @manageVat="$emit('manageVat')"
@@ -122,6 +123,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isDepositingOrWithdrawing: {
+            type: Boolean,
+            default: false,
+        },
         isAuthorizing: {
             type: Boolean,
             default: false,
@@ -154,7 +159,7 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        transactionBidAmount: {
+        transactionAmountDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },

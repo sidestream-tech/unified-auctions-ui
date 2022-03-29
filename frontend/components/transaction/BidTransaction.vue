@@ -10,7 +10,7 @@
         <BidTransactionTable
             class="mt-4 mb-6"
             :auction-transaction="auctionTransaction"
-            @inputBidAmount="transactionBidAmount = $event"
+            @inputBidAmount="transactionAmountDai = $event"
             @amountToReceive="setAmountToReceive"
         />
         <WalletBlock
@@ -25,8 +25,9 @@
         <DepositBlock
             class="mb-6 lg:mb-0"
             :disabled="!auctionTransaction.isActive || !isConnected"
+            :is-loading="isDepositingOrWithdrawing"
             :is-explanations-shown="isExplanationsShown"
-            :transaction-bid-amount="transactionBidAmount"
+            :transaction-bid-amount="transactionAmountDai"
             :wallet-dai="walletDai"
             :wallet-vat-dai="walletVatDai"
             @manageVat="$emit('manageVat')"
@@ -44,14 +45,14 @@
         />
         <BidBlock
             :auction-transaction="auctionTransaction"
-            :transaction-bid-amount="transactionBidAmount"
+            :transaction-bid-amount="transactionAmountDai"
             :amount-to-receive="amountToReceive"
             :disabled="
                 !auctionTransaction.isActive || !isWalletAuthorised || !isCollateralAuthorised || !isEnoughDeposited
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
-            @execute="$emit('execute', { id: auctionTransaction.id, transactionBidAmount })"
+            @execute="$emit('execute', { id: auctionTransaction.id, transactionAmountDai })"
         />
     </div>
 </template>
@@ -83,6 +84,10 @@ export default Vue.extend({
             required: true,
         },
         isConnecting: {
+            type: Boolean,
+            default: false,
+        },
+        isDepositingOrWithdrawing: {
             type: Boolean,
             default: false,
         },
@@ -121,7 +126,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            transactionBidAmount: undefined as BigNumber | undefined,
+            transactionAmountDai: undefined as BigNumber | undefined,
             amountToReceive: undefined as BigNumber | undefined,
         };
     },
@@ -133,7 +138,7 @@ export default Vue.extend({
             return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
         },
         isEnoughDeposited(): boolean {
-            return this.walletVatDai?.isGreaterThanOrEqualTo(this.transactionBidAmount);
+            return this.walletVatDai?.isGreaterThanOrEqualTo(this.transactionAmountDai);
         },
     },
     methods: {

@@ -44,6 +44,7 @@
                 v-else
                 type="primary"
                 :disabled="isDisabled"
+                :is-loading="isLoading"
                 class="w-full md:w-80"
                 @click="$emit('manageVat')"
             >
@@ -70,6 +71,10 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        isLoading: {
+            type: Boolean,
+            default: false,
         },
         disabled: {
             type: Boolean,
