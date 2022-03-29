@@ -9,10 +9,9 @@
                 @focus="hideMaxValue"
                 @blur="showMaxValueIfEmpty"
             />
-            <div v-if="!inputValue" class="Overlay MaxValue">
-                <format-currency v-if="maxValue" :value="maxValue" :class="{ 'opacity-50': disabled }" />
+            <div class="Overlay right-2" :class="{ 'opacity-50': disabled }">
+                <format-currency v-if="!inputValue && maxValue" :value="maxValue" />&nbsp;DAI
             </div>
-            <span class="Overlay right-1" :class="{ 'opacity-50': disabled }">DAI</span>
         </Tooltip>
     </div>
 </template>
@@ -119,9 +118,7 @@ export default Vue.extend({
 }
 
 .Input {
-    @apply text-right;
-
-    padding-right: 30px;
+    @apply text-right pr-8;
 }
 
 .Error {
@@ -135,12 +132,8 @@ export default Vue.extend({
 }
 
 .Overlay {
-    @apply absolute pointer-events-none;
+    @apply absolute pointer-events-none h-full flex items-center;
 
-    top: 5.5px;
-}
-
-.MaxValue {
-    right: 30px;
+    top: 0.5px;
 }
 </style>

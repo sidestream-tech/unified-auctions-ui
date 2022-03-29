@@ -37,6 +37,7 @@
                     :want-to-deposit-dai="depositAmount || maxDeposit"
                     :token-address-dai="tokenAddressDai"
                     :network="network"
+                    :is-explanations-shown="isExplanationsShown"
                     @refresh="$emit('refresh')"
                 />
             </div>

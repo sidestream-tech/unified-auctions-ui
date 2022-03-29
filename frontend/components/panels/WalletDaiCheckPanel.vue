@@ -1,7 +1,7 @@
 <template>
     <BasePanel class="WalletDaiCheckPanel">
         <template #[currentStateAndTitle.name]>{{ currentStateAndTitle.title }}</template>
-        <TextBlock>
+        <TextBlock v-if="isExplanationsShown">
             If you do not have DAI funds to deposit yet, there are several ways to obtain them:
             <ul class="list-disc list-inside">
                 <li>
@@ -15,10 +15,10 @@
                     <FormatAddress type="address" :value="tokenAddressDai" shorten />)
                 </li>
             </ul>
-            <div class="flex justify-end my-2">
-                <BaseButton @click="$emit('refresh')">Refresh wallet balance</BaseButton>
-            </div>
         </TextBlock>
+        <div class="flex justify-end my-2">
+            <BaseButton @click="$emit('refresh')">Refresh wallet balance</BaseButton>
+        </div>
     </BasePanel>
 </template>
 
@@ -54,6 +54,10 @@ export default Vue.extend({
         tokenAddressDai: {
             type: String,
             default: undefined,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
     },
     computed: {
