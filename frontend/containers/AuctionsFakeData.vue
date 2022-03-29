@@ -11,9 +11,9 @@
         :wallet-dai="walletDai"
         :wallet-vat-dai="walletVatDai"
         :transaction-address="selectedAuction && selectedAuction.transactionAddress"
-        :transaction-amount-dai="transactionAmountDai"
+        :transaction-bid-amount="transactionBidAmount"
         :is-explanations-shown.sync="isExplanationsShown"
-        @inputBidAmount="setTransactionAmountDai"
+        @inputBidAmount="settransactionBidAmount"
         @connect="connect"
         @disconnect="disconnect"
         @manageVat="deposit"
@@ -48,7 +48,7 @@ export default Vue.extend({
             walletAddress: null as string | null,
             walletDai: new BigNumber(faker.finance.amount()),
             walletVatDai: new BigNumber(faker.finance.amount()),
-            transactionAmountDai: undefined as BigNumber | undefined,
+            transactionBidAmount: undefined as BigNumber | undefined,
         };
     },
     computed: {
@@ -71,7 +71,7 @@ export default Vue.extend({
                     const network = this.$route.query.network;
                     this.$router.push({ query: { network } });
                 }
-                this.transactionAmountDai = this.selectedAuction?.totalPrice;
+                this.transactionBidAmount = this.selectedAuction?.totalPrice;
             },
         },
         '$route.query.auction': {
@@ -85,9 +85,9 @@ export default Vue.extend({
                 }
             },
         },
-        transactionAmountDai(newAmount) {
+        transactionBidAmount(newAmount) {
             if (newAmount === undefined) {
-                this.transactionAmountDai = this.selectedAuction?.totalPrice ?? undefined;
+                this.transactionBidAmount = this.selectedAuction?.totalPrice ?? undefined;
             }
         },
     },
@@ -135,7 +135,7 @@ export default Vue.extend({
                     this.selectedAuction.isFinished = true;
                     this.selectedAuction.endDate = new Date();
                     this.selectedAuction.transactionAddress = faker.finance.ethereumAddress();
-                    this.walletVatDai = this.walletVatDai.minus(this.transactionAmountDai!);
+                    this.walletVatDai = this.walletVatDai.minus(this.transactionBidAmount!);
                 }
                 this.isExecuting = false;
             }, 1000);
@@ -146,11 +146,11 @@ export default Vue.extend({
                 message.success('The auction has been restarted!');
             }
         },
-        setTransactionAmountDai(amount: BigNumber | undefined) {
-            this.transactionAmountDai = amount;
+        settransactionBidAmount(amount: BigNumber | undefined) {
+            this.transactionBidAmount = amount;
         },
         deposit(): void {
-            this.walletVatDai = this.transactionAmountDai!;
+            this.walletVatDai = this.transactionBidAmount!;
         },
     },
 });

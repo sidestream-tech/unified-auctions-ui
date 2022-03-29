@@ -68,7 +68,7 @@
                     :wallet-address="walletAddress"
                     :wallet-dai="walletDai"
                     :wallet-vat-dai="walletVatDai"
-                    :transaction-amount-dai="transactionAmountDai"
+                    :transaction-bid-amount="transactionBidAmount"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
                     @manageVat="$emit('manageVat')"
@@ -154,7 +154,7 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        transactionAmountDai: {
+        transactionBidAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },

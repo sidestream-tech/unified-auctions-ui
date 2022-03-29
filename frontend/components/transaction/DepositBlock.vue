@@ -26,7 +26,7 @@
             <div class="flex justify-between">
                 <span>Minimum to deposit</span>
                 <format-currency
-                    v-if="minimumDepositDai && !transactionAmountDai.isNaN()"
+                    v-if="minimumDepositDai && !transactionBidAmount.isNaN()"
                     :value="minimumDepositDai"
                     currency="DAI"
                 />
@@ -83,17 +83,17 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        transactionAmountDai: {
+        transactionBidAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
     },
     computed: {
         minimumDepositDai(): BigNumber | undefined {
-            if (!this.transactionAmountDai || !this.walletVatDai) {
+            if (!this.transactionBidAmount || !this.walletVatDai) {
                 return undefined;
             }
-            return BigNumber.maximum(0, this.transactionAmountDai.minus(this.walletVatDai));
+            return BigNumber.maximum(0, this.transactionBidAmount.minus(this.walletVatDai));
         },
         isDisabled(): Boolean {
             return this.disabled || (!this.walletVatDai && !this.walletDai);

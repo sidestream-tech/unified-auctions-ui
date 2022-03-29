@@ -22,7 +22,7 @@ const data = {
     walletDai: new BigNumber(faker.finance.amount()),
     walletVatDai: new BigNumber(faker.finance.amount()),
     transactionAddress: null,
-    transactionAmountDai: fakeAuctionTransaction.totalPrice,
+    transactionBidAmount: fakeAuctionTransaction.totalPrice,
 };
 
 const common = {
@@ -69,12 +69,12 @@ const common = {
                 this.auctionTransaction.isFinished = true;
                 this.auctionTransaction.endDate = new Date();
                 this.auctionTransaction.transactionAddress = faker.finance.ethereumAddress();
-                this.walletVatDai = this.walletVatDai.minus(this.transactionAmountDai);
+                this.walletVatDai = this.walletVatDai.minus(this.transactionBidAmount);
                 this.isExecuting = false;
             }, 1000);
         },
         deposit() {
-            this.walletVatDai = this.transactionAmountDai;
+            this.walletVatDai = this.transactionBidAmount;
         },
     },
     template: `
@@ -111,7 +111,7 @@ storiesOf('Transaction/BidTransaction', module)
                     isActive: false,
                     isFinished: false,
                 },
-                transactionAmountDai: undefined,
+                transactionBidAmount: undefined,
             };
         },
     }))
@@ -126,7 +126,7 @@ storiesOf('Transaction/BidTransaction', module)
                     isActive: true,
                     transactionAddress: faker.finance.ethereumAddress(),
                 },
-                transactionAmountDai: undefined,
+                transactionBidAmount: undefined,
             };
         },
     }));
