@@ -32,6 +32,7 @@
 
             <div v-if="selectedMethod === 'deposit'">
                 <WalletDaiCheckPanel
+                    :is-correct.sync="isWalletDaiCheckPassed"
                     :wallet-dai="maxDeposit"
                     :want-to-deposit-dai="depositAmount || maxDeposit"
                     :token-address-dai="tokenAddressDai"
@@ -111,10 +112,11 @@ export default Vue.extend({
             selectedMethod: 'deposit',
             depositAmount: undefined,
             withDrawAmount: undefined,
+            isWalletDaiCheckPassed: false,
         };
     },
     computed: {
-        canDeposit() {
+        canDeposit(): boolean {
             return (
                 !this.isLoading &&
                 !this.isSubmitting &&
@@ -123,7 +125,7 @@ export default Vue.extend({
                 !this.maxDeposit.isZero()
             );
         },
-        canWithdraw() {
+        canWithdraw(): boolean {
             return (
                 !this.isLoading &&
                 !this.isSubmitting &&
@@ -135,6 +137,9 @@ export default Vue.extend({
         canSubmit(): boolean {
             if (this.selectedMethod === 'deposit') {
                 if (!this.canDeposit) {
+                    return false;
+                }
+                if (!this.isWalletDaiCheckPassed) {
                     return false;
                 }
                 if (this.depositAmount === undefined) {
