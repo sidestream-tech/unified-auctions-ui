@@ -1,20 +1,9 @@
 <template>
-    <BasePanel :current-state="currentStateAndTitle.name" class="WalletDaiDepositCheckPanel">
+    <BasePanel :current-state="currentStateAndTitle.name" class="WalletVatDaiWithdrawCheckPanel">
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
-            If you do not have DAI funds to deposit yet, there are several ways to obtain them:
-            <ul class="list-disc list-inside">
-                <li>
-                    By borrowing DAI against a collateral in the
-                    <a href="https://oasis.app/" target="_blank">oasis.app</a>
-                </li>
-                <li>
-                    By purchasing it on a decentralized exchange like
-                    <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct DAI token address used on
-                    the “{{ networkTitle }}” network is
-                    <FormatAddress type="address" :value="tokenAddressDai" shorten />)
-                </li>
-            </ul>
+            The amount of <FormatCurrency :value="desiredAmount" currency="DAI" /> is not present in the VAT and needs
+            to be deposited there before it can be withdrawn.
         </TextBlock>
         <div class="flex justify-end mt-2">
             <BaseButton :disabled="disabled" :is-loading="isLoading" @click="$emit('refresh')"
@@ -27,34 +16,25 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 import BaseButton from '~/components/common/BaseButton.vue';
 import BasePanel from '~/components/common/BasePanel.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
+import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 export default Vue.extend({
     components: {
         BaseButton,
         BasePanel,
         TextBlock,
-        FormatAddress,
+        FormatCurrency,
     },
     props: {
-        walletDai: {
+        walletVatDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
         desiredAmount: {
             type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        network: {
-            type: String,
-            default: undefined,
-        },
-        tokenAddressDai: {
-            type: String,
             default: undefined,
         },
         disabled: {
@@ -72,7 +52,7 @@ export default Vue.extend({
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (!this.walletDai) {
+            if (!this.walletVatDai) {
                 return {
                     name: 'inactive',
                     title: 'Please connect a wallet',
@@ -90,24 +70,17 @@ export default Vue.extend({
                     title: 'The amount can not be negative',
                 };
             }
-            const isTooSmall = this.desiredAmount.isGreaterThan(this.walletDai);
+            const isTooSmall = this.desiredAmount.isGreaterThan(this.walletVatDai);
             if (isTooSmall) {
                 return {
                     name: 'incorrect',
-                    title: 'The sufficient amount of DAI is not present in the connected wallet',
+                    title: 'The sufficient amount is not present in the VAT',
                 };
             }
             return {
                 name: 'correct',
-                title: 'The sufficient amount of DAI is present in the connected wallet',
+                title: 'The sufficient amount is present in the VAT',
             };
-        },
-        networkTitle(): string {
-            try {
-                return getNetworkConfigByType(this.network).title;
-            } catch {
-                return this.network;
-            }
         },
     },
     watch: {

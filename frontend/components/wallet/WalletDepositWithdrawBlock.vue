@@ -22,14 +22,6 @@
                 :min-value="minimumDaiAmount"
                 :disabled="!canDeposit || isAllowanceAmountLoading"
             />
-            <BaseValueInput
-                v-show="selectedMethod === 'withdraw'"
-                :input-value.sync="withdrawAmount"
-                :max-value="maxWithdraw"
-                :min-value="minimumDaiAmount"
-                :disabled="!canWithdraw || isAllowanceAmountLoading"
-            />
-
             <div v-if="selectedMethod === 'deposit'">
                 <WalletDaiDepositCheckPanel
                     :is-correct.sync="isWalletDaiCheckPassed"
@@ -53,6 +45,25 @@
                 />
             </div>
 
+            <BaseValueInput
+                v-show="selectedMethod === 'withdraw'"
+                :input-value.sync="withdrawAmount"
+                :max-value="maxWithdraw"
+                :min-value="minimumDaiAmount"
+                :disabled="!canWithdraw || isAllowanceAmountLoading"
+            />
+            <div v-if="selectedMethod === 'withdraw'">
+                <WalletVatDaiWithdrawCheckPanel
+                    :is-correct.sync="isWalletDaiCheckPassed"
+                    :wallet-vat-dai="maxWithdraw"
+                    :desired-amount="withdrawAmount || maxWithdraw"
+                    :is-loading="isLoading"
+                    :is-explanations-shown="isExplanationsShown"
+                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading"
+                    @refresh="$emit('refresh')"
+                />
+            </div>
+
             <BaseButton type="primary" :is-loading="isSubmitting" :disabled="!canSubmit" html-type="submit">
                 <span class="capitalize">{{ selectedMethod }}{{ isSubmitting ? 'ing...' : '' }}</span>
             </BaseButton>
@@ -70,6 +81,7 @@ import BaseButton from '~/components/common/BaseButton.vue';
 import BaseValueInput from '~/components/common/BaseValueInput.vue';
 import WalletDaiDepositCheckPanel from '~/components/panels/WalletDaiDepositCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
+import WalletVatDaiWithdrawCheckPanel from '~/components/panels/WalletVatDaiWithdrawCheckPanel.vue';
 
 export default Vue.extend({
     name: 'WalletDepositWithdrawBlock',
@@ -81,6 +93,7 @@ export default Vue.extend({
         RadioButton: Radio.Button,
         WalletDaiDepositCheckPanel,
         AllowanceAmountCheckPanel,
+        WalletVatDaiWithdrawCheckPanel,
     },
     props: {
         network: {

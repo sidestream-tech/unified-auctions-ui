@@ -109,7 +109,7 @@ export default Vue.extend({
                     title: 'Please connect a wallet',
                 };
             }
-            if (!this.desiredAmount) {
+            if (!this.desiredAmount || this.desiredAmount?.isNaN()) {
                 return {
                     name: 'inactive',
                     title: 'Please enter the desired value first',
