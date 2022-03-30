@@ -56,18 +56,19 @@ export const calculateTransactionGrossProfit = function (auction: Auction): BigN
 
 export const calculateTransactionCollateralOutcome = function (
     bidAmountDai: BigNumber,
+    unitPrice: BigNumber,
     auction: AuctionTransaction
 ): BigNumber {
     // Based on the clipper contract logic
     // https://github.com/makerdao/dss/blob/60690042965500992490f695cf259256cc94c140/src/clip.sol#L357-L380
-    const collateralToBuyForTheBid = bidAmountDai.dividedBy(auction.approximateUnitPrice);
+    const collateralToBuyForTheBid = bidAmountDai.dividedBy(unitPrice);
     const potentialOutcomeCollateralAmount = BigNumber.minimum(collateralToBuyForTheBid, auction.collateralAmount); // slice
-    const potentialOutcomeTotalPrice = potentialOutcomeCollateralAmount.multipliedBy(auction.approximateUnitPrice); // owe
+    const potentialOutcomeTotalPrice = potentialOutcomeCollateralAmount.multipliedBy(unitPrice); // owe
     if (
         // if owe > tab
         potentialOutcomeTotalPrice.isGreaterThan(auction.debtDAI)
     ) {
-        return auction.debtDAI.dividedBy(auction.approximateUnitPrice); // return tab / price
+        return auction.debtDAI.dividedBy(unitPrice); // return tab / price
     } else if (
         // if owe < tab && slice < lot
         potentialOutcomeTotalPrice.isLessThan(auction.debtDAI) &&
@@ -85,7 +86,7 @@ export const calculateTransactionCollateralOutcome = function (
                 return new BigNumber(NaN);
             }
             // tab - _chost / price
-            return auction.debtDAI.minus(auction.minimumBidDai).dividedBy(auction.approximateUnitPrice);
+            return auction.debtDAI.minus(auction.minimumBidDai).dividedBy(unitPrice);
         }
     }
     return potentialOutcomeCollateralAmount;

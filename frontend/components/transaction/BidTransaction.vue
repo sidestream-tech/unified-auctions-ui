@@ -58,6 +58,7 @@
 </template>
 
 <script lang="ts">
+import type { AuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
@@ -145,7 +146,11 @@ export default Vue.extend({
             return output;
         },
         amountToReceive(): BigNumber {
-            return calculateTransactionCollateralOutcome(this.transactionBidAmount, this.auctionTransaction);
+            return calculateTransactionCollateralOutcome(
+                this.transactionBidAmount,
+                this.auctionTransaction.approximateUnitPrice,
+                this.auctionTransaction
+            );
         },
     },
 });

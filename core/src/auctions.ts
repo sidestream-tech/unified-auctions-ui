@@ -11,6 +11,7 @@ import {
     calculateAuctionPrice,
     calculateTransactionGrossProfit,
     calculateTransactionGrossProfitDate,
+    calculateTransactionCollateralOutcome,
 } from './price';
 import { getSupportedCollateralTypes } from './addresses';
 import getContract, { getClipperNameByCollateralType } from './contracts';
@@ -181,14 +182,14 @@ export const restartAuction = async function (
 
 export const bidWithDai = async function (
     network: string,
-    auction: Auction,
+    auction: AuctionTransaction,
     bidAmountDai: BigNumber,
     profitAddress: string,
     notifier?: Notifier
 ): Promise<string> {
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const updatedAuction = await enrichAuctionWithActualNumbers(network, auction);
-    const collateralAmount = bidAmountDai.dividedBy(updatedAuction.unitPrice);
+    const collateralAmount = calculateTransactionCollateralOutcome(bidAmountDai, updatedAuction.unitPrice, auction);
     const contractParameters = [
         convertNumberTo32Bytes(auction.index),
         collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
