@@ -37,7 +37,7 @@
             :disabled="!isEnoughDeposited || !auctionTransaction.isActive || !isConnected"
             :auction-transaction="auctionTransaction"
             :is-loading="isAuthorizing"
-            :is-wallet-authorised="isWalletAuthorised"
+            :is-wallet-authorized="isWalletAuthorized"
             :is-collateral-authorised="isCollateralAuthorised"
             :is-explanations-shown="isExplanationsShown"
             @authorizeWallet="$emit('authorizeWallet')"
@@ -48,11 +48,7 @@
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
             :disabled="
-                !auctionTransaction.isActive ||
-                auctionTransaction.isFinished ||
-                !isWalletAuthorised ||
-                !isCollateralAuthorised ||
-                !isEnoughDeposited
+                !auctionTransaction.isActive || !isWalletAuthorized || !isCollateralAuthorised || !isEnoughDeposited
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
@@ -103,7 +99,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isWalletAuthorised: {
+        isWalletAuthorized: {
             type: Boolean,
             default: false,
         },

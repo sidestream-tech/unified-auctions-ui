@@ -7,18 +7,20 @@
         :wallet-address="walletAddress"
         :wallet-balances="walletBalances"
         :allowance-amount="allowanceAmount"
-        :is-withdrawing-allowed="isWalletAuthorizationDone"
         :is-submitting="isDepositingOrWithdrawing"
         :is-wallet-loading="isFetchingBalances"
         :is-loading="isFetchingBalances"
         :is-allowance-amount-loading="isAllowanceAmountLoading"
         :token-address-dai="tokenAddressDai"
+        :is-wallet-authorized="isWalletAuthorized"
+        :is-authorization-loading="isAuthorizationLoading"
         @cancel="setWalletModal(false)"
         @refresh="fetchRelatedData()"
         @connectWallet="openSelectWalletModal()"
         @deposit="depositToVAT"
         @withdraw="withdrawFromVAT"
-        @grantAccess="grantAccess"
+        @setAllowanceAmount="setAllowanceAmount"
+        @authorizeWallet="authorizeWallet"
     />
 </template>
 
@@ -47,7 +49,8 @@ export default Vue.extend({
             isWalletModalShown: 'getWalletModal',
         }),
         ...mapGetters('authorizations', {
-            isWalletAuthorizationDone: 'isWalletAuthorizationDone',
+            isWalletAuthorized: 'isWalletAuthorizationDone',
+            isAuthorizationLoading: 'isAuthorizationLoading',
             allowanceAmount: 'allowanceAmount',
             isAllowanceAmountLoading: 'isAllowanceAmountLoading',
         }),
@@ -85,10 +88,8 @@ export default Vue.extend({
         },
     },
     methods: {
-        ...mapActions('wallet', {
-            depositToVAT: 'depositToVAT',
-            withdrawFromVAT: 'withdrawFromVAT',
-        }),
+        ...mapActions('wallet', ['depositToVAT', 'withdrawFromVAT']),
+        ...mapActions('authorizations', ['setAllowanceAmount', 'authorizeWallet']),
         openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);
@@ -98,9 +99,6 @@ export default Vue.extend({
         },
         setWalletModal(open: boolean): void {
             this.$store.commit('modals/setWalletModal', open);
-        },
-        grantAccess(): void {
-            this.$store.dispatch('authorizations/setAllowanceAmount');
         },
         fetchRelatedData(): void {
             this.$store.dispatch('wallet/fetchWalletBalances');

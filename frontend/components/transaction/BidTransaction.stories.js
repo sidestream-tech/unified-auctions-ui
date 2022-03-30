@@ -17,7 +17,8 @@ const data = {
     isDepositingOrWithdrawing: false,
     isAuthorizing: false,
     isExecuting: false,
-    isWalletAuthorised: false,
+    isWalletAuthorized: false,
+    isDeposited: false,
     authorisedCollaterals: [],
     walletAddress: null,
     walletDai: new BigNumber(faker.finance.amount()),
@@ -43,7 +44,7 @@ const common = {
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = null;
-                this.isWalletAuthorised = false;
+                this.isWalletAuthorized = false;
                 this.authorisedCollaterals = [];
                 this.transactionAddress = null;
                 this.isConnecting = false;
@@ -52,7 +53,7 @@ const common = {
         authorizeWallet() {
             this.isAuthorizing = true;
             setTimeout(() => {
-                this.isWalletAuthorised = true;
+                this.isWalletAuthorized = true;
                 this.isAuthorizing = false;
             }, 1000);
         },
@@ -89,7 +90,7 @@ const common = {
         :isDepositingOrWithdrawing="isDepositingOrWithdrawing"
         :isAuthorizing="isAuthorizing"
         :isExecuting="isExecuting"
-        :isWalletAuthorised="isWalletAuthorised"
+        :isWalletAuthorized="isWalletAuthorized"
         :authorisedCollaterals="authorisedCollaterals"
         :walletAddress="walletAddress"
         :walletDai="walletDai"

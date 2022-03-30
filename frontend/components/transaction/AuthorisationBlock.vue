@@ -133,7 +133,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isWalletAuthorised: {
+        isWalletAuthorized: {
             type: Boolean,
             default: false,
         },
@@ -152,7 +152,7 @@ export default Vue.extend({
     },
     computed: {
         walletAuthorizationState(): string {
-            if (this.isWalletAuthorised) {
+            if (this.isWalletAuthorized) {
                 return 'authorized';
             }
             if (this.isLoading) {
@@ -164,7 +164,7 @@ export default Vue.extend({
             return 'notAuthorized';
         },
         collateralAuthorizationState(): string {
-            if (!this.isWalletAuthorised) {
+            if (!this.isWalletAuthorized) {
                 return 'disabled';
             }
             if (this.isCollateralAuthorised) {

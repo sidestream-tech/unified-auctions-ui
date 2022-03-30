@@ -14,9 +14,8 @@
                 </a>
                 due to changing busyness of the Ethereum network. However, you can look up the current average gas
                 price
-                <a href="https://ethgasstation.info/" target="_blank"> here </a>
-            </Explain>
-            . The amount can be edited by the participant to influence the speed of the transaction.
+                <a href="https://ethgasstation.info/" target="_blank"> here </a> </Explain
+            >. The amount can be edited by the participant to influence the speed of the transaction.
             <div v-if="showDifferentWalletInfo">
                 <br />
                 By default, the profit from a successful bidding will be sent to the same wallet which executed the

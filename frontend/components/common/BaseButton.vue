@@ -1,8 +1,8 @@
 <template>
     <Button
         :disabled="disabled || isLoading"
-        :class="buttonStyles"
-        class="overflow-hidden"
+        :class="buttonClass"
+        class="Button"
         :type="type"
         :html-type="htmlType"
         @click="$emit('click')"
@@ -43,35 +43,43 @@ export default Vue.extend({
         },
     },
     computed: {
-        buttonStyles() {
+        buttonClass() {
             if (this.type === 'primary') {
-                return 'Button-Primary';
+                return 'Primary';
             }
             if (this.type === 'link') {
-                return 'Button-Link';
+                return 'Link';
             }
-            return '';
+            return 'Default';
         },
     },
 });
 </script>
 
-<style>
-.Button-Primary,
-.dark .Button-Primary {
+<style scoped>
+.Button {
+    @apply overflow-hidden;
+}
+
+.Button.Default:enabled {
+    @apply border-primary text-primary hover:text-white hover:bg-primary-light hover:border-primary-light;
+}
+
+.Primary:enabled,
+.dark .Primary:enabled {
     @apply text-white bg-primary border-primary focus:bg-primary-light focus:border-primary-light hover:bg-primary-light hover:border-primary-light;
 }
 
-.Button-Link,
-.dark .Button-Link {
-    @apply inline-flex items-center p-0 h-auto;
+.Link,
+.dark .Link {
+    @apply inline-flex items-center p-0 h-auto leading-4;
 }
 
-.Button-Link span {
+.Link span {
     @apply text-primary underline overflow-auto transition-colors;
 }
 
-.Button-Link:hover span {
+.Link:hover span {
     @apply text-primary-light no-underline;
 }
 </style>
