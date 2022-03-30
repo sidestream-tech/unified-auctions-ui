@@ -38,6 +38,9 @@ export default Vue.extend({
     },
     methods: {
         validator(currentValue: BigNumber, minValue: BigNumber, maxValue: BigNumber) {
+            if (!currentValue || !minValue || !maxValue) {
+                return;
+            }
             const bidTopLimit = maxValue?.minus(minValue);
             if (currentValue?.isGreaterThan(bidTopLimit) || currentValue?.isLessThan(minValue)) {
                 throw new Error(`The value can only be between ${minValue.toFixed(2)} and ${bidTopLimit.toFixed(2)}`);

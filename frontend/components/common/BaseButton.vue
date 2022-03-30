@@ -65,8 +65,8 @@ export default Vue.extend({
     @apply border-primary text-primary hover:text-white hover:bg-primary-light hover:border-primary-light;
 }
 
-.Primary,
-.dark .Primary {
+.Primary:enabled,
+.dark .Primary:enabled {
     @apply text-white bg-primary border-primary focus:bg-primary-light focus:border-primary-light hover:bg-primary-light hover:border-primary-light;
 }
 
