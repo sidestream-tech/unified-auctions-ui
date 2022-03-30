@@ -175,7 +175,7 @@ export default Vue.extend({
         transactionBidAmount: {
             immediate: true,
             handler(transactionBidAmount) {
-                this.$emit('inputBidAmount', transactionBidAmount ?? this.auctionTransaction.totalPrice);
+                this.$emit('inputBidAmount', transactionBidAmount);
             },
         },
         amountToReceive: {

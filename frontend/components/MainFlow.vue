@@ -69,7 +69,6 @@
                     :wallet-address="walletAddress"
                     :wallet-dai="walletDai"
                     :wallet-vat-dai="walletVatDai"
-                    :transaction-bid-amount="transactionAmountDai"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
                     @manageVat="$emit('manageVat')"
@@ -158,10 +157,6 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
-        },
-        transactionAmountDai: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
         },
     },
     data: () => ({

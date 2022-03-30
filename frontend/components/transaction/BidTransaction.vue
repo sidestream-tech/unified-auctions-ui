@@ -10,8 +10,8 @@
         <BidTransactionTable
             class="mt-4 mb-6"
             :auction-transaction="auctionTransaction"
-            @inputBidAmount="transactionBidAmount = $event"
-            @amountToReceive="setAmountToReceive"
+            @inputBidAmount="inputBidAmount = $event"
+            @amountToReceive="amountToReceive = $event"
         />
         <WalletBlock
             class="mb-6 lg:mb-0"
@@ -126,7 +126,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            transactionBidAmount: undefined as BigNumber | undefined,
+            inputBidAmount: undefined as BigNumber | undefined,
             amountToReceive: undefined as BigNumber | undefined,
         };
     },
@@ -140,10 +140,9 @@ export default Vue.extend({
         isEnoughDeposited(): boolean {
             return this.walletVatDai?.isGreaterThanOrEqualTo(this.transactionBidAmount);
         },
-    },
-    methods: {
-        setAmountToReceive(amount: BigNumber | undefined) {
-            this.amountToReceive = amount;
+        transactionBidAmount(): BigNumber {
+            const output = this.inputBidAmount || this.auctionTransaction?.totalPrice || new BigNumber(NaN);
+            return output;
         },
     },
 });
