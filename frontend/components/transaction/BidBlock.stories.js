@@ -11,7 +11,7 @@ const common = {
     data() {
         return {
             auction: fakeAuction,
-            transactionAmountDAI: new BigNumber(faker.finance.amount()),
+            transactionBidAmount: new BigNumber(faker.finance.amount()),
         };
     },
 };
@@ -19,20 +19,20 @@ const common = {
 storiesOf('Transaction/BidBlock', module)
     .add('Default', () => ({
         ...common,
-        template: '<BidBlock :auctionTransaction="auction" :transactionAmountDAI="transactionAmountDAI" />',
+        template: '<BidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" />',
     }))
     .add('Disabled', () => ({
         ...common,
-        template: '<BidBlock :auctionTransaction="auction" :transactionAmountDAI="transactionAmountDAI" disabled />',
+        template: '<BidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" disabled />',
     }))
     .add('Loading', () => ({
         ...common,
-        template: '<BidBlock :auctionTransaction="auction" :transactionAmountDAI="transactionAmountDAI" is-loading />',
+        template: '<BidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" is-loading />',
     }))
     .add('Expert Mode', () => ({
         ...common,
         template:
-            '<BidBlock :auctionTransaction="auction" :transactionAmountDAI="transactionAmountDAI" :is-explanations-shown="false" />',
+            '<BidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" :is-explanations-shown="false" />',
     }))
     .add('Finished', () => ({
         ...common,
@@ -44,5 +44,5 @@ storiesOf('Transaction/BidBlock', module)
                 };
             },
         },
-        template: '<BidBlock :auctionTransaction="finishedAuction" :transactionAmountDAI="transactionAmountDAI" />',
+        template: '<BidBlock :auctionTransaction="finishedAuction" :transactionBidAmount="transactionBidAmount" />',
     }));

@@ -1,11 +1,11 @@
 <template>
     <BaseValueInput
-        :input-value="amountToBid"
+        :input-value="transactionBidAmount"
         :max-value="totalPrice"
         :min-value="minimumDepositDai"
         :disabled="!canWithdraw"
         :validator="validator"
-        @update:inputValue="$emit('update:amountToBid', $event)"
+        @update:inputValue="$emit('update:transactionBidAmount', $event)"
     />
 </template>
 
@@ -23,11 +23,11 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        minimumDepositDai: {
+        minimumBidDai: {
             type: Object as Vue.PropType<BigNumber>,
             required: true,
         },
-        amountToBid: {
+        transactionBidAmount: {
             type: Object as Vue.PropType<BigNumber> | undefined,
             default: undefined,
         },

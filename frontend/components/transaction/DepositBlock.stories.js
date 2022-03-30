@@ -3,14 +3,14 @@ import faker from 'faker';
 import BigNumber from 'bignumber.js';
 import DepositBlock from './DepositBlock';
 
-const transactionAmountDai = new BigNumber(faker.finance.amount());
+const transactionBidAmount = new BigNumber(faker.finance.amount());
 
 const common = {
     components: { DepositBlock },
     data() {
         return {
-            transactionAmountDai,
-            walletVatDai: new BigNumber(faker.finance.amount(0, transactionAmountDai.toNumber())),
+            transactionBidAmount,
+            walletVatDai: new BigNumber(faker.finance.amount(0, transactionBidAmount.toNumber())),
             walletDai: new BigNumber(faker.finance.amount()),
         };
     },
@@ -23,7 +23,7 @@ storiesOf('Transaction/DepositBlock', module)
     <DepositBlock 
         :walletDai="walletDai"
         :walletVatDai="walletVatDai"
-        :transactionAmountDai="transactionAmountDai"
+        :transactionBidAmount="transactionBidAmount"
     />`,
     }))
     .add('Disabled', () => ({
@@ -32,7 +32,7 @@ storiesOf('Transaction/DepositBlock', module)
     <DepositBlock 
         :walletDai="walletDai"
         :walletVatDai="walletVatDai"
-        :transactionAmountDai="transactionAmountDai"
+        :transactionBidAmount="transactionBidAmount"
         disabled
     />`,
     }))
@@ -40,7 +40,7 @@ storiesOf('Transaction/DepositBlock', module)
         ...common,
         template: `
         <DepositBlock
-            :transactionAmountDai="transactionAmountDai"
+            :transactionBidAmount="transactionBidAmount"
             disabled
         />`,
     }))
@@ -50,7 +50,7 @@ storiesOf('Transaction/DepositBlock', module)
         <DepositBlock 
             :walletDai="walletDai"
             :walletVatDai="walletVatDai"
-            :transactionAmountDai="transactionAmountDai"
+            :transactionBidAmount="transactionBidAmount"
             is-loading
         />`,
     }))
@@ -60,7 +60,7 @@ storiesOf('Transaction/DepositBlock', module)
         <DepositBlock 
             :walletDai="walletDai"
             :walletVatDai="walletVatDai"
-            :transactionAmountDai="transactionAmountDai"
+            :transactionBidAmount="transactionBidAmount"
             :is-explanations-shown="false"
         />`,
     }))
@@ -68,7 +68,7 @@ storiesOf('Transaction/DepositBlock', module)
         ...common,
         template: `
         <DepositBlock 
-            :transactionAmountDai="transactionAmountDai"
+            :transactionBidAmount="transactionBidAmount"
         />`,
     }))
     .add('Minimum to deposit is 0', () => ({
@@ -77,14 +77,14 @@ storiesOf('Transaction/DepositBlock', module)
             return {
                 walletDai: new BigNumber(faker.finance.amount()),
                 walletVatDai: new BigNumber(100),
-                transactionAmountDai: new BigNumber(100),
+                transactionBidAmount: new BigNumber(100),
             };
         },
         template: `
         <DepositBlock 
             :walletDai="walletDai"
             :walletVatDai="walletVatDai"
-            :transactionAmountDai="transactionAmountDai"
+            :transactionBidAmount="transactionBidAmount"
         />`,
     }))
     .add('Not enough DAI in wallet', () => ({
@@ -93,13 +93,13 @@ storiesOf('Transaction/DepositBlock', module)
             return {
                 walletDai: new BigNumber(faker.finance.amount(0, 50)),
                 walletVatDai: new BigNumber(faker.finance.amount(0, 20)),
-                transactionAmountDai: new BigNumber(faker.finance.amount(50, 100)),
+                transactionBidAmount: new BigNumber(faker.finance.amount(50, 100)),
             };
         },
         template: `
         <DepositBlock 
             :walletDai="walletDai"
             :walletVatDai="walletVatDai"
-            :transactionAmountDai="transactionAmountDai"
+            :transactionBidAmount="transactionBidAmount"
         />`,
     }));

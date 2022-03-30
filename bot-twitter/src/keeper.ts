@@ -1,6 +1,6 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
-import { bidOnTheAuction, enrichAuction } from 'auctions-core/src/auctions';
+import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
 import {
     authorizeCollateral,
     authorizeWallet,
@@ -127,7 +127,7 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
 
     // bid on the Auction
     console.info(`keeper: auction "${auctionTransaction.id}": attempting swap execution`);
-    const bidHash = await bidOnTheAuction(ETHEREUM_NETWORK, auctionTransaction, walletAddress);
+    const bidHash = await bidWithCallee(ETHEREUM_NETWORK, auctionTransaction, walletAddress);
     console.info(`keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`);
 };
 
