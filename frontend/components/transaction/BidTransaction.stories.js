@@ -18,7 +18,6 @@ const data = {
     isAuthorizing: false,
     isExecuting: false,
     isWalletAuthorized: false,
-    isDaiAccessGranted: false,
     isDeposited: false,
     authorisedCollaterals: [],
     walletAddress: null,
@@ -92,7 +91,6 @@ const common = {
         :isAuthorizing="isAuthorizing"
         :isExecuting="isExecuting"
         :isWalletAuthorized="isWalletAuthorized"
-        :isDaiAccessGranted="isDaiAccessGranted"
         :authorisedCollaterals="authorisedCollaterals"
         :walletAddress="walletAddress"
         :walletDai="walletDai"

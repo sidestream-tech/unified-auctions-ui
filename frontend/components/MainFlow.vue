@@ -64,7 +64,6 @@
                     :is-depositing-or-withdrawing="isDepositingOrWithdrawing"
                     :is-executing="isExecuting"
                     :is-wallet-authorized="isWalletAuthorized"
-                    :is-dai-access-granted="isDaiAccessGranted"
                     :is-explanations-shown="isExplanationsShown"
                     :authorised-collaterals="authorisedCollaterals"
                     :wallet-address="walletAddress"

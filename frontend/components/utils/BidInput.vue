@@ -2,8 +2,8 @@
     <BaseValueInput
         :input-value="transactionBidAmount"
         :max-value="totalPrice"
-        :min-value="minimumDepositDai"
-        :disabled="!canWithdraw"
+        :min-value="minimumBidDai"
+        :disabled="!disabled"
         :validator="validator"
         @update:inputValue="$emit('update:transactionBidAmount', $event)"
     />

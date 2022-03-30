@@ -6,7 +6,6 @@
         :is-depositing-or-withdrawing="isDepositingOrWithdrawing"
         :is-authorizing="isAuthorizing"
         :is-wallet-authorized="isWalletAuthorized"
-        :is-dai-access-granted="isDaiAccessGranted"
         :authorised-collaterals="authorisedCollaterals"
         :is-executing="isExecuting"
         :wallet-address="walletAddress"
@@ -48,7 +47,6 @@ export default Vue.extend({
             isAuthorizing: false,
             isExecuting: false,
             isWalletAuthorized: false,
-            isDaiAccessGranted: false,
             isDeposited: false,
             authorisedCollaterals: [] as string[],
             walletAddress: null as string | null,

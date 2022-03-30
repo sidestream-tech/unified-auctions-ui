@@ -47,7 +47,9 @@
             :auction-transaction="auctionTransaction"
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
-            :disabled="!auctionTransaction.isActive || !isWalletAuthorized || !isCollateralAuthorised"
+            :disabled="
+                !auctionTransaction.isActive || !isWalletAuthorized || !isCollateralAuthorised || !isEnoughDeposited
+            "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
             @bidWithDai="$emit('bidWithDai', { id: auctionTransaction.id, bidAmountDai: transactionBidAmount })"
