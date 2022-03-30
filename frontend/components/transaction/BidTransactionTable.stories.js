@@ -1,4 +1,5 @@
 import { storiesOf } from '@storybook/vue';
+import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
 import BidTransactionTable from './BidTransactionTable';
@@ -7,6 +8,11 @@ import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 const fakeAuction = generateFakeAuctionTransaction();
 
 const common = {
+    template: `<BidTransactionTable
+        :auctionTransaction="auctionTransaction"
+        :amountToReceive="amountToReceive"
+        @inputBidAmount="inputBidAmount"
+    />`,
     components: { BidTransactionTable },
     data() {
         return {
@@ -15,14 +21,17 @@ const common = {
                 isFinished: false,
                 isActive: true,
             },
+            amountToReceive: new BigNumber(NaN),
         };
+    },
+    methods: {
+        inputBidAmount: action('inputBidAmount'),
     },
 };
 
 storiesOf('Transaction/BidTransactionTable', module)
     .add('Default', () => ({
         ...common,
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Finished', () => ({
         ...common,
@@ -33,9 +42,9 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isFinished: true,
                     totalPrice: null,
                 },
+                amountToReceive: new BigNumber(NaN),
             };
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Inactive', () => ({
         ...common,
@@ -47,9 +56,9 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isFinished: false,
                     totalPrice: null,
                 },
+                amountToReceive: new BigNumber(NaN),
             };
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Total < Minimum x 2', () => ({
         ...common,
@@ -62,9 +71,9 @@ storiesOf('Transaction/BidTransactionTable', module)
                     totalPrice: new BigNumber(faker.finance.amount(60, 99)),
                     minimumBidDai: new BigNumber(faker.finance.amount(50, 60)),
                 },
+                amountToReceive: new BigNumber(NaN),
             };
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Decreasing Price', () => ({
         ...common,
@@ -75,6 +84,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isActive: true,
                     isFinished: false,
                 },
+                amountToReceive: new BigNumber(NaN),
             };
         },
         created() {
@@ -82,7 +92,6 @@ storiesOf('Transaction/BidTransactionTable', module)
                 this.auctionTransaction.totalPrice = this.auctionTransaction.totalPrice.multipliedBy(0.99);
             }, 5000);
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Decreasing Into Disabled Input', () => ({
         ...common,
@@ -95,6 +104,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                     totalPrice: new BigNumber(faker.finance.amount(50, 51)),
                     minimumBidDai: new BigNumber(faker.finance.amount(25, 25)),
                 },
+                amountToReceive: new BigNumber(NaN),
             };
         },
         created() {
@@ -102,5 +112,4 @@ storiesOf('Transaction/BidTransactionTable', module)
                 this.auctionTransaction.totalPrice = this.auctionTransaction.totalPrice.multipliedBy(0.99);
             }, 5000);
         },
-        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }));
