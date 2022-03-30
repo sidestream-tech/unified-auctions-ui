@@ -3,14 +3,14 @@
         <Tooltip :visible="!!error" placement="topLeft" :title="error">
             <Tooltip placement="topLeft" :title="isTooSmallToPartiallyTakeTooltipContent">
                 <Input
-                    v-model="amountToBidInput"
+                    v-model="transactionBidAmountInput"
                     :disabled="isDisabled"
                     class="Input"
                     :class="{ Error: error }"
                     @focus="hideTotalPrice()"
                     @blur="showTotalPriceIfEmpty()"
                 />
-                <div v-if="!amountToBid" class="Overlay TotalPrice">
+                <div v-if="!transactionBidAmount" class="Overlay TotalPrice">
                     <format-currency v-if="totalPrice" :value="totalPrice" :class="{ 'opacity-50': isDisabled }" />
                 </div>
                 <span class="Overlay right-1" :class="{ 'opacity-50': isDisabled }">DAI</span>
@@ -31,11 +31,11 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        minimumDepositDai: {
+        minimumBidDai: {
             type: Object as Vue.PropType<BigNumber>,
             required: true,
         },
-        amountToBid: {
+        transactionBidAmount: {
             type: Object as Vue.PropType<BigNumber> | undefined,
             default: undefined,
         },
@@ -46,34 +46,32 @@ export default Vue.extend({
     },
     data() {
         return {
-            amountToBidInput: '' as string,
+            transactionBidAmountInput: '' as string,
         };
     },
     computed: {
         isInputEmpty(): boolean {
-            return this.amountToBidInput.trim() === '';
+            return this.transactionBidAmountInput.trim() === '';
         },
-        amountToBidInputParsed(): BigNumber | undefined {
+        transactionBidAmountInputParsed(): BigNumber | undefined {
             if (this.isInputEmpty) {
                 return undefined;
             }
-            const amountToBid = new BigNumber(this.amountToBidInput);
-            return amountToBid;
+            const transactionBidAmount = new BigNumber(this.transactionBidAmountInput);
+            return transactionBidAmount;
         },
         error(): string | undefined {
-            const maximumBid = this.totalPrice?.minus(this.minimumDepositDai);
+            const maximumBid = this.totalPrice?.minus(this.minimumBidDai);
             if (
-                this.amountToBidInputParsed?.isGreaterThan(maximumBid) ||
-                this.amountToBidInputParsed?.isLessThan(this.minimumDepositDai)
+                this.transactionBidAmountInputParsed?.isGreaterThan(maximumBid) ||
+                this.transactionBidAmountInputParsed?.isLessThan(this.minimumBidDai)
             ) {
-                return `The value can only be between ${this.minimumDepositDai.toFixed(2)} and ${maximumBid.toFixed(
-                    2
-                )}`;
+                return `The value can only be between ${this.minimumBidDai.toFixed(2)} and ${maximumBid.toFixed(2)}`;
             }
             return undefined;
         },
         isTooSmallToPartiallyTake(): boolean {
-            return this.totalPrice?.isLessThan(this.minimumDepositDai.multipliedBy(2));
+            return this.totalPrice?.isLessThan(this.minimumBidDai.multipliedBy(2));
         },
         isDisabled(): boolean {
             return this.disabled || this.isTooSmallToPartiallyTake;
@@ -86,44 +84,44 @@ export default Vue.extend({
         },
     },
     watch: {
-        amountToBidInput(_newAmountToBidInput: string, oldAmountToBidInput: string) {
+        transactionBidAmountInput(_newtransactionBidAmountInput: string, oldtransactionBidAmountInput: string) {
             if (this.error) {
-                this.$emit('update:amountToBid', new BigNumber(NaN));
+                this.$emit('update:transactionBidAmount', new BigNumber(NaN));
                 return;
             }
-            if (!this.amountToBidInputParsed) {
+            if (!this.transactionBidAmountInputParsed) {
                 return;
             }
-            if (this.amountToBidInputParsed?.isNaN()) {
-                this.amountToBidInput = oldAmountToBidInput || '';
+            if (this.transactionBidAmountInputParsed?.isNaN()) {
+                this.transactionBidAmountInput = oldtransactionBidAmountInput || '';
                 return;
             }
-            this.$emit('update:amountToBid', this.amountToBidInputParsed);
+            this.$emit('update:transactionBidAmount', this.transactionBidAmountInputParsed);
         },
-        amountToBid(newAmountToBid: BigNumber | undefined) {
-            if (!newAmountToBid) {
-                this.amountToBidInput = '';
+        transactionBidAmount(newtransactionBidAmount: BigNumber | undefined) {
+            if (!newtransactionBidAmount) {
+                this.transactionBidAmountInput = '';
                 return;
             }
-            if (newAmountToBid.isEqualTo(this.minimumDepositDai) && !newAmountToBid.isZero()) {
-                this.amountToBidInput = newAmountToBid.toFixed();
+            if (newtransactionBidAmount.isEqualTo(this.minimumDepositDai) && !newtransactionBidAmount.isZero()) {
+                this.transactionBidAmountInput = newtransactionBidAmount.toFixed();
             }
         },
         isTooSmallToPartiallyTake(newVal) {
             if (newVal) {
-                this.$emit('update:amountToBid', undefined);
+                this.$emit('update:transactionBidAmount', undefined);
             }
         },
     },
     methods: {
         hideTotalPrice(): void {
-            if (!this.amountToBid) {
-                this.$emit('update:amountToBid', new BigNumber(NaN));
+            if (!this.transactionBidAmount) {
+                this.$emit('update:transactionBidAmount', new BigNumber(NaN));
             }
         },
         showTotalPriceIfEmpty(): void {
             if (this.isInputEmpty) {
-                this.$emit('update:amountToBid', undefined);
+                this.$emit('update:transactionBidAmount', undefined);
             }
         },
     },

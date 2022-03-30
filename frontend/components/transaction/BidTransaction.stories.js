@@ -14,20 +14,16 @@ const data = {
         isFinished: false,
     },
     isConnecting: false,
-    isGrantingAccess: false,
-    isDepositing: false,
+    isDepositingOrWithdrawing: false,
     isAuthorizing: false,
     isExecuting: false,
     isWalletAuthorised: false,
-    isDaiAccessGranted: false,
-    isDeposited: false,
     authorisedCollaterals: [],
     walletAddress: null,
     walletDai: new BigNumber(faker.finance.amount()),
     walletVatDai: new BigNumber(faker.finance.amount()),
     transactionAddress: null,
     transactionAmountDai: fakeAuctionTransaction.totalPrice,
-    minimumBidDai: new BigNumber(faker.finance.amount(0, 100)),
 };
 
 const common = {
@@ -51,21 +47,6 @@ const common = {
                 this.authorisedCollaterals = [];
                 this.transactionAddress = null;
                 this.isConnecting = false;
-            }, 1000);
-        },
-        grantDaiAccess() {
-            this.isGrantingAccess = true;
-            setTimeout(() => {
-                this.isDaiAccessGranted = true;
-                this.isGrantingAccess = false;
-            }, 1000);
-        },
-        deposit(amount) {
-            this.isDepositing = true;
-            setTimeout(() => {
-                this.walletDai = this.walletDai?.minus(new BigNumber(amount));
-                this.walletVatDai = this.walletVatDai.plus(new BigNumber(amount));
-                this.isDepositing = false;
             }, 1000);
         },
         authorizeWallet() {
@@ -93,41 +74,32 @@ const common = {
                 this.isExecuting = false;
             }, 1000);
         },
-        setTransactionAmountDAI(amount) {
-            this.transactionAmountDai = amount;
-        },
-    },
-    watch: {
-        transactionAmountDai(newAmount) {
-            if (newAmount === undefined) {
-                this.transactionAmountDai = this.auctionTransaction.totalPrice;
-            }
+        deposit() {
+            this.isDepositingOrWithdrawing = true;
+            setTimeout(() => {
+                this.walletVatDai = this.transactionAmountDai;
+                this.isDepositingOrWithdrawing = false;
+            }, 1000);
         },
     },
     template: `
     <BidTransaction
         :auctionTransaction="auctionTransaction"
         :isConnecting="isConnecting"
-        :isGrantingAccess="isGrantingAccess"
-        :isDepositing="isDepositing"
+        :isDepositingOrWithdrawing="isDepositingOrWithdrawing"
         :isAuthorizing="isAuthorizing"
         :isExecuting="isExecuting"
         :isWalletAuthorised="isWalletAuthorised"
-        :isDaiAccessGranted="isDaiAccessGranted"
         :authorisedCollaterals="authorisedCollaterals"
         :walletAddress="walletAddress"
         :walletDai="walletDai"
         :walletVatDai="walletVatDai"
-        :transactionAmountDai="transactionAmountDai"
-        :minimumBidDai="minimumBidDai"
-        @inputBidAmount="setTransactionAmountDAI($event)"
         @connect="connect()"
         @disconnect="disconnect()"
-        @grantDaiAccess="grantDaiAccess()"
-        @deposit="deposit($event)"
         @authorizeWallet="authorizeWallet()"
         @authorizeCollateral="authorizeCollateral($event)"
-        @execute="execute()"
+        @bidWithDai="execute()"
+        @manageVat="deposit()"
     />`,
 };
 

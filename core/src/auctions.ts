@@ -1,6 +1,6 @@
 import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier, TakeEvent } from './types';
 import BigNumber from './bignumber';
-import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
+import fetchAuctionsByCollateralType, { fetchAuctionStatus, fetchMinimumBidDai } from './fetch';
 import { getCalleeData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
@@ -27,15 +27,18 @@ const enrichAuctionWithActualNumbers = async function (
     if (!auction.isActive || auction.isFinished) {
         return {
             ...auction,
+            minimumBidDai: new BigNumber(0),
             unitPrice: new BigNumber(0),
             approximateUnitPrice: new BigNumber(0),
             totalPrice: new BigNumber(0),
         };
     }
     const auctionStatus = await fetchAuctionStatus(network, auction.collateralType, auction.index);
+    const minimumBidDai = await fetchMinimumBidDai(network, auction.collateralType);
     return {
         ...auction,
         ...auctionStatus,
+        minimumBidDai,
         approximateUnitPrice: auctionStatus.unitPrice,
     };
 };

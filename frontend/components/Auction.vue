@@ -202,13 +202,10 @@
             </template>
             <TextBlock>
                 <div class="flex w-full justify-end flex-wrap mt-4">
-                    <Tooltip placement="top">
-                        <div v-if="!isPageNetworkFake" slot="title">
-                            This feature is currently only supported for stub data.
-                        </div>
+                    <Tooltip :title="auctionError" placement="top">
                         <div>
                             <Button
-                                :disabled="!isPageNetworkFake || !!auctionError"
+                                :disabled="!!auctionError"
                                 type="secondary"
                                 class="w-60 mb-4"
                                 @click="$emit('purchase')"
@@ -264,7 +261,6 @@ import Explain from '~/components/utils/Explain.vue';
 import RestartBlock from '~/components/transaction/RestartBlock.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
-import { FAKE_NETWORK_NAME } from '~/store/network';
 
 export default Vue.extend({
     name: 'Auction',
@@ -350,9 +346,6 @@ export default Vue.extend({
                 because we can't get value of ${this.auction?.collateralSymbol} on UniSwap`;
             }
             return null;
-        },
-        isPageNetworkFake(): Boolean {
-            return this.auction?.network === FAKE_NETWORK_NAME;
         },
     },
     watch: {
