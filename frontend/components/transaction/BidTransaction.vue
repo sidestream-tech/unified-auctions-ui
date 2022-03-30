@@ -10,8 +10,8 @@
         <BidTransactionTable
             class="mt-4 mb-6"
             :auction-transaction="auctionTransaction"
+            :amount-to-receive="amountToReceive"
             @inputBidAmount="inputBidAmount = $event"
-            @amountToReceive="amountToReceive = $event"
         />
         <WalletBlock
             class="mb-6 lg:mb-0"
@@ -65,6 +65,7 @@
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
+import { calculateTransactionCollateralOutcome } from 'auctions-core/src/price';
 import AuthorisationBlock from './AuthorisationBlock.vue';
 import BidTransactionTable from './BidTransactionTable.vue';
 import WalletBlock from './WalletBlock.vue';
@@ -131,7 +132,6 @@ export default Vue.extend({
     data() {
         return {
             inputBidAmount: undefined as BigNumber | undefined,
-            amountToReceive: undefined as BigNumber | undefined,
         };
     },
     computed: {
@@ -147,6 +147,9 @@ export default Vue.extend({
         transactionBidAmount(): BigNumber {
             const output = this.inputBidAmount || this.auctionTransaction?.totalPrice || new BigNumber(NaN);
             return output;
+        },
+        amountToReceive(): BigNumber {
+            return calculateTransactionCollateralOutcome(this.transactionBidAmount, this.auctionTransaction);
         },
     },
 });

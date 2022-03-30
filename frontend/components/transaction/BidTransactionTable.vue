@@ -146,6 +146,10 @@ export default Vue.extend({
             type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
         },
+        amountToReceive: {
+            type: Object as Vue.PropType<BigNumber>,
+            required: true,
+        },
     },
     data() {
         return {
@@ -153,12 +157,6 @@ export default Vue.extend({
         };
     },
     computed: {
-        amountToReceive(): BigNumber | undefined {
-            if (!this.transactionBidAmount || !this.auctionTransaction.approximateUnitPrice) {
-                return this.auctionTransaction.collateralAmount;
-            }
-            return this.transactionBidAmount.dividedBy(this.auctionTransaction.approximateUnitPrice);
-        },
         isActive(): boolean {
             return this.auctionTransaction.isActive && !this.auctionTransaction.isFinished;
         },
@@ -176,12 +174,6 @@ export default Vue.extend({
             immediate: true,
             handler(transactionBidAmount) {
                 this.$emit('inputBidAmount', transactionBidAmount);
-            },
-        },
-        amountToReceive: {
-            immediate: true,
-            handler(amountToReceive) {
-                this.$emit('amountToReceive', amountToReceive);
             },
         },
     },

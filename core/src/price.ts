@@ -54,21 +54,41 @@ export const calculateTransactionGrossProfit = function (auction: Auction): BigN
     return totalMarketPriceLimitedByDebt.minus(auction.debtDAI);
 };
 
-export const calculateBidTransactionCollateralProfit = function (
+export const calculateTransactionCollateralOutcome = function (
     bidAmountDai: BigNumber,
     auction: AuctionTransaction
 ): BigNumber {
     // Based on the clipper contract logic
     // https://github.com/makerdao/dss/blob/60690042965500992490f695cf259256cc94c140/src/clip.sol#L357-L380
-    const collateralToBuyForTheBid = bidAmountDai.dividedBy(auction.unitPrice);
-    if (bidAmountDai.isGreaterThan(auction.debtDAI)) {
-        return auction.debtDAI.dividedBy(auction.unitPrice);
-    } else if (bidAmountDai.isLessThan(auction.debtDAI) && collateralToBuyForTheBid < auction.collateralAmount) {
-        if (auction.debtDAI.minus(bidAmountDai).isLessThan(auction.minimumBidDai)) {
-            return auction.debtDAI.minus(auction.minimumBidDai).dividedBy(auction.unitPrice);
+    const collateralToBuyForTheBid = bidAmountDai.dividedBy(auction.approximateUnitPrice);
+    const potentialOutcomeCollateralAmount = BigNumber.minimum(collateralToBuyForTheBid, auction.collateralAmount); // slice
+    const potentialOutcomeTotalPrice = potentialOutcomeCollateralAmount.multipliedBy(auction.approximateUnitPrice); // owe
+    if (
+        // if owe > tab
+        potentialOutcomeTotalPrice.isGreaterThan(auction.debtDAI)
+    ) {
+        return auction.debtDAI.dividedBy(auction.approximateUnitPrice); // return tab / price
+    } else if (
+        // if owe < tab && slice < lot
+        potentialOutcomeTotalPrice.isLessThan(auction.debtDAI) &&
+        potentialOutcomeCollateralAmount.isLessThan(auction.collateralAmount)
+    ) {
+        if (
+            // if tab - owe < _chost
+            auction.debtDAI.minus(potentialOutcomeTotalPrice).isLessThan(auction.minimumBidDai)
+        ) {
+            if (
+                // if tab > _chost
+                auction.debtDAI.isLessThanOrEqualTo(auction.minimumBidDai)
+            ) {
+                // shouldn't be possible to left less than minimumBidDai
+                return new BigNumber(NaN);
+            }
+            // tab - _chost / price
+            return auction.debtDAI.minus(auction.minimumBidDai).dividedBy(auction.approximateUnitPrice);
         }
     }
-    return collateralToBuyForTheBid;
+    return potentialOutcomeCollateralAmount;
 };
 
 export const calculateTransactionGrossProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
