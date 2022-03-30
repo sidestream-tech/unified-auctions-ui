@@ -178,7 +178,7 @@ data:
           - frontend.deployment.tag=$DRONE_COMMIT_SHA
           - botTwitter.deployment.tag=$DRONE_COMMIT_SHA
 
-    - name: deploy-production.auction-ui.k8s.sidestream.tech
+    - name: deploy-unified-auctions.makerdao.com
       depends_on:
         - publish-bot-twitter-on-tag
         - publish-frontend-makerdao-on-tag
@@ -191,7 +191,7 @@ data:
         aws_ssm_path_to_base64_encoded_secrets_yaml: auction-ui/secrets.yaml
         value_files:
         - values.yaml
-        - values.override_production.auction-ui.k8s.sidestream.tech.yaml
+        - values.override_unified-auctions.makerdao.com.yaml
         target_namespace: "auction-ui-production"
         release_name: "auction-ui"
         values_to_set:
