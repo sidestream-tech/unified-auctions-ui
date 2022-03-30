@@ -79,13 +79,13 @@ data:
       path_to_context: ./
       build_args:
         - key: PRODUCTION_DOMAIN
-          value_from_secret: auction-ui/auctions.makerdao.network/frontend/production_domain
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/production_domain
         - key: INFURA_PROJECT_ID
-          value_from_secret: auction-ui/auctions.makerdao.network/frontend/infura_project_id
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/infura_project_id
         - key: CONTACT_EMAIL
-          value_from_secret: auction-ui/auctions.makerdao.network/frontend/contact_email
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/contact_email
         - key: DEFAULT_ETHEREUM_NETWORK
-          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/default_etherum_network
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/default_etherum_network
       tags_to_cache_from:
         - "main"
       trigger:
