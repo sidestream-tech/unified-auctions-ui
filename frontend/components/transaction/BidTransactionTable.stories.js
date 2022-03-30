@@ -15,7 +15,6 @@ const common = {
                 isFinished: false,
                 isActive: true,
             },
-            minimumDepositDAI: new BigNumber(faker.finance.amount(0, 50)),
         };
     },
 };
@@ -23,8 +22,7 @@ const common = {
 storiesOf('Transaction/BidTransactionTable', module)
     .add('Default', () => ({
         ...common,
-        template:
-            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Finished', () => ({
         ...common,
@@ -35,11 +33,9 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isFinished: true,
                     totalPrice: null,
                 },
-                minimumDepositDAI: new BigNumber(faker.finance.amount(0, 50)),
             };
         },
-        template:
-            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Inactive', () => ({
         ...common,
@@ -51,11 +47,9 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isFinished: false,
                     totalPrice: null,
                 },
-                minimumDepositDAI: new BigNumber(faker.finance.amount(0, 50)),
             };
         },
-        template:
-            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Total < Minimum x 2', () => ({
         ...common,
@@ -66,12 +60,11 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isActive: true,
                     isFinished: false,
                     totalPrice: new BigNumber(faker.finance.amount(60, 99)),
+                    minimumBidDai: new BigNumber(faker.finance.amount(50, 60)),
                 },
-                minimumDepositDAI: new BigNumber(faker.finance.amount(50, 60)),
             };
         },
-        template:
-            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Decreasing Price', () => ({
         ...common,
@@ -82,7 +75,6 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isActive: true,
                     isFinished: false,
                 },
-                minimumDepositDAI: new BigNumber(faker.finance.amount(0, 50)),
             };
         },
         created() {
@@ -90,8 +82,7 @@ storiesOf('Transaction/BidTransactionTable', module)
                 this.auctionTransaction.totalPrice = this.auctionTransaction.totalPrice.multipliedBy(0.99);
             }, 5000);
         },
-        template:
-            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }))
     .add('Decreasing Into Disabled Input', () => ({
         ...common,
@@ -102,8 +93,8 @@ storiesOf('Transaction/BidTransactionTable', module)
                     isActive: true,
                     isFinished: false,
                     totalPrice: new BigNumber(faker.finance.amount(50, 51)),
+                    minimumBidDai: new BigNumber(faker.finance.amount(25, 25)),
                 },
-                minimumDepositDAI: new BigNumber(faker.finance.amount(25, 25)),
             };
         },
         created() {
@@ -111,6 +102,5 @@ storiesOf('Transaction/BidTransactionTable', module)
                 this.auctionTransaction.totalPrice = this.auctionTransaction.totalPrice.multipliedBy(0.99);
             }, 5000);
         },
-        template:
-            '<BidTransactionTable :auctionTransaction="auctionTransaction" :minimumDepositDai="minimumDepositDAI" />',
+        template: '<BidTransactionTable :auctionTransaction="auctionTransaction" />',
     }));

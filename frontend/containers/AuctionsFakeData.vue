@@ -3,29 +3,26 @@
         :auctions="auctions"
         :selected-auction-id.sync="selectedAuctionId"
         :is-connecting="isConnecting"
-        :is-granting-access="isGrantingAccess"
-        :is-depositing-dai="isDepositingDai"
+        :is-depositing-or-withdrawing="isDepositingOrWithdrawing"
         :is-authorizing="isAuthorizing"
         :is-wallet-authorised="isWalletAuthorised"
-        :is-dai-access-granted="isDaiAccessGranted"
         :authorised-collaterals="authorisedCollaterals"
         :is-executing="isExecuting"
         :wallet-address="walletAddress"
         :wallet-dai="walletDai"
         :wallet-vat-dai="walletVatDai"
         :transaction-address="selectedAuction && selectedAuction.transactionAddress"
-        :transaction-amount-dai="transactionAmountDai"
-        :minimum-bid-dai="minimumBidDai"
+        :transaction-bid-amount="transactionAmountDai"
         :is-explanations-shown.sync="isExplanationsShown"
         @inputBidAmount="setTransactionAmountDai"
         @connect="connect"
         @disconnect="disconnect"
-        @grantDaiAccess="grantDaiAccess"
-        @deposit="deposit"
+        @manageVat="deposit"
         @authorizeWallet="authorizeWallet"
         @authorizeCollateral="authorizeCollateral"
         @restart="restart"
         @execute="execute"
+        @bidWithDai="execute"
     />
 </template>
 
@@ -46,18 +43,14 @@ export default Vue.extend({
             auctions: [] as AuctionTransaction[],
             selectedAuctionId: '',
             isConnecting: false,
-            isGrantingAccess: false,
-            isDepositingDai: false,
+            isDepositingOrWithdrawing: false,
             isAuthorizing: false,
             isExecuting: false,
             isWalletAuthorised: false,
-            isDaiAccessGranted: false,
-            isDeposited: false,
             authorisedCollaterals: [] as string[],
             walletAddress: null as string | null,
             walletDai: new BigNumber(faker.finance.amount()),
             walletVatDai: new BigNumber(faker.finance.amount()),
-            minimumBidDai: new BigNumber(faker.finance.amount(0, 100)),
             transactionAmountDai: undefined as BigNumber | undefined,
         };
     },
@@ -124,21 +117,6 @@ export default Vue.extend({
                 this.isConnecting = false;
             }, 1000);
         },
-        grantDaiAccess() {
-            this.isGrantingAccess = true;
-            setTimeout(() => {
-                this.isDaiAccessGranted = true;
-                this.isGrantingAccess = false;
-            }, 1000);
-        },
-        deposit(amount: BigNumber) {
-            this.isDepositingDai = true;
-            setTimeout(() => {
-                this.walletDai = this.walletDai.minus(amount);
-                this.walletVatDai = this.walletVatDai.plus(amount);
-                this.isDepositingDai = false;
-            }, 1000);
-        },
         authorizeWallet() {
             this.isAuthorizing = true;
             setTimeout(() => {
@@ -173,6 +151,13 @@ export default Vue.extend({
         },
         setTransactionAmountDai(amount: BigNumber | undefined) {
             this.transactionAmountDai = amount;
+        },
+        deposit(): void {
+            this.isDepositingOrWithdrawing = true;
+            setTimeout(() => {
+                this.walletVatDai = this.transactionAmountDai!;
+                this.isDepositingOrWithdrawing = false;
+            }, 1000);
         },
     },
 });

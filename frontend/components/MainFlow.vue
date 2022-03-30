@@ -60,27 +60,21 @@
                     class="mt-6 mb-8 mx-8"
                     :auction-transaction="selectedAuction"
                     :is-connecting="isConnecting"
-                    :is-granting-access="isGrantingAccess"
-                    :is-depositing="isDepositingDai"
                     :is-authorizing="isAuthorizing"
+                    :is-depositing-or-withdrawing="isDepositingOrWithdrawing"
                     :is-executing="isExecuting"
                     :is-wallet-authorised="isWalletAuthorised"
-                    :is-dai-access-granted="isDaiAccessGranted"
                     :is-explanations-shown="isExplanationsShown"
                     :authorised-collaterals="authorisedCollaterals"
                     :wallet-address="walletAddress"
                     :wallet-dai="walletDai"
                     :wallet-vat-dai="walletVatDai"
-                    :transaction-amount-dai="transactionAmountDai"
-                    :minimum-bid-dai="minimumBidDai"
-                    @inputBidAmount="$emit('inputBidAmount', $event)"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
-                    @grantDaiAccess="$emit('grantDaiAccess')"
-                    @deposit="$emit('deposit', $event)"
+                    @manageVat="$emit('manageVat')"
                     @authorizeWallet="$emit('authorizeWallet')"
                     @authorizeCollateral="$emit('authorizeCollateral', $event)"
-                    @execute="$emit('execute', $event)"
+                    @bidWithDai="$emit('bidWithDai', $event)"
                 />
             </template>
         </SplitLayout>
@@ -128,11 +122,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isGrantingAccess: {
-            type: Boolean,
-            default: false,
-        },
-        isDepositingDai: {
+        isDepositingOrWithdrawing: {
             type: Boolean,
             default: false,
         },
@@ -145,10 +135,6 @@ export default Vue.extend({
             default: false,
         },
         isWalletAuthorised: {
-            type: Boolean,
-            default: false,
-        },
-        isDaiAccessGranted: {
             type: Boolean,
             default: false,
         },
@@ -171,14 +157,6 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
-        },
-        transactionAmountDai: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        minimumBidDai: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
         },
     },
     data: () => ({

@@ -11,10 +11,10 @@
                 class="w-full md:w-80"
                 :disabled="state === 'disabled' || state === 'executed'"
                 type="primary"
-                @click="$emit('execute')"
+                @click="$emit('bidWithDai')"
             >
                 <span>
-                    Bid <format-currency :value="transactionAmountDai" currency="DAI" /> for
+                    Bid <format-currency :value="transactionBidAmount" currency="DAI" /> for
                     <format-currency
                         :value="amountToReceive || auctionTransaction.collateralAmount"
                         :currency="auctionTransaction.collateralSymbol"
@@ -56,7 +56,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<AuctionTransaction>,
             default: null,
         },
-        transactionAmountDai: {
+        transactionBidAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
