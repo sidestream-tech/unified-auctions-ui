@@ -1,9 +1,8 @@
 import type { AuctionInitialInfo, AuctionStatus } from './types';
-import { ethers } from 'ethers';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import getContract, { getClipperNameByCollateralType } from './contracts';
-import { RAD, RAY, WAD } from './constants/UNITS';
+import { RAD, RAD_NUMBER_OF_DIGITS, RAY, WAD } from './constants/UNITS';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 
@@ -25,11 +24,10 @@ const fetchMaximumAuctionDurationInSeconds = memoizee(_fetchMaximumAuctionDurati
 });
 
 const _fetchMinimumBidDai = async function (network: string, collateralType: string): Promise<BigNumber> {
-    const dogContract = await getContract(network, 'MCD_DOG');
-    const encodedCollateralType = ethers.utils.formatBytes32String(collateralType);
-    const collateralParameters = await dogContract.ilks(encodedCollateralType);
-    const minimumBidDai = new BigNumber(collateralParameters.dirt._hex).div(RAD);
-    return minimumBidDai;
+    const contractName = getClipperNameByCollateralType(collateralType);
+    const contract = await getContract(network, contractName);
+    const minimumBidRaw = await contract.chost();
+    return new BigNumber(minimumBidRaw._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
 };
 
 export const fetchMinimumBidDai = memoizee(_fetchMinimumBidDai, {
