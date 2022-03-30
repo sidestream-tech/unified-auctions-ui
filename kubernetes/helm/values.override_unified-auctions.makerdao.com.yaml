@@ -2,9 +2,6 @@
 hosts:
   - "unified-auctions.makerdao.com"
 
-ingress:
-  isCertManagerActivated: false
-
 frontend:
   deployment:
     # the frontend bakes in environment variables that need to be changed for makerdao,
