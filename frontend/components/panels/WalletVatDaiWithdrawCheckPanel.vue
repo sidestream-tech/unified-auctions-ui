@@ -1,0 +1,95 @@
+<template>
+    <BasePanel :current-state="currentStateAndTitle.name" class="WalletVatDaiWithdrawCheckPanel">
+        <template #title>{{ currentStateAndTitle.title }}</template>
+        <TextBlock v-if="isExplanationsShown">
+            The amount of <FormatCurrency :value="desiredAmount" currency="DAI" /> is not present in the VAT and needs
+            to be deposited there before it can be withdrawn.
+        </TextBlock>
+        <div class="flex justify-end mt-2">
+            <BaseButton :disabled="disabled" :is-loading="isLoading" @click="$emit('refresh')"
+                >Refresh wallet balance</BaseButton
+            >
+        </div>
+    </BasePanel>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import BigNumber from 'bignumber.js';
+import BaseButton from '~/components/common/BaseButton.vue';
+import BasePanel from '~/components/common/BasePanel.vue';
+import TextBlock from '~/components/common/TextBlock.vue';
+import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+
+export default Vue.extend({
+    components: {
+        BaseButton,
+        BasePanel,
+        TextBlock,
+        FormatCurrency,
+    },
+    props: {
+        walletVatDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        desiredAmount: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
+        isLoading: {
+            type: Boolean,
+            default: false,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
+        },
+    },
+    computed: {
+        currentStateAndTitle(): PanelProps {
+            if (!this.walletVatDai) {
+                return {
+                    name: 'inactive',
+                    title: 'Please connect a wallet',
+                };
+            }
+            if (!this.desiredAmount || this.desiredAmount?.isNaN()) {
+                return {
+                    name: 'inactive',
+                    title: 'Please enter the value to deposit first',
+                };
+            }
+            if (this.desiredAmount.isLessThan(0)) {
+                return {
+                    name: 'incorrect',
+                    title: 'The amount can not be negative',
+                };
+            }
+            const isTooSmall = this.desiredAmount.isGreaterThan(this.walletVatDai);
+            if (isTooSmall) {
+                return {
+                    name: 'incorrect',
+                    title: 'The sufficient amount is not present in the VAT',
+                };
+            }
+            return {
+                name: 'correct',
+                title: 'The sufficient amount is present in the VAT',
+            };
+        },
+    },
+    watch: {
+        currentStateAndTitle: {
+            immediate: true,
+            handler(newCurrentStateAndTitle) {
+                this.$emit('update:isCorrect', newCurrentStateAndTitle.name === 'correct');
+            },
+        },
+    },
+});
+</script>

@@ -5,7 +5,7 @@
         :is-connecting="isConnecting"
         :is-depositing-or-withdrawing="isDepositingOrWithdrawing"
         :is-authorizing="isAuthorizing"
-        :is-wallet-authorised="isWalletAuthorised"
+        :is-wallet-authorized="isWalletAuthorized"
         :authorised-collaterals="authorisedCollaterals"
         :is-executing="isExecuting"
         :wallet-address="walletAddress"
@@ -46,7 +46,8 @@ export default Vue.extend({
             isDepositingOrWithdrawing: false,
             isAuthorizing: false,
             isExecuting: false,
-            isWalletAuthorised: false,
+            isWalletAuthorized: false,
+            isDeposited: false,
             authorisedCollaterals: [] as string[],
             walletAddress: null as string | null,
             walletDai: new BigNumber(faker.finance.amount()),
@@ -109,7 +110,7 @@ export default Vue.extend({
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = null;
-                this.isWalletAuthorised = false;
+                this.isWalletAuthorized = false;
                 this.authorisedCollaterals = [];
                 if (this.selectedAuction) {
                     this.selectedAuction.transactionAddress = undefined;
@@ -120,7 +121,7 @@ export default Vue.extend({
         authorizeWallet() {
             this.isAuthorizing = true;
             setTimeout(() => {
-                this.isWalletAuthorised = true;
+                this.isWalletAuthorized = true;
                 this.isAuthorizing = false;
             }, 1000);
         },

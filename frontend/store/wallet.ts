@@ -184,6 +184,7 @@ export const actions = {
         try {
             await depositToVAT(network, getters.getAddress, new BigNumber(amount), notifier);
             await dispatch('fetchWalletBalances');
+            await dispatch('authorizations/fetchAllowanceAmount', undefined, { root: true });
         } catch (error) {
             message.error(`Error while depositing to VAT: ${error.message}`);
         } finally {

@@ -1,31 +1,23 @@
 <template>
-    <div class="w-full relative dark:text-gray-300">
-        <Tooltip :visible="!!error" placement="topLeft" :title="error">
-            <Tooltip placement="topLeft" :title="isTooSmallToPartiallyTakeTooltipContent">
-                <Input
-                    v-model="transactionBidAmountInput"
-                    :disabled="isDisabled"
-                    class="Input"
-                    :class="{ Error: error }"
-                    @focus="hideTotalPrice()"
-                    @blur="showTotalPriceIfEmpty()"
-                />
-                <div v-if="!transactionBidAmount" class="Overlay TotalPrice">
-                    <format-currency v-if="totalPrice" :value="totalPrice" :class="{ 'opacity-50': isDisabled }" />
-                </div>
-                <span class="Overlay right-1" :class="{ 'opacity-50': isDisabled }">DAI</span>
-            </Tooltip>
-        </Tooltip>
-    </div>
+    <BaseValueInput
+        :input-value="transactionBidAmount"
+        :max-value="totalPrice"
+        :min-value="minimumBidDai"
+        :disabled="!disabled"
+        :validator="validator"
+        @update:inputValue="$emit('update:transactionBidAmount', $event)"
+    />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { Input, Tooltip } from 'ant-design-vue';
-import FormatCurrency from './FormatCurrency.vue';
+import BaseValueInput from '~/components/common/BaseValueInput.vue';
+
 export default Vue.extend({
-    components: { FormatCurrency, Tooltip, Input },
+    components: {
+        BaseValueInput,
+    },
     props: {
         totalPrice: {
             type: Object as Vue.PropType<BigNumber>,
@@ -44,114 +36,19 @@ export default Vue.extend({
             default: false,
         },
     },
-    data() {
-        return {
-            transactionBidAmountInput: '' as string,
-        };
-    },
-    computed: {
-        isInputEmpty(): boolean {
-            return this.transactionBidAmountInput.trim() === '';
-        },
-        transactionBidAmountInputParsed(): BigNumber | undefined {
-            if (this.isInputEmpty) {
-                return undefined;
-            }
-            const transactionBidAmount = new BigNumber(this.transactionBidAmountInput);
-            return transactionBidAmount;
-        },
-        error(): string | undefined {
-            const maximumBid = this.totalPrice?.minus(this.minimumBidDai);
-            if (
-                this.transactionBidAmountInputParsed?.isGreaterThan(maximumBid) ||
-                this.transactionBidAmountInputParsed?.isLessThan(this.minimumBidDai)
-            ) {
-                return `The value can only be between ${this.minimumBidDai.toFixed(2)} and ${maximumBid.toFixed(2)}`;
-            }
-            return undefined;
-        },
-        isTooSmallToPartiallyTake(): boolean {
-            return this.totalPrice?.isLessThan(this.minimumBidDai.multipliedBy(2));
-        },
-        isDisabled(): boolean {
-            return this.disabled || this.isTooSmallToPartiallyTake;
-        },
-        isTooSmallToPartiallyTakeTooltipContent(): string {
-            if (this.isTooSmallToPartiallyTake) {
-                return 'The value can not be changed since the leftover part will be too small';
-            }
-            return '';
-        },
-    },
-    watch: {
-        transactionBidAmountInput(_newtransactionBidAmountInput: string, oldtransactionBidAmountInput: string) {
-            if (this.error) {
-                this.$emit('update:transactionBidAmount', new BigNumber(NaN));
-                return;
-            }
-            if (!this.transactionBidAmountInputParsed) {
-                return;
-            }
-            if (this.transactionBidAmountInputParsed?.isNaN()) {
-                this.transactionBidAmountInput = oldtransactionBidAmountInput || '';
-                return;
-            }
-            this.$emit('update:transactionBidAmount', this.transactionBidAmountInputParsed);
-        },
-        transactionBidAmount(newtransactionBidAmount: BigNumber | undefined) {
-            if (!newtransactionBidAmount) {
-                this.transactionBidAmountInput = '';
-                return;
-            }
-            if (newtransactionBidAmount.isEqualTo(this.minimumDepositDai) && !newtransactionBidAmount.isZero()) {
-                this.transactionBidAmountInput = newtransactionBidAmount.toFixed();
-            }
-        },
-        isTooSmallToPartiallyTake(newVal) {
-            if (newVal) {
-                this.$emit('update:transactionBidAmount', undefined);
-            }
-        },
-    },
     methods: {
-        hideTotalPrice(): void {
-            if (!this.transactionBidAmount) {
-                this.$emit('update:transactionBidAmount', new BigNumber(NaN));
+        validator(currentValue: BigNumber, minValue: BigNumber, maxValue: BigNumber) {
+            if (!currentValue || !minValue || !maxValue) {
+                return;
             }
-        },
-        showTotalPriceIfEmpty(): void {
-            if (this.isInputEmpty) {
-                this.$emit('update:transactionBidAmount', undefined);
+            const bidTopLimit = maxValue?.minus(minValue);
+            if (currentValue?.isGreaterThan(bidTopLimit) || currentValue?.isLessThan(minValue)) {
+                throw new Error(`The value can only be between ${minValue.toFixed(2)} and ${bidTopLimit.toFixed(2)}`);
+            }
+            if (maxValue?.isLessThan(minValue.multipliedBy(2))) {
+                throw new Error('The value can not be changed since the leftover part will be too small');
             }
         },
     },
 });
 </script>
-
-<style scoped>
-.Input {
-    @apply text-right;
-
-    padding-right: 30px;
-}
-
-.Error {
-    @apply border-red-500 hover:border-red-400;
-}
-
-.Error:focus {
-    @apply border-red-400;
-
-    box-shadow: 0 0 3px rgb(239, 68, 68);
-}
-
-.Overlay {
-    @apply absolute pointer-events-none;
-
-    top: 5.5px;
-}
-
-.TotalPrice {
-    right: 30px;
-}
-</style>

@@ -29,27 +29,24 @@
                 is the set of immutable rules for managing DAI and collaterals which constitutes the core of the Maker
                 Protocol.
             </TextBlock>
-            <AccessDaiBlock
-                :is-loading="isAllowanceAmountLoading"
-                :is-explanations-shown="isExplanationsShown"
-                :allowance-amount="allowanceAmount"
-                :is-dai-access-granted="
-                    allowanceAmount.isGreaterThanOrEqualTo(walletBalances ? walletBalances.walletDAI : 0)
-                "
-                @grantAccess="$emit('grantAccess')"
-            />
             <WalletDepositWithdrawBlock
                 :network="network"
                 :is-loading="isLoading"
                 :is-submitting="isSubmitting"
                 :is-explanations-shown="isExplanationsShown"
                 :allowance-amount="allowanceAmount"
-                :is-withdrawing-allowed="isWithdrawingAllowed"
                 :max-deposit="walletBalances && walletBalances.walletDAI"
                 :max-withdraw="walletBalances && walletBalances.walletVatDAI"
                 :token-address-dai="tokenAddressDai"
-                @deposit="value => $emit('deposit', value)"
-                @withdraw="value => $emit('withdraw', value)"
+                :wallet-address="walletAddress"
+                :is-allowance-amount-loading="isAllowanceAmountLoading"
+                :is-wallet-authorized="isWalletAuthorized"
+                :is-authorization-loading="isAuthorizationLoading"
+                @refresh="$emit('refresh')"
+                @deposit="$emit('deposit', $event)"
+                @withdraw="$emit('withdraw', $event)"
+                @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
+                @authorizeWallet="$emit('authorizeWallet')"
             />
         </div>
     </modal>
@@ -61,12 +58,16 @@ import { Modal } from 'ant-design-vue';
 import { WalletBalances } from 'auctions-core/dist/src/types';
 import BigNumber from 'bignumber.js';
 import TextBlock from '../common/TextBlock.vue';
-import AccessDaiBlock from '../transaction/AccessDaiBlock.vue';
 import WalletTable from './WalletTable.vue';
 import WalletDepositWithdrawBlock from './WalletDepositWithdrawBlock.vue';
 
 export default Vue.extend({
-    components: { AccessDaiBlock, TextBlock, WalletDepositWithdrawBlock, WalletTable, Modal },
+    components: {
+        TextBlock,
+        WalletDepositWithdrawBlock,
+        WalletTable,
+        Modal,
+    },
     props: {
         network: {
             type: String,
@@ -86,7 +87,7 @@ export default Vue.extend({
         },
         walletAddress: {
             type: String,
-            default: null,
+            default: '',
         },
         walletBalances: {
             type: Object as Vue.PropType<WalletBalances>,
@@ -95,10 +96,6 @@ export default Vue.extend({
         allowanceAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
-        },
-        isWithdrawingAllowed: {
-            type: Boolean,
-            required: true,
         },
         isLoading: {
             type: Boolean,
@@ -117,6 +114,14 @@ export default Vue.extend({
             default: true,
         },
         isAllowanceAmountLoading: {
+            type: Boolean,
+            default: false,
+        },
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isAuthorizationLoading: {
             type: Boolean,
             default: false,
         },

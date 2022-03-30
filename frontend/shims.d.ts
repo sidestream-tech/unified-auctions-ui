@@ -37,3 +37,8 @@ declare interface FeatureList {
     url: string | undefined;
     items: FeatureItem[];
 }
+
+declare interface PanelProps {
+    name: string;
+    title: string;
+}

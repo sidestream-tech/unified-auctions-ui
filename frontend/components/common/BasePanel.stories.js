@@ -16,38 +16,43 @@ storiesOf('common/BasePanel', module)
     .add('Stack of panels', () => ({
         ...common,
         template: `<div>
-            <BasePanel v-bind="$data" currentState="incorrect"> Error content </BasePanel>
-            <BasePanel v-bind="$data" currentState="notice"> Notice content </BasePanel>
-            <BasePanel v-bind="$data" currentState="correct"> Correct content </BasePanel>
-            <BasePanel v-bind="$data" currentState="inactive"> Inactive content </BasePanel>
+            <BasePanel currentState="incorrect"><template #title>{{ incorrect }}</template>Error content</BasePanel>
+            <BasePanel currentState="notice"><template #title>{{ notice }}</template>Notice content</BasePanel>
+            <BasePanel currentState="correct"><template #title>{{ correct }}</template>Correct content</BasePanel>
+            <BasePanel currentState="inactive"><template #title>{{ inactive }}</template>Inactive content</BasePanel>
         </div>`,
     }))
     .add('Inactive', () => ({
         ...common,
-        template: '<BasePanel v-bind="$data" currentState="inactive"> Inactive content </BasePanel>',
+        template:
+            '<BasePanel currentState="inactive"><template #title>{{ inactive }}</template>Inactive content</BasePanel>',
     }))
     .add('Incorrect', () => ({
         ...common,
-        template: '<BasePanel v-bind="$data" currentState="incorrect"> Incorrect content </BasePanel>',
+        template:
+            '<BasePanel currentState="incorrect"><template #title>{{ incorrect }}</template>Incorrect content</BasePanel>',
     }))
     .add('Correct', () => ({
         ...common,
-        template: '<BasePanel v-bind="$data" currentState="correct"> Correct content </BasePanel>',
+        template:
+            '<BasePanel currentState="correct"><template #title>{{ correct }}</template>Correct content</BasePanel>',
     }))
     .add('Notice', () => ({
         ...common,
-        template: '<BasePanel v-bind="$data" currentState="notice"> Notice content </BasePanel>',
+        template:
+            '<BasePanel currentState="notice"><template #title>{{ notice }}</template>Notice content</BasePanel>',
     }))
     .add('Very long notice', () => ({
         ...common,
-        template: `<BasePanel notice="${faker.lorem.sentence(20)}" currentState="notice">
+        template: `<BasePanel currentState="notice">
+            <template #title>${faker.lorem.sentence(20)}</template>
             Content: ${faker.lorem.sentence(50)}
         </BasePanel>`,
     }))
     .add('Notice with html', () => ({
         ...common,
         template: `<BasePanel currentState="notice">
-            <template #notice>Title with <i>italic</i> text</template>
+            <template #title>Title with <i>italic</i> text</template>
             Content: ${faker.lorem.sentence(50)}
         </BasePanel>`,
     }));

@@ -2,24 +2,11 @@
     <div class="WalletDepositWithDrawBlock">
         <TextBlock v-if="isExplanationsShown" title="Moving funds">
             The DAI funds can be moved freely between VAT and your wallet without any extra conversion. You only need
-            to be aware that each transfer incurs transaction fees. Also, if you do not have DAI funds to deposit yet,
-            there are several ways to obtain it:
-            <ul class="list-disc list-inside">
-                <li>
-                    By borrowing DAI against a collateral in the
-                    <a href="https://oasis.app/" target="_blank">oasis.app</a>
-                </li>
-                <li>
-                    By purchasing it on a decentralized exchange like
-                    <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct DAI token address used on
-                    the “{{ networkTitle }}” network is
-                    <FormatAddress type="address" :value="tokenAddressDai || ''" shorten />)
-                </li>
-            </ul>
+            to be aware that each transfer incurs transaction fees.
         </TextBlock>
         <form class="flex flex-col gap-4" @submit.prevent="submit">
             <RadioGroup
-                :disabled="isLoading"
+                :disabled="isLoading || isSubmitting || isAllowanceAmountLoading || isAuthorizationLoading"
                 :value="selectedMethod"
                 class="flex items-center w-full"
                 @change="handleMethodChange"
@@ -28,20 +15,63 @@
                 <RadioButton value="withdraw" class="w-full text-center"> Withdraw </RadioButton>
             </RadioGroup>
 
-            <BidInput
+            <BaseValueInput
                 v-show="selectedMethod === 'deposit'"
-                :transaction-bid-amount.sync="depositAmount"
-                :disabled="!canDeposit"
-                :total-price="maxAllowedDeposit"
-                :minimum-bid-dai="minimumDaiAmount"
+                :input-value.sync="depositAmount"
+                :max-value="maxDeposit"
+                :min-value="minimumDaiAmount"
+                :disabled="!canDeposit || isAllowanceAmountLoading"
             />
-            <BidInput
+            <div v-if="selectedMethod === 'deposit'">
+                <WalletDaiDepositCheckPanel
+                    :is-correct.sync="isWalletDaiCheckPassed"
+                    :wallet-dai="maxDeposit"
+                    :desired-amount="depositAmount || maxDeposit"
+                    :token-address-dai="tokenAddressDai"
+                    :network="network"
+                    :is-loading="isLoading"
+                    :is-explanations-shown="isExplanationsShown"
+                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading || isAuthorizationLoading"
+                    @refresh="$emit('refresh')"
+                />
+                <AllowanceAmountCheckPanel
+                    :is-correct.sync="isAllowanceAmountCheckPassed"
+                    :allowance-amount="allowanceAmount"
+                    :desired-amount="depositAmount || maxDeposit"
+                    :is-loading="isAllowanceAmountLoading"
+                    :is-explanations-shown="isExplanationsShown"
+                    :disabled="isLoading || isSubmitting"
+                    @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
+                />
+            </div>
+
+            <BaseValueInput
                 v-show="selectedMethod === 'withdraw'"
-                :transaction-bid-amount.sync="withDrawAmount"
-                :disabled="!canWithdraw"
-                :total-price="maxWithdraw"
-                :minimum-bid-dai="minimumDaiAmount"
+                :input-value.sync="withdrawAmount"
+                :max-value="maxWithdraw"
+                :min-value="minimumDaiAmount"
+                :disabled="!canWithdraw || isAllowanceAmountLoading || isAuthorizationLoading"
             />
+            <div v-if="selectedMethod === 'withdraw'">
+                <WalletVatDaiWithdrawCheckPanel
+                    :is-correct.sync="isWalletVatDaiCheckPassed"
+                    :wallet-vat-dai="maxWithdraw"
+                    :desired-amount="withdrawAmount || maxWithdraw"
+                    :is-loading="isLoading"
+                    :is-explanations-shown="isExplanationsShown"
+                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading || isAuthorizationLoading"
+                    @refresh="$emit('refresh')"
+                />
+                <WalletAuthorizationCheckPanel
+                    :is-correct.sync="isWalletAuthorizationsCheckPassed"
+                    :wallet-address="walletAddress"
+                    :is-wallet-authorized="isWalletAuthorized"
+                    :is-loading="isAuthorizationLoading"
+                    :is-explanations-shown="isExplanationsShown"
+                    :disabled="isLoading || isSubmitting || isAllowanceAmountLoading || isAuthorizationLoading"
+                    @authorizeWallet="$emit('authorizeWallet')"
+                />
+            </div>
 
             <BaseButton type="primary" :is-loading="isSubmitting" :disabled="!canSubmit" html-type="submit">
                 <span class="capitalize">{{ selectedMethod }}{{ isSubmitting ? 'ing...' : '' }}</span>
@@ -55,25 +85,35 @@ import Vue from 'vue';
 import { Radio } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
-import TextBlock from '../common/TextBlock.vue';
-import FormatAddress from '../utils/FormatAddress.vue';
-import BaseButton from '../common/BaseButton.vue';
-import BidInput from '../utils/BidInput';
+import TextBlock from '~/components/common/TextBlock.vue';
+import BaseButton from '~/components/common/BaseButton.vue';
+import BaseValueInput from '~/components/common/BaseValueInput.vue';
+import WalletDaiDepositCheckPanel from '~/components/panels/WalletDaiDepositCheckPanel.vue';
+import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
+import WalletVatDaiWithdrawCheckPanel from '~/components/panels/WalletVatDaiWithdrawCheckPanel.vue';
+import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
 
 export default Vue.extend({
     name: 'WalletDepositWithdrawBlock',
     components: {
-        BidInput,
+        BaseValueInput,
         BaseButton,
-        FormatAddress,
         TextBlock,
         RadioGroup: Radio.Group,
         RadioButton: Radio.Button,
+        WalletDaiDepositCheckPanel,
+        AllowanceAmountCheckPanel,
+        WalletVatDaiWithdrawCheckPanel,
+        WalletAuthorizationCheckPanel,
     },
     props: {
         network: {
             type: String,
             default: undefined,
+        },
+        walletAddress: {
+            type: String,
+            default: '',
         },
         isLoading: {
             type: Boolean,
@@ -103,9 +143,17 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        isWithdrawingAllowed: {
+        isAllowanceAmountLoading: {
             type: Boolean,
-            required: true,
+            default: false,
+        },
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isAuthorizationLoading: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {
@@ -113,11 +161,15 @@ export default Vue.extend({
             minimumDaiAmount: new BigNumber(0),
             selectedMethod: 'deposit',
             depositAmount: undefined,
-            withDrawAmount: undefined,
+            withdrawAmount: undefined,
+            isWalletDaiCheckPassed: false,
+            isAllowanceAmountCheckPassed: false,
+            isWalletVatDaiCheckPassed: false,
+            isWalletAuthorizationsCheckPassed: false,
         };
     },
     computed: {
-        canDeposit() {
+        canDeposit(): boolean {
             return (
                 !this.isLoading &&
                 !this.isSubmitting &&
@@ -126,11 +178,10 @@ export default Vue.extend({
                 !this.maxDeposit.isZero()
             );
         },
-        canWithdraw() {
+        canWithdraw(): boolean {
             return (
                 !this.isLoading &&
                 !this.isSubmitting &&
-                this.isWithdrawingAllowed &&
                 BigNumber.isBigNumber(this.maxWithdraw) &&
                 !this.maxWithdraw.isZero()
             );
@@ -138,6 +189,9 @@ export default Vue.extend({
         canSubmit(): boolean {
             if (this.selectedMethod === 'deposit') {
                 if (!this.canDeposit) {
+                    return false;
+                }
+                if (!this.isWalletDaiCheckPassed || !this.isAllowanceAmountCheckPassed) {
                     return false;
                 }
                 if (this.depositAmount === undefined) {
@@ -149,18 +203,15 @@ export default Vue.extend({
                 if (!this.canWithdraw) {
                     return false;
                 }
-                if (this.withDrawAmount === undefined) {
+                if (!this.isWalletVatDaiCheckPassed || !this.isWalletAuthorizationsCheckPassed) {
+                    return false;
+                }
+                if (this.withdrawAmount === undefined) {
                     return true;
                 }
-                return !this.withDrawAmount.isNaN();
+                return !this.withdrawAmount.isNaN();
             }
             return false;
-        },
-        maxAllowedDeposit(): BigNumber {
-            if (this.allowanceAmount.isGreaterThan(this.maxDeposit)) {
-                return this.maxDeposit;
-            }
-            return this.allowanceAmount;
         },
         networkTitle(): string {
             try {
@@ -176,17 +227,17 @@ export default Vue.extend({
         },
         submit() {
             if (this.selectedMethod === 'deposit') {
-                this.$emit('deposit', this.depositAmount ?? this.maxAllowedDeposit);
+                this.$emit('deposit', this.depositAmount ?? this.maxDeposit);
             }
             if (this.selectedMethod === 'withdraw') {
-                this.$emit('withdraw', this.withDrawAmount ?? this.maxWithdraw);
+                this.$emit('withdraw', this.withdrawAmount ?? this.maxWithdraw);
             }
         },
     },
 });
 </script>
 
-<style>
+<style scoped>
 .WalletDepositWithDrawBlock {
     @apply flex flex-col gap-4;
 }

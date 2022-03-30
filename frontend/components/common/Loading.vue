@@ -7,7 +7,7 @@
             :class="{
                 'bg-white dark:bg-gray-800 dark:bg-opacity-90': isLoading,
                 'bg-gray-200 dark:bg-gray-800 dark:bg-opacity-95': !isLoading && error,
-                'bg-opacity-90': isLoading || error,
+                'bg-opacity-60': isLoading || error,
             }"
         >
             <LoadingIcon v-if="isLoading" class="h-8 w-8 animate animate-spin fill-current dark:text-gray-300" />
