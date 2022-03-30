@@ -54,6 +54,23 @@ export const calculateTransactionGrossProfit = function (auction: Auction): BigN
     return totalMarketPriceLimitedByDebt.minus(auction.debtDAI);
 };
 
+export const calculateBidTransactionCollateralProfit = function (
+    bidAmountDai: BigNumber,
+    auction: AuctionTransaction
+): BigNumber {
+    // Based on the clipper contract logic
+    // https://github.com/makerdao/dss/blob/60690042965500992490f695cf259256cc94c140/src/clip.sol#L357-L380
+    const collateralToBuyForTheBid = bidAmountDai.dividedBy(auction.unitPrice);
+    if (bidAmountDai.isGreaterThan(auction.debtDAI)) {
+        return auction.debtDAI.dividedBy(auction.unitPrice);
+    } else if (bidAmountDai.isLessThan(auction.debtDAI) && collateralToBuyForTheBid < auction.collateralAmount) {
+        if (auction.debtDAI.minus(bidAmountDai).isLessThan(auction.minimumBidDai)) {
+            return auction.debtDAI.minus(auction.minimumBidDai).dividedBy(auction.unitPrice);
+        }
+    }
+    return collateralToBuyForTheBid;
+};
+
 export const calculateTransactionGrossProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
     if (
         auction.secondsBetweenPriceDrops === undefined ||
