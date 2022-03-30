@@ -3,7 +3,7 @@
         :input-value="transactionBidAmount"
         :max-value="totalPrice"
         :min-value="minimumBidDai"
-        :disabled="!disabled"
+        :disabled="disabled"
         :validator="validator"
         @update:inputValue="$emit('update:transactionBidAmount', $event)"
     />
@@ -19,16 +19,16 @@ export default Vue.extend({
         BaseValueInput,
     },
     props: {
-        totalPrice: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: null,
-        },
         minimumBidDai: {
-            type: Object as Vue.PropType<BigNumber>,
-            required: true,
+            type: Object as Vue.PropType<BigNumber | undefined>,
+            default: undefined,
+        },
+        totalPrice: {
+            type: Object as Vue.PropType<BigNumber | undefined>,
+            default: undefined,
         },
         transactionBidAmount: {
-            type: Object as Vue.PropType<BigNumber> | undefined,
+            type: Object as Vue.PropType<BigNumber | undefined>,
             default: undefined,
         },
         disabled: {
@@ -37,7 +37,11 @@ export default Vue.extend({
         },
     },
     methods: {
-        validator(currentValue: BigNumber, minValue: BigNumber, maxValue: BigNumber) {
+        validator(
+            currentValue: BigNumber | undefined,
+            minValue: BigNumber | undefined,
+            maxValue: BigNumber | undefined
+        ) {
             if (!currentValue || !minValue || !maxValue) {
                 return;
             }
