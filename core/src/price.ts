@@ -1,4 +1,4 @@
-import type { Auction } from './types';
+import type { Auction, AuctionTransaction } from './types';
 import BigNumber from './bignumber';
 import { addSeconds } from 'date-fns';
 

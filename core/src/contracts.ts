@@ -5,6 +5,7 @@ import { fetchContractAddressByNetwork } from './addresses';
 import MCD_DAI from './abis/MCD_DAI.json';
 import MCD_VAT from './abis/MCD_VAT.json';
 import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
+import MCD_JOIN from './abis/MCD_JOIN.json';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import MCD_CLIP from './abis/MCD_CLIP.json';
 import WSTETH from './abis/WSTETH.json';
@@ -36,6 +37,9 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     }
     if (contractName === 'MCD_JOIN_DAI') {
         return MCD_JOIN_DAI;
+    }
+    if (contractName.startsWith('MCD_JOIN_')) {
+        return MCD_JOIN;
     }
     if (contractName.startsWith('MCD_CLIP_CALC_')) {
         return MCD_CLIP_CALC;
