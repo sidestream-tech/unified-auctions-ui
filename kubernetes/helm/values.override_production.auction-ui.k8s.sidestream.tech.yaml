@@ -1,7 +1,7 @@
 # Value overrides for the deployment to the following host:
 hosts:
   - "production.auction-ui.k8s.sidestream.tech"
-  - "auctions.makerdao.network"
+  - "unified-auctions.makerdao.com"
 
 ingress:
   isCertManagerActivated: true
