@@ -50,18 +50,16 @@
             </div>
         </div>
         <div class="flex justify-between">
-            <span v-if="!isActive || !auctionTransaction.totalPrice || isTooSmallToPartiallyTake">Total price</span>
-            <button v-else class="ClickableText" @click="setTransactionBidAmount(undefined)">
-                Buy all collateral
-            </button>
+            <span v-if="!isActive || !auctionTransaction.debtDAI || isTooSmallToPartiallyTake">Auction debt</span>
+            <button v-else class="ClickableText" @click="setTransactionBidAmount(undefined)">Set maximum bid</button>
             <button
                 class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.totalPrice || isTooSmallToPartiallyTake"
+                :disabled="!isActive || !auctionTransaction.debtDAI || isTooSmallToPartiallyTake"
                 @click="setTransactionBidAmount(undefined)"
             >
                 <format-currency
-                    v-if="auctionTransaction.totalPrice && isActive"
-                    :value="auctionTransaction.totalPrice"
+                    v-if="auctionTransaction.debtDAI && isActive"
+                    :value="auctionTransaction.debtDAI"
                     currency="DAI"
                 />
                 <span v-else class="opacity-50">Unknown</span>
@@ -88,19 +86,11 @@
         <div class="flex justify-between items-center">
             <div>The amount to bid</div>
             <div class="flex w-1/2 items-center space-x-2 justify-end -mr-1">
-                <div v-if="transactionBidAmount">
-                    <button
-                        class="text-primary hover:text-primary-light whitespace-nowrap"
-                        @click="setTransactionBidAmount(undefined)"
-                    >
-                        Reset To Total
-                    </button>
-                </div>
                 <div class="w-full flex-shrink-0">
                     <bid-input
                         :transaction-bid-amount.sync="transactionBidAmount"
                         :minimum-bid-dai="auctionTransaction.minimumBidDai"
-                        :total-price="auctionTransaction.totalPrice"
+                        :debt-dai="auctionTransaction.debtDAI"
                         :disabled="!isActive || isTooSmallToPartiallyTake"
                     />
                 </div>

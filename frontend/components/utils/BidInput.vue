@@ -1,7 +1,7 @@
 <template>
     <BaseValueInput
         :input-value="transactionBidAmount"
-        :max-value="totalPrice"
+        :max-value="debtDai"
         :min-value="minimumBidDai"
         :disabled="disabled"
         :validator="validator"
@@ -23,7 +23,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber | undefined>,
             default: undefined,
         },
-        totalPrice: {
+        debtDai: {
             type: Object as Vue.PropType<BigNumber | undefined>,
             default: undefined,
         },
@@ -47,7 +47,9 @@ export default Vue.extend({
             }
             const bidTopLimit = maxValue?.minus(minValue);
             if (currentValue?.isGreaterThan(bidTopLimit) || currentValue?.isLessThan(minValue)) {
-                throw new Error(`The value can only be between ${minValue.toFixed(2)} and ${bidTopLimit.toFixed(2)}`);
+                throw new Error(
+                    `The value can only be between ${minValue.toFixed(2)} and ${bidTopLimit.toFixed(2)} or the maximum`
+                );
             }
             if (maxValue?.isLessThan(minValue.multipliedBy(2))) {
                 throw new Error('The value can not be changed since the leftover part will be too small');
