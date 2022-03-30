@@ -48,7 +48,11 @@
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
             :disabled="
-                !auctionTransaction.isActive || !isWalletAuthorised || !isCollateralAuthorised || !isEnoughDeposited
+                !auctionTransaction.isActive ||
+                auctionTransaction.isFinished ||
+                !isWalletAuthorised ||
+                !isCollateralAuthorised ||
+                !isEnoughDeposited
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
