@@ -9,15 +9,18 @@
             </div>
             <slot name="title" />
         </button>
-        <div v-show="isExpanded" class="Content">
-            <slot />
-        </div>
+        <CollapseTransition>
+            <div v-show="isExpanded" class="Content">
+                <slot />
+            </div>
+        </CollapseTransition>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { Icon } from 'ant-design-vue';
+import CollapseTransition from '@ivanv/vue-collapse-transition';
 
 const STATES = [
     {
@@ -49,6 +52,7 @@ const STATES = [
 export default Vue.extend({
     components: {
         Icon,
+        CollapseTransition,
     },
     props: {
         currentState: {
