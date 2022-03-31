@@ -49,7 +49,11 @@
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
             :disabled="
-                !auctionTransaction.isActive || !isWalletAuthorized || !isCollateralAuthorised || !isEnoughDeposited
+                !auctionTransaction.isActive ||
+                auctionTransaction.isFinished ||
+                !isWalletAuthorized ||
+                !isCollateralAuthorised ||
+                !isEnoughDeposited
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
@@ -162,8 +166,7 @@ export default Vue.extend({
             return this.walletVatDai?.isGreaterThanOrEqualTo(this.transactionBidAmount);
         },
         transactionBidAmount(): BigNumber {
-            const output = this.inputBidAmount || this.auctionTransaction?.totalPrice || new BigNumber(NaN);
-            return output;
+            return this.inputBidAmount || this.auctionTransaction?.debtDAI || new BigNumber(NaN);
         },
         amountToReceive(): BigNumber {
             return calculateTransactionCollateralOutcome(
