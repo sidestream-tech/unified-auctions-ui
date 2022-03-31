@@ -69,6 +69,10 @@
                     :wallet-address="walletAddress"
                     :wallet-dai="walletDai"
                     :wallet-vat-dai="walletVatDai"
+                    :collateral-vat-balance="collateralVatBalance"
+                    :is-fetching-collateral-vat-balance="isFetchingCollateralVatBalance"
+                    @fetchCollateralVatBalance="$emit('fetchCollateralVatBalance', $event)"
+                    @withdrawAllCollateralFromVat="$emit('withdrawAllCollateralFromVat', $event)"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
                     @manageVat="$emit('manageVat')"
@@ -154,6 +158,14 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
+        collateralVatBalanceStore: {
+            type: Object as Vue.PropType<Record<string, BigNumber | undefined>>,
+            default: undefined,
+        },
+        isFetchingCollateralVatBalance: {
+            type: Boolean,
+            default: false,
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
@@ -175,6 +187,12 @@ export default Vue.extend({
         },
         isStagingEnvironment(): boolean {
             return !!process.env.STAGING_BANNER_URL;
+        },
+        collateralVatBalance(): BigNumber | undefined {
+            if (!this.collateralVatBalanceStore || !this.selectedAuction) {
+                return;
+            }
+            return this.collateralVatBalanceStore[this.selectedAuction.collateralType];
         },
     },
     watch: {

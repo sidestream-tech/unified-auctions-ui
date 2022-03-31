@@ -44,6 +44,7 @@
             @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
         />
         <BidBlock
+            class="mb-6 lg:mb-0"
             :auction-transaction="auctionTransaction"
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
@@ -53,6 +54,15 @@
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
             @bidWithDai="$emit('bidWithDai', { id: auctionTransaction.id, bidAmountDai: transactionBidAmount })"
+        />
+        <WithdrawCollateralBlock
+            :collateral-type="auctionTransaction.collateralType"
+            :collateral-vat-balance="collateralVatBalance"
+            :is-withdrawing="isDepositingOrWithdrawing"
+            :is-fetching="isFetchingCollateralVatBalance"
+            :is-explanations-shown="isExplanationsShown"
+            @fetchCollateralVatBalance="$emit('fetchCollateralVatBalance', $event)"
+            @withdrawAllCollateralFromVat="$emit('withdrawAllCollateralFromVat', $event)"
         />
     </div>
 </template>
@@ -68,6 +78,7 @@ import BidTransactionTable from './BidTransactionTable.vue';
 import WalletBlock from './WalletBlock.vue';
 import DepositBlock from './DepositBlock.vue';
 import BidBlock from './BidBlock.vue';
+import WithdrawCollateralBlock from './WithdrawCollateralBlock.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 
 export default Vue.extend({
@@ -78,6 +89,7 @@ export default Vue.extend({
         WalletBlock,
         DepositBlock,
         BidBlock,
+        WithdrawCollateralBlock,
         Alert,
     },
     props: {
@@ -120,6 +132,14 @@ export default Vue.extend({
         walletVatDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: null,
+        },
+        collateralVatBalance: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        isFetchingCollateralVatBalance: {
+            type: Boolean,
+            default: false,
         },
         isExplanationsShown: {
             type: Boolean,

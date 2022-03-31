@@ -230,6 +230,7 @@ export const actions = {
                 notifier
             );
             await dispatch('wallet/fetchWalletBalances', undefined, { root: true });
+            await dispatch('wallet/fetchCollateralVatBalance', auction.collateralType, { root: true });
             await dispatch('fetch');
         } catch (error) {
             console.error('Bidding error', error);

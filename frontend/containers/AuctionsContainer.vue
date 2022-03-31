@@ -17,6 +17,10 @@
             :take-event-storage="takeEvents"
             :wallet-dai="walletDai"
             :wallet-vat-dai="walletVatDai"
+            :collateral-vat-balance-store="collateralVatBalanceStore"
+            :is-fetching-collateral-vat-balance="isFetchingCollateralVatBalance"
+            @fetchCollateralVatBalance="fetchCollateralVatBalance"
+            @withdrawAllCollateralFromVat="withdrawAllCollateralFromVat"
             @manageVat="openWalletModal"
             @connect="openSelectWalletModal"
             @disconnect="disconnect"
@@ -53,6 +57,8 @@ export default Vue.extend({
             walletAddress: 'getAddress',
             walletBalances: 'walletBalances',
             isDepositingOrWithdrawing: 'isDepositingOrWithdrawing',
+            isFetchingCollateralVatBalance: 'isFetchingCollateralVatBalance',
+            collateralVatBalanceStore: 'collateralVatBalanceStore',
         }),
         ...mapGetters('authorizations', {
             isAuthorizing: 'isAuthorizationLoading',
@@ -102,25 +108,12 @@ export default Vue.extend({
     watch: {
         fetchedSelectedAuctionId: {
             immediate: true,
-            handler(fetchedSelectedAuctionId) {
-                if (!fetchedSelectedAuctionId) {
-                    return;
-                }
-                this.fetchWalletBalances();
-                this.fetchWalletAuthorizationStatus();
-                this.fetchCollateralAuthorizationStatus(this.selectedAuction.collateralType);
+            handler(): void {
+                this.fetchRelatedData();
             },
         },
-        walletAddress(newWalletAddress) {
-            if (!newWalletAddress) {
-                return;
-            }
-
-            this.fetchWalletBalances();
-            this.fetchWalletAuthorizationStatus();
-            if (this.selectedAuction) {
-                this.fetchCollateralAuthorizationStatus(this.selectedAuction.collateralType);
-            }
+        walletAddress(): void {
+            this.fetchRelatedData();
         },
     },
     methods: {
@@ -131,7 +124,7 @@ export default Vue.extend({
             'fetchCollateralAuthorizationStatus',
         ]),
         ...mapActions('auctions', ['bidWithCallee', 'bidWithDai', 'restart', 'fetchTakeEventsByAuctionId']),
-        ...mapActions('wallet', ['fetchWalletBalances']),
+        ...mapActions('wallet', ['fetchWalletBalances', 'fetchCollateralVatBalance', 'withdrawAllCollateralFromVat']),
         openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);
@@ -147,6 +140,15 @@ export default Vue.extend({
         },
         restartAuction(auctionId: string): void {
             this.restart(auctionId);
+        },
+        fetchRelatedData(): void {
+            if (!this.fetchedSelectedAuctionId || !this.walletAddress) {
+                return;
+            }
+            this.fetchWalletBalances();
+            this.fetchWalletAuthorizationStatus();
+            this.fetchCollateralAuthorizationStatus(this.selectedAuction.collateralType);
+            this.fetchCollateralVatBalance(this.selectedAuction.collateralType);
         },
     },
 });
