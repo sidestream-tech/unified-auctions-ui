@@ -76,7 +76,7 @@
                 @click="setTransactionBidAmount(auctionTransaction.minimumBidDai)"
             >
                 <format-currency
-                    v-if="auctionTransaction.minimumBidDai && isActive"
+                    v-if="auctionTransaction.minimumBidDai"
                     :value="auctionTransaction.minimumBidDai"
                     currency="DAI"
                 />
@@ -152,9 +152,7 @@ export default Vue.extend({
             return !!this.transactionBidAmount?.isNaN();
         },
         isTooSmallToPartiallyTake(): boolean {
-            return this.auctionTransaction.totalPrice.isLessThan(
-                this.auctionTransaction.minimumBidDai.multipliedBy(2)
-            );
+            return this.auctionTransaction.debtDAI.isLessThan(this.auctionTransaction.minimumBidDai.multipliedBy(2));
         },
     },
     watch: {
