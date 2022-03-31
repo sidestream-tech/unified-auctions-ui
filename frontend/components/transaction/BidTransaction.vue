@@ -10,8 +10,8 @@
         <BidTransactionTable
             class="mt-4 mb-6"
             :auction-transaction="auctionTransaction"
+            :amount-to-receive="amountToReceive"
             @inputBidAmount="inputBidAmount = $event"
-            @amountToReceive="amountToReceive = $event"
         />
         <WalletBlock
             class="mb-6 lg:mb-0"
@@ -44,28 +44,45 @@
             @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
         />
         <BidBlock
+            class="mb-6 lg:mb-0"
             :auction-transaction="auctionTransaction"
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
             :disabled="
-                !auctionTransaction.isActive || !isWalletAuthorized || !isCollateralAuthorised || !isEnoughDeposited
+                !auctionTransaction.isActive ||
+                auctionTransaction.isFinished ||
+                !isWalletAuthorized ||
+                !isCollateralAuthorised ||
+                !isEnoughDeposited
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
             @bidWithDai="$emit('bidWithDai', { id: auctionTransaction.id, bidAmountDai: transactionBidAmount })"
         />
+        <WithdrawCollateralBlock
+            :collateral-type="auctionTransaction.collateralType"
+            :collateral-vat-balance="collateralVatBalance"
+            :is-withdrawing="isDepositingOrWithdrawing"
+            :is-fetching="isFetchingCollateralVatBalance"
+            :is-explanations-shown="isExplanationsShown"
+            @fetchCollateralVatBalance="$emit('fetchCollateralVatBalance', $event)"
+            @withdrawAllCollateralFromVat="$emit('withdrawAllCollateralFromVat', $event)"
+        />
     </div>
 </template>
 
 <script lang="ts">
+import type { AuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
+import { calculateTransactionCollateralOutcome } from 'auctions-core/src/price';
 import AuthorisationBlock from './AuthorisationBlock.vue';
 import BidTransactionTable from './BidTransactionTable.vue';
 import WalletBlock from './WalletBlock.vue';
 import DepositBlock from './DepositBlock.vue';
 import BidBlock from './BidBlock.vue';
+import WithdrawCollateralBlock from './WithdrawCollateralBlock.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 
 export default Vue.extend({
@@ -76,6 +93,7 @@ export default Vue.extend({
         WalletBlock,
         DepositBlock,
         BidBlock,
+        WithdrawCollateralBlock,
         Alert,
     },
     props: {
@@ -119,6 +137,14 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
+        collateralVatBalance: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        isFetchingCollateralVatBalance: {
+            type: Boolean,
+            default: false,
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
@@ -127,7 +153,6 @@ export default Vue.extend({
     data() {
         return {
             inputBidAmount: undefined as BigNumber | undefined,
-            amountToReceive: undefined as BigNumber | undefined,
         };
     },
     computed: {
@@ -141,8 +166,14 @@ export default Vue.extend({
             return this.walletVatDai?.isGreaterThanOrEqualTo(this.transactionBidAmount);
         },
         transactionBidAmount(): BigNumber {
-            const output = this.inputBidAmount || this.auctionTransaction?.totalPrice || new BigNumber(NaN);
-            return output;
+            return this.inputBidAmount || this.auctionTransaction?.debtDAI || new BigNumber(NaN);
+        },
+        amountToReceive(): BigNumber {
+            return calculateTransactionCollateralOutcome(
+                this.transactionBidAmount,
+                this.auctionTransaction.approximateUnitPrice,
+                this.auctionTransaction
+            );
         },
     },
 });

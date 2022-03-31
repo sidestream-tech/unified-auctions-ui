@@ -50,37 +50,33 @@
             </div>
         </div>
         <div class="flex justify-between">
-            <span v-if="!isActive || !auctionTransaction.totalPrice || !isTooSmallToPartiallyTake">Total price</span>
-            <button v-else class="ClickableText" @click="settransactionBidAmount(undefined)">
-                Buy all collateral
-            </button>
+            <span v-if="!isActive || !auctionTransaction.debtDAI || isTooSmallToPartiallyTake">Auction debt</span>
+            <button v-else class="ClickableText" @click="setTransactionBidAmount(undefined)">Set maximum bid</button>
             <button
                 class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.totalPrice || !isTooSmallToPartiallyTake"
-                @click="settransactionBidAmount(undefined)"
+                :disabled="!isActive || !auctionTransaction.debtDAI || isTooSmallToPartiallyTake"
+                @click="setTransactionBidAmount(undefined)"
             >
                 <format-currency
-                    v-if="auctionTransaction.totalPrice && isActive"
-                    :value="auctionTransaction.totalPrice"
+                    v-if="auctionTransaction.debtDAI && isActive"
+                    :value="auctionTransaction.debtDAI"
                     currency="DAI"
                 />
                 <span v-else class="opacity-50">Unknown</span>
             </button>
         </div>
         <div class="flex justify-between">
-            <span v-if="!isActive || !auctionTransaction.minimumBidDai || !isTooSmallToPartiallyTake"
-                >Minimum bid</span
-            >
-            <button v-else class="ClickableText" @click="settransactionBidAmount(auctionTransaction.minimumBidDai)">
+            <span v-if="!isActive || !auctionTransaction.minimumBidDai || isTooSmallToPartiallyTake">Minimum bid</span>
+            <button v-else class="ClickableText" @click="setTransactionBidAmount(auctionTransaction.minimumBidDai)">
                 Set minimum bid
             </button>
             <button
                 class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.minimumBidDai || !isTooSmallToPartiallyTake"
-                @click="settransactionBidAmount(auctionTransaction.minimumBidDai)"
+                :disabled="!isActive || !auctionTransaction.minimumBidDai || isTooSmallToPartiallyTake"
+                @click="setTransactionBidAmount(auctionTransaction.minimumBidDai)"
             >
                 <format-currency
-                    v-if="auctionTransaction.minimumBidDai && isActive"
+                    v-if="auctionTransaction.minimumBidDai"
                     :value="auctionTransaction.minimumBidDai"
                     currency="DAI"
                 />
@@ -90,20 +86,13 @@
         <div class="flex justify-between items-center">
             <div>The amount to bid</div>
             <div class="flex w-1/2 items-center space-x-2 justify-end -mr-1">
-                <div v-if="transactionBidAmount">
-                    <button
-                        class="text-primary hover:text-primary-light whitespace-nowrap"
-                        @click="settransactionBidAmount(undefined)"
-                    >
-                        Reset To Total
-                    </button>
-                </div>
                 <div class="w-full flex-shrink-0">
                     <bid-input
                         :transaction-bid-amount.sync="transactionBidAmount"
                         :minimum-bid-dai="auctionTransaction.minimumBidDai"
-                        :total-price="auctionTransaction.totalPrice"
-                        :disabled="auctionTransaction.isFinished || !auctionTransaction.isActive"
+                        :debt-dai="auctionTransaction.debtDAI"
+                        :disabled="!isActive || isTooSmallToPartiallyTake"
+                        :is-too-small-to-partially-take="isTooSmallToPartiallyTake"
                     />
                 </div>
             </div>
@@ -146,6 +135,10 @@ export default Vue.extend({
             type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
         },
+        amountToReceive: {
+            type: Object as Vue.PropType<BigNumber>,
+            required: true,
+        },
     },
     data() {
         return {
@@ -153,12 +146,6 @@ export default Vue.extend({
         };
     },
     computed: {
-        amountToReceive(): BigNumber | undefined {
-            if (!this.transactionBidAmount || !this.auctionTransaction.approximateUnitPrice) {
-                return this.auctionTransaction.collateralAmount;
-            }
-            return this.transactionBidAmount.dividedBy(this.auctionTransaction.approximateUnitPrice);
-        },
         isActive(): boolean {
             return this.auctionTransaction.isActive && !this.auctionTransaction.isFinished;
         },
@@ -166,9 +153,7 @@ export default Vue.extend({
             return !!this.transactionBidAmount?.isNaN();
         },
         isTooSmallToPartiallyTake(): boolean {
-            return this.auctionTransaction.totalPrice.isGreaterThanOrEqualTo(
-                this.auctionTransaction.minimumBidDai.multipliedBy(2)
-            );
+            return this.auctionTransaction.debtDAI.isLessThan(this.auctionTransaction.minimumBidDai.multipliedBy(2));
         },
     },
     watch: {
@@ -178,15 +163,9 @@ export default Vue.extend({
                 this.$emit('inputBidAmount', transactionBidAmount);
             },
         },
-        amountToReceive: {
-            immediate: true,
-            handler(amountToReceive) {
-                this.$emit('amountToReceive', amountToReceive);
-            },
-        },
     },
     methods: {
-        settransactionBidAmount(value: BigNumber | undefined) {
+        setTransactionBidAmount(value: BigNumber | undefined) {
             if (this.isActive) {
                 this.transactionBidAmount = value;
             }

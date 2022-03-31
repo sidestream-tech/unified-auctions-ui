@@ -1,6 +1,6 @@
 <template>
     <span>
-        <span v-if="isNotANumber">NaN</span>
+        <span v-if="isNotANumber">Unknown</span>
         <span v-else> {{ sign }}<animated-number :value="value" :decimal-places="2" /> </span>
         <span class="uppercase">{{ currency }}</span>
     </span>

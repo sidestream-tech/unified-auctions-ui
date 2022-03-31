@@ -48,7 +48,7 @@
                 class="w-full md:w-80"
                 @click="$emit('manageVat')"
             >
-                Manage DAI in VAT
+                Deposit more DAI in VAT
             </BaseButton>
         </div>
     </div>

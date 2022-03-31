@@ -16,8 +16,7 @@
                 price
                 <a href="https://ethgasstation.info/" target="_blank"> here </a> </Explain
             >. The amount can be edited by the participant to influence the speed of the transaction.
-            <div v-if="showDifferentWalletInfo">
-                <br />
+            <div v-if="showDifferentWalletInfo" class="mt-2">
                 By default, the profit from a successful bidding will be sent to the same wallet which executed the
                 transaction. However, you can provide a different address which will receive the transaction profit.
             </div>

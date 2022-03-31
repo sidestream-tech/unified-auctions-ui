@@ -1,7 +1,8 @@
 import type { Notifier, WalletBalances } from './types';
+import { ethers } from 'ethers';
 import getProvider from './provider';
 import BigNumber from './bignumber';
-import getContract from './contracts';
+import getContract, { getJoinNameByCollateralType } from './contracts';
 import executeTransaction from './execute';
 import {
     DAI_NUMBER_OF_DIGITS,
@@ -31,6 +32,17 @@ export const fetchVATbalanceDAI = async function (network: string, walletAddress
     return walletVatDAI.decimalPlaces(WAD_NUMBER_OF_DIGITS, BigNumber.ROUND_DOWN);
 };
 
+export const fetchCollateralVatBalance = async function (
+    network: string,
+    walletAddress: string,
+    collateralType: string
+): Promise<BigNumber> {
+    const contract = await getContract(network, 'MCD_VAT');
+    const encodedCollateralType = ethers.utils.formatBytes32String(collateralType);
+    const wadAmount = await contract.gem(encodedCollateralType, walletAddress);
+    return new BigNumber(wadAmount._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+};
+
 export const fetchWalletBalances = async function (network: string, walletAddress: string): Promise<WalletBalances> {
     return {
         walletETH: await fetchBalanceETH(network, walletAddress),
@@ -58,4 +70,17 @@ export const withdrawFromVAT = async function (
 ): Promise<void> {
     const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
     await executeTransaction(network, 'MCD_JOIN_DAI', 'exit', [walletAddress, wadAmount], notifier, true);
+};
+
+export const withdrawCollateralFromVat = async function (
+    network: string,
+    walletAddress: string,
+    collateralType: string,
+    amount: BigNumber | undefined,
+    notifier?: Notifier
+): Promise<void> {
+    const withdrawalAmount = amount || (await fetchCollateralVatBalance(network, walletAddress, collateralType));
+    const withdrawalAmountWad = withdrawalAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
+    const contractName = getJoinNameByCollateralType(collateralType);
+    await executeTransaction(network, contractName, 'exit', [walletAddress, withdrawalAmountWad], notifier, true);
 };

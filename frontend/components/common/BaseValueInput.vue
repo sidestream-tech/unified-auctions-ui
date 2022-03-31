@@ -74,7 +74,10 @@ export default Vue.extend({
     },
     watch: {
         inputText(_newInputText: string, oldInputText: string) {
-            if (this.errorMessage || !this.inputTextParsed) {
+            if (!this.inputTextParsed) {
+                return;
+            }
+            if (this.errorMessage) {
                 this.$emit('update:inputValue', new BigNumber(NaN));
                 return;
             }
