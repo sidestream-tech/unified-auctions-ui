@@ -92,6 +92,7 @@
                         :minimum-bid-dai="auctionTransaction.minimumBidDai"
                         :debt-dai="auctionTransaction.debtDAI"
                         :disabled="!isActive || isTooSmallToPartiallyTake"
+                        :is-too-small-to-partially-take="isTooSmallToPartiallyTake"
                     />
                 </div>
             </div>

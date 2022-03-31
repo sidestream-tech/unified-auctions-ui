@@ -1,21 +1,25 @@
 <template>
-    <BaseValueInput
-        :input-value="transactionBidAmount"
-        :max-value="debtDai"
-        :min-value="minimumBidDai"
-        :disabled="disabled"
-        :validator="validator"
-        @update:inputValue="$emit('update:transactionBidAmount', $event)"
-    />
+    <Tooltip :title="tooltipText" placement="topLeft">
+        <BaseValueInput
+            :input-value="transactionBidAmount"
+            :max-value="debtDai"
+            :min-value="minimumBidDai"
+            :disabled="disabled"
+            :validator="validator"
+            @update:inputValue="$emit('update:transactionBidAmount', $event)"
+        />
+    </Tooltip>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { Tooltip } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import BaseValueInput from '~/components/common/BaseValueInput.vue';
 
 export default Vue.extend({
     components: {
+        Tooltip,
         BaseValueInput,
     },
     props: {
@@ -31,9 +35,21 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber | undefined>,
             default: undefined,
         },
+        isTooSmallToPartiallyTake: {
+            type: Boolean,
+            default: false,
+        },
         disabled: {
             type: Boolean,
             default: false,
+        },
+    },
+    computed: {
+        tooltipText(): string {
+            if (this.isTooSmallToPartiallyTake) {
+                return `Not possible to change the amount since the leftover will be smaller than minimum`;
+            }
+            return '';
         },
     },
     methods: {
