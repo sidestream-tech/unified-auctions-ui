@@ -1,16 +1,6 @@
 # Value overrides for the deployment to the following host:
 hosts:
-  - "production.auction-ui.k8s.sidestream.tech"
   - "unified-auctions.makerdao.com"
-
-ingress:
-  isCertManagerActivated: true
-  # We can only generate a TLS cert for our own domain,
-  # maker needs to take over their domains TLS termination
-  tls:
-    - hosts:
-        - "production.auction-ui.k8s.sidestream.tech"
-      secretName: "auction-ui-tls-certificate"
 
 frontend:
   deployment:
