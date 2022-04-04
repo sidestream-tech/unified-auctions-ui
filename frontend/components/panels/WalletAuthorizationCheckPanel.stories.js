@@ -29,6 +29,7 @@ storiesOf('Panels/WalletAuthorizationCheckPanel', module)
             return {
                 isWalletAuthorized: true,
                 walletAddress: faker.finance.ethereumAddress(),
+                isLoading: false,
             };
         },
         template: `
@@ -55,6 +56,7 @@ storiesOf('Panels/WalletAuthorizationCheckPanel', module)
             return {
                 isWalletAuthorized: false,
                 walletAddress: undefined,
+                isLoading: false,
             };
         },
         template: `
