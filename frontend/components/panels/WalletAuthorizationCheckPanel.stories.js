@@ -11,7 +11,6 @@ const common = {
             walletAddress: faker.finance.ethereumAddress(),
             isLoading: false,
             disabled: false,
-            isCorrect: false,
             isExplanationsShown: true,
         };
     },
@@ -23,73 +22,52 @@ const common = {
                 this.isLoading = false;
             }, 1000);
         },
-    },
-    watch: {
-        isCorrect: {
-            immediate: true,
-            handler(isCorrect) {
-                action('isCorrect')(isCorrect);
-            },
-        },
+        isCorrect: action('isCorrect'),
     },
     template: `
     <WalletAuthorizationCheckPanel
-        :is-wallet-authorized="isWalletAuthorized"
-        :wallet-address="walletAddress"
-        :is-loading="isLoading"
-        :disabled="disabled"
-        :is-correct.sync="isCorrect"
-        :is-explanations-shown="isExplanationsShown"
+        v-bind="$data"
         @authorizeWallet="authorize"
+        @update:isCorrect="isCorrect"
     />`,
 };
 
 storiesOf('Panels/WalletAuthorizationCheckPanel', module)
     .add('Authorized', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                isWalletAuthorized: true,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            isWalletAuthorized: true,
+        }),
     }))
     .add('Unauthorized', () => ({
         ...common,
     }))
     .add('Missing Wallet', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                walletAddress: undefined,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            walletAddress: undefined,
+        }),
     }))
     .add('Loading', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                isLoading: true,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            isLoading: true,
+        }),
     }))
     .add('Disabled', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                disabled: true,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            disabled: true,
+        }),
     }))
     .add('Expert Mode', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                isExplanationsShown: false,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            isExplanationsShown: false,
+        }),
     }));

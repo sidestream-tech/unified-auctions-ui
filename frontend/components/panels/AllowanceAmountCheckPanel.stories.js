@@ -12,7 +12,6 @@ const common = {
             desiredAmount: new BigNumber(faker.finance.amount(100, 200)),
             isLoading: false,
             disabled: false,
-            isCorrect: false,
             isExplanationsShown: true,
         };
     },
@@ -24,101 +23,74 @@ const common = {
                 this.isLoading = false;
             }, 1000);
         },
-    },
-    watch: {
-        isCorrect: {
-            immediate: true,
-            handler(isCorrect) {
-                action('isCorrect')(isCorrect);
-            },
-        },
+        isCorrect: action('isCorrect'),
     },
     template: `
-        <AllowanceAmountCheckPanel 
-            :allowance-amount="allowanceAmount" 
-            :desired-amount="desiredAmount"
-            :is-loading="isLoading"
-            :disabled="disabled"
-            :is-correct.sync="isCorrect"
-            :isExplanationsShown="isExplanationsShown"
-            @setAllowanceAmount="setAllowanceAmount" 
+        <AllowanceAmountCheckPanel
+            v-bind="$data"
+            @setAllowanceAmount="setAllowanceAmount"
+            @update:isCorrect="isCorrect"
         />`,
 };
 
 storiesOf('Panels/AllowanceAmountCheckPanel', module)
     .add('Within Allowance', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                allowanceAmount: new BigNumber(faker.finance.amount(100, 200)),
-                desiredAmount: new BigNumber(faker.finance.amount(0, 100)),
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            allowanceAmount: new BigNumber(faker.finance.amount(100, 200)),
+            desiredAmount: new BigNumber(faker.finance.amount(0, 100)),
+        }),
     }))
     .add('Exceeds Allowance', () => ({
         ...common,
     }))
     .add('Unlimited Allowance', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                allowanceAmount: new BigNumber(Number.MAX_VALUE),
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            allowanceAmount: new BigNumber(Number.MAX_VALUE),
+        }),
     }))
     .add('Missing Allowance Amount', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                allowanceAmount: undefined,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            allowanceAmount: undefined,
+        }),
     }))
     .add('Missing Desired Amount', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                desiredAmount: undefined,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            desiredAmount: undefined,
+        }),
     }))
     .add('Desired Amount is NaN', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                desiredAmount: new BigNumber(NaN),
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            desiredAmount: new BigNumber(NaN),
+        }),
     }))
     .add('Loading', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                isLoading: true,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            isLoading: true,
+        }),
     }))
     .add('Disabled', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                disabled: true,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            disabled: true,
+        }),
     }))
     .add('Expert Mode', () => ({
         ...common,
-        data() {
-            return {
-                ...common.data(),
-                isExplanationsShown: false,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            isExplanationsShown: false,
+        }),
     }));
