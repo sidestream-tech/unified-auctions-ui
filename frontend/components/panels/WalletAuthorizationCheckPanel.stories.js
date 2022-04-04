@@ -7,8 +7,10 @@ const common = {
     data() {
         return {
             isWalletAuthorized: false,
-            isLoading: false,
             walletAddress: faker.finance.ethereumAddress(),
+            isLoading: false,
+            disabled: false,
+            isExplanationsShown: true,
         };
     },
     methods: {
@@ -20,6 +22,15 @@ const common = {
             }, 1000);
         },
     },
+    template: `
+    <WalletAuthorizationCheckPanel
+        :is-wallet-authorized="isWalletAuthorized"
+        :wallet-address="walletAddress"
+        :is-loading="isLoading"
+        :disabled="disabled"
+        :is-explanations-shown="isExplanationsShown"
+        @authorizeWallet="authorize"
+    />`,
 };
 
 storiesOf('Panels/WalletAuthorizationCheckPanel', module)
@@ -27,76 +38,47 @@ storiesOf('Panels/WalletAuthorizationCheckPanel', module)
         ...common,
         data() {
             return {
+                ...common.data(),
                 isWalletAuthorized: true,
-                walletAddress: faker.finance.ethereumAddress(),
-                isLoading: false,
             };
         },
-        template: `
-        <WalletAuthorizationCheckPanel
-            :is-wallet-authorized="isWalletAuthorized"
-            :wallet-address="walletAddress"
-            :is-loading="isLoading"
-            @authorizeWallet="authorize"
-        />`,
     }))
     .add('Unauthorized', () => ({
         ...common,
-        template: `
-        <WalletAuthorizationCheckPanel
-            :is-wallet-authorized="isWalletAuthorized"
-            :wallet-address="walletAddress"
-            :is-loading="isLoading"
-            @authorizeWallet="authorize()"
-        />`,
     }))
     .add('Missing Wallet', () => ({
         ...common,
         data() {
             return {
-                isWalletAuthorized: false,
+                ...common.data(),
                 walletAddress: undefined,
-                isLoading: false,
             };
         },
-        template: `
-        <WalletAuthorizationCheckPanel
-            :is-wallet-authorized="isWalletAuthorized"
-            :wallet-address="walletAddress"
-            :is-loading="isLoading"
-            @authorizeWallet="authorize"
-        />`,
     }))
     .add('Loading', () => ({
         ...common,
-        template: `
-        <WalletAuthorizationCheckPanel
-            :is-wallet-authorized="isWalletAuthorized"
-            :wallet-address="walletAddress"
-            :is-loading="isLoading"
-            @authorizeWallet="authorize"
-            is-loading
-        />`,
+        data() {
+            return {
+                ...common.data(),
+                isLoading: true,
+            };
+        },
     }))
     .add('Disabled', () => ({
         ...common,
-        template: `
-        <WalletAuthorizationCheckPanel
-            :is-wallet-authorized="isWalletAuthorized"
-            :wallet-address="walletAddress"
-            :is-loading="isLoading"
-            @authorizeWallet="authorize"
-            disabled
-        />`,
+        data() {
+            return {
+                ...common.data(),
+                disabled: true,
+            };
+        },
     }))
     .add('Expert Mode', () => ({
         ...common,
-        template: `
-        <WalletAuthorizationCheckPanel
-            :is-wallet-authorized="isWalletAuthorized"    
-            :wallet-address="walletAddress"
-            :is-loading="isLoading"
-            @authorizeWallet="authorize"
-            :is-explanations-shown="false"
-        />`,
+        data() {
+            return {
+                ...common.data(),
+                isExplanationsShown: false,
+            };
+        },
     }));

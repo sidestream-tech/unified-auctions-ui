@@ -10,17 +10,28 @@ const common = {
             allowanceAmount: new BigNumber(faker.finance.amount(0, 100)),
             desiredAmount: new BigNumber(faker.finance.amount(100, 200)),
             isLoading: false,
+            disabled: false,
+            isExplanationsShown: true,
         };
     },
     methods: {
         setAllowanceAmount(amount) {
             this.isLoading = true;
             setTimeout(() => {
-                this.allowanceAmount = amount;
+                this.allowanceAmount = amount || new BigNumber(Number.MAX_VALUE);
                 this.isLoading = false;
             }, 1000);
         },
     },
+    template: `
+        <AllowanceAmountCheckPanel 
+            :allowance-amount="allowanceAmount" 
+            :desired-amount="desiredAmount"
+            :is-loading="isLoading"
+            :disabled="disabled"
+            :isExplanationsShown="isExplanationsShown"
+            @setAllowanceAmount="setAllowanceAmount" 
+        />`,
 };
 
 storiesOf('Panels/AllowanceAmountCheckPanel', module)
@@ -28,92 +39,75 @@ storiesOf('Panels/AllowanceAmountCheckPanel', module)
         ...common,
         data() {
             return {
+                ...common.data(),
                 allowanceAmount: new BigNumber(faker.finance.amount(100, 200)),
                 desiredAmount: new BigNumber(faker.finance.amount(0, 100)),
-                isLoading: false,
             };
         },
-        template: `
-        <AllowanceAmountCheckPanel 
-            :allowance-amount="allowanceAmount" 
-            :desired-amount="desiredAmount"
-            :is-loading="isLoading"
-            @setAllowanceAmount="setAllowanceAmount" 
-        />`,
     }))
     .add('Exceeds Allowance', () => ({
         ...common,
-        template: `
-        <AllowanceAmountCheckPanel
-            :allowance-amount="allowanceAmount" 
-            :desired-amount="desiredAmount"
-            :is-loading="isLoading"
-            @setAllowanceAmount="setAllowanceAmount"
-        />`,
+    }))
+    .add('Unlimited Allowance', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                allowanceAmount: new BigNumber(Number.MAX_VALUE),
+            };
+        },
     }))
     .add('Missing Allowance Amount', () => ({
         ...common,
         data() {
             return {
+                ...common.data(),
                 allowanceAmount: undefined,
-                desiredAmount: new BigNumber(faker.finance.amount(0, 100)),
-                isLoading: false,
             };
         },
-        template: `
-        <AllowanceAmountCheckPanel
-            :allowance-amount="allowanceAmount" 
-            :desired-amount="desiredAmount"
-            :is-loading="isLoading"
-            @setAllowanceAmount="setAllowanceAmount" 
-        />`,
     }))
     .add('Missing Desired Amount', () => ({
         ...common,
         data() {
             return {
-                allowanceAmount: new BigNumber(faker.finance.amount(100, 200)),
+                ...common.data(),
                 desiredAmount: undefined,
-                isLoading: false,
             };
         },
-        template: `
-        <AllowanceAmountCheckPanel 
-            :allowance-amount="allowanceAmount" 
-            :desired-amount="desiredAmount"
-            :is-loading="isLoading"
-            @setAllowanceAmount="setAllowanceAmount"
-        />`,
+    }))
+    .add('Desired Amount is NaN', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                desiredAmount: new BigNumber(NaN),
+            };
+        },
     }))
     .add('Loading', () => ({
         ...common,
-        template: `
-        <AllowanceAmountCheckPanel 
-            :allowance-amount="allowanceAmount" 
-            :desired-amount="desiredAmount"
-            is-loading
-            @setAllowanceAmount="setAllowanceAmount"
-        />`,
+        data() {
+            return {
+                ...common.data(),
+                isLoading: true,
+            };
+        },
     }))
     .add('Disabled', () => ({
         ...common,
-        template: `
-        <AllowanceAmountCheckPanel 
-            :allowance-amount="allowanceAmount" 
-            :desired-amount="desiredAmount"
-            :is-loading="isLoading"
-            @setAllowanceAmount="setAllowanceAmount"
-            disabled
-        />`,
+        data() {
+            return {
+                ...common.data(),
+                disabled: true,
+            };
+        },
     }))
     .add('Expert Mode', () => ({
         ...common,
-        template: `
-        <AllowanceAmountCheckPanel 
-            :allowance-amount="allowanceAmount" 
-            :desired-amount="desiredAmount"
-            :is-loading="isLoading"
-            @setAllowanceAmount="setAllowanceAmount"
-            :is-explanations-shown="false"
-        />`,
+        data() {
+            return {
+                ...common.data(),
+                isExplanationsShown: false,
+            };
+        },
     }));
