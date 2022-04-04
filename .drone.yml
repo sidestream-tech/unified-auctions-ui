@@ -176,7 +176,7 @@ data:
         release_name: "auction-ui"
         values_to_set:
           - frontend.deployment.tag=$DRONE_COMMIT_SHA
-          - botTwitter.deployment.tag=$DRONE_COMMIT_SHA
+          - bot.deployment.tag=$DRONE_COMMIT_SHA
 
     - name: deploy-unified-auctions.makerdao.com
       depends_on:
@@ -196,7 +196,7 @@ data:
         release_name: "auction-ui"
         values_to_set:
           - frontend.deployment.tag=$DRONE_TAG
-          - botTwitter.deployment.tag=$DRONE_TAG
+          - bot.deployment.tag=$DRONE_TAG
 
   in_development_image_pipelines:
     - name: core-lint-build
