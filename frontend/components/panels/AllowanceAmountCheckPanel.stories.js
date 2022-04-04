@@ -1,4 +1,5 @@
 import { storiesOf } from '@storybook/vue';
+import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
 import AllowanceAmountCheckPanel from './AllowanceAmountCheckPanel';
@@ -11,6 +12,7 @@ const common = {
             desiredAmount: new BigNumber(faker.finance.amount(100, 200)),
             isLoading: false,
             disabled: false,
+            isCorrect: false,
             isExplanationsShown: true,
         };
     },
@@ -23,12 +25,21 @@ const common = {
             }, 1000);
         },
     },
+    watch: {
+        isCorrect: {
+            immediate: true,
+            handler(isCorrect) {
+                action('isCorrect')(isCorrect);
+            },
+        },
+    },
     template: `
         <AllowanceAmountCheckPanel 
             :allowance-amount="allowanceAmount" 
             :desired-amount="desiredAmount"
             :is-loading="isLoading"
             :disabled="disabled"
+            :is-correct.sync="isCorrect"
             :isExplanationsShown="isExplanationsShown"
             @setAllowanceAmount="setAllowanceAmount" 
         />`,

@@ -1,4 +1,5 @@
 import { storiesOf } from '@storybook/vue';
+import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import WalletAuthorizationCheckPanel from './WalletAuthorizationCheckPanel';
 
@@ -10,6 +11,7 @@ const common = {
             walletAddress: faker.finance.ethereumAddress(),
             isLoading: false,
             disabled: false,
+            isCorrect: false,
             isExplanationsShown: true,
         };
     },
@@ -22,12 +24,21 @@ const common = {
             }, 1000);
         },
     },
+    watch: {
+        isCorrect: {
+            immediate: true,
+            handler(isCorrect) {
+                action('isCorrect')(isCorrect);
+            },
+        },
+    },
     template: `
     <WalletAuthorizationCheckPanel
         :is-wallet-authorized="isWalletAuthorized"
         :wallet-address="walletAddress"
         :is-loading="isLoading"
         :disabled="disabled"
+        :is-correct.sync="isCorrect"
         :is-explanations-shown="isExplanationsShown"
         @authorizeWallet="authorize"
     />`,
