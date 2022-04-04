@@ -51,23 +51,6 @@ storiesOf('Panels/AllowanceAmountCheckPanel', module)
             @setAllowanceAmount="setAllowanceAmount"
         />`,
     }))
-    .add('Unlimited Allowance', () => ({
-        ...common,
-        data() {
-            return {
-                allowanceAmount: new BigNumber('99999999999999999999999999999999999999999999999999'),
-                desiredAmount: new BigNumber(faker.finance.amount(0, 100)),
-                isLoading: false,
-            };
-        },
-        template: `
-        <AllowanceAmountCheckPanel
-            :allowance-amount="allowanceAmount"
-            :desired-amount="desiredAmount"
-            :is-loading="isLoading"
-            @setAllowanceAmount="setAllowanceAmount"
-        />`,
-    }))
     .add('Missing Allowance Amount', () => ({
         ...common,
         data() {
