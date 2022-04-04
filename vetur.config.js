@@ -1,3 +1,3 @@
 module.exports = {
-    projects: ['./core', './frontend', './bot-twitter'],
+    projects: ['./core', './frontend', './bot'],
 };

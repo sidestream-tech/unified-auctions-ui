@@ -2,7 +2,7 @@
 
 ## What is "Unified Auctions Bot"?
 
-Unified Auctions Bot" is a server-side application with two distinct functionalities:
+"Unified Auctions Bot" is a server-side application with two distinct functionalities:
 
 - `Twitter bot` – a script that periodically fetches collateral auctions and publish a tweet if it finds a new auction
 - `Keeper bot` – a script that periodically fetches collateral auctions and their market values, and if it finds that any
@@ -61,7 +61,7 @@ Help on both things is given in the linked resources above.
 
 Testing scenario:
 
-1. Create `./bot-twitter/.env` file all variables from `auction-ui/bot/staging` or `auction-ui/bot/production`
+1. Create `./bot/.env` file all variables from `auction-ui/bot/staging` or `auction-ui/bot/production`
 2. Start the project in production mode, i.e.: `npm run build && npm start` or using docker image
 3. Restart auction on kovan using frontend
 4. Check the logs for the tweet message and its url

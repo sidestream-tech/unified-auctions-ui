@@ -92,16 +92,16 @@ data:
         event:
           - tag
 
-    # bot-twitter:main and bot-twitter:$MAIN_COMMIT_SHA
-    - name: publish-bot-twitter-merge-main
-      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
+    # bot:main and bot:$MAIN_COMMIT_SHA
+    - name: publish-bot-merge-main
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot
       tags:
         - "main"
         - "${DRONE_COMMIT_SHA}"
       labels:
         - key: org.opencontainers.image.source
           value: https://github.com/sidestream-tech/unified-auctions-ui
-      path_to_dockerfile: bot-twitter/Dockerfile
+      path_to_dockerfile: bot/Dockerfile
       path_to_context: ./
       tags_to_cache_from:
         - "main"
@@ -111,10 +111,10 @@ data:
         branch:
           - main
 
-    # bot-twitter no tag, just test production build
-    - name: build-bot-twitter-to-test-production-build
-      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
-      path_to_dockerfile: bot-twitter/Dockerfile
+    # bot no tag, just test production build
+    - name: build-bot-to-test-production-build
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot
+      path_to_dockerfile: bot/Dockerfile
       path_to_context: ./
       tags_to_cache_from:
         - "main"
@@ -122,15 +122,15 @@ data:
         event:
           - pull_request
 
-    # bot-twitter:$RELEASE_TAG
-    - name: publish-bot-twitter-on-tag
-      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
+    # bot:$RELEASE_TAG
+    - name: publish-bot-on-tag
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot
       tags:
         - "${DRONE_TAG}"
       labels:
         - key: org.opencontainers.image.source
           value: https://github.com/sidestream-tech/unified-auctions-ui
-      path_to_dockerfile: bot-twitter/Dockerfile
+      path_to_dockerfile: bot/Dockerfile
       path_to_context: ./
       tags_to_cache_from:
         - "main"
@@ -138,16 +138,16 @@ data:
         event:
           - tag
 
-    # bot-twitter:pr-$PULL_REQUEST_NUMBER
-    - name: publish-bot-twitter-on-pr-push
+    # bot:pr-$PULL_REQUEST_NUMBER
+    - name: publish-bot-on-pr-push
       target: development
-      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/bot
       tags:
         - "pr-${DRONE_PULL_REQUEST}"
       labels:
         - key: org.opencontainers.image.source
           value: https://github.com/sidestream-tech/unified-auctions-ui
-      path_to_dockerfile: bot-twitter/Dockerfile
+      path_to_dockerfile: bot/Dockerfile
       path_to_context: ./
       tags_to_cache_from:
         - "main"
@@ -158,7 +158,7 @@ data:
   deployments_to_aws_eks:
     - name: deploy-main.auction-ui.k8s.sidestream.tech
       depends_on:
-        - publish-bot-twitter-merge-main
+        - publish-bot-merge-main
         - publish-frontend-merge-main
       trigger:
         event:
@@ -180,7 +180,7 @@ data:
 
     - name: deploy-unified-auctions.makerdao.com
       depends_on:
-        - publish-bot-twitter-on-tag
+        - publish-bot-on-tag
         - publish-frontend-makerdao-on-tag
       trigger:
         event:
@@ -225,11 +225,11 @@ data:
       trigger:
         event:
           - pull_request
-    - name: bot-twitter-lint
+    - name: bot-lint
       type: kubernetes
-      depends_on: [publish-bot-twitter-on-pr-push]
-      image: ghcr.io/sidestream-tech/unified-auctions-ui/bot-twitter:pr-${DRONE_PULL_REQUEST}
-      workdir: /bot-twitter
+      depends_on: [publish-bot-on-pr-push]
+      image: ghcr.io/sidestream-tech/unified-auctions-ui/bot:pr-${DRONE_PULL_REQUEST}
+      workdir: /bot
       steps_parallel:
         - name: lint
           command: npm run lint
