@@ -41,7 +41,7 @@ export default Vue.extend({
     props: {
         walletAddress: {
             type: String,
-            required: true,
+            default: null,
         },
         disabled: {
             type: Boolean,
