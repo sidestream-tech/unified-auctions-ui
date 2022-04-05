@@ -2,8 +2,7 @@
     <BasePanel :current-state="currentStateAndTitle.name" class="WalletVatDaiWithdrawCheckPanel">
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
-            The amount of <FormatCurrency :value="desiredAmount" currency="DAI" /> is not present in the VAT and needs
-            to be deposited there before it can be withdrawn.
+            If you do not have enough DAI funds in the VAT, you will need to deposit them, before you can continue.
         </TextBlock>
         <div class="flex justify-end mt-2">
             <BaseButton :disabled="disabled" :is-loading="isLoading" @click="$emit('refresh')"
@@ -19,14 +18,12 @@ import BigNumber from 'bignumber.js';
 import BaseButton from '~/components/common/BaseButton.vue';
 import BasePanel from '~/components/common/BasePanel.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 export default Vue.extend({
     components: {
         BaseButton,
         BasePanel,
         TextBlock,
-        FormatCurrency,
     },
     props: {
         walletVatDai: {
