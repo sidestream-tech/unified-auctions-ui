@@ -1,12 +1,7 @@
 <template>
-    <div class="my-3">
-        <WalletBlock
-            v-if="!walletAddress"
-            class="mb-4"
-            :wallet-address="walletAddress"
-            :is-explanations-shown="isExplanationsShown"
-            @connectWallet="$emit('connect')"
-        />
+    <BasePanel :current-state="currentStateAndTitle.name" class="AuctionRestartPanel">
+        <template #title>{{ currentStateAndTitle.title }}</template>
+
         <TextBlock v-if="isExplanationsShown">
             Auction that either has experienced a too steep decrease in price or has reached its time limit becomes
             inactive and requires interaction to be restarted. When restarted, a new price is calculated and a fresh
@@ -44,54 +39,78 @@
             that is sent to the participant’s wallet. However, this action incurs transaction fee of approximately
             <FormatCurrency :value="transactionFee" :decimals="5" currency="eth" />.
         </TextBlock>
-        <div class="flex flex-row-reverse mt-3">
-            <Tooltip :title="!walletAddress ? 'Please connect a wallet' : null" placement="top">
-                <div>
-                    <base-button
-                        class="w-full md:w-80"
-                        type="primary"
-                        :is-loading="isRestarting"
-                        :disabled="!walletAddress || isRestarting"
-                        @click="$emit('restart')"
-                    >
-                        <span v-if="isRestarting">Restarting...</span>
-                        <span v-else>Restart Auction</span>
-                    </base-button>
-                </div>
-            </Tooltip>
+        <div class="flex justify-end mt-2 gap-5">
+            <BaseButton
+                class="w-full md:w-80"
+                type="primary"
+                :disabled="isDisabled"
+                :is-loading="isRestarting"
+                @click="$emit('restart')"
+            >
+                <span v-if="isRestarting">Restarting...</span>
+                <span v-else>Restart Auction</span>
+            </BaseButton>
         </div>
-    </div>
+    </BasePanel>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { Tooltip } from 'ant-design-vue';
-import WalletBlock from './WalletBlock.vue';
-import BaseButton from '~/components/common/BaseButton.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import Explain from '~/components/utils/Explain.vue';
+import BasePanel from '../common/BasePanel.vue';
+import TextBlock from '../common/TextBlock.vue';
+import Explain from '../utils/Explain.vue';
+import FormatCurrency from '../utils/FormatCurrency.vue';
+import BaseButton from '../common/BaseButton.vue';
 
 export default Vue.extend({
-    name: 'RestartBlock',
-    components: { TextBlock, BaseButton, FormatCurrency, Explain, Tooltip, WalletBlock },
+    name: 'AuctionRestartPanel',
+    components: { BaseButton, FormatCurrency, Explain, TextBlock, BasePanel },
     props: {
+        auctionIsActive: {
+            type: Boolean,
+            default: false,
+        },
         transactionFee: {
             type: [Number, Object] as Vue.PropType<Number | BigNumber>,
-            default: null,
-        },
-        isExplanationsShown: {
-            type: Boolean,
-            default: true,
-        },
-        walletAddress: {
-            type: String,
             default: null,
         },
         isRestarting: {
             type: Boolean,
             default: false,
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
+        },
+    },
+    computed: {
+        currentStateAndTitle(): PanelProps {
+            if (!this.auctionIsActive) {
+                return {
+                    name: 'notice',
+                    title: 'The auction is currently inactive.',
+                };
+            }
+            return {
+                name: 'correct',
+                title: 'The auction is active.',
+            };
+        },
+        isDisabled(): boolean {
+            return this.disabled || this.auctionIsActive;
+        },
+    },
+    watch: {
+        currentStateAndTitle: {
+            immediate: true,
+            handler(newCurrentStateAndTitle) {
+                this.$emit('update:isCorrect', newCurrentStateAndTitle.name === 'correct');
+            },
         },
     },
 });

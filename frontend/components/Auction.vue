@@ -2,14 +2,13 @@
     <TextBlock :title="`Auction #${auctionId}`">
         <Alert v-if="auctionError" class="my-3" :message="auctionError" type="error" />
         <div v-if="auction">
-            <RestartBlock
-                v-if="auctionError === 'This auction is inactive and must be restarted'"
+            <AuctionRestartPanel
+                :disabled="!walletAddress"
+                :auction-is-active="auction.isActive"
                 :transaction-fee="auction.restartTransactionFeeETH"
                 :is-explanations-shown="isExplanationsShown"
-                :wallet-address="walletAddress"
                 :is-restarting="auction.isRestarting"
                 @restart="$emit('restart', auctionId)"
-                @connect="$emit('connect')"
             />
             <div class="relative mt-4">
                 <table class="w-full table-fixed border-collapse border">
@@ -261,10 +260,12 @@ import Explain from '~/components/utils/Explain.vue';
 import RestartBlock from '~/components/transaction/RestartBlock.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
+import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
 
 export default Vue.extend({
     name: 'Auction',
     components: {
+        AuctionRestartPanel,
         AuctionEventsBlock,
         PriceDropAnimation,
         RestartBlock,
