@@ -53,18 +53,18 @@ storiesOf('Panels/WalletDaiDepositCheckPanel', module)
             desiredAmount: undefined,
         }),
     }))
-    .add('Desired Amount is negative', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            desiredAmount: new BigNumber(-10),
-        }),
-    }))
     .add('Desired Amount is NaN', () => ({
         ...common,
         data: () => ({
             ...common.data(),
             desiredAmount: new BigNumber(NaN),
+        }),
+    }))
+    .add('Desired Amount is negative', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            desiredAmount: new BigNumber(-10),
         }),
     }))
     .add('No wallet connected', () => ({
