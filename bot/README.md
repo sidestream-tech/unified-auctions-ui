@@ -53,7 +53,7 @@ to get started with your development setup. Namely, you should:
 
 - have a minimum `node` and `npm` version (see `package.json` `engine` section)
 - have a certain formatting and linting setup
-- don't forget to create `./bot-twitter/.env` file
+- don't forget to create `./bot/.env` file
 
 Help on both things is given in the linked resources above.
 
