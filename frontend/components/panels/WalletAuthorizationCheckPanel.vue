@@ -16,13 +16,13 @@
                     target="_blank"
                     >here</a
                 > </Explain
-            >. This operation should only be done once.
+            >, this operation should only be done once.
         </TextBlock>
         <div class="flex justify-end mt-2">
             <BaseButton
                 type="primary"
                 :is-loading="isLoading"
-                :disabled="disabled || isWalletAuthorized"
+                :disabled="disabled || isWalletAuthorized || !walletAddress"
                 @click="$emit('authorizeWallet')"
             >
                 <span v-if="isLoading">Authorizing...</span>
