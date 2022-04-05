@@ -2,8 +2,14 @@
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title> {{ currentStateAndTitle.title }} </template>
         <TextBlock v-if="isExplanationsShown">
-            If you do not have a wallet yet, you can simply sign up for it on a service like
-            <a href="https://metamask.io/" target="_blank">MetaMask</a>.
+            <div v-if="!walletAddress">
+                To execute transactions, you need to connect a wallet. If you don’t have a wallet yet, you can sign up
+                for it on a service like <a href="https://metamask.io/" target="_blank">MetaMask</a>.
+            </div>
+            <div v-else>
+                All transactions will be carried over the connected wallet
+                <format-address shorten :value="walletAddress" type="address" />
+            </div>
         </TextBlock>
         <div class="flex justify-end mt-2">
             <BaseButton
