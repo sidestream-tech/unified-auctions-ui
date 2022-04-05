@@ -24,7 +24,7 @@
         <div class="flex justify-end mt-2 gap-5">
             <BaseButton
                 class="w-full md:w-80"
-                :disabled="disabled"
+                :disabled="isDisabled"
                 :is-loading="isLoading"
                 @click="$emit('setAllowanceAmount', alwaysValidDesiredAmount)"
             >
@@ -34,7 +34,7 @@
             <BaseButton
                 class="w-full md:w-80"
                 :type="!isEnough ? 'primary' : ''"
-                :disabled="disabled || isUnlimitedAllowance"
+                :disabled="isDisabled || isUnlimitedAllowance"
                 :is-loading="isLoading"
                 @click="$emit('setAllowanceAmount')"
             >
@@ -125,6 +125,9 @@ export default Vue.extend({
                 name: 'correct',
                 title: 'The desired amount is within DAI allowance',
             };
+        },
+        isDisabled(): boolean {
+            return this.disabled || !this.allowanceAmount || this.isInvalidDesiredAmount;
         },
     },
     watch: {
