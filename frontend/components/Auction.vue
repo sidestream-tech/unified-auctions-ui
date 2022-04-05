@@ -257,7 +257,6 @@ import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import Loading from '~/components/common/Loading.vue';
 import Explain from '~/components/utils/Explain.vue';
-import RestartBlock from '~/components/transaction/RestartBlock.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
@@ -268,7 +267,6 @@ export default Vue.extend({
         AuctionRestartPanel,
         AuctionEventsBlock,
         PriceDropAnimation,
-        RestartBlock,
         Explain,
         Loading,
         FormatCurrency,
