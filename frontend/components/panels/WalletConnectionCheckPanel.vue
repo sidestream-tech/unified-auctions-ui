@@ -1,11 +1,6 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
-        <template #title>
-            <span v-if="currentStateAndTitle.name === 'correct'">
-                Wallet <format-address disable shorten :value="walletAddress" /> is connected
-            </span>
-            <span v-else>{{ currentStateAndTitle.title }}</span>
-        </template>
+        <template #title> {{ currentStateAndTitle.title }} </template>
         <TextBlock v-if="isExplanationsShown">
             If you do not have a wallet yet, you can simply sign up for it on a service like
             <a href="https://metamask.io/" target="_blank">MetaMask</a>.
@@ -66,12 +61,12 @@ export default Vue.extend({
             if (!this.walletAddress) {
                 return {
                     name: 'incorrect',
-                    title: 'Wallet is not connected',
+                    title: 'No wallet is connected',
                 };
             }
             return {
                 name: 'correct',
-                title: `Wallet is connected`,
+                title: `A wallet is connected`,
             };
         },
     },
