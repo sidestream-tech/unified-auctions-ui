@@ -1,6 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
+import BigNumber from 'bignumber.js';
 import CollateralAuthorizationCheckPanel from './CollateralAuthorizationCheckPanel';
 import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 
@@ -10,7 +11,7 @@ const common = {
     components: { CollateralAuthorizationCheckPanel },
     data: () => ({
         collateralType: fakeAuctionTransaction.collateralType,
-        authTransactionFeeETH: fakeAuctionTransaction.authTransactionFeeETH,
+        authTransactionFeeETH: new BigNumber(fakeAuctionTransaction.authTransactionFeeETH),
         walletAddress: faker.finance.ethereumAddress(),
         isCollateralAuthorized: false,
         isWalletAuthorized: true,
