@@ -1,5 +1,5 @@
 <template>
-    <BasePanel :current-state="currentStateAndTitle.name" :disabled="!isExplanationsShown">
+    <BasePanel :current-state="currentStateAndTitle.name">
         <template #title> {{ currentStateAndTitle.title }} </template>
         <TextBlock>
             You cannot execute an auction while it is not yet profitable. Once the auction price drops below the price

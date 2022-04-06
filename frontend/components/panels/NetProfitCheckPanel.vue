@@ -1,5 +1,5 @@
 <template>
-    <BasePanel :current-state="currentStateAndTitle.name" :disabled="!isExplanationsShown">
+    <BasePanel :current-state="currentStateAndTitle.name">
         <template #title> {{ currentStateAndTitle.title }} </template>
         <TextBlock>
             Executing an auction with a negative net profit is possible, but according to our calculations it will
