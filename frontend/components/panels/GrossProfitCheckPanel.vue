@@ -3,7 +3,7 @@
         <template #title> {{ currentStateAndTitle.title }} </template>
         <TextBlock>
             You cannot execute an auction while it is not yet profitable. Once the auction price drops below the price
-            on UniSwap, you may continue with the bidding process
+            on UniSwap, you may continue with the auction participation
         </TextBlock>
     </BasePanel>
 </template>
