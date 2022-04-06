@@ -3,7 +3,7 @@
         <template #title> {{ currentStateAndTitle.title }} </template>
         <TextBlock v-if="isExplanationsShown">
             Executing an auction with a negative net profit is possible, but according to our calculations it will
-            result in the net loss due to the transaction fees being higher then the gross profit.
+            result in a net loss due to the transaction fees being higher than the gross profit.
         </TextBlock>
     </BasePanel>
 </template>
