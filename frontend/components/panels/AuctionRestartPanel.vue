@@ -71,6 +71,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        walletAddress: {
+            type: String,
+            default: null,
+        },
         transactionFee: {
             type: [Number, Object] as Vue.PropType<Number | BigNumber>,
             default: null,
@@ -90,6 +94,12 @@ export default Vue.extend({
     },
     computed: {
         currentStateAndTitle(): PanelProps {
+            if (!this.walletAddress) {
+                return {
+                    name: 'inactive',
+                    title: 'The auction is currently inactive.',
+                };
+            }
             if (!this.auctionIsActive) {
                 return {
                     name: 'notice',
@@ -102,7 +112,7 @@ export default Vue.extend({
             };
         },
         isDisabled(): boolean {
-            return this.disabled || this.auctionIsActive;
+            return this.disabled || !!this.auctionIsActive;
         },
     },
     watch: {

@@ -1,10 +1,19 @@
 <template>
     <TextBlock :title="`Auction #${auctionId}`">
-        <Alert v-if="auctionError" class="my-3" :message="auctionError" type="error" />
+        <div class="my-3">
+            <Alert v-if="auctionError" :message="auctionError" type="error" />
+        </div>
         <div v-if="auction">
+            <WalletConnectionCheckPanel
+                :wallet-address="walletAddress"
+                is-explanations-shown="is-explanations-shown"
+                @connectWallet="$emit('connect')"
+                @disconnectWallet="$emit('disconnect')"
+            />
             <AuctionRestartPanel
                 :disabled="!walletAddress"
                 :auction-is-active="auction.isActive"
+                :wallet-address="walletAddress"
                 :transaction-fee="auction.restartTransactionFeeETH"
                 :is-explanations-shown="isExplanationsShown"
                 :is-restarting="auction.isRestarting"
@@ -260,10 +269,12 @@ import Explain from '~/components/utils/Explain.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
+import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 
 export default Vue.extend({
     name: 'Auction',
     components: {
+        WalletConnectionCheckPanel,
         AuctionRestartPanel,
         AuctionEventsBlock,
         PriceDropAnimation,
