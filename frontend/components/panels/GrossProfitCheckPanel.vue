@@ -1,7 +1,7 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name" :disabled="!isExplanationsShown">
         <template #title> {{ currentStateAndTitle.title }} </template>
-        <TextBlock v-if="isExplanationsShown">
+        <TextBlock>
             You cannot execute an auction while it is not yet profitable. Once the auction price drops below the price
             on UniSwap, you may continue with the bidding process
         </TextBlock>
@@ -21,10 +21,6 @@ export default Vue.extend({
         grossProfit: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
-        },
-        isExplanationsShown: {
-            type: Boolean,
-            default: true,
         },
     },
     computed: {

@@ -37,12 +37,4 @@ storiesOf('Panels/NetProfitCheckPanel', module)
             ...common.data(),
             netProfit: undefined,
         }),
-    }))
-    .add('Expert Mode', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            isExplanationsShown: false,
-            netProfit: new BigNumber(-10),
-        }),
     }));

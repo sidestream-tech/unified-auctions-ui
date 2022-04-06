@@ -1,7 +1,7 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name" :disabled="!isExplanationsShown">
         <template #title> {{ currentStateAndTitle.title }} </template>
-        <TextBlock v-if="isExplanationsShown">
+        <TextBlock>
             Executing an auction with a negative net profit is possible, but according to our calculations it will
             result in the net loss due to the transaction fees being higher then the gross profit.
         </TextBlock>
@@ -21,10 +21,6 @@ export default Vue.extend({
         netProfit: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
-        },
-        isExplanationsShown: {
-            type: Boolean,
-            default: true,
         },
     },
     computed: {

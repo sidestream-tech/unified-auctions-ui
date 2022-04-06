@@ -9,7 +9,7 @@
             </div>
             <slot name="title" />
         </button>
-        <CollapseTransition v-if="!disabled">
+        <CollapseTransition>
             <div v-show="isExpanded" class="Content">
                 <slot />
             </div>
@@ -59,10 +59,6 @@ export default Vue.extend({
             type: String,
             required: true,
             validator: (value: string) => STATES.map(s => s.name).includes(value),
-        },
-        disabled: {
-            type: Boolean,
-            default: false,
         },
     },
     data() {

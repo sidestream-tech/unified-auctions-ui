@@ -37,12 +37,4 @@ storiesOf('Panels/GrossProfitCheckPanel', module)
             ...common.data(),
             grossProfit: undefined,
         }),
-    }))
-    .add('Expert Mode', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            isExplanationsShown: false,
-            grossProfit: new BigNumber(-10),
-        }),
     }));
