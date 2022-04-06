@@ -10,6 +10,7 @@ const common = {
         return {
             auctionIsActive: false,
             transactionFee: new BigNumber(faker.finance.amount(0, 10)),
+            walletAddress: faker.finance.ethereumAddress(),
             isRestarting: false,
             disabled: false,
             isExplanationsShown: true,
@@ -54,6 +55,14 @@ storiesOf('Panels/AuctionRestartPanel', module)
         ...common,
         data: () => ({
             ...common.data(),
+            disabled: true,
+        }),
+    }))
+    .add('No Wallet Connected', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            walletAddress: undefined,
             disabled: true,
         }),
     }))
