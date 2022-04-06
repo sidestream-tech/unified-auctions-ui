@@ -1,4 +1,3 @@
-import type { CollateralConfig } from '../../types';
 import { ethers } from 'ethers';
 import { abi as UNISWAP_V3_QUOTER_ABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 import BigNumber from '../../bignumber';
@@ -10,20 +9,20 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
 
-export const encodeRoute = async function (network: string, collateral: CollateralConfig): Promise<string> {
-    if (collateral.exchange.callee !== 'CurveLpTokenUniv3Callee') {
-        throw new Error(`Can not encode route for the "${collateral.ilk}"`);
-    }
-    const types = ['address'];
-    const values = [await getContractAddressByName(network, collateral.symbol)] as any[];
+export const encodeRoute = async function (network: string, collateralSymbols: string[]): Promise<string> {
+    const types = [] as string[];
+    const values = [] as Array<string | number>;
 
-    for (const collateralSymbol of collateral.exchange.route) {
-        types.push('uint24');
-        values.push(UNISWAP_FEE);
-
+    for (const collateralSymbol of collateralSymbols) {
         types.push('address');
         values.push(await getContractAddressByName(network, collateralSymbol));
+
+        types.push('uint24');
+        values.push(UNISWAP_FEE);
     }
+
+    types.push('address');
+    values.push(await getContractAddressByName(network, 'MCD_DAI'));
     return ethers.utils.solidityPack(types, values);
 };
 

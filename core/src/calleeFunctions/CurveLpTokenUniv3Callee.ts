@@ -10,7 +10,10 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     profitAddress: string
 ): Promise<string> {
-    const route = encodeRoute(network, collateral);
+    if (collateral.exchange.callee !== 'CurveLpTokenUniv3Callee') {
+        throw new Error(`Can not encode route for the "${collateral.ilk}"`);
+    }
+    const route = await encodeRoute(network, collateral.exchange.route);
     const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 0;
