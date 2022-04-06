@@ -42,6 +42,11 @@ storiesOf('common/BasePanel', module)
         template:
             '<BasePanel currentState="notice"><template #title>{{ notice }}</template>Notice content</BasePanel>',
     }))
+    .add('Disabled Expand', () => ({
+        ...common,
+        template:
+            '<BasePanel currentState="notice" :disabled="true"><template #title>{{ notice }}</template>Notice content</BasePanel>',
+    }))
     .add('Very long notice', () => ({
         ...common,
         template: `<BasePanel currentState="notice">
