@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import NetProfitCheckPanel from "~/components/panels/NetProfitCheckPanel";
+import NetProfitCheckPanel from '~/components/panels/NetProfitCheckPanel';
 
 const common = {
     components: { NetProfitCheckPanel },
