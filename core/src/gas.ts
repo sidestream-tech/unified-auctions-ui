@@ -11,7 +11,7 @@ const GAS_CACHE = 10 * 1000;
 
 const _getCurrentGasPrice = async function (): Promise<BigNumber> {
     const gasData = await fetch(API_URL).then(r => r.json());
-    const gasPriceString = ethers.utils.formatUnits(gasData[TRANSACTION_SPEED] / 10, 'gwei');
+    const gasPriceString = ethers.utils.formatUnits(gasData[TRANSACTION_SPEED], 'gwei');
     return new BigNumber(gasPriceString);
 };
 
