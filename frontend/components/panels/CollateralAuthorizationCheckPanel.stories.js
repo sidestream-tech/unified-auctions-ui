@@ -1,6 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import BigNumber from 'bignumber.js';
+import faker from 'faker';
 import CollateralAuthorizationCheckPanel from './CollateralAuthorizationCheckPanel';
 import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 
@@ -12,6 +13,7 @@ const common = {
         collateralType: fakeAuctionTransaction.collateralType,
         authTransactionFeeETH: new BigNumber(fakeAuctionTransaction.authTransactionFeeETH),
         isCollateralAuthorized: false,
+        walletAddress: faker.finance.ethereumAddress(),
         isLoading: false,
         disabled: false,
         isExplanationsShown: true,
@@ -57,6 +59,13 @@ storiesOf('Panels/CollateralAuthorizationCheckPanel', module)
         data: () => ({
             ...common.data(),
             disabled: true,
+        }),
+    }))
+    .add('No wallet connected', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            walletAddress: undefined,
         }),
     }))
     .add('Expert Mode', () => ({
