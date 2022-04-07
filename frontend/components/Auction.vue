@@ -1,7 +1,7 @@
 <template>
     <TextBlock :title="`Auction #${auctionId}`">
         <div class="my-3">
-            <Alert v-if="auctionError && auction.isActive" :message="auctionError" type="error" />
+            <Alert v-if="auctionError && auctionError.showBanner" :message="auctionError.error" type="error" />
         </div>
         <div v-if="auction">
             <AuctionRestartPanel
@@ -206,7 +206,7 @@
             </template>
             <TextBlock>
                 <div class="flex w-full justify-end flex-wrap mt-4">
-                    <Tooltip :title="auctionError" placement="top">
+                    <Tooltip :title="auctionError && auctionError.error" placement="top">
                         <div>
                             <Button
                                 :disabled="!!auctionError"
@@ -325,21 +325,33 @@ export default Vue.extend({
         };
     },
     computed: {
-        auctionError(): string | null {
+        auctionError(): { error: string; showBanner: boolean } | null {
             if (!this.areAuctionsFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
-                return 'This auction was not found';
+                return {
+                    error: 'This auction was not found',
+                    showBanner: true,
+                };
             } else if (this.error) {
-                return this.error;
+                return {
+                    error: this.error,
+                    showBanner: true,
+                };
             } else if (this.auction?.isFinished || (!this.auction && this.takeEvents)) {
-                return 'This auction is finished';
+                return {
+                    error: 'This auction is finished',
+                    showBanner: true,
+                };
             } else if (!this.auction?.isActive && !this.areAuctionsFetching && !this.areTakeEventsFetching) {
-                return 'This auction is inactive and must be restarted';
+                return {
+                    error: 'This auction is inactive and must be restarted',
+                    showBanner: false,
+                };
             }
             return null;
         },
         swapTransactionError(): string | null {
             if (this.auctionError) {
-                return this.auctionError;
+                return this.auctionError.error;
             }
             if (
                 !this.areAuctionsFetching &&
