@@ -30,7 +30,6 @@ const NETWORKS: Record<string, NetworkConfig> = {
     localhost: {
         chainId: '0x539',
         title: 'Localhost:8545',
-        gasPrice: 2000000000000,
         url: `http://127.0.0.1:8545`,
         etherscanUrl: '',
         isFork: true,
