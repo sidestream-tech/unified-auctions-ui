@@ -24,8 +24,14 @@ const _executeTransaction = async function (
 ): Promise<string> {
     const contract = await getContract(network, contractName, true);
     const gasPrice = await getGasPrice(network);
+    const gasPriceWei = gasPrice.shiftedBy(ETH_NUMBER_OF_DIGITS);
+    const gasLimit = await contract.estimateGas[contractMethod](...contractParameters, {
+        maxPriorityFeePerGas: gasPriceWei.toFixed(0),
+        maxFeePerGas: gasPriceWei.multipliedBy(2).toFixed(0),
+    });
     const transactionPromise = contract[contractMethod](...contractParameters, {
-        gasPrice: gasPrice.shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(),
+        gasLimit,
+        maxFeePerGas: gasPriceWei.toFixed(0),
     });
     return trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network, confirmTransaction));
 };
