@@ -58,7 +58,7 @@ export default Vue.extend({
         },
         walletAddress: {
             type: String,
-            default: '',
+            default: null,
         },
         isLoading: {
             type: Boolean,
