@@ -39,7 +39,17 @@
             that is sent to the participant’s wallet. However, this action incurs transaction fee of approximately
             <FormatCurrency :value="transactionFee" :decimals="5" currency="eth" />.
         </TextBlock>
-        <div class="flex justify-end mt-2 gap-5">
+
+        <WalletConnectionCheckPanel
+            class="my-3"
+            :wallet-address="walletAddress"
+            :is-explanations-shown="isExplanationsShown"
+            :is-loading="isConnecting"
+            @connectWallet="$emit('connectWallet')"
+            @disconnectWallet="$emit('disconnectWallet')"
+        />
+
+        <div class="flex justify-end gap-5">
             <BaseButton
                 class="w-full md:w-80"
                 type="primary"
@@ -62,10 +72,11 @@ import TextBlock from '../common/TextBlock.vue';
 import Explain from '../utils/Explain.vue';
 import FormatCurrency from '../utils/FormatCurrency.vue';
 import BaseButton from '../common/BaseButton.vue';
+import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 
 export default Vue.extend({
     name: 'AuctionRestartPanel',
-    components: { BaseButton, FormatCurrency, Explain, TextBlock, BasePanel },
+    components: { WalletConnectionCheckPanel, BaseButton, FormatCurrency, Explain, TextBlock, BasePanel },
     props: {
         auctionIsActive: {
             type: Boolean,
@@ -83,6 +94,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isConnecting: {
+            type: Boolean,
+            default: false,
+        },
         disabled: {
             type: Boolean,
             default: false,
@@ -94,15 +109,9 @@ export default Vue.extend({
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (!this.walletAddress) {
-                return {
-                    name: 'inactive',
-                    title: 'The auction is currently inactive.',
-                };
-            }
             if (!this.auctionIsActive) {
                 return {
-                    name: 'notice',
+                    name: 'incorrect',
                     title: 'The auction is currently inactive.',
                 };
             }
@@ -112,7 +121,7 @@ export default Vue.extend({
             };
         },
         isDisabled(): boolean {
-            return this.disabled || !!this.auctionIsActive;
+            return this.disabled || !!this.auctionIsActive || !this.walletAddress;
         },
     },
     watch: {

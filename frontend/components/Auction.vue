@@ -1,15 +1,9 @@
 <template>
     <TextBlock :title="`Auction #${auctionId}`">
         <div class="my-3">
-            <Alert v-if="auctionError" :message="auctionError" type="error" />
+            <Alert v-if="auctionError && auction.isActive" :message="auctionError" type="error" />
         </div>
         <div v-if="auction">
-            <WalletConnectionCheckPanel
-                :wallet-address="walletAddress"
-                is-explanations-shown="is-explanations-shown"
-                @connectWallet="$emit('connect')"
-                @disconnectWallet="$emit('disconnect')"
-            />
             <AuctionRestartPanel
                 :disabled="!walletAddress"
                 :auction-is-active="auction.isActive"
@@ -18,8 +12,10 @@
                 :is-explanations-shown="isExplanationsShown"
                 :is-restarting="auction.isRestarting"
                 @restart="$emit('restart', auctionId)"
+                @connectWallet="$emit('connect')"
+                @disconnectWallet="$emit('disconnect')"
             />
-            <div class="relative mt-4">
+            <div class="relative mt-2">
                 <table class="w-full table-fixed border-collapse border">
                     <tbody>
                         <tr>
@@ -269,12 +265,10 @@ import Explain from '~/components/utils/Explain.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
-import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 
 export default Vue.extend({
     name: 'Auction',
     components: {
-        WalletConnectionCheckPanel,
         AuctionRestartPanel,
         AuctionEventsBlock,
         PriceDropAnimation,

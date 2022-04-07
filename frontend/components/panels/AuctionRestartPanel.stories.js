@@ -4,14 +4,17 @@ import faker from 'faker';
 import BigNumber from 'bignumber.js';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel';
 
+const fakeAddress = faker.finance.ethereumAddress();
+
 const common = {
     components: { AuctionRestartPanel },
     data() {
         return {
             auctionIsActive: false,
             transactionFee: new BigNumber(faker.finance.amount(0, 10)),
-            walletAddress: faker.finance.ethereumAddress(),
+            walletAddress: fakeAddress,
             isRestarting: false,
+            isConnecting: false,
             disabled: false,
             isExplanationsShown: true,
         };
@@ -23,12 +26,28 @@ const common = {
                 this.isRestarting = false;
             }, 1000);
         },
+        connectWallet() {
+            this.isConnecting = true;
+            setTimeout(() => {
+                this.isConnecting = false;
+                this.walletAddress = fakeAddress;
+            }, 1000);
+        },
+        disconnectWallet() {
+            this.isConnecting = true;
+            setTimeout(() => {
+                this.isConnecting = false;
+                this.walletAddress = undefined;
+            }, 1000);
+        },
         isCorrect: action('isCorrect'),
     },
     template: `
         <AuctionRestartPanel
             v-bind="$data"
             @restart="restart"
+            @connectWallet="connectWallet"
+            @disconnectWallet="disconnectWallet"
             @update:isCorrect="isCorrect"
         />`,
 };
@@ -63,7 +82,14 @@ storiesOf('Panels/AuctionRestartPanel', module)
         data: () => ({
             ...common.data(),
             walletAddress: undefined,
-            disabled: true,
+        }),
+    }))
+    .add('Wallet Connecting', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            walletAddress: undefined,
+            isConnecting: true,
         }),
     }))
     .add('Restarting', () => ({
