@@ -1,6 +1,5 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import faker from 'faker';
 import BigNumber from 'bignumber.js';
 import CollateralAuthorizationCheckPanel from './CollateralAuthorizationCheckPanel';
 import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
@@ -12,9 +11,7 @@ const common = {
     data: () => ({
         collateralType: fakeAuctionTransaction.collateralType,
         authTransactionFeeETH: new BigNumber(fakeAuctionTransaction.authTransactionFeeETH),
-        walletAddress: faker.finance.ethereumAddress(),
         isCollateralAuthorized: false,
-        isWalletAuthorized: true,
         isLoading: false,
         disabled: false,
         isExplanationsShown: true,
@@ -38,30 +35,15 @@ const common = {
 };
 
 storiesOf('Panels/CollateralAuthorizationCheckPanel', module)
-    .add('No wallet connected', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            isWalletAuthorized: false,
-            walletAddress: null,
-        }),
-    }))
-    .add('DAI transactions not authorized yet', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            isWalletAuthorized: false,
-        }),
-    }))
-    .add('Collateral transactions not authorized yet', () => ({
-        ...common,
-    }))
-    .add('Collateral transactions authorized', () => ({
+    .add('Authorized', () => ({
         ...common,
         data: () => ({
             ...common.data(),
             isCollateralAuthorized: true,
         }),
+    }))
+    .add('Unauthorized', () => ({
+        ...common,
     }))
     .add('Loading', () => ({
         ...common,
@@ -81,7 +63,6 @@ storiesOf('Panels/CollateralAuthorizationCheckPanel', module)
         ...common,
         data: () => ({
             ...common.data(),
-            isWalletAuthorized: true,
             isExplanationsShown: false,
         }),
     }));

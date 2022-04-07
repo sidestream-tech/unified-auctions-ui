@@ -15,7 +15,7 @@
             <BaseButton
                 type="primary"
                 :is-loading="isLoading"
-                :disabled="disabled || isCollateralAuthorized || !isWalletAuthorized || !walletAddress"
+                :disabled="disabled || isCollateralAuthorized"
                 @click="$emit('authorizeCollateral')"
             >
                 <span v-if="isLoading">Authorizing...</span>
@@ -56,14 +56,6 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: null,
         },
-        walletAddress: {
-            type: String,
-            default: '',
-        },
-        isWalletAuthorized: {
-            type: Boolean,
-            default: false,
-        },
         isLoading: {
             type: Boolean,
             default: false,
@@ -79,12 +71,6 @@ export default Vue.extend({
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (!this.walletAddress) {
-                return {
-                    name: 'inactive',
-                    title: `The ${this.collateralType} authorization is unknown until a wallet is connected`,
-                };
-            }
             if (!this.isCollateralAuthorized) {
                 return {
                     name: 'incorrect',
