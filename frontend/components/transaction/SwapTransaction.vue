@@ -29,27 +29,39 @@
             </Explain>
             the auction. In case your transaction will be rejected, it only results in the loss of the transaction fee.
         </TextBlock>
-        <WalletBlock
-            class="mb-6 lg:mb-0"
-            :disabled="!auctionTransaction.isActive"
-            :is-loading="isConnecting"
+        <WalletConnectionCheckPanel
             :wallet-address="walletAddress"
+            :is-loading="isConnecting"
             :is-explanations-shown="isExplanationsShown"
+            :disabled="!auctionTransaction.isActive"
             @connectWallet="$emit('connect')"
             @disconnectWallet="$emit('disconnect')"
         />
-        <AuthorisationBlock
-            class="mb-6 lg:mb-0"
-            :disabled="!isConnected || !auctionTransaction.isActive"
-            :auction-transaction="auctionTransaction"
-            :is-loading="isAuthorizing"
+        <WalletAuthorizationCheckPanel
             :is-wallet-authorized="isWalletAuthorized"
-            :is-collateral-authorised="isCollateralAuthorised"
+            :disabled="!auctionTransaction.isActive"
+            :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
+            :is-loading="isAuthorizing"
             @authorizeWallet="$emit('authorizeWallet')"
+        />
+        <CollateralAuthorizationCheckPanel
+            :collateral-type="auctionTransaction.collateralType"
+            :is-collateral-authorized="isCollateralAuthorised"
+            :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
+            :wallet-address="walletAddress"
+            :is-loading="isAuthorizing"
+            :disabled="!auctionTransaction.isActive || !isWalletAuthorized"
+            :is-explanations-shown="isExplanationsShown"
             @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
         />
+        <GrossProfitCheckPanel :gross-profit="auctionTransaction.transactionGrossProfit" />
+        <NetProfitCheckPanel
+            :net-profit="auctionTransaction.transactionNetProfit"
+            :negative-gross-profit="!auctionTransaction.transactionGrossProfit.isGreaterThanOrEqualTo(0)"
+        />
         <ExecutionBlock
+            class="mt-3"
             :disabled="
                 !isCollateralAuthorised ||
                 !isWalletAuthorized ||
@@ -71,8 +83,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
-import WalletBlock from '~/components/transaction/WalletBlock.vue';
-import AuthorisationBlock from '~/components/transaction/AuthorisationBlock.vue';
+import WalletConnectionCheckPanel from '../panels/WalletConnectionCheckPanel.vue';
+import WalletAuthorizationCheckPanel from '../panels/WalletAuthorizationCheckPanel.vue';
+import CollateralAuthorizationCheckPanel from '../panels/CollateralAuthorizationCheckPanel.vue';
+import GrossProfitCheckPanel from '../panels/GrossProfitCheckPanel.vue';
+import NetProfitCheckPanel from '../panels/NetProfitCheckPanel.vue';
 import ExecutionBlock from '~/components/transaction/ExecutionBlock.vue';
 import SwapTransactionTable from '~/components/transaction/SwapTransactionTable.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
@@ -81,11 +96,14 @@ import Explain from '~/components/utils/Explain.vue';
 export default Vue.extend({
     name: 'SwapTransaction',
     components: {
+        NetProfitCheckPanel,
+        GrossProfitCheckPanel,
+        CollateralAuthorizationCheckPanel,
+        WalletAuthorizationCheckPanel,
+        WalletConnectionCheckPanel,
         Explain,
         TextBlock,
         SwapTransactionTable,
-        WalletBlock,
-        AuthorisationBlock,
         ExecutionBlock,
         Alert,
     },

@@ -22,9 +22,19 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
+        negativeGrossProfit: {
+            type: Boolean,
+            default: false,
+        },
     },
     computed: {
         currentStateAndTitle(): PanelProps {
+            if (this.negativeGrossProfit) {
+                return {
+                    name: 'inactive',
+                    title: `The transaction net profit is negative`,
+                };
+            }
             if (this.netProfit === undefined) {
                 return {
                     name: 'notice',
