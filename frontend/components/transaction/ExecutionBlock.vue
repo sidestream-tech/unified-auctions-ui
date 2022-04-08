@@ -8,7 +8,7 @@
         />
         <div class="flex flex-col md:flex-row md:space-x-4 justify-end flex-wrap mt-4">
             <ExecuteWithOtherWalletBlock
-                :disabled="disabled || isLoading || state === 'notProfitable' || state === 'executed'"
+                :disabled="disabled || isLoading || state === 'executed'"
                 :default-wallet="walletAddress"
                 :is-loading="state === 'loading'"
                 class="pb-3"
@@ -71,10 +71,6 @@ export default Vue.extend({
             type: String,
             required: true,
         },
-        transactionGrossProfit: {
-            type: [Number, Object] as Vue.PropType<Number | BigNumber>,
-            default: null,
-        },
         walletAddress: {
             type: String,
             default: null,
@@ -87,9 +83,6 @@ export default Vue.extend({
             }
             if (this.disabled) {
                 return 'disabled';
-            }
-            if (this.transactionGrossProfit < 0) {
-                return 'notProfitable';
             }
             if (!this.transactionAddress) {
                 return 'notExecuted';

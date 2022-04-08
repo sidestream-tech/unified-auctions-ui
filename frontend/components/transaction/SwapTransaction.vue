@@ -29,44 +29,52 @@
             </Explain>
             the auction. In case your transaction will be rejected, it only results in the loss of the transaction fee.
         </TextBlock>
-        <WalletConnectionCheckPanel
-            :wallet-address="walletAddress"
-            :is-loading="isConnecting"
-            :is-explanations-shown="isExplanationsShown"
-            :disabled="!auctionTransaction.isActive"
-            @connectWallet="$emit('connect')"
-            @disconnectWallet="$emit('disconnect')"
-        />
-        <WalletAuthorizationCheckPanel
-            :is-wallet-authorized="isWalletAuthorized"
-            :disabled="!auctionTransaction.isActive"
-            :wallet-address="walletAddress"
-            :is-explanations-shown="isExplanationsShown"
-            :is-loading="isAuthorizing"
-            @authorizeWallet="$emit('authorizeWallet')"
-        />
-        <CollateralAuthorizationCheckPanel
-            :collateral-type="auctionTransaction.collateralType"
-            :is-collateral-authorized="isCollateralAuthorised"
-            :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
-            :wallet-address="walletAddress"
-            :is-loading="isAuthorizing"
-            :disabled="!auctionTransaction.isActive || !isWalletAuthorized"
-            :is-explanations-shown="isExplanationsShown"
-            @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
-        />
-        <GrossProfitCheckPanel :gross-profit="auctionTransaction.transactionGrossProfit" />
-        <NetProfitCheckPanel
-            :net-profit="auctionTransaction.transactionNetProfit"
-            :negative-gross-profit="!auctionTransaction.transactionGrossProfit.isGreaterThanOrEqualTo(0)"
-        />
+        <div>
+            <WalletConnectionCheckPanel
+                :is-correct.sync="isWalletConnectedCheck"
+                :wallet-address="walletAddress"
+                :is-loading="isConnecting"
+                :is-explanations-shown="isExplanationsShown"
+                :disabled="!isAuctionActiveAndNotFinished"
+                @connectWallet="$emit('connect')"
+                @disconnectWallet="$emit('disconnect')"
+            />
+            <WalletAuthorizationCheckPanel
+                :is-correct.sync="isWalletDAIAuthorizationCheckPassed"
+                :is-wallet-authorized="isWalletAuthorized"
+                :disabled="!isAuctionActiveAndNotFinished || !isWalletConnectedCheck"
+                :wallet-address="walletAddress"
+                :is-explanations-shown="isExplanationsShown"
+                :is-loading="isAuthorizing"
+                @authorizeWallet="$emit('authorizeWallet')"
+            />
+            <CollateralAuthorizationCheckPanel
+                :is-correct.sync="isWalletCollateralAuthorizationCheckPassed"
+                :collateral-type="auctionTransaction.collateralType"
+                :is-collateral-authorized="isCollateralAuthorised"
+                :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
+                :wallet-address="walletAddress"
+                :is-loading="isAuthorizing"
+                :disabled="!isAuctionActiveAndNotFinished || !isWalletDAIAuthorizationCheckPassed"
+                :is-explanations-shown="isExplanationsShown"
+                @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
+            />
+            <GrossProfitCheckPanel
+                :is-correct.sync="isGrossProfitCheckPassed"
+                :gross-profit="auctionTransaction.transactionGrossProfit"
+            />
+            <NetProfitCheckPanel
+                :net-profit="auctionTransaction.transactionNetProfit"
+                :negative-gross-profit="!isGrossProfitCheckPassed"
+            />
+        </div>
         <ExecutionBlock
             class="mt-3"
             :disabled="
-                !isCollateralAuthorised ||
-                !isWalletAuthorized ||
-                !auctionTransaction.isActive ||
-                auctionTransaction.isFinished
+                !isAuctionActiveAndNotFinished ||
+                !isWalletDAIAuthorizationCheckPassed ||
+                !isWalletCollateralAuthorizationCheckPassed ||
+                !isGrossProfitCheckPassed
             "
             :is-loading="isExecuting"
             :transaction-address="auctionTransaction.transactionAddress"
@@ -86,8 +94,8 @@ import { Alert } from 'ant-design-vue';
 import WalletConnectionCheckPanel from '../panels/WalletConnectionCheckPanel.vue';
 import WalletAuthorizationCheckPanel from '../panels/WalletAuthorizationCheckPanel.vue';
 import CollateralAuthorizationCheckPanel from '../panels/CollateralAuthorizationCheckPanel.vue';
-import GrossProfitCheckPanel from '../panels/GrossProfitCheckPanel.vue';
 import NetProfitCheckPanel from '../panels/NetProfitCheckPanel.vue';
+import GrossProfitCheckPanel from '../panels/GrossProfitCheckPanel.vue';
 import ExecutionBlock from '~/components/transaction/ExecutionBlock.vue';
 import SwapTransactionTable from '~/components/transaction/SwapTransactionTable.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
@@ -96,8 +104,8 @@ import Explain from '~/components/utils/Explain.vue';
 export default Vue.extend({
     name: 'SwapTransaction',
     components: {
-        NetProfitCheckPanel,
         GrossProfitCheckPanel,
+        NetProfitCheckPanel,
         CollateralAuthorizationCheckPanel,
         WalletAuthorizationCheckPanel,
         WalletConnectionCheckPanel,
@@ -141,12 +149,23 @@ export default Vue.extend({
             default: true,
         },
     },
+    data() {
+        return {
+            isWalletConnectedCheck: false,
+            isWalletDAIAuthorizationCheckPassed: false,
+            isWalletCollateralAuthorizationCheckPassed: false,
+            isGrossProfitCheckPassed: false,
+        };
+    },
     computed: {
         isConnected(): boolean {
             return this.walletAddress !== null;
         },
         isCollateralAuthorised(): boolean {
             return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
+        },
+        isAuctionActiveAndNotFinished(): boolean {
+            return this.auctionTransaction.isActive && !this.auctionTransaction.isFinished;
         },
     },
 });
