@@ -59,13 +59,10 @@
                 :is-explanations-shown="isExplanationsShown"
                 @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
             />
-            <GrossProfitCheckPanel
-                :is-correct.sync="isGrossProfitCheckPassed"
+            <ProfitCheckPanel
+                :is-correct.sync="isProfitCheckPassed"
                 :gross-profit="auctionTransaction.transactionGrossProfit"
-            />
-            <NetProfitCheckPanel
                 :net-profit="auctionTransaction.transactionNetProfit"
-                :negative-gross-profit="!isGrossProfitCheckPassed"
             />
         </div>
         <ExecutionBlock
@@ -74,7 +71,7 @@
                 !isAuctionActiveAndNotFinished ||
                 !isWalletDAIAuthorizationCheckPassed ||
                 !isWalletCollateralAuthorizationCheckPassed ||
-                !isGrossProfitCheckPassed
+                !isProfitCheckPassed
             "
             :is-loading="isExecuting"
             :transaction-address="auctionTransaction.transactionAddress"
@@ -94,8 +91,7 @@ import { Alert } from 'ant-design-vue';
 import WalletConnectionCheckPanel from '../panels/WalletConnectionCheckPanel.vue';
 import WalletAuthorizationCheckPanel from '../panels/WalletAuthorizationCheckPanel.vue';
 import CollateralAuthorizationCheckPanel from '../panels/CollateralAuthorizationCheckPanel.vue';
-import NetProfitCheckPanel from '../panels/NetProfitCheckPanel.vue';
-import GrossProfitCheckPanel from '../panels/GrossProfitCheckPanel.vue';
+import ProfitCheckPanel from '../panels/ProfitCheckPanel.vue';
 import ExecutionBlock from '~/components/transaction/ExecutionBlock.vue';
 import SwapTransactionTable from '~/components/transaction/SwapTransactionTable.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
@@ -104,8 +100,7 @@ import Explain from '~/components/utils/Explain.vue';
 export default Vue.extend({
     name: 'SwapTransaction',
     components: {
-        GrossProfitCheckPanel,
-        NetProfitCheckPanel,
+        ProfitCheckPanel,
         CollateralAuthorizationCheckPanel,
         WalletAuthorizationCheckPanel,
         WalletConnectionCheckPanel,
@@ -154,7 +149,7 @@ export default Vue.extend({
             isWalletConnectedCheck: false,
             isWalletDAIAuthorizationCheckPassed: false,
             isWalletCollateralAuthorizationCheckPassed: false,
-            isGrossProfitCheckPassed: false,
+            isProfitCheckPassed: false,
         };
     },
     computed: {

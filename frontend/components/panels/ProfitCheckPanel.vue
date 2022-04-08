@@ -1,7 +1,11 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title> {{ currentStateAndTitle.title }} </template>
-        <TextBlock>
+        <TextBlock v-if="currentStateAndTitle.title === 'The transaction gross profit is negative'">
+            You cannot execute an auction while it is not yet profitable. Once the auction price drops below the price
+            on UniSwap, you may continue with the auction participation
+        </TextBlock>
+        <TextBlock v-else>
             Executing an auction with a negative net profit is possible, but according to our calculations it will
             result in a net loss due to the transaction fees being higher than the gross profit.
         </TextBlock>
@@ -15,30 +19,36 @@ import BasePanel from '../common/BasePanel.vue';
 import TextBlock from '../common/TextBlock.vue';
 
 export default Vue.extend({
-    name: 'NetProfitCheckPanel',
+    name: 'ProfitCheckPanel',
     components: { TextBlock, BasePanel },
     props: {
+        grossProfit: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
         netProfit: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        negativeGrossProfit: {
-            type: Boolean,
-            default: false,
-        },
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (this.negativeGrossProfit) {
+            if (this.grossProfit === undefined || this.netProfit === undefined) {
                 return {
-                    name: 'inactive',
-                    title: `The transaction net profit is negative`,
+                    name: 'incorrect',
+                    title: `The transaction profit is unknown`,
                 };
             }
-            if (this.netProfit === undefined) {
+            if (this.grossProfit.isNaN() || this.netProfit.isNaN()) {
                 return {
-                    name: 'notice',
-                    title: `The transaction net profit is unknown`,
+                    name: 'incorrect',
+                    title: `The transaction profit is unknown`,
+                };
+            }
+            if (this.grossProfit.isLessThanOrEqualTo(0)) {
+                return {
+                    name: 'incorrect',
+                    title: `The transaction gross profit is negative`,
                 };
             }
             if (this.netProfit.isLessThanOrEqualTo(0)) {
@@ -49,7 +59,7 @@ export default Vue.extend({
             }
             return {
                 name: 'correct',
-                title: `The transaction net profit is positive`,
+                title: `The transaction profit is positive`,
             };
         },
     },
