@@ -58,11 +58,11 @@ export default Vue.extend({
     props: {
         walletDai: {
             type: Object as Vue.PropType<BigNumber>,
-            required: true,
+            default: null,
         },
         walletVatDai: {
             type: Object as Vue.PropType<BigNumber>,
-            required: true,
+            default: null,
         },
         transactionBidAmount: {
             type: Object as Vue.PropType<BigNumber>,

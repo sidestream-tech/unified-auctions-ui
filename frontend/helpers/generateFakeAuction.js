@@ -53,12 +53,12 @@ export const generateFakeAuction = function () {
 
 export const generateFakeAuctionTransaction = function () {
     const auction = generateFakeAuction();
-    const biddingTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
-    const biddingTransactionFeeDAI = biddingTransactionFeeETH * 1000;
-    const authTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
-    const authTransactionFeeDAI = authTransactionFeeETH * 1000;
-    const restartTransactionFeeETH = faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 });
-    const transactionNetProfit = auction.transactionGrossProfit - biddingTransactionFeeDAI;
+    const biddingTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
+    const biddingTransactionFeeDAI = biddingTransactionFeeETH.multipliedBy(1000);
+    const authTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
+    const authTransactionFeeDAI = authTransactionFeeETH.multipliedBy(1000);
+    const restartTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
+    const transactionNetProfit = new BigNumber(auction.transactionGrossProfit - biddingTransactionFeeDAI.toNumber());
     return {
         ...auction,
         biddingTransactionFeeETH,
