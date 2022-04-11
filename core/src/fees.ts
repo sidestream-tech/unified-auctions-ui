@@ -1,7 +1,7 @@
 import type { Auction, AuctionTransaction, TransactionFees } from './types';
 import BigNumber from './bignumber';
 import { getMarketPrice } from './calleeFunctions';
-import { getGasPrice } from './gas';
+import { getGasPriceForUI } from './gas';
 import getSigner from './signer';
 import { getCollateralAuthorizationStatus, getWalletAuthorizationStatus } from './authorizations';
 
@@ -11,7 +11,7 @@ export const convertETHtoDAI = async function (network: string, eth: BigNumber):
 };
 
 export const getApproximateTransactionFees = async function (network: string): Promise<TransactionFees> {
-    const gasPrice = await getGasPrice(network);
+    const gasPrice = await getGasPriceForUI(network);
 
     // TODO: figure out a way to properly estimate gas
     // for each transaction when no wallet is connected

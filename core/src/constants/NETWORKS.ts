@@ -6,7 +6,6 @@ const NETWORKS: Record<string, NetworkConfig> = {
     mainnet: {
         chainId: '0x1',
         title: 'Main',
-        gasPrice: undefined,
         url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://etherscan.io',
         isFork: false,

@@ -1,19 +1,40 @@
-import { ethers } from 'ethers';
+import type { GasParameters } from './types';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import { getNetworkConfigByType } from './constants/NETWORKS';
 import { ETH_NUMBER_OF_DIGITS } from './constants/UNITS';
-import CHAINLINK_FAST_GAS_ABI from './abis/CHAINLINK_FAST_GAS.json';
 import getProvider from './provider';
 
-const CHAINLINK_FAST_GAS_ADDRESS = '0x169E633A2D1E6c10dD91238Ba11c4A708dfEF37C';
 const GAS_CACHE_MS = 10 * 1000;
 
-const _getCurrentGasPrice = async function (network: string): Promise<BigNumber> {
+const getEIP1559Values = async function (network: string): Promise<GasParameters> {
     const provider = await getProvider(network);
-    const contract = new ethers.Contract(CHAINLINK_FAST_GAS_ADDRESS, CHAINLINK_FAST_GAS_ABI, provider);
-    const gasPrice = await contract.latestAnswer();
-    return new BigNumber(gasPrice._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
+    const feeData = await provider.getFeeData();
+    return {
+        maxFeePerGas: feeData.maxFeePerGas?.toString(),
+        maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.toString(),
+    };
+};
+
+export const getGasParametersForTransaction = async function (network: string): Promise<GasParameters> {
+    const networkConfig = getNetworkConfigByType(network);
+    if (networkConfig.gasPrice) {
+        // use hardcoded gasPrice in case it is defined in the network config
+        return {
+            gasPrice: new BigNumber(networkConfig.gasPrice).toFixed(0),
+        };
+    }
+    // get EIP-1559 values
+    return await getEIP1559Values(network);
+};
+
+const _getCurrentGasPrice = async function (network: string): Promise<BigNumber> {
+    const gasParameters = await getGasParametersForTransaction(network);
+    const gasPrice = gasParameters.maxFeePerGas ?? gasParameters.gasPrice;
+    if (!gasPrice) {
+        return new BigNumber(NaN);
+    }
+    return new BigNumber(gasPrice).shiftedBy(-ETH_NUMBER_OF_DIGITS);
 };
 
 const getCurrentGasPrice = memoizee(_getCurrentGasPrice, {
@@ -22,14 +43,10 @@ const getCurrentGasPrice = memoizee(_getCurrentGasPrice, {
     length: 1,
 });
 
-export const getGasPrice = async function (network: string): Promise<BigNumber> {
+export const getGasPriceForUI = async function (network: string): Promise<BigNumber> {
     const networkConfig = getNetworkConfigByType(network);
     if (networkConfig.gasPrice) {
         return new BigNumber(networkConfig.gasPrice).shiftedBy(-ETH_NUMBER_OF_DIGITS);
     }
-    try {
-        return await getCurrentGasPrice(network);
-    } catch (error) {
-        throw new Error(`Gas data is not available on "${network}" network`);
-    }
+    return await getCurrentGasPrice(network);
 };
