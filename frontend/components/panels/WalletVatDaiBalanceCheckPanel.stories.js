@@ -1,4 +1,5 @@
 import { storiesOf } from '@storybook/vue';
+import { action } from '@storybook/addon-actions';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
 import WalletVatDaiBalanceCheckPanel from './WalletVatDaiBalanceCheckPanel';
@@ -15,9 +16,13 @@ const common = {
         disabled: false,
         isExplanationsShown: true,
     }),
+    methods: {
+        isCorrect: action('isCorrect'),
+    },
     template: `
     <WalletVatDaiBalanceCheckPanel
         v-bind="$data"
+        @update:isCorrect="isCorrect"
     />`,
 };
 
