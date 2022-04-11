@@ -1,12 +1,12 @@
 import { storiesOf } from '@storybook/vue';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
-import WalletVatBalanceCheckPanel from './WalletVatBalanceCheckPanel';
+import WalletVatDaiBalanceCheckPanel from './WalletVatDaiBalanceCheckPanel';
 
 const transactionBidAmount = new BigNumber(faker.finance.amount());
 
 const common = {
-    components: { WalletVatBalanceCheckPanel },
+    components: { WalletVatDaiBalanceCheckPanel },
     data: () => ({
         transactionBidAmount,
         walletVatDai: new BigNumber(faker.finance.amount(0, transactionBidAmount.toNumber())),
@@ -16,12 +16,12 @@ const common = {
         isExplanationsShown: true,
     }),
     template: `
-    <WalletVatBalanceCheckPanel
+    <WalletVatDaiBalanceCheckPanel
         v-bind="$data"
     />`,
 };
 
-storiesOf('Panels/WalletVatBalanceCheckPanel', module)
+storiesOf('Panels/WalletVatDaiBalanceCheckPanel', module)
     .add('No wallet Connected', () => ({
         ...common,
         data: () => ({

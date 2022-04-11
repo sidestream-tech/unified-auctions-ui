@@ -76,7 +76,7 @@ export default Vue.extend({
             if (!this.walletAddress) {
                 return {
                     name: 'inactive',
-                    title: 'Please connect a wallet',
+                    title: 'The DAI authorization is unknown until a wallet is connected',
                 };
             }
             if (!this.isWalletAuthorized) {

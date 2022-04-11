@@ -92,7 +92,7 @@ export default Vue.extend({
             if (!this.walletDai) {
                 return {
                     name: 'inactive',
-                    title: 'The VAT balance is unknown until a wallet is connected',
+                    title: 'The balances are unknown until a wallet is connected',
                 };
             }
             if (this.minimumDepositDai?.isGreaterThan(0)) {
