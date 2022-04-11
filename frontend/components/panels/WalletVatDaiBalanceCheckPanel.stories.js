@@ -17,11 +17,19 @@ const common = {
         isExplanationsShown: true,
     }),
     methods: {
+        deposit() {
+            this.isLoading = true;
+            setTimeout(() => {
+                this.walletVatDai = this.transactionBidAmount;
+                this.isLoading = false;
+            }, 1000);
+        },
         isCorrect: action('isCorrect'),
     },
     template: `
     <WalletVatDaiBalanceCheckPanel
         v-bind="$data"
+        @manageVat="deposit"
         @update:isCorrect="isCorrect"
     />`,
 };
