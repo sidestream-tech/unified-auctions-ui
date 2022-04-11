@@ -12,7 +12,7 @@ const common = {
     data: () => ({
         collateralType: fakeAuctionTransaction.collateralType,
         authTransactionFeeETH: new BigNumber(fakeAuctionTransaction.authTransactionFeeETH),
-        isCollateralAuthorized: false,
+        authorizedCollaterals: [],
         walletAddress: faker.finance.ethereumAddress(),
         isLoading: false,
         disabled: false,
@@ -22,7 +22,7 @@ const common = {
         authorizeCollateral() {
             this.isLoading = true;
             setTimeout(() => {
-                this.isCollateralAuthorized = true;
+                this.authorizedCollaterals = [fakeAuctionTransaction.collateralType];
                 this.isLoading = false;
             }, 1000);
         },
@@ -41,7 +41,7 @@ storiesOf('Panels/CollateralAuthorizationCheckPanel', module)
         ...common,
         data: () => ({
             ...common.data(),
-            isCollateralAuthorized: true,
+            authorizedCollaterals: [fakeAuctionTransaction.collateralType],
         }),
     }))
     .add('Unauthorized', () => ({
