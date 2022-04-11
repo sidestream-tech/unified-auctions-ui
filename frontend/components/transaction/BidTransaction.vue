@@ -13,14 +13,14 @@
             :amount-to-receive="amountToReceive"
             @inputBidAmount="inputBidAmount = $event"
         />
-        <WalletBlock
-            class="mb-6 lg:mb-0"
+        <WalletConnectionCheckPanel
+            :wallet-address="walletAddress"
             :disabled="!auctionTransaction.isActive || auctionTransaction.isFinished"
             :is-loading="isConnecting"
-            :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
             @connectWallet="$emit('connect')"
             @disconnectWallet="$emit('disconnect')"
+            @update:isCorrect="isConnected = $event"
         />
         <DepositBlock
             class="mb-6 lg:mb-0"
@@ -32,15 +32,23 @@
             :wallet-vat-dai="walletVatDai"
             @manageVat="$emit('manageVat')"
         />
-        <AuthorisationBlock
-            class="mb-6 lg:mb-0"
-            :disabled="!isEnoughDeposited || !auctionTransaction.isActive || !isConnected"
-            :auction-transaction="auctionTransaction"
-            :is-loading="isAuthorizing"
+        <WalletAuthorizationCheckPanel
             :is-wallet-authorized="isWalletAuthorized"
-            :is-collateral-authorised="isCollateralAuthorised"
+            :wallet-address="walletAddress"
+            :disabled="!isEnoughDeposited"
+            :is-loading="isAuthorizing"
             :is-explanations-shown="isExplanationsShown"
             @authorizeWallet="$emit('authorizeWallet')"
+        />
+        <CollateralAuthorizationCheckPanel
+            :collateral-type="auctionTransaction.collateralType"
+            :is-collateral-authorized="isCollateralAuthorized"
+            :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
+            :wallet-address="walletAddress"
+            :is-wallet-authorized="isWalletAuthorized"
+            :disabled="!isEnoughDeposited"
+            :is-loading="isAuthorizing"
+            :is-explanations-shown="isExplanationsShown"
             @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
         />
         <BidBlock
@@ -52,7 +60,7 @@
                 !auctionTransaction.isActive ||
                 auctionTransaction.isFinished ||
                 !isWalletAuthorized ||
-                !isCollateralAuthorised ||
+                !isCollateralAuthorized ||
                 !isEnoughDeposited
             "
             :is-loading="isExecuting"
@@ -77,24 +85,26 @@ import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import { calculateTransactionCollateralOutcome } from 'auctions-core/src/price';
-import AuthorisationBlock from './AuthorisationBlock.vue';
 import BidTransactionTable from './BidTransactionTable.vue';
-import WalletBlock from './WalletBlock.vue';
 import DepositBlock from './DepositBlock.vue';
 import BidBlock from './BidBlock.vue';
 import WithdrawCollateralBlock from './WithdrawCollateralBlock.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
+import CollateralAuthorizationCheckPanel from '~/components/panels/CollateralAuthorizationCheckPanel.vue';
+import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
+import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 
 export default Vue.extend({
     components: {
         TextBlock,
         BidTransactionTable,
-        AuthorisationBlock,
-        WalletBlock,
         DepositBlock,
         BidBlock,
         WithdrawCollateralBlock,
         Alert,
+        CollateralAuthorizationCheckPanel,
+        WalletAuthorizationCheckPanel,
+        WalletConnectionCheckPanel,
     },
     props: {
         auctionTransaction: {
@@ -153,13 +163,11 @@ export default Vue.extend({
     data() {
         return {
             inputBidAmount: undefined as BigNumber | undefined,
+            isConnected: false,
         };
     },
     computed: {
-        isConnected(): boolean {
-            return this.walletAddress !== null;
-        },
-        isCollateralAuthorised(): boolean {
+        isCollateralAuthorized(): boolean {
             return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
         },
         isEnoughDeposited(): boolean {

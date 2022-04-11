@@ -21,8 +21,8 @@ const data = {
     isDeposited: false,
     authorisedCollaterals: [],
     walletAddress: null,
-    walletDai: new BigNumber(faker.finance.amount()),
-    walletVatDai: new BigNumber(faker.finance.amount()),
+    walletDai: null,
+    walletVatDai: null,
     transactionAddress: null,
     transactionAmountDai: fakeAuctionTransaction.totalPrice,
 };
@@ -37,6 +37,8 @@ const common = {
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = faker.finance.ethereumAddress();
+                this.walletDai = new BigNumber(faker.finance.amount());
+                this.walletVatDai = new BigNumber(faker.finance.amount());
                 this.isConnecting = false;
             }, 1000);
         },
@@ -47,6 +49,8 @@ const common = {
                 this.isWalletAuthorized = false;
                 this.authorisedCollaterals = [];
                 this.transactionAddress = null;
+                this.walletDai = null;
+                this.walletVatDai = null;
                 this.isConnecting = false;
             }, 1000);
         },
