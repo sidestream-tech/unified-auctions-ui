@@ -1,20 +1,35 @@
 import type { GasParameters } from './types';
+import { ethers } from 'ethers';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import { getNetworkConfigByType } from './constants/NETWORKS';
 import { ETH_NUMBER_OF_DIGITS } from './constants/UNITS';
+import CHAINLINK_ORACLE_ABI from './abis/CHAINLINK_FAST_GAS.json';
 import getProvider from './provider';
 
+const CHAINLINK_ORACLE_ADDRESS = '0x169e633a2d1e6c10dd91238ba11c4a708dfef37c';
 const GAS_CACHE_MS = 10 * 1000;
 
-const getEIP1559Values = async function (network: string): Promise<GasParameters> {
+const getOracleGasPrice = async function (network: string): Promise<BigNumber> {
     const provider = await getProvider(network);
-    const feeData = await provider.getFeeData();
+    const contract = new ethers.Contract(CHAINLINK_ORACLE_ADDRESS, CHAINLINK_ORACLE_ABI, provider);
+    const gasPrice = await contract.latestAnswer();
+    return new BigNumber(gasPrice._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
+};
+
+const _getEIP1559Values = async function (network: string): Promise<GasParameters> {
+    const oracleGasPrice = await getOracleGasPrice(network);
     return {
-        maxFeePerGas: feeData.maxFeePerGas?.toString(),
-        maxPriorityFeePerGas: feeData.maxPriorityFeePerGas?.toString(),
+        maxFeePerGas: oracleGasPrice.shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(0),
+        maxPriorityFeePerGas: '1500000000',
     };
 };
+
+const getEIP1559Values = memoizee(_getEIP1559Values, {
+    maxAge: GAS_CACHE_MS,
+    promise: true,
+    length: 1,
+});
 
 export const getGasParametersForTransaction = async function (network: string): Promise<GasParameters> {
     const networkConfig = getNetworkConfigByType(network);
@@ -28,25 +43,11 @@ export const getGasParametersForTransaction = async function (network: string): 
     return await getEIP1559Values(network);
 };
 
-const _getCurrentGasPrice = async function (network: string): Promise<BigNumber> {
+export const getGasPriceForUI = async function (network: string): Promise<BigNumber> {
     const gasParameters = await getGasParametersForTransaction(network);
-    const gasPrice = gasParameters.maxFeePerGas ?? gasParameters.gasPrice;
-    if (!gasPrice) {
+    const anyGasPriceInWei = gasParameters.maxFeePerGas ?? gasParameters.gasPrice;
+    if (!anyGasPriceInWei) {
         return new BigNumber(NaN);
     }
-    return new BigNumber(gasPrice).shiftedBy(-ETH_NUMBER_OF_DIGITS);
-};
-
-const getCurrentGasPrice = memoizee(_getCurrentGasPrice, {
-    maxAge: GAS_CACHE_MS,
-    promise: true,
-    length: 1,
-});
-
-export const getGasPriceForUI = async function (network: string): Promise<BigNumber> {
-    const networkConfig = getNetworkConfigByType(network);
-    if (networkConfig.gasPrice) {
-        return new BigNumber(networkConfig.gasPrice).shiftedBy(-ETH_NUMBER_OF_DIGITS);
-    }
-    return await getCurrentGasPrice(network);
+    return new BigNumber(anyGasPriceInWei).shiftedBy(-ETH_NUMBER_OF_DIGITS);
 };
