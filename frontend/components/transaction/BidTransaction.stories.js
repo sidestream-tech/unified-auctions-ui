@@ -15,7 +15,8 @@ const data = {
     },
     isConnecting: false,
     isDepositingOrWithdrawing: false,
-    isAuthorizing: false,
+    isAuthorizingWallet: false,
+    isAuthorizingCollateral: false,
     isExecuting: false,
     isWalletAuthorized: false,
     isDeposited: false,
@@ -55,17 +56,17 @@ const common = {
             }, 1000);
         },
         authorizeWallet() {
-            this.isAuthorizing = true;
+            this.isAuthorizingWallet = true;
             setTimeout(() => {
                 this.isWalletAuthorized = true;
-                this.isAuthorizing = false;
+                this.isAuthorizingWallet = false;
             }, 1000);
         },
         authorizeCollateral(collateralType) {
-            this.isAuthorizing = true;
+            this.isAuthorizingCollateral = true;
             setTimeout(() => {
                 this.authorisedCollaterals.push(collateralType);
-                this.isAuthorizing = false;
+                this.isAuthorizingCollateral = false;
                 action('Authorized Collateral:')(collateralType);
             }, 1000);
         },
@@ -89,16 +90,7 @@ const common = {
     },
     template: `
     <BidTransaction
-        :auctionTransaction="auctionTransaction"
-        :isConnecting="isConnecting"
-        :isDepositingOrWithdrawing="isDepositingOrWithdrawing"
-        :isAuthorizing="isAuthorizing"
-        :isExecuting="isExecuting"
-        :isWalletAuthorized="isWalletAuthorized"
-        :authorisedCollaterals="authorisedCollaterals"
-        :walletAddress="walletAddress"
-        :walletDai="walletDai"
-        :walletVatDai="walletVatDai"
+        v-bind="$data"
         @connect="connect()"
         @disconnect="disconnect()"
         @authorizeWallet="authorizeWallet()"
