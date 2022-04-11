@@ -19,18 +19,18 @@
                 :disabled="!auctionTransaction.isActive || auctionTransaction.isFinished"
                 :is-loading="isConnecting"
                 :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="isWalletConnected"
                 @connectWallet="$emit('connect')"
                 @disconnectWallet="$emit('disconnect')"
-                @update:isCorrect="isConnected = $event"
             />
             <WalletVatDaiBalanceCheckPanel
                 :wallet-dai="walletDai"
                 :wallet-vat-dai="walletVatDai"
                 :transaction-bid-amount="transactionBidAmount"
                 :is-loading="isDepositingOrWithdrawing"
-                :disabled="!isConnected"
+                :is-correct.sync="isEnoughDeposited"
+                :disabled="!isWalletConnected"
                 @manageVat="$emit('manageVat')"
-                @update:isCorrect="isEnoughDeposited = $event"
             />
             <WalletAuthorizationCheckPanel
                 :is-wallet-authorized="isWalletAuthorized"
@@ -38,17 +38,18 @@
                 :disabled="!isEnoughDeposited"
                 :is-loading="isAuthorizingWallet"
                 :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="isWalletAuthorizedCorrect"
                 @authorizeWallet="$emit('authorizeWallet')"
             />
             <CollateralAuthorizationCheckPanel
                 :collateral-type="auctionTransaction.collateralType"
-                :is-collateral-authorized="isCollateralAuthorized"
+                :authorized-collaterals="authorisedCollaterals"
                 :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
                 :wallet-address="walletAddress"
-                :is-wallet-authorized="isWalletAuthorized"
-                :disabled="!isEnoughDeposited"
+                :disabled="!isWalletAuthorized"
                 :is-loading="isAuthorizingCollateral"
                 :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="isCollateralAuthorized"
                 @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
             />
         </div>
@@ -60,9 +61,10 @@
             :disabled="
                 !auctionTransaction.isActive ||
                 auctionTransaction.isFinished ||
-                !isWalletAuthorized ||
-                !isCollateralAuthorized ||
-                !isEnoughDeposited
+                !isWalletConnected ||
+                !isEnoughDeposited ||
+                !isWalletAuthorizedCorrect ||
+                !isCollateralAuthorizedCorrect
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
@@ -157,14 +159,13 @@ export default Vue.extend({
     data() {
         return {
             inputBidAmount: undefined as BigNumber | undefined,
-            isConnected: false,
+            isWalletConnected: false,
             isEnoughDeposited: false,
+            isWalletAuthorizedCorrect: false,
+            isCollateralAuthorized: false,
         };
     },
     computed: {
-        isCollateralAuthorized(): boolean {
-            return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
-        },
         transactionBidAmount(): BigNumber {
             return this.inputBidAmount || this.auctionTransaction?.debtDAI || new BigNumber(NaN);
         },

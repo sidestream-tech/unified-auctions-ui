@@ -33,7 +33,12 @@
             transaction can happen.
         </TextBlock>
         <div class="flex justify-end mt-2">
-            <BaseButton type="primary" :disabled="disabled" :is-loading="isLoading" @click="$emit('manageVat')">
+            <BaseButton
+                :type="currentStateAndTitle.name === 'incorrect' ? 'primary' : 'default'"
+                :disabled="disabled"
+                :is-loading="isLoading"
+                @click="$emit('manageVat')"
+            >
                 Manage DAI in VAT
             </BaseButton>
         </div>

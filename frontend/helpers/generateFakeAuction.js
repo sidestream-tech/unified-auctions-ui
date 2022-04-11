@@ -58,7 +58,7 @@ export const generateFakeAuctionTransaction = function () {
     const authTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const authTransactionFeeDAI = authTransactionFeeETH.multipliedBy(1000);
     const restartTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
-    const transactionNetProfit = new BigNumber(auction.transactionGrossProfit - biddingTransactionFeeDAI.toNumber());
+    const transactionNetProfit = auction.transactionGrossProfit.minus(biddingTransactionFeeDAI);
     return {
         ...auction,
         biddingTransactionFeeETH,
