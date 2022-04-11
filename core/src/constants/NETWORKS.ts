@@ -43,6 +43,7 @@ const NETWORK_TITLES: Record<string, string | undefined> = {
     '0x3': 'ropsten',
     '0x4': 'rinkeby',
     '0x5': 'goerli',
+    '0x539': 'localhost',
 };
 
 export const getDecimalChainIdByNetworkType = function (networkType: string): number {
