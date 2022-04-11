@@ -64,7 +64,7 @@
                 !isWalletConnected ||
                 !isEnoughDeposited ||
                 !isWalletAuthorizedCorrect ||
-                !isCollateralAuthorizedCorrect
+                !isCollateralAuthorized
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
