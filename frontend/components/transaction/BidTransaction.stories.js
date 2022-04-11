@@ -7,32 +7,28 @@ import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 
 const fakeAuctionTransaction = generateFakeAuctionTransaction();
 
-const data = {
-    auctionTransaction: {
-        ...fakeAuctionTransaction,
-        isActive: true,
-        isFinished: false,
-    },
-    isConnecting: false,
-    isDepositingOrWithdrawing: false,
-    isAuthorizingWallet: false,
-    isAuthorizingCollateral: false,
-    isExecuting: false,
-    isWalletAuthorized: false,
-    isDeposited: false,
-    authorisedCollaterals: [],
-    walletAddress: null,
-    walletDai: null,
-    walletVatDai: null,
-    transactionAddress: null,
-    transactionAmountDai: fakeAuctionTransaction.totalPrice,
-};
-
 const common = {
     components: { BidTransaction },
-    data() {
-        return data;
-    },
+    data: () => ({
+        auctionTransaction: {
+            ...fakeAuctionTransaction,
+            isActive: true,
+            isFinished: false,
+        },
+        isConnecting: false,
+        isDepositingOrWithdrawing: false,
+        isAuthorizingWallet: false,
+        isAuthorizingCollateral: false,
+        isExecuting: false,
+        isWalletAuthorized: false,
+        isDeposited: false,
+        authorisedCollaterals: [],
+        walletAddress: null,
+        walletDai: null,
+        walletVatDai: null,
+        transactionAddress: null,
+        transactionAmountDai: fakeAuctionTransaction.totalPrice,
+    }),
     methods: {
         connect() {
             this.isConnecting = true;
@@ -106,30 +102,26 @@ storiesOf('Transaction/BidTransaction', module)
     }))
     .add('Inactive', () => ({
         ...common,
-        data() {
-            return {
-                ...data,
-                auctionTransaction: {
-                    ...fakeAuctionTransaction,
-                    isActive: false,
-                    isFinished: false,
-                },
-                transactionAmountDai: undefined,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            auctionTransaction: {
+                ...fakeAuctionTransaction,
+                isActive: false,
+                isFinished: false,
+            },
+            transactionAmountDai: undefined,
+        }),
     }))
     .add('Finished', () => ({
         ...common,
-        data() {
-            return {
-                ...data,
-                auctionTransaction: {
-                    ...fakeAuctionTransaction,
-                    isFinished: true,
-                    isActive: true,
-                    transactionAddress: faker.finance.ethereumAddress(),
-                },
-                transactionAmountDai: undefined,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            auctionTransaction: {
+                ...fakeAuctionTransaction,
+                isFinished: true,
+                isActive: true,
+                transactionAddress: faker.finance.ethereumAddress(),
+            },
+            transactionAmountDai: undefined,
+        }),
     }));
