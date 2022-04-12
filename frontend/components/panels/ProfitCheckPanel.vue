@@ -42,13 +42,13 @@ export default Vue.extend({
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (this.grossProfit === undefined || this.grossProfit.isNaN()) {
+            if (this.grossProfit === undefined || this.grossProfit?.isNaN()) {
                 return {
                     name: 'incorrect',
                     title: `The transaction gross profit is unknown`,
                 };
             }
-            if (this.netProfit === undefined || this.netProfit.isNaN()) {
+            if (this.netProfit === undefined || this.netProfit?.isNaN()) {
                 return {
                     name: 'incorrect',
                     title: `The transaction net profit is unknown`,
