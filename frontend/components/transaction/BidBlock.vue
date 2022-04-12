@@ -8,18 +8,20 @@
         <div class="flex flex-row-reverse mt-3">
             <BaseButton
                 v-if="state !== 'loading'"
+                class="w-full md:w-80"
                 :disabled="state === 'disabled' || state === 'executed'"
                 type="primary"
+                @click="$emit('bidWithDai')"
             >
                 <span>
-                    Bid <format-currency :value="transactionAmountDAI" currency="DAI" /> for
+                    Bid <format-currency :value="transactionBidAmount" currency="DAI" /> for
                     <format-currency
-                        :value="auctionTransaction.collateralAmount"
+                        :value="amountToReceive || auctionTransaction.collateralAmount"
                         :currency="auctionTransaction.collateralSymbol"
                     />
                 </span>
             </BaseButton>
-            <BaseButton v-else is-loading disabled>Bidding...</BaseButton>
+            <BaseButton v-else is-loading disabled class="w-full md:w-80">Bidding...</BaseButton>
         </div>
     </div>
 </template>
@@ -54,7 +56,11 @@ export default Vue.extend({
             type: Object as Vue.PropType<AuctionTransaction>,
             default: null,
         },
-        transactionAmountDAI: {
+        transactionBidAmount: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        amountToReceive: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },

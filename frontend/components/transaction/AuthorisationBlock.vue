@@ -49,11 +49,9 @@
             >
                 Authorize DAI Transactions
             </base-button>
-            <Tooltip v-else title="Already authorized for this wallet" placement="top">
-                <div class="w-full md:w-80">
-                    <base-button type="primary" class="w-full" disabled> Authorize DAI Transactions </base-button>
-                </div>
-            </Tooltip>
+            <base-button v-else type="primary" class="w-full md:w-80" disabled>
+                DAI Transactions Authorized
+            </base-button>
         </div>
         <TextBlock v-if="isExplanationsShown">
             <div>
@@ -94,22 +92,15 @@
             >
                 Authorizing...
             </base-button>
-
-            <Tooltip v-else title="Already authorized for this wallet" placement="top">
-                <div class="w-full md:w-80">
-                    <base-button type="primary" class="w-full" disabled>
-                        Authorize
-                        <format-currency class="px-1" :currency="auctionTransaction.collateralType" /> Transactions
-                    </base-button>
-                </div>
-            </Tooltip>
+            <base-button v-else type="primary" class="w-full md:w-80" disabled>
+                <format-currency class="px-1" :currency="auctionTransaction.collateralType" /> Transactions Authorized
+            </base-button>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
@@ -122,7 +113,6 @@ export default Vue.extend({
         TextBlock,
         BaseButton,
         FormatCurrency,
-        Tooltip,
     },
     props: {
         disabled: {
@@ -133,7 +123,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isWalletAuthorised: {
+        isWalletAuthorized: {
             type: Boolean,
             default: false,
         },
@@ -152,7 +142,7 @@ export default Vue.extend({
     },
     computed: {
         walletAuthorizationState(): string {
-            if (this.isWalletAuthorised) {
+            if (this.isWalletAuthorized) {
                 return 'authorized';
             }
             if (this.isLoading) {
@@ -164,7 +154,7 @@ export default Vue.extend({
             return 'notAuthorized';
         },
         collateralAuthorizationState(): string {
-            if (!this.isWalletAuthorised) {
+            if (!this.isWalletAuthorized) {
                 return 'disabled';
             }
             if (this.isCollateralAuthorised) {

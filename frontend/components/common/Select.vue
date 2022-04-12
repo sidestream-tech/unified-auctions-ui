@@ -40,6 +40,7 @@
                 :footer="null"
                 class="Select md:hidden"
                 :dialog-style="{ top: '60px' }"
+                destroy-on-close
             >
                 <ul>
                     <li

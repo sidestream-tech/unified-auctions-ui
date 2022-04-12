@@ -1,16 +1,18 @@
 import type { Auction, AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
+import Vue from 'vue';
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import {
     fetchAllAuctions,
-    bidOnTheAuction,
+    bidWithDai,
+    bidWithCallee,
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
     fetchTakeEvents,
 } from 'auctions-core/src/auctions';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
-import Vue from 'vue';
+import BigNumber from 'auctions-core/src/bignumber';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
@@ -169,7 +171,7 @@ export const actions = {
         refetchIntervalId = setInterval(() => dispatch('fetchWithoutLoading'), REFETCH_INTERVAL);
         updateAuctionsPricesIntervalId = setInterval(() => dispatch('updateAuctionsPrices'), TIMER_INTERVAL);
     },
-    async bid(
+    async bidWithCallee(
         { getters, commit, rootGetters }: ActionContext<State, State>,
         { id, alternativeDestinationAddress }: { id: string; alternativeDestinationAddress: string | undefined }
     ) {
@@ -186,13 +188,50 @@ export const actions = {
         }
         commit('setIsBidding', true);
         try {
-            const transactionAddress = await bidOnTheAuction(
+            const transactionAddress = await bidWithCallee(
                 network,
                 auction,
                 alternativeDestinationAddress || walletAddress,
                 notifier
             );
             commit('setAuctionFinish', { id, transactionAddress });
+        } catch (error) {
+            console.error('Bidding error', error);
+        } finally {
+            commit('setIsBidding', false);
+        }
+    },
+    async bidWithDai(
+        { getters, commit, dispatch, rootGetters }: ActionContext<State, State>,
+        {
+            id,
+            bidAmountDai,
+            alternativeDestinationAddress,
+        }: { id: string; bidAmountDai: BigNumber | string; alternativeDestinationAddress: string | undefined }
+    ) {
+        const auction = getters.getAuctionById(id);
+        if (!auction) {
+            message.error(`Bidding error: can not find auction with id "${id}"`);
+            return;
+        }
+        const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = getWallet().address;
+        if (!walletAddress) {
+            message.error('Bidding error: can not find wallet');
+            return;
+        }
+        commit('setIsBidding', true);
+        try {
+            await bidWithDai(
+                network,
+                auction,
+                new BigNumber(bidAmountDai),
+                alternativeDestinationAddress || walletAddress,
+                notifier
+            );
+            await dispatch('wallet/fetchWalletBalances', undefined, { root: true });
+            await dispatch('wallet/fetchCollateralVatBalance', auction.collateralType, { root: true });
+            await dispatch('fetch');
         } catch (error) {
             console.error('Bidding error', error);
         } finally {

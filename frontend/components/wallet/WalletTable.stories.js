@@ -8,10 +8,12 @@ const common = {
     components: { WalletTable },
     data: () => ({
         walletAddress: faker.finance.ethereumAddress(),
-        walletETH: new BigNumber(faker.finance.amount()),
-        walletDAI: new BigNumber(faker.finance.amount()),
-        walletVatDAI: new BigNumber(faker.finance.amount()),
-        walletLastUpdatedDate: faker.date.recent(),
+        walletBalances: {
+            walletETH: new BigNumber(faker.finance.amount()),
+            walletDAI: new BigNumber(faker.finance.amount()),
+            walletVatDAI: new BigNumber(faker.finance.amount()),
+            walletLastUpdatedDate: faker.date.recent(),
+        },
         isWalletLoading: false,
     }),
     methods: {

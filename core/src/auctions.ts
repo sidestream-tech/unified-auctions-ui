@@ -1,16 +1,17 @@
 import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier, TakeEvent } from './types';
 import BigNumber from './bignumber';
-import fetchAuctionsByCollateralType, { fetchAuctionStatus } from './fetch';
+import fetchAuctionsByCollateralType, { fetchAuctionStatus, fetchMinimumBidDai } from './fetch';
 import { getCalleeData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
-import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS, NULL_BYTES } from './constants/UNITS';
 import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
     calculateAuctionPrice,
     calculateTransactionGrossProfit,
     calculateTransactionGrossProfitDate,
+    calculateTransactionCollateralOutcome,
 } from './price';
 import { getSupportedCollateralTypes } from './addresses';
 import getContract, { getClipperNameByCollateralType } from './contracts';
@@ -27,15 +28,18 @@ const enrichAuctionWithActualNumbers = async function (
     if (!auction.isActive || auction.isFinished) {
         return {
             ...auction,
+            minimumBidDai: new BigNumber(0),
             unitPrice: new BigNumber(0),
             approximateUnitPrice: new BigNumber(0),
             totalPrice: new BigNumber(0),
         };
     }
     const auctionStatus = await fetchAuctionStatus(network, auction.collateralType, auction.index);
+    const minimumBidDai = await fetchMinimumBidDai(network, auction.collateralType);
     return {
         ...auction,
         ...auctionStatus,
+        minimumBidDai,
         approximateUnitPrice: auctionStatus.unitPrice,
     };
 };
@@ -176,7 +180,27 @@ export const restartAuction = async function (
     return executeTransaction(network, contractName, 'redo', [auction.index, profitAddress], notifier, false);
 };
 
-export const bidOnTheAuction = async function (
+export const bidWithDai = async function (
+    network: string,
+    auction: AuctionTransaction,
+    bidAmountDai: BigNumber,
+    profitAddress: string,
+    notifier?: Notifier
+): Promise<string> {
+    const contractName = getClipperNameByCollateralType(auction.collateralType);
+    const updatedAuction = await enrichAuctionWithActualNumbers(network, auction);
+    const collateralAmount = calculateTransactionCollateralOutcome(bidAmountDai, updatedAuction.unitPrice, auction);
+    const contractParameters = [
+        convertNumberTo32Bytes(auction.index),
+        collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        updatedAuction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(0),
+        profitAddress,
+        NULL_BYTES,
+    ];
+    return executeTransaction(network, contractName, 'take', contractParameters, notifier);
+};
+
+export const bidWithCallee = async function (
     network: string,
     auction: Auction,
     profitAddress: string,
@@ -187,8 +211,8 @@ export const bidOnTheAuction = async function (
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
         convertNumberTo32Bytes(auction.index),
-        auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
-        auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(),
+        auction.collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        auction.unitPrice.shiftedBy(RAY_NUMBER_OF_DIGITS).toFixed(0),
         calleeAddress,
         calleeData,
     ];

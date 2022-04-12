@@ -2,8 +2,7 @@ import type { Notifier } from './types';
 import memoizee from 'memoizee';
 import getContract from './contracts';
 import trackTransaction from './tracker';
-import { getGasPrice } from './gas';
-import { ETH_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { getGasParametersForTransaction } from './gas';
 import { getNetworkConfigByType } from './constants/NETWORKS';
 
 const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
@@ -23,9 +22,10 @@ const _executeTransaction = async function (
     confirmTransaction?: boolean
 ): Promise<string> {
     const contract = await getContract(network, contractName, true);
-    const gasPrice = await getGasPrice(network);
+    const gasParameters = await getGasParametersForTransaction(network);
     const transactionPromise = contract[contractMethod](...contractParameters, {
-        gasPrice: gasPrice.shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(),
+        ...gasParameters,
+        type: gasParameters.gasPrice ? undefined : 2,
     });
     return trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network, confirmTransaction));
 };

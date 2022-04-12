@@ -162,15 +162,6 @@ export default Vue.extend({
                     filters: ['collateral'],
                 },
                 {
-                    title: 'Catflip',
-                    description: `
-                    Provides overview on system parameters including auction related parameters on a per collateral basis`,
-                    links: {
-                        analytics: 'https://catflip.co/maker/',
-                    },
-                    filters: ['collateral', 'surplus', 'debt'],
-                },
-                {
                     title: 'Daistats',
                     description: `
                     Provides overview on different auction related parameters like number of surplus,

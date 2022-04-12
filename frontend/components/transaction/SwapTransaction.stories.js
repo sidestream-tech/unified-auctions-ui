@@ -17,7 +17,7 @@ const common = {
             isConnecting: false,
             isAuthorizing: false,
             isExecuting: false,
-            isWalletAuthorised: false,
+            isWalletAuthorized: false,
             authorisedCollaterals: [],
             walletAddress: null,
             transactionAddress: null,
@@ -35,7 +35,7 @@ const common = {
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = null;
-                this.isWalletAuthorised = false;
+                this.isWalletAuthorized = false;
                 this.authorisedCollaterals = [];
                 this.transactionAddress = null;
                 this.isConnecting = false;
@@ -44,7 +44,7 @@ const common = {
         authorizeWallet() {
             this.isAuthorizing = true;
             setTimeout(() => {
-                this.isWalletAuthorised = true;
+                this.isWalletAuthorized = true;
                 this.isAuthorizing = false;
             }, 1000);
         },
@@ -70,7 +70,7 @@ storiesOf('Transaction/SwapTransaction', module)
     .add('Default', () => ({
         ...common,
         template:
-            '<SwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isWalletAuthorised="isWalletAuthorised" :authorisedCollaterals="authorisedCollaterals" :isExecuting="isExecuting" :walletAddress="walletAddress" @connect="connect" @disconnect="disconnect" @authorizeCollateral="authorizeCollateral" @authorizeWallet="authorizeWallet" @execute="execute" />',
+            '<SwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isWalletAuthorized="isWalletAuthorized" :authorisedCollaterals="authorisedCollaterals" :isExecuting="isExecuting" :walletAddress="walletAddress" @connect="connect" @disconnect="disconnect" @authorizeCollateral="authorizeCollateral" @authorizeWallet="authorizeWallet" @execute="execute" />',
     }))
     .add('Inactive Auction', () => ({
         components: { SwapTransaction },

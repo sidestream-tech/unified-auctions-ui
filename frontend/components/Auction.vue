@@ -1,9 +1,9 @@
 <template>
     <TextBlock :title="`Auction #${auctionId}`">
-        <Alert v-if="errorText" class="my-3" :message="errorText" type="error" />
+        <Alert v-if="auctionError" class="my-3" :message="auctionError" type="error" />
         <div v-if="auction">
             <RestartBlock
-                v-if="errorText === 'This auction is inactive and must be restarted'"
+                v-if="auctionError === 'This auction is inactive and must be restarted'"
                 :transaction-fee="auction.restartTransactionFeeETH"
                 :is-explanations-shown="isExplanationsShown"
                 :wallet-address="walletAddress"
@@ -202,23 +202,26 @@
             </template>
             <TextBlock>
                 <div class="flex w-full justify-end flex-wrap mt-4">
-                    <Tooltip placement="top">
-                        <div slot="title">
-                            This website does not yet support bidding on the auction with your own DAI. In the
-                            meantime, you can use
-                            <a href="https://liquidations.makerdao.com/" target="_blank" class="underline text-primary"
-                                >Liquidation Portal</a
-                            >
-                        </div>
+                    <Tooltip :title="auctionError" placement="top">
                         <div>
-                            <Button disabled type="secondary" class="w-60 mb-4" @click="$emit('purchase')">
+                            <Button
+                                :disabled="!!auctionError"
+                                type="secondary"
+                                class="w-60 mb-4"
+                                @click="$emit('purchase')"
+                            >
                                 Bid with DAI
                             </Button>
                         </div>
                     </Tooltip>
-                    <Tooltip :title="errorText" placement="bottom">
+                    <Tooltip :title="swapTransactionError" placement="bottom">
                         <div>
-                            <Button :disabled="!!errorText" type="primary" class="w-60 ml-4" @click="$emit('swap')">
+                            <Button
+                                :disabled="!!swapTransactionError"
+                                type="primary"
+                                class="w-60 ml-4"
+                                @click="$emit('swap')"
+                            >
                                 Directly swap into profit
                             </Button>
                         </div>
@@ -318,7 +321,7 @@ export default Vue.extend({
         };
     },
     computed: {
-        errorText(): string | null {
+        auctionError(): string | null {
             if (!this.areAuctionsFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
                 return 'This auction was not found';
             } else if (this.error) {
@@ -327,7 +330,14 @@ export default Vue.extend({
                 return 'This auction is finished';
             } else if (!this.auction?.isActive && !this.areAuctionsFetching && !this.areTakeEventsFetching) {
                 return 'This auction is inactive and must be restarted';
-            } else if (
+            }
+            return null;
+        },
+        swapTransactionError(): string | null {
+            if (this.auctionError) {
+                return this.auctionError;
+            }
+            if (
                 !this.areAuctionsFetching &&
                 !this.areTakeEventsFetching &&
                 typeof this.auction?.marketUnitPriceToUnitPriceRatio === 'undefined'

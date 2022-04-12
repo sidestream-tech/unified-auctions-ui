@@ -2,10 +2,6 @@
 hosts:
 - "localhost"
 
-ingress:
-  isCertManagerActivated: false
-  isTlsActivated: false
-
 frontend:
   deployment:
     tag: "main"

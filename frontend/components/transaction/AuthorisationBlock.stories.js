@@ -10,7 +10,7 @@ const common = {
     data() {
         return {
             isLoading: false,
-            isWalletAuthorised: false,
+            isWalletAuthorized: false,
             isCollateralAuthorised: false,
             auctionTransaction: fakeAuctionTransaction,
             currencyType: faker.finance.currencyCode(),
@@ -20,7 +20,7 @@ const common = {
         authorizeWallet() {
             this.isLoading = true;
             setTimeout(() => {
-                this.isWalletAuthorised = true;
+                this.isWalletAuthorized = true;
                 this.isLoading = false;
             }, 1000);
         },
@@ -38,7 +38,7 @@ storiesOf('Transaction/AuthorisationBlock', module)
     .add('Default', () => ({
         ...common,
         template:
-            '<AuthorisationBlock :auction-transaction="auctionTransaction" :isLoading="isLoading" :isWalletAuthorised="isWalletAuthorised" :isCollateralAuthorised="isCollateralAuthorised"  @authorizeWallet="authorizeWallet" @authorizeCollateral="authorizeCollateral" />',
+            '<AuthorisationBlock :auction-transaction="auctionTransaction" :isLoading="isLoading" :isWalletAuthorized="isWalletAuthorized" :isCollateralAuthorised="isCollateralAuthorised"  @authorizeWallet="authorizeWallet" @authorizeCollateral="authorizeCollateral" />',
     }))
     .add('Disabled', () => ({
         ...common,
@@ -55,5 +55,5 @@ storiesOf('Transaction/AuthorisationBlock', module)
     .add('Authorized', () => ({
         ...common,
         template:
-            '<AuthorisationBlock :isWalletAuthorised="true" :isCollateralAuthorised="true" :auction-transaction="auctionTransaction"/>',
+            '<AuthorisationBlock :isWalletAuthorized="true" :isCollateralAuthorised="true" :auction-transaction="auctionTransaction"/>',
     }));

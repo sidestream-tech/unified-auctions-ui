@@ -3,19 +3,26 @@
         :auctions="auctions"
         :selected-auction-id.sync="selectedAuctionId"
         :is-connecting="isConnecting"
+        :is-depositing-or-withdrawing="isDepositingOrWithdrawing"
         :is-authorizing="isAuthorizing"
-        :is-wallet-authorised="isWalletAuthorised"
+        :is-wallet-authorized="isWalletAuthorized"
         :authorised-collaterals="authorisedCollaterals"
         :is-executing="isExecuting"
         :wallet-address="walletAddress"
+        :wallet-dai="walletDai"
+        :wallet-vat-dai="walletVatDai"
         :transaction-address="selectedAuction && selectedAuction.transactionAddress"
+        :transaction-bid-amount="transactionAmountDai"
         :is-explanations-shown.sync="isExplanationsShown"
+        @inputBidAmount="setTransactionAmountDai"
         @connect="connect"
         @disconnect="disconnect"
+        @manageVat="deposit"
         @authorizeWallet="authorizeWallet"
         @authorizeCollateral="authorizeCollateral"
         @restart="restart"
         @execute="execute"
+        @bidWithDai="execute"
     />
 </template>
 
@@ -23,6 +30,7 @@
 import Vue from 'vue';
 import faker from 'faker';
 import { message } from 'ant-design-vue';
+import BigNumber from 'bignumber.js';
 import MainFlow from '~/components/MainFlow.vue';
 import { generateFakeAuctionTransactions } from '~/helpers/generateFakeAuction';
 
@@ -35,11 +43,16 @@ export default Vue.extend({
             auctions: [] as AuctionTransaction[],
             selectedAuctionId: '',
             isConnecting: false,
+            isDepositingOrWithdrawing: false,
             isAuthorizing: false,
             isExecuting: false,
-            isWalletAuthorised: false,
+            isWalletAuthorized: false,
+            isDeposited: false,
             authorisedCollaterals: [] as string[],
             walletAddress: null as string | null,
+            walletDai: new BigNumber(faker.finance.amount()),
+            walletVatDai: new BigNumber(faker.finance.amount()),
+            transactionAmountDai: undefined as BigNumber | undefined,
         };
     },
     computed: {
@@ -62,6 +75,7 @@ export default Vue.extend({
                     const network = this.$route.query.network;
                     this.$router.push({ query: { network } });
                 }
+                this.transactionAmountDai = this.selectedAuction?.totalPrice;
             },
         },
         '$route.query.auction': {
@@ -74,6 +88,11 @@ export default Vue.extend({
                     this.selectedAuctionId = auctionParam;
                 }
             },
+        },
+        transactionAmountDai(newAmount) {
+            if (newAmount === undefined) {
+                this.transactionAmountDai = this.selectedAuction?.totalPrice ?? undefined;
+            }
         },
     },
     created() {
@@ -91,7 +110,7 @@ export default Vue.extend({
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = null;
-                this.isWalletAuthorised = false;
+                this.isWalletAuthorized = false;
                 this.authorisedCollaterals = [];
                 if (this.selectedAuction) {
                     this.selectedAuction.transactionAddress = undefined;
@@ -102,7 +121,7 @@ export default Vue.extend({
         authorizeWallet() {
             this.isAuthorizing = true;
             setTimeout(() => {
-                this.isWalletAuthorised = true;
+                this.isWalletAuthorized = true;
                 this.isAuthorizing = false;
             }, 1000);
         },
@@ -120,6 +139,7 @@ export default Vue.extend({
                     this.selectedAuction.isFinished = true;
                     this.selectedAuction.endDate = new Date();
                     this.selectedAuction.transactionAddress = faker.finance.ethereumAddress();
+                    this.walletVatDai = this.walletVatDai.minus(this.transactionAmountDai!);
                 }
                 this.isExecuting = false;
             }, 1000);
@@ -129,6 +149,16 @@ export default Vue.extend({
                 this.selectedAuction.isActive = true;
                 message.success('The auction has been restarted!');
             }
+        },
+        setTransactionAmountDai(amount: BigNumber | undefined) {
+            this.transactionAmountDai = amount;
+        },
+        deposit(): void {
+            this.isDepositingOrWithdrawing = true;
+            setTimeout(() => {
+                this.walletVatDai = this.transactionAmountDai!;
+                this.isDepositingOrWithdrawing = false;
+            }, 1000);
         },
     },
 });
