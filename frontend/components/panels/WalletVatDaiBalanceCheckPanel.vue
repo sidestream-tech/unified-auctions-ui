@@ -27,10 +27,7 @@
                 </div>
             </div>
         </TextBlock>
-        <TextBlock
-            v-if="isExplanationsShown && currentStateAndTitle.title === 'The amount is not present in the VAT'"
-            class="mt-2"
-        >
+        <TextBlock v-if="isExplanationsShown && currentStateAndTitle.name === 'incorrect'" class="mt-2">
             The amount of <format-currency :value="transactionBidAmount" currency="DAI" /> is not present in the VAT
             and at least <format-currency :value="minimumDepositDai" currency="DAI" /> needs to be deposited before the
             transaction can happen.
@@ -105,7 +102,7 @@ export default Vue.extend({
             }
             if (this.transactionBidAmount.isNaN()) {
                 return {
-                    name: 'incorrect',
+                    name: 'inactive',
                     title: 'The amount to bid is invalid',
                 };
             }
