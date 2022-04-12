@@ -15,8 +15,8 @@ export const getApproximateTransactionFees = async function (network: string): P
 
     // TODO: figure out a way to properly estimate gas
     // for each transaction when no wallet is connected
-    const biddingTransactionFeeETH = gasPrice.multipliedBy(647053);
-    const authTransactionFeeETH = gasPrice.multipliedBy(74951);
+    const biddingTransactionFeeETH = gasPrice.multipliedBy(722651);
+    const authTransactionFeeETH = gasPrice.multipliedBy(48356);
     const restartTransactionFeeETH = gasPrice.multipliedBy(209182);
 
     return {
