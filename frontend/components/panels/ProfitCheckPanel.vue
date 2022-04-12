@@ -1,11 +1,12 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title> {{ currentStateAndTitle.title }} </template>
+        <TextBlock v-if="isExplanationsShown"> </TextBlock>
         <TextBlock v-if="currentStateAndTitle.title === 'The transaction gross profit is negative'">
             You cannot execute an auction while it is not yet profitable. Once the auction price drops below the price
             on UniSwap, you may continue with the auction participation
         </TextBlock>
-        <TextBlock v-else>
+        <TextBlock v-else-if="currentStateAndTitle.name === 'notice'">
             Executing an auction with a negative net profit is possible, but according to our calculations it will
             result in a net loss due to the transaction fees being higher than the gross profit.
         </TextBlock>
@@ -30,19 +31,23 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
+        },
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (this.grossProfit === undefined || this.netProfit === undefined) {
+            if (this.grossProfit === undefined || this.grossProfit.isNaN()) {
                 return {
                     name: 'incorrect',
-                    title: `The transaction profit is unknown`,
+                    title: `The transaction gross profit is unknown`,
                 };
             }
-            if (this.grossProfit.isNaN() || this.netProfit.isNaN()) {
+            if (this.netProfit === undefined || this.netProfit.isNaN()) {
                 return {
                     name: 'incorrect',
-                    title: `The transaction profit is unknown`,
+                    title: `The transaction net profit is unknown`,
                 };
             }
             if (this.grossProfit.isLessThanOrEqualTo(0)) {
@@ -67,7 +72,7 @@ export default Vue.extend({
         currentStateAndTitle: {
             immediate: true,
             handler(newCurrentStateAndTitle) {
-                this.$emit('update:isCorrect', newCurrentStateAndTitle.name === 'correct');
+                this.$emit('update:isCorrect', ['correct', 'notice'].includes(newCurrentStateAndTitle.name));
             },
         },
     },
