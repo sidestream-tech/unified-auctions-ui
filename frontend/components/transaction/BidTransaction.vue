@@ -54,7 +54,7 @@
             />
         </div>
         <BidBlock
-            class="mb-6 lg:mb-0"
+            class="mb-6"
             :auction-transaction="auctionTransaction"
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
@@ -69,6 +69,15 @@
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
             @bidWithDai="$emit('bidWithDai', { id: auctionTransaction.id, bidAmountDai: transactionBidAmount })"
+        />
+        <WithdrawCollateralPanel
+            :collateral-type="auctionTransaction.collateralType"
+            :collateral-vat-balance="collateralVatBalance"
+            :is-fetching="isFetchingCollateralVatBalance"
+            :is-withdrawing="isDepositingOrWithdrawing"
+            :is-explanations-shown="isExplanationsShown"
+            @fetchCollateralVatBalance="$emit('fetchCollateralVatBalance', $event)"
+            @withdrawAllCollateralFromVat="$emit('withdrawAllCollateralFromVat', $event)"
         />
     </div>
 </template>
@@ -86,6 +95,7 @@ import CollateralAuthorizationCheckPanel from '~/components/panels/CollateralAut
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import WalletVatDaiBalanceCheckPanel from '~/components/panels/WalletVatDaiBalanceCheckPanel.vue';
+import WithdrawCollateralPanel from '~/components/panels/WithdrawCollateralPanel.vue';
 
 export default Vue.extend({
     components: {
@@ -97,6 +107,7 @@ export default Vue.extend({
         WalletAuthorizationCheckPanel,
         WalletConnectionCheckPanel,
         WalletVatDaiBalanceCheckPanel,
+        WithdrawCollateralPanel,
     },
     props: {
         auctionTransaction: {
