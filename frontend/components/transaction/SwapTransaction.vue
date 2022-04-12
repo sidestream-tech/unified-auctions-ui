@@ -63,7 +63,7 @@
                 :is-correct.sync="isProfitCheckPassed"
                 :gross-profit="auctionTransaction.transactionGrossProfit"
                 :net-profit="auctionTransaction.transactionNetProfit"
-                :is-explanations-shown="isExplanaionsShown"
+                :is-explanations-shown="isExplanationsShown"
             />
         </div>
         <ExecutionBlock

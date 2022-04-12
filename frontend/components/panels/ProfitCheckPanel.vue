@@ -1,7 +1,11 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title> {{ currentStateAndTitle.title }} </template>
-        <TextBlock v-if="isExplanationsShown"> </TextBlock>
+        <TextBlock v-if="isExplanationsShown" class="mb-1">
+            The gross profit is the profit in DAI if you were to execute the auction at its current price. The net
+            profit is the amount you would actually receive after transaction fees. Please note that this value is only
+            approximate, since it is extrapolated from the exchange rates and may change during the transaction.
+        </TextBlock>
         <TextBlock v-if="currentStateAndTitle.title === 'The transaction gross profit is negative'">
             You cannot execute an auction while it is not yet profitable. Once the auction price drops below the price
             on UniSwap, you may continue with the auction participation
