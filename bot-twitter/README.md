@@ -30,6 +30,7 @@ $ npm run start
 - `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum ->
   create new project -> settings -> keys). Note: this project can not be restricted by the origin.
 - `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
+- `MAX_PRIORITY_FEE_PER_GAS_WEI`: (optional, default can be found in core/src/gas.ts) – [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559) `max_priority_fee_per_gas` value
   options can be found in [constants/NETWORKS](../core/src/constants/NETWORKS.ts)
 - `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
 - `KEEPER_*`: (optional) set of env variables to enable keeper bot:
