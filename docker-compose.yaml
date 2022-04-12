@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-    bot-twitter:
+    bot:
         restart: unless-stopped
         environment:
             - AWS_REGION=eu-central-1
@@ -10,7 +10,7 @@ services:
             - AWS_SECRET_ACCESS_KEY
         build:
             context: .
-            dockerfile: ./bot-twitter/Dockerfile
+            dockerfile: bot/Dockerfile
 
     frontend:
         restart: unless-stopped

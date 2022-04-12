@@ -6,7 +6,7 @@ screenshot.jpg
 **/Dockerfile
 **/.env
 
-# node/npm (frontend, bot-twitter)
+# node/npm (frontend, bot)
 node_modules
 npm-debug*
 .nuxt

@@ -17,13 +17,13 @@ frontend:
     image: "frontend"
     pullPolicy: "IfNotPresent"
 
-botTwitter:
-  name: "bot-twitter"
+bot:
+  name: "bot"
   # AWS SSM path for chamber to read secrets for the pods from, e.g., `auction-ui/staging/bot`
   secretChamberPath:
   deployment:
     tag: null
-    image: "bot-twitter"
+    image: "bot"
     pullPolicy: "IfNotPresent"
 
 ingress:

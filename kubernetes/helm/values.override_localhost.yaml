@@ -7,8 +7,8 @@ frontend:
     tag: "main"
     pullPolicy: "Always"
 
-botTwitter:
-  secretChamberPath: "auction-ui/localhost/bot-twitter"
+bot:
+  secretChamberPath: "auction-ui/localhost/bot"
   deployment:
     tag: "main"
     pullPolicy: "Always"

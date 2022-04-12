@@ -9,5 +9,5 @@ ingress:
       - "main.auction-ui.k8s.sidestream.tech"
       secretName: "auction-ui-tls-certificate"
 
-botTwitter:
-  secretChamberPath: "auction-ui/main.auction-ui.k8s.sidestream.tech/bot-twitter"
+bot:
+  secretChamberPath: "auction-ui/main.auction-ui.k8s.sidestream.tech/bot"
