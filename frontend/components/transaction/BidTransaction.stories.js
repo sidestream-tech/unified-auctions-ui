@@ -17,8 +17,7 @@ const common = {
         },
         isConnecting: false,
         isDepositingOrWithdrawing: false,
-        isAuthorizingWallet: false,
-        isAuthorizingCollateral: false,
+        isAuthorizing: false,
         isExecuting: false,
         isWalletAuthorized: false,
         isDeposited: false,
@@ -52,17 +51,17 @@ const common = {
             }, 1000);
         },
         authorizeWallet() {
-            this.isAuthorizingWallet = true;
+            this.isAuthorizing = true;
             setTimeout(() => {
                 this.isWalletAuthorized = true;
-                this.isAuthorizingWallet = false;
+                this.isAuthorizing = false;
             }, 1000);
         },
         authorizeCollateral(collateralType) {
-            this.isAuthorizingCollateral = true;
+            this.isAuthorizing = true;
             setTimeout(() => {
                 this.authorisedCollaterals.push(collateralType);
-                this.isAuthorizingCollateral = false;
+                this.isAuthorizing = false;
                 action('Authorized Collateral:')(collateralType);
             }, 1000);
         },
