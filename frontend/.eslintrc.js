@@ -18,9 +18,8 @@ module.exports = {
         process: 'readonly',
     },
     parserOptions: {
-        emcaVersion: 'lastest',
-        sourceType: 'module',
         project: ['tsconfig.json', 'jsconfig.json'],
+        tsconfigRootDir: __dirname,
     },
     rules: {
         'prettier/prettier': 'warn',
