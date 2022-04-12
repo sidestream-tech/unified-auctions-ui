@@ -1,32 +1,25 @@
 <template>
-    <BasePanel :current-state="currentStateAndTitle.name" class="WalletAuthorizationCheckPanel">
+    <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
-            In order for some
-            <Explain text="smart contracts">
-                The particular smart contract is called DaiJoin and its technical specification can be found
-                <a href="https://github.com/makerdao/dss/blob/master/src/join.sol#L106-L142" target="_blank">here</a>
+            In order to participate, you need to authorize a certain
+            <Explain text="smart contract">
+                The particular smart contract is called Clipper and its technical specification can be found
+                <a href="https://github.com/makerdao/dss/blob/master/src/clip.sol#L51-L473" target="_blank"> here </a>
             </Explain>
-            to modify your internal DAI
-            <Explain text="balance">
-                The core vault engine of the Maker Protocol is called VAT and manages the central accounting invariants
-                of DAI. More information on the VAT can be found
-                <a
-                    href="https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation#2-contract-details"
-                    target="_blank"
-                    >here</a
-                > </Explain
-            >, this operation should only be done once.
+            to alter your internal DAI balance. This is only done once per collateral type and can be done in advance.
+            Approximate fee:
+            <format-currency :value="authTransactionFeeETH" currency="eth" />
         </TextBlock>
         <div class="flex justify-end mt-2">
             <BaseButton
                 type="primary"
                 :is-loading="isLoading"
-                :disabled="disabled || isWalletAuthorized || !walletAddress"
-                @click="$emit('authorizeWallet')"
+                :disabled="disabled || isCollateralAuthorized || !walletAddress"
+                @click="$emit('authorizeCollateral')"
             >
                 <span v-if="isLoading">Authorizing...</span>
-                <span v-else-if="!isWalletAuthorized">Authorize DAI Transactions</span>
+                <span v-else-if="!isCollateralAuthorized">Authorize {{ collateralType }} Transactions</span>
                 <span v-else>Already authorized</span>
             </BaseButton>
         </div>
@@ -35,11 +28,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import BaseButton from '~/components/common/BaseButton.vue';
 import BasePanel from '~/components/common/BasePanel.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import Explain from '~/components/utils/Explain.vue';
-// import FormatAddress from '~/components/utils/FormatAddress.vue';
+import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 export default Vue.extend({
     components: {
@@ -47,18 +41,30 @@ export default Vue.extend({
         BasePanel,
         TextBlock,
         Explain,
-        // FormatAddress,
+        FormatCurrency,
     },
     props: {
-        isWalletAuthorized: {
+        collateralType: {
+            type: String,
+            required: true,
+        },
+        isCollateralAuthorized: {
             type: Boolean,
             required: true,
         },
-        disabled: {
+        authTransactionFeeETH: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: null,
+        },
+        walletAddress: {
+            type: String,
+            default: null,
+        },
+        isLoading: {
             type: Boolean,
             default: false,
         },
-        isLoading: {
+        disabled: {
             type: Boolean,
             default: false,
         },
@@ -66,28 +72,24 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        walletAddress: {
-            type: String,
-            default: '',
-        },
     },
     computed: {
         currentStateAndTitle(): PanelProps {
             if (!this.walletAddress) {
                 return {
                     name: 'inactive',
-                    title: 'Please connect a wallet',
+                    title: `The ${this.collateralType} authorization is unknown until a wallet is connected`,
                 };
             }
-            if (!this.isWalletAuthorized) {
+            if (!this.isCollateralAuthorized) {
                 return {
                     name: 'incorrect',
-                    title: 'The wallet is not yet authorized to execute DAI transactions',
+                    title: `The wallet is not yet authorized to execute ${this.collateralType} transactions`,
                 };
             }
             return {
                 name: 'correct',
-                title: 'The wallet is authorized to execute DAI transactions',
+                title: `The wallet is authorized to execute ${this.collateralType} transactions`,
             };
         },
     },
