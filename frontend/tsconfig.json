@@ -32,7 +32,8 @@
     },
     "include": [
         "package.json",
-        "**/*.ts"
+        "**/*.ts",
+        ".eslintrc.js"
     ],
     "exclude": [
         "node_modules",

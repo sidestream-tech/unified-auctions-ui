@@ -17,6 +17,11 @@ module.exports = {
     globals: {
         process: 'readonly',
     },
+    parserOptions: {
+        emcaVersion: 'lastest',
+        sourceType: 'module',
+        project: ['tsconfig.json', 'jsconfig.json'],
+    },
     rules: {
         'prettier/prettier': 'warn',
         'prefer-const': ['warn'],
@@ -30,6 +35,7 @@ module.exports = {
         curly: 'warn',
         'no-undef': 'off',
         'eol-last': ['error', 'always'],
+        '@typescript-eslint/no-floating-promises': ['error'],
         'vue/block-lang': [
             'error',
             {
