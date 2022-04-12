@@ -53,6 +53,13 @@ storiesOf('Panels/WalletVatDaiBalanceCheckPanel', module)
             walletVatDai: new BigNumber(faker.finance.amount(transactionBidAmount.toNumber())),
         }),
     }))
+    .add('Invalid Bid Amount', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            transactionBidAmount: new BigNumber(NaN),
+        }),
+    }))
     .add('Disabled', () => ({
         ...common,
         data: () => ({
