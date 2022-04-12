@@ -2,7 +2,7 @@
 
 ## What is "Unified Auctions Bot"?
 
-Unified Auctions Bot" is a server-side application with two distinct functionalities:
+"Unified Auctions Bot" is a server-side application with two distinct functionalities:
 
 - `Twitter bot` – a script that periodically fetches collateral auctions and publish a tweet if it finds a new auction
 - `Keeper bot` – a script that periodically fetches collateral auctions and their market values, and if it finds that any
@@ -30,6 +30,7 @@ $ npm run start
 - `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum ->
   create new project -> settings -> keys). Note: this project can not be restricted by the origin.
 - `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
+- `MAX_PRIORITY_FEE_PER_GAS_WEI`: (optional, default can be found in core/src/gas.ts) – [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559) `max_priority_fee_per_gas` value
   options can be found in [constants/NETWORKS](../core/src/constants/NETWORKS.ts)
 - `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
 - `KEEPER_*`: (optional) set of env variables to enable keeper bot:
@@ -53,7 +54,7 @@ to get started with your development setup. Namely, you should:
 
 - have a minimum `node` and `npm` version (see `package.json` `engine` section)
 - have a certain formatting and linting setup
-- don't forget to create `./bot-twitter/.env` file
+- don't forget to create `./bot/.env` file
 
 Help on both things is given in the linked resources above.
 
@@ -61,7 +62,7 @@ Help on both things is given in the linked resources above.
 
 Testing scenario:
 
-1. Create `./bot-twitter/.env` file all variables from `auction-ui/bot/staging` or `auction-ui/bot/production`
+1. Create `./bot/.env` file all variables from `auction-ui/bot/staging` or `auction-ui/bot/production`
 2. Start the project in production mode, i.e.: `npm run build && npm start` or using docker image
 3. Restart auction on kovan using frontend
 4. Check the logs for the tweet message and its url

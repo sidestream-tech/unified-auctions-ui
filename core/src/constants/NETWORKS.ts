@@ -6,7 +6,6 @@ const NETWORKS: Record<string, NetworkConfig> = {
     mainnet: {
         chainId: '0x1',
         title: 'Main',
-        gasPrice: undefined,
         url: `https://mainnet.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
         etherscanUrl: 'https://etherscan.io',
         isFork: false,
@@ -30,7 +29,6 @@ const NETWORKS: Record<string, NetworkConfig> = {
     localhost: {
         chainId: '0x539',
         title: 'Localhost:8545',
-        gasPrice: 2000000000000,
         url: `http://127.0.0.1:8545`,
         etherscanUrl: '',
         isFork: true,
@@ -44,6 +42,7 @@ const NETWORK_TITLES: Record<string, string | undefined> = {
     '0x3': 'ropsten',
     '0x4': 'rinkeby',
     '0x5': 'goerli',
+    '0x539': 'localhost',
 };
 
 export const getDecimalChainIdByNetworkType = function (networkType: string): number {

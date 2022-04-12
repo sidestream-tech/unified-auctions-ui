@@ -1,5 +1,11 @@
 import BigNumber from 'bignumber.js';
 
+export declare interface GasParameters {
+    maxFeePerGas?: string;
+    maxPriorityFeePerGas?: string;
+    gasPrice?: string;
+}
+
 export declare interface AuctionInitialInfo {
     network: string;
     id: string;

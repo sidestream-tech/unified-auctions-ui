@@ -43,8 +43,8 @@ const STATES = [
     },
     {
         name: 'notice',
-        titleClass: 'text-yellow-500',
-        iconClass: 'text-yellow-500',
+        titleClass: 'text-gray-400',
+        iconClass: 'text-gray-400',
         isExpanded: true,
     },
 ];
