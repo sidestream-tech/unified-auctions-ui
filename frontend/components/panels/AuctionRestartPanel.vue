@@ -111,7 +111,7 @@ export default Vue.extend({
             };
         },
         isDisabled(): boolean {
-            return this.disabled || !!this.auctionIsActive || !this.walletAddress;
+            return this.disabled || !this.walletAddress;
         },
     },
 });
