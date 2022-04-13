@@ -1,28 +1,28 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const CHAOSLABS_API_BASEURL = 'https://chaoslabs.co';
-const MAX_TIMEOUT = 120 * 1000;
 const RETRY_TIMEOUT = 2 * 1000;
 
-const buildAPIUrl = function (accessToken: string, endpoint: string): string {
+const executeAPIrequest = async function (accessToken: string, endpoint: string, data: any): Promise<AxiosResponse<any, any>> {
     const url = new URL(`${CHAOSLABS_API_BASEURL}${endpoint}`);
     url.searchParams.append('chaos_token', accessToken);
-    return url.toString();
+    try {
+        return await axios.post(
+            url.toString(),
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+    } catch (error) {
+        throw new Error(`Chaoslabs API request failed with error: ${error instanceof Error ? error.message : error}`);
+    }
 };
 
 const startSimulationInstance = async function (accessToken: string, simulationID: string): Promise<string> {
-    const url = buildAPIUrl(accessToken, '/async_simulation');
-    const response = await axios.post(
-        url,
-        {
-            simulationID,
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-    );
+    const response = await executeAPIrequest(accessToken, '/async_simulation', { simulationID });
     if (!response.data) {
         throw new Error('Simulation start error: no instanceId has been returned');
     }
@@ -30,18 +30,7 @@ const startSimulationInstance = async function (accessToken: string, simulationI
 };
 
 const fetchSimulationUrl = async function (accessToken: string, instanceId: string): Promise<string | undefined> {
-    const url = buildAPIUrl(accessToken, '/simulation_details');
-    const response = await axios.post(
-        url,
-        {
-            id: instanceId,
-        },
-        {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
-    );
+    const response = await executeAPIrequest(accessToken, '/simulation_details', { id: instanceId });
     if (response.status === 404) {
         return undefined;
     }
@@ -49,22 +38,21 @@ const fetchSimulationUrl = async function (accessToken: string, instanceId: stri
 };
 
 const waitForSimluationUrl = async function (accessToken: string, instanceId: string): Promise<string | undefined> {
-    let details = undefined;
-    const totalTime = 0;
-    while (!details && totalTime < MAX_TIMEOUT) {
+    let simulationUrl = undefined;
+    while (!simulationUrl) {
         await new Promise(resolve => setTimeout(resolve, RETRY_TIMEOUT));
-        details = await fetchSimulationUrl(accessToken, instanceId);
+        simulationUrl = await fetchSimulationUrl(accessToken, instanceId);
     }
-    return details;
+    return simulationUrl;
 };
 
 export async function getSimulationUrl(accessToken: string, simulationID: string): Promise<string> {
     const instanceId = await startSimulationInstance(accessToken, simulationID);
-    console.info(`Simuattion started with instance id '${instanceId}'. Waiting for the RPC url...`);
+    console.info(`Simulation started with instance id '${instanceId}'. Waiting for the RPC url...`);
     const simulationUrl = await waitForSimluationUrl(accessToken, instanceId);
     if (!simulationUrl) {
-        throw new Error('Failed to get RPC URL');
+        throw new Error('Failed to get Simulation RPC url');
     }
-    console.info(`Simuattion RPC endpoint ${simulationUrl}`);
+    console.info(`Simulation RPC url ${simulationUrl}`);
     return simulationUrl;
 }
