@@ -5,6 +5,8 @@ import { getContractAddressByName, getJoinNameByCollateralType } from '../contra
 import { convertCrvethToEth, CURVE_COIN_INDEX, CURVE_POOL_ADDRESS } from './helpers/curve';
 import { encodeRoute, convertCollateralToDai } from './helpers/uniswapV3';
 
+export const CHARTER_MANAGER_ADDRESS = '0x8377CD01a5834a6EaD3b7efb482f678f2092b77e';
+
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
@@ -23,7 +25,7 @@ const getCalleeData = async function (
         joinAdapterAddress,
         minProfit,
         route,
-        ethers.constants.AddressZero,
+        CHARTER_MANAGER_ADDRESS,
         curveData,
     ]);
 };
