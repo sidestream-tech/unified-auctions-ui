@@ -9,7 +9,7 @@ The package to access chaoslabs simulations locally. Forked from the [ChaosLabsI
 
 ## Environment variables
 
-- `CHAOSLABS_ACCESS_TOKEN`: (required) access topken (acquired from the chaoslabs)
+- `CHAOSLABS_ACCESS_TOKEN`: (required) access token (acquired from the chaoslabs)
 - `CHAOSLABS_SIMULATIONS`: (required) a json-formatted object with `simulationId` as keys and free text as values, eg `CHAOSLABS_SIMULATIONS="{\"simulation-id-123\": \"100 ETH auctions\"}`. The text is used to not forget what each simulation does (`simulationId`s are acquired from the chaoslabs)
 - `PORT`: (optional, default `8545`) a port on which the proxy will start
   create new project -> settings -> keys). Note: this project can not be restricted by the origin.
