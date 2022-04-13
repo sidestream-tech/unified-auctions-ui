@@ -7,36 +7,34 @@ import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 
 const fakeAuctionTransaction = generateFakeAuctionTransaction();
 
-const data = {
-    auctionTransaction: {
-        ...fakeAuctionTransaction,
-        isActive: true,
-        isFinished: false,
-    },
-    isConnecting: false,
-    isDepositingOrWithdrawing: false,
-    isAuthorizing: false,
-    isExecuting: false,
-    isWalletAuthorized: false,
-    isDeposited: false,
-    authorisedCollaterals: [],
-    walletAddress: null,
-    walletDai: new BigNumber(faker.finance.amount()),
-    walletVatDai: new BigNumber(faker.finance.amount()),
-    transactionAddress: null,
-    transactionAmountDai: fakeAuctionTransaction.totalPrice,
-};
-
 const common = {
     components: { BidTransaction },
-    data() {
-        return data;
-    },
+    data: () => ({
+        auctionTransaction: {
+            ...fakeAuctionTransaction,
+            isActive: true,
+            isFinished: false,
+        },
+        isConnecting: false,
+        isDepositingOrWithdrawing: false,
+        isAuthorizing: false,
+        isExecuting: false,
+        isWalletAuthorized: false,
+        isDeposited: false,
+        authorisedCollaterals: [],
+        walletAddress: null,
+        walletDai: null,
+        walletVatDai: null,
+        transactionAddress: null,
+        transactionAmountDai: fakeAuctionTransaction.totalPrice,
+    }),
     methods: {
         connect() {
             this.isConnecting = true;
             setTimeout(() => {
                 this.walletAddress = faker.finance.ethereumAddress();
+                this.walletDai = new BigNumber(faker.finance.amount());
+                this.walletVatDai = new BigNumber(faker.finance.amount());
                 this.isConnecting = false;
             }, 1000);
         },
@@ -47,6 +45,8 @@ const common = {
                 this.isWalletAuthorized = false;
                 this.authorisedCollaterals = [];
                 this.transactionAddress = null;
+                this.walletDai = null;
+                this.walletVatDai = null;
                 this.isConnecting = false;
             }, 1000);
         },
@@ -85,16 +85,7 @@ const common = {
     },
     template: `
     <BidTransaction
-        :auctionTransaction="auctionTransaction"
-        :isConnecting="isConnecting"
-        :isDepositingOrWithdrawing="isDepositingOrWithdrawing"
-        :isAuthorizing="isAuthorizing"
-        :isExecuting="isExecuting"
-        :isWalletAuthorized="isWalletAuthorized"
-        :authorisedCollaterals="authorisedCollaterals"
-        :walletAddress="walletAddress"
-        :walletDai="walletDai"
-        :walletVatDai="walletVatDai"
+        v-bind="$data"
         @connect="connect()"
         @disconnect="disconnect()"
         @authorizeWallet="authorizeWallet()"
@@ -110,30 +101,26 @@ storiesOf('Transaction/BidTransaction', module)
     }))
     .add('Inactive', () => ({
         ...common,
-        data() {
-            return {
-                ...data,
-                auctionTransaction: {
-                    ...fakeAuctionTransaction,
-                    isActive: false,
-                    isFinished: false,
-                },
-                transactionAmountDai: undefined,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            auctionTransaction: {
+                ...fakeAuctionTransaction,
+                isActive: false,
+                isFinished: false,
+            },
+            transactionAmountDai: undefined,
+        }),
     }))
     .add('Finished', () => ({
         ...common,
-        data() {
-            return {
-                ...data,
-                auctionTransaction: {
-                    ...fakeAuctionTransaction,
-                    isFinished: true,
-                    isActive: true,
-                    transactionAddress: faker.finance.ethereumAddress(),
-                },
-                transactionAmountDai: undefined,
-            };
-        },
+        data: () => ({
+            ...common.data(),
+            auctionTransaction: {
+                ...fakeAuctionTransaction,
+                isFinished: true,
+                isActive: true,
+                transactionAddress: faker.finance.ethereumAddress(),
+            },
+            transactionAmountDai: undefined,
+        }),
     }));
