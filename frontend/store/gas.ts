@@ -3,7 +3,7 @@ import type { GasParameters, TransactionFees } from 'auctions-core/src/types';
 import { getBaseFeePerGas, getGasParametersForTransaction } from 'auctions-core/src/gas';
 import BigNumber from 'bignumber.js';
 import { getApproximateTransactionFees } from 'auctions-core/src/fees';
-import { ETH_NUMBER_OF_DIGITS } from 'auctions-core/dist/src/constants/UNITS';
+import { ETH_NUMBER_OF_DIGITS, GWEI_NUMBER_OF_DIGITS } from 'auctions-core/src/constants/UNITS';
 
 interface State {
     baseFeePerGas: BigNumber | undefined;
@@ -55,7 +55,7 @@ export const actions = {
             return;
         }
         const baseFeePerGas = await getBaseFeePerGas(network);
-        commit('setBaseFeePerGas', baseFeePerGas);
+        commit('setBaseFeePerGas', baseFeePerGas.shiftedBy(GWEI_NUMBER_OF_DIGITS));
     },
     async fetchGasParameters({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
@@ -67,13 +67,22 @@ export const actions = {
         const gasParameters: GasParameters = {
             maxFeePerGas:
                 initialGasParameters.maxFeePerGas &&
-                new BigNumber(initialGasParameters.maxFeePerGas).shiftedBy(-ETH_NUMBER_OF_DIGITS).toString(),
+                new BigNumber(initialGasParameters.maxFeePerGas)
+                    .shiftedBy(-ETH_NUMBER_OF_DIGITS)
+                    .shiftedBy(GWEI_NUMBER_OF_DIGITS)
+                    .toFixed(),
             gasPrice:
                 initialGasParameters.gasPrice &&
-                new BigNumber(initialGasParameters.gasPrice).shiftedBy(-ETH_NUMBER_OF_DIGITS).toString(),
+                new BigNumber(initialGasParameters.gasPrice)
+                    .shiftedBy(-ETH_NUMBER_OF_DIGITS)
+                    .shiftedBy(GWEI_NUMBER_OF_DIGITS)
+                    .toFixed(),
             maxPriorityFeePerGas:
                 initialGasParameters.maxPriorityFeePerGas &&
-                new BigNumber(initialGasParameters.maxPriorityFeePerGas).shiftedBy(-ETH_NUMBER_OF_DIGITS).toString(),
+                new BigNumber(initialGasParameters.maxPriorityFeePerGas)
+                    .shiftedBy(-ETH_NUMBER_OF_DIGITS)
+                    .shiftedBy(GWEI_NUMBER_OF_DIGITS)
+                    .toFixed(),
         };
         commit('setGasParameters', gasParameters);
     },

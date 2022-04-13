@@ -12,7 +12,11 @@
                         <span> Gas Price </span>
                     </td>
                     <td class="Body">
-                        <span v-if="gasParameters && gasParameters.gasPrice"> {{ gasParameters.gasPrice }} ETH </span>
+                        <FormatCurrency
+                            v-if="gasParameters && gasParameters.gasPrice"
+                            :value="parseInt(gasParameters.gasPrice)"
+                            currency="Gwei"
+                        />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
@@ -24,9 +28,11 @@
                         <span> Max Priority Fee Per Gas </span>
                     </td>
                     <td class="Body">
-                        <span v-if="gasParameters && gasParameters.maxPriorityFeePerGas">
-                            {{ gasParameters.maxPriorityFeePerGas }} ETH
-                        </span>
+                        <FormatCurrency
+                            v-if="gasParameters && gasParameters.maxPriorityFeePerGas"
+                            :value="parseInt(gasParameters.maxPriorityFeePerGas)"
+                            currency="Gwei"
+                        />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
@@ -38,9 +44,11 @@
                         <span> Max Fee Per Gas </span>
                     </td>
                     <td class="Body">
-                        <span v-if="gasParameters && gasParameters.maxFeePerGas">
-                            {{ gasParameters.maxFeePerGas }} ETH
-                        </span>
+                        <FormatCurrency
+                            v-if="gasParameters && gasParameters.maxFeePerGas"
+                            :value="parseInt(gasParameters.maxFeePerGas)"
+                            currency="Gwei"
+                        />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
@@ -52,7 +60,7 @@
                         <span> Base Fee Per Gas </span>
                     </td>
                     <td class="Body">
-                        <span v-if="baseFeePerGas"> {{ baseFeePerGas }} ETH </span>
+                        <FormatCurrency v-if="baseFeePerGas" :value="baseFeePerGas" currency="Gwei" />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
@@ -64,11 +72,19 @@
                         <span> Bidding Transaction Fee </span>
                     </td>
                     <td class="Body">
-                        <span v-if="transactionFees"> {{ transactionFees.biddingTransactionFeeETH }} ETH </span>
+                        <FormatCurrency
+                            v-if="transactionFees"
+                            :value="transactionFees.biddingTransactionFeeETH"
+                            currency="ETH"
+                        />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
-                        <span v-if="transactionFees"> {{ transactionFees.biddingTransactionFeeDAI }} ETH </span>
+                        <FormatCurrency
+                            v-if="transactionFees"
+                            :value="transactionFees.biddingTransactionFeeDAI"
+                            currency="DAI"
+                        />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                 </tr>
@@ -77,11 +93,19 @@
                         <span> Auth Transaction Fee </span>
                     </td>
                     <td class="Body">
-                        <span v-if="transactionFees"> {{ transactionFees.authTransactionFeeETH }} ETH </span>
+                        <FormatCurrency
+                            v-if="transactionFees"
+                            :value="transactionFees.authTransactionFeeETH"
+                            currency="ETH"
+                        />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
-                        <span v-if="transactionFees"> {{ transactionFees.authTransactionFeeDAI }} ETH </span>
+                        <FormatCurrency
+                            v-if="transactionFees"
+                            :value="transactionFees.authTransactionFeeDAI"
+                            currency="DAI"
+                        />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                 </tr>
@@ -90,11 +114,20 @@
                         <span> Restart Transaction Fee </span>
                     </td>
                     <td class="Body">
-                        <span v-if="transactionFees"> {{ transactionFees.restartTransactionFeeETH }} ETH </span>
+                        <FormatCurrency
+                            v-if="transactionFees"
+                            :value="transactionFees.restartTransactionFeeETH"
+                            currency="ETH"
+                        />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
-                        <span class="UnknownValue"> Unknown </span>
+                        <FormatCurrency
+                            v-if="transactionFees"
+                            :value="transactionFees.restartTransactionFeeDAI"
+                            currency="DAI"
+                        />
+                        <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                 </tr>
             </tbody>
@@ -106,10 +139,11 @@
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import type { GasParameters, TransactionFees } from 'auctions-core/src/types';
+import FormatCurrency from './utils/FormatCurrency.vue';
 
 export default Vue.extend({
     name: 'GasTable',
-    components: {},
+    components: { FormatCurrency },
     props: {
         baseFeePerGas: {
             type: Object as Vue.PropType<BigNumber>,

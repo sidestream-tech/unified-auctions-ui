@@ -25,6 +25,7 @@ export const getApproximateTransactionFees = async function (network: string): P
         authTransactionFeeETH,
         authTransactionFeeDAI: await convertETHtoDAI(network, authTransactionFeeETH),
         restartTransactionFeeETH,
+        restartTransactionFeeDAI: await convertETHtoDAI(network, restartTransactionFeeETH),
     };
 };
 

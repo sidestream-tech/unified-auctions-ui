@@ -52,6 +52,7 @@ export declare interface TransactionFees {
     authTransactionFeeETH: BigNumber;
     authTransactionFeeDAI: BigNumber;
     restartTransactionFeeETH: BigNumber;
+    restartTransactionFeeDAI: BigNumber;
 }
 
 export declare interface CollateralRow extends CollateralConfig, Partial<MakerParams> {
