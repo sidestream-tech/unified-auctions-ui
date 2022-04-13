@@ -5,6 +5,9 @@ import BigNumber from 'bignumber.js';
 import { getApproximateTransactionFees } from 'auctions-core/src/fees';
 import { GWEI_NUMBER_OF_DIGITS } from 'auctions-core/src/constants/UNITS';
 
+const REFETCH_INTERVAL = 30 * 1000;
+let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
+
 interface State {
     baseFeePerGas: BigNumber | undefined;
     gasParameters: GasParameters;
@@ -77,5 +80,14 @@ export const actions = {
         await dispatch('fetchBaseFeePerGas');
         await dispatch('fetchGasParameters');
         await dispatch('fetchTransactionFees');
+
+        if (refetchIntervalId) {
+            clearInterval(refetchIntervalId);
+        }
+        refetchIntervalId = setInterval(async () => {
+            await dispatch('fetchBaseFeePerGas');
+            await dispatch('fetchGasParameters');
+            await dispatch('fetchTransactionFees');
+        }, REFETCH_INTERVAL);
     },
 };
