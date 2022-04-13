@@ -4,17 +4,17 @@
             <Alert v-if="auctionError && auctionError.showBanner" :message="auctionError.error" type="error" />
         </div>
         <div v-if="auction">
-            <AuctionRestartPanel
-                :disabled="!walletAddress"
-                :auction-is-active="auction.isActive"
-                :wallet-address="walletAddress"
-                :transaction-fee="auction.restartTransactionFeeETH"
-                :is-explanations-shown="isExplanationsShown"
-                :is-restarting="auction.isRestarting"
-                @restart="$emit('restart', auctionId)"
-                @connectWallet="$emit('connect')"
-                @disconnectWallet="$emit('disconnect')"
-            />
+            <div v-if="!auction.isActive">
+                <AuctionRestartPanel
+                    :wallet-address="walletAddress"
+                    :transaction-fee="auction.restartTransactionFeeETH"
+                    :is-explanations-shown="isExplanationsShown"
+                    :is-restarting="auction.isRestarting"
+                    @restart="$emit('restart', auctionId)"
+                    @connectWallet="$emit('connect')"
+                    @disconnectWallet="$emit('disconnect')"
+                />
+            </div>
             <div class="relative mt-2">
                 <table class="w-full table-fixed border-collapse border">
                     <tbody>

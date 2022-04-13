@@ -78,10 +78,6 @@ export default Vue.extend({
     name: 'AuctionRestartPanel',
     components: { WalletConnectionCheckPanel, BaseButton, FormatCurrency, Explain, TextBlock, BasePanel },
     props: {
-        auctionIsActive: {
-            type: Boolean,
-            default: false,
-        },
         walletAddress: {
             type: String,
             default: null,
@@ -109,27 +105,13 @@ export default Vue.extend({
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (!this.auctionIsActive) {
-                return {
-                    name: 'incorrect',
-                    title: 'The auction is currently inactive.',
-                };
-            }
             return {
-                name: 'correct',
-                title: 'The auction is active.',
+                name: 'incorrect',
+                title: 'The auction is currently inactive.',
             };
         },
         isDisabled(): boolean {
             return this.disabled || !!this.auctionIsActive || !this.walletAddress;
-        },
-    },
-    watch: {
-        currentStateAndTitle: {
-            immediate: true,
-            handler(newCurrentStateAndTitle) {
-                this.$emit('update:isCorrect', newCurrentStateAndTitle.name === 'correct');
-            },
         },
     },
 });

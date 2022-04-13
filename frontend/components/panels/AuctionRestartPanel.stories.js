@@ -1,5 +1,4 @@
 import { storiesOf } from '@storybook/vue';
-import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel';
@@ -10,7 +9,6 @@ const common = {
     components: { AuctionRestartPanel },
     data() {
         return {
-            auctionIsActive: false,
             transactionFee: new BigNumber(faker.finance.amount(0, 10)),
             walletAddress: fakeAddress,
             isRestarting: false,
@@ -40,7 +38,6 @@ const common = {
                 this.walletAddress = undefined;
             }, 1000);
         },
-        isCorrect: action('isCorrect'),
     },
     template: `
         <AuctionRestartPanel
@@ -48,20 +45,12 @@ const common = {
             @restart="restart"
             @connectWallet="connectWallet"
             @disconnectWallet="disconnectWallet"
-            @update:isCorrect="isCorrect"
         />`,
 };
 
 storiesOf('Panels/AuctionRestartPanel', module)
     .add('Inactive Auction', () => ({
         ...common,
-    }))
-    .add('Active Auction', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            auctionIsActive: true,
-        }),
     }))
     .add('Expert Mode', () => ({
         ...common,
