@@ -161,7 +161,7 @@ export default Vue.extend({
     },
     methods: {
         formatGasParameters(value): BigNumber {
-            return new BigNumber(value).shiftedBy(-ETH_NUMBER_OF_DIGITS).shiftedBy(GWEI_NUMBER_OF_DIGITS);
+            return new BigNumber(value).shiftedBy(-GWEI_NUMBER_OF_DIGITS);
         },
     },
 });
