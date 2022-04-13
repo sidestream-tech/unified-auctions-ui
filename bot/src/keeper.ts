@@ -7,10 +7,22 @@ import {
     getCollateralAuthorizationStatus,
     getWalletAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-import { ETHEREUM_NETWORK, KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
+import { ETHEREUM_NETWORK, KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY, KEEPER_WHITELIST } from './variables';
 
 let isSetupCompleted = false;
 const currentlyExecutedAuctions = new Set();
+function isCollateralInWhitelist (collateralSymbol: string): boolean{
+    if(!KEEPER_WHITELIST){
+        return true;
+    }
+    //First parse the string and make it into an array
+    const whiteListArray = KEEPER_WHITELIST.split(',');
+
+    console.log('the item exist in the whitelist? ', whiteListArray.includes(collateralSymbol))
+    //Check if the collateral symbol is in your newly created array
+    return whiteListArray.includes(collateralSymbol);
+}
+
 
 export const setupKeeper = async function () {
     if (!KEEPER_WALLET_PRIVATE_KEY) {
@@ -37,6 +49,11 @@ export const setupKeeper = async function () {
 const checkAndParticipateIfPossible = async function (auction: AuctionInitialInfo) {
     // check if setupKeeper hasn't run
     if (!isSetupCompleted) {
+        return;
+    }
+
+    //check if collateral is white listed
+    if (!isCollateralInWhitelist(auction.collateralSymbol)){
         return;
     }
 
