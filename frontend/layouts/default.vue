@@ -12,6 +12,7 @@
             :is-dev="isDev"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
+            @openWalletModal="openWalletModal"
         />
         <Nuxt />
         <ChangePageNetworkModal
@@ -117,6 +118,10 @@ export default Vue.extend({
         },
         setTermsModal(open: boolean): void {
             this.$store.commit('modals/setTermsModal', open);
+        },
+        openWalletModal(): void {
+            console.log('openWalletModal');
+            this.$store.commit('modals/setWalletModal', true);
         },
         setSelectWalletModal(open: boolean): void {
             this.$store.commit('modals/setSelectWalletModal', open);
