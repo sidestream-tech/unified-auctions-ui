@@ -120,7 +120,6 @@ export default Vue.extend({
             this.$store.commit('modals/setTermsModal', open);
         },
         openWalletModal(): void {
-            console.log('openWalletModal');
             this.$store.commit('modals/setWalletModal', true);
         },
         setSelectWalletModal(open: boolean): void {
