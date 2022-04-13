@@ -46,13 +46,14 @@ const waitForSimluationUrl = async function (accessToken: string, instanceId: st
     return simulationUrl;
 };
 
-export async function getSimulationUrl(accessToken: string, simulationID: string): Promise<string> {
-    const instanceId = await startSimulationInstance(accessToken, simulationID);
-    console.info(`Simulation started with instance id '${instanceId}'. Waiting for the RPC url...`);
+export async function getSimulationUrl(accessToken: string, simulationId: string): Promise<string> {
+    console.info(`Starting simulation "${simulationId}"...`);
+    const instanceId = await startSimulationInstance(accessToken, simulationId);
+    console.info(`Simulation "${simulationId}" started with instance id "${instanceId}". Waiting for the RPC url...`);
     const simulationUrl = await waitForSimluationUrl(accessToken, instanceId);
     if (!simulationUrl) {
         throw new Error('Failed to get Simulation RPC url');
     }
-    console.info(`Simulation RPC url ${simulationUrl}`);
+    console.info(`Simulation RPC url: "${simulationUrl}"`);
     return simulationUrl;
 }
