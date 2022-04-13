@@ -2,56 +2,62 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
-import CollateralAuthorizationCheckPanel from './CollateralAuthorizationCheckPanel';
-import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
+import WalletVatDaiBalanceCheckPanel from './WalletVatDaiBalanceCheckPanel';
 
-const fakeAuctionTransaction = generateFakeAuctionTransaction();
+const transactionBidAmount = new BigNumber(faker.finance.amount());
 
 const common = {
-    components: { CollateralAuthorizationCheckPanel },
+    components: { WalletVatDaiBalanceCheckPanel },
     data: () => ({
-        collateralType: fakeAuctionTransaction.collateralType,
-        authTransactionFeeETH: new BigNumber(fakeAuctionTransaction.authTransactionFeeETH),
-        authorizedCollaterals: [],
-        walletAddress: faker.finance.ethereumAddress(),
+        transactionBidAmount,
+        walletVatDai: new BigNumber(faker.finance.amount(0, transactionBidAmount.toNumber())),
+        walletDai: new BigNumber(faker.finance.amount()),
         isLoading: false,
         disabled: false,
         isExplanationsShown: true,
     }),
     methods: {
-        authorizeCollateral() {
+        deposit() {
             this.isLoading = true;
             setTimeout(() => {
-                this.authorizedCollaterals = [fakeAuctionTransaction.collateralType];
+                this.walletVatDai = this.transactionBidAmount;
                 this.isLoading = false;
             }, 1000);
         },
         isCorrect: action('isCorrect'),
     },
     template: `
-    <CollateralAuthorizationCheckPanel 
+    <WalletVatDaiBalanceCheckPanel
         v-bind="$data"
-        @authorizeCollateral="authorizeCollateral"
+        @manageVat="deposit"
         @update:isCorrect="isCorrect"
     />`,
 };
 
-storiesOf('Panels/CollateralAuthorizationCheckPanel', module)
-    .add('Authorized', () => ({
+storiesOf('Panels/WalletVatDaiBalanceCheckPanel', module)
+    .add('No wallet Connected', () => ({
         ...common,
         data: () => ({
             ...common.data(),
-            authorizedCollaterals: [fakeAuctionTransaction.collateralType],
+            walletDai: null,
+            walletVatDai: null,
         }),
     }))
-    .add('Unauthorized', () => ({
+    .add('Not enough DAI deposited', () => ({
         ...common,
     }))
-    .add('Loading', () => ({
+    .add('Enough DAI is deposited', () => ({
         ...common,
         data: () => ({
             ...common.data(),
-            isLoading: true,
+            walletVatDai: new BigNumber(faker.finance.amount(transactionBidAmount.toNumber())),
+        }),
+    }))
+    .add('Invalid Bid Amount', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            transactionBidAmount: new BigNumber(NaN),
         }),
     }))
     .add('Disabled', () => ({
@@ -61,11 +67,11 @@ storiesOf('Panels/CollateralAuthorizationCheckPanel', module)
             disabled: true,
         }),
     }))
-    .add('No wallet connected', () => ({
+    .add('Loading', () => ({
         ...common,
         data: () => ({
             ...common.data(),
-            walletAddress: undefined,
+            isLoading: true,
         }),
     }))
     .add('Expert Mode', () => ({

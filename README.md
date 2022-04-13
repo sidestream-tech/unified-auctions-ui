@@ -8,7 +8,7 @@ The tool to enable easy and straightforward participation in [MakerDAO](https://
 
 #### Environment variables
 
-Please follow service-level readme instructions inside [frontend](./frontend) and [bot-twitter](./bot-twitter) folders.
+Please follow service-level readme instructions inside [frontend](./frontend) and [bot](./bot) folders.
 
 NOTE: Environment variables are accessible/available via the `secret` command. Please refer to the [secrets and configuration management guide](https://github.com/sidestream-tech/guides/tree/main/secrets) for more information:
 
