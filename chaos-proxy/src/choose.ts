@@ -1,20 +1,28 @@
-import inquirer from 'inquirer';
+import prompts from 'prompts';
 
 const generateChoices = function (simulationIdsString: string) {
-    return simulationIdsString.split(/,/g).map(s => s.trim());
+    try {
+        const simulationsObject = JSON.parse(simulationIdsString);
+        const simulationIds = Object.keys(simulationsObject);
+        return simulationIds.map(simulationId => ({
+            title: simulationsObject[simulationId],
+            value: simulationId,
+        }));
+    } catch {
+        throw new Error(`CHAOSLABS_SIMULATION_IDS is not in json format`);
+    }
 };
 
 export const chooseSimulationId = async function (simulationIdsString: string): Promise<string> {
     const choices = generateChoices(simulationIdsString)
     if (choices.length === 1) {
-        return choices[0];
+        return choices[0].value;
     }
-    const question = {
-        message: 'Please select simulation id',
-        type: 'list',
+    const response = await prompts({
         name: 'simulationId',
+        message: 'Please select simulation id',
+        type: 'select',
         choices,
-    };
-    const answers = await inquirer.prompt([question]);
-    return answers.simulationId;
+    });
+    return response.simulationId;
 };
