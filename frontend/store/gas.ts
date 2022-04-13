@@ -3,6 +3,7 @@ import type { GasParameters, TransactionFees } from 'auctions-core/src/types';
 import { getBaseFeePerGas, getGasParametersForTransaction } from 'auctions-core/src/gas';
 import BigNumber from 'bignumber.js';
 import { getApproximateTransactionFees } from 'auctions-core/src/fees';
+import { ETH_NUMBER_OF_DIGITS } from 'auctions-core/dist/src/constants/UNITS';
 
 interface State {
     baseFeePerGas: BigNumber | undefined;
@@ -61,7 +62,19 @@ export const actions = {
         if (!network) {
             return;
         }
-        const gasParameters = await getGasParametersForTransaction(network);
+        const initialGasParameters = await getGasParametersForTransaction(network);
+
+        const gasParameters: GasParameters = {
+            maxFeePerGas:
+                initialGasParameters.maxFeePerGas &&
+                new BigNumber(initialGasParameters.maxFeePerGas).shiftedBy(-ETH_NUMBER_OF_DIGITS).toString(),
+            gasPrice:
+                initialGasParameters.gasPrice &&
+                new BigNumber(initialGasParameters.gasPrice).shiftedBy(-ETH_NUMBER_OF_DIGITS).toString(),
+            maxPriorityFeePerGas:
+                initialGasParameters.maxPriorityFeePerGas &&
+                new BigNumber(initialGasParameters.maxPriorityFeePerGas).shiftedBy(-ETH_NUMBER_OF_DIGITS).toString(),
+        };
         commit('setGasParameters', gasParameters);
     },
     async fetchTransactionFees({ commit, rootGetters }: ActionContext<State, State>) {
