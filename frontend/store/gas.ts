@@ -70,19 +70,19 @@ export const actions = {
                 new BigNumber(initialGasParameters.maxFeePerGas)
                     .shiftedBy(-ETH_NUMBER_OF_DIGITS)
                     .shiftedBy(GWEI_NUMBER_OF_DIGITS)
-                    .toFixed(),
+                    .toString(),
             gasPrice:
                 initialGasParameters.gasPrice &&
                 new BigNumber(initialGasParameters.gasPrice)
                     .shiftedBy(-ETH_NUMBER_OF_DIGITS)
                     .shiftedBy(GWEI_NUMBER_OF_DIGITS)
-                    .toFixed(),
+                    .toString(),
             maxPriorityFeePerGas:
                 initialGasParameters.maxPriorityFeePerGas &&
                 new BigNumber(initialGasParameters.maxPriorityFeePerGas)
                     .shiftedBy(-ETH_NUMBER_OF_DIGITS)
                     .shiftedBy(GWEI_NUMBER_OF_DIGITS)
-                    .toFixed(),
+                    .toString(),
         };
         commit('setGasParameters', gasParameters);
     },

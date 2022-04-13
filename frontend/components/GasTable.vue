@@ -12,11 +12,7 @@
                         <span> Gas Price </span>
                     </td>
                     <td class="Body">
-                        <FormatCurrency
-                            v-if="gasParameters && gasParameters.gasPrice"
-                            :value="parseInt(gasParameters.gasPrice)"
-                            currency="Gwei"
-                        />
+                        <span v-if="gasParameters && gasParameters.gasPrice"> {{ gasParameters.gasPrice }} Gwei </span>
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
@@ -28,11 +24,9 @@
                         <span> Max Priority Fee Per Gas </span>
                     </td>
                     <td class="Body">
-                        <FormatCurrency
-                            v-if="gasParameters && gasParameters.maxPriorityFeePerGas"
-                            :value="parseInt(gasParameters.maxPriorityFeePerGas)"
-                            currency="Gwei"
-                        />
+                        <span v-if="gasParameters && gasParameters.maxPriorityFeePerGas">
+                            {{ gasParameters.maxPriorityFeePerGas }} Gwei
+                        </span>
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
@@ -44,11 +38,9 @@
                         <span> Max Fee Per Gas </span>
                     </td>
                     <td class="Body">
-                        <FormatCurrency
-                            v-if="gasParameters && gasParameters.maxFeePerGas"
-                            :value="parseInt(gasParameters.maxFeePerGas)"
-                            currency="Gwei"
-                        />
+                        <span v-if="gasParameters && gasParameters.maxFeePerGas">
+                            {{ gasParameters.maxFeePerGas }} Gwei
+                        </span>
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
