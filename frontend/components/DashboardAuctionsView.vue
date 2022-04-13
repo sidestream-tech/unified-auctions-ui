@@ -27,19 +27,32 @@
             </TextBlock>
             <CalleeTable :callees="callees" />
         </div>
+        <div class="Block space-y-4 md:space-y-8 max-w-screen-sm">
+            <TextBlock v-if="isExplanationsShown" title="Gas prices">
+                These are the current gas prices on your selected network.
+            </TextBlock>
+            <GasTable
+                :base-fee-per-gas="baseFeePerGas"
+                :gas-parameters="gasParameters"
+                :transaction-fees="transactionFees"
+            />
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import type { CollateralRow, CalleeAddresses } from 'auctions-core/src/types';
+import type { CollateralRow, CalleeAddresses, GasParameters, TransactionFees } from 'auctions-core/src/types';
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import CollateralTable from './CollateralTable.vue';
 import CalleeTable from './CalleeTable.vue';
+import GasTable from './GasTable.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 
 export default Vue.extend({
     components: {
+        GasTable,
         LandingBlock,
         TextBlock,
         CollateralTable,
@@ -57,6 +70,18 @@ export default Vue.extend({
         callees: {
             type: Object as Vue.PropType<CalleeAddresses>,
             default: () => ({}),
+        },
+        baseFeePerGas: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        gasParameters: {
+            type: Object as Vue.PropType<GasParameters>,
+            default: undefined,
+        },
+        transactionFees: {
+            type: Object as Vue.PropType<TransactionFees>,
+            default: undefined,
         },
     },
     computed: {
