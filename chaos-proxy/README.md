@@ -17,7 +17,9 @@ The package to access chaoslabs simulations locally. Forked from the [ChaosLabsI
 ### How to start
 
 1. Create `chaos-proxy/.env` file with required env variables (see explanation above)
-  - If you have access to the chamber secrets, you can instead execute this command inside this folder:
-    `secret export auction-ui/localhost/chaos-proxy --format dotenv > ./.env`
+    - If you have access to the chamber secrets, you can instead execute this command inside this folder:
+    ```
+    secret export auction-ui/localhost/chaos-proxy --format dotenv > ./.env
+    ```
 2. Install dependecies with `npm i`
 3. Run `npm run dev`
