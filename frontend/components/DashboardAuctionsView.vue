@@ -18,7 +18,7 @@
             </TextBlock>
         </div>
         <div class="Block max-w-screen-lg">
-            <CollateralTable :collaterals="collaterals" class="overflow-x-scroll" />
+            <CollateralTable :collaterals="collaterals" class="overflow-x-auto" />
         </div>
         <div class="Block space-y-4 md:space-y-8 max-w-screen-sm">
             <TextBlock v-if="isExplanationsShown" title="Exchange Callee Contracts">
