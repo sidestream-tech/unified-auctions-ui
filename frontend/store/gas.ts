@@ -3,7 +3,7 @@ import type { GasParameters, TransactionFees } from 'auctions-core/src/types';
 import { getBaseFeePerGas, getGasParametersForTransaction } from 'auctions-core/src/gas';
 import BigNumber from 'bignumber.js';
 import { getApproximateTransactionFees } from 'auctions-core/src/fees';
-import { ETH_NUMBER_OF_DIGITS, GWEI_NUMBER_OF_DIGITS } from 'auctions-core/src/constants/UNITS';
+import { GWEI_NUMBER_OF_DIGITS } from 'auctions-core/src/constants/UNITS';
 
 interface State {
     baseFeePerGas: BigNumber | undefined;
@@ -62,28 +62,7 @@ export const actions = {
         if (!network) {
             return;
         }
-        const initialGasParameters = await getGasParametersForTransaction(network);
-
-        const gasParameters: GasParameters = {
-            maxFeePerGas:
-                initialGasParameters.maxFeePerGas &&
-                new BigNumber(initialGasParameters.maxFeePerGas)
-                    .shiftedBy(-ETH_NUMBER_OF_DIGITS)
-                    .shiftedBy(GWEI_NUMBER_OF_DIGITS)
-                    .toString(),
-            gasPrice:
-                initialGasParameters.gasPrice &&
-                new BigNumber(initialGasParameters.gasPrice)
-                    .shiftedBy(-ETH_NUMBER_OF_DIGITS)
-                    .shiftedBy(GWEI_NUMBER_OF_DIGITS)
-                    .toString(),
-            maxPriorityFeePerGas:
-                initialGasParameters.maxPriorityFeePerGas &&
-                new BigNumber(initialGasParameters.maxPriorityFeePerGas)
-                    .shiftedBy(-ETH_NUMBER_OF_DIGITS)
-                    .shiftedBy(GWEI_NUMBER_OF_DIGITS)
-                    .toString(),
-        };
+        const gasParameters = await getGasParametersForTransaction(network);
         commit('setGasParameters', gasParameters);
     },
     async fetchTransactionFees({ commit, rootGetters }: ActionContext<State, State>) {
