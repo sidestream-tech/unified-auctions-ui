@@ -39,7 +39,6 @@ import BaseButton from '~/components/common/BaseButton.vue';
 import BasePanel from '~/components/common/BasePanel.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import Explain from '~/components/utils/Explain.vue';
-// import FormatAddress from '~/components/utils/FormatAddress.vue';
 
 export default Vue.extend({
     components: {
@@ -47,7 +46,6 @@ export default Vue.extend({
         BasePanel,
         TextBlock,
         Explain,
-        // FormatAddress,
     },
     props: {
         isWalletAuthorized: {
