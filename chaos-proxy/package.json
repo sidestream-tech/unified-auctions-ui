@@ -5,6 +5,9 @@
     "build": "npx tsc -b",
     "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0"
   },
+  "repository": {
+    "url": "https://github.com/sidestream-tech/unified-auctions-ui"
+  },
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=7.0.0"

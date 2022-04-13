@@ -3,19 +3,19 @@ import axios, { AxiosResponse } from 'axios';
 const CHAOSLABS_API_BASEURL = 'https://chaoslabs.co';
 const RETRY_TIMEOUT = 2 * 1000;
 
-const executeAPIrequest = async function (accessToken: string, endpoint: string, data: any): Promise<AxiosResponse<any, any>> {
+const executeAPIrequest = async function (
+    accessToken: string,
+    endpoint: string,
+    data: any
+): Promise<AxiosResponse<any, any>> {
     const url = new URL(`${CHAOSLABS_API_BASEURL}${endpoint}`);
     url.searchParams.append('chaos_token', accessToken);
     try {
-        return await axios.post(
-            url.toString(),
-            data,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
+        return await axios.post(url.toString(), data, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
     } catch (error) {
         throw new Error(`Chaoslabs API request failed with error: ${error instanceof Error ? error.message : error}`);
     }

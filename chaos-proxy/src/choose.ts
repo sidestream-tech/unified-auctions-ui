@@ -14,7 +14,7 @@ const generateChoices = function (simulationIdsString: string) {
 };
 
 export const chooseSimulationId = async function (simulationIdsString: string): Promise<string> {
-    const choices = generateChoices(simulationIdsString)
+    const choices = generateChoices(simulationIdsString);
     if (choices.length === 1) {
         return choices[0].value;
     }
