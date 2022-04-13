@@ -51,7 +51,7 @@
             <CollateralAuthorizationCheckPanel
                 :is-correct.sync="isWalletCollateralAuthorizationCheckPassed"
                 :collateral-type="auctionTransaction.collateralType"
-                :is-collateral-authorized="isCollateralAuthorised"
+                :authorized-collaterals="authorisedCollaterals"
                 :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
                 :wallet-address="walletAddress"
                 :is-loading="isAuthorizing"
