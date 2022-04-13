@@ -4,7 +4,7 @@ The package to access chaoslabs simulations locally. Forked from the [ChaosLabsI
 
 ## Functionality
 
-1. Spin up a remote in-the-cloud simulation based on given enviourment variables
+1. Spin up a remote in-the-cloud simulation based on given environment variables
 2. Start a reverse proxy to the simulation RPC node and serve it on localhost
 
 ## Environment variables

@@ -1,5 +1,5 @@
 {
-  "name": "dydx-cli",
+  "name": "chaos-proxy",
   "scripts": {
     "dev": "npx ts-node src/index.ts",
     "build": "npx tsc -b",

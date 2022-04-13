@@ -37,7 +37,7 @@ const fetchSimulationUrl = async function (accessToken: string, instanceId: stri
     return response.data?.nodeUrl;
 };
 
-const waitForSimluationUrl = async function (accessToken: string, instanceId: string): Promise<string | undefined> {
+const waitForSimulationUrl = async function (accessToken: string, instanceId: string): Promise<string | undefined> {
     let simulationUrl = undefined;
     while (!simulationUrl) {
         await new Promise(resolve => setTimeout(resolve, RETRY_TIMEOUT));
@@ -50,7 +50,7 @@ export async function getSimulationUrl(accessToken: string, simulationId: string
     console.info(`Starting simulation "${simulationId}"...`);
     const instanceId = await startSimulationInstance(accessToken, simulationId);
     console.info(`Simulation "${simulationId}" started with instance id "${instanceId}". Waiting for the RPC url...`);
-    const simulationUrl = await waitForSimluationUrl(accessToken, instanceId);
+    const simulationUrl = await waitForSimulationUrl(accessToken, instanceId);
     if (!simulationUrl) {
         throw new Error('Failed to get Simulation RPC url');
     }

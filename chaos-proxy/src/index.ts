@@ -16,5 +16,5 @@ const PORT = parseInt(process.env.PORT || '8545');
     }
     const simulationId = await chooseSimulationId(CHAOSLABS_SIMULATIONS);
     const targetURL = await getSimulationUrl(CHAOSLABS_ACCESS_TOKEN, simulationId);
-    startProxy(targetURL, PORT);
+    await startProxy(targetURL, PORT);
 })();
