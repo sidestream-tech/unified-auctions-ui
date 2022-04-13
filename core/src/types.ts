@@ -98,6 +98,7 @@ export declare interface CalleeAddresses {
     UniswapV2CalleeDai: string;
     UniswapV2LpTokenCalleeDai: string;
     WstETHCurveUniv3Callee?: string;
+    UniswapV3Callee?: string;
 }
 
 export type CalleeNames = keyof CalleeAddresses;
