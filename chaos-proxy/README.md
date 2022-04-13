@@ -21,5 +21,5 @@ The package to access chaoslabs simulations locally. Forked from the [ChaosLabsI
     ```
     secret export auction-ui/localhost/chaos-proxy --format dotenv > ./.env
     ```
-2. Install dependecies with `npm i`
+2. Install dependencies with `npm i`
 3. Run `npm run dev`
