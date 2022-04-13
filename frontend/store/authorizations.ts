@@ -98,7 +98,7 @@ export const actions = {
     async fetchWalletAuthorizationStatus({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         const walletAddress = rootGetters['wallet/getAddress'];
         const network = rootGetters['network/getMakerNetwork'];
-        if (!walletAddress) {
+        if (!walletAddress || !network) {
             commit('setIsWalletAuthorizationDone', false);
             return;
         }
@@ -148,7 +148,7 @@ export const actions = {
     ) {
         const walletAddress = rootGetters['wallet/getAddress'];
         const network = rootGetters['network/getMakerNetwork'];
-        if (!walletAddress) {
+        if (!walletAddress || !network) {
             commit('setIsWalletAuthorizationDone', false);
             return;
         }
@@ -218,7 +218,7 @@ export const actions = {
         commit('setIsAllowanceAmountLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
-        if (!walletAddress) {
+        if (!walletAddress || !network) {
             commit('setAllowanceAmount', undefined);
             return;
         }
