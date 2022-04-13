@@ -160,7 +160,7 @@ export const actions = {
     async fetchWalletBalances({ commit, getters, rootGetters }: ActionContext<State, State>): Promise<void> {
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getters.getAddress;
-        if (!walletAddress) {
+        if (!walletAddress || !network) {
             commit('clearWalletBalances');
             return;
         }
@@ -222,7 +222,7 @@ export const actions = {
     ): Promise<void> {
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getters.getAddress;
-        if (!walletAddress) {
+        if (!walletAddress || !network) {
             commit('setCollateralVatBalance', { collateralType, balance: undefined });
             return;
         }
