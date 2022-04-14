@@ -64,7 +64,8 @@
                 !isWalletConnected ||
                 !isEnoughDeposited ||
                 !isWalletAuthorizedCorrect ||
-                !isCollateralAuthorized
+                !isCollateralAuthorized ||
+                isAmountToReceiveUknown
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
@@ -182,6 +183,9 @@ export default Vue.extend({
                 this.auctionTransaction.approximateUnitPrice,
                 this.auctionTransaction
             );
+        },
+        isAmountToReceiveUknown(): boolean {
+            return this.amountToReceive?.isNaN();
         },
     },
 });
