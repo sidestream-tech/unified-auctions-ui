@@ -3,7 +3,7 @@
         <table class="Table">
             <tr>
                 <th class="Heading">Fee Parameter</th>
-                <th class="Heading">Value in ETH</th>
+                <th class="Heading">Value</th>
                 <th class="Heading">Value in DAI</th>
             </tr>
             <tbody>
