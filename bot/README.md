@@ -30,6 +30,7 @@ $ npm run start
 - `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum ->
   create new project -> settings -> keys). Note: this project can not be restricted by the origin.
 - `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
+- `COLLATERAL_WHITELIST`: (optional) set a list of collaterals that the bot should use. [More info](#collateral-whitelist)
 - `MAX_PRIORITY_FEE_PER_GAS_WEI`: (optional, default can be found in core/src/gas.ts) – [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559) `max_priority_fee_per_gas` value
   options can be found in [constants/NETWORKS](../core/src/constants/NETWORKS.ts)
 - `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
@@ -46,6 +47,15 @@ $ npm run start
   example: `https://auctions.makerdao.network`)
 
 Note: env variables are accessible via the `secret` command under `auction-ui/bot/${environment}`.
+
+### Collateral Whitelist
+Our bot allows users to specify which collaterals they are interested in. By default, the bot will follow the following behavior
+- Tweet about every new incoming auction
+- Bid on every auction that satisfies the minimum net profit threshold
+
+If you wish to limit the collaterals the bot accesses you can use our `COLLATERAL_WHITELIST`. In order to use this whitelist please set the environment variable `COLLATERAL_WHITELIST` to a list of the collaterals the bot should observe. Every collateral should be seperated by a comma.
+
+Example: `COLLATERAL_WHITELIST="ETH-A,ETH-C""`
 
 ## Development Setup
 
