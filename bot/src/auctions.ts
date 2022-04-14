@@ -40,11 +40,16 @@ export const getAllAuctions = async function (network: string): Promise<AuctionI
     let collateralWhitelist: undefined | string[];
     if (COLLATERAL_WHITELIST) {
         collateralWhitelist = parseCollateralWhitelist(COLLATERAL_WHITELIST);
-        console.info(`auctions: whitelist is enabled, only fetching auctions from "${COLLATERAL_WHITELIST}"`);
+        console.info(`auctions: whitelist is enabled, only fetching auctions of type "${COLLATERAL_WHITELIST}"`);
     }
 
     const auctions = await fetchAllInitialAuctions(network);
-    const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
-    console.info(`auctions: found "${auctions.length}" auctions (${auctionIds}) on "${network}" network`);
-    return auctions.filter(auction => checkIfAuctionCollateralIsInWhitelist(auction, collateralWhitelist));
+    const filteredAuctions = auctions.filter(auction =>
+        checkIfAuctionCollateralIsInWhitelist(auction, collateralWhitelist)
+    );
+    const auctionIds = filteredAuctions.map(auction => `"${auction.id}"`).join(', ');
+    console.info(
+        `auctions: found "${filteredAuctions.length}/${auctions.length}" auctions (${auctionIds}) on "${network}" network`
+    );
+    return filteredAuctions;
 };
