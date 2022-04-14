@@ -15,7 +15,7 @@
                         <FormatCurrency
                             v-if="gasParameters && gasParameters.gasPrice"
                             :value="formatGasParameters(gasParameters.gasPrice)"
-                            currency="Gwei"
+                            currency="GWEI"
                         />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
@@ -31,7 +31,7 @@
                         <FormatCurrency
                             v-if="gasParameters && gasParameters.maxPriorityFeePerGas"
                             :value="formatGasParameters(gasParameters.maxPriorityFeePerGas)"
-                            currency="Gwei"
+                            currency="GWEI"
                         />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
@@ -47,7 +47,7 @@
                         <FormatCurrency
                             v-if="gasParameters && gasParameters.maxFeePerGas"
                             :value="formatGasParameters(gasParameters.maxFeePerGas)"
-                            currency="Gwei"
+                            currency="GWEI"
                         />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
@@ -60,7 +60,7 @@
                         <span> Base Fee Per Gas </span>
                     </td>
                     <td class="Body">
-                        <FormatCurrency v-if="baseFeePerGas" :value="baseFeePerGas" currency="Gwei" />
+                        <FormatCurrency v-if="baseFeePerGas" :value="baseFeePerGas" currency="GWEI" />
                         <span v-else class="UnknownValue"> Unknown </span>
                     </td>
                     <td class="Body">
