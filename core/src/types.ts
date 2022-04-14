@@ -67,7 +67,7 @@ export declare interface AuctionTransaction extends Auction, TransactionFees {
 }
 
 export declare interface UniswapV2CalleeConfig {
-    callee: 'UniswapV2CalleeDai' | 'WstETHCurveUniv3Callee';
+    callee: 'UniswapV2CalleeDai' | 'WstETHCurveUniv3Callee' | 'CurveLpTokenUniv3Callee';
     route: string[];
 }
 
@@ -98,6 +98,7 @@ export declare interface CalleeAddresses {
     UniswapV2CalleeDai: string;
     UniswapV2LpTokenCalleeDai: string;
     WstETHCurveUniv3Callee?: string;
+    CurveLpTokenUniv3Callee?: string;
 }
 
 export type CalleeNames = keyof CalleeAddresses;

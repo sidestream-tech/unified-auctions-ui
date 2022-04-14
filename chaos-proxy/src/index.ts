@@ -15,6 +15,10 @@ const PORT = parseInt(process.env.PORT || '8545');
         throw new Error('CHAOSLABS_SIMULATIONS is not set');
     }
     const simulationId = await chooseSimulationId(CHAOSLABS_SIMULATIONS);
+    if (!simulationId) {
+        console.info('Exiting since no simulation was selected');
+        return;
+    }
     const targetURL = await getSimulationUrl(CHAOSLABS_ACCESS_TOKEN, simulationId);
     await startProxy(targetURL, PORT);
 })();

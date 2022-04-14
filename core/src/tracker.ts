@@ -1,7 +1,7 @@
 import type { Notifier, MessageContent } from './types';
 import { ethers } from 'ethers';
 import { v4 as uuidv4 } from 'uuid';
-import truncateText from './helpers/truncateText';
+import parseMetamaskError from './helpers/parseMetamaskError';
 
 const DEFAULT_NOTIFICATION_DURATION = 3;
 const NUMBER_OF_BLOCKS_TO_CONFIRM = 5;
@@ -35,7 +35,7 @@ const trackTransaction = async function (
         });
     } catch (error: any) {
         notifier('error', {
-            content: `Transaction error: ${truncateText(error?.message || 'unknown')}`,
+            content: `Transaction error: "${parseMetamaskError(error?.message)}"`,
             key: messageId,
             duration: DEFAULT_NOTIFICATION_DURATION,
         });
@@ -72,7 +72,7 @@ const trackTransaction = async function (
         return confirmedTransactionReceipt.transactionHash;
     } catch (error: any) {
         notifier('error', {
-            content: `Transaction was rejected with error: "${truncateText(error?.message || 'unknown')}"`,
+            content: `Transaction was rejected with error: "${parseMetamaskError(error?.message)}"`,
             key: messageId,
             duration: DEFAULT_NOTIFICATION_DURATION,
         });

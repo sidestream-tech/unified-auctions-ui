@@ -42,6 +42,7 @@
                             :has-accepted-terms="hasAcceptedTerms"
                             @update:isModalOpen="$emit('update:isModalOpen', $event)"
                             @changeWalletType="$emit('changeWalletType', $event)"
+                            @openWalletModal="$emit('openWalletModal')"
                             @openTermsModal="$emit('openTermsModal')"
                         />
 
