@@ -32,9 +32,7 @@
     },
     "include": [
         "package.json",
-        "**/*.ts",
-        ".eslintrc.js",
-        ".eslintrc.typescript.js"
+        "**/*.ts"
     ],
     "exclude": [
         "node_modules",
