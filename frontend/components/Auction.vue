@@ -1,17 +1,21 @@
 <template>
     <TextBlock :title="`Auction #${auctionId}`">
-        <Alert v-if="auctionError" class="my-3" :message="auctionError" type="error" />
+        <div class="my-3">
+            <Alert v-if="auctionError && auctionError.showBanner" :message="auctionError.error" type="error" />
+        </div>
         <div v-if="auction">
-            <RestartBlock
-                v-if="auctionError === 'This auction is inactive and must be restarted'"
-                :transaction-fee="auction.restartTransactionFeeETH"
-                :is-explanations-shown="isExplanationsShown"
-                :wallet-address="walletAddress"
-                :is-restarting="auction.isRestarting"
-                @restart="$emit('restart', auctionId)"
-                @connect="$emit('connect')"
-            />
-            <div class="relative mt-4">
+            <div v-if="!auction.isActive">
+                <AuctionRestartPanel
+                    :wallet-address="walletAddress"
+                    :transaction-fee="auction.restartTransactionFeeETH"
+                    :is-explanations-shown="isExplanationsShown"
+                    :is-restarting="auction.isRestarting"
+                    @restart="$emit('restart', auctionId)"
+                    @connectWallet="$emit('connect')"
+                    @disconnectWallet="$emit('disconnect')"
+                />
+            </div>
+            <div class="relative mt-2">
                 <table class="w-full table-fixed border-collapse border">
                     <tbody>
                         <tr>
@@ -202,7 +206,7 @@
             </template>
             <TextBlock>
                 <div class="flex w-full justify-end flex-wrap mt-4">
-                    <Tooltip :title="auctionError" placement="top">
+                    <Tooltip :title="auctionError && auctionError.error" placement="top">
                         <div>
                             <Button
                                 :disabled="!!auctionError"
@@ -258,16 +262,16 @@ import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import Loading from '~/components/common/Loading.vue';
 import Explain from '~/components/utils/Explain.vue';
-import RestartBlock from '~/components/transaction/RestartBlock.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
+import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
 
 export default Vue.extend({
     name: 'Auction',
     components: {
+        AuctionRestartPanel,
         AuctionEventsBlock,
         PriceDropAnimation,
-        RestartBlock,
         Explain,
         Loading,
         FormatCurrency,
@@ -321,21 +325,33 @@ export default Vue.extend({
         };
     },
     computed: {
-        auctionError(): string | null {
+        auctionError(): { error: string; showBanner: boolean } | null {
             if (!this.areAuctionsFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
-                return 'This auction was not found';
+                return {
+                    error: 'This auction was not found',
+                    showBanner: true,
+                };
             } else if (this.error) {
-                return this.error;
+                return {
+                    error: this.error,
+                    showBanner: true,
+                };
             } else if (this.auction?.isFinished || (!this.auction && this.takeEvents)) {
-                return 'This auction is finished';
+                return {
+                    error: 'This auction is finished',
+                    showBanner: true,
+                };
             } else if (!this.auction?.isActive && !this.areAuctionsFetching && !this.areTakeEventsFetching) {
-                return 'This auction is inactive and must be restarted';
+                return {
+                    error: 'This auction is inactive and must be restarted',
+                    showBanner: false,
+                };
             }
             return null;
         },
         swapTransactionError(): string | null {
             if (this.auctionError) {
-                return this.auctionError;
+                return this.auctionError.error;
             }
             if (
                 !this.areAuctionsFetching &&

@@ -48,9 +48,9 @@ export default Vue.extend({
             type: String,
             required: true,
         },
-        isCollateralAuthorized: {
-            type: Boolean,
-            required: true,
+        authorizedCollaterals: {
+            type: Array as Vue.PropType<string[]>,
+            default: () => [],
         },
         authTransactionFeeETH: {
             type: Object as Vue.PropType<BigNumber>,
@@ -91,6 +91,9 @@ export default Vue.extend({
                 name: 'correct',
                 title: `The wallet is authorized to execute ${this.collateralType} transactions`,
             };
+        },
+        isCollateralAuthorized(): boolean {
+            return this.authorizedCollaterals.includes(this.collateralType);
         },
     },
     watch: {

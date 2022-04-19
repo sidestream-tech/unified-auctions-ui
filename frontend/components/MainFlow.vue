@@ -31,6 +31,7 @@
                         :are-take-events-fetching="areTakeEventsFetching"
                         @restart="$emit('restart', $event)"
                         @connect="$emit('connect')"
+                        @disconnect="$emit('disconnect')"
                         @swap="swap()"
                         @purchase="purchase()"
                         @fetchTakeEventsFromAuction="$emit('fetchTakeEventsFromAuction', $event)"

@@ -5,6 +5,7 @@ declare module '*.svg' {
 }
 
 declare module 'animated-number-vue' {}
+declare module '@ivanv/vue-collapse-transition' {}
 
 // allow typescript to properly process image imports
 declare module '*.png' {

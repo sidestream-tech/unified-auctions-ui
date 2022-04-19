@@ -1,5 +1,5 @@
 <template>
-    <TextBlock :title="isExplanationsShown ? 'Make a bid' : ''">
+    <TextBlock>
         <div v-if="transactionAddress">
             Transaction <format-address shorten :value="transactionAddress" /> was successfully executed.
             <format-address explicit :value="transactionAddress" />

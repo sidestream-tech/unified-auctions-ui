@@ -3,6 +3,9 @@
         <DashboardAuctionsView
             :collaterals="collaterals"
             :callees="callees"
+            :base-fee-per-gas="baseFeePerGas"
+            :gas-parameters="gasParameters"
+            :transaction-fees="transactionFees"
             :is-explanations-shown.sync="isExplanationsShown"
         />
     </div>
@@ -22,6 +25,11 @@ export default Vue.extend({
         ...mapGetters('collaterals', {
             collaterals: 'collaterals',
         }),
+        ...mapGetters('gas', {
+            baseFeePerGas: 'getBaseFeePerGas',
+            gasParameters: 'getGasParameters',
+            transactionFees: 'getTransactionFees',
+        }),
         isExplanationsShown: {
             get(): boolean {
                 return this.$store.getters['preferences/getIsExplanationsShown'];
@@ -39,6 +47,7 @@ export default Vue.extend({
         },
     },
     async mounted() {
+        await this.$store.dispatch('gas/setup');
         await this.$store.dispatch('collaterals/setup');
     },
 });

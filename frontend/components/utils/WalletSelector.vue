@@ -1,9 +1,9 @@
 <template>
     <Select
         v-if="walletAddress || isLoading"
-        :options="[{ label: 'Disconnect', value: -1 }]"
+        :options="menuOptions"
         :title="walletAddress"
-        @input="$emit('changeWalletType')"
+        @input="determineMenuAction"
     >
         <template #text-prefix>
             <icon type="wallet" class="pr-2 text-3xl md:text-sm" />
@@ -69,6 +69,17 @@ export default Vue.extend({
             return WALLETS.map(Wallet => {
                 return { label: Wallet.title, value: Wallet.title, icon: Wallet.icon };
             });
+        },
+        menuOptions(): SelectOption[] {
+            return [
+                { label: 'Manage Wallet', value: 'openWalletModal' },
+                { label: 'Disconnect', value: 'changeWalletType' },
+            ];
+        },
+    },
+    methods: {
+        determineMenuAction(eventName) {
+            this.$emit(eventName);
         },
     },
 });

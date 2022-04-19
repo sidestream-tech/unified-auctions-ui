@@ -6,18 +6,9 @@
             :transaction-fee="transactionFee"
             show-different-wallet-info
         />
-        <div class="flex flex-col space-y-3 my-3 md:mb-0">
-            <Alert
-                v-if="state === 'notProfitable'"
-                message="Executing this auction is not yet profitable. Please wait till the auction price drops below the price
-            on UniSwap"
-                type="error"
-            />
-        </div>
-
         <div class="flex flex-col md:flex-row md:space-x-4 justify-end flex-wrap mt-4">
             <ExecuteWithOtherWalletBlock
-                :disabled="disabled || isLoading || state === 'notProfitable' || state === 'executed'"
+                :disabled="disabled || isLoading || state === 'executed'"
                 :default-wallet="walletAddress"
                 :is-loading="state === 'loading'"
                 class="pb-3"
@@ -44,7 +35,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { Alert } from 'ant-design-vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import ExecuteWithOtherWalletBlock from '~/components/transaction/ExecuteWithOtherWalletBlock.vue';
 import TransactionMessage from '~/components/transaction/TransactionMessage.vue';
@@ -53,7 +43,6 @@ export default Vue.extend({
     name: 'WalletBlock',
     components: {
         ExecuteWithOtherWalletBlock,
-        Alert,
         BaseButton,
         TransactionMessage,
     },
@@ -82,10 +71,6 @@ export default Vue.extend({
             type: String,
             required: true,
         },
-        transactionGrossProfit: {
-            type: [Number, Object] as Vue.PropType<Number | BigNumber>,
-            default: null,
-        },
         walletAddress: {
             type: String,
             default: null,
@@ -98,9 +83,6 @@ export default Vue.extend({
             }
             if (this.disabled) {
                 return 'disabled';
-            }
-            if (this.transactionGrossProfit < 0) {
-                return 'notProfitable';
             }
             if (!this.transactionAddress) {
                 return 'notExecuted';

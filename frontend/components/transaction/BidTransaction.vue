@@ -13,57 +13,69 @@
             :amount-to-receive="amountToReceive"
             @inputBidAmount="inputBidAmount = $event"
         />
-        <WalletBlock
-            class="mb-6 lg:mb-0"
-            :disabled="!auctionTransaction.isActive || auctionTransaction.isFinished"
-            :is-loading="isConnecting"
-            :wallet-address="walletAddress"
-            :is-explanations-shown="isExplanationsShown"
-            @connectWallet="$emit('connect')"
-            @disconnectWallet="$emit('disconnect')"
-        />
-        <DepositBlock
-            class="mb-6 lg:mb-0"
-            :disabled="!auctionTransaction.isActive || !isConnected"
-            :is-loading="isDepositingOrWithdrawing"
-            :is-explanations-shown="isExplanationsShown"
-            :transaction-bid-amount="transactionBidAmount"
-            :wallet-dai="walletDai"
-            :wallet-vat-dai="walletVatDai"
-            @manageVat="$emit('manageVat')"
-        />
-        <AuthorisationBlock
-            class="mb-6 lg:mb-0"
-            :disabled="!isEnoughDeposited || !auctionTransaction.isActive || !isConnected"
-            :auction-transaction="auctionTransaction"
-            :is-loading="isAuthorizing"
-            :is-wallet-authorized="isWalletAuthorized"
-            :is-collateral-authorised="isCollateralAuthorised"
-            :is-explanations-shown="isExplanationsShown"
-            @authorizeWallet="$emit('authorizeWallet')"
-            @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
-        />
+        <div class="mb-4">
+            <WalletConnectionCheckPanel
+                :wallet-address="walletAddress"
+                :disabled="!auctionTransaction.isActive || auctionTransaction.isFinished"
+                :is-loading="isConnecting"
+                :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="isWalletConnected"
+                @connectWallet="$emit('connect')"
+                @disconnectWallet="$emit('disconnect')"
+            />
+            <WalletVatDaiBalanceCheckPanel
+                :wallet-dai="walletDai"
+                :wallet-vat-dai="walletVatDai"
+                :transaction-bid-amount="transactionBidAmount"
+                :is-loading="isDepositingOrWithdrawing"
+                :is-correct.sync="isEnoughDeposited"
+                :disabled="!isWalletConnected"
+                @manageVat="$emit('manageVat')"
+            />
+            <WalletAuthorizationCheckPanel
+                :is-wallet-authorized="isWalletAuthorized"
+                :wallet-address="walletAddress"
+                :disabled="!isEnoughDeposited"
+                :is-loading="isAuthorizing"
+                :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="isWalletAuthorizedCorrect"
+                @authorizeWallet="$emit('authorizeWallet')"
+            />
+            <CollateralAuthorizationCheckPanel
+                :collateral-type="auctionTransaction.collateralType"
+                :authorized-collaterals="authorisedCollaterals"
+                :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
+                :wallet-address="walletAddress"
+                :disabled="!isWalletAuthorized"
+                :is-loading="isAuthorizing"
+                :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="isCollateralAuthorized"
+                @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
+            />
+        </div>
         <BidBlock
-            class="mb-6 lg:mb-0"
+            class="mb-6"
             :auction-transaction="auctionTransaction"
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
             :disabled="
                 !auctionTransaction.isActive ||
                 auctionTransaction.isFinished ||
-                !isWalletAuthorized ||
-                !isCollateralAuthorised ||
-                !isEnoughDeposited
+                !isWalletConnected ||
+                !isEnoughDeposited ||
+                !isWalletAuthorizedCorrect ||
+                !isCollateralAuthorized ||
+                isAmountToReceiveUknown
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
             @bidWithDai="$emit('bidWithDai', { id: auctionTransaction.id, bidAmountDai: transactionBidAmount })"
         />
-        <WithdrawCollateralBlock
+        <WithdrawCollateralPanel
             :collateral-type="auctionTransaction.collateralType"
             :collateral-vat-balance="collateralVatBalance"
-            :is-withdrawing="isDepositingOrWithdrawing"
             :is-fetching="isFetchingCollateralVatBalance"
+            :is-withdrawing="isDepositingOrWithdrawing"
             :is-explanations-shown="isExplanationsShown"
             @fetchCollateralVatBalance="$emit('fetchCollateralVatBalance', $event)"
             @withdrawAllCollateralFromVat="$emit('withdrawAllCollateralFromVat', $event)"
@@ -77,24 +89,26 @@ import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import { calculateTransactionCollateralOutcome } from 'auctions-core/src/price';
-import AuthorisationBlock from './AuthorisationBlock.vue';
 import BidTransactionTable from './BidTransactionTable.vue';
-import WalletBlock from './WalletBlock.vue';
-import DepositBlock from './DepositBlock.vue';
 import BidBlock from './BidBlock.vue';
-import WithdrawCollateralBlock from './WithdrawCollateralBlock.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
+import CollateralAuthorizationCheckPanel from '~/components/panels/CollateralAuthorizationCheckPanel.vue';
+import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
+import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
+import WalletVatDaiBalanceCheckPanel from '~/components/panels/WalletVatDaiBalanceCheckPanel.vue';
+import WithdrawCollateralPanel from '~/components/panels/WithdrawCollateralPanel.vue';
 
 export default Vue.extend({
     components: {
         TextBlock,
         BidTransactionTable,
-        AuthorisationBlock,
-        WalletBlock,
-        DepositBlock,
         BidBlock,
-        WithdrawCollateralBlock,
         Alert,
+        CollateralAuthorizationCheckPanel,
+        WalletAuthorizationCheckPanel,
+        WalletConnectionCheckPanel,
+        WalletVatDaiBalanceCheckPanel,
+        WithdrawCollateralPanel,
     },
     props: {
         auctionTransaction: {
@@ -153,18 +167,13 @@ export default Vue.extend({
     data() {
         return {
             inputBidAmount: undefined as BigNumber | undefined,
+            isWalletConnected: false,
+            isEnoughDeposited: false,
+            isWalletAuthorizedCorrect: false,
+            isCollateralAuthorized: false,
         };
     },
     computed: {
-        isConnected(): boolean {
-            return this.walletAddress !== null;
-        },
-        isCollateralAuthorised(): boolean {
-            return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
-        },
-        isEnoughDeposited(): boolean {
-            return this.walletVatDai?.isGreaterThanOrEqualTo(this.transactionBidAmount);
-        },
         transactionBidAmount(): BigNumber {
             return this.inputBidAmount || this.auctionTransaction?.debtDAI || new BigNumber(NaN);
         },
@@ -174,6 +183,9 @@ export default Vue.extend({
                 this.auctionTransaction.approximateUnitPrice,
                 this.auctionTransaction
             );
+        },
+        isAmountToReceiveUknown(): boolean {
+            return this.amountToReceive?.isNaN();
         },
     },
 });

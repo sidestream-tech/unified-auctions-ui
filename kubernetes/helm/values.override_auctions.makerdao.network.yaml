@@ -9,5 +9,5 @@ frontend:
     # so we built a separate image just for that
     image: "frontend-makerdao"
 
-botTwitter:
-  secretChamberPath: "auction-ui/auctions.makerdao.network/bot-twitter"
+bot:
+  secretChamberPath: "auction-ui/auctions.makerdao.network/bot"
