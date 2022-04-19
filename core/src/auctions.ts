@@ -93,7 +93,6 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
             transactionGrossProfitDate,
         };
     } catch (error) {
-        console.warn(`auction price drop information is not available for auction "${auction.id}"`);
         return {
             ...auction,
             totalPrice: auction.collateralAmount.multipliedBy(auction.unitPrice),

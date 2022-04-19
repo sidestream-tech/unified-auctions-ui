@@ -4,6 +4,7 @@
     More info on how UniSwap works and other available methods can be found here:
     https://www.quicknode.com/guides/defi/how-to-interact-with-uniswap-using-javascript#interacting-with-uniswap
 */
+import type { CollateralConfig, RegularCalleeConfig } from '../../types';
 import { ethers } from 'ethers';
 import memoizee from 'memoizee';
 import { Fetcher, Token, Pair, Route, TokenAmount, Trade, TradeType } from '@uniswap/sdk';
@@ -16,16 +17,20 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 
 const EXCHANGE_RATE_CACHE = 20 * 1000;
 
+const getColleeConfig = function (collateral: CollateralConfig): RegularCalleeConfig {
+    if (collateral.exchange.callee === 'UniswapV2CalleeDai' || collateral.exchange.callee === 'UniswapV3Callee') {
+        return collateral.exchange;
+    }
+    throw new Error(`"${collateral.symbol}" is not an UniSwap token`);
+};
+
 export const getCompleteExchangePathBySymbol = function (symbol: string, useExchangeRoute = true) {
     if (symbol === 'DAI') {
         // no exchange is needed for DAI -> DAI
         return ['DAI'];
     }
     const collateral = getCollateralConfigBySymbol(symbol);
-    if (collateral.exchange.callee !== 'UniswapV2CalleeDai') {
-        throw new Error(`"${symbol}" is not a uniswap token`);
-    }
-    return !useExchangeRoute ? [symbol, 'DAI'] : [symbol, ...collateral.exchange.route, 'DAI'];
+    return !useExchangeRoute ? [symbol, 'DAI'] : [symbol, ...getColleeConfig(collateral).route, 'DAI'];
 };
 
 export const getUniswapRouteAddressesBySymbol = async function (network: string, symbol: string): Promise<string[]> {
@@ -103,9 +108,7 @@ export const getRegularTokenExchangeRateBySymbol = async function (
     amount: BigNumber
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(symbol);
-    if (collateral.exchange.callee !== 'UniswapV2CalleeDai') {
-        throw new Error(`"${collateral.symbol}" is not an UniSwap token`);
-    }
+    getColleeConfig(collateral); // to check that the callee is supported
     const completeExchangePath = getCompleteExchangePathBySymbol(symbol);
     const pairs = splitArrayIntoPairs(completeExchangePath);
     const uniswapPairs = await Promise.all(pairs.map(pair => getUniswapPairBySymbols(network, pair[0], pair[1])));
