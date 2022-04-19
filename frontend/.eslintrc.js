@@ -17,10 +17,6 @@ module.exports = {
     globals: {
         process: 'readonly',
     },
-    parserOptions: {
-        project: ['tsconfig.json', 'jsconfig.json'],
-        tsconfigRootDir: __dirname,
-    },
     rules: {
         'prettier/prettier': 'warn',
         'prefer-const': ['warn'],
@@ -34,7 +30,6 @@ module.exports = {
         curly: 'warn',
         'no-undef': 'off',
         'eol-last': ['error', 'always'],
-        '@typescript-eslint/no-floating-promises': ['error'],
         'vue/block-lang': [
             'error',
             {

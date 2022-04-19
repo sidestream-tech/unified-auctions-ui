@@ -12,7 +12,7 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "lint:js": "eslint --ext \".js,.vue,.ts\" --ignore-path .gitignore . --max-warnings=0",
+    "lint:js": "eslint -c .eslintrc.typescript.js --ext \".js,.vue,.ts\" --ignore-path .gitignore . --max-warnings=0",
     "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path .gitignore",
     "lint": "npm run lint:js && npm run lint:style",
     "test": "jest",
