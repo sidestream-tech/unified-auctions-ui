@@ -177,13 +177,13 @@ export const actions = {
     ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            message.error(`Bidding error: can not find auction with id "${id}"`);
+            await message.error(`Bidding error: can not find auction with id "${id}"`);
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            message.error('Bidding error: can not find wallet');
+            await message.error('Bidding error: can not find wallet');
             return;
         }
         commit('setIsBidding', true);
@@ -211,13 +211,13 @@ export const actions = {
     ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            message.error(`Bidding error: can not find auction with id "${id}"`);
+            await message.error(`Bidding error: can not find auction with id "${id}"`);
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            message.error('Bidding error: can not find wallet');
+            await message.error('Bidding error: can not find wallet');
             return;
         }
         commit('setIsBidding', true);
@@ -242,12 +242,12 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            message.error(`Auction reset error: can not find auction with id "${id}"`);
+            await message.error(`Auction reset error: can not find auction with id "${id}"`);
             return;
         }
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            message.error('Bidding error: can not find wallet');
+            await message.error('Bidding error: can not find wallet');
             return;
         }
         commit('addAuctionRestarting', id);
@@ -263,7 +263,10 @@ export const actions = {
         const auctions = getters.listAuctions;
 
         auctions.forEach((auction: Auction) => {
-            dispatch('updateAuctionPrice', auction.id);
+            dispatch('updateAuctionPrice', auction.id).then(
+                () => {},
+                () => {}
+            );
         });
     },
     async updateAuctionPrice({ getters, commit, rootGetters }: ActionContext<State, State>, id: string) {

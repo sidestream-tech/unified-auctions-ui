@@ -147,7 +147,10 @@ export default Vue.extend({
         restart() {
             if (this.selectedAuction) {
                 this.selectedAuction.isActive = true;
-                message.success('The auction has been restarted!');
+                message.success('The auction has been restarted!').then(
+                    () => {},
+                    () => {}
+                );
             }
         },
         setTransactionAmountDai(amount: BigNumber | undefined) {

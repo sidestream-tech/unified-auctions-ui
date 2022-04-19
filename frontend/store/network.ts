@@ -97,7 +97,7 @@ export const actions = {
             await dispatch('setWalletNetwork', newNetwork);
             window.location.href = `${rootState.route.path}?network=${newNetwork}`;
         } catch (error) {
-            message.error(`Network switch error: ${error.message}`);
+            await message.error(`Network switch error: ${error.message}`);
         }
     },
     async setWalletNetwork(_: ActionContext<State, State>, newNetwork: string): Promise<void> {
@@ -117,7 +117,7 @@ export const actions = {
             await dispatch('setWalletNetwork', getters.getPageNetwork);
             window.location.reload();
         } catch (error) {
-            message.error(`Network switch error: ${error.message}`);
+            await message.error(`Network switch error: ${error.message}`);
         }
     },
 };
