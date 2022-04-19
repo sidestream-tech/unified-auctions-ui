@@ -83,7 +83,6 @@ export declare interface CollateralConfig {
     ilk: string;
     symbol: string;
     decimals: number;
-    predictPrice?: boolean;
     exchange: UniswapV2CalleeConfig | UniswapV2LpTokenCalleeConfig;
 }
 
