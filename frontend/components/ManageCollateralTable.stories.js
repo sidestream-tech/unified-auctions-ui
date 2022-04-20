@@ -7,7 +7,6 @@ const common = {
     components: { ManageCollateralTable },
     data: () => ({
         collateralStatuses: generateFakeCollateralStatuses(),
-        isExplanationsShown: true,
         isAuthorizing: false,
         isWithdrawing: false,
     }),
