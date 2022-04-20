@@ -1,5 +1,5 @@
 import { ActionContext } from 'vuex';
-import type { CollateralRow } from 'auctions-core/src/types';
+import type { CollateralRow, CollateralStatus } from 'auctions-core/src/types';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { getMarketPrice } from 'auctions-core/src/calleeFunctions';
 import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
@@ -8,15 +8,23 @@ import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 
 interface State {
     collaterals: CollateralRow[];
+    collateralStatuses: Record<string, CollateralStatus>;
 }
 
 export const state = (): State => ({
     collaterals: [],
+    collateralStatuses: {},
 });
 
 export const getters = {
     collaterals(state: State) {
         return state.collaterals || [];
+    },
+    collateralStatuses(state: State) {
+        return state.collateralStatuses;
+    },
+    collateralStatus(state: State, type: string) {
+        return state.collateralStatuses[type];
     },
 };
 
@@ -30,6 +38,9 @@ export const mutations = {
             ...state.collaterals[collateralIndex],
             ...updatedCollateral,
         });
+    },
+    setCollateralStatus(state: State, collateralStatus: CollateralStatus) {
+        Vue.set(state.collateralStatuses, collateralStatus.type, collateralStatus);
     },
 };
 
@@ -67,6 +78,27 @@ export const actions = {
                 tokenAddress,
             };
             commit('updateCollateral', updated);
+        }
+    },
+    async fetchCollateralStatuses({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        for (const collateral of Object.values(COLLATERALS)) {
+            const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateral.symbol).catch(error => {
+                console.error(error);
+            });
+            await dispatch('wallet/fetchCollateralVatBalance', collateral.ilk);
+            await dispatch('authorization/fetchCollateralAuthorizationStatus', collateral.ilk);
+            const isAuthorized = rootGetters['authorization/collateralAuthorizations'].includes(collateral.ilk);
+            const balance = rootGetters['wallet/collateralVatBalanceStore'][collateral.ilk];
+            commit('setCollateralStatus', {
+                type: collateral.ilk,
+                address: tokenAddress,
+                isAuthorized,
+                balance,
+            });
         }
     },
     async setup({ commit, dispatch }: ActionContext<State, State>) {
