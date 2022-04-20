@@ -17,7 +17,8 @@
                         {{ collateralStatus.type }}
                     </td>
                     <td>
-                        <format-address :value="collateralStatus.address" shorten />
+                        <format-address v-if="collateralStatus.address" :value="collateralStatus.address" shorten />
+                        <span v-else class="opacity-50">Unknown</span>
                     </td>
                     <td>
                         <span v-if="collateralStatus.isAuthorized">Authorized</span>
@@ -27,7 +28,7 @@
                     </td>
                     <td>
                         <button
-                            :disabled="!canWithdrawCollateral(collateralStatus)"
+                            :disabled="!canWithdrawCollateral(collateralStatus) || isWithdrawing"
                             class="Button"
                             @click="$emit('withdrawCollateral', collateralStatus.type)"
                         >
@@ -55,12 +56,20 @@ export default Vue.extend({
     },
     props: {
         collateralStatuses: {
-            type: Object as Vue.PropType<CollateralStatus>,
+            type: Array as Vue.PropType<CollateralStatus[]>,
             default: undefined,
         },
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        isAuthorizing: {
+            type: Boolean,
+            default: false,
+        },
+        isWithdrawing: {
+            type: Boolean,
+            default: false,
         },
     },
     methods: {
@@ -93,5 +102,9 @@ export default Vue.extend({
 
 .Button {
     @apply text-primary hover:text-primary-light underline;
+}
+
+.Button:disabled {
+    @apply text-gray-300 dark:text-gray-500 no-underline cursor-not-allowed;
 }
 </style>

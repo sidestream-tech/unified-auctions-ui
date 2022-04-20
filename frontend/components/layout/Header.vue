@@ -44,6 +44,7 @@
                             @changeWalletType="$emit('changeWalletType', $event)"
                             @openWalletModal="$emit('openWalletModal')"
                             @openTermsModal="$emit('openTermsModal')"
+                            @openCollateralModal="$emit('openCollateralModal')"
                         />
 
                         <ThemeSwitcher :dark-mode="darkMode" @update="$emit('update:darkMode', $event)" />
