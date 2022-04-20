@@ -105,6 +105,6 @@ export default Vue.extend({
 }
 
 .Button:disabled {
-    @apply text-gray-300 dark:text-gray-500 no-underline cursor-not-allowed;
+    @apply text-gray-400 dark:text-gray-500 no-underline cursor-not-allowed;
 }
 </style>
