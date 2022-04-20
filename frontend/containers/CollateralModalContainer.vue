@@ -6,8 +6,8 @@
         :collateral-statuses="collateralStatuses"
         :is-authorizing="isAuthorizing"
         :is-withdrawing="isWithdrawing"
-        @authorizeCollateral="authorizeCollateral"
-        @withdrawCollateral="withdrawAllCollateralFromVat"
+        @authorizeCollateral="authorize"
+        @withdrawCollateral="withdraw"
         @cancel="setCollateralModal(false)"
     />
 </template>
@@ -53,16 +53,25 @@ export default Vue.extend({
     watch: {
         isCollateralModalShown: {
             immediate: true,
-            handler() {
-                this.$store.dispatch('collaterals/fetchCollateralStatuses');
+            handler(isShown) {
+                if (isShown) {
+                    this.$store.dispatch('collaterals/fetchCollateralStatuses');
+                }
             },
         },
     },
     methods: {
         ...mapActions('wallet', ['withdrawAllCollateralFromVat']),
-        ...mapActions('authorizations', ['authorizeCollateral']),
         setCollateralModal(open: boolean): void {
             this.$store.commit('modals/setCollateralModal', open);
+        },
+        async authorize(collateralType: string) {
+            await this.$store.dispatch('authorizations/authorizeCollateral', collateralType);
+            await this.$store.dispatch('collaterals/refreshCollateralStatus', collateralType);
+        },
+        async withdraw(collateralType: string) {
+            await this.$store.dispatch('wallet/withdrawAllCollateralFromVat', collateralType);
+            await this.$store.dispatch('collaterals/refreshCollateralStatus', collateralType);
         },
     },
 });
