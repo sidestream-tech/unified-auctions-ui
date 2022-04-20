@@ -1,5 +1,5 @@
 import type { AuctionInitialInfo } from 'auctions-core/src/types';
-import { fetchAllInitialAuctions } from 'auctions-core/src/auctions';
+import { fetchAllAuctionsFromCollateralTypes } from 'auctions-core/src/auctions';
 import { COLLATERAL_WHITELIST } from './variables';
 import { parseCollateralWhitelist } from './whitelist';
 
@@ -12,17 +12,6 @@ const checkIfAuctionIsAlreadyKnown = function (auction: AuctionInitialInfo): boo
 
 const markAuctionAsKnown = function (auction: AuctionInitialInfo): void {
     knownAuctionIds.add(auction.id);
-};
-
-const checkIfAuctionCollateralIsInWhitelist = function (
-    auction: AuctionInitialInfo,
-    whitelist: string[] | undefined
-): boolean {
-    // if whitelist is disabled all auctions should be used
-    if (!whitelist) {
-        return true;
-    }
-    return whitelist.includes(auction.collateralType);
 };
 
 export const getNewAuctionsFromActiveAuctions = function (activeActions: AuctionInitialInfo[]): AuctionInitialInfo[] {
@@ -43,13 +32,10 @@ export const getAllAuctions = async function (network: string): Promise<AuctionI
         console.info(`auctions: whitelist is enabled, only fetching auctions of type "${COLLATERAL_WHITELIST}"`);
     }
 
-    const auctions = await fetchAllInitialAuctions(network);
-    const filteredAuctions = auctions.filter(auction =>
-        checkIfAuctionCollateralIsInWhitelist(auction, collateralWhitelist)
-    );
-    const auctionIds = filteredAuctions.map(auction => `"${auction.id}"`).join(', ');
-    console.info(
-        `auctions: found "${filteredAuctions.length}/${auctions.length}" auctions (${auctionIds}) on "${network}" network`
-    );
-    return filteredAuctions;
+    // if collateralWhitelist is undefined all auctions will be fetched
+    const auctions = await fetchAllAuctionsFromCollateralTypes(network, collateralWhitelist);
+
+    const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
+    console.info(`auctions: found "${auctions.length}" auctions (${auctionIds}) on "${network}" network`);
+    return auctions;
 };

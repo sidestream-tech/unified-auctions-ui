@@ -1,18 +1,14 @@
-import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
+import { getCollateralConfigByType } from 'auctions-core/src/constants/COLLATERALS';
 import { COLLATERAL_WHITELIST } from './variables';
 
 const validateWhitelist = function (whitelist: string[]) {
-    whitelist.map(collateralType => {
-        if (!COLLATERALS[collateralType]) {
-            throw new Error(`whitelist: incorrect collateral type found "${collateralType}"`);
-        }
-        return true;
+    whitelist.forEach(collateralType => {
+        getCollateralConfigByType(collateralType);
     });
 };
 
 export const parseCollateralWhitelist = function (whitelist: string): string[] {
-    const whitelistNoSpaces = whitelist.replace(/\s/g, '');
-    return whitelistNoSpaces.split(',');
+    return whitelist.split(',').map(item => item.trim());
 };
 
 export const setupWhitelist = function (): void {
@@ -20,6 +16,6 @@ export const setupWhitelist = function (): void {
         const parsedWhitelist = parseCollateralWhitelist(COLLATERAL_WHITELIST);
         validateWhitelist(parsedWhitelist);
     } else {
-        console.warn(`whitelist: skipping setup due to missing collateral whitelist`);
+        console.warn(`collateral whitelisting: skipping setup due to missing WHITELISTED_COLLATERALS`);
     }
 };
