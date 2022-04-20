@@ -136,3 +136,10 @@ export declare interface WalletBalances {
     walletVatDAI: BigNumber;
     walletLastUpdatedDate: Date;
 }
+
+export declare interface CollateralStatus {
+    type: string;
+    address: string;
+    isAuthorized: boolean;
+    balance: BigNumber;
+}
