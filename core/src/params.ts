@@ -33,8 +33,8 @@ const _fetchCalcParametersByCollateralType = async function (
             secondsBetweenPriceDrops,
             priceDropRatio,
         };
-    } catch (error) {
-        throw new Error(`failed to fetch step/cut for the collateral "${collateralType}": ${error.message}`);
+    } catch {
+        throw new Error(`failed to fetch step/cut parameters for the collateral "${collateralType}"`);
     }
 };
 
