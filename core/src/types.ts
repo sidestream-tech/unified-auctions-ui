@@ -139,6 +139,7 @@ export declare interface WalletBalances {
 
 export declare interface CollateralStatus {
     type: string;
+    symbol: string;
     address: string;
     isAuthorized: boolean;
     balance: BigNumber;

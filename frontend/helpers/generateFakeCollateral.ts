@@ -24,6 +24,7 @@ export const generateFakeCollateralStatuses = function () {
     for (const collateral of Object.values(COLLATERALS)) {
         collateralStatuses.push({
             type: collateral.ilk,
+            symbol: collateral.symbol,
             address: faker.finance.ethereumAddress(),
             isAuthorized: faker.datatype.boolean(),
             balance: new BigNumber(faker.finance.amount()),

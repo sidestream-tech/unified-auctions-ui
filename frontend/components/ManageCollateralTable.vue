@@ -12,12 +12,20 @@
                 <th>Balance</th>
             </tr>
             <tbody>
-                <tr v-for="collateralStatus of collateralStatuses" :key="collateralStatus.type" class="Body">
+                <tr v-for="collateralStatus of sortedCollaterals" :key="collateralStatus.type" class="Body">
                     <td>
-                        {{ collateralStatus.type }}
+                        <div class="flex items-center gap-2">
+                            <CurrencyIcon :currency-symbol="collateralStatus.symbol" />
+                            {{ collateralStatus.type }}
+                        </div>
                     </td>
                     <td>
-                        <format-address v-if="collateralStatus.address" :value="collateralStatus.address" shorten />
+                        <format-address
+                            v-if="collateralStatus.address"
+                            :value="collateralStatus.address"
+                            shorten
+                            type="address"
+                        />
                         <span v-else class="opacity-50">Unknown</span>
                     </td>
                     <td>
@@ -47,12 +55,14 @@ import Vue from 'vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+import CurrencyIcon from '~/components/common/CurrencyIcon.vue';
 
 export default Vue.extend({
     components: {
         TextBlock,
         FormatAddress,
         FormatCurrency,
+        CurrencyIcon,
     },
     props: {
         collateralStatuses: {
@@ -70,6 +80,14 @@ export default Vue.extend({
         isWithdrawing: {
             type: Boolean,
             default: false,
+        },
+    },
+    computed: {
+        sortedCollaterals() {
+            const statuses = this.collateralStatuses;
+            return statuses.sort((firstCollateral: CollateralStatus, secondCollateral: CollateralStatus) =>
+                firstCollateral.type.localeCompare(secondCollateral.type)
+            );
         },
     },
     methods: {

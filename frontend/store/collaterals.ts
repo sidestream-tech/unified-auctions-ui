@@ -96,6 +96,7 @@ export const actions = {
             const balance = rootGetters['wallet/collateralVatBalanceStore'][collateral.ilk];
             commit('setCollateralStatus', {
                 type: collateral.ilk,
+                symbol: collateral.symbol,
                 address: tokenAddress,
                 isAuthorized,
                 balance,
