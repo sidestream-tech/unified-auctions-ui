@@ -1,6 +1,6 @@
 import type { AuctionInitialInfo } from 'auctions-core/src/types';
-import { fetchAllAuctionsFromCollateralTypes } from 'auctions-core/src/auctions';
-import { COLLATERAL_WHITELIST } from './variables';
+import { fetchAllInitialAuctions } from 'auctions-core/src/auctions';
+import { WHITELISTED_COLLATERALS } from './variables';
 import { parseCollateralWhitelist } from './whitelist';
 
 const THRESHOLD_FOR_NEW_AUCTIONS = 5 * 60 * 1000;
@@ -27,13 +27,13 @@ export const getNewAuctionsFromActiveAuctions = function (activeActions: Auction
 
 export const getAllAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
     let collateralWhitelist: undefined | string[];
-    if (COLLATERAL_WHITELIST) {
-        collateralWhitelist = parseCollateralWhitelist(COLLATERAL_WHITELIST);
-        console.info(`auctions: whitelist is enabled, only fetching auctions of type "${COLLATERAL_WHITELIST}"`);
+    if (WHITELISTED_COLLATERALS) {
+        collateralWhitelist = parseCollateralWhitelist(WHITELISTED_COLLATERALS);
+        console.info(`auctions: whitelist is enabled, only fetching auctions of type "${WHITELISTED_COLLATERALS}"`);
     }
 
     // if collateralWhitelist is undefined all auctions will be fetched
-    const auctions = await fetchAllAuctionsFromCollateralTypes(network, collateralWhitelist);
+    const auctions = await fetchAllInitialAuctions(network, collateralWhitelist);
 
     const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
     console.info(`auctions: found "${auctions.length}" auctions (${auctionIds}) on "${network}" network`);

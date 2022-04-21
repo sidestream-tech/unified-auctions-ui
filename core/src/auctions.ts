@@ -20,7 +20,6 @@ import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from 
 import parseAuctionId from './helpers/parseAuctionId';
 import { EventFilter } from 'ethers';
 import getNetworkDate, { fetchDateByBlockNumber } from './date';
-import { getCollateralConfigByType } from './constants/COLLATERALS';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -102,29 +101,13 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
     return await enrichAuctionWithMarketValues(enrichedAuctionWithNewPriceDrop, network);
 };
 
-export const fetchAllInitialAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
-    const collateralTypes = await getSupportedCollateralTypes(network);
-    const auctionGroupsPromises = collateralTypes.map((collateralType: string) => {
-        return fetchAuctionsByCollateralType(network, collateralType);
-    });
-    const auctionGroups = await Promise.all(auctionGroupsPromises);
-    return auctionGroups.flat();
-};
-
-export const fetchAllAuctionsFromCollateralTypes = async function (
+export const fetchAllInitialAuctions = async function (
     network: string,
-    collateralTypes: string[] | undefined
+    collateralTypes?: string[]
 ): Promise<AuctionInitialInfo[]> {
-    // If no collateralTypes list is given return all auctions from all collateralTypes
     if (!collateralTypes) {
-        return await fetchAllInitialAuctions(network);
+        collateralTypes = await getSupportedCollateralTypes(network);
     }
-
-    // Map through given collateral types and validate that our UI supports them
-    collateralTypes.forEach(collateralType => {
-        getCollateralConfigByType(collateralType);
-    });
-
     const auctionGroupsPromises = collateralTypes.map((collateralType: string) => {
         return fetchAuctionsByCollateralType(network, collateralType);
     });
