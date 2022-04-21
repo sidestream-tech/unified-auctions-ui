@@ -131,7 +131,7 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
     console.info(`keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`);
 };
 
-const participate = async function (auction: AuctionInitialInfo) {
+const participateInAuction = async function (auction: AuctionInitialInfo) {
     // check if this auction is currently executed to avoid double execution
     if (currentlyExecutedAuctions.has(auction.id)) {
         return;
@@ -147,6 +147,12 @@ const participate = async function (auction: AuctionInitialInfo) {
 
     // clear pool of currently executed auctions
     currentlyExecutedAuctions.delete(auction.id);
+};
+
+export const participate = async function (auctions: AuctionInitialInfo[]) {
+    for (let i = 0; i < auctions.length; i += 1) {
+        await participateInAuction(auctions[i]);
+    }
 };
 
 export default participate;
