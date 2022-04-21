@@ -150,8 +150,8 @@ const participateInAuction = async function (auction: AuctionInitialInfo) {
 };
 
 export const participate = async function (auctions: AuctionInitialInfo[]) {
-    for (let i = 0; i < auctions.length; i += 1) {
-        await participateInAuction(auctions[i]);
+    for (const auction of auctions) {
+        await participateInAuction(auction);
     }
 };
 
