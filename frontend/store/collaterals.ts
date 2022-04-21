@@ -105,16 +105,23 @@ export const actions = {
             });
         }
     },
-    async refreshCollateralStatus(
-        { getters, commit, dispatch, rootGetters }: ActionContext<State, State>,
+    async fetchCollateralStatus(
+        { commit, dispatch, rootGetters }: ActionContext<State, State>,
         collateralType: string
     ) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        const collateralStatus = getters.collateralStatus(collateralType);
-        if (!collateralStatus) {
+        const collateral = Object.values(COLLATERALS).find(collateral => collateral.ilk === collateralType);
+        if (!collateral) {
+            console.error('Unknown collateral:', collateralType);
+            return;
+        }
+        const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateral.symbol).catch(() => {
+            return undefined;
+        });
+        if (!tokenAddress) {
             return;
         }
         await dispatch('wallet/fetchCollateralVatBalance', collateralType, { root: true });
@@ -122,7 +129,9 @@ export const actions = {
         const isAuthorized = rootGetters['authorizations/collateralAuthorizations'].includes(collateralType);
         const balance = rootGetters['wallet/collateralVatBalanceStore'][collateralType];
         commit('setCollateralStatus', {
-            ...collateralStatus,
+            type: collateral.ilk,
+            symbol: collateral.symbol,
+            address: tokenAddress,
             isAuthorized,
             balance,
         });
