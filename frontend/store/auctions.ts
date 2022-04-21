@@ -263,10 +263,7 @@ export const actions = {
         const auctions = getters.listAuctions;
 
         auctions.forEach((auction: Auction) => {
-            dispatch('updateAuctionPrice', auction.id).then(
-                () => {},
-                () => {}
-            );
+            dispatch('updateAuctionPrice', auction.id).catch(() => {});
         });
     },
     async updateAuctionPrice({ getters, commit, rootGetters }: ActionContext<State, State>, id: string) {
