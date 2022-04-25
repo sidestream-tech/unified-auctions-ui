@@ -1,58 +1,62 @@
 <template>
-    <Table
-        ref="tableContainer"
-        :data-source="auctions"
-        :columns="columns"
-        :pagination="{ pageSize: numberOfRowsPerPage, hideOnSinglePage: true }"
-        :row-class-name="getRowClassNames"
-        :row-key="record => record.id"
-        :custom-row="customRowEvents"
-        :get-popup-container="() => $el"
-        :locale="{ emptyText: 'No active auctions' }"
-        class="AuctionsTable relative overflow-visible"
-    >
-        <div slot="collateralAmount" slot-scope="collateralAmount, record" class="flex items-center space-x-2">
-            <currency-icon :currency-symbol="record.collateralSymbol" />
-            <format-currency :value="collateralAmount" :currency="record.collateralSymbol" />
-        </div>
-        <div slot="approximateUnitPrice" slot-scope="approximateUnitPrice, record">
-            <template v-if="record.isActive && !record.isFinished">
-                <format-currency :value="approximateUnitPrice" currency="DAI" /> per
-                <format-currency :currency="record.collateralSymbol" />
-            </template>
-            <span v-else class="opacity-50">Unknown</span>
-        </div>
-        <div slot="marketUnitPriceToUnitPriceRatio" slot-scope="marketUnitPriceToUnitPriceRatio, record">
-            <format-market-value
-                v-if="record.isActive && record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
-                :value="marketUnitPriceToUnitPriceRatio"
-            />
-            <span
-                v-else-if="record.isActive && !record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
-                class="opacity-50"
-            >
-                Not tradable
-            </span>
-            <span v-else class="opacity-50">Unknown</span>
-        </div>
-        <div slot="endDate" slot-scope="endDate, record" class="text-center">
-            <span v-if="record.isFinished" class="opacity-50"> Finished </span>
-            <span v-else-if="record.isRestarting" class="opacity-50"> Restarting </span>
-            <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
-            <time-till v-else :date="endDate" />
-        </div>
-        <div slot="action" slot-scope="text, record, index" class="w-full h-full">
-            <nuxt-link
-                :to="getAuctionLink(record)"
-                :class="(hoveredRowIndex === index && 'bg-primary text-white dark:bg-primary-dark') || 'text-primary'"
-                class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
-            >
-                <span v-if="record.isFinished">See details</span>
-                <span v-else-if="record.isActive">Participate</span>
-                <span v-else-if="!record.isActive">Restart Auction</span>
-            </nuxt-link>
-        </div>
-    </Table>
+    <Loading :is-loading="showLoadingOverlay" :error="error">
+        <Table
+            ref="tableContainer"
+            :data-source="auctions"
+            :columns="columns"
+            :pagination="{ pageSize: numberOfRowsPerPage, hideOnSinglePage: true }"
+            :row-class-name="getRowClassNames"
+            :row-key="record => record.id"
+            :custom-row="customRowEvents"
+            :get-popup-container="() => $el"
+            :locale="{ emptyText: 'No active auctions' }"
+            class="AuctionsTable relative overflow-visible"
+        >
+            <div slot="collateralAmount" slot-scope="collateralAmount, record" class="flex items-center space-x-2">
+                <currency-icon :currency-symbol="record.collateralSymbol" />
+                <format-currency :value="collateralAmount" :currency="record.collateralSymbol" />
+            </div>
+            <div slot="approximateUnitPrice" slot-scope="approximateUnitPrice, record">
+                <template v-if="record.isActive && !record.isFinished">
+                    <format-currency :value="approximateUnitPrice" currency="DAI" /> per
+                    <format-currency :currency="record.collateralSymbol" />
+                </template>
+                <span v-else class="opacity-50">Unknown</span>
+            </div>
+            <div slot="marketUnitPriceToUnitPriceRatio" slot-scope="marketUnitPriceToUnitPriceRatio, record">
+                <format-market-value
+                    v-if="record.isActive && record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
+                    :value="marketUnitPriceToUnitPriceRatio"
+                />
+                <span
+                    v-else-if="record.isActive && !record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
+                    class="opacity-50"
+                >
+                    Not tradable
+                </span>
+                <span v-else class="opacity-50">Unknown</span>
+            </div>
+            <div slot="endDate" slot-scope="endDate, record" class="text-center">
+                <span v-if="record.isFinished" class="opacity-50"> Finished </span>
+                <span v-else-if="record.isRestarting" class="opacity-50"> Restarting </span>
+                <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
+                <time-till v-else :date="endDate" />
+            </div>
+            <div slot="action" slot-scope="text, record, index" class="w-full h-full">
+                <nuxt-link
+                    :to="getAuctionLink(record)"
+                    :class="
+                        (hoveredRowIndex === index && 'bg-primary text-white dark:bg-primary-dark') || 'text-primary'
+                    "
+                    class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
+                >
+                    <span v-if="record.isFinished">See details</span>
+                    <span v-else-if="record.isActive">Participate</span>
+                    <span v-else-if="!record.isActive">Restart Auction</span>
+                </nuxt-link>
+            </div>
+        </Table>
+    </Loading>
 </template>
 
 <script lang="ts">
@@ -60,6 +64,8 @@ import type { Auction } from 'auctions-core/src/types';
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
 import { compareAsc } from 'date-fns';
+import { formatInterval } from '../helpers/tillDuration';
+import Loading from './common/Loading.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
@@ -88,6 +94,7 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
 
 export default Vue.extend({
     components: {
+        Loading,
         Table,
         TimeTill,
         FormatMarketValue,
@@ -107,6 +114,18 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isLoading: {
+            type: Boolean,
+            default: false,
+        },
+        lastUpdated: {
+            type: Date,
+            default: null,
+        },
+        error: {
+            type: String,
+            default: null,
+        },
     },
     data() {
         return {
@@ -121,7 +140,6 @@ export default Vue.extend({
                 text: currency.toUpperCase(),
                 value: currency,
             }));
-
             return [
                 {
                     title: 'Index',
@@ -158,7 +176,7 @@ export default Vue.extend({
                     sorter: compareBy('endDate', (a: Date, b: Date) => compareAsc(a, b)),
                 },
                 {
-                    title: '',
+                    title: this.fetchingText,
                     scopedSlots: { customRender: 'action' },
                     width: '20%',
                 },
@@ -166,6 +184,26 @@ export default Vue.extend({
         },
         numberOfRowsPerPage(): number {
             return this.showMoreRows ? 15 : 10;
+        },
+        parsedDate(): Date | null {
+            const date: Date = new Date(this.date);
+            if (isNaN(date.getTime())) {
+                return null;
+            }
+            return date;
+        },
+        fetchingText(): string {
+            if (this.isLoading) {
+                return 'Is updating...';
+            }
+            if (!this.lastUpdated) {
+                return 'Last updated: unknown';
+            }
+            const now = new Date();
+            return `Last updated: ${formatInterval(now, this.lastUpdated)}`;
+        },
+        showLoadingOverlay(): boolean {
+            return this.isLoading && this.auctions.length === 0;
         },
     },
     methods: {
@@ -200,6 +238,9 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.AuctionsTable >>> .ant-table-placeholder {
+    min-height: 100px;
+}
 .AuctionsTable >>> .ant-table-thead th {
     @apply py-1 px-2 h-8 bg-transparent text-gray-700 font-bold border-0 border-t-2 dark:text-gray-100;
 }

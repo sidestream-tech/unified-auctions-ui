@@ -11,23 +11,34 @@ const common = {
     data: () => ({
         auctions: fakeAuctions,
         selectedAuctionId: randomSelectedAuction.id,
+        lastUpdated: new Date(faker.date.recent()),
     }),
 };
 
 storiesOf('AuctionsTable', module)
     .add('Plain', () => ({
         ...common,
-        template: '<AuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" />',
+        template:
+            '<AuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" :last-updated="lastUpdated" />',
+    }))
+    .add('Fetching With Auctions', () => ({
+        ...common,
+        template: '<AuctionsTable :auctions="auctions" :last-updated="lastUpdated" :is-loading="true" />',
+    }))
+    .add('Fetching without Auctions', () => ({
+        ...common,
+        template: '<AuctionsTable :last-updated="lastUpdated" :is-loading="true" />',
     }))
     .add('Empty auctions', () => ({
         ...common,
-        template: '<AuctionsTable />',
+        template: '<AuctionsTable :last-updated="lastUpdated" />',
+    }))
+    .add('Error', () => ({
+        ...common,
+        template: '<AuctionsTable error="There was an error fetching the Auctions." />',
     }))
     .add('Expert Mode', () => ({
         ...common,
-        data: () => ({
-            auctions: generateFakeAuctions(100),
-            selectedAuctionId: faker.random.arrayElement(fakeAuctions).id,
-        }),
-        template: '<AuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" show-more-rows />',
+        template:
+            '<AuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" show-more-rows :last-updated="lastUpdated" />',
     }));

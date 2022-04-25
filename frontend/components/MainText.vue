@@ -72,17 +72,17 @@
             </TextBlock>
         </template>
         <div
-            class="w-full self-center Loading"
+            class="w-full self-center"
             :class="{ 'max-w-4xl': isExplanationsShown, 'md:px-10': !isExplanationsShown }"
         >
-            <Loading :is-loading="isAuctionsLoading" :error="auctionsError">
-                <AuctionsTable
-                    class="block overflow-x-auto"
-                    :auctions="auctions"
-                    :selected-auction-id.sync="selectedAuctionId"
-                    :show-more-rows="!isExplanationsShown"
-                />
-            </Loading>
+            <AuctionsTable
+                class="block overflow-x-auto"
+                :is-loading="isAuctionsLoading"
+                :error="auctionsError"
+                :auctions="auctions"
+                :selected-auction-id.sync="selectedAuctionId"
+                :show-more-rows="!isExplanationsShown"
+            />
         </div>
         <TextBlock v-if="isExplanationsShown" title="What's the catch?" class="TextBlock">
             This situation exists in the first place, because the Maker protocol can not be executed by itself. There
@@ -112,7 +112,6 @@
 import Vue, { PropType } from 'vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import AuctionsTable from '~/components/AuctionsTable.vue';
-import Loading from '~/components/common/Loading.vue';
 import FormatPercentage from '~/components/utils/FormatPercentage.vue';
 import Explain from '~/components/utils/Explain.vue';
 
@@ -121,7 +120,6 @@ export default Vue.extend({
         FormatPercentage,
         TextBlock,
         AuctionsTable,
-        Loading,
         Explain,
     },
     props: {
@@ -181,9 +179,5 @@ export default Vue.extend({
 <style scoped>
 .TextBlock {
     @apply max-w-screen-sm self-center;
-}
-
-.Loading {
-    min-height: 100px;
 }
 </style>
