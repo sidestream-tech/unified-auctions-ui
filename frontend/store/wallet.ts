@@ -134,7 +134,8 @@ export const actions = {
             commit('setAddress', wallet.address);
             commit('setWalletType', walletType);
         } catch (error) {
-            await message.error(`Wallet connection error: ${error.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Wallet connection error: ${error.message}`);
         } finally {
             commit('setIsConnecting', false);
         }
@@ -170,7 +171,8 @@ export const actions = {
             commit('setWalletBalances', walletBalances);
         } catch (error) {
             commit('clearWalletBalances');
-            await message.error(`Error while fetching wallet balances: ${error.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Error while fetching wallet balances: ${error.message}`);
         } finally {
             commit('setIsFetchingBalances', false);
         }
@@ -186,7 +188,8 @@ export const actions = {
             await dispatch('fetchWalletBalances');
             await dispatch('authorizations/fetchAllowanceAmount', undefined, { root: true });
         } catch (error) {
-            await message.error(`Error while depositing to VAT: ${error.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Error while depositing to VAT: ${error.message}`);
         } finally {
             commit('setIsDepositingOrWithdrawing', false);
         }
@@ -201,7 +204,8 @@ export const actions = {
             await withdrawFromVAT(network, getters.getAddress, new BigNumber(amount), notifier);
             await dispatch('fetchWalletBalances');
         } catch (error) {
-            await message.error(`Error while withdrawing from VAT: ${error.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Error while withdrawing from VAT: ${error.message}`);
         } finally {
             commit('setIsDepositingOrWithdrawing', false);
         }
@@ -213,7 +217,8 @@ export const actions = {
             await commit('setTokenAddressDai', tokenAddressDai);
         } catch (error) {
             await commit('setTokenAddressDai', undefined);
-            await message.error(`Error while fetching tokenAddressDai: ${error.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Error while fetching tokenAddressDai: ${error.message}`);
         }
     },
     async fetchCollateralVatBalance(
@@ -232,7 +237,10 @@ export const actions = {
             commit('setCollateralVatBalance', { collateralType, balance: collateralVatBalance });
         } catch (error) {
             commit('setCollateralVatBalance', { collateralType, balance: undefined });
-            await message.error(`Error while fetching "${collateralType}" collateral vat balance: ${error.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message
+                .error(`Error while fetching "${collateralType}" collateral vat balance: ${error.message}`)
+                .catch(() => {});
         } finally {
             commit('setIsFetchingCollateralVatBalance', false);
         }
@@ -247,7 +255,8 @@ export const actions = {
             await withdrawCollateralFromVat(network, getters.getAddress, collateralType, undefined, notifier);
             await dispatch('fetchCollateralVatBalance', collateralType);
         } catch (error) {
-            await message.error(`Error while withdrawing "${collateralType}" collateral from VAT: ${error.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Error while withdrawing "${collateralType}" collateral from VAT: ${error.message}`);
         } finally {
             commit('setIsDepositingOrWithdrawing', false);
         }

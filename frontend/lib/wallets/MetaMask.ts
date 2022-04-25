@@ -50,7 +50,8 @@ export default class MetaMask extends AbstractWallet {
     public async connect(): Promise<void> {
         const constructor = this.constructor as typeof MetaMask;
         if (!constructor.isConnected) {
-            await message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
             return;
         }
         const signer = await this.getSigner();
@@ -62,7 +63,8 @@ export default class MetaMask extends AbstractWallet {
     public async switchNetwork(network: string): Promise<void> {
         const constructor = this.constructor as typeof MetaMask;
         if (!constructor.isConnected) {
-            await message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
             return;
         }
         const provider = this.getProvider();

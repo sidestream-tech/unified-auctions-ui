@@ -177,13 +177,15 @@ export const actions = {
     ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            await message.error(`Bidding error: can not find auction with id "${id}"`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Bidding error: can not find auction with id "${id}"`);
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            await message.error('Bidding error: can not find wallet');
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error('Bidding error: can not find wallet');
             return;
         }
         commit('setIsBidding', true);
@@ -211,13 +213,15 @@ export const actions = {
     ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            await message.error(`Bidding error: can not find auction with id "${id}"`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Bidding error: can not find auction with id "${id}"`);
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            await message.error('Bidding error: can not find wallet');
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error('Bidding error: can not find wallet');
             return;
         }
         commit('setIsBidding', true);
@@ -242,12 +246,14 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            await message.error(`Auction reset error: can not find auction with id "${id}"`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Auction reset error: can not find auction with id "${id}"`);
             return;
         }
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            await message.error('Bidding error: can not find wallet');
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error('Bidding error: can not find wallet');
             return;
         }
         commit('addAuctionRestarting', id);

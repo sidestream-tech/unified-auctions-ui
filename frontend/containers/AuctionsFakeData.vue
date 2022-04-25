@@ -144,10 +144,11 @@ export default Vue.extend({
                 this.isExecuting = false;
             }, 1000);
         },
-        async restart() {
+        restart() {
             if (this.selectedAuction) {
                 this.selectedAuction.isActive = true;
-                await message.success('The auction has been restarted!');
+                // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                message.success('The auction has been restarted!');
             }
         },
         setTransactionAmountDai(amount: BigNumber | undefined) {

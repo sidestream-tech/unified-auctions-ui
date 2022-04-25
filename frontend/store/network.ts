@@ -97,7 +97,8 @@ export const actions = {
             await dispatch('setWalletNetwork', newNetwork);
             window.location.href = `${rootState.route.path}?network=${newNetwork}`;
         } catch (error) {
-            await message.error(`Network switch error: ${error.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Network switch error: ${error.message}`);
         }
     },
     async setWalletNetwork(_: ActionContext<State, State>, newNetwork: string): Promise<void> {
@@ -117,7 +118,8 @@ export const actions = {
             await dispatch('setWalletNetwork', getters.getPageNetwork);
             window.location.reload();
         } catch (error) {
-            await message.error(`Network switch error: ${error.message}`);
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            message.error(`Network switch error: ${error.message}`);
         }
     },
 };
