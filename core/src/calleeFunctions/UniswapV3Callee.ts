@@ -9,12 +9,12 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     profitAddress: string
 ): Promise<string> {
-    if (collateral.exchange.callee !== 'UniswapV2CalleeDai') {
+    if (collateral.exchange.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 0;
-    const uniswapV3route = encodeRoute(network, [collateral.symbol, ...collateral.exchange.route]);
+    const uniswapV3route = await encodeRoute(network, [collateral.symbol, ...collateral.exchange.route]);
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,
