@@ -13,10 +13,12 @@ const CALLEES: Record<string, CalleeAddresses | undefined> = {
     '0x5': {
         UniswapV2CalleeDai: '0x6d9139ac89ad2263f138633de20e47bcae253938',
         UniswapV2LpTokenCalleeDai: '0x13eba3f2dd908e3624e9fb721ea9bd2f5d46f2c0',
+        UniswapV3Callee: '0x323533Ad6355Ade4eCFA97E49DE7cBa27DfF1208',
     },
     '0x2a': {
         UniswapV2CalleeDai: '0x5A40F810754f725DA93e2362775a0600468f7a83',
         UniswapV2LpTokenCalleeDai: '0xDeC8b9c2829583A89f7F182DEeD7C12112dfAeD0',
+        UniswapV3Callee: '0xd028e722c00434182c9558d84802bb5706219d26',
     },
 };
 
