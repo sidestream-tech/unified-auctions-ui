@@ -1,6 +1,6 @@
 <template>
-    <CollateralModal
-        :is-shown="isCollateralModalShown"
+    <ManageCollateralModal
+        :is-shown="isManageCollateralModalShown"
         :is-dark-mode="isDarkMode"
         :is-explanations-shown="isExplanationsShown"
         :collateral-statuses="collateralStatuses"
@@ -8,24 +8,24 @@
         :is-withdrawing="isWithdrawing"
         @authorizeCollateral="authorize"
         @withdrawCollateral="withdraw"
-        @cancel="setCollateralModal(false)"
+        @cancel="setManageCollateralModal(false)"
     />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
-import CollateralModal from '~/components/modals/CollateralModal.vue';
+import ManageCollateralModal from '~/components/modals/ManageCollateralModal.vue';
 
 export default Vue.extend({
-    name: 'CollateralModalContainer',
-    components: { CollateralModal },
+    name: 'ManageCollateralModalContainer',
+    components: { ManageCollateralModal },
     computed: {
         ...mapGetters('collaterals', {
             collateralStatuses: 'collateralStatuses',
         }),
         ...mapGetters('modals', {
-            isCollateralModalShown: 'getCollateralModal',
+            isManageCollateralModalShown: 'getManageCollateralModal',
         }),
         ...mapGetters('wallet', {
             isWithdrawing: 'isDepositingOrWithdrawing',
@@ -51,7 +51,7 @@ export default Vue.extend({
         },
     },
     watch: {
-        isCollateralModalShown: {
+        isManageCollateralModalShown: {
             immediate: true,
             handler(isShown) {
                 if (isShown) {
@@ -62,8 +62,8 @@ export default Vue.extend({
     },
     methods: {
         ...mapActions('wallet', ['withdrawAllCollateralFromVat']),
-        setCollateralModal(open: boolean): void {
-            this.$store.commit('modals/setCollateralModal', open);
+        setManageCollateralModal(open: boolean): void {
+            this.$store.commit('modals/setManageCollateralModal', open);
         },
         async authorize(collateralType: string) {
             await this.$store.dispatch('authorizations/authorizeCollateral', collateralType);

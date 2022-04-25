@@ -1,9 +1,9 @@
 import { storiesOf } from '@storybook/vue';
-import CollateralModal from './CollateralModal';
+import ManageCollateralModal from './ManageCollateralModal';
 import { generateFakeCollateralStatuses } from '~/helpers/generateFakeCollateral';
 
 const common = {
-    components: { CollateralModal },
+    components: { ManageCollateralModal },
     data: () => ({
         isShown: true,
         isAuthorizing: false,
@@ -30,7 +30,7 @@ const common = {
         },
     },
     template: `
-    <CollateralModal 
+    <ManageCollateralModal 
         :isShown="isShown" 
         :isAuthorizing="isAuthorizing" 
         :isWithdrawing="isWithdrawing" 
@@ -40,7 +40,7 @@ const common = {
     />`,
 };
 
-storiesOf('Modals/CollateralModal', module)
+storiesOf('Modals/ManageCollateralModal', module)
     .add('Default', () => ({
         ...common,
     }))
