@@ -227,7 +227,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'YFI',
         decimals: 18,
         exchange: {
-            callee: 'UniswapV2CalleeDai',
+            callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
     },
