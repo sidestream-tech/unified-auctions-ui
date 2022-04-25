@@ -28,7 +28,7 @@ const loop = async function (): Promise<void> {
 const start = async function (): Promise<void> {
     await delay(SETUP_DELAY);
     getNetworkConfigByType(ETHEREUM_NETWORK);
-    await setupWhitelist();
+    setupWhitelist();
     await setupTwitter();
     await setupKeeper();
     loop();
