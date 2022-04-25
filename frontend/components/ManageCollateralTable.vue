@@ -30,18 +30,32 @@
                     </td>
                     <td>
                         <span v-if="collateralStatus.isAuthorized">Authorized</span>
-                        <button v-else class="Button" @click="$emit('authorizeCollateral', collateralStatus.type)">
-                            Authorize
-                        </button>
+                        <div v-else class="flex items-center">
+                            <span v-if="isAuthorizing">
+                                <loading-icon class="h-3 w-3 fill-current text-gray-400 animate-spin mr-2 my-auto" />
+                            </span>
+                            <button
+                                class="Button"
+                                :disabled="isAuthorizing"
+                                @click="$emit('authorizeCollateral', collateralStatus.type)"
+                            >
+                                Authorize
+                            </button>
+                        </div>
                     </td>
                     <td>
-                        <button
-                            :disabled="!canWithdrawCollateral(collateralStatus) || isWithdrawing"
-                            class="Button"
-                            @click="$emit('withdrawCollateral', collateralStatus.type)"
-                        >
-                            Withdraw
-                        </button>
+                        <div class="flex items-center mr-1">
+                            <span v-if="isWithdrawing && canWithdrawCollateral(collateralStatus)">
+                                <loading-icon class="h-3 w-3 fill-current text-gray-400 animate-spin mr-2 my-auto" />
+                            </span>
+                            <button
+                                :disabled="!canWithdrawCollateral(collateralStatus) || isWithdrawing"
+                                class="Button"
+                                @click="$emit('withdrawCollateral', collateralStatus.type)"
+                            >
+                                Withdraw
+                            </button>
+                        </div>
                         <format-currency :value="collateralStatus.balance" />
                     </td>
                 </tr>
@@ -56,6 +70,7 @@ import TextBlock from '~/components/common/TextBlock.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import CurrencyIcon from '~/components/common/CurrencyIcon.vue';
+import LoadingIcon from '~/assets/icons/loading.svg';
 
 export default Vue.extend({
     components: {
@@ -63,6 +78,7 @@ export default Vue.extend({
         FormatAddress,
         FormatCurrency,
         CurrencyIcon,
+        LoadingIcon,
     },
     props: {
         collateralStatuses: {

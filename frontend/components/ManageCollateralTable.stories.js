@@ -34,7 +34,9 @@ storiesOf('ManageCollateralTable', module).add('Default', () => ({
     ...common,
     template: `
     <ManageCollateralTable 
-        :collateralStatuses="collateralStatuses" 
+        :collateralStatuses="collateralStatuses"
+        :isAuthorizing="isAuthorizing"
+        :isWithdrawing="isWithdrawing" 
         @authorizeCollateral="authorize"
         @withdrawCollateral="withdraw"  
     />`,
