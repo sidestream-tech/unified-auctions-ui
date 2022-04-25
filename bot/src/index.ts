@@ -5,6 +5,7 @@ import notify from './notify';
 import participate, { setupKeeper } from './keeper';
 import { ETHEREUM_NETWORK } from './variables';
 import { setupTwitter } from './twitter';
+import { setupWhitelist } from './whitelist';
 
 const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
 const SETUP_DELAY = 3 * 1000;
@@ -18,7 +19,7 @@ const loop = async function (): Promise<void> {
         }
         const newAuctions = getNewAuctionsFromActiveAuctions(activeAuctions);
         newAuctions.map(notify);
-        activeAuctions.map(participate);
+        participate(activeAuctions);
     } catch (error) {
         console.error('loop error:', error);
     }
@@ -27,6 +28,7 @@ const loop = async function (): Promise<void> {
 const start = async function (): Promise<void> {
     await delay(SETUP_DELAY);
     getNetworkConfigByType(ETHEREUM_NETWORK);
+    setupWhitelist();
     await setupTwitter();
     await setupKeeper();
     loop();
