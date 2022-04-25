@@ -67,8 +67,8 @@ export declare interface AuctionTransaction extends Auction, TransactionFees {
     totalFeeETH: BigNumber;
 }
 
-export declare interface UniswapV2CalleeConfig {
-    callee: 'UniswapV2CalleeDai' | 'WstETHCurveUniv3Callee' | 'CurveLpTokenUniv3Callee';
+export declare interface RegularCalleeConfig {
+    callee: 'UniswapV2CalleeDai' | 'WstETHCurveUniv3Callee' | 'CurveLpTokenUniv3Callee' | 'UniswapV3Callee';
     route: string[];
 }
 
@@ -83,7 +83,7 @@ export declare interface CollateralConfig {
     ilk: string;
     symbol: string;
     decimals: number;
-    exchange: UniswapV2CalleeConfig | UniswapV2LpTokenCalleeConfig;
+    exchange: RegularCalleeConfig | UniswapV2LpTokenCalleeConfig;
 }
 
 export declare interface NetworkConfig {
@@ -100,6 +100,7 @@ export declare interface CalleeAddresses {
     UniswapV2LpTokenCalleeDai: string;
     WstETHCurveUniv3Callee?: string;
     CurveLpTokenUniv3Callee?: string;
+    UniswapV3Callee?: string;
 }
 
 export type CalleeNames = keyof CalleeAddresses;
