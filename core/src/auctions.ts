@@ -109,8 +109,13 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
     return await enrichAuctionWithMarketValues(enrichedAuctionWithNewPriceDrop, network);
 };
 
-export const fetchAllInitialAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
-    const collateralTypes = await getSupportedCollateralTypes(network);
+export const fetchAllInitialAuctions = async function (
+    network: string,
+    collateralTypes?: string[]
+): Promise<AuctionInitialInfo[]> {
+    if (!collateralTypes) {
+        collateralTypes = await getSupportedCollateralTypes(network);
+    }
     const auctionGroupsPromises = collateralTypes.map((collateralType: string) => {
         return fetchAuctionsByCollateralType(network, collateralType);
     });
