@@ -3,16 +3,20 @@ import { WHITELISTED_COLLATERALS } from './variables';
 
 const validateWhitelist = function (whitelist: string[]): Promise<void> {
     return new Promise((resolve, reject) => {
-        const errors: string[] = [];
+        const unsupportedCollateralTypes: string[] = [];
         whitelist.forEach(collateralType => {
             try {
                 getCollateralConfigByType(collateralType);
             } catch (error) {
-                errors.push(collateralType);
+                unsupportedCollateralTypes.push(collateralType);
             }
         });
-        if (errors.length > 0) {
-            reject(new Error(`collateral whitelisting: no collaterals found for "${errors.toString()}"`));
+        if (unsupportedCollateralTypes.length > 0) {
+            reject(
+                new Error(
+                    `collateral whitelisting: no collaterals found for "${unsupportedCollateralTypes.toString()}"`
+                )
+            );
         }
         resolve();
     });
