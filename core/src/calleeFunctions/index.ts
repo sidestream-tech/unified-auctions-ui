@@ -5,6 +5,7 @@ import UniswapV2CalleeDai from './UniswapV2CalleeDai';
 import UniswapV2LpTokenCalleeDai from './UniswapV2LpTokenCalleeDai';
 import WstETHCurveUniv3Callee from './WstETHCurveUniv3Callee';
 import CurveLpTokenUniv3Callee from './CurveLpTokenUniv3Callee';
+import UniswapV3Callee from './UniswapV3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
@@ -14,6 +15,7 @@ const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV2LpTokenCalleeDai,
     WstETHCurveUniv3Callee,
     CurveLpTokenUniv3Callee,
+    UniswapV3Callee,
 };
 
 export const getCalleeData = async function (

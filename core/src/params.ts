@@ -25,15 +25,17 @@ const _fetchCalcParametersByCollateralType = async function (
     const address = await getCalcAddressByCollateralType(network, collateralType);
     const provider = await getProvider(network);
     const contract = await new ethers.Contract(address, MCD_CLIP_CALC, provider);
-
-    const secondsBetweenPriceDrops = await contract.step();
-    const cut = await contract.cut();
-    const priceDropRatio = new BigNumber(cut.toString()).shiftedBy(-RAY_NUMBER_OF_DIGITS);
-
-    return {
-        secondsBetweenPriceDrops,
-        priceDropRatio,
-    };
+    try {
+        const secondsBetweenPriceDrops = await contract.step();
+        const cut = await contract.cut();
+        const priceDropRatio = new BigNumber(cut._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS);
+        return {
+            secondsBetweenPriceDrops,
+            priceDropRatio,
+        };
+    } catch {
+        throw new Error(`failed to fetch step/cut parameters for the collateral "${collateralType}"`);
+    }
 };
 
 export const fetchCalcParametersByCollateralType = memoizee(_fetchCalcParametersByCollateralType, {

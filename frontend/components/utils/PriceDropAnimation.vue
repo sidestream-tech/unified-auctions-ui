@@ -1,5 +1,5 @@
 <template>
-    <span v-if="auction.isActive && !auction.isFinished">
+    <span v-if="auction.isActive && !auction.isFinished && auction.secondsTillNextPriceDrop">
         <Popover :placement="placement">
             <template slot="content">
                 <div class="text-center">

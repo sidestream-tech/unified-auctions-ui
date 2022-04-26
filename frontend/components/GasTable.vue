@@ -14,7 +14,7 @@
                     <td class="Body">
                         <FormatCurrency
                             v-if="gasParameters && gasParameters.gasPrice"
-                            :value="formatGasParameters(gasParameters.gasPrice)"
+                            :value="parseGasParameters(gasParameters.gasPrice)"
                             currency="GWEI"
                         />
                         <span v-else class="UnknownValue"> Unknown </span>
@@ -30,7 +30,7 @@
                     <td class="Body">
                         <FormatCurrency
                             v-if="gasParameters && gasParameters.maxPriorityFeePerGas"
-                            :value="formatGasParameters(gasParameters.maxPriorityFeePerGas)"
+                            :value="parseGasParameters(gasParameters.maxPriorityFeePerGas)"
                             currency="GWEI"
                         />
                         <span v-else class="UnknownValue"> Unknown </span>
@@ -46,7 +46,7 @@
                     <td class="Body">
                         <FormatCurrency
                             v-if="gasParameters && gasParameters.maxFeePerGas"
-                            :value="formatGasParameters(gasParameters.maxFeePerGas)"
+                            :value="parseGasParameters(gasParameters.maxFeePerGas)"
                             currency="GWEI"
                         />
                         <span v-else class="UnknownValue"> Unknown </span>
@@ -160,8 +160,12 @@ export default Vue.extend({
         },
     },
     methods: {
-        formatGasParameters(value): BigNumber {
-            return new BigNumber(value).shiftedBy(-GWEI_NUMBER_OF_DIGITS);
+        parseGasParameters(value: any): BigNumber {
+            try {
+                return new BigNumber(value).shiftedBy(-GWEI_NUMBER_OF_DIGITS);
+            } catch (error) {
+                return new BigNumber(NaN);
+            }
         },
     },
 });

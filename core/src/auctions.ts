@@ -73,24 +73,31 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
     if (!auction.isActive || auction.isFinished) {
         return auction;
     }
-    const params = await fetchCalcParametersByCollateralType(auction.network, auction.collateralType);
-    const auctionWithParams = {
-        ...auction,
-        secondsBetweenPriceDrops: params.secondsBetweenPriceDrops,
-        priceDropRatio: params.priceDropRatio,
-    };
-    const currentDate = await getNetworkDate(auction.network);
-    const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
-    const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
-    const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
-    const transactionGrossProfitDate = calculateTransactionGrossProfitDate(auctionWithParams, currentDate);
-    return {
-        ...auctionWithParams,
-        secondsTillNextPriceDrop,
-        approximateUnitPrice,
-        totalPrice,
-        transactionGrossProfitDate,
-    };
+    try {
+        const params = await fetchCalcParametersByCollateralType(auction.network, auction.collateralType);
+        const auctionWithParams = {
+            ...auction,
+            secondsBetweenPriceDrops: params.secondsBetweenPriceDrops,
+            priceDropRatio: params.priceDropRatio,
+        };
+        const currentDate = await getNetworkDate(auction.network);
+        const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
+        const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
+        const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
+        const transactionGrossProfitDate = calculateTransactionGrossProfitDate(auctionWithParams, currentDate);
+        return {
+            ...auctionWithParams,
+            secondsTillNextPriceDrop,
+            approximateUnitPrice,
+            totalPrice,
+            transactionGrossProfitDate,
+        };
+    } catch (error) {
+        return {
+            ...auction,
+            totalPrice: auction.collateralAmount.multipliedBy(auction.unitPrice),
+        };
+    }
 };
 
 export const enrichAuctionWithPriceDropAndMarketValue = async function (
@@ -101,8 +108,13 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
     return await enrichAuctionWithMarketValues(enrichedAuctionWithNewPriceDrop, network);
 };
 
-export const fetchAllInitialAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
-    const collateralTypes = await getSupportedCollateralTypes(network);
+export const fetchAllInitialAuctions = async function (
+    network: string,
+    collateralTypes?: string[]
+): Promise<AuctionInitialInfo[]> {
+    if (!collateralTypes) {
+        collateralTypes = await getSupportedCollateralTypes(network);
+    }
     const auctionGroupsPromises = collateralTypes.map((collateralType: string) => {
         return fetchAuctionsByCollateralType(network, collateralType);
     });
