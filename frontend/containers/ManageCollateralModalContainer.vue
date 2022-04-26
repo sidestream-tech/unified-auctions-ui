@@ -67,11 +67,9 @@ export default Vue.extend({
         },
         async authorize(collateralType: string) {
             await this.$store.dispatch('authorizations/authorizeCollateral', collateralType);
-            await this.$store.dispatch('collaterals/fetchCollateralStatus', collateralType);
         },
         async withdraw(collateralType: string) {
             await this.$store.dispatch('wallet/withdrawAllCollateralFromVat', collateralType);
-            await this.$store.dispatch('collaterals/fetchCollateralStatus', collateralType);
         },
     },
 });

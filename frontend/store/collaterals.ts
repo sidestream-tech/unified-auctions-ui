@@ -20,8 +20,18 @@ export const getters = {
     collaterals(state: State) {
         return state.collaterals || [];
     },
-    collateralStatuses(state: State) {
-        return Object.values(state.collateralStatusesStore);
+    collateralStatuses(state: State, _getters: any, _rootState: any, rootGetters: any) {
+        return Object.values(state.collateralStatusesStore).map(collateralStatus => {
+            const isAuthorized = rootGetters['authorizations/collateralAuthorizations'].includes(
+                collateralStatus.type
+            );
+            const balance = rootGetters['wallet/collateralVatBalanceStore'][collateralStatus.type];
+            return {
+                ...collateralStatus,
+                isAuthorized,
+                balance,
+            };
+        });
     },
     collateralStatus: (state: State) => (type: string) => {
         return state.collateralStatusesStore[type];
@@ -110,14 +120,10 @@ export const actions = {
         }
         await dispatch('wallet/fetchCollateralVatBalance', collateralType, { root: true });
         await dispatch('authorizations/fetchCollateralAuthorizationStatus', collateralType, { root: true });
-        const isAuthorized = rootGetters['authorizations/collateralAuthorizations'].includes(collateralType);
-        const balance = rootGetters['wallet/collateralVatBalanceStore'][collateralType];
         commit('setCollateralStatus', {
             type: collateral.ilk,
             symbol: collateral.symbol,
             address: tokenAddress,
-            isAuthorized,
-            balance,
         });
     },
     async setup({ commit, dispatch }: ActionContext<State, State>) {
