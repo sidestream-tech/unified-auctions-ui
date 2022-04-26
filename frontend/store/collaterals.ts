@@ -8,12 +8,12 @@ import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 
 interface State {
     collaterals: CollateralRow[];
-    collateralStatuses: Record<string, CollateralStatus>;
+    collateralStatusesStore: Record<string, CollateralStatus>;
 }
 
 export const state = (): State => ({
     collaterals: [],
-    collateralStatuses: {},
+    collateralStatusesStore: {},
 });
 
 export const getters = {
@@ -21,10 +21,10 @@ export const getters = {
         return state.collaterals || [];
     },
     collateralStatuses(state: State) {
-        return Object.values(state.collateralStatuses);
+        return Object.values(state.collateralStatusesStore);
     },
     collateralStatus: (state: State) => (type: string) => {
-        return state.collateralStatuses[type];
+        return state.collateralStatusesStore[type];
     },
 };
 
@@ -40,7 +40,7 @@ export const mutations = {
         });
     },
     setCollateralStatus(state: State, collateralStatus: CollateralStatus) {
-        Vue.set(state.collateralStatuses, collateralStatus.type, collateralStatus);
+        Vue.set(state.collateralStatusesStore, collateralStatus.type, collateralStatus);
     },
 };
 
