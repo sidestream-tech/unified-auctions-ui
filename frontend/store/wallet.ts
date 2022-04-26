@@ -238,9 +238,7 @@ export const actions = {
         } catch (error) {
             commit('setCollateralVatBalance', { collateralType, balance: undefined });
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            message
-                .error(`Error while fetching "${collateralType}" collateral vat balance: ${error.message}`)
-                .catch(() => {});
+            message.error(`Error while fetching "${collateralType}" collateral vat balance: ${error.message}`);
         } finally {
             commit('setIsFetchingCollateralVatBalance', false);
         }
