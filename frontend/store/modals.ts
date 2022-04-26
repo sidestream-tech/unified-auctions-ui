@@ -4,14 +4,14 @@ interface State {
     termsModal: boolean;
     selectWalletModal: boolean;
     walletModal: boolean;
-    ManageCollateralModal: boolean;
+    manageCollateralModal: boolean;
 }
 
 export const state = (): State => ({
     termsModal: false,
     walletModal: false,
     selectWalletModal: false,
-    ManageCollateralModal: false,
+    manageCollateralModal: false,
 });
 
 export const getters = {
@@ -25,7 +25,7 @@ export const getters = {
         return state.walletModal;
     },
     getManageCollateralModal(state: State) {
-        return state.ManageCollateralModal;
+        return state.manageCollateralModal;
     },
 };
 
@@ -40,7 +40,7 @@ export const mutations = {
         state.selectWalletModal = open;
     },
     setManageCollateralModal(state: State, open: boolean): void {
-        state.ManageCollateralModal = open;
+        state.manageCollateralModal = open;
     },
 };
 
