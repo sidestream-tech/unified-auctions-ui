@@ -80,29 +80,13 @@ export const actions = {
             commit('updateCollateral', updated);
         }
     },
-    async fetchCollateralStatuses({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+    async fetchCollateralStatuses({ dispatch, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
         for (const collateral of Object.values(COLLATERALS)) {
-            const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateral.symbol).catch(() => {
-                return undefined;
-            });
-            if (!tokenAddress) {
-                continue;
-            }
-            await dispatch('wallet/fetchCollateralVatBalance', collateral.ilk, { root: true });
-            await dispatch('authorizations/fetchCollateralAuthorizationStatus', collateral.ilk, { root: true });
-            const isAuthorized = rootGetters['authorizations/collateralAuthorizations'].includes(collateral.ilk);
-            const balance = rootGetters['wallet/collateralVatBalanceStore'][collateral.ilk];
-            commit('setCollateralStatus', {
-                type: collateral.ilk,
-                symbol: collateral.symbol,
-                address: tokenAddress,
-                isAuthorized,
-                balance,
-            });
+            await dispatch('fetchCollateralStatus', collateral.ilk);
         }
     },
     async fetchCollateralStatus(
