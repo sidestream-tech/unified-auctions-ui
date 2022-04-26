@@ -30,27 +30,24 @@
                     </td>
                     <td>
                         <span v-if="collateralStatus.isAuthorized">Authorized</span>
-                        <div v-else class="flex items-center">
-                            <BaseButton
-                                type="link"
-                                :is-loading="isAuthorizing"
-                                @click="$emit('authorizeCollateral', collateralStatus.type)"
-                            >
-                                Authorize
-                            </BaseButton>
-                        </div>
+                        <BaseButton
+                            v-else
+                            type="link"
+                            :is-loading="isAuthorizing"
+                            @click="$emit('authorizeCollateral', collateralStatus.type)"
+                        >
+                            Authorize
+                        </BaseButton>
                     </td>
                     <td>
-                        <div class="flex items-center mr-1">
-                            <BaseButton
-                                type="link"
-                                :disabled="!canWithdrawCollateral(collateralStatus)"
-                                :is-loading="isWithdrawing"
-                                @click="$emit('withdrawCollateral', collateralStatus.type)"
-                            >
-                                Withdraw
-                            </BaseButton>
-                        </div>
+                        <BaseButton
+                            type="link"
+                            :disabled="!canWithdrawCollateral(collateralStatus)"
+                            :is-loading="isWithdrawing"
+                            @click="$emit('withdrawCollateral', collateralStatus.type)"
+                        >
+                            Withdraw
+                        </BaseButton>
                         <format-currency :value="collateralStatus.balance" />
                     </td>
                 </tr>
