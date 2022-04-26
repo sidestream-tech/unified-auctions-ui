@@ -33,8 +33,8 @@ export const getters = {
             };
         });
     },
-    collateralStatus: (state: State) => (type: string) => {
-        return state.collateralStatusesStore[type];
+    collateralStatus: (_state: State, getters: any) => (type: string) => {
+        return getters.collateralStatuses.find((collateralStatus: CollateralStatus) => collateralStatus.type === type);
     },
 };
 
