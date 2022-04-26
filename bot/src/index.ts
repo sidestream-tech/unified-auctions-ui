@@ -19,7 +19,7 @@ const loop = async function (): Promise<void> {
         }
         const newAuctions = getNewAuctionsFromActiveAuctions(activeAuctions);
         newAuctions.map(notify);
-        participate(activeAuctions);
+        await participate(activeAuctions);
     } catch (error) {
         console.error('loop error:', error);
     }
