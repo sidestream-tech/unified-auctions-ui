@@ -82,6 +82,7 @@
                 :auctions="auctions"
                 :selected-auction-id.sync="selectedAuctionId"
                 :show-more-rows="!isExplanationsShown"
+                :last-updated="lastUpdated"
             />
         </div>
         <TextBlock v-if="isExplanationsShown" title="What's the catch?" class="TextBlock">
@@ -142,6 +143,10 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        lastUpdated: {
+            type: Date,
+            default: null,
         },
     },
     computed: {

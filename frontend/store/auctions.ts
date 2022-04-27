@@ -30,6 +30,7 @@ interface State {
     isBidding: boolean;
     error: string | null;
     restartingAuctionsIds: string[];
+    lastUpdated: Date | null;
 }
 
 export const state = (): State => ({
@@ -40,6 +41,7 @@ export const state = (): State => ({
     isBidding: false,
     error: null,
     restartingAuctionsIds: [],
+    lastUpdated: null,
 });
 
 export const getters = {
@@ -76,6 +78,9 @@ export const getters = {
     },
     getError(state: State) {
         return state.error;
+    },
+    getLastUpdated(state: State) {
+        return state.lastUpdated;
     },
     isAuctionRestarting: (state: State) => (id: string) => {
         return state.restartingAuctionsIds.includes(id);
@@ -125,6 +130,10 @@ export const mutations = {
         }
     },
     setAreAuctionsFetching(state: State, areFetching: boolean) {
+        if (!areFetching) {
+            // if auctions finished loading, update last updated time stamp
+            state.lastUpdated = new Date();
+        }
         state.areAuctionsFetching = areFetching;
     },
     setAreTakeEventsFetching(state: State, areFetching: boolean) {
@@ -144,6 +153,7 @@ export const actions = {
         if (!network) {
             return;
         }
+        commit('setAreAuctionsFetching', true);
         try {
             const auctions = await fetchAllAuctions(network);
             const active = auctions.filter(auction => auction.isActive);
@@ -159,8 +169,7 @@ export const actions = {
             commit('setAreAuctionsFetching', false);
         }
     },
-    async fetch({ commit, dispatch }: ActionContext<State, State>) {
-        commit('setAreAuctionsFetching', true);
+    async fetch({ dispatch }: ActionContext<State, State>) {
         await dispatch('fetchWithoutLoading');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);

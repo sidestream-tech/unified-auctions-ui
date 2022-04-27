@@ -13,6 +13,7 @@
                         :is-auctions-loading="areAuctionsFetching"
                         :selected-auction-id="selectedAuctionId"
                         :is-explanations-shown="isExplanationsShown"
+                        :last-updated="lastUpdated"
                         @selectedAuctionId:update="$emit('selectedAuctionId:update', $event)"
                     />
                 </div>
@@ -170,6 +171,10 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        lastUpdated: {
+            type: Date,
+            default: null,
         },
     },
     data: () => ({
