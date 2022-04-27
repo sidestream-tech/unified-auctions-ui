@@ -42,6 +42,14 @@
                 <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
                 <time-till v-else :date="endDate" />
             </div>
+            <div slot="updatingStatus" class="opacity-50 font-normal">
+                <div v-if="isLoading" class="flex items-center space-x-2">
+                    <LoadingIcon class="h-4 w-4 animate animate-spin fill-current dark:text-gray-300" />
+                    <span>Updating...</span>
+                </div>
+                <span v-else-if="lastUpdated"> Last Updated <TimeTill :date="lastUpdated" /></span>
+                <span v-else> Last Updated Unknown </span>
+            </div>
             <div slot="action" slot-scope="text, record, index" class="w-full h-full">
                 <nuxt-link
                     :to="getAuctionLink(record)"
@@ -64,12 +72,12 @@ import type { Auction } from 'auctions-core/src/types';
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
 import { compareAsc } from 'date-fns';
-import { formatInterval } from '../helpers/tillDuration';
 import Loading from './common/Loading.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import CurrencyIcon from '~/components/common/CurrencyIcon.vue';
+import LoadingIcon from '~/assets/icons/loading.svg';
 
 const compareBy = function (field: string, cmp: Function = (a: number, b: number): number => a - b): Function {
     return (aAuction: any, bAuction: any, sortOrder: string) => {
@@ -100,6 +108,7 @@ export default Vue.extend({
         FormatMarketValue,
         FormatCurrency,
         CurrencyIcon,
+        LoadingIcon,
     },
     props: {
         auctions: {
@@ -176,7 +185,7 @@ export default Vue.extend({
                     sorter: compareBy('endDate', (a: Date, b: Date) => compareAsc(a, b)),
                 },
                 {
-                    title: this.fetchingText,
+                    slots: { title: 'updatingStatus', customRender: 'action' },
                     scopedSlots: { customRender: 'action' },
                     width: '20%',
                 },
@@ -184,23 +193,6 @@ export default Vue.extend({
         },
         numberOfRowsPerPage(): number {
             return this.showMoreRows ? 15 : 10;
-        },
-        parsedDate(): Date | null {
-            const date: Date = new Date(this.date);
-            if (isNaN(date.getTime())) {
-                return null;
-            }
-            return date;
-        },
-        fetchingText(): string {
-            if (this.isLoading) {
-                return 'Is updating...';
-            }
-            if (!this.lastUpdated) {
-                return 'Last updated: unknown';
-            }
-            const now = new Date();
-            return `Last updated: ${formatInterval(now, this.lastUpdated)}`;
         },
         showLoadingOverlay(): boolean {
             return this.isLoading && this.auctions.length === 0;
