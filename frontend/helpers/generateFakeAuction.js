@@ -48,7 +48,7 @@ export const generateFakeAuction = function () {
         minimumBidDai: new BigNumber(faker.finance.amount()),
         priceDropRatio: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
         transactionGrossProfitDate: faker.date.future(),
-        fetched: new Date(),
+        fetchedAt: new Date(),
     };
 };
 
