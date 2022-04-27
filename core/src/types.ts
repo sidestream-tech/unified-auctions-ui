@@ -141,6 +141,8 @@ export declare interface CollateralStatus {
     type: string;
     symbol: string;
     isAuthorized: boolean;
+    isAuthorizing: boolean;
+    isDepositingOrWithdrawing: boolean;
     address?: string | null;
     balance?: BigNumber;
 }

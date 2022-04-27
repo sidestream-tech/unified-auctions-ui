@@ -30,7 +30,7 @@
                             <BaseButton
                                 v-else
                                 class="w-full"
-                                :is-loading="isCollateralAuthorizing(collateralStatus.type)"
+                                :is-loading="collateralStatus.isAuthorizing"
                                 @click="$emit('authorizeCollateral', collateralStatus.type)"
                             >
                                 Authorize
@@ -39,12 +39,12 @@
                     </td>
                     <td>
                         <template v-if="collateralStatus.address">
-                            <Tooltip :title="generateWithdrawalError(collateralStatus)" placement="top">
+                            <Tooltip :title="generateWithdrawalErrorMessage(collateralStatus)" placement="top">
                                 <div>
                                     <BaseButton
                                         class="w-full"
                                         :disabled="!canWithdrawCollateral(collateralStatus)"
-                                        :is-loading="isWithdrawing"
+                                        :is-loading="collateralStatus.isDepositingOrWithdrawing"
                                         @click="$emit('withdrawCollateral', collateralStatus.type)"
                                     >
                                         <span class="mr-1">Withdraw</span
@@ -82,19 +82,11 @@ export default Vue.extend({
     props: {
         collateralStatuses: {
             type: Array as Vue.PropType<CollateralStatus[]>,
-            default: undefined,
+            default: () => [],
         },
         isExplanationsShown: {
             type: Boolean,
             default: true,
-        },
-        authorizingCollaterals: {
-            type: Array as Vue.PropType<String[]>,
-            default: undefined,
-        },
-        isWithdrawing: {
-            type: Boolean,
-            default: false,
         },
     },
     computed: {
@@ -109,10 +101,7 @@ export default Vue.extend({
         canWithdrawCollateral(collateral: CollateralStatus): boolean {
             return collateral.balance?.isGreaterThan(0) && collateral.isAuthorized;
         },
-        isCollateralAuthorizing(collateralType: string): boolean {
-            return this.authorizingCollaterals?.includes(collateralType) ?? false;
-        },
-        generateWithdrawalError(collateral: CollateralStatus): string | undefined {
+        generateWithdrawalErrorMessage(collateral: CollateralStatus): string | undefined {
             if (!collateral.balance?.isGreaterThan(0)) {
                 return `There is no ${collateral.type} collateral to withdraw`;
             }

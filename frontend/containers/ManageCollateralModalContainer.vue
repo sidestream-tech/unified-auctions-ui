@@ -4,8 +4,6 @@
         :is-dark-mode="isDarkMode"
         :is-explanations-shown="isExplanationsShown"
         :collateral-statuses="collateralStatuses"
-        :authorizing-collaterals="authorizingCollaterals"
-        :is-withdrawing="isWithdrawing"
         @authorizeCollateral="authorize"
         @withdrawCollateral="withdraw"
         @cancel="setManageCollateralModal(false)"
@@ -26,12 +24,6 @@ export default Vue.extend({
         }),
         ...mapGetters('modals', {
             isManageCollateralModalShown: 'getManageCollateralModal',
-        }),
-        ...mapGetters('wallet', {
-            isWithdrawing: 'isDepositingOrWithdrawing',
-        }),
-        ...mapGetters('authorizations', {
-            authorizingCollaterals: 'loadingCollateralAuthorizations',
         }),
         isExplanationsShown: {
             get() {

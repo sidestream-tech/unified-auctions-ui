@@ -1,6 +1,6 @@
+import Vue from 'vue';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
-import Vue from 'vue';
 import {
     getWalletAuthorizationStatus,
     authorizeWallet,
@@ -17,7 +17,7 @@ const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
 interface State {
     isWalletAuthorizationLoading: boolean;
     isWalletAuthorizationDone: boolean;
-    isCollateralAuthorizationLoadingStore: Record<string, boolean>;
+    authorizingCollaterals: string[];
     collateralAuthorizations: string[];
     isAllowanceAmountLoading: boolean;
     allowanceAmount?: BigNumber;
@@ -26,7 +26,7 @@ interface State {
 const getInitialState = (): State => ({
     isWalletAuthorizationLoading: false,
     isWalletAuthorizationDone: false,
-    isCollateralAuthorizationLoadingStore: {},
+    authorizingCollaterals: [],
     collateralAuthorizations: [],
     isAllowanceAmountLoading: false,
     allowanceAmount: undefined,
@@ -36,15 +36,10 @@ export const state = () => getInitialState();
 
 export const getters = {
     isAuthorizationLoading(state: State) {
-        return (
-            state.isWalletAuthorizationLoading ||
-            Object.values(state.isCollateralAuthorizationLoadingStore).some(isLoading => isLoading === true)
-        );
+        return state.authorizingCollaterals.length > 0;
     },
-    loadingCollateralAuthorizations(state: State) {
-        return Object.entries(state.isCollateralAuthorizationLoadingStore)
-            .filter(([_, isLoading]) => isLoading === true)
-            .map(collateral => collateral[0]);
+    authorizingCollaterals(state: State) {
+        return state.authorizingCollaterals;
     },
     isWalletAuthorizationDone(state: State) {
         return state.isWalletAuthorizationDone;
@@ -71,7 +66,11 @@ export const mutations = {
         state: State,
         { collateralType, isLoading }: { collateralType: string; isLoading: boolean }
     ) {
-        Vue.set(state.isCollateralAuthorizationLoadingStore, collateralType, isLoading);
+        if (isLoading) {
+            state.authorizingCollaterals.push(collateralType);
+        } else {
+            state.authorizingCollaterals = state.authorizingCollaterals.filter(c => c !== collateralType);
+        }
     },
     setIsAllowanceAmountLoading(state: State, isAllowanceAmountLoading: boolean) {
         state.isAllowanceAmountLoading = isAllowanceAmountLoading;
@@ -174,7 +173,7 @@ export const actions = {
             }
             return isAuthorized;
         } catch (error) {
-            console.error(`Collateral authorization status error: ${error.message}`);
+            console.error(`Collateral ${collateralType} authorization status error: ${error.message}`);
             await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } finally {
