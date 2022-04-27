@@ -25,8 +25,6 @@ const enrichAuctionWithActualNumbers = async function (
     network: string,
     auction: AuctionInitialInfo
 ): Promise<Auction> {
-    const fetched = new Date();
-
     if (!auction.isActive || auction.isFinished) {
         return {
             ...auction,
@@ -34,7 +32,6 @@ const enrichAuctionWithActualNumbers = async function (
             unitPrice: new BigNumber(0),
             approximateUnitPrice: new BigNumber(0),
             totalPrice: new BigNumber(0),
-            fetched,
         };
     }
     const auctionStatus = await fetchAuctionStatus(network, auction.collateralType, auction.index);
@@ -43,7 +40,6 @@ const enrichAuctionWithActualNumbers = async function (
         ...auction,
         ...auctionStatus,
         minimumBidDai,
-        fetched,
         approximateUnitPrice: auctionStatus.unitPrice,
     };
 };

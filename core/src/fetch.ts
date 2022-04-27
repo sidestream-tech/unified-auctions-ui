@@ -65,6 +65,7 @@ const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
     const auctionData = await contract.sales(auctionIndex);
     const startTimestamp = new BigNumber(auctionData.tic._hex).times(1000).toNumber();
     const endDate = new Date(startTimestamp + maximumAuctionDurationInSeconds * 1000);
+    const fetchedAt = new Date();
     return {
         network,
         id: `${collateralType}:${auctionIndex}`,
@@ -80,6 +81,7 @@ const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
         isActive: true,
         isFinished: false,
         isRestarting: false,
+        fetchedAt,
     };
 };
 

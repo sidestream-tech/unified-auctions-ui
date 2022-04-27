@@ -89,7 +89,7 @@
                                     />
                                     <span>Updating...</span>
                                 </div>
-                                <time-till v-else :date="auction.fetched" />
+                                <time-till v-else :date="auction.fetchedAt" />
                             </td>
                         </tr>
                         <template v-if="isTableExpanded">
