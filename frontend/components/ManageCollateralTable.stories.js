@@ -7,24 +7,22 @@ const common = {
     components: { ManageCollateralTable },
     data: () => ({
         collateralStatuses: generateFakeCollateralStatuses(),
-        authorizingCollaterals: [],
-        isWithdrawing: false,
     }),
     methods: {
         authorize(collateralType) {
-            this.authorizingCollaterals.push(collateralType);
+            const collateralStatus = this.collateralStatuses.find(c => c.type === collateralType);
+            collateralStatus.isAuthorizing = true;
             setTimeout(() => {
-                this.authorizingCollaterals.filter(collateral => collateral !== collateralType);
-                const index = this.collateralStatuses.findIndex(status => status.type === collateralType);
-                this.collateralStatuses[index].isAuthorized = true;
+                collateralStatus.isAuthorized = true;
+                collateralStatus.isAuthorizing = false;
             }, 1000);
         },
         withdraw(collateralType) {
-            this.isWithdrawing = true;
+            const collateralStatus = this.collateralStatuses.find(c => c.type === collateralType);
+            collateralStatus.isDepositingOrWithdrawing = true;
             setTimeout(() => {
-                this.isWithdrawing = false;
-                const index = this.collateralStatuses.findIndex(status => status.type === collateralType);
-                this.collateralStatuses[index].balance = new BigNumber(0);
+                collateralStatus.balance = new BigNumber(0);
+                collateralStatus.isDepositingOrWithdrawing = false;
             }, 1000);
         },
     },
@@ -32,11 +30,8 @@ const common = {
 
 storiesOf('ManageCollateralTable', module).add('Default', () => ({
     ...common,
-    template: `
-    <ManageCollateralTable 
+    template: `<ManageCollateralTable 
         :collateralStatuses="collateralStatuses"
-        :authorizingCollaterals="authorizingCollaterals"
-        :isWithdrawing="isWithdrawing" 
         @authorizeCollateral="authorize"
         @withdrawCollateral="withdraw"  
     />`,

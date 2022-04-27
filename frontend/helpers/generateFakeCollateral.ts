@@ -27,7 +27,9 @@ export const generateFakeCollateralStatuses = function () {
             symbol: collateral.symbol,
             address: faker.finance.ethereumAddress(),
             isAuthorized: faker.datatype.boolean(),
+            isAuthorizing: false,
             balance: new BigNumber(faker.finance.amount()),
+            isDepositingOrWithdrawing: false,
         });
     }
     return collateralStatuses;
