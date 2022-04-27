@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
