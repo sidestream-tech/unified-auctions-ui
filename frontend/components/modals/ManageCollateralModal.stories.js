@@ -6,14 +6,13 @@ const common = {
     components: { ManageCollateralModal },
     data: () => ({
         isShown: true,
-        isAuthorizing: false,
+        authorizingCollaterals: {},
         isWithdrawing: false,
         collateralStatuses: generateFakeCollateralStatuses(),
         isExplanationsShown: true,
     }),
     methods: {
         authorize(collateralType) {
-            this.isAuthorizing = true;
             setTimeout(() => {
                 this.isAuthorizing = false;
                 const index = this.collateralStatuses.findIndex(status => status.type === collateralType);

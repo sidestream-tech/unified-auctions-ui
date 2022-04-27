@@ -1,5 +1,6 @@
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
+import Vue from 'vue';
 import {
     getWalletAuthorizationStatus,
     authorizeWallet,
@@ -16,7 +17,7 @@ const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
 interface State {
     isWalletAuthorizationLoading: boolean;
     isWalletAuthorizationDone: boolean;
-    isCollateralAuthorizationLoading: boolean;
+    isCollateralAuthorizationLoadingStore: Record<string, boolean>;
     collateralAuthorizations: string[];
     isAllowanceAmountLoading: boolean;
     allowanceAmount?: BigNumber;
@@ -25,7 +26,7 @@ interface State {
 const getInitialState = (): State => ({
     isWalletAuthorizationLoading: false,
     isWalletAuthorizationDone: false,
-    isCollateralAuthorizationLoading: false,
+    isCollateralAuthorizationLoadingStore: {},
     collateralAuthorizations: [],
     isAllowanceAmountLoading: false,
     allowanceAmount: undefined,
@@ -35,7 +36,15 @@ export const state = () => getInitialState();
 
 export const getters = {
     isAuthorizationLoading(state: State) {
-        return state.isWalletAuthorizationLoading || state.isCollateralAuthorizationLoading;
+        return (
+            state.isWalletAuthorizationLoading ||
+            Object.values(state.isCollateralAuthorizationLoadingStore).some(isLoading => isLoading === true)
+        );
+    },
+    loadingCollateralAuthorizations(state: State) {
+        return Object.entries(state.isCollateralAuthorizationLoadingStore)
+            .filter(([_, isLoading]) => isLoading === true)
+            .map(collateral => collateral[0]);
     },
     isWalletAuthorizationDone(state: State) {
         return state.isWalletAuthorizationDone;
@@ -58,8 +67,11 @@ export const mutations = {
     setIsWalletAuthorizationLoading(state: State, isLoading: boolean) {
         state.isWalletAuthorizationLoading = isLoading;
     },
-    setIsCollateralAuthorizationLoading(state: State, isLoading: boolean) {
-        state.isCollateralAuthorizationLoading = isLoading;
+    setIsCollateralAuthorizationLoading(
+        state: State,
+        { collateralType, isLoading }: { collateralType: string; isLoading: boolean }
+    ) {
+        Vue.set(state.isCollateralAuthorizationLoadingStore, collateralType, isLoading);
     },
     setIsAllowanceAmountLoading(state: State, isAllowanceAmountLoading: boolean) {
         state.isAllowanceAmountLoading = isAllowanceAmountLoading;
@@ -152,7 +164,7 @@ export const actions = {
             commit('setIsWalletAuthorizationDone', false);
             return;
         }
-        commit('setIsCollateralAuthorizationLoading', true);
+        commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: true });
         try {
             const isAuthorized = await getCollateralAuthorizationStatus(network, collateralType, walletAddress);
             if (isAuthorized) {
@@ -166,11 +178,11 @@ export const actions = {
             await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } finally {
-            commit('setIsCollateralAuthorizationLoading', false);
+            commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: false });
         }
     },
     async authorizeCollateral({ commit, dispatch, rootGetters }: ActionContext<State, State>, collateralType: string) {
-        commit('setIsCollateralAuthorizationLoading', true);
+        commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: true });
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
         try {
@@ -179,14 +191,14 @@ export const actions = {
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
         } finally {
-            commit('setIsCollateralAuthorizationLoading', false);
+            commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: false });
         }
     },
     async deauthorizeCollateral(
         { commit, dispatch, rootGetters }: ActionContext<State, State>,
         collateralType: string
     ) {
-        commit('setIsCollateralAuthorizationLoading', true);
+        commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: true });
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
         try {
@@ -195,7 +207,7 @@ export const actions = {
         } catch (error) {
             console.error(`Collateral authorization error: ${error.message}`);
         } finally {
-            commit('setIsCollateralAuthorizationLoading', false);
+            commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: false });
         }
     },
     async setAllowanceAmount(

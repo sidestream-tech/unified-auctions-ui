@@ -10,7 +10,7 @@
         <ManageCollateralTable
             class="px-4 py-2"
             :is-explanations-shown="isExplanationsShown"
-            :is-authorizing="isAuthorizing"
+            :authorizing-collaterals="authorizingCollaterals"
             :is-withdrawing="isWithdrawing"
             :collateral-statuses="collateralStatuses"
             @authorizeCollateral="$emit('authorizeCollateral', $event)"
@@ -42,9 +42,9 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isAuthorizing: {
-            type: Boolean,
-            default: false,
+        authorizingCollaterals: {
+            type: Array as Vue.PropType<String[]>,
+            default: undefined,
         },
         isWithdrawing: {
             type: Boolean,

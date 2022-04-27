@@ -7,14 +7,14 @@ const common = {
     components: { ManageCollateralTable },
     data: () => ({
         collateralStatuses: generateFakeCollateralStatuses(),
-        isAuthorizing: false,
+        authorizingCollaterals: [],
         isWithdrawing: false,
     }),
     methods: {
         authorize(collateralType) {
-            this.isAuthorizing = true;
+            this.authorizingCollaterals.push(collateralType);
             setTimeout(() => {
-                this.isAuthorizing = false;
+                this.authorizingCollaterals.filter(collateral => collateral !== collateralType);
                 const index = this.collateralStatuses.findIndex(status => status.type === collateralType);
                 this.collateralStatuses[index].isAuthorized = true;
             }, 1000);
@@ -35,7 +35,7 @@ storiesOf('ManageCollateralTable', module).add('Default', () => ({
     template: `
     <ManageCollateralTable 
         :collateralStatuses="collateralStatuses"
-        :isAuthorizing="isAuthorizing"
+        :authorizingCollaterals="authorizingCollaterals"
         :isWithdrawing="isWithdrawing" 
         @authorizeCollateral="authorize"
         @withdrawCollateral="withdraw"  

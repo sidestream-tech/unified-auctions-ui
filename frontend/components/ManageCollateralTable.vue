@@ -1,8 +1,8 @@
 <template>
     <div>
         <TextBlock v-if="isExplanationsShown" class="mb-2">
-            This is a list of collaterals supported by the Maker. Each row provides the possibility to withdraw
-            collateral from the VAT (if there is any) and to pre-authorize VAT transactions.
+            This is a list of collaterals supported by the Maker Protocol. Each row provides the possibility to
+            withdraw collateral from the VAT (if there is any) and to pre-authorize VAT transactions.
         </TextBlock>
         <table class="Table">
             <tr class="Heading">
@@ -33,7 +33,7 @@
                         <BaseButton
                             v-else
                             type="link"
-                            :is-loading="isAuthorizing"
+                            :is-loading="isCollateralAuthorizing(collateralStatus.type)"
                             @click="$emit('authorizeCollateral', collateralStatus.type)"
                         >
                             Authorize
@@ -81,9 +81,9 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isAuthorizing: {
-            type: Boolean,
-            default: false,
+        authorizingCollaterals: {
+            type: Array as Vue.PropType<String[]>,
+            default: undefined,
         },
         isWithdrawing: {
             type: Boolean,
@@ -99,11 +99,11 @@ export default Vue.extend({
         },
     },
     methods: {
-        close() {
-            this.$emit('close');
-        },
-        canWithdrawCollateral(collateral: CollateralStatus) {
+        canWithdrawCollateral(collateral: CollateralStatus): boolean {
             return collateral.balance?.isGreaterThan(0) && collateral.isAuthorized;
+        },
+        isCollateralAuthorizing(collateralType: string): boolean {
+            return this.authorizingCollaterals?.includes(collateralType) ?? false;
         },
     },
 });

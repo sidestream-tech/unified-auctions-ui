@@ -4,7 +4,7 @@
         :is-dark-mode="isDarkMode"
         :is-explanations-shown="isExplanationsShown"
         :collateral-statuses="collateralStatuses"
-        :is-authorizing="isAuthorizing"
+        :authorizing-collaterals="authorizingCollaterals"
         :is-withdrawing="isWithdrawing"
         @authorizeCollateral="authorize"
         @withdrawCollateral="withdraw"
@@ -31,7 +31,7 @@ export default Vue.extend({
             isWithdrawing: 'isDepositingOrWithdrawing',
         }),
         ...mapGetters('authorizations', {
-            isAuthorizing: 'isAuthorizationLoading',
+            authorizingCollaterals: 'loadingCollateralAuthorizations',
         }),
         isExplanationsShown: {
             get() {
