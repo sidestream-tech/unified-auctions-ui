@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <TextBlock>
         <TextBlock v-if="isExplanationsShown" class="mb-2">
             This is a list of collaterals supported by the Maker Protocol. Each row provides the possibility to
             withdraw collateral from the VAT (if there is any) and to pre-authorize VAT transactions.
@@ -20,44 +20,50 @@
                         </div>
                     </td>
                     <td>
-                        <format-address
-                            v-if="collateralStatus.address"
-                            :value="collateralStatus.address"
-                            shorten
-                            type="address"
-                        />
-                        <span v-else class="opacity-50">Unknown</span>
+                        <span v-if="collateralStatus.address === undefined" class="opacity-50">Fetching</span>
+                        <span v-else-if="collateralStatus.address === null" class="opacity-50">Not found</span>
+                        <format-address v-else :value="collateralStatus.address" shorten type="address" />
                     </td>
                     <td>
-                        <span v-if="collateralStatus.isAuthorized">Authorized</span>
-                        <BaseButton
-                            v-else
-                            type="link"
-                            :is-loading="isCollateralAuthorizing(collateralStatus.type)"
-                            @click="$emit('authorizeCollateral', collateralStatus.type)"
-                        >
-                            Authorize
-                        </BaseButton>
+                        <template v-if="collateralStatus.address">
+                            <span v-if="collateralStatus.isAuthorized">Authorized</span>
+                            <BaseButton
+                                v-else
+                                class="w-full"
+                                :is-loading="isCollateralAuthorizing(collateralStatus.type)"
+                                @click="$emit('authorizeCollateral', collateralStatus.type)"
+                            >
+                                Authorize
+                            </BaseButton>
+                        </template>
                     </td>
                     <td>
-                        <BaseButton
-                            type="link"
-                            :disabled="!canWithdrawCollateral(collateralStatus)"
-                            :is-loading="isWithdrawing"
-                            @click="$emit('withdrawCollateral', collateralStatus.type)"
-                        >
-                            Withdraw
-                        </BaseButton>
-                        <format-currency :value="collateralStatus.balance" />
+                        <template v-if="collateralStatus.address">
+                            <Tooltip :title="generateWithdrawalError(collateralStatus)" placement="top">
+                                <div>
+                                    <BaseButton
+                                        class="w-full"
+                                        :disabled="!canWithdrawCollateral(collateralStatus)"
+                                        :is-loading="isWithdrawing"
+                                        @click="$emit('withdrawCollateral', collateralStatus.type)"
+                                    >
+                                        <span class="mr-1">Withdraw</span
+                                        ><format-currency :value="collateralStatus.balance" />
+                                    </BaseButton>
+                                </div>
+                            </Tooltip>
+                        </template>
                     </td>
                 </tr>
             </tbody>
         </table>
-    </div>
+    </TextBlock>
 </template>
 
 <script lang="ts">
+import type { CollateralStatus } from 'auction-core/src/types';
 import Vue from 'vue';
+import { Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
@@ -66,6 +72,7 @@ import BaseButton from '~/components/common/BaseButton.vue';
 
 export default Vue.extend({
     components: {
+        Tooltip,
         TextBlock,
         FormatAddress,
         FormatCurrency,
@@ -105,6 +112,14 @@ export default Vue.extend({
         isCollateralAuthorizing(collateralType: string): boolean {
             return this.authorizingCollaterals?.includes(collateralType) ?? false;
         },
+        generateWithdrawalError(collateral: CollateralStatus): string | undefined {
+            if (!collateral.balance?.isGreaterThan(0)) {
+                return `There is no ${collateral.type} collateral to withdraw`;
+            }
+            if (!collateral.isAuthorized) {
+                return `The ${collateral.type} collateral needs to be authorized first`;
+            }
+        },
     },
 });
 </script>
@@ -115,7 +130,7 @@ export default Vue.extend({
 }
 
 .Element {
-    @apply p-2 h-8 border-r-2 border-b-2 border-gray-300 dark:border-gray-600;
+    @apply p-2 h-12 border-r-2 border-b-2 border-gray-300 dark:border-gray-600;
 }
 
 .Heading > th {

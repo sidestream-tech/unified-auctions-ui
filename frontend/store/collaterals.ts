@@ -1,6 +1,9 @@
 import { ActionContext } from 'vuex';
 import type { CollateralRow, CollateralStatus } from 'auctions-core/src/types';
-import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
+import COLLATERALS, {
+    getAllCollateralTypes,
+    getCollateralConfigByType,
+} from 'auctions-core/src/constants/COLLATERALS';
 import { getMarketPrice } from 'auctions-core/src/calleeFunctions';
 import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
 import Vue from 'vue';
@@ -8,12 +11,12 @@ import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 
 interface State {
     collaterals: CollateralRow[];
-    collateralStatusesStore: Record<string, CollateralStatus>;
+    collateralStatusesStorage: Record<string, CollateralStatus>;
 }
 
 export const state = (): State => ({
     collaterals: [],
-    collateralStatusesStore: {},
+    collateralStatusesStorage: {},
 });
 
 export const getters = {
@@ -21,7 +24,7 @@ export const getters = {
         return state.collaterals || [];
     },
     collateralStatuses(state: State, _getters: any, _rootState: any, rootGetters: any) {
-        return Object.values(state.collateralStatusesStore).map(collateralStatus => {
+        return Object.values(state.collateralStatusesStorage).map(collateralStatus => {
             const isAuthorized = rootGetters['authorizations/collateralAuthorizations'].includes(
                 collateralStatus.type
             );
@@ -33,8 +36,10 @@ export const getters = {
             };
         });
     },
-    collateralStatus: (_state: State, getters: any) => (type: string) => {
-        return getters.collateralStatuses.find((collateralStatus: CollateralStatus) => collateralStatus.type === type);
+    collateralStatus: (_state: State, getters: any) => (collateralType: string) => {
+        return getters.collateralStatuses.find(
+            (collateralStatus: CollateralStatus) => collateralStatus.type === collateralType
+        );
     },
 };
 
@@ -50,7 +55,7 @@ export const mutations = {
         });
     },
     setCollateralStatus(state: State, collateralStatus: CollateralStatus) {
-        Vue.set(state.collateralStatusesStore, collateralStatus.type, collateralStatus);
+        Vue.set(state.collateralStatusesStorage, collateralStatus.type, collateralStatus);
     },
 };
 
@@ -90,14 +95,24 @@ export const actions = {
             commit('updateCollateral', updated);
         }
     },
-    async fetchCollateralStatuses({ dispatch, rootGetters }: ActionContext<State, State>) {
+    fetchCollateralStatuses({ dispatch, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        for (const collateral of Object.values(COLLATERALS)) {
-            await dispatch('fetchCollateralStatus', collateral.ilk);
+        for (const collateralType of getAllCollateralTypes()) {
+            dispatch('resetCollateralStatus', collateralType);
         }
+        for (const collateralType of getAllCollateralTypes()) {
+            dispatch('fetchCollateralStatus', collateralType);
+        }
+    },
+    resetCollateralStatus({ commit }: ActionContext<State, State>, collateralType: string) {
+        const collateral = getCollateralConfigByType(collateralType);
+        commit('setCollateralStatus', {
+            type: collateral.ilk,
+            symbol: collateral.symbol,
+        });
     },
     async fetchCollateralStatus(
         { commit, dispatch, rootGetters }: ActionContext<State, State>,
@@ -107,24 +122,23 @@ export const actions = {
         if (!network) {
             return;
         }
-        const collateral = Object.values(COLLATERALS).find(collateral => collateral.ilk === collateralType);
-        if (!collateral) {
-            console.error('Unknown collateral:', collateralType);
-            return;
+        const collateral = getCollateralConfigByType(collateralType);
+        try {
+            const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateral.symbol);
+            await dispatch('wallet/fetchCollateralVatBalance', collateralType, { root: true });
+            await dispatch('authorizations/fetchCollateralAuthorizationStatus', collateralType, { root: true });
+            commit('setCollateralStatus', {
+                type: collateral.ilk,
+                symbol: collateral.symbol,
+                address: tokenAddress,
+            });
+        } catch {
+            commit('setCollateralStatus', {
+                type: collateral.ilk,
+                symbol: collateral.symbol,
+                address: null,
+            });
         }
-        const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateral.symbol).catch(() => {
-            return undefined;
-        });
-        if (!tokenAddress) {
-            return;
-        }
-        await dispatch('wallet/fetchCollateralVatBalance', collateralType, { root: true });
-        await dispatch('authorizations/fetchCollateralAuthorizationStatus', collateralType, { root: true });
-        commit('setCollateralStatus', {
-            type: collateral.ilk,
-            symbol: collateral.symbol,
-            address: tokenAddress,
-        });
     },
     async setup({ commit, dispatch }: ActionContext<State, State>) {
         const collaterals = Object.values(COLLATERALS).map(collateral => ({

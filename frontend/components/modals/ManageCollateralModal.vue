@@ -3,12 +3,14 @@
         :visible="isShown"
         :footer="null"
         :class="{ dark: isDarkMode }"
-        title="Collaterals"
-        destory-on-close
+        title="Collaterals in VAT"
+        :dialog-style="{ top: '60px' }"
+        :width="620"
+        destroy-on-close
         @cancel="$emit('cancel')"
     >
         <ManageCollateralTable
-            class="px-4 py-2"
+            class="p-4"
             :is-explanations-shown="isExplanationsShown"
             :authorizing-collaterals="authorizingCollaterals"
             :is-withdrawing="isWithdrawing"

@@ -73,7 +73,7 @@ export default Vue.extend({
         menuOptions(): SelectOption[] {
             return [
                 { label: 'Manage Wallet', value: 'openWalletModal' },
-                { label: 'Manage Collaterals in VAT', value: 'openManageCollateralModal' },
+                { label: 'Manage Collaterals', value: 'openManageCollateralModal' },
                 { label: 'Disconnect', value: 'changeWalletType' },
             ];
         },
