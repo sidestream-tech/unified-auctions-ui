@@ -30,7 +30,7 @@ interface State {
     isBidding: boolean;
     error: string | null;
     restartingAuctionsIds: string[];
-    lastUpdated: Date | null;
+    lastUpdated: Date | undefined;
 }
 
 export const state = (): State => ({
@@ -41,7 +41,7 @@ export const state = (): State => ({
     isBidding: false,
     error: null,
     restartingAuctionsIds: [],
-    lastUpdated: null,
+    lastUpdated: undefined,
 });
 
 export const getters = {
@@ -130,8 +130,7 @@ export const mutations = {
         }
     },
     setAreAuctionsFetching(state: State, areFetching: boolean) {
-        if (!areFetching) {
-            // if auctions finished loading, update last updated time stamp
+        if (areFetching === false) {
             state.lastUpdated = new Date();
         }
         state.areAuctionsFetching = areFetching;
@@ -148,7 +147,7 @@ export const mutations = {
 };
 
 export const actions = {
-    async fetchWithoutLoading({ commit, rootGetters }: ActionContext<State, State>) {
+    async update({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
@@ -170,14 +169,14 @@ export const actions = {
         }
     },
     async fetch({ dispatch }: ActionContext<State, State>) {
-        await dispatch('fetchWithoutLoading');
+        await dispatch('update');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }
         if (updateAuctionsPricesIntervalId) {
             clearInterval(updateAuctionsPricesIntervalId);
         }
-        refetchIntervalId = setInterval(() => dispatch('fetchWithoutLoading'), REFETCH_INTERVAL);
+        refetchIntervalId = setInterval(() => dispatch('update'), REFETCH_INTERVAL);
         updateAuctionsPricesIntervalId = setInterval(() => dispatch('updateAuctionsPrices'), TIMER_INTERVAL);
     },
     async bidWithCallee(
