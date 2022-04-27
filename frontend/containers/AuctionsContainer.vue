@@ -19,6 +19,7 @@
             :wallet-vat-dai="walletVatDai"
             :collateral-vat-balance-store="collateralVatBalanceStore"
             :is-fetching-collateral-vat-balance="isFetchingCollateralVatBalance"
+            :last-updated="lastUpdated"
             @fetchCollateralVatBalance="fetchCollateralVatBalance"
             @withdrawAllCollateralFromVat="withdrawAllCollateralFromVat"
             @manageVat="openWalletModal"
@@ -51,6 +52,7 @@ export default Vue.extend({
             areTakeEventsFetching: 'getAreTakeEventsFetching',
             isAuctionBidding: 'getIsBidding',
             auctionsError: 'getError',
+            lastUpdated: 'getLastUpdated',
         }),
         ...mapGetters('wallet', {
             isWalletLoading: 'isLoading',

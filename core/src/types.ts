@@ -25,6 +25,7 @@ export declare interface AuctionInitialInfo {
     transactionGrossProfit?: BigNumber;
     transactionAddress?: string;
     initialPrice: BigNumber;
+    fetchedAt: Date;
 }
 
 export declare interface AuctionStatus {

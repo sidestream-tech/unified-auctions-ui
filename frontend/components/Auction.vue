@@ -80,6 +80,18 @@
                                 <time-till-profitable :auction="auction" />
                             </td>
                         </tr>
+                        <tr>
+                            <td>Last updated</td>
+                            <td>
+                                <div v-if="areAuctionsFetching" class="flex items-center space-x-2">
+                                    <LoadingIcon
+                                        class="h-4 w-4 animate animate-spin fill-current dark:text-gray-300"
+                                    />
+                                    <span>Updating...</span>
+                                </div>
+                                <time-till v-else :date="auction.fetchedAt" />
+                            </td>
+                        </tr>
                         <template v-if="isTableExpanded">
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Vault type</td>
@@ -265,6 +277,7 @@ import Explain from '~/components/utils/Explain.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
+import LoadingIcon from '~/assets/icons/loading.svg';
 
 export default Vue.extend({
     name: 'Auction',
@@ -284,6 +297,7 @@ export default Vue.extend({
         Tooltip,
         TimeTillProfitable,
         Popover,
+        LoadingIcon,
     },
     props: {
         auction: {
