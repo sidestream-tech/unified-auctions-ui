@@ -1,7 +1,7 @@
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
-import type { CollateralRow } from 'auctions-core/src/types';
+import type { CollateralRow, CollateralStatus } from 'auctions-core/src/types';
 
 export const generateFakeCollaterals = function () {
     const collaterals: CollateralRow[] = [];
@@ -16,4 +16,21 @@ export const generateFakeCollaterals = function () {
         });
     }
     return collaterals;
+};
+
+export const generateFakeCollateralStatuses = function () {
+    const collateralStatuses: CollateralStatus[] = [];
+
+    for (const collateral of Object.values(COLLATERALS)) {
+        collateralStatuses.push({
+            type: collateral.ilk,
+            symbol: collateral.symbol,
+            address: faker.finance.ethereumAddress(),
+            isAuthorized: faker.datatype.boolean(),
+            isAuthorizing: false,
+            balance: new BigNumber(faker.finance.amount()),
+            isDepositingOrWithdrawing: false,
+        });
+    }
+    return collateralStatuses;
 };

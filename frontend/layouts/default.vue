@@ -13,6 +13,7 @@
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
             @openWalletModal="openWalletModal"
+            @openManageCollateralModal="openManageCollateralModal"
         />
         <Nuxt />
         <ChangePageNetworkModal
@@ -36,6 +37,7 @@
             @close="setSelectWalletModal(false)"
         />
         <WalletModalContainer />
+        <ManageCollateralModalContainer />
     </div>
 </template>
 
@@ -48,6 +50,7 @@ import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.v
 import ChangeWalletNetworkModal from '~/components/modals/ChangeWalletNetworkModal.vue';
 import WalletSelectModal from '~/components/modals/WalletSelectModal.vue';
 import WalletModalContainer from '~/containers/WalletModalContainer.vue';
+import ManageCollateralModalContainer from '~/containers/ManageCollateralModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
 
 export default Vue.extend({
@@ -58,6 +61,7 @@ export default Vue.extend({
         ChangeWalletNetworkModal,
         Header,
         WalletSelectModal,
+        ManageCollateralModalContainer,
     },
     computed: {
         ...mapGetters('wallet', {
@@ -121,6 +125,9 @@ export default Vue.extend({
         },
         openWalletModal(): void {
             this.$store.commit('modals/setWalletModal', true);
+        },
+        openManageCollateralModal(): void {
+            this.$store.commit('modals/setManageCollateralModal', true);
         },
         setSelectWalletModal(open: boolean): void {
             this.$store.commit('modals/setSelectWalletModal', open);
