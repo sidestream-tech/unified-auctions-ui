@@ -8,7 +8,6 @@ import {
 import getWallet from '~/lib/wallet';
 
 const DEFAULT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
-export const FAKE_NETWORK_NAME = 'stub';
 
 interface State {
     walletChainId: string | undefined;
@@ -37,9 +36,6 @@ export const getters = {
             return DEFAULT_NETWORK;
         }
         return pageNetwork;
-    },
-    isPageNetworkFake(_state: State, getters: any) {
-        return getters.getPageNetwork === FAKE_NETWORK_NAME;
     },
     isPageNetworkValid(_state: State, getters: any) {
         if (getters.isPageNetworkFake) {
@@ -101,9 +97,6 @@ export const actions = {
         }
     },
     async setWalletNetwork(_: ActionContext<State, State>, newNetwork: string): Promise<void> {
-        if (newNetwork === FAKE_NETWORK_NAME) {
-            return;
-        }
         let wallet;
         try {
             wallet = getWallet();
