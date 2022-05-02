@@ -21,7 +21,7 @@ export default Vue.extend({
                 return;
             }
             if (!process.env.HEAPIO_ID) {
-                console.log('HEAPIO_ID is not defined. Analytics are disabled.');
+                console.warn('HEAPIO_ID is not defined. Analytics are disabled.');
                 return;
             }
             heapIO.load(process.env.HEAPIO_ID);
