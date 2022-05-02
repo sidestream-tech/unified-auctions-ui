@@ -15,6 +15,7 @@ export default {
         GITHUB_URL: pkg.repository.url,
         STAGING_BANNER_URL: process.env.STAGING_BANNER_URL || undefined,
         DEFAULT_ETHEREUM_NETWORK: process.env.DEFAULT_ETHEREUM_NETWORK || 'mainnet',
+        HEAPIO_ID: process.env.HEAPIO_ID || undefined,
     },
 
     publicRuntimeConfig: {
