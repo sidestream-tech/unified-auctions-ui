@@ -1,4 +1,5 @@
 import { storiesOf } from '@storybook/vue';
+import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import RpcForm from './RpcForm';
 
@@ -11,25 +12,27 @@ const common = {
         disabled: false,
     }),
     methods: {
-        submit() {
+        submit(url) {
             if (this.isConnected) {
-                this.disconnect();
+                this.disconnect(url);
                 return;
             }
-            this.connect();
+            this.connect(url);
         },
-        connect() {
+        connect(url) {
             this.isLoading = true;
             setTimeout(() => {
                 this.isLoading = false;
                 this.isConnected = true;
+                action('connect')(url);
             }, 1000);
         },
-        disconnect() {
+        disconnect(url) {
             this.isLoading = true;
             setTimeout(() => {
                 this.isLoading = false;
                 this.isConnected = false;
+                action('disconnect')(url);
             }, 1000);
         },
     },

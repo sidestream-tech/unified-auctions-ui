@@ -1,6 +1,9 @@
 <template>
-    <form class="flex gap-4" @submit.prevent="submitForm">
-        <Input v-model="inputUrl" placeholder="https://" :disabled="isLoading || disabled" />
+    <form class="flex flex-col md:flex-row gap-4 items-end" @submit.prevent="submitForm">
+        <label class="w-full">
+            <TextBlock class="font-semibold text-xs">Or directly provice RPC url</TextBlock>
+            <Input v-model="inputUrl" placeholder="https://" :disabled="isLoading || disabled || isConnected" />
+        </label>
         <div class="w-48">
             <BaseButton
                 v-if="!isConnected"
@@ -23,16 +26,18 @@
 import Vue from 'vue';
 import { Input, message } from 'ant-design-vue';
 import BaseButton from '~/components/common/BaseButton.vue';
+import TextBlock from '~/components/common/TextBlock.vue';
 
 export default Vue.extend({
     components: {
         BaseButton,
         Input,
+        TextBlock,
     },
     props: {
         url: {
             type: String,
-            default: null,
+            default: '',
         },
         isConnected: {
             type: Boolean,
