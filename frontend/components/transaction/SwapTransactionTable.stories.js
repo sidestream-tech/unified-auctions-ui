@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction.js';
+import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction.ts';
 import SwapTransactionTable from '~/components/transaction/SwapTransactionTable.vue';
 
 const fakeAuctionTransaction = generateFakeAuctionTransaction();

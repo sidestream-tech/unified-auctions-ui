@@ -34,7 +34,7 @@
                         />
 
                         <WalletSelector
-                            v-if="!(isUnifiedPage || network === 'stub') && !isMinimal"
+                            v-if="!isUnifiedPage && !isMinimal"
                             class="hidden sm:block"
                             :wallet-address="walletAddress"
                             :is-loading="isWalletLoading"
