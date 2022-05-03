@@ -15,7 +15,9 @@ export const generateFakeAuction = function () {
         ? new BigNumber(faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 }))
         : undefined;
     const collateralObject = faker.helpers.randomize(Object.values(COLLATERALS));
-    const marketUnitPrice = approximateUnitPrice.multipliedBy(1 - marketUnitPriceToUnitPriceRatio);
+    const marketUnitPrice = approximateUnitPrice.multipliedBy(
+        new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio || 0)
+    );
     const transactionGrossProfit = marketUnitPrice
         .multipliedBy(collateralAmount)
         .minus(approximateUnitPrice.multipliedBy(collateralAmount));
@@ -48,6 +50,7 @@ export const generateFakeAuction = function () {
         minimumBidDai: new BigNumber(faker.finance.amount()),
         priceDropRatio: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
         transactionGrossProfitDate: faker.date.future(),
+        fetchedAt: new Date(),
     };
 };
 

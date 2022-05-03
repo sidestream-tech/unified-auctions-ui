@@ -34,7 +34,7 @@
                         />
 
                         <WalletSelector
-                            v-if="!(isUnifiedPage || network === 'stub') && !isMinimal"
+                            v-if="!isUnifiedPage && !isMinimal"
                             class="hidden sm:block"
                             :wallet-address="walletAddress"
                             :is-loading="isWalletLoading"
@@ -44,6 +44,7 @@
                             @changeWalletType="$emit('changeWalletType', $event)"
                             @openWalletModal="$emit('openWalletModal')"
                             @openTermsModal="$emit('openTermsModal')"
+                            @openManageCollateralModal="$emit('openManageCollateralModal')"
                         />
 
                         <ThemeSwitcher :dark-mode="darkMode" @update="$emit('update:darkMode', $event)" />

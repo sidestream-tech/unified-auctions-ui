@@ -25,6 +25,7 @@ export declare interface AuctionInitialInfo {
     transactionGrossProfit?: BigNumber;
     transactionAddress?: string;
     initialPrice: BigNumber;
+    fetchedAt: Date;
 }
 
 export declare interface AuctionStatus {
@@ -136,4 +137,14 @@ export declare interface WalletBalances {
     walletDAI: BigNumber;
     walletVatDAI: BigNumber;
     walletLastUpdatedDate: Date;
+}
+
+export declare interface CollateralStatus {
+    type: string;
+    symbol: string;
+    isAuthorized: boolean;
+    isAuthorizing: boolean;
+    isDepositingOrWithdrawing: boolean;
+    address?: string | null;
+    balance?: BigNumber;
 }

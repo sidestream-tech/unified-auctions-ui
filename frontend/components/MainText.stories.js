@@ -19,6 +19,18 @@ storiesOf('MainText', module)
         ...common,
         template: '<MainText :auctions="auctions" :selectedAuctionId="selectedAuctionId" />',
     }))
+    .add('Fetching with Auctions', () => ({
+        ...common,
+        template: '<MainText :auctions="auctions" :selectedAuctionId="selectedAuctionId" :isAuctionsLoading="true" />',
+    }))
+    .add('Fetching without Auctions', () => ({
+        ...common,
+        template: '<MainText :isAuctionsLoading="true" />',
+    }))
+    .add('Error', () => ({
+        ...common,
+        template: '<MainText auctionsError="There was an error fetching the Auctions." />',
+    }))
     .add('Expert Mode', () => ({
         ...common,
         template:

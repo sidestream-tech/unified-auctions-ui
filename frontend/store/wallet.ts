@@ -1,4 +1,5 @@
 import type { WalletBalances } from 'auctions-core/src/types';
+import Vue from 'vue';
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
@@ -20,6 +21,7 @@ interface State {
     walletBalances?: WalletBalances;
     isFetchingBalances: boolean;
     isDepositingOrWithdrawing: boolean;
+    depositingOrWithdrawingCollaterals: string[];
     tokenAddressDai: string | undefined;
     isFetchingCollateralVatBalance: boolean;
     collateralVatBalanceStore: Record<string, BigNumber | undefined>;
@@ -32,6 +34,7 @@ export const state = (): State => ({
     walletBalances: undefined,
     isFetchingBalances: false,
     isDepositingOrWithdrawing: false,
+    depositingOrWithdrawingCollaterals: [],
     tokenAddressDai: undefined,
     isFetchingCollateralVatBalance: false,
     collateralVatBalanceStore: {},
@@ -68,6 +71,9 @@ export const getters = {
     collateralVatBalanceStore(state: State) {
         return state.collateralVatBalanceStore;
     },
+    depositingOrWithdrawingCollaterals(state: State) {
+        return state.depositingOrWithdrawingCollaterals;
+    },
 };
 
 export const mutations = {
@@ -92,6 +98,18 @@ export const mutations = {
     setIsDepositingOrWithdrawing(state: State, isDepositingOrWithdrawing: boolean): void {
         state.isDepositingOrWithdrawing = isDepositingOrWithdrawing;
     },
+    setDepositingOrWithdrawingCollaterals(
+        state: State,
+        { collateralType, isDepositingOrWithdrawing }: { collateralType: string; isDepositingOrWithdrawing: boolean }
+    ): void {
+        if (isDepositingOrWithdrawing) {
+            state.depositingOrWithdrawingCollaterals.push(collateralType);
+        } else {
+            state.depositingOrWithdrawingCollaterals = state.depositingOrWithdrawingCollaterals.filter(
+                c => c !== collateralType
+            );
+        }
+    },
     setTokenAddressDai(state: State, tokenAddressDai: string): void {
         state.tokenAddressDai = tokenAddressDai;
     },
@@ -103,6 +121,7 @@ export const mutations = {
         { collateralType, balance }: { collateralType: string; balance: BigNumber }
     ): void {
         state.collateralVatBalanceStore[collateralType] = balance;
+        Vue.set(state.collateralVatBalanceStore, collateralType, balance);
     },
 };
 
@@ -248,6 +267,7 @@ export const actions = {
         collateralType: string
     ): Promise<void> {
         const network = rootGetters['network/getMakerNetwork'];
+        commit('setDepositingOrWithdrawingCollaterals', { collateralType, isDepositingOrWithdrawing: true });
         commit('setIsDepositingOrWithdrawing', true);
         try {
             await withdrawCollateralFromVat(network, getters.getAddress, collateralType, undefined, notifier);
@@ -256,6 +276,7 @@ export const actions = {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             message.error(`Error while withdrawing "${collateralType}" collateral from VAT: ${error.message}`);
         } finally {
+            commit('setDepositingOrWithdrawingCollaterals', { collateralType, isDepositingOrWithdrawing: false });
             commit('setIsDepositingOrWithdrawing', false);
         }
     },

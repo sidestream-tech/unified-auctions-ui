@@ -30,6 +30,7 @@ interface State {
     isBidding: boolean;
     error: string | null;
     restartingAuctionsIds: string[];
+    lastUpdated: Date | undefined;
 }
 
 export const state = (): State => ({
@@ -40,6 +41,7 @@ export const state = (): State => ({
     isBidding: false,
     error: null,
     restartingAuctionsIds: [],
+    lastUpdated: undefined,
 });
 
 export const getters = {
@@ -76,6 +78,9 @@ export const getters = {
     },
     getError(state: State) {
         return state.error;
+    },
+    getLastUpdated(state: State) {
+        return state.lastUpdated;
     },
     isAuctionRestarting: (state: State) => (id: string) => {
         return state.restartingAuctionsIds.includes(id);
@@ -125,6 +130,9 @@ export const mutations = {
         }
     },
     setAreAuctionsFetching(state: State, areFetching: boolean) {
+        if (areFetching === false) {
+            state.lastUpdated = new Date();
+        }
         state.areAuctionsFetching = areFetching;
     },
     setAreTakeEventsFetching(state: State, areFetching: boolean) {
@@ -139,11 +147,12 @@ export const mutations = {
 };
 
 export const actions = {
-    async fetchWithoutLoading({ commit, rootGetters }: ActionContext<State, State>) {
+    async update({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
+        commit('setAreAuctionsFetching', true);
         try {
             const auctions = await fetchAllAuctions(network);
             const active = auctions.filter(auction => auction.isActive);
@@ -159,16 +168,15 @@ export const actions = {
             commit('setAreAuctionsFetching', false);
         }
     },
-    async fetch({ commit, dispatch }: ActionContext<State, State>) {
-        commit('setAreAuctionsFetching', true);
-        await dispatch('fetchWithoutLoading');
+    async fetch({ dispatch }: ActionContext<State, State>) {
+        await dispatch('update');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }
         if (updateAuctionsPricesIntervalId) {
             clearInterval(updateAuctionsPricesIntervalId);
         }
-        refetchIntervalId = setInterval(() => dispatch('fetchWithoutLoading'), REFETCH_INTERVAL);
+        refetchIntervalId = setInterval(() => dispatch('update'), REFETCH_INTERVAL);
         updateAuctionsPricesIntervalId = setInterval(() => dispatch('updateAuctionsPrices'), TIMER_INTERVAL);
     },
     async bidWithCallee(
