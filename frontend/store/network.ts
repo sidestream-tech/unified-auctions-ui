@@ -1,10 +1,10 @@
-import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
 import {
     getNetworkConfigByType,
     getNetworkTypeByChainId,
     getNetworkTitleByChainId,
 } from 'auctions-core/src/constants/NETWORKS';
+import { message } from '~/helpers/messageWrapper';
 import getWallet from '~/lib/wallet';
 
 const DEFAULT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
@@ -84,7 +84,6 @@ export const actions = {
             await dispatch('setWalletNetwork', newNetwork);
             window.location.href = `${rootState.route.path}?network=${newNetwork}`;
         } catch (error) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             message.error(`Network switch error: ${error.message}`);
         }
     },
@@ -102,7 +101,6 @@ export const actions = {
             await dispatch('setWalletNetwork', getters.getPageNetwork);
             window.location.reload();
         } catch (error) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             message.error(`Network switch error: ${error.message}`);
         }
     },

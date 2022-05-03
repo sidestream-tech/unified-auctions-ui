@@ -1,7 +1,6 @@
 import type { Auction, AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { ActionContext } from 'vuex';
-import { message } from 'ant-design-vue';
 import {
     fetchAllAuctions,
     bidWithDai,
@@ -13,6 +12,7 @@ import {
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import BigNumber from 'auctions-core/src/bignumber';
+import { message } from '~/helpers/messageWrapper';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
@@ -185,14 +185,12 @@ export const actions = {
     ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             message.error(`Bidding error: can not find auction with id "${id}"`);
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             message.error('Bidding error: can not find wallet');
             return;
         }
@@ -221,14 +219,12 @@ export const actions = {
     ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             message.error(`Bidding error: can not find auction with id "${id}"`);
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             message.error('Bidding error: can not find wallet');
             return;
         }
@@ -254,13 +250,11 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             message.error(`Auction reset error: can not find auction with id "${id}"`);
             return;
         }
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
             message.error('Bidding error: can not find wallet');
             return;
         }
