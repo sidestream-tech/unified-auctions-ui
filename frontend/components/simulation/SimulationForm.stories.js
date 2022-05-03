@@ -62,6 +62,7 @@ storiesOf('Simulation/SimulationForm', module)
     .add('No simulations', () => ({
         ...common,
         data: () => ({
+            ...common.data(),
             simulationIds: '',
         }),
     }))
