@@ -212,19 +212,6 @@ data:
       trigger:
         event:
           - pull_request
-    - name: notification-service-lint-build
-      type: kubernetes
-      depends_on: [publish-frontend-on-pr-push]
-      image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:pr-${DRONE_PULL_REQUEST}
-      workdir: /notification-service
-      steps_parallel:
-        - name: lint
-          command: npm run lint
-        - name: build
-          command: npm run build
-      trigger:
-        event:
-          - pull_request
     - name: frontend-lint-test
       type: kubernetes
       depends_on: [publish-frontend-on-pr-push]
