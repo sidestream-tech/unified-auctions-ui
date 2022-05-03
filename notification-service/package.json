@@ -27,18 +27,24 @@
       "pre-commit": "lint-staged"
     }
   },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "ethers": "^5.6.5",
+    "nodemailer": "^6.7.4"
+  },
   "devDependencies": {
+    "@types/nodemailer": "^6.4.4",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
-    "husky": "^7.0.4",
-    "tsdx": "^0.14.1",
     "eslint": "^7.8.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^7.0.4",
     "lint-staged": "^12.1.2",
     "prettier": "^2.1.1",
+    "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
     "typescript": "^4.5.4"
   }
