@@ -38,9 +38,6 @@ export const getters = {
         return pageNetwork;
     },
     isPageNetworkValid(_state: State, getters: any) {
-        if (getters.isPageNetworkFake) {
-            return true;
-        }
         try {
             getNetworkConfigByType(getters.getPageNetwork);
             return true;
@@ -49,18 +46,12 @@ export const getters = {
         }
     },
     isWalletNetworkValid(_state: State, getters: any) {
-        if (getters.isPageNetworkFake) {
-            return true;
-        }
         if (!getters.isWalletConnected) {
             return true;
         }
         return getters.getPageNetwork === getters.getWalletNetwork;
     },
     getMakerNetwork(_state: State, getters: any) {
-        if (getters.isPageNetworkFake) {
-            return;
-        }
         if (!getters.isPageNetworkValid) {
             return;
         }
