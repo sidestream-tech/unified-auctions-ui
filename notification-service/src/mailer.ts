@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { RECEIVERS, SMTP_EMAIL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNAME } from './variables';
 import { MAIL_PREFIX } from './constants/PREFIXES';
-import generateEmail, { generateTextEmail } from './templates/generateEmail';
+import generateEmail, { generateTextEmail } from './helpers/generateEmail';
 import { getEtherscanURL } from './constants/NETWORKS';
 
 export async function setupMailer() {
