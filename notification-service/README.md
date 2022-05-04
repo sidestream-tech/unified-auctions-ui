@@ -26,6 +26,7 @@ $ npm run start
 ## Environment variables
 
 - `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum ->
+- `ETHERSCAN_API_KEY`: (required) [Etherscan API Key](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics), which is used to automatically download ABIs 
 - `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
 - `SMTP_*`: (required) - SMTP data for the service to send emails
     - `SMTP_HOST`: (required) - SMTP host address
