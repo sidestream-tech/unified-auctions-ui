@@ -55,6 +55,5 @@ export const getGasParametersForTransaction = async function (network: string): 
 };
 
 export const getGasPriceForUI = async function (network: string): Promise<BigNumber> {
-    const baseFeePerGas = await getBaseFeePerGas(network);
-    return baseFeePerGas.shiftedBy(-ETH_NUMBER_OF_DIGITS);
+    return (await getBaseFeePerGas(network)).plus(maxPriorityFeePerGas);
 };
