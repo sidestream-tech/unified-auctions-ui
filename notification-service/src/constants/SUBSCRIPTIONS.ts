@@ -2,6 +2,7 @@ import axios from 'axios';
 import { EventSubscription } from '../types';
 import { ETHERSCAN_API_KEY, ETHEREUM_NETWORK } from '../variables';
 import { getEtherscanAPI, getEtherscanURL } from './NETWORKS';
+import { ethers } from 'ethers';
 
 export async function getAbiFromContractAddress(contract: string) {
     if (!ETHERSCAN_API_KEY) {
@@ -22,7 +23,7 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
         eventName: 'UpdateAddress',
         formatData: event => {
             return `
-                Key: ${event.args.key}<br /> 
+                Key: ${ethers.utils.formatBytes32String(event.args.key)}<br /> 
                 Address: <a href="${getEtherscanURL(ETHEREUM_NETWORK)}/address/${
                 event.args.addr
             }" target="_blank" style="color: lightblue;">${event.args.addr}</a>
@@ -32,7 +33,7 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
     {
         id: 'MCD_DAI_Transfer',
         contract: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
-        eventName: 'Transfer',
+        eventName: '*',
         formatData: event => {
             return `
                 From: <a href="${getEtherscanURL(ETHEREUM_NETWORK)}/address/${
