@@ -14,13 +14,14 @@ export async function setupMailer() {
     if (!validator.isEmail(SMTP_EMAIL)) {
         throw new Error(`mailer: the SMTP_EMAIL "${SMTP_EMAIL}" is not a valid email address`);
     }
+    let transporter;
     if (!SMTP_HOST || !SMTP_PORT || !SMTP_USERNAME || !SMTP_PASSWORD) {
         console.warn(`${MAIL_PREFIX} missing account data. using mock ethereal email.`);
 
         // Generate Test Account for development
         const testAccount = await nodemailer.createTestAccount();
 
-        return nodemailer.createTransport({
+        transporter = nodemailer.createTransport({
             host: 'smtp.ethereal.email',
             port: 587,
             secure: false,
@@ -31,8 +32,7 @@ export async function setupMailer() {
         });
     }
 
-    console.info(`${MAIL_PREFIX} setting up custom mailing service`);
-    return nodemailer.createTransport({
+    transporter = nodemailer.createTransport({
         host: SMTP_HOST,
         port: SMTP_PORT,
         secure: SMTP_PORT === 465, // true for 465, false for other ports
@@ -41,6 +41,15 @@ export async function setupMailer() {
             pass: SMTP_PASSWORD,
         },
     });
+
+    transporter.verify(function (error) {
+        if (error) {
+            throw new Error(`Error setting up mailer. Error: ${error}`);
+        } else {
+            console.info(`${MAIL_PREFIX} mailer was successfully set up`);
+        }
+    });
+    return transporter;
 }
 
 export async function sendMail(
