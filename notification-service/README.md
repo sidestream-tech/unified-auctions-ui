@@ -32,6 +32,7 @@ $ npm run start
     - `SMTP_PORT`: (optional) - SMTP port. Defaults to `465`
     - `SMTP_USERNAME`: (required) - SMTP username
     - `SMTP_PASSWORD`: (required) - SMTP password
+    - `SMTP_EMAIL`: (optional) - The displayed address from which the email was sent. Defaults to `notification@unified-auctions.makerdao.com`
 - `RECEIVERS`: (optional) - a comma-separated list of email addresses, that should receive an email when an event is
   called
 
