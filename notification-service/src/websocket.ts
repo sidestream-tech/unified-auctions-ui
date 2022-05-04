@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { INFURA_PROJECT_ID, ETHEREUM_NETWORK } from './variables';
 import { SUBSCRIPTIONS } from './constants/SUBSCRIPTIONS';
-import { WEBSOCKET_PREFIX } from './constants/PREFIX';
+import { WEBSOCKET_PREFIX } from './constants/PREFIXES';
 
 export function setupWebSocket(): ethers.providers.WebSocketProvider {
     if (!INFURA_PROJECT_ID) {

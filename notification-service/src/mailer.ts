@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { RECEIVERS, SMTP_EMAIL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNAME } from './variables';
-import { MAIL_PREFIX } from './constants/PREFIX';
+import { MAIL_PREFIX } from './constants/PREFIXES';
 
 export async function setupMailer() {
     if (!SMTP_HOST || !SMTP_PORT || !SMTP_USERNAME || !SMTP_PASSWORD) {
