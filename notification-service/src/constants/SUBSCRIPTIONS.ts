@@ -19,13 +19,19 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
     {
         id: 'ChainlogUpdateVersion',
         contract: '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F',
-        eventNames: ['UpdateVersion'],
+        eventName: 'UpdateVersion',
+        formatData: event => {
+            return JSON.stringify(event);
+        },
     },
-    /*{
+    {
         id: 'MCD_DAI',
         contract: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
-        eventNames: ['*'],
-    },*/
+        eventName: '*',
+        formatData: event => {
+            return JSON.stringify(event);
+        },
+    },
 ];
 
 export function getSubscriptionById(id: string) {

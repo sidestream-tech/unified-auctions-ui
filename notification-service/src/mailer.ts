@@ -49,8 +49,8 @@ export async function sendMail(
     network: string,
     mailData: MailData
 ) {
-    const etherscanURL = `${getEtherscanURL(network)}/tx/${mailData.transactionHash}#eventlog`;
-    const receivers = getReceiversForSubscriptionId(mailData.subscriptionId);
+    const etherscanURL = `${getEtherscanURL(network)}/tx/${mailData.eventData.transactionHash}#eventlog`;
+    const receivers = getReceiversForSubscriptionId(mailData.eventSubscription.id);
 
     if (!receivers) {
         return;
@@ -59,9 +59,9 @@ export async function sendMail(
     const info = await transporter.sendMail({
         from: SMTP_EMAIL,
         to: receivers,
-        subject: `[${network.toUpperCase()}] Event "${mailData.eventName}" has been updated`,
-        text: generateTextEmail(mailData.eventName, mailData.contractAddress, etherscanURL, network),
-        html: generateEmail(mailData.eventName, mailData.contractAddress, etherscanURL, network),
+        subject: `[${network.toUpperCase()}] ${mailData.eventSubscription.id} has been triggered`,
+        text: generateTextEmail(mailData, etherscanURL, network),
+        html: generateEmail(mailData, etherscanURL, network),
     });
 
     // Preview only available when sending through an Ethereal account

@@ -1,7 +1,8 @@
 export interface EventSubscription {
     id: string;
     contract: string;
-    eventNames: string[];
+    eventName: string;
+    formatData: (event: any) => string;
 }
 
 export interface Receiver {
@@ -10,8 +11,7 @@ export interface Receiver {
 }
 
 export interface MailData {
-    eventName: string;
-    contractAddress: string;
-    transactionHash: string;
-    subscriptionId: string;
+    eventSubscription: EventSubscription;
+    eventData: any;
+    formattedData: any;
 }

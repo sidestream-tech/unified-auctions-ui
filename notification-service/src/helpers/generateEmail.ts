@@ -1,8 +1,10 @@
-export function generateTextEmail(eventName: string, contractAddress: string, link: string, network: string) {
-    return `We just detected an update of the event "${eventName}" from the contract "${contractAddress}" on the network "${network}". View more info on ${link}`;
+import { MailData } from '../types';
+
+export function generateTextEmail(mailData: MailData, link: string, network: string) {
+    return `We just detected an update of the event "${mailData.eventData.event}" from the contract "${mailData.eventSubscription.contract}" on the network "${network}". View more info on ${link}`;
 }
 
-export default function generateEmail(eventName: string, contractAddress: string, link: string, network: string) {
+export default function generateEmail(mailData: MailData, link: string, network: string) {
     return `
     <!doctype html>
     <html lang="en">
@@ -121,10 +123,13 @@ export default function generateEmail(eventName: string, contractAddress: string
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Hello,</p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                             We just detected an update of the event <b>"${eventName}"</b> of the contract "${contractAddress}" on the network "${network}".
+                             We just detected an update of the event <b>"${mailData.eventData.event}"</b> of the contract "${mailData.eventSubscription.contract}" on the network "${network}".
                           </p>
-                          <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                             You are currently subscribed to receive updates when this event is triggered. 
+                          <p style="font-family: sans-serif; font-size: 14px; font-weight: bold; margin: 0; margin-bottom: 5px; color: #3498db">
+                             New Data:
+                          </p>
+                          <p style="font-family: monospace; font-size: 14px; font-weight: normal; margin: 0 0 15px; background-color: #2e3338; color: white; padding: 10px; border-radius: 10px; max-width: 580px; overflow: auto">
+                             ${mailData.formattedData}
                           </p>
                           <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; box-sizing: border-box; width: 100%;" width="100%">
                             <tbody>
@@ -145,6 +150,9 @@ export default function generateEmail(eventName: string, contractAddress: string
                               </tr>
                             </tbody>
                           </table>
+                          <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
+                             You are currently subscribed to receive updates when this event is triggered. 
+                          </p>
                         </td>
                       </tr>
                     </table>

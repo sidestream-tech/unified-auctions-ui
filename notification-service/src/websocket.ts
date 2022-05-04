@@ -18,24 +18,21 @@ export function setupWebSocket(): ethers.providers.WebSocketProvider {
 }
 
 export function subscribe(wsProvider: ethers.providers.WebSocketProvider, sendMail: (mailData: MailData) => void) {
-    SUBSCRIPTIONS.map(async subscription => {
+    SUBSCRIPTIONS.forEach(async subscription => {
         const contractAbi = await getAbiFromContractAddress(subscription.contract);
         const contract = new ethers.Contract(subscription.contract, contractAbi, wsProvider);
 
-        subscription.eventNames.map(eventName => {
+        console.info(
+            `${WEBSOCKET_PREFIX} listening for event "${subscription.eventName}" on contract "${subscription.contract}"`
+        );
+        contract.on(subscription.eventName, event => {
             console.info(
-                `${WEBSOCKET_PREFIX} listening for event "${eventName}" on contract "${subscription.contract}"`
+                `${EVENT_PREFIX} event "${event.event}" triggered in block "${event.blockNumber}". Attempting to send email.`
             );
-            contract.on(eventName, event => {
-                console.info(
-                    `${EVENT_PREFIX} event "${event.event}" triggered in block "${event.blockNumber}". Attempting to send email.`
-                );
-                sendMail({
-                    subscriptionId: subscription.id,
-                    eventName: event.event,
-                    contractAddress: subscription.contract,
-                    transactionHash: event.transactionHash,
-                });
+            sendMail({
+                eventSubscription: subscription,
+                eventData: event,
+                formattedData: subscription.formatData(event),
             });
         });
     });
