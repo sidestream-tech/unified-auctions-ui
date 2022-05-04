@@ -33,7 +33,7 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
     {
         id: 'MCD_DAI_Transfer',
         contract: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
-        eventName: '*',
+        eventName: 'Transfer',
         formatData: event => {
             return `
                 From: <a href="${getEtherscanURL(ETHEREUM_NETWORK)}/address/${

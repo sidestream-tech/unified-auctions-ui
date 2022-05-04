@@ -25,15 +25,17 @@ export function subscribe(wsProvider: ethers.providers.WebSocketProvider, sendMa
         console.info(
             `${WEBSOCKET_PREFIX} listening for event "${subscription.eventName}" on contract "${subscription.contract}"`
         );
-        contract.on(subscription.eventName, event => {
-            console.info(
-                `${EVENT_PREFIX} event "${event.event}" triggered in block "${event.blockNumber}". Attempting to send email.`
-            );
-            sendMail({
-                eventSubscription: subscription,
-                eventData: event,
-                formattedData: subscription.formatData(event),
-            });
+        contract.on('*', event => {
+            if (event.event === subscription.eventName) {
+                console.info(
+                    `${EVENT_PREFIX} event "${event.event}" triggered in block "${event.blockNumber}". Attempting to send email.`
+                );
+                sendMail({
+                    eventSubscription: subscription,
+                    eventData: event,
+                    formattedData: subscription.formatData(event),
+                });
+            }
         });
     });
 }
