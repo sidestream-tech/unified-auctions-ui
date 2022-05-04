@@ -1,39 +1,38 @@
 import type { GasParameters } from './types';
-import { ethers } from 'ethers';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import { getNetworkConfigByType } from './constants/NETWORKS';
 import { ETH_NUMBER_OF_DIGITS } from './constants/UNITS';
-import CHAINLINK_ORACLE_ABI from './abis/CHAINLINK_FAST_GAS.json';
 import getProvider from './provider';
 
-const CHAINLINK_ORACLE_ADDRESS = '0x169e633a2d1e6c10dd91238ba11c4a708dfef37c';
 const GAS_CACHE_MS = 10 * 1000;
 const maxPriorityFeePerGas = new BigNumber(process.env.MAX_PRIORITY_FEE_PER_GAS_WEI || '1500000000').shiftedBy(
     -ETH_NUMBER_OF_DIGITS
 );
 
-export const getBaseFeePerGas = async function (network: string): Promise<BigNumber> {
+export const _getBaseFeePerGas = async function (network: string): Promise<BigNumber> {
     const provider = await getProvider(network);
-    const pendingBlock = await provider.getBlock('latest');
-    if (!pendingBlock?.baseFeePerGas?._hex) {
+    const latestBlock = await provider.getBlock('latest');
+    if (!latestBlock?.baseFeePerGas?._hex) {
         return new BigNumber(NaN);
     }
-    return new BigNumber(pendingBlock?.baseFeePerGas?._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
+    return new BigNumber(latestBlock?.baseFeePerGas?._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
 };
 
-const getOracleGasPrice = async function (network: string): Promise<BigNumber> {
-    const provider = await getProvider(network);
-    const contract = new ethers.Contract(CHAINLINK_ORACLE_ADDRESS, CHAINLINK_ORACLE_ABI, provider);
-    const gasPrice = await contract.latestAnswer();
-    return new BigNumber(gasPrice._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
-};
+const getBaseFeePerGas = memoizee(_getBaseFeePerGas, {
+    maxAge: GAS_CACHE_MS,
+    promise: true,
+    length: 1,
+});
 
 const _getEIP1559Values = async function (network: string): Promise<GasParameters> {
-    const oracleGasPrice = await getOracleGasPrice(network);
+    const baseFeePerGas = await getBaseFeePerGas(network);
+    // The formula to compute maxFeePerGas is taken from ethers.js
+    // https://github.com/ethers-io/ethers.js/blob/cf47ec5fd5c7e6dda4da499b1c25ac1d1cc84b5a/packages/abstract-provider/src.ts/index.ts#L247-L251
+    const maxFeePerGas = baseFeePerGas.multipliedBy(2).plus(maxPriorityFeePerGas);
     return {
         maxPriorityFeePerGas: maxPriorityFeePerGas.shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(0),
-        maxFeePerGas: oracleGasPrice.plus(maxPriorityFeePerGas).shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(0),
+        maxFeePerGas: maxFeePerGas.shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(0),
     };
 };
 
@@ -56,10 +55,6 @@ export const getGasParametersForTransaction = async function (network: string): 
 };
 
 export const getGasPriceForUI = async function (network: string): Promise<BigNumber> {
-    const gasParameters = await getGasParametersForTransaction(network);
-    const anyGasPriceInWei = gasParameters.maxFeePerGas ?? gasParameters.gasPrice;
-    if (!anyGasPriceInWei) {
-        return new BigNumber(NaN);
-    }
-    return new BigNumber(anyGasPriceInWei).shiftedBy(-ETH_NUMBER_OF_DIGITS);
+    const baseFeePerGas = await getBaseFeePerGas(network);
+    return baseFeePerGas.shiftedBy(-ETH_NUMBER_OF_DIGITS);
 };
