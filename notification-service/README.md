@@ -48,7 +48,6 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
   {
     id: 'ChainlogUpdateVersion',
     contract: '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F',
-    abi: CHAINLOG_ABI,
     eventNames: ['UpdateVersion'],
   }
 ]
@@ -56,7 +55,6 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
 
 - `id` - Unique identifier. Used for references in email and console logs
 - `contract` - The Ethereum Address on which your Event is
-- `abi` - A corresponding ABI file for the contract
 - `eventNames` - An array of Event names you wish to subscribe to. Use `*` to subscribe to all
 
 ## Development Setup
