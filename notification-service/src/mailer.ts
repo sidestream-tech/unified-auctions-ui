@@ -21,7 +21,7 @@ export async function setupMailer() {
         });
     }
 
-    console.info(`${MAIL_PREFIX} setting up custom mailing service.`);
+    console.info(`${MAIL_PREFIX} setting up custom mailing service`);
     return nodemailer.createTransport({
         host: SMTP_HOST,
         port: SMTP_PORT,
