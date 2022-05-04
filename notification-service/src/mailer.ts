@@ -2,6 +2,8 @@ import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { RECEIVERS, SMTP_EMAIL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNAME } from './variables';
 import { MAIL_PREFIX } from './constants/PREFIXES';
+import generateEmail, { generateTextEmail } from './templates/generateEmail';
+import { getEtherscanURL } from './constants/NETWORKS';
 
 export async function setupMailer() {
     if (!SMTP_HOST || !SMTP_PORT || !SMTP_USERNAME || !SMTP_PASSWORD) {
@@ -35,14 +37,20 @@ export async function setupMailer() {
 
 export async function sendMail(
     transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo>,
-    { subject, body }: { subject: string; body: string }
+    network: string,
+    mailData: {
+        eventName: string;
+        contractAddress: string;
+        transactionHash: string;
+    }
 ) {
+    const etherscanURL = `${getEtherscanURL(network)}/tx/${mailData.transactionHash}#eventlog`;
     const info = await transporter.sendMail({
         from: SMTP_EMAIL,
         to: RECEIVERS,
-        subject: subject,
-        text: 'Test',
-        html: body,
+        subject: `Event "${mailData.eventName}" has been updated!`,
+        text: generateTextEmail(mailData.eventName, mailData.contractAddress, etherscanURL),
+        html: generateEmail(mailData.eventName, mailData.contractAddress, etherscanURL),
     });
 
     // Preview only available when sending through an Ethereal account

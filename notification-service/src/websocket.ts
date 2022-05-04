@@ -18,7 +18,7 @@ export function setupWebSocket(): ethers.providers.WebSocketProvider {
 
 export function subscribe(
     wsProvider: ethers.providers.WebSocketProvider,
-    sendMail: (subject: string, body: string) => void
+    sendMail: (mailData: { eventName: string; contractAddress: string; transactionHash: string }) => void
 ) {
     SUBSCRIPTIONS.map(subscription => {
         const contract = new ethers.Contract(subscription.contract, subscription.abi, wsProvider);
@@ -31,10 +31,11 @@ export function subscribe(
                 console.info(
                     `${EVENT_PREFIX} event "${event.event}" triggered in block "${event.blockNumber}". Attempting to send email.`
                 );
-                sendMail(
-                    `Event "${event.event}" has been updated.`,
-                    `Event "${event.event}" triggered in block "${event.blockNumber}". Email sent by the unified-auctions notification service.`
-                );
+                sendMail({
+                    eventName: event.event,
+                    contractAddress: subscription.contract,
+                    transactionHash: event.transactionHash,
+                });
             });
         });
     });

@@ -11,7 +11,7 @@ const start = async function () {
     const transporter = await setupMailer();
     const wsProvider = setupWebSocket();
 
-    subscribe(wsProvider, (subject, body) => sendMail(transporter, { subject, body }));
+    subscribe(wsProvider, mailData => sendMail(transporter, ETHEREUM_NETWORK, mailData));
 };
 
 start().catch(error => {
