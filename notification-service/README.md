@@ -70,3 +70,7 @@ to get started with your development setup. Namely, you should:
 - don't forget to create `./notification-service/.env` file
 
 Help on both things is given in the linked resources above.
+
+In addition to this please be aware of the following for this project:
+- By default, this project uses [Etheral Email](https://ethereal.email/) to mock emails. If Etheral is down and no custom SMTP server is set, the service will not run.
+- We advise using [MailTrap](https://mailtrap.io/) for more extensive testing. 

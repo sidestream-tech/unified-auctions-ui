@@ -1,10 +1,11 @@
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNAME } from './variables';
+import { RECEIVERS, SMTP_EMAIL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNAME } from './variables';
+import { MAIL_PREFIX } from './constants/PREFIX';
 
 export async function setupMailer() {
     if (!SMTP_HOST || !SMTP_PORT || !SMTP_USERNAME || !SMTP_PASSWORD) {
-        console.warn('mailer: missing account data. using mock ethereal email.');
+        console.warn(`${MAIL_PREFIX} missing account data. using mock ethereal email.`);
 
         // Generate Test Account for development
         const testAccount = await nodemailer.createTestAccount();
@@ -20,10 +21,11 @@ export async function setupMailer() {
         });
     }
 
+    console.info(`${MAIL_PREFIX} setting up custom mailing service.`);
     return nodemailer.createTransport({
         host: SMTP_HOST,
         port: SMTP_PORT,
-        secure: !(SMTP_PORT === 465), // true for 465, false for other ports
+        secure: SMTP_PORT === 465, // true for 465, false for other ports
         auth: {
             user: SMTP_USERNAME,
             pass: SMTP_PASSWORD,
@@ -36,15 +38,16 @@ export async function sendMail(
     { subject, body }: { subject: string; body: string }
 ) {
     const info = await transporter.sendMail({
-        from: '"Unified Auctions Notification Service" <foo@example.com>',
-        to: 'bar@example.com, baz@example.com',
+        from: SMTP_EMAIL,
+        to: RECEIVERS,
         subject: subject,
+        text: 'Test',
         html: body,
     });
 
     // Preview only available when sending through an Ethereal account
     const previewLink = nodemailer.getTestMessageUrl(info);
     if (previewLink) {
-        console.info(`mailer: sent test mail: ${previewLink}`);
+        console.info(`${MAIL_PREFIX} sent test mail: ${previewLink}`);
     }
 }

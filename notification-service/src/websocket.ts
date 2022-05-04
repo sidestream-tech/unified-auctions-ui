@@ -1,17 +1,18 @@
 import { ethers } from 'ethers';
 import { INFURA_PROJECT_ID, ETHEREUM_NETWORK } from './variables';
 import { SUBSCRIPTIONS } from './constants/SUBSCRIPTIONS';
+import { WEBSOCKET_PREFIX } from './constants/PREFIX';
 
 export function setupWebSocket(): ethers.providers.WebSocketProvider {
     if (!INFURA_PROJECT_ID) {
-        throw new Error('websocket: please set a valid infura project id, in the environment files.');
+        throw new Error(`${WEBSOCKET_PREFIX} please set a valid infura project id, in the environment files.`);
     }
     const wsProvider = new ethers.providers.WebSocketProvider(
         `wss://${ETHEREUM_NETWORK}.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
         ETHEREUM_NETWORK
     );
 
-    console.info(`websocket: websocket connection opened with network "${ETHEREUM_NETWORK}"`);
+    console.info(`${WEBSOCKET_PREFIX} websocket connection opened with network "${ETHEREUM_NETWORK}"`);
     return wsProvider;
 }
 
@@ -21,11 +22,20 @@ export function subscribe(
 ) {
     SUBSCRIPTIONS.map(subscription => {
         const contract = new ethers.Contract(subscription.contract, subscription.abi, wsProvider);
-        console.info(
-            `websocket: listening for event "${subscription.eventName}" on contract "${subscription.contract}"`
-        );
-        contract.on(subscription.eventName, () => {
-            sendMail(`Test`, `Test`);
+
+        subscription.eventNames.map(eventName => {
+            console.info(
+                `${WEBSOCKET_PREFIX} listening for event "${eventName}" on contract "${subscription.contract}"`
+            );
+            contract.on(eventName, event => {
+                console.info(
+                    `${WEBSOCKET_PREFIX} event "${event.event}" triggered in block "${event.blockNumber}". Attempting to send email.`
+                );
+                sendMail(
+                    `Event "${event.event}" has been updated.`,
+                    `Event "${event.event}" triggered in block "${event.blockNumber}". Email sent by the unified-auctions notification service.`
+                );
+            });
         });
     });
 }
