@@ -7,6 +7,10 @@ export function generateTextEmail(mailData: MailData, link: string, network: str
 export default function generateEmail(mailData: MailData, link: string, network: string) {
     return `
     <!doctype html>
+    <!-- 
+      Email template by leemunroe:
+      https://github.com/leemunroe/responsive-html-email-template
+    -->
     <html lang="en">
     <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
