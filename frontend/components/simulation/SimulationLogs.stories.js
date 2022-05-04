@@ -4,7 +4,7 @@ import SimulationLogs from './SimulationLogs';
 
 const randomLogs = length => {
     return faker.datatype.array(length).map(() => {
-        return `${faker.date.recent().toISOString()}: ${faker.random.words(3)}`;
+        return `${faker.date.recent().toISOString()}: ${faker.lorem.sentence()}`;
     });
 };
 

@@ -73,7 +73,7 @@ export default Vue.extend({
         };
     },
     computed: {
-        simulations(): Object {
+        simulations(): SelectOption[] {
             return this.simulationIds
                 .split(',')
                 .map(id => ({
@@ -83,16 +83,16 @@ export default Vue.extend({
                 .filter(simulation => simulation.label !== '');
         },
         noSimulationsAvailable(): boolean {
-            return Object.keys(this.simulations).length < 1;
+            return this.simulations.length < 1;
         },
-        hasProperEnvVariables(): boolean {
-            return !!this.selectedSimulationId && !!this.inputToken;
+        hasValidVariables(): boolean {
+            return !!this.selectedSimulationId && !!this.inputToken.trim();
         },
     },
     methods: {
         submitForm() {
             this.$emit('submit', {
-                token: this.inputToken,
+                token: this.inputToken.trim(),
                 simulationId: this.selectedSimulationId,
             });
         },
