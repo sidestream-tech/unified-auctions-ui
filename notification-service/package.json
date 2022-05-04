@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+    "bignumber.js": "^9.0.2",
     "dotenv": "^16.0.0",
     "ethers": "^5.6.5",
     "nodemailer": "^6.7.4",

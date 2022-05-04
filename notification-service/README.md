@@ -48,14 +48,18 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
   {
     id: 'ChainlogUpdateVersion',
     contract: '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F',
-    eventNames: ['UpdateVersion'],
+    eventName: 'UpdateVersion',
+    formatData: event => {
+      return `Key: ${event.args.key}<br /> Address: ${event.args.addr}`;
+    },
   }
 ]
 ```
 
 - `id` - Unique identifier. Used for references in email and console logs
 - `contract` - The Ethereum Address on which your Event is
-- `eventNames` - An array of Event names you wish to subscribe to. Use `*` to subscribe to all
+- `eventName` - The name of the event you want to observe
+- `formatData` - A function that takes the event output, can reformat and then output it in html. It will be displayed in the email.
 
 ## Development Setup
 

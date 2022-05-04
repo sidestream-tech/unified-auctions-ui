@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { EventSubscription } from '../types';
 import { ETHERSCAN_API_KEY, ETHEREUM_NETWORK } from '../variables';
-import { getEtherscanAPI } from './NETWORKS';
+import { getEtherscanAPI, getEtherscanURL } from './NETWORKS';
 
 export async function getAbiFromContractAddress(contract: string) {
     if (!ETHERSCAN_API_KEY) {
@@ -17,19 +17,31 @@ export async function getAbiFromContractAddress(contract: string) {
 
 export const SUBSCRIPTIONS: EventSubscription[] = [
     {
-        id: 'ChainlogUpdateVersion',
+        id: 'ChainLogUpdateAddress',
         contract: '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F',
-        eventName: 'UpdateVersion',
+        eventName: 'UpdateAddress',
         formatData: event => {
-            return JSON.stringify(event);
+            return `
+                Key: ${event.args.key}<br /> 
+                Address: <a href="${getEtherscanURL(ETHEREUM_NETWORK)}/address/${
+                event.args.addr
+            }" target="_blank" style="color: lightblue;">${event.args.addr}</a>
+            `;
         },
     },
     {
-        id: 'MCD_DAI',
+        id: 'MCD_DAI_Transfer',
         contract: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
-        eventName: '*',
+        eventName: 'Transfer',
         formatData: event => {
-            return JSON.stringify(event);
+            return `
+                From: <a href="${getEtherscanURL(ETHEREUM_NETWORK)}/address/${
+                event.args.src
+            }" target="_blank" style="color: lightblue;">${event.args.src}</a><br />
+                To: <a href="${getEtherscanURL(ETHEREUM_NETWORK)}/address/${
+                event.args.dst
+            }" target="_blank" style="color: lightblue;">${event.args.dst}</a>
+            `;
         },
     },
 ];

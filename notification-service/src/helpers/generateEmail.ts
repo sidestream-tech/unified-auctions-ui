@@ -126,7 +126,7 @@ export default function generateEmail(mailData: MailData, link: string, network:
                              We just detected an update of the event <b>"${mailData.eventData.event}"</b> of the contract "${mailData.eventSubscription.contract}" on the network "${network}".
                           </p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: bold; margin: 0; margin-bottom: 5px; color: #3498db">
-                             New Data:
+                             Updated Data:
                           </p>
                           <p style="font-family: monospace; font-size: 14px; font-weight: normal; margin: 0 0 15px; background-color: #2e3338; color: white; padding: 10px; border-radius: 10px; max-width: 580px; overflow: auto">
                              ${mailData.formattedData}
