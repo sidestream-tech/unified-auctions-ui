@@ -3,7 +3,6 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { SMTP_EMAIL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNAME } from './variables';
 import { MAIL_PREFIX } from './constants/PREFIXES';
 import generateEmail, { generateTextEmail } from './helpers/generateEmail';
-import { getEtherscanURL } from './constants/NETWORKS';
 import validator from 'validator';
 import { getReceiversForSubscriptionId } from './recievers';
 import { MailData } from './types';
@@ -49,7 +48,6 @@ export async function sendMail(
     network: string,
     mailData: MailData
 ) {
-    const etherscanURL = `${getEtherscanURL(network)}/tx/${mailData.eventData.transactionHash}#eventlog`;
     const receivers = getReceiversForSubscriptionId(mailData.eventSubscription.id);
 
     if (!receivers) {
@@ -60,8 +58,8 @@ export async function sendMail(
         from: SMTP_EMAIL,
         to: receivers,
         subject: `[${network.toUpperCase()}] ${mailData.eventSubscription.id} has been triggered`,
-        text: generateTextEmail(mailData, etherscanURL, network),
-        html: generateEmail(mailData, etherscanURL, network),
+        text: generateTextEmail(mailData, network),
+        html: generateEmail(mailData, network),
     });
 
     // Preview only available when sending through an Ethereal account

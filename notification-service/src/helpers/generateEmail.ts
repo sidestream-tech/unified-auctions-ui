@@ -1,10 +1,11 @@
 import { MailData } from '../types';
+import { getEtherscanURL } from '../constants/NETWORKS';
 
-export function generateTextEmail(mailData: MailData, link: string, network: string) {
-    return `We just detected an update of the event "${mailData.eventData.event}" from the contract "${mailData.eventSubscription.contract}" on the network "${network}". View more info on ${link}`;
+export function generateTextEmail(mailData: MailData, network: string) {
+    return `We just detected an update of the event "${mailData.eventData.event}" from the contract "${mailData.eventSubscription.contract}" on the network "${network}". View more info on ${getEtherscanURL(network)}/tx/${mailData.eventData.transactionHash}#eventlog`;
 }
 
-export default function generateEmail(mailData: MailData, link: string, network: string) {
+export default function generateEmail(mailData: MailData, network: string) {
     return `
     <!doctype html>
     <!-- 
@@ -127,7 +128,7 @@ export default function generateEmail(mailData: MailData, link: string, network:
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Hello,</p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                             We just detected an update of the event <b>"${mailData.eventData.event}"</b> of the contract "${mailData.eventSubscription.contract}" on the network "${network}".
+                             We just detected an update of the event <b>"${mailData.eventData.event}"</b> of the contract <a href="${getEtherscanURL(network)}/address/${mailData.eventSubscription.contract}#eventlog">${mailData.eventSubscription.contract}</a> on the network "${network}".
                           </p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: bold; margin: 0; margin-bottom: 5px; color: #3498db">
                              Updated Data:
@@ -143,7 +144,7 @@ export default function generateEmail(mailData: MailData, link: string, network:
                                     <tbody>
                                       <tr>
                                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background-color: #3498db;" valign="top" align="center" bgcolor="#3498db"> 
-                                          <a href="${link}" target="_blank" style="border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border-color: #3498db; color: #ffffff;">
+                                          <a href="${getEtherscanURL(network)}/tx/${mailData.eventData.transactionHash}#eventlog" target="_blank" style="border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border-color: #3498db; color: #ffffff;">
                                             View Event on Etherscan
                                           </a>
                                         </td>
