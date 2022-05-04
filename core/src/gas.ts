@@ -10,7 +10,7 @@ const maxPriorityFeePerGas = new BigNumber(process.env.MAX_PRIORITY_FEE_PER_GAS_
     -ETH_NUMBER_OF_DIGITS
 );
 
-export const _getBaseFeePerGas = async function (network: string): Promise<BigNumber> {
+const _getBaseFeePerGas = async function (network: string): Promise<BigNumber> {
     const provider = await getProvider(network);
     const latestBlock = await provider.getBlock('latest');
     if (!latestBlock?.baseFeePerGas?._hex) {
@@ -19,7 +19,7 @@ export const _getBaseFeePerGas = async function (network: string): Promise<BigNu
     return new BigNumber(latestBlock?.baseFeePerGas?._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
 };
 
-const getBaseFeePerGas = memoizee(_getBaseFeePerGas, {
+export const getBaseFeePerGas = memoizee(_getBaseFeePerGas, {
     maxAge: GAS_CACHE_MS,
     promise: true,
     length: 1,
