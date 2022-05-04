@@ -48,9 +48,9 @@ export async function sendMail(
     const info = await transporter.sendMail({
         from: SMTP_EMAIL,
         to: RECEIVERS,
-        subject: `Event "${mailData.eventName}" has been updated!`,
-        text: generateTextEmail(mailData.eventName, mailData.contractAddress, etherscanURL),
-        html: generateEmail(mailData.eventName, mailData.contractAddress, etherscanURL),
+        subject: `[${network.toUpperCase()}] Event "${mailData.eventName}" has been updated`,
+        text: generateTextEmail(mailData.eventName, mailData.contractAddress, etherscanURL, network),
+        html: generateEmail(mailData.eventName, mailData.contractAddress, etherscanURL, network),
     });
 
     // Preview only available when sending through an Ethereal account

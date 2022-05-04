@@ -1,8 +1,8 @@
-export function generateTextEmail(eventName: string, contractAddress: string, link: string) {
-    return `We just detected an update of the event "${eventName}" on the contract "${contractAddress}". View more info on ${link}`;
+export function generateTextEmail(eventName: string, contractAddress: string, link: string, network: string) {
+    return `We just detected an update of the event "${eventName}" from the contract "${contractAddress}" on the network "${network}". View more info on ${link}`;
 }
 
-export default function generateEmail(eventName: string, contractAddress: string, link: string) {
+export default function generateEmail(eventName: string, contractAddress: string, link: string, network: string) {
     return `
     <!doctype html>
     <html lang="en">
@@ -121,7 +121,7 @@ export default function generateEmail(eventName: string, contractAddress: string
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Hello,</p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                             We just detected an update of the event <b>"${eventName}"</b> on the contract "${contractAddress}".
+                             We just detected an update of the event <b>"${eventName}"</b> of the contract "${contractAddress}" on the network "${network}".
                           </p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
                              You are currently subscribed to receive updates when this event is triggered. 
