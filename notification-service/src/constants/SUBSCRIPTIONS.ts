@@ -27,3 +27,7 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
         eventNames: ['*'],
     },*/
 ];
+
+export function getSubscriptionById(id: string) {
+    return SUBSCRIPTIONS.find(eventSubscription => eventSubscription.id == id);
+}

@@ -34,8 +34,7 @@ $ npm run start
     - `SMTP_USERNAME`: (required) - SMTP username
     - `SMTP_PASSWORD`: (required) - SMTP password
     - `SMTP_EMAIL`: (required) - The outgoing address which is displayed to the user
-- `RECEIVERS`: (required) - a comma-separated list of email addresses, that should receive an email when an event is
-  called
+- `RECEIVERS`: (required) - a json-formatted object with `email` as key and `Event Subscription Ids` as an array value, eg `RECEIVERS="{\"email@example.com\": [\"EVENT_1\", \"EVENT_2\"]}"`. The email will then become subscribed to the listed events
 
 Note: env variables are accessible via the `secret` command under `auction-ui/notification-service/${environment}`.
 

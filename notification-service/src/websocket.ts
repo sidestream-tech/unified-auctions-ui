@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { INFURA_PROJECT_ID, ETHEREUM_NETWORK } from './variables';
 import { getAbiFromContractAddress, SUBSCRIPTIONS } from './constants/SUBSCRIPTIONS';
 import { EVENT_PREFIX, WEBSOCKET_PREFIX } from './constants/PREFIXES';
+import { MailData } from './types';
 
 export function setupWebSocket(): ethers.providers.WebSocketProvider {
     if (!INFURA_PROJECT_ID) {
@@ -16,10 +17,7 @@ export function setupWebSocket(): ethers.providers.WebSocketProvider {
     return wsProvider;
 }
 
-export function subscribe(
-    wsProvider: ethers.providers.WebSocketProvider,
-    sendMail: (mailData: { eventName: string; contractAddress: string; transactionHash: string }) => void
-) {
+export function subscribe(wsProvider: ethers.providers.WebSocketProvider, sendMail: (mailData: MailData) => void) {
     SUBSCRIPTIONS.map(async subscription => {
         const contractAbi = await getAbiFromContractAddress(subscription.contract);
         const contract = new ethers.Contract(subscription.contract, contractAbi, wsProvider);
@@ -33,6 +31,7 @@ export function subscribe(
                     `${EVENT_PREFIX} event "${event.event}" triggered in block "${event.blockNumber}". Attempting to send email.`
                 );
                 sendMail({
+                    subscriptionId: subscription.id,
                     eventName: event.event,
                     contractAddress: subscription.contract,
                     transactionHash: event.transactionHash,
