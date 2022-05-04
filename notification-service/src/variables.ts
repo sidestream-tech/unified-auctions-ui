@@ -5,6 +5,6 @@ export const SMTP_HOST = process.env.SMTP_HOST;
 export const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465');
 export const SMTP_USERNAME = process.env.SMTP_USERNAME;
 export const SMTP_PASSWORD = process.env.SMTP_PASSWORD;
-export const SMTP_EMAIL = process.env.SMTP_EMAIL || 'notification@unified-auctions.makerdao.com';
+export const SMTP_EMAIL = process.env.SMTP_EMAIL;
 
-export const RECEIVERS = process.env.RECEIVERS || '';
+export const RECEIVERS = process.env.RECEIVERS;

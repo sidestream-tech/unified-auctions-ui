@@ -1,9 +1,10 @@
 import { RECEIVERS } from './variables';
+import validator from 'validator';
 
 const validateReceivers = function (receivers: string[]) {
     const invalidEmails: string[] = [];
     receivers.forEach(receiver => {
-        if (!receiver.includes('@') || !receiver.includes('.')) {
+        if (!validator.isEmail(receiver)) {
             invalidEmails.push(receiver);
         }
     });
@@ -28,6 +29,6 @@ export const setupReceiverList = function () {
         const parsedList = parseReceiverList(RECEIVERS);
         validateReceivers(parsedList);
     } else {
-        console.warn(`receivers: skipping setup due to missing RECEIVERS`);
+        throw new Error('receivers: please specify at least one email address in RECEIVERS');
     }
 };

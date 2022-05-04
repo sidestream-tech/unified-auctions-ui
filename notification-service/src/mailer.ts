@@ -4,8 +4,15 @@ import { RECEIVERS, SMTP_EMAIL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNA
 import { MAIL_PREFIX } from './constants/PREFIXES';
 import generateEmail, { generateTextEmail } from './helpers/generateEmail';
 import { getEtherscanURL } from './constants/NETWORKS';
+import validator from 'validator';
 
 export async function setupMailer() {
+    if (!SMTP_EMAIL) {
+        throw new Error('mailer: please specify an outgoing email address in "SMTP_EMAIL"');
+    }
+    if (!validator.isEmail(SMTP_EMAIL)) {
+        throw new Error(`mailer: the SMTP_EMAIL "${SMTP_EMAIL}" is not a valid email address`);
+    }
     if (!SMTP_HOST || !SMTP_PORT || !SMTP_USERNAME || !SMTP_PASSWORD) {
         console.warn(`${MAIL_PREFIX} missing account data. using mock ethereal email.`);
 
