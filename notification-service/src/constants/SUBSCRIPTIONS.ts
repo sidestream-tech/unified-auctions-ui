@@ -1,6 +1,6 @@
 import { EventSubscription } from '../types';
 import CHAINLOG_ABI from '../abis/CHAINLOG.json';
-import MCD_DAI_ABI from '../abis/MCD_DAI.json';
+// import MCD_DAI_ABI from '../abis/MCD_DAI.json';
 
 export const SUBSCRIPTIONS: EventSubscription[] = [
     {
@@ -10,11 +10,11 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
         eventNames: ['UpdateVersion'],
         generateText: (latestEvent, previousEvent) => `New: ${latestEvent}; Previous Event: ${previousEvent}`,
     },
-    {
+    /*{
         id: 'MCD_DAI',
         contract: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
         abi: MCD_DAI_ABI,
         eventNames: ['*'],
         generateText: (latestEvent, previousEvent) => `New: ${latestEvent}; Previous Event: ${previousEvent}`,
-    },
+    },*/
 ];
