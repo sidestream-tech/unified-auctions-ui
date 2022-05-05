@@ -116,6 +116,18 @@ export default function generateEmailHTMLBody(
               background-color: #34495e !important;
               border-color: #34495e !important;
             }
+            blockquote {
+              margin-block: 0;
+              margin-inline: 0;
+              background-color: #12302e;
+              padding: 5px 10px;
+              border-radius: 10px;
+              color: white;
+              margin-bottom: 10px;
+            }
+            blockquote a {
+              color: lightblue !important;
+            }
           }
     </style>
     </head>
