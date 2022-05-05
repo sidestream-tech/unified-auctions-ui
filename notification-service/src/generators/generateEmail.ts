@@ -1,5 +1,6 @@
 import { EventSubscription } from '../types';
 import { formatEtherscanLink } from '../etherscan';
+import { POWERED_BY, POWERED_BY_LINK } from '../variables';
 
 export function generateEmailSubject(network: string, id: string) {
     return `[${network.toUpperCase()}] ${id} has been triggered`;
@@ -203,7 +204,7 @@ export default function generateEmailHTMLBody(
                 <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;" width="100%">
                   <tr>
                     <td class="content-block powered-by" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; color: #999999; font-size: 12px; text-align: center;" valign="top" align="center">
-                      Powered by <a href="https://github.com/sidestream-tech/unified-auctions-ui" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;">Unified Auctions UI</a>.
+                      Powered by <a href="${POWERED_BY_LINK}" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;">${POWERED_BY}</a>.
                     </td>
                   </tr>
                 </table>

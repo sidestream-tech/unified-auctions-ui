@@ -1,5 +1,6 @@
 import { EventSubscription } from '../types';
 import { formatEtherscanLink } from '../etherscan';
+import { POWERED_BY, POWERED_BY_LINK } from '../variables';
 
 export function generateDiscordMessage(
     network: string,
@@ -11,9 +12,8 @@ export function generateDiscordMessage(
         embeds: [
             {
                 author: {
-                    name: 'Unified Auctions Service',
-                    url: 'https://github.com/sidestream-tech/unified-auctions-ui',
-                    icon_url: 'https://i.imgur.com/nMmBaXj.png',
+                    name: POWERED_BY,
+                    url: POWERED_BY_LINK,
                 },
                 title: `${eventSubscription.id} has been triggered`,
                 url: formatEtherscanLink(network, 'tx', event.transactionHash),

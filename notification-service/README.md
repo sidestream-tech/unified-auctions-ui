@@ -37,6 +37,8 @@ Note: env variables are accessible via the `secret` command under `auction-ui/${
     - `SMTP_PASSWORD`: (required) - SMTP password
     - `SMTP_EMAIL`: (required) - The outgoing address which is displayed to the user
 - `RECEIVERS`: (required) - a [json-string-formatted](https://onlinejsontools.com/stringify-json) array of `Receivers` (See explanation below)
+- `POWERED_BY`: (optional) - the operator of the service
+- `POWERED_BY_LINK`: (optional) - a link on which you can contact the operator of the service
 
 ### Receivers:
 

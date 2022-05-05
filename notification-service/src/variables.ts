@@ -9,3 +9,6 @@ export const SMTP_PASSWORD = process.env.SMTP_PASSWORD;
 export const SMTP_EMAIL = process.env.SMTP_EMAIL;
 
 export const RECEIVERS = process.env.RECEIVERS;
+
+export const POWERED_BY = process.env.POWERED_BY || 'Unified Auctions Service';
+export const POWERED_BY_LINK = process.env.POWERED_BY_LINK || 'https://github.com/sidestream-tech/unified-auctions-ui';
