@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "tsdx watch",
     "build": "tsdx build",
-    "start": "npm run build && node .",
+    "start": "node .",
     "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0"
   },
   "engines": {
