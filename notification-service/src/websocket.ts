@@ -5,7 +5,7 @@ import { WEBSOCKET_PREFIX } from './constants/PREFIXES';
 import { EventData, EventSubscription } from './types';
 import { getAbiFromContractAddress } from './etherscan';
 
-export function setupWebSocket(): ethers.providers.WebSocketProvider {
+export async function setupWebSocket(): Promise<ethers.providers.WebSocketProvider> {
     if (!INFURA_PROJECT_ID) {
         throw new Error(`${WEBSOCKET_PREFIX} please set a valid INFURA_PROJECT_ID, in the environment files`);
     }
@@ -14,7 +14,9 @@ export function setupWebSocket(): ethers.providers.WebSocketProvider {
         ETHEREUM_NETWORK
     );
 
-    console.info(`${WEBSOCKET_PREFIX} websocket connection opened with network "${ETHEREUM_NETWORK}"`);
+    await wsProvider.ready;
+
+    console.info(`${WEBSOCKET_PREFIX} websocket connection opened to "${ETHEREUM_NETWORK}" network`);
     return wsProvider;
 }
 
@@ -33,18 +35,25 @@ export function listenForEvents(
     });
 
     Object.keys(contracts).forEach(async contractAddress => {
-        const contractAbi = await getAbiFromContractAddress(contractAddress);
-        const contract = new ethers.Contract(contractAddress, contractAbi, wsProvider);
-
-        console.info(
-            `${WEBSOCKET_PREFIX} registered listener for ${contracts[contractAddress].length} event(s) on contract "${contractAddress}"`
-        );
-        contract.on('*', event => {
-            contracts[contractAddress].forEach(eventSubscription => {
-                if (event.event === eventSubscription.eventName) {
-                    triggerEvent({ eventSubscription: eventSubscription, event: event });
-                }
+        try {
+            const contractAbi = await getAbiFromContractAddress(contractAddress);
+            const contract = new ethers.Contract(contractAddress, contractAbi, wsProvider);
+            const eventNames = contracts[contractAddress].map(eventSubscription => {
+                return eventSubscription.eventName;
             });
-        });
+
+            console.info(
+                `${WEBSOCKET_PREFIX} subscribed to "${eventNames.toString()}" event(s) on "${contractAddress}" address`
+            );
+            contract.on('*', event => {
+                contracts[contractAddress].forEach(eventSubscription => {
+                    if (event.event === eventSubscription.eventName) {
+                        triggerEvent({ eventSubscription: eventSubscription, event: event });
+                    }
+                });
+            });
+        } catch (error) {
+            console.error(`${WEBSOCKET_PREFIX} failed to subscribe to "${contractAddress}" address. Error: ${error}`);
+        }
     });
 }

@@ -12,7 +12,7 @@ const start = async function () {
     validateReceiverList();
 
     const notifiers = await setupNotifiers();
-    const wsProvider = setupWebSocket();
+    const wsProvider = await setupWebSocket();
 
     listenForEvents(wsProvider, eventData => notify(notifiers, eventData));
 };
