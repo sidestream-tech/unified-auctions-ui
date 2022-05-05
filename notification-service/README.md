@@ -15,7 +15,7 @@ refer to [`Environment variables`](#environment-variables) section below.
 # install dependencies
 $ npm install
 
-# serve with hot reload
+# rebuild and launch server
 $ npm run dev
 
 # build for production and launch server
