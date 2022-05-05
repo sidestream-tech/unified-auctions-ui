@@ -9,12 +9,13 @@ export async function setupWebSocket(): Promise<ethers.providers.WebSocketProvid
     if (!INFURA_PROJECT_ID) {
         throw new Error(`${WEBSOCKET_PREFIX} please set a valid INFURA_PROJECT_ID, in the environment files`);
     }
+
     const wsProvider = new ethers.providers.WebSocketProvider(
         `wss://${ETHEREUM_NETWORK}.infura.io/ws/v3/${INFURA_PROJECT_ID}`,
         ETHEREUM_NETWORK
     );
 
-    await wsProvider.ready;
+    await wsProvider.getNetwork();
 
     console.info(`${WEBSOCKET_PREFIX} websocket connection opened to "${ETHEREUM_NETWORK}" network`);
     return wsProvider;

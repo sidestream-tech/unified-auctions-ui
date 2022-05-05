@@ -1,24 +1,40 @@
 {
-  // see https://www.typescriptlang.org/tsconfig to better understand tsconfigs
-  "include": ["src", "types"],
   "compilerOptions": {
-    "module": "esnext",
-    "lib": ["dom", "esnext"],
-    "importHelpers": true,
-    "declaration": true,
-    "sourceMap": true,
     "rootDir": "./src",
+    "outDir": "dist",
+    "composite": true,
+    "incremental": true,
+    "target": "es2017",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSourceMap": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
     "strict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "moduleResolution": "node",
-    "jsx": "react",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "resolveJsonModule": true
-  }
+    "noFallthroughCasesInSwitch": true,
+    "traceResolution": false,
+    "listEmittedFiles": true,
+    "listFiles": false,
+    "pretty": true,
+    "lib": [
+      "es2019",
+      "dom"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "src/**/*"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.json"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "references": []
 }

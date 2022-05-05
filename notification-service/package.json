@@ -10,7 +10,7 @@
     "src"
   ],
   "scripts": {
-    "dev": "tsdx watch",
+    "dev": "npm run build && npm run start",
     "build": "tsdx build",
     "start": "node .",
     "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0"
