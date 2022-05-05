@@ -7,6 +7,10 @@ import { formatEtherscanLink } from '../etherscan';
 const DISCORD_PREFIX = '💬 [discord]:';
 
 export async function notifyPerDiscord(eventData: EventData, receivers: string[]) {
+    if (receivers.length <= 0) {
+        return;
+    }
+
     const formattedData = eventData.eventSubscription
         .formatData(eventData.event, (type, content) => formatEtherscanLink(ETHEREUM_NETWORK, type, content))
         .replace('<br />', '');
