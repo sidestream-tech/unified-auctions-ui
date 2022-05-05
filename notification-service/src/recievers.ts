@@ -34,23 +34,7 @@ function validateReceivers(receivers: Receiver[]) {
 }
 
 export function parseReceiverList(receivers: string): Receiver[] {
-    const receiverObjects = JSON.parse(JSON.parse(`"${receivers}"`));
-    const receiverIds = Object.keys(receiverObjects);
-
-    return receiverIds.map(receiverId => ({
-        receiver: receiverId,
-        type: receiverObjects[receiverId].type,
-        subscriptions: receiverObjects[receiverId].subscriptions,
-    }));
-}
-
-export function validateReceiverList() {
-    if (RECEIVERS) {
-        const parsedList = parseReceiverList(RECEIVERS);
-        validateReceivers(parsedList);
-    } else {
-        throw new Error('receivers: please specify at least one receiver in RECEIVERS');
-    }
+    return JSON.parse(JSON.parse(`"${receivers}"`));
 }
 
 export function getReceiversForSubscriptionId(subscriptionId: string) {
@@ -66,4 +50,13 @@ export function getReceiversForSubscriptionId(subscriptionId: string) {
         }
     });
     return receivers;
+}
+
+export function validateReceiverList() {
+    if (RECEIVERS) {
+        const parsedList = parseReceiverList(RECEIVERS);
+        validateReceivers(parsedList);
+    } else {
+        throw new Error('receivers: please specify at least one receiver in RECEIVERS');
+    }
 }

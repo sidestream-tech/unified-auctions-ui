@@ -25,6 +25,8 @@ $ npm run start
 
 ## Environment variables
 
+Note: env variables are accessible via the `secret` command under `auction-ui/${environment}/notification-service`.
+
 - `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum ->
 - `ETHERSCAN_API_KEY`: (required) [Etherscan API Key](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics), which is used to automatically download ABIs 
 - `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
@@ -34,44 +36,54 @@ $ npm run start
     - `SMTP_USERNAME`: (required) - SMTP username
     - `SMTP_PASSWORD`: (required) - SMTP password
     - `SMTP_EMAIL`: (required) - The outgoing address which is displayed to the user
-- `RECEIVERS`: (required) - a json-formatted object with `receiver` as key and `Event Subscription Ids` as an array value, eg `RECEIVERS="{\"email@example.com\": {\"type\": \"email\", \"subscriptions\": [\"EVENT_1\", \"EVENT_2\"]}}"`. The email will then become subscribed to the listed events
+- `RECEIVERS`: (required) - a [json-string-formatted](https://onlinejsontools.com/stringify-json) array of `Receivers` (See explanation below)
 
-Note: env variables are accessible via the `secret` command under `auction-ui/${environment}/notification-service`.
+### Receivers:
 
-## Adding a new "Receiver"
-You can set your receivers over the environment variable `RECEIVERS`. This is a json-formatted object. An example can be found below:
+Every Receiver requires the following values:
+- `receiver` - A custom value depending on the notifier type (see examples below)
+- `type` - The type of notifier (we currently support `email` and `discord`)
+- `subscriptions` - An array of [Subscription Ids](#event-subscriptions)
 
+You can find examples below:
+
+#### Email Receiver:
 ```json
 {
-  "test@example.com": {
-    "type": "email",
-    "subscriptions": ["MCD_DAI_Transfer", "ChainLogUpdateAddress"]
-  },
-  "https://discord.com/api/webhooks/YOUR_WEBHOOK_ADDRESS": {
-    "type": "discord",
-    "subscriptions": ["MCD_DAI_Transfer", "ChainLogUpdateAddress"]
-  }
+  "receiver": "test@example.com",
+  "type": "email",
+  "subscriptions": ["MCD_DAI_Transfer", "ChainLogUpdateAddress"]
 }
 ```
-_final environment variable must be [stringified JSON](https://onlinejsontools.com/stringify-json)!_
+Please make sure to include the required [`Environment variables`](#environment-variables).
 
-We currently support two different receiver types:
+#### Discord Receiver:
+````json
+{
+  "receiver": "https://discord.com/api/webhooks/YOUR_WEBHOOK_ADDRESS",
+  "type": "discord",
+  "subscriptions": ["MCD_DAI_Transfer", "ChainLogUpdateAddress"]
+}
+````
+Please provide a [Discord Webhook URL](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) to which we can send updates.
 
-### Email
-In order to use email receivers you need to set up your own SMTP server and connect it to the service. Refer to [`Environment variables`](#environment-variables) for more information.
+You do not need to update any other environment variables to setup a discord notifier.
 
-When adding a new Email Receiver make sure to set the email address as the key of the object and set the type to `email`.
+## Event Subscriptions
 
-### Discord
-If you want to send updates to your discord server, please begin by generating a [Discord Webhook URL](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
+Users can add their own custom event subscriptions. By default, the project comes with a few predefined subscriptions, however these may need to change depending on the use case or network.
 
-When adding a new discord receiver make sure to set the discord web hook url as the key of the object and set the type to `discord`.
+The subscriptions can be found in `./src/constants/SUBSCRIPTIONS.ts`.
 
-## Adding a new "Event Subscription"
+Every subscription requires the following values:
+- `id` - Unique identifier. Used for references in email and console logs
+- `address` - The Ethereum address which expected to emit the event
+- `eventName` - The name of the event you want to observe
+- `formatData` - A function that takes the emitted event data and have to return a markdown string that will be displayed in through the different notifiers. It has two values provided to help with the formatting:
+  - `event` - the entire data returned by the event being called
+  - `formatEtherscanLink` - a helper function that takes in `type` (either `address` or `tx`) and the content (either the `address` or `transactionHash`).
 
-In order to add a custom event subscription you need to edit the file `/constants/SUBSCRIPTIONS.ts`. Inside you will
-find an array of Event Subscriptions. You can add your own with the following format:
-
+Example:
 ```js
 export const SUBSCRIPTIONS: EventSubscription[] = [
   {
@@ -81,17 +93,10 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
     formatData: (event, formatEtherscanLink) => {
       return `> From: [${event.args.src}](${formatEtherscanLink('address', event.args.src)})<br />
               > To: [${event.args.dst}](${formatEtherscanLink('address', event.args.src)})`;
-    },
+    }
   }
 ]
 ```
-
-- `id` - Unique identifier. Used for references in email and console logs
-- `address` - The Ethereum address which expected to emit the event
-- `eventName` - The name of the event you want to observe
-- `formatData` - A function that takes the emitted event data and have to return a markdown string that will be displayed in through the different notifiers. It has two values provided to help with the formatting:
-  - `event` - the entire data returned by the event being called
-  - `formatEtherscanLink` - a helper function that takes in `type` (either `address` or `tx`) and the content (either the `address` or `transactionHash`).
 
 ## Development Setup
 
