@@ -17,7 +17,7 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
         eventName: 'Transfer',
         formatData: (event, formatEtherscanLink) => {
             return `> From: [${event.args.src}](${formatEtherscanLink('address', event.args.src)})<br />
-                    > To: [${event.args.dst}](${formatEtherscanLink('address', event.args.src)})`;
+                    > To: [${event.args.dst}](${formatEtherscanLink('address', event.args.dst)})`;
         },
     },
 ];
