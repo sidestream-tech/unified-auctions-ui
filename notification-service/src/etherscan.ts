@@ -12,7 +12,7 @@ function getEtherscanAPI(network: string) {
 
 export function validateEtherscanAPIKey() {
     if (!ETHERSCAN_API_KEY) {
-        throw new Error(``);
+        throw new Error(`Please provide a valid "ETHERSCAN_API_KEY".`);
     }
 }
 
