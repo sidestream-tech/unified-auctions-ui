@@ -1,6 +1,6 @@
 export const INFURA_PROJECT_ID = process.env.INFURA_PROJECT_ID;
 export const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY;
-export const ETHEREUM_NETWORK = process.env.ETHEREUM_NETWORK || 'mainnet';
+export const ETHEREUM_NETWORK = process.env.ETHEREUM_NETWORK || 'kovan';
 
 export const SMTP_HOST = process.env.SMTP_HOST;
 export const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465');
