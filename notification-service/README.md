@@ -36,7 +36,7 @@ $ npm run start
     - `SMTP_EMAIL`: (required) - The outgoing address which is displayed to the user
 - `RECEIVERS`: (required) - a json-formatted object with `receiver` as key and `Event Subscription Ids` as an array value, eg `RECEIVERS="{\"email@example.com\": {\"type\": \"email\", \"subscriptions\": [\"EVENT_1\", \"EVENT_2\"]}}"`. The email will then become subscribed to the listed events
 
-Note: env variables are accessible via the `secret` command under `auction-ui/notification-service/${environment}`.
+Note: env variables are accessible via the `secret` command under `auction-ui/${environment}/notification-service`.
 
 ## Adding a new "Receiver"
 You can set your receivers over the environment variable `RECEIVERS`. This is a json-formatted object. An example can be found below:
