@@ -1,17 +1,20 @@
 import 'dotenv/config';
-import { sendMail, setupMailer } from './mailer';
-import { setupWebSocket, subscribe } from './websocket';
-import { isNetworkSupported } from './constants/NETWORKS';
 import { ETHEREUM_NETWORK } from './variables';
-import { setupReceiverList } from './recievers';
+import { listenForEvents, setupWebSocket } from './websocket';
+import { isNetworkSupported } from './constants/NETWORKS';
+import { validateReceiverList } from './recievers';
+import { validateEtherscanAPIKey } from './etherscan';
+import { notify, setupNotifiers } from './notifiers';
 
 const start = async function () {
     isNetworkSupported(ETHEREUM_NETWORK);
-    setupReceiverList();
-    const transporter = await setupMailer();
+    validateEtherscanAPIKey();
+    validateReceiverList();
+
+    const notifiers = await setupNotifiers();
     const wsProvider = setupWebSocket();
 
-    subscribe(wsProvider, mailData => sendMail(transporter, ETHEREUM_NETWORK, mailData));
+    listenForEvents(wsProvider, eventData => notify(notifiers, eventData));
 };
 
 start().catch(error => {

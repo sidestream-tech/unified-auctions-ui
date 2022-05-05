@@ -1,28 +1,36 @@
 import { RECEIVERS } from './variables';
-import validator from 'validator';
 import { Receiver } from './types';
 import { getSubscriptionById } from './constants/SUBSCRIPTIONS';
+import { validateEmailReceivers } from './notifiers/mailer';
 
-function validateReceivers(receivers: Receiver[]) {
-    const invalidEmails: string[] = [];
+function validateSubscriptions(subscriptions: string[]) {
     const invalidEventSubscriptions: string[] = [];
-
-    receivers.forEach(receiver => {
-        if (!validator.isEmail(receiver.email)) {
-            invalidEmails.push(receiver.email);
+    subscriptions.forEach(subscription => {
+        if (!getSubscriptionById(subscription)) {
+            invalidEventSubscriptions.push(subscription);
         }
-        receiver.subscriptions.forEach(eventSubscription => {
-            if (!getSubscriptionById(eventSubscription)) {
-                invalidEventSubscriptions.push(eventSubscription);
-            }
-        });
     });
-    if (invalidEmails.length > 0) {
-        throw new Error(`receivers: invalid emails found for "${invalidEmails.toString()}"`);
-    }
     if (invalidEventSubscriptions.length > 0) {
         throw new Error(`receivers: invalid event subscriptions found for "${invalidEventSubscriptions.toString()}"`);
     }
+}
+
+export function getReceiversByType(receivers: Receiver[], type: string) {
+    return receivers
+        .filter(receiver => {
+            return receiver.type === type;
+        })
+        .map(receiver => {
+            return receiver.receiver;
+        });
+}
+
+function validateReceivers(receivers: Receiver[]) {
+    receivers.forEach(receiver => {
+        validateSubscriptions(receiver.subscriptions);
+    });
+
+    validateEmailReceivers(getReceiversByType(receivers, 'email'));
 }
 
 export function parseReceiverList(receivers: string): Receiver[] {
@@ -30,30 +38,31 @@ export function parseReceiverList(receivers: string): Receiver[] {
     const receiverIds = Object.keys(receiverObjects);
 
     return receiverIds.map(receiverId => ({
-        email: receiverId,
-        subscriptions: receiverObjects[receiverId],
+        receiver: receiverId,
+        type: receiverObjects[receiverId].type,
+        subscriptions: receiverObjects[receiverId].subscriptions,
     }));
 }
 
-export function setupReceiverList() {
+export function validateReceiverList() {
     if (RECEIVERS) {
         const parsedList = parseReceiverList(RECEIVERS);
         validateReceivers(parsedList);
     } else {
-        throw new Error('receivers: please specify at least one email address in RECEIVERS');
+        throw new Error('receivers: please specify at least one receiver in RECEIVERS');
     }
 }
 
 export function getReceiversForSubscriptionId(subscriptionId: string) {
     if (!RECEIVERS) {
-        return undefined;
+        throw new Error('receivers: please specify at least one receiver in RECEIVERS');
     }
     const parsedList = parseReceiverList(RECEIVERS);
 
-    const receivers: string[] = [];
-    parsedList.forEach(emailSubscriber => {
-        if (emailSubscriber.subscriptions.includes(subscriptionId) && !receivers.includes(emailSubscriber.email)) {
-            receivers.push(emailSubscriber.email);
+    const receivers: Receiver[] = [];
+    parsedList.forEach(receiver => {
+        if (receiver.subscriptions.includes(subscriptionId)) {
+            receivers.push(receiver);
         }
     });
     return receivers;

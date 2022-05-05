@@ -1,8 +1,9 @@
 import { ethers } from 'ethers';
 import { INFURA_PROJECT_ID, ETHEREUM_NETWORK } from './variables';
-import { getAbiFromContractAddress, SUBSCRIPTIONS } from './constants/SUBSCRIPTIONS';
-import { EVENT_PREFIX, WEBSOCKET_PREFIX } from './constants/PREFIXES';
-import { EventSubscription, MailData } from './types';
+import { SUBSCRIPTIONS } from './constants/SUBSCRIPTIONS';
+import { WEBSOCKET_PREFIX } from './constants/PREFIXES';
+import { EventData, EventSubscription } from './types';
+import { getAbiFromContractAddress } from './etherscan';
 
 export function setupWebSocket(): ethers.providers.WebSocketProvider {
     if (!INFURA_PROJECT_ID) {
@@ -17,14 +18,17 @@ export function setupWebSocket(): ethers.providers.WebSocketProvider {
     return wsProvider;
 }
 
-export function subscribe(wsProvider: ethers.providers.WebSocketProvider, sendMail: (mailData: MailData) => void) {
+export function listenForEvents(
+    wsProvider: ethers.providers.WebSocketProvider,
+    triggerEvent: (eventData: EventData) => void
+) {
     const contracts: Record<string, EventSubscription[]> = {};
 
     SUBSCRIPTIONS.forEach(eventSubscription => {
-        if (!contracts[eventSubscription.contract]) {
-            contracts[eventSubscription.contract] = [eventSubscription];
+        if (!contracts[eventSubscription.address]) {
+            contracts[eventSubscription.address] = [eventSubscription];
         } else {
-            contracts[eventSubscription.contract].push(eventSubscription);
+            contracts[eventSubscription.address].push(eventSubscription);
         }
     });
 
@@ -38,14 +42,7 @@ export function subscribe(wsProvider: ethers.providers.WebSocketProvider, sendMa
         contract.on('*', event => {
             contracts[contractAddress].forEach(eventSubscription => {
                 if (event.event === eventSubscription.eventName) {
-                    console.info(
-                        `${EVENT_PREFIX} event "${event.event}" triggered in block "${event.blockNumber}". Attempting to send email.`
-                    );
-                    sendMail({
-                        eventSubscription: eventSubscription,
-                        eventData: event,
-                        formattedData: eventSubscription.formatData(event),
-                    });
+                    triggerEvent({ eventSubscription: eventSubscription, event: event });
                 }
             });
         });

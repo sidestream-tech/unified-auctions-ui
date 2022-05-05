@@ -47,19 +47,21 @@ find an array of Event Subscriptions. You can add your own with the following fo
 export const SUBSCRIPTIONS: EventSubscription[] = [
   {
     id: 'ChainlogUpdateVersion',
-    contract: '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F',
+    address: '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F',
     eventName: 'UpdateVersion',
-    formatData: event => {
-      return `Key: ${event.args.key}<br /> Address: ${event.args.addr}`;
+    formatData: (event, formatEtherscanLink) => {
+      return `Key: ${event.args.key}<br /> Address: <a href="${formatEtherscanLink('address', event.args.addr)}">${event.args.addr}</a>`;
     },
   }
 ]
 ```
 
 - `id` - Unique identifier. Used for references in email and console logs
-- `contract` - The Ethereum Address on which your Event is
+- `address` - The Ethereum address which expected to emit the event
 - `eventName` - The name of the event you want to observe
-- `formatData` - A function that takes the event output, can reformat and then output it in html. It will be displayed in the email.
+- `formatData` - A function that takes the emitted event data and have to return a html string that will be displayed in the email. It has two values provided to help with the formatting:
+  - `event` - the entire data returned by the event being called
+  - `formatEtherscanLink` - a helper function that takes in `type` (either `address` or `tx`) and the content (either the `address` or `transactionHash`).
 
 ## Development Setup
 
@@ -71,7 +73,3 @@ to get started with your development setup. Namely, you should:
 - don't forget to create `./notification-service/.env` file
 
 Help on both things is given in the linked resources above.
-
-In addition to this please be aware of the following for this project:
-- By default, this project uses [Etheral Email](https://ethereal.email/) to mock emails. If Etheral is down and no custom SMTP server is set, the service will not run.
-- We advise using [MailTrap](https://mailtrap.io/) for more extensive testing. 

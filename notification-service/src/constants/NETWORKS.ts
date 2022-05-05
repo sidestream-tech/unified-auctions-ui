@@ -31,11 +31,3 @@ export function isNetworkSupported(network: string) {
         throw new Error(`No network found with name "${network}"`);
     }
 }
-
-export function getEtherscanURL(network: string) {
-    return NETWORKS[network].etherscanURL;
-}
-
-export function getEtherscanAPI(network: string) {
-    return NETWORKS[network].etherscanAPI;
-}

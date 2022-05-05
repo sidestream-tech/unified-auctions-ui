@@ -1,15 +1,20 @@
-import { MailData } from '../types';
-import { getEtherscanURL } from '../constants/NETWORKS';
+import { EventSubscription } from '../types';
+import { formatEtherscanLink } from '../etherscan';
 
-export function generateTextEmail(mailData: MailData, network: string) {
-    return `We just detected an update of the event "${mailData.eventData.event}" from the contract "${
-        mailData.eventSubscription.contract
-    }" on the network "${network}". View more info on ${getEtherscanURL(network)}/tx/${
-        mailData.eventData.transactionHash
-    }#eventlog`;
+export function generateEmailSubject(network: string, id: string) {
+    return `[${network.toUpperCase()}] ${id} has been triggered`;
 }
 
-export default function generateEmail(mailData: MailData, network: string) {
+export function generateEmailTextBody(network: string, eventSubscription: EventSubscription) {
+    return `Hello, We just detected an update of the event "${eventSubscription.id}". The update was found on the contract ${eventSubscription.address} and happened on the network ${network}. You can view more information about this even on etherscan here: `;
+}
+
+export default function generateEmailHTMLBody(
+    network: string,
+    eventSubscription: EventSubscription,
+    event: any,
+    formattedData: string
+) {
     return `
     <!doctype html>
     <!-- 
@@ -123,26 +128,26 @@ export default function generateEmail(mailData: MailData, network: string) {
   
               <!-- START CENTERED WHITE CONTAINER -->
               <table role="presentation" class="main" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; background: #ffffff; border-radius: 3px; width: 100%;" width="100%">
-  
                 <!-- START MAIN CONTENT AREA -->
-                <tr>
+                                 <tr>
                   <td class="wrapper" style="font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 20px;" valign="top">
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;" width="100%">
                       <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Hello,</p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                             We just detected an update of the event <b>"${
-                                 mailData.eventData.event
-                             }"</b> of the contract <a href="${getEtherscanURL(network)}/address/${
-        mailData.eventSubscription.contract
-    }#eventlog">${mailData.eventSubscription.contract}</a> on the network "${network}".
+                             We just detected an update of the event <b>"${eventSubscription.id}"</b>
+                             of the contract 
+                            <a href="${formatEtherscanLink(network, 'address', eventSubscription.address)}#eventlog">
+                              ${eventSubscription.address}
+                            </a>
+                             on the network "${network}".
                           </p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: bold; margin: 0; margin-bottom: 5px; color: #3498db">
                              Updated Data:
                           </p>
                           <p style="font-family: monospace; font-size: 14px; font-weight: normal; margin: 0 0 15px; background-color: #2e3338; color: white; padding: 10px; border-radius: 10px; max-width: 580px; overflow: auto">
-                             ${mailData.formattedData}
+                             ${formattedData}
                           </p>
                           <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; box-sizing: border-box; width: 100%;" width="100%">
                             <tbody>
@@ -152,9 +157,15 @@ export default function generateEmail(mailData: MailData, network: string) {
                                     <tbody>
                                       <tr>
                                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background-color: #3498db;" valign="top" align="center" bgcolor="#3498db"> 
-                                          <a href="${getEtherscanURL(network)}/tx/${
-        mailData.eventData.transactionHash
-    }#eventlog" target="_blank" style="border: solid 1px #3498db; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border-color: #3498db; color: #ffffff;">
+                                          <a 
+                                            href="${formatEtherscanLink(
+                                                network,
+                                                'tx',
+                                                event.transactionHash
+                                            )}#eventlog" 
+                                            target="_blank" 
+                                            style="border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border: 1px solid #3498db;color: #ffffff;
+                                           ">
                                             View Event on Etherscan
                                           </a>
                                         </td>
@@ -173,8 +184,7 @@ export default function generateEmail(mailData: MailData, network: string) {
                     </table>
                   </td>
                 </tr>
-  
-              <!-- END MAIN CONTENT AREA -->
+                <!-- END MAIN CONTENT AREA -->
               </table>
               <!-- END CENTERED WHITE CONTAINER -->
   
@@ -189,7 +199,6 @@ export default function generateEmail(mailData: MailData, network: string) {
                 </table>
               </div>
               <!-- END FOOTER -->
-  
             </div>
           </td>
           <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">&nbsp;</td>
