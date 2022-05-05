@@ -1,11 +1,13 @@
 import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import validator from 'validator';
+import * as showdown from 'showdown';
 import { ETHEREUM_NETWORK, SMTP_EMAIL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNAME } from '../variables';
 import { EventData, MailData } from '../types';
 import { formatEtherscanLink } from '../etherscan';
-import generateEmailHTMLBody, { generateEmailSubject, generateEmailTextBody } from '../helpers/generateEmail';
+import generateEmailHTMLBody, { generateEmailSubject, generateEmailTextBody } from '../generators/generateEmail';
 
+const converter = new showdown.Converter();
 const MAIL_PREFIX = '📧 [mailer]:';
 
 export async function setupMailer() {
@@ -77,8 +79,14 @@ export async function notifyPerMail(
         console.warn(`${MAIL_PREFIX} cannot send email notification. Missing account data.`);
         return;
     }
-    const formattedData = eventData.eventSubscription.formatData(eventData.event, (type, content) =>
-        formatEtherscanLink(ETHEREUM_NETWORK, type, content)
+    if (receivers.length <= 0) {
+        return;
+    }
+
+    const formattedData = converter.makeHtml(
+        eventData.eventSubscription.formatData(eventData.event, (type, content) =>
+            formatEtherscanLink(ETHEREUM_NETWORK, type, content)
+        )
     );
 
     const emailSubject = generateEmailSubject(ETHEREUM_NETWORK, eventData.eventSubscription.id);

@@ -146,9 +146,7 @@ export default function generateEmailHTMLBody(
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: bold; margin: 0; margin-bottom: 5px; color: #3498db">
                              Updated Data:
                           </p>
-                          <p style="font-family: monospace; font-size: 14px; font-weight: normal; margin: 0 0 15px; background-color: #2e3338; color: white; padding: 10px; border-radius: 10px; max-width: 580px; overflow: auto">
-                             ${formattedData}
-                          </p>
+                          ${formattedData}
                           <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; box-sizing: border-box; width: 100%;" width="100%">
                             <tbody>
                               <tr>

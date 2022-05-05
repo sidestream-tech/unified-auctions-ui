@@ -14,7 +14,7 @@ export interface EventData {
 }
 
 export interface Receiver {
-    type: 'email';
+    type: string;
     receiver: string;
     subscriptions: string[];
 }

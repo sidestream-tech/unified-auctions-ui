@@ -33,10 +33,12 @@
     "dotenv": "^16.0.0",
     "ethers": "^5.6.5",
     "nodemailer": "^6.7.4",
+    "showdown": "^2.1.0",
     "validator": "^13.7.0"
   },
   "devDependencies": {
     "@types/nodemailer": "^6.4.4",
+    "@types/showdown": "^2.0.0",
     "@types/validator": "^13.7.2",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",

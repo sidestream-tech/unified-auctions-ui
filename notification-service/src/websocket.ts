@@ -37,7 +37,7 @@ export function listenForEvents(
         const contract = new ethers.Contract(contractAddress, contractAbi, wsProvider);
 
         console.info(
-            `${WEBSOCKET_PREFIX} registered websocket on contract "${contractAddress}" for ${contracts[contractAddress].length} event(s)`
+            `${WEBSOCKET_PREFIX} registered listener for ${contracts[contractAddress].length} event(s) on contract "${contractAddress}"`
         );
         contract.on('*', event => {
             contracts[contractAddress].forEach(eventSubscription => {
