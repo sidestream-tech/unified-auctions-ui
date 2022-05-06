@@ -155,13 +155,13 @@ export const mutations = {
 };
 
 export const actions = {
-    async update({ rootState, commit, rootGetters }: ActionContext<State, any>) {
+    async update({ rootState, commit, rootGetters }: ActionContext<State, any>, forceUpdateAllAuction?: boolean) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
         const selectedAuctionId = rootState.route.query.auction;
-        if (!selectedAuctionId) {
+        if (!selectedAuctionId || forceUpdateAllAuction) {
             commit('setAreAuctionsFetching', true);
             try {
                 const auctions = await fetchAllAuctions(network);
