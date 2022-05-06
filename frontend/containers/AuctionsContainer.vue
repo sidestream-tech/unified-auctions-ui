@@ -80,6 +80,7 @@ export default Vue.extend({
                 if (!newAuctionId) {
                     const network = this.$route.query.network;
                     this.$router.push({ query: { network } });
+                    this.update();
                 }
             },
         },
@@ -125,7 +126,7 @@ export default Vue.extend({
             'fetchWalletAuthorizationStatus',
             'fetchCollateralAuthorizationStatus',
         ]),
-        ...mapActions('auctions', ['bidWithCallee', 'bidWithDai', 'restart', 'fetchTakeEventsByAuctionId']),
+        ...mapActions('auctions', ['bidWithCallee', 'bidWithDai', 'restart', 'fetchTakeEventsByAuctionId', 'update']),
         ...mapActions('wallet', ['fetchWalletBalances', 'fetchCollateralVatBalance', 'withdrawAllCollateralFromVat']),
         openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {

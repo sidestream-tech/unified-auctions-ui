@@ -9,10 +9,13 @@ import {
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
     fetchTakeEvents,
+    enrichAuction,
 } from 'auctions-core/src/auctions';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import BigNumber from 'auctions-core/src/bignumber';
+import { fetchAuctionByCollateralTypeAndAuctionIndex } from 'auctions-core/dist/src/fetch';
+import parseAuctionId from 'auctions-core/dist/src/helpers/parseAuctionId';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
@@ -31,6 +34,7 @@ interface State {
     error: string | null;
     restartingAuctionsIds: string[];
     lastUpdated: Date | undefined;
+    selectedAuctionId: string | undefined;
 }
 
 export const state = (): State => ({
@@ -42,6 +46,7 @@ export const state = (): State => ({
     error: null,
     restartingAuctionsIds: [],
     lastUpdated: undefined,
+    selectedAuctionId: undefined,
 });
 
 export const getters = {
@@ -81,6 +86,9 @@ export const getters = {
     },
     getLastUpdated(state: State) {
         return state.lastUpdated;
+    },
+    getSelectedAuctionId(state: State) {
+        return state.selectedAuctionId;
     },
     isAuctionRestarting: (state: State) => (id: string) => {
         return state.restartingAuctionsIds.includes(id);
@@ -129,10 +137,10 @@ export const mutations = {
             state.restartingAuctionsIds = state.restartingAuctionsIds.filter(auctionId => auctionId !== id);
         }
     },
+    refreshLastUpdated(state: State) {
+        state.lastUpdated = new Date();
+    },
     setAreAuctionsFetching(state: State, areFetching: boolean) {
-        if (areFetching === false) {
-            state.lastUpdated = new Date();
-        }
         state.areAuctionsFetching = areFetching;
     },
     setAreTakeEventsFetching(state: State, areFetching: boolean) {
@@ -147,25 +155,46 @@ export const mutations = {
 };
 
 export const actions = {
-    async update({ commit, rootGetters }: ActionContext<State, State>) {
+    async update({ rootState, commit, rootGetters }: ActionContext<State, any>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        commit('setAreAuctionsFetching', true);
-        try {
-            const auctions = await fetchAllAuctions(network);
-            const active = auctions.filter(auction => auction.isActive);
-            active.forEach(auction => {
-                commit('removeAuctionRestarting', auction.id);
-            });
-            commit('setError', null);
-            commit('setAuctions', auctions);
-        } catch (error) {
-            console.error('fetch auction error', error);
-            commit('setError', error.message);
-        } finally {
-            commit('setAreAuctionsFetching', false);
+        const selectedAuctionId = rootState.route.query.auction;
+        if (!selectedAuctionId) {
+            commit('setAreAuctionsFetching', true);
+            try {
+                const auctions = await fetchAllAuctions(network);
+                const active = auctions.filter(auction => auction.isActive);
+                active.forEach(auction => {
+                    commit('removeAuctionRestarting', auction.id);
+                });
+                commit('setError', null);
+                commit('setAuctions', auctions);
+            } catch (error) {
+                console.error('fetch auction error', error);
+                commit('setError', error.message);
+            } finally {
+                commit('refreshLastUpdated');
+                commit('setAreAuctionsFetching', false);
+            }
+        } else {
+            commit('setAreAuctionsFetching', true);
+            try {
+                const auctionInfo = parseAuctionId(selectedAuctionId);
+                const auction = await fetchAuctionByCollateralTypeAndAuctionIndex(
+                    network,
+                    auctionInfo.collateralType,
+                    auctionInfo.index
+                );
+                const enrichedAuction = await enrichAuction(network, auction);
+                commit('setAuction', enrichedAuction);
+            } catch (error) {
+                console.error('fetch auction error', error);
+                commit('setError', error.message);
+            } finally {
+                commit('setAreAuctionsFetching', false);
+            }
         }
     },
     async fetch({ dispatch }: ActionContext<State, State>) {
