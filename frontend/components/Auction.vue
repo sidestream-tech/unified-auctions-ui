@@ -194,11 +194,8 @@
                         <li>
                             Bid with DAI: This allows the participant to manually bid DAI on the auctioned collateral
                             and redeem the auctioned collateral. This transaction type is not yet supported. In the
-                            meantime, you can use the
-                            <a href="https://legacyliquidations.vercel.app/" target="_blank" class="inline-block">
-                                Legacy Liquidation Portal
-                            </a>
-                            . However, this UI is no longer actively maintained.
+                            meantime, you can use
+                            <a href="https://liquidations.makerdao.com/" target="_blank">Liquidation Portal</a>
                         </li>
                         <li>
                             Directly swap into profit: The auctioned collateral is bought and sold on an available
