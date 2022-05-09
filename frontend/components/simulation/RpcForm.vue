@@ -10,7 +10,7 @@
                 class="w-full"
                 :type="inputUrl ? 'primary' : ''"
                 :is-loading="isLoading"
-                :disabled="disabled"
+                :disabled="disabled || !inputUrl"
                 html-type="submit"
             >
                 <span>Connect{{ isLoading ? 'ing...' : '' }}</span>

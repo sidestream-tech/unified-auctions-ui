@@ -17,10 +17,10 @@
             </label>
         </div>
         <BaseButton
-            :type="hasProperEnvVariables ? 'primary' : ''"
+            :type="hasValidVariables && !isStarted ? 'primary' : ''"
             class="w-48"
             :is-loading="isLoading"
-            :disabled="disabled || !hasProperEnvVariables"
+            :disabled="disabled || !hasValidVariables"
             html-type="submit"
         >
             <span v-if="isLoading && isStarted">Resetting</span>
