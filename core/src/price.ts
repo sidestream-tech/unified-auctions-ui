@@ -1,6 +1,9 @@
 import type { Auction, AuctionTransaction } from './types';
 import BigNumber from './bignumber';
+import memoizee from 'memoizee';
 import { addSeconds } from 'date-fns';
+
+const TRANSACTION_GROSS_PROFIT_DATE_CACHE_MS = 30 * (60 * 1000);
 
 const checkAuctionStartDate = function (startDate: Date, currentDate: Date): void {
     const auctionStartTimestamp = startDate.getTime();
@@ -92,7 +95,7 @@ export const calculateTransactionCollateralOutcome = function (
     return potentialOutcomeCollateralAmount;
 };
 
-export const calculateTransactionGrossProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
+const _calculateTransactionGrossProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
     if (
         auction.secondsBetweenPriceDrops === undefined ||
         auction.secondsTillNextPriceDrop === undefined ||
@@ -119,3 +122,9 @@ export const calculateTransactionGrossProfitDate = function (auction: Auction, c
     const secondsTillProfitable = auction.secondsBetweenPriceDrops * stepNumber - secondsSinceLastPriceDrop;
     return addSeconds(currentDate, secondsTillProfitable);
 };
+
+export const calculateTransactionGrossProfitDate = memoizee(_calculateTransactionGrossProfitDate, {
+    maxAge: TRANSACTION_GROSS_PROFIT_DATE_CACHE_MS,
+    promise: true,
+    length: 1,
+});
