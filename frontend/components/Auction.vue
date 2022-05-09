@@ -193,12 +193,11 @@
                     <ul class="list-disc list-outside pl-5">
                         <li>
                             Bid with DAI: This allows the participant to manually bid DAI on the auctioned collateral
-                            and redeem the auctioned collateral. This transaction type is not yet supported. In the
-                            meantime, you can use the
+                            and redeem the auctioned collateral. (In case you want to participate in this auction via
+                            the old liquidation UI, you can use the
                             <a href="https://legacyliquidations.vercel.app/" target="_blank" class="inline-block">
-                                Legacy Liquidation Portal
-                            </a>
-                            . However, this UI is no longer actively maintained.
+                                Legacy Liquidation Portal </a
+                            >. However, be aware that this UI is no longer actively maintained.)
                         </li>
                         <li>
                             Directly swap into profit: The auctioned collateral is bought and sold on an available
