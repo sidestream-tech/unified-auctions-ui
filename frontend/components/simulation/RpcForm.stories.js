@@ -54,7 +54,7 @@ storiesOf('Simulation/RpcForm', module)
         ...common,
         data: () => ({
             ...common.data(),
-            url: faker.internet.url(),
+            url: `https:${faker.internet.url().split(':')[1]}`,
         }),
     }))
     .add('Loading', () => ({
