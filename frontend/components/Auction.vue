@@ -195,7 +195,7 @@
                             Bid with DAI: This allows the participant to manually bid DAI on the auctioned collateral
                             and redeem the auctioned collateral. This transaction type is not yet supported. In the
                             meantime, you can use the
-                            <a href="https://legacyliquidations.vercel.app/" target="_blank">
+                            <a href="https://legacyliquidations.vercel.app/" target="_blank" class="inline-block">
                                 Legacy Liquidation Portal
                             </a>
                             . However, this UI is no longer actively maintained.
