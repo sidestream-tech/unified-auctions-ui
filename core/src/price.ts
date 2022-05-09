@@ -126,5 +126,5 @@ const _calculateTransactionGrossProfitDate = function (auction: Auction, current
 export const calculateTransactionGrossProfitDate = memoizee(_calculateTransactionGrossProfitDate, {
     maxAge: TRANSACTION_GROSS_PROFIT_DATE_CACHE_MS,
     promise: true,
-    length: 1,
+    length: 2,
 });
