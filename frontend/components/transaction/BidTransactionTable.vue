@@ -135,7 +135,7 @@ export default Vue.extend({
             return !!this.transactionBidAmount?.isNaN();
         },
         isTooSmallToPartiallyTake(): boolean {
-            return this.auctionTransaction.debtDAI.isLessThan(this.auctionTransaction.minimumBidDai);
+            return this.auctionTransaction.debtDAI.isLessThanOrEqualTo(this.auctionTransaction.minimumBidDai);
         },
     },
     watch: {
