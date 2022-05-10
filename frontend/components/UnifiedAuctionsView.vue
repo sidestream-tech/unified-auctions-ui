@@ -74,9 +74,9 @@ export default Vue.extend({
             filter: '',
             toolList: [
                 {
-                    title: 'Swap collateral auctions',
+                    title: 'Collateral auctions portal',
                     description:
-                        'Web tool that supports participation in collateral auctions without capital requirements',
+                        'Web tool that supports participation in collateral auctions without capital requirements or by bidding with own Dai',
                     links: {
                         source: 'https://github.com/sidestream-tech/unified-auctions-ui',
                         participate: '/collateral',
@@ -88,7 +88,6 @@ export default Vue.extend({
                     description: 'Web tool that support participation in collateral auctions by bidding with own Dai',
                     links: {
                         source: 'https://github.com/makerdao/liquidations-portal',
-                        participate: 'https://liquidations.makerdao.com/',
                     },
                     filters: ['collateral'],
                 },
