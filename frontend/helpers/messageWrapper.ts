@@ -1,27 +1,24 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 
-import type {
-    MessageOptions,
-    MessageConfigOptions,
-    ConfigType,
-    ConfigDuration,
-    ConfigOnClose,
-} from 'ant-design-vue/types/message';
+import type { Message, ConfigType, ConfigDuration, ConfigOnClose } from 'ant-design-vue/types/message';
 import { message as antdMessage } from 'ant-design-vue';
 
-declare interface WrapperMessage {
-    success(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
-    warning(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
-    warn(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
-    info(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
-    error(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
-    loading(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
-    open: (config: MessageOptions) => void;
-    config: (options: MessageConfigOptions) => void;
-    destroy: () => void;
-}
+type Modify<T, R> = Omit<T, keyof R> & R;
 
-export const message: WrapperMessage = {
+export type WrappedMessage = Modify<
+    Message,
+    {
+        success(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
+        warning(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
+        warn(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
+        info(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
+        error(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
+        loading(content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose): void;
+    }
+>;
+
+export const message: WrappedMessage = {
+    ...antdMessage,
     success: (content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose) => {
         antdMessage.success(content, duration, onClose);
     },
@@ -39,14 +36,5 @@ export const message: WrapperMessage = {
     },
     loading: (content: ConfigType, duration?: ConfigDuration, onClose?: ConfigOnClose) => {
         antdMessage.loading(content, duration, onClose);
-    },
-    open: (config: MessageOptions) => {
-        antdMessage.open(config);
-    },
-    config: (options: MessageConfigOptions) => {
-        antdMessage.config(options);
-    },
-    destroy: () => {
-        antdMessage.destroy();
     },
 };
