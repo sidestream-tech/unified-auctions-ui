@@ -65,24 +65,6 @@
                 <span v-else class="opacity-50">Unknown</span>
             </button>
         </div>
-        <div class="flex justify-between">
-            <span v-if="!isActive || !auctionTransaction.minimumBidDai || isTooSmallToPartiallyTake">Minimum bid</span>
-            <button v-else class="ClickableText" @click="setTransactionBidAmount(auctionTransaction.minimumBidDai)">
-                Set minimum bid
-            </button>
-            <button
-                class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.minimumBidDai || isTooSmallToPartiallyTake"
-                @click="setTransactionBidAmount(auctionTransaction.minimumBidDai)"
-            >
-                <format-currency
-                    v-if="auctionTransaction.minimumBidDai"
-                    :value="auctionTransaction.minimumBidDai"
-                    currency="DAI"
-                />
-                <div v-else class="opacity-50">Unknown</div>
-            </button>
-        </div>
         <div class="flex justify-between items-center">
             <div>The amount to bid</div>
             <div class="flex w-1/2 items-center space-x-2 justify-end -mr-1">
