@@ -54,6 +54,7 @@ export default Vue.extend({
             areTakeEventsFetching: 'getAreTakeEventsFetching',
             isAuctionBidding: 'getIsBidding',
             auctionsError: 'getError',
+            auctionErrors: 'getAuctionErrors',
             lastUpdated: 'getLastUpdated',
         }),
         ...mapGetters('wallet', {
@@ -82,7 +83,7 @@ export default Vue.extend({
                 if (!newAuctionId) {
                     const network = this.$route.query.network;
                     this.$router.push({ query: { network } });
-                    this.updateSingleAuction(newAuctionId);
+                    this.update();
                 }
             },
         },

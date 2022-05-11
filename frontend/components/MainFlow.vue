@@ -30,6 +30,7 @@
                         :auction-id="selectedAuctionId"
                         :are-auctions-fetching="areAuctionsFetching || isSelectedAuctionFetching"
                         :are-take-events-fetching="areTakeEventsFetching"
+                        :error="selectedAuctionError"
                         @restart="$emit('restart', $event)"
                         @connect="$emit('connect')"
                         @disconnect="$emit('disconnect')"
@@ -124,6 +125,10 @@ export default Vue.extend({
             type: String,
             default: null,
         },
+        auctionErrors: {
+            type: Object as Vue.PropType<string, string>,
+            default: () => ({}),
+        },
         selectedAuctionId: {
             type: String,
             default: null,
@@ -188,6 +193,9 @@ export default Vue.extend({
     computed: {
         selectedAuction(): AuctionTransaction | null {
             return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
+        },
+        selectedAuctionError(): string | null {
+            return this.auctionErrors[this.selectedAuctionId] || null;
         },
         selectedTakeEvents(): TakeEvent[] | null {
             if (this.selectedAuction === null && this.takeEventStorage) {

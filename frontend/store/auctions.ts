@@ -31,6 +31,7 @@ interface State {
     areTakeEventsFetching: boolean;
     isBidding: boolean;
     error: string | null;
+    auctionErrors: Record<string, string>;
     restartingAuctionsIds: string[];
     lastUpdated: Date | undefined;
 }
@@ -43,6 +44,7 @@ export const state = (): State => ({
     areTakeEventsFetching: false,
     isBidding: false,
     error: null,
+    auctionErrors: {},
     restartingAuctionsIds: [],
     lastUpdated: undefined,
 });
@@ -84,6 +86,9 @@ export const getters = {
     },
     getError(state: State) {
         return state.error;
+    },
+    getAuctionErrors(state: State) {
+        return state.auctionErrors;
     },
     getLastUpdated(state: State) {
         return state.lastUpdated;
@@ -153,6 +158,9 @@ export const mutations = {
     setError(state: State, error: string) {
         state.error = error;
     },
+    setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
+        state.auctionErrors[auctionId] = error;
+    },
 };
 
 export const actions = {
@@ -178,7 +186,7 @@ export const actions = {
             });
             commit('setError', null);
             commit('setAuctions', auctions);
-        } catch (error) {
+        } catch (error: any) {
             console.error('fetch auction error', error);
             commit('setError', error.message);
         } finally {
@@ -195,9 +203,10 @@ export const actions = {
         try {
             const auction = await fetchSingleAuctionById(network, auctionId);
             commit('setAuction', auction);
-        } catch (error) {
+            commit('setErrorByAuctionId', { auctionId, error: null });
+        } catch (error: any) {
             console.error('fetch auction error', error);
-            commit('setError', error.message);
+            commit('setErrorByAuctionId', { auctionId, error: error.message });
         } finally {
             commit('setIsSelectedAuctionFetching', false);
         }
@@ -296,7 +305,7 @@ export const actions = {
         try {
             await restartAuction(network, auction, walletAddress, notifier);
             await dispatch('fetchWithoutLoading');
-        } catch (error) {
+        } catch (error: any) {
             commit('removeAuctionRestarting', id);
             console.error(`Auction redo error: ${error.message}`);
         }
@@ -314,7 +323,7 @@ export const actions = {
         try {
             const updatedAuction = await enrichAuctionWithPriceDropAndMarketValue(auction, network);
             commit('setAuction', updatedAuction);
-        } catch (error) {
+        } catch (error: any) {
             console.warn(
                 `Updating price for ${auction.id} failed with error:`,
                 error instanceof Error && error.message
