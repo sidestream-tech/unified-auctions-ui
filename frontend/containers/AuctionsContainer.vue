@@ -3,6 +3,7 @@
         <MainFlow
             :auctions="auctions"
             :are-auctions-fetching="areAuctionsFetching"
+            :is-selected-auction-fetching="isSelectedAuctionFetching"
             :are-take-events-fetching="areTakeEventsFetching"
             :auctions-error="auctionsError"
             :selected-auction-id.sync="selectedAuctionId"
@@ -49,6 +50,7 @@ export default Vue.extend({
             auctions: 'listAuctionTransactions',
             takeEvents: 'getTakeEventStorage',
             areAuctionsFetching: 'getAreAuctionsFetching',
+            isSelectedAuctionFetching: 'getIsSelectedAuctionFetching',
             areTakeEventsFetching: 'getAreTakeEventsFetching',
             isAuctionBidding: 'getIsBidding',
             auctionsError: 'getError',
@@ -80,7 +82,7 @@ export default Vue.extend({
                 if (!newAuctionId) {
                     const network = this.$route.query.network;
                     this.$router.push({ query: { network } });
-                    this.update(true);
+                    this.updateSingleAuction(newAuctionId);
                 }
             },
         },
@@ -126,7 +128,7 @@ export default Vue.extend({
             'fetchWalletAuthorizationStatus',
             'fetchCollateralAuthorizationStatus',
         ]),
-        ...mapActions('auctions', ['bidWithCallee', 'bidWithDai', 'restart', 'fetchTakeEventsByAuctionId', 'update']),
+        ...mapActions('auctions', ['bidWithCallee', 'bidWithDai', 'restart', 'fetchTakeEventsByAuctionId', 'update', 'updateSingleAuction']),
         ...mapActions('wallet', ['fetchWalletBalances', 'fetchCollateralVatBalance', 'withdrawAllCollateralFromVat']),
         openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {

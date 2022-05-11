@@ -9,8 +9,8 @@ import {
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
     fetchTakeEvents,
-    enrichAuction,
-} from 'auctions-core/src/auctions';
+    enrichAuction, fetchSingleAuctionById
+} from "auctions-core/src/auctions";
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import BigNumber from 'auctions-core/src/bignumber';
@@ -29,24 +29,24 @@ interface State {
     auctionStorage: Record<string, AuctionTransaction>;
     takeEventStorage: Record<string, TakeEvent[]>;
     areAuctionsFetching: boolean;
+    isSelectedAuctionFetching: boolean;
     areTakeEventsFetching: boolean;
     isBidding: boolean;
     error: string | null;
     restartingAuctionsIds: string[];
     lastUpdated: Date | undefined;
-    selectedAuctionId: string | undefined;
 }
 
 export const state = (): State => ({
     auctionStorage: {},
     takeEventStorage: {},
     areAuctionsFetching: false,
+    isSelectedAuctionFetching: false,
     areTakeEventsFetching: false,
     isBidding: false,
     error: null,
     restartingAuctionsIds: [],
     lastUpdated: undefined,
-    selectedAuctionId: undefined,
 });
 
 export const getters = {
@@ -75,6 +75,9 @@ export const getters = {
     getAreAuctionsFetching(state: State) {
         return state.areAuctionsFetching;
     },
+    getIsSelectedAuctionFetching(state: State) {
+        return state.isSelectedAuctionFetching;
+    },
     getAreTakeEventsFetching(state: State) {
         return state.areTakeEventsFetching;
     },
@@ -86,9 +89,6 @@ export const getters = {
     },
     getLastUpdated(state: State) {
         return state.lastUpdated;
-    },
-    getSelectedAuctionId(state: State) {
-        return state.selectedAuctionId;
     },
     isAuctionRestarting: (state: State) => (id: string) => {
         return state.restartingAuctionsIds.includes(id);
@@ -143,6 +143,9 @@ export const mutations = {
     setAreAuctionsFetching(state: State, areFetching: boolean) {
         state.areAuctionsFetching = areFetching;
     },
+    setIsSelectedAuctionFetching(state: State, isFetching: boolean) {
+        state.isSelectedAuctionFetching = isFetching;
+    },
     setAreTakeEventsFetching(state: State, areFetching: boolean) {
         state.areTakeEventsFetching = areFetching;
     },
@@ -155,46 +158,50 @@ export const mutations = {
 };
 
 export const actions = {
-    async update({ rootState, commit, rootGetters }: ActionContext<State, any>, forceUpdateAllAuction?: boolean) {
+    async update({ rootState, dispatch }: ActionContext<State, any>) {
+        const selectedAuctionId = rootState.route.query.auction;
+        if (!selectedAuctionId) {
+            await dispatch('updateAllAuctions');
+        } else {
+            await dispatch('updateSingleAuction', selectedAuctionId);
+        }
+    },
+    async updateAllAuctions({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        const selectedAuctionId = rootState.route.query.auction;
-        if (!selectedAuctionId || forceUpdateAllAuction) {
-            commit('setAreAuctionsFetching', true);
-            try {
-                const auctions = await fetchAllAuctions(network);
-                const active = auctions.filter(auction => auction.isActive);
-                active.forEach(auction => {
-                    commit('removeAuctionRestarting', auction.id);
-                });
-                commit('setError', null);
-                commit('setAuctions', auctions);
-            } catch (error) {
-                console.error('fetch auction error', error);
-                commit('setError', error.message);
-            } finally {
-                commit('refreshLastUpdated');
-                commit('setAreAuctionsFetching', false);
-            }
-        } else {
-            commit('setAreAuctionsFetching', true);
-            try {
-                const auctionInfo = parseAuctionId(selectedAuctionId);
-                const auction = await fetchAuctionByCollateralTypeAndAuctionIndex(
-                    network,
-                    auctionInfo.collateralType,
-                    auctionInfo.index
-                );
-                const enrichedAuction = await enrichAuction(network, auction);
-                commit('setAuction', enrichedAuction);
-            } catch (error) {
-                console.error('fetch auction error', error);
-                commit('setError', error.message);
-            } finally {
-                commit('setAreAuctionsFetching', false);
-            }
+        commit('setAreAuctionsFetching', true);
+        try {
+            const auctions = await fetchAllAuctions(network);
+            const active = auctions.filter(auction => auction.isActive);
+            active.forEach(auction => {
+                commit('removeAuctionRestarting', auction.id);
+            });
+            commit('setError', null);
+            commit('setAuctions', auctions);
+        } catch (error) {
+            console.error('fetch auction error', error);
+            commit('setError', error.message);
+        } finally {
+            commit('refreshLastUpdated');
+            commit('setAreAuctionsFetching', false);
+        }
+    },
+    async updateSingleAuction({ commit, rootGetters }: ActionContext<State, State>, auctionId: string) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        commit('setIsSelectedAuctionFetching', true);
+        try {
+            const auction = await fetchSingleAuctionById(network, auctionId);
+            commit('setAuction', auction);
+        } catch (error) {
+            console.error('fetch auction error', error);
+            commit('setError', error.message);
+        } finally {
+            commit('setIsSelectedAuctionFetching', false);
         }
     },
     async fetch({ dispatch }: ActionContext<State, State>) {

@@ -28,7 +28,7 @@
                         :take-events="selectedTakeEvents"
                         :wallet-address="walletAddress"
                         :auction-id="selectedAuctionId"
-                        :are-auctions-fetching="areAuctionsFetching"
+                        :are-auctions-fetching="areAuctionsFetching || isSelectedAuctionFetching"
                         :are-take-events-fetching="areTakeEventsFetching"
                         @restart="$emit('restart', $event)"
                         @connect="$emit('connect')"
@@ -109,6 +109,10 @@ export default Vue.extend({
             default: () => ({}),
         },
         areAuctionsFetching: {
+            type: Boolean,
+            default: false,
+        },
+        isSelectedAuctionFetching: {
             type: Boolean,
             default: false,
         },
