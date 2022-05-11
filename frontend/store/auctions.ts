@@ -9,13 +9,11 @@ import {
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
     fetchTakeEvents,
-    enrichAuction, fetchSingleAuctionById
-} from "auctions-core/src/auctions";
+    fetchSingleAuctionById,
+} from 'auctions-core/src/auctions';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import BigNumber from 'auctions-core/src/bignumber';
-import { fetchAuctionByCollateralTypeAndAuctionIndex } from 'auctions-core/dist/src/fetch';
-import parseAuctionId from 'auctions-core/dist/src/helpers/parseAuctionId';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
