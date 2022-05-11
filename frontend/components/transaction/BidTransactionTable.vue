@@ -49,6 +49,12 @@
                 <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
+        <div v-if="auctionTransaction.minimumBidDai" class="flex justify-between">
+            <div>Minimum leftover</div>
+            <div>
+                <format-currency :value="auctionTransaction.minimumBidDai" currency="DAI" />
+            </div>
+        </div>
         <div class="flex justify-between">
             <span v-if="!isActive || !auctionTransaction.debtDAI || isTooSmallToPartiallyTake">Auction debt</span>
             <button v-else class="ClickableText" @click="setTransactionBidAmount(undefined)">Set maximum bid</button>
