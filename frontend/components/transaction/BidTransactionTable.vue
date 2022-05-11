@@ -49,6 +49,12 @@
                 <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
+        <div v-if="auctionTransaction.minimumBidDai" class="flex justify-between">
+            <div>Minimum leftover</div>
+            <div>
+                <format-currency :value="auctionTransaction.minimumBidDai" currency="DAI" />
+            </div>
+        </div>
         <div class="flex justify-between">
             <span v-if="!isActive || !auctionTransaction.debtDAI || isTooSmallToPartiallyTake">Auction debt</span>
             <button v-else class="ClickableText" @click="setTransactionBidAmount(undefined)">Set maximum bid</button>
@@ -63,24 +69,6 @@
                     currency="DAI"
                 />
                 <span v-else class="opacity-50">Unknown</span>
-            </button>
-        </div>
-        <div class="flex justify-between">
-            <span v-if="!isActive || !auctionTransaction.minimumBidDai || isTooSmallToPartiallyTake">Minimum bid</span>
-            <button v-else class="ClickableText" @click="setTransactionBidAmount(auctionTransaction.minimumBidDai)">
-                Set minimum bid
-            </button>
-            <button
-                class="ClickableText"
-                :disabled="!isActive || !auctionTransaction.minimumBidDai || isTooSmallToPartiallyTake"
-                @click="setTransactionBidAmount(auctionTransaction.minimumBidDai)"
-            >
-                <format-currency
-                    v-if="auctionTransaction.minimumBidDai"
-                    :value="auctionTransaction.minimumBidDai"
-                    currency="DAI"
-                />
-                <div v-else class="opacity-50">Unknown</div>
             </button>
         </div>
         <div class="flex justify-between items-center">
@@ -153,7 +141,7 @@ export default Vue.extend({
             return !!this.transactionBidAmount?.isNaN();
         },
         isTooSmallToPartiallyTake(): boolean {
-            return this.auctionTransaction.debtDAI.isLessThan(this.auctionTransaction.minimumBidDai.multipliedBy(2));
+            return this.auctionTransaction.debtDAI.isLessThanOrEqualTo(this.auctionTransaction.minimumBidDai);
         },
     },
     watch: {

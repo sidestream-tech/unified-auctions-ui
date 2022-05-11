@@ -62,12 +62,10 @@ export default Vue.extend({
                 return;
             }
             const bidTopLimit = maxValue?.minus(minValue);
-            if (currentValue?.isGreaterThan(bidTopLimit) || currentValue?.isLessThan(minValue)) {
-                throw new Error(
-                    `The value can only be between ${minValue.toFixed(2)} and ${bidTopLimit.toFixed(2)} or the maximum`
-                );
+            if (currentValue?.isGreaterThan(bidTopLimit)) {
+                throw new Error(`The value can only be less than ${bidTopLimit.toFixed(2)} or the maximum`);
             }
-            if (maxValue?.isLessThan(minValue.multipliedBy(2))) {
+            if (maxValue?.isLessThan(minValue)) {
                 throw new Error('The value can not be changed since the leftover part will be too small');
             }
         },
