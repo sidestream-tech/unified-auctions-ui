@@ -7,7 +7,7 @@ export function generateEmailSubject(network: string, id: string) {
 }
 
 export function generateEmailTextBody(network: string, eventSubscription: EventSubscription) {
-    return `Hello, We just detected an update of the event "${eventSubscription.id}". The update was found on the contract ${eventSubscription.address} and happened on the network ${network}. You can view more information about this even on etherscan here: `;
+    return `There was a new "${eventSubscription.eventName}" event on the "${eventSubscription.address}" contract (${network} network)`;
 }
 
 export default function generateEmailHTMLBody(
@@ -16,6 +16,8 @@ export default function generateEmailHTMLBody(
     event: any,
     formattedData: string
 ) {
+    const etherscanContractUrl = `${formatEtherscanLink(network, 'address', eventSubscription.address)}#eventlog`;
+    const etherscanTransactionUrl = `${formatEtherscanLink(network, 'tx', event.transactionHash)}`;
     return `
     <!doctype html>
     <!-- 
@@ -147,17 +149,11 @@ export default function generateEmailHTMLBody(
                     <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;" width="100%">
                       <tr>
                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                          <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">Hello,</p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">
-                             We just detected an update of the event <b>"${eventSubscription.id}"</b>
-                             of the contract 
-                            <a href="${formatEtherscanLink(network, 'address', eventSubscription.address)}#eventlog">
-                              ${eventSubscription.address}
-                            </a>
-                             on the network "${network}".
+                            There was a new "${eventSubscription.eventName}" event on the <a href="${etherscanContractUrl}">${eventSubscription.address}</a> contract ("${network}" network).
                           </p>
                           <p style="font-family: sans-serif; font-size: 14px; font-weight: bold; margin: 0; margin-bottom: 5px; color: #3498db">
-                             Updated Data:
+                            Event data:
                           </p>
                           ${formattedData}
                           <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; box-sizing: border-box; width: 100%;" width="100%">
@@ -169,15 +165,11 @@ export default function generateEmailHTMLBody(
                                       <tr>
                                         <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background-color: #3498db;" valign="top" align="center" bgcolor="#3498db"> 
                                           <a 
-                                            href="${formatEtherscanLink(
-                                                network,
-                                                'tx',
-                                                event.transactionHash
-                                            )}#eventlog" 
+                                            href="${etherscanTransactionUrl}" 
                                             target="_blank" 
                                             style="border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; margin: 0; padding: 12px 25px; text-decoration: none; text-transform: capitalize; background-color: #3498db; border: 1px solid #3498db;color: #ffffff;
                                            ">
-                                            View Event on Etherscan
+                                            View transaction emitted the event on etherscan
                                           </a>
                                         </td>
                                       </tr>
