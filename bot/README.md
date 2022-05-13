@@ -46,7 +46,7 @@ $ npm run start
     - `FRONTEND_ORIGIN`: (required) The auction UI origin for the tweet (valid
   example: `https://auctions.makerdao.network`)
 
-Note: env variables are accessible via the `secret` command under `auction-ui/bot/${environment}`.
+Note: env variables are accessible via the `secret` command under `auction-ui/${environment}/bot`.
 
 ## Development Setup
 

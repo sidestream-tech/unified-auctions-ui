@@ -1,0 +1,57 @@
+{
+  "name": "auctions-notification-service",
+  "version": "1.0.0",
+  "description": "An automated blockchain subscription service.",
+  "module": "dist/notification-service.esm.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "dev": "tsdx watch --onSuccess 'npm run start'",
+    "build": "tsdx build",
+    "start": "node .",
+    "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts}": "eslint --max-warnings=0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "bignumber.js": "^9.0.2",
+    "dotenv": "^16.0.0",
+    "ethers": "^5.6.5",
+    "nodemailer": "^6.7.4",
+    "showdown": "^2.1.0",
+    "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.4",
+    "@types/showdown": "^2.0.0",
+    "@types/validator": "^13.7.2",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
+    "eslint": "^7.8.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.1.2",
+    "prettier": "^2.1.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.5.4"
+  }
+}
