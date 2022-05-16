@@ -9,12 +9,12 @@ const parseMetamaskError = function (errorMessage = ''): string {
         const metamaskError = JSON.parse(jsonString);
 
         const rawErrorMessage = metamaskError?.value?.data?.message || 'unknown';
-        const parsedErrorMessage = METAMASK_ERRORS[rawErrorMessage] || rawErrorMessage
+        const parsedErrorMessage = METAMASK_ERRORS[rawErrorMessage] || rawErrorMessage;
 
         return truncateText(parsedErrorMessage);
     } catch {
         const rawErrorMessage = errorMessage || 'unknown';
-        const parsedErrorMessage = METAMASK_ERRORS[rawErrorMessage] || rawErrorMessage
+        const parsedErrorMessage = METAMASK_ERRORS[rawErrorMessage] || rawErrorMessage;
 
         return truncateText(parsedErrorMessage);
     }
