@@ -27,7 +27,7 @@ interface State {
     collateralVatBalanceStore: Record<string, BigNumber | undefined>;
 }
 
-export const state = (): State => ({
+const getInitialState = (): State => ({
     address: undefined,
     walletType: undefined,
     isConnecting: false,
@@ -39,6 +39,8 @@ export const state = (): State => ({
     isFetchingCollateralVatBalance: false,
     collateralVatBalanceStore: {},
 });
+
+export const state = (): State => getInitialState();
 
 export const getters = {
     getAddress(state: State) {
@@ -122,6 +124,9 @@ export const mutations = {
     ): void {
         state.collateralVatBalanceStore[collateralType] = balance;
         Vue.set(state.collateralVatBalanceStore, collateralType, balance);
+    },
+    reset(state: State) {
+        Object.assign(state, getInitialState());
     },
 };
 
@@ -272,5 +277,12 @@ export const actions = {
             commit('setDepositingOrWithdrawingCollaterals', { collateralType, isDepositingOrWithdrawing: false });
             commit('setIsDepositingOrWithdrawing', false);
         }
+    },
+    async setup({ commit, dispatch }: ActionContext<State, State>): Promise<void> {
+        commit('reset');
+
+        await dispatch('autoConnect');
+        await dispatch('fetchWalletBalances');
+        await dispatch('fetchTokenAddressDai');
     },
 };

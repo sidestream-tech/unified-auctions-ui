@@ -99,9 +99,15 @@ export const actions = {
     async fixWalletNetwork({ dispatch, getters }: ActionContext<State, State>): Promise<void> {
         try {
             await dispatch('setWalletNetwork', getters.getPageNetwork);
-            window.location.reload();
+            await dispatch('setup');
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
         }
+    },
+    async setup({ dispatch }: ActionContext<State, State>): Promise<void> {
+        await dispatch('auctions/setup');
+        await dispatch('authorizations/setup');
+        await dispatch('gas/setup');
+        await dispatch('wallet/setup');
     },
 };

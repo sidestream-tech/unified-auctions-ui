@@ -14,7 +14,7 @@ interface State {
     transactionFees: TransactionFees | undefined;
 }
 
-export const state = (): State => ({
+const getInitialState = (): State => ({
     baseFeePerGas: undefined,
     gasParameters: {
         maxFeePerGas: undefined,
@@ -23,6 +23,8 @@ export const state = (): State => ({
     },
     transactionFees: undefined,
 });
+
+export const state = (): State => getInitialState();
 
 export const getters = {
     getBaseFeePerGas(state: State) {
@@ -48,6 +50,9 @@ export const mutations = {
     },
     setTransactionFees(state: State, transactionFees: TransactionFees) {
         state.transactionFees = transactionFees;
+    },
+    reset(state: State) {
+        Object.assign(state, getInitialState());
     },
 };
 
@@ -76,7 +81,9 @@ export const actions = {
         const transactionFees = await getApproximateTransactionFees(network);
         commit('setTransactionFees', transactionFees);
     },
-    async setup({ dispatch }: ActionContext<State, State>) {
+    async setup({ commit, dispatch }: ActionContext<State, State>) {
+        commit('reset');
+
         await dispatch('fetchBaseFeePerGas');
         await dispatch('fetchGasParameters');
         await dispatch('fetchTransactionFees');

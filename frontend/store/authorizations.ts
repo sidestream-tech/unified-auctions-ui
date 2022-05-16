@@ -243,4 +243,10 @@ export const actions = {
             commit('setIsAllowanceAmountLoading', false);
         }
     },
+    async setup({ commit, dispatch }: ActionContext<State, State>) {
+        commit('reset');
+
+        await dispatch('refetch');
+        await dispatch('fetchAllowanceAmount');
+    },
 };
