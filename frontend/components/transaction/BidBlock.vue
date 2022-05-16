@@ -3,7 +3,7 @@
         <TransactionMessage
             :is-explanations-shown="isExplanationsShown"
             :transaction-address="auctionTransaction.transactionAddress"
-            :transaction-fee="auctionTransaction.biddingTransactionFeeETH"
+            :transaction-fee="auctionTransaction.swapTransactionFeeETH"
         />
         <div class="flex flex-row-reverse mt-3">
             <BaseButton

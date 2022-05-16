@@ -79,7 +79,7 @@
             :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
             :collateral-type="auctionTransaction.collateralType"
-            :transaction-fee="auctionTransaction.biddingTransactionFeeETH"
+            :transaction-fee="auctionTransaction.swapTransactionFeeETH"
             :transaction-gross-profit="auctionTransaction.transactionGrossProfit"
             @execute="$emit('execute', { id: auctionTransaction.id, alternativeDestinationAddress: $event })"
         />

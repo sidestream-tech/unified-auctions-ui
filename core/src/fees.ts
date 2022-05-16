@@ -15,13 +15,16 @@ export const getApproximateTransactionFees = async function (network: string): P
 
     // TODO: figure out a way to properly estimate gas
     // for each transaction when no wallet is connected
-    const biddingTransactionFeeETH = gasPrice.multipliedBy(722651);
+    const bidTransactionFeeETH = gasPrice.multipliedBy(145438);
+    const swapTransactionFeeETH = gasPrice.multipliedBy(722651);
     const authTransactionFeeETH = gasPrice.multipliedBy(48356);
     const restartTransactionFeeETH = gasPrice.multipliedBy(209182);
 
     return {
-        biddingTransactionFeeETH,
-        biddingTransactionFeeDAI: await convertETHtoDAI(network, biddingTransactionFeeETH),
+        bidTransactionFeeETH,
+        bidTransactionFeeDAI: await convertETHtoDAI(network, bidTransactionFeeETH),
+        swapTransactionFeeETH,
+        swapTransactionFeeDAI: await convertETHtoDAI(network, swapTransactionFeeETH),
         authTransactionFeeETH,
         authTransactionFeeDAI: await convertETHtoDAI(network, authTransactionFeeETH),
         restartTransactionFeeETH,
@@ -34,7 +37,8 @@ export const enrichAuctionWithTransactionFees = async function (
     fees: TransactionFees,
     network: string
 ): Promise<AuctionTransaction> {
-    let totalFeeETH = fees.biddingTransactionFeeETH;
+    let combinedSwapFeesETH = fees.swapTransactionFeeETH;
+    let combinedBidFeesETH = fees.bidTransactionFeeETH;
 
     try {
         const signer = await getSigner(network);
@@ -47,24 +51,30 @@ export const enrichAuctionWithTransactionFees = async function (
         );
 
         if (!isWalletAuthed) {
-            totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);
+            combinedSwapFeesETH = combinedSwapFeesETH.plus(fees.authTransactionFeeETH);
+            combinedBidFeesETH = combinedBidFeesETH.plus(fees.authTransactionFeeETH);
         }
         if (!isCollateralAuthed) {
-            totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH);
+            combinedSwapFeesETH = combinedSwapFeesETH.plus(fees.authTransactionFeeETH);
+            combinedBidFeesETH = combinedSwapFeesETH.plus(fees.authTransactionFeeETH);
         }
     } catch (e) {
-        totalFeeETH = totalFeeETH.plus(fees.authTransactionFeeETH).plus(fees.authTransactionFeeETH);
+        combinedSwapFeesETH = combinedSwapFeesETH.plus(fees.authTransactionFeeETH).plus(fees.authTransactionFeeETH);
+        combinedBidFeesETH = combinedBidFeesETH.plus(fees.authTransactionFeeETH).plus(fees.authTransactionFeeETH);
     }
 
-    const totalFeeDAI = await convertETHtoDAI(network, totalFeeETH);
+    const combinedSwapFeesDAI = await convertETHtoDAI(network, combinedSwapFeesETH);
+    const combinedBidFeesDAI = await convertETHtoDAI(network, combinedBidFeesETH);
     const auctionTransaction = {
         ...auction,
         ...fees,
-        totalFeeETH: totalFeeETH,
-        totalFeeDAI: totalFeeDAI,
+        combinedBidFeesETH: combinedBidFeesETH,
+        combinedBidFeesDAI: combinedBidFeesDAI,
+        combinedSwapFeesETH: combinedSwapFeesETH,
+        combinedSwapFeesDAI: combinedSwapFeesDAI,
     } as AuctionTransaction;
-    if (auction.transactionGrossProfit && fees.biddingTransactionFeeDAI) {
-        auctionTransaction.transactionNetProfit = auction.transactionGrossProfit.minus(totalFeeDAI);
+    if (auction.transactionGrossProfit && fees.swapTransactionFeeDAI) {
+        auctionTransaction.transactionNetProfit = auction.transactionGrossProfit.minus(combinedSwapFeesDAI);
     }
     return auctionTransaction;
 };

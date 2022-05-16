@@ -32,8 +32,8 @@
                 <span class="text-gray-300">
                     (~
                     <FormatCurrency
-                        v-if="auctionTransaction.biddingTransactionFeeETH"
-                        :value="auctionTransaction.biddingTransactionFeeETH"
+                        v-if="auctionTransaction.combinedBidFeesETH"
+                        :value="auctionTransaction.combinedBidFeesETH"
                         :decimals="5"
                     />
                     <span v-else>Unknown</span>
@@ -42,8 +42,8 @@
             </div>
             <div>
                 <FormatCurrency
-                    v-if="auctionTransaction.biddingTransactionFeeDAI"
-                    :value="auctionTransaction.biddingTransactionFeeDAI * -1"
+                    v-if="auctionTransaction.combinedBidFeesDAI"
+                    :value="auctionTransaction.combinedBidFeesDAI * -1"
                     currency="DAI"
                 />
                 <span v-else class="opacity-50">Unknown</span>
