@@ -1,3 +1,4 @@
+import METAMASK_ERRORS from '../constants/METAMASK_ERRORS';
 import truncateText from './truncateText';
 
 const parseMetamaskError = function (errorMessage = ''): string {
@@ -6,9 +7,16 @@ const parseMetamaskError = function (errorMessage = ''): string {
     try {
         const jsonString = errorMessage.substring(jsonFirstIndex, jsonLastIndex + 1);
         const metamaskError = JSON.parse(jsonString);
-        return truncateText(metamaskError?.value?.data?.message || 'unknown');
+
+        const rawErrorMessage = metamaskError?.value?.data?.message || 'unknown';
+        const parsedErrorMessage = METAMASK_ERRORS[rawErrorMessage] || rawErrorMessage
+
+        return truncateText(parsedErrorMessage);
     } catch {
-        return truncateText(errorMessage || 'unknown');
+        const rawErrorMessage = errorMessage || 'unknown';
+        const parsedErrorMessage = METAMASK_ERRORS[rawErrorMessage] || rawErrorMessage
+
+        return truncateText(parsedErrorMessage);
     }
 };
 
