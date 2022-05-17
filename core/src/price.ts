@@ -1,9 +1,6 @@
 import type { Auction, AuctionTransaction } from './types';
 import BigNumber from './bignumber';
-import memoizee from 'memoizee';
 import { addSeconds } from 'date-fns';
-
-const TRANSACTION_GROSS_PROFIT_DATE_CACHE_MS = 30 * (60 * 1000);
 
 const checkAuctionStartDate = function (startDate: Date, currentDate: Date): void {
     const auctionStartTimestamp = startDate.getTime();
