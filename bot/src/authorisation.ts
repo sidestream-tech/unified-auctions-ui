@@ -1,11 +1,12 @@
-import getSigner from 'auctions-core/dist/src/signer';
+import getSigner from 'auctions-core/src/signer';
 import {
     authorizeCollateral,
     authorizeWallet,
     getCollateralAuthorizationStatus,
     getWalletAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-import { ETHEREUM_NETWORK } from '~/src/variables';
+import { ETHEREUM_NETWORK, KEEPER_PREAUTHORIZE, WHITELISTED_COLLATERALS } from './variables';
+import { parseCollateralWhitelist } from './whitelist';
 
 export async function authorizeKeeperWallet(authorizeCallback: () => void) {
     const signer = await getSigner(ETHEREUM_NETWORK);
@@ -23,7 +24,7 @@ export async function authorizeKeeperWallet(authorizeCallback: () => void) {
 export async function checkAndAuthorizeKeeperCollateral(
     walletAddress: string,
     collateralType: string,
-    authorizeCallback: () => void
+    authorizeCallback?: () => void
 ) {
     // get collateral authorization status
     const isCollateralAuth = await getCollateralAuthorizationStatus(ETHEREUM_NETWORK, collateralType, walletAddress);
@@ -42,6 +43,25 @@ export async function checkAndAuthorizeKeeperCollateral(
         console.info(
             `keeper: collateral "${collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
         );
-        authorizeCallback();
+        if (authorizeCallback) {
+            authorizeCallback();
+        }
+    }
+}
+
+export async function setupCollateralAuthorizations() {
+    if (!KEEPER_PREAUTHORIZE || !WHITELISTED_COLLATERALS) {
+        return;
+    }
+    const collaterals = parseCollateralWhitelist(WHITELISTED_COLLATERALS);
+    console.info(
+        `keeper: "KEEPER_PREAUTHORIZE" is true attempting to authorize collaterals: '${collaterals.toString()}'`
+    );
+
+    const signer = await getSigner(ETHEREUM_NETWORK);
+    const walletAddress = await signer.getAddress();
+
+    for (const collateral of collaterals) {
+        await checkAndAuthorizeKeeperCollateral(walletAddress, collateral);
     }
 }
