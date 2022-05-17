@@ -95,7 +95,7 @@ export const calculateTransactionCollateralOutcome = function (
     return potentialOutcomeCollateralAmount;
 };
 
-const _calculateTransactionGrossProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
+export const calculateTransactionGrossProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
     if (
         auction.secondsBetweenPriceDrops === undefined ||
         auction.secondsTillNextPriceDrop === undefined ||
@@ -122,9 +122,3 @@ const _calculateTransactionGrossProfitDate = function (auction: Auction, current
     const secondsTillProfitable = auction.secondsBetweenPriceDrops * stepNumber - secondsSinceLastPriceDrop;
     return addSeconds(currentDate, secondsTillProfitable);
 };
-
-export const calculateTransactionGrossProfitDate = memoizee(_calculateTransactionGrossProfitDate, {
-    maxAge: TRANSACTION_GROSS_PROFIT_DATE_CACHE_MS,
-    promise: true,
-    length: 2,
-});
