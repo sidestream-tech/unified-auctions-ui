@@ -8,7 +8,7 @@ import {
 import { ETHEREUM_NETWORK, KEEPER_PREAUTHORIZE, WHITELISTED_COLLATERALS } from './variables';
 import { parseCollateralWhitelist } from './whitelist';
 
-export async function authorizeKeeperWallet(authorizeCallback: () => void) {
+export async function authorizeKeeperWallet(authorizeCallback?: () => void) {
     const signer = await getSigner(ETHEREUM_NETWORK);
     const walletAddress = await signer.getAddress();
     const isWalletAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
@@ -17,7 +17,9 @@ export async function authorizeKeeperWallet(authorizeCallback: () => void) {
         console.info(`keeper: wallet "${walletAddress}" has not been authorized yet. Attempting authorization now...`);
         const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, walletAddress, false);
         console.info(`keeper: wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
-        authorizeCallback();
+        if (authorizeCallback) {
+            authorizeCallback();
+        }
     }
 }
 
@@ -53,6 +55,10 @@ export async function setupCollateralAuthorizations() {
     if (!KEEPER_PREAUTHORIZE || !WHITELISTED_COLLATERALS) {
         return;
     }
+
+    // check if the wallet is authorized
+    await authorizeKeeperWallet();
+
     const collaterals = parseCollateralWhitelist(WHITELISTED_COLLATERALS);
     console.info(
         `keeper: "KEEPER_PREAUTHORIZE" is true attempting to authorize collaterals: '${collaterals.toString()}'`
