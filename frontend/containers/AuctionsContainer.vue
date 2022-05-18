@@ -84,7 +84,7 @@ export default Vue.extend({
                 if (!newAuctionId) {
                     const network = this.$route.query.network;
                     this.$router.push({ query: { network } });
-                    this.update();
+                    this.updateAllAuctions();
                 }
             },
         },
@@ -135,7 +135,7 @@ export default Vue.extend({
             'bidWithDai',
             'restart',
             'fetchTakeEventsByAuctionId',
-            'update',
+            'updateAllAuctions',
             'updateSingleAuction',
         ]),
         ...mapActions('wallet', ['fetchWalletBalances', 'fetchCollateralVatBalance', 'withdrawAllCollateralFromVat']),
