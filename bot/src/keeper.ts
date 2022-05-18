@@ -1,9 +1,8 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
 import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
-import { getWalletAuthorizationStatus } from 'auctions-core/src/authorizations';
-import { authorizeKeeperWallet, checkAndAuthorizeKeeperCollateral } from './authorisation';
 import { ETHEREUM_NETWORK, KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
+import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from './authorisation';
 
 let isSetupCompleted = false;
 const currentlyExecutedAuctions = new Set();
@@ -85,19 +84,20 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
 
     // get wallet authorization status
     const walletAddress = await signer.getAddress();
-    const isWalletAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
 
     // try to authorize the wallet then return
-    if (!isWalletAuth) {
-        await authorizeKeeperWallet(async () => await checkAndParticipateIfPossible(auction));
+    const walletNewlyAuthed = await checkAndAuthorizeWallet();
+    if (walletNewlyAuthed) {
+        await checkAndParticipateIfPossible(auction);
+        return;
     }
 
     // check the collateral authorization status and authorize it if needed
-    await checkAndAuthorizeKeeperCollateral(
-        walletAddress,
-        auctionTransaction.collateralType,
-        async () => await checkAndParticipateIfPossible(auction)
-    );
+    const collateralNewlyAuthed = await checkAndAuthorizeCollateral(walletAddress, auctionTransaction.collateralType);
+    if (collateralNewlyAuthed) {
+        await checkAndParticipateIfPossible(auction);
+        return;
+    }
 
     // bid on the Auction
     console.info(`keeper: auction "${auctionTransaction.id}": attempting swap execution`);

@@ -31,13 +31,13 @@ $ npm run start
   create new project -> settings -> keys). Note: this project can not be restricted by the origin.
 - `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
 - `WHITELISTED_COLLATERALS`: (optional) a comma-separated list of collaterals the bot will fetch. Example: `MATIC-A, UNI-A`
-- `KEEPER_PREAUTHORIZE`: (optional, default false) if set to `true`, all `WHITELISTED_COLLATERALS` will be authorized on startup.
 - `MAX_PRIORITY_FEE_PER_GAS_WEI`: (optional, default can be found in core/src/gas.ts) – [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559) `max_priority_fee_per_gas` value
   options can be found in [constants/NETWORKS](../core/src/constants/NETWORKS.ts)
 - `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
 - `KEEPER_*`: (optional) set of env variables to enable keeper bot:
     - `KEEPER_WALLET_PRIVATE_KEY`: (required) The wallet private key (https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key)
     - `KEEPER_MINIMUM_NET_PROFIT_DAI`: (required) The minimum net profit an auction must yield before the keeper automatically bids on it. Can be negative if one is willing to spend ETH on transaction fees to keep DAI stable
+    - `KEEPER_PREAUTHORIZE`: (optional, default false) if set to `true`, all `WHITELISTED_COLLATERALS` will be authorized on startup.
 - `TWITTER_*`: (optional) set of env variables to enable twitter bot. Created via twitter developer account
   with `OAuth 1.0a` `Elevated` access and `Read and Write` permissions:
     - `TWITTER_API_KEY`: (required)

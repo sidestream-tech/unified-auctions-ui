@@ -8,7 +8,7 @@ import {
 import { ETHEREUM_NETWORK, KEEPER_PREAUTHORIZE, WHITELISTED_COLLATERALS } from './variables';
 import { parseCollateralWhitelist } from './whitelist';
 
-export async function authorizeKeeperWallet(authorizeCallback?: () => void) {
+export async function checkAndAuthorizeWallet() {
     const signer = await getSigner(ETHEREUM_NETWORK);
     const walletAddress = await signer.getAddress();
     const isWalletAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
@@ -17,17 +17,13 @@ export async function authorizeKeeperWallet(authorizeCallback?: () => void) {
         console.info(`keeper: wallet "${walletAddress}" has not been authorized yet. Attempting authorization now...`);
         const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, walletAddress, false);
         console.info(`keeper: wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
-        if (authorizeCallback) {
-            authorizeCallback();
-        }
+        return true;
     }
+    console.info(`keeper: wallet is already authorized`);
+    return false;
 }
 
-export async function checkAndAuthorizeKeeperCollateral(
-    walletAddress: string,
-    collateralType: string,
-    authorizeCallback?: () => void
-) {
+export async function checkAndAuthorizeCollateral(walletAddress: string, collateralType: string) {
     // get collateral authorization status
     const isCollateralAuth = await getCollateralAuthorizationStatus(ETHEREUM_NETWORK, collateralType, walletAddress);
 
@@ -45,10 +41,10 @@ export async function checkAndAuthorizeKeeperCollateral(
         console.info(
             `keeper: collateral "${collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
         );
-        if (authorizeCallback) {
-            authorizeCallback();
-        }
+        return true;
     }
+    console.info(`keeper: collateral "${collateralType}" has already been authorized on wallet "${walletAddress}".`);
+    return false;
 }
 
 export async function setupCollateralAuthorizations() {
@@ -57,7 +53,7 @@ export async function setupCollateralAuthorizations() {
     }
 
     // check if the wallet is authorized
-    await authorizeKeeperWallet();
+    await checkAndAuthorizeWallet();
 
     const collaterals = parseCollateralWhitelist(WHITELISTED_COLLATERALS);
     console.info(
@@ -68,6 +64,6 @@ export async function setupCollateralAuthorizations() {
     const walletAddress = await signer.getAddress();
 
     for (const collateral of collaterals) {
-        await checkAndAuthorizeKeeperCollateral(walletAddress, collateral);
+        await checkAndAuthorizeCollateral(walletAddress, collateral);
     }
 }
