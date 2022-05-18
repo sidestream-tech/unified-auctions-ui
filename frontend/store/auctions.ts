@@ -159,7 +159,7 @@ export const mutations = {
         state.error = error;
     },
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
-        state.auctionErrors[auctionId] = error;
+        Vue.set(state.auctionErrors, auctionId, error);
     },
 };
 

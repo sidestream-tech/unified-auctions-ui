@@ -6,6 +6,7 @@
             :is-selected-auction-fetching="isSelectedAuctionFetching"
             :are-take-events-fetching="areTakeEventsFetching"
             :auctions-error="auctionsError"
+            :auction-errors="auctionErrors"
             :selected-auction-id.sync="selectedAuctionId"
             :is-explanations-shown.sync="isExplanationsShown"
             :wallet-address="walletAddress"
