@@ -1,5 +1,5 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://i.imgur.com/qyfdUXN.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://i.imgur.com/o7Oj6Rg.png">
   <img alt="A quick preview of our UI" src="https://i.imgur.com/79FolWw.png">
 </picture>
 
