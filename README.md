@@ -1,6 +1,6 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./darkMode.png">
-  <img alt="A quick preview of our UI" src="./lightMode.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://i.imgur.com/qlwbtCo.png">
+  <img alt="A quick preview of our UI" src="https://i.imgur.com/0hunW23.png">
 </picture>
 
 # Unified Auctions UI
