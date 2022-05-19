@@ -1,4 +1,7 @@
-![Screenshot of the main page](./screenshot.jpg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./screenshots/darkMode.png">
+  <img alt="A quick preview of our UI" src="./screenshots/lightMode.png">
+</picture>
 
 # Unified Auctions UI
 
