@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/constants/NETWORKS';
 import { setSigner } from 'auctions-core/src/signer';
-import { message } from '~/helpers/messageWrapper';
+import { message } from 'ant-design-vue';
 import MetaMaskLogo from '~/assets/icons/wallets/metamask.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
 
@@ -62,7 +62,9 @@ export default class MetaMask extends AbstractWallet {
     public async switchNetwork(network: string): Promise<void> {
         const constructor = this.constructor as typeof MetaMask;
         if (!constructor.isConnected) {
-            message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
+            message
+                .error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`)
+                .promise.catch(() => {});
             return;
         }
         const provider = this.getProvider();

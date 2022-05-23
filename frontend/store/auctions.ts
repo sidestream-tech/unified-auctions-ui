@@ -12,7 +12,7 @@ import {
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import BigNumber from 'auctions-core/src/bignumber';
-import { message } from '~/helpers/messageWrapper';
+import { message } from 'ant-design-vue';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
@@ -185,13 +185,13 @@ export const actions = {
     ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            message.error(`Bidding error: can not find auction with id "${id}"`);
+            message.error(`Bidding error: can not find auction with id "${id}"`).promise.catch(() => {});
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            message.error('Bidding error: can not find wallet');
+            message.error('Bidding error: can not find wallet').promise.catch(() => {});
             return;
         }
         commit('setIsBidding', true);
@@ -219,13 +219,13 @@ export const actions = {
     ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            message.error(`Bidding error: can not find auction with id "${id}"`);
+            message.error(`Bidding error: can not find auction with id "${id}"`).promise.catch(() => {});
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            message.error('Bidding error: can not find wallet');
+            message.error('Bidding error: can not find wallet').promise.catch(() => {});
             return;
         }
         commit('setIsBidding', true);
@@ -250,12 +250,12 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const auction = getters.getAuctionById(id);
         if (!auction) {
-            message.error(`Auction reset error: can not find auction with id "${id}"`);
+            message.error(`Auction reset error: can not find auction with id "${id}"`).promise.catch(() => {});
             return;
         }
         const walletAddress = getWallet().address;
         if (!walletAddress) {
-            message.error('Bidding error: can not find wallet');
+            message.error('Bidding error: can not find wallet').promise.catch(() => {});
             return;
         }
         commit('addAuctionRestarting', id);
