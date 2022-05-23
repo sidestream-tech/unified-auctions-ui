@@ -34,7 +34,7 @@ export default {
             { hid: 'description', name: 'description', content: '' },
         ],
         link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
-        script: [{ src: 'js/HeapIO.js' }],
+        script: [{ src: '/js/HeapIO.js' }],
     },
 
     // Global CSS: https://go.nuxtjs.dev/config-css
@@ -69,11 +69,6 @@ export default {
     // Plausible.io Settings
     plausible: {
         domain: process.env.PRODUCTION_DOMAIN,
-    },
-
-    // Disable Static Asset Path Prefix: https://nuxtjs.org/docs/directory-structure/static/#static-asset-prefixs
-    static: {
-        prefix: false,
     },
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
