@@ -41,7 +41,10 @@ export const calculateAuctionDropTime = function (auction: Auction, currentDate:
     return auction.secondsBetweenPriceDrops - (elapsedTime % auction.secondsBetweenPriceDrops);
 };
 
-export const calculateTransactionGrossProfit = function (auction: Auction): BigNumber {
+export const calculateTransactionGrossProfit = function (
+    auction: Auction,
+    collateralToCoverDebt: BigNumber
+): BigNumber {
     if (!auction.marketUnitPrice) {
         return new BigNumber(0);
     }
@@ -49,9 +52,9 @@ export const calculateTransactionGrossProfit = function (auction: Auction): BigN
     if (totalMarketPrice <= auction.debtDAI) {
         return totalMarketPrice.minus(auction.totalPrice);
     }
-    const collateralAmountLimitedByDebt = auction.debtDAI.dividedBy(auction.approximateUnitPrice);
-    const totalMarketPriceLimitedByDebt = collateralAmountLimitedByDebt.multipliedBy(auction.marketUnitPrice);
-    return totalMarketPriceLimitedByDebt.minus(auction.debtDAI);
+    const totalDebtMarketPrice = collateralToCoverDebt.multipliedBy(auction.marketUnitPrice);
+    const totalDebtPrice = collateralToCoverDebt.multipliedBy(auction.approximateUnitPrice);
+    return totalDebtMarketPrice.minus(totalDebtPrice);
 };
 
 export const calculateTransactionCollateralOutcome = function (

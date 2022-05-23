@@ -44,12 +44,30 @@ const enrichAuctionWithActualNumbers = async function (
     };
 };
 
+const calculateCollateralToCoverDebt = async function (network: string, auction: Auction): Promise<BigNumber> {
+    const transactionCollateralOutcome = calculateTransactionCollateralOutcome(
+        auction.debtDAI,
+        auction.approximateUnitPrice,
+        auction as AuctionTransaction
+    );
+    if (!transactionCollateralOutcome.isNaN()) {
+        return transactionCollateralOutcome;
+    }
+    const marketPriceForAllCollateral = await getMarketPrice(
+        network,
+        auction.collateralSymbol,
+        auction.collateralAmount
+    );
+    return auction.debtDAI.dividedBy(marketPriceForAllCollateral);
+};
+
 const enrichAuctionWithMarketValues = async function (auction: Auction, network: string): Promise<Auction> {
     if (!auction.isActive || !auction.approximateUnitPrice || auction.isFinished) {
         return auction;
     }
     try {
-        const marketUnitPrice = await getMarketPrice(network, auction.collateralSymbol, auction.collateralAmount);
+        const collateralToCoverDebt = await calculateCollateralToCoverDebt(network, auction);
+        const marketUnitPrice = await getMarketPrice(network, auction.collateralSymbol, collateralToCoverDebt);
         const marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
             .minus(marketUnitPrice)
             .dividedBy(marketUnitPrice);
@@ -58,9 +76,10 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
             marketUnitPrice,
             marketUnitPriceToUnitPriceRatio,
         };
+        const transactionGrossProfit = calculateTransactionGrossProfit(auctionWithMarketValues, collateralToCoverDebt);
         return {
             ...auctionWithMarketValues,
-            transactionGrossProfit: calculateTransactionGrossProfit(auctionWithMarketValues),
+            transactionGrossProfit,
         };
     } catch (error) {
         // since it's expected that some collaterals are not tradable on some networks
