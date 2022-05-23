@@ -71,6 +71,7 @@ export default {
         domain: process.env.PRODUCTION_DOMAIN,
     },
 
+    // Disable Static Asset Path Prefix: https://nuxtjs.org/docs/directory-structure/static/#static-asset-prefixs
     static: {
         prefix: false,
     },
