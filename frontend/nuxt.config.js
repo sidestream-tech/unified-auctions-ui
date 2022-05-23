@@ -71,6 +71,10 @@ export default {
         domain: process.env.PRODUCTION_DOMAIN,
     },
 
+    static: {
+        prefix: false,
+    },
+
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {
         // Webpack config
