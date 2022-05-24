@@ -5,8 +5,8 @@ import {
     getCollateralAuthorizationStatus,
     getWalletAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-import { ETHEREUM_NETWORK, KEEPER_PREAUTHORIZE, WHITELISTED_COLLATERALS } from './variables';
-import { parseCollateralWhitelist } from './whitelist';
+import { ETHEREUM_NETWORK, KEEPER_PREAUTHORIZE } from './variables';
+import { getWhitelistedCollaterals } from './whitelist';
 
 export async function checkAndAuthorizeWallet() {
     const signer = await getSigner(ETHEREUM_NETWORK);
@@ -48,14 +48,14 @@ export async function checkAndAuthorizeCollateral(walletAddress: string, collate
 }
 
 export async function setupCollateralAuthorizations() {
-    if (!KEEPER_PREAUTHORIZE || !WHITELISTED_COLLATERALS) {
+    if (!KEEPER_PREAUTHORIZE) {
         return;
     }
 
     // check if the wallet is authorized
     await checkAndAuthorizeWallet();
 
-    const collaterals = parseCollateralWhitelist(WHITELISTED_COLLATERALS);
+    const collaterals = await getWhitelistedCollaterals();
     console.info(
         `keeper: "KEEPER_PREAUTHORIZE" is true attempting to authorize collaterals: '${collaterals.toString()}'`
     );
