@@ -63,8 +63,8 @@
                 Combined Transactions Fees
                 <span class="text-gray-300"
                     >(~<FormatCurrency
-                        v-if="auctionTransaction.totalFeeETH"
-                        :value="auctionTransaction.totalFeeETH"
+                        v-if="auctionTransaction.combinedSwapFeesETH"
+                        :value="auctionTransaction.combinedSwapFeesETH"
                         :decimals="5"
                     />
                     <span v-else>Unknown</span>
@@ -73,8 +73,8 @@
             </div>
             <div class="RightInfo">
                 <FormatCurrency
-                    v-if="auctionTransaction.totalFeeDAI"
-                    :value="auctionTransaction.totalFeeDAI * -1"
+                    v-if="auctionTransaction.combinedSwapFeesDAI"
+                    :value="auctionTransaction.combinedSwapFeesDAI * -1"
                     currency="DAI"
                 />
                 <span v-else class="opacity-50">Unknown</span>

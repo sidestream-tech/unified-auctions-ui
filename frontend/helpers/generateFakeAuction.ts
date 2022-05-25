@@ -56,24 +56,24 @@ export const generateFakeAuction = function () {
 
 export const generateFakeAuctionTransaction = function () {
     const auction = generateFakeAuction();
-    const biddingTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
-    const biddingTransactionFeeDAI = biddingTransactionFeeETH.multipliedBy(1000);
+    const swapTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
+    const swapTransactionFeeDAI = swapTransactionFeeETH.multipliedBy(1000);
     const authTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const authTransactionFeeDAI = authTransactionFeeETH.multipliedBy(1000);
     const restartTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
-    const transactionNetProfit = auction.transactionGrossProfit.minus(biddingTransactionFeeDAI);
-    const totalFeeETH = biddingTransactionFeeETH.plus(authTransactionFeeETH);
-    const totalFeeDAI = totalFeeETH.multipliedBy(1000);
+    const transactionNetProfit = auction.transactionGrossProfit.minus(swapTransactionFeeDAI);
+    const combinedSwapFeesETH = swapTransactionFeeETH.plus(authTransactionFeeETH);
+    const combinedSwapFeesDAI = combinedSwapFeesETH.multipliedBy(1000);
     return {
         ...auction,
-        biddingTransactionFeeETH,
-        biddingTransactionFeeDAI,
+        swapTransactionFeeETH,
+        swapTransactionFeeDAI,
         authTransactionFeeETH,
         authTransactionFeeDAI,
         restartTransactionFeeETH,
         transactionNetProfit,
-        totalFeeETH,
-        totalFeeDAI,
+        combinedSwapFeesETH,
+        combinedSwapFeesDAI,
     };
 };
 
