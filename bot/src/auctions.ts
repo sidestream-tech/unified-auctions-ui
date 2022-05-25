@@ -25,7 +25,8 @@ export const getNewAuctionsFromActiveAuctions = function (activeActions: Auction
 };
 
 export const getAllAuctions = async function (network: string): Promise<AuctionInitialInfo[]> {
-    const auctions = await fetchAllInitialAuctions(network, getWhitelistedCollaterals());
+    const collaterals = await getWhitelistedCollaterals();
+    const auctions = await fetchAllInitialAuctions(network, collaterals);
 
     const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
     console.info(`auctions: found "${auctions.length}" auctions (${auctionIds}) on "${network}" network`);
