@@ -31,7 +31,7 @@ interface State {
     areTakeEventsFetching: boolean;
     isBidding: boolean;
     error: string | null;
-    auctionErrors: Record<string, string>;
+    auctionErrors: Record<string, string | undefined>;
     restartingAuctionsIds: string[];
     lastUpdated: Date | undefined;
 }
@@ -203,7 +203,7 @@ export const actions = {
         try {
             const auction = await fetchSingleAuctionById(network, auctionId);
             commit('setAuction', auction);
-            commit('setErrorByAuctionId', { auctionId, error: null });
+            commit('setErrorByAuctionId', { auctionId, error: undefined });
         } catch (error: any) {
             console.error('fetch auction error', error);
             commit('setErrorByAuctionId', { auctionId, error: error.message });

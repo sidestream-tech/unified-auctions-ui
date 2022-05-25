@@ -136,7 +136,6 @@ export default Vue.extend({
             'restart',
             'fetchTakeEventsByAuctionId',
             'updateAllAuctions',
-            'updateSingleAuction',
         ]),
         ...mapActions('wallet', ['fetchWalletBalances', 'fetchCollateralVatBalance', 'withdrawAllCollateralFromVat']),
         openSelectWalletModal(): void {
