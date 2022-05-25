@@ -342,14 +342,14 @@ export default Vue.extend({
     },
     computed: {
         auctionError(): { error: string; showBanner: boolean } | null {
-            if (!this.areAuctionsFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
-                return {
-                    error: 'This auction was not found',
-                    showBanner: true,
-                };
-            } else if (this.error) {
+            if (this.error) {
                 return {
                     error: this.error,
+                    showBanner: true,
+                };
+            } else if (!this.areAuctionsFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
+                return {
+                    error: 'This auction was not found',
                     showBanner: true,
                 };
             } else if (this.auction?.isFinished || (!this.auction && this.takeEvents)) {
@@ -390,7 +390,7 @@ export default Vue.extend({
             },
         },
         areAuctionsFetching(areAuctionsFetching) {
-            if (!areAuctionsFetching && !this.auction) {
+            if (!areAuctionsFetching && !this.auction && !this.error) {
                 this.$emit('fetchTakeEventsFromAuction', this.auctionId);
             }
         },
