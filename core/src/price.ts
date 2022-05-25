@@ -110,14 +110,12 @@ export const calculateTransactionGrossProfitDate = function (auction: Auction, c
         return undefined;
     }
 
-    let steps = 0;
-    let currentValue = new BigNumber(auction.approximateUnitPrice);
+    const stepNumber = Math.ceil(
+        Math.log(auction.marketUnitPrice.dividedBy(auction.approximateUnitPrice).toNumber()) /
+            Math.log(auction.priceDropRatio.toNumber())
+    );
 
-    while (currentValue.isGreaterThan(auction.marketUnitPrice)) {
-        steps += 1;
-        currentValue = currentValue.multipliedBy(auction.priceDropRatio);
-    }
     const secondsSinceLastPriceDrop = auction.secondsBetweenPriceDrops - auction.secondsTillNextPriceDrop;
-    const secondsTillProfitable = auction.secondsBetweenPriceDrops * steps - secondsSinceLastPriceDrop;
+    const secondsTillProfitable = auction.secondsBetweenPriceDrops * stepNumber - secondsSinceLastPriceDrop;
     return addSeconds(currentDate, secondsTillProfitable);
 };
