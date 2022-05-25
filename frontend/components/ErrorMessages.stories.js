@@ -12,7 +12,7 @@ storiesOf('ErrorMessages', module)
                 return parseMetamaskError(this.errorMessage);
             },
         },
-        template: '<a>{{parsedErrorMessage}}</a>',
+        template: '<div><pre>{{errorMessage}}</pre><br />{{parsedErrorMessage}}</div>',
     }))
     .add('Cannot estimate gas', () => ({
         data: () => ({
@@ -24,7 +24,7 @@ storiesOf('ErrorMessages', module)
                 return parseMetamaskError(this.errorMessage);
             },
         },
-        template: '<a>{{parsedErrorMessage}}</a>',
+        template: '<div><pre>{{errorMessage}}</pre><br />{{parsedErrorMessage}}</div>',
     }))
     .add('Redo Transaction failed', () => ({
         data: () => ({
@@ -36,7 +36,7 @@ storiesOf('ErrorMessages', module)
                 return parseMetamaskError(this.errorMessage);
             },
         },
-        template: '<a>{{parsedErrorMessage}}</a>',
+        template: '<div><pre>{{errorMessage}}</pre><br />{{parsedErrorMessage}}</div>',
     }))
     .add('Bidding Transaction failed', () => ({
         data: () => ({
@@ -48,5 +48,5 @@ storiesOf('ErrorMessages', module)
                 return parseMetamaskError(this.errorMessage);
             },
         },
-        template: '<a>{{parsedErrorMessage}}</a>',
+        template: '<div><pre>{{errorMessage}}</pre><br />{{parsedErrorMessage}}</div>',
     }));
