@@ -37,7 +37,7 @@ $ npm run start
 - `KEEPER_*`: (optional) set of env variables to enable keeper bot:
     - `KEEPER_WALLET_PRIVATE_KEY`: (required) The wallet private key (https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key)
     - `KEEPER_MINIMUM_NET_PROFIT_DAI`: (required) The minimum net profit an auction must yield before the keeper automatically bids on it. Can be negative if one is willing to spend ETH on transaction fees to keep DAI stable
-    - `KEEPER_PREAUTHORIZE`: (optional, default false) if set to `true`, all `WHITELISTED_COLLATERALS` will be authorized on startup.
+    - `KEEPER_PREAUTHORIZE`: (optional, default `false`) if set to `true`, the wallet will execute all required authorizations (for DAI and collateralals) on start. Default behaviour is to wait until specific auction is profitable and then execute authorizations only required for the particular auction. Note that it's recommended to set this to `true` only in combination with `WHITELISTED_COLLATERALS`
 - `TWITTER_*`: (optional) set of env variables to enable twitter bot. Created via twitter developer account
   with `OAuth 1.0a` `Elevated` access and `Read and Write` permissions:
     - `TWITTER_API_KEY`: (required)
