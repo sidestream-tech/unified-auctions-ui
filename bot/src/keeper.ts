@@ -82,19 +82,23 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
         );
     }
 
-    // get wallet authorization status
     const walletAddress = await signer.getAddress();
 
     // try to authorize the wallet then return
-    const walletNewlyAuthed = await checkAndAuthorizeWallet();
-    if (walletNewlyAuthed) {
+    const wasWalletNewlyAuthorized = await checkAndAuthorizeWallet(walletAddress);
+    if (wasWalletNewlyAuthorized) {
+        // restart auction evaluation in case authorization was executed
         await checkAndParticipateIfPossible(auction);
         return;
     }
 
-    // check the collateral authorization status and authorize it if needed
-    const collateralNewlyAuthed = await checkAndAuthorizeCollateral(walletAddress, auctionTransaction.collateralType);
-    if (collateralNewlyAuthed) {
+    // check the collateral authorization status and authorize if needed
+    const wasCollateralNewlyAuthorized = await checkAndAuthorizeCollateral(
+        walletAddress,
+        auctionTransaction.collateralType
+    );
+    if (wasCollateralNewlyAuthorized) {
+        // restart auction evaluation in case authorization was executed
         await checkAndParticipateIfPossible(auction);
         return;
     }
