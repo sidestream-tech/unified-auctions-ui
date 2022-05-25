@@ -10,9 +10,8 @@ const parseMetamaskError = function (errorMessage = ''): unknown {
 
     const messageJsonString = `${jsonString.substring(messageFirstIndex + 1, messageLastIndex)}}`;
 
-    console.log(messageJsonString)
-    const metamaskError = JSON.parse(messageJsonString);
-    return truncateText(metamaskError?.value?.data?.message || 'unknown');
+    const metamaskError = JSON.parse(messageJsonString.replace('\\', ''));
+    return truncateText(metamaskError?.value?.message || 'unknown');
 };
 
 export default parseMetamaskError;
