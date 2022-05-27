@@ -1,11 +1,9 @@
 import { ethers } from 'ethers';
-import { getNetworkConfigByType } from './constants/NETWORKS';
 
 const providers: Record<string, Promise<ethers.providers.BaseProvider>> = {};
 
-export const createProvider = async function (network: string) {
-    const networkConfig = getNetworkConfigByType(network);
-    const provider = new ethers.providers.StaticJsonRpcProvider({ url: networkConfig.url });
+export const createProvider = async function (rpcURL: string) {
+    const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcURL });
     await provider.ready;
     return provider;
 };

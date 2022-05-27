@@ -4,8 +4,8 @@ import { createProvider } from './provider';
 
 const signers: Record<string, Promise<ethers.Signer>> = {};
 
-export const createSigner = async function (network: string, privateKey: string): Promise<ethers.Signer> {
-    const provider = await createProvider(network);
+export const createSigner = async function (rpcURL: string, privateKey: string): Promise<ethers.Signer> {
+    const provider = await createProvider(rpcURL);
     const signer = new ethers.Wallet(privateKey, provider);
     return signer;
 };
