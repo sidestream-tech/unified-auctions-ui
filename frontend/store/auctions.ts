@@ -87,9 +87,6 @@ export const getters = {
     isAuctionRestarting: (state: State) => (id: string) => {
         return state.restartingAuctionsIds.includes(id);
     },
-    reset(state: State) {
-        Object.assign(state, getInitialState());
-    },
 };
 
 export const mutations = {
@@ -148,6 +145,9 @@ export const mutations = {
     },
     setError(state: State, error: string) {
         state.error = error;
+    },
+    reset(state: State) {
+        Object.assign(state, getInitialState());
     },
 };
 
@@ -317,6 +317,6 @@ export const actions = {
     async setup({ commit, dispatch }: ActionContext<State, State>) {
         commit('reset');
 
-        await dispatch('auctions/fetch');
+        await dispatch('fetch');
     },
 };

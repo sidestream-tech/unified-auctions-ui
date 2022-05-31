@@ -126,7 +126,12 @@ export const mutations = {
         Vue.set(state.collateralVatBalanceStore, collateralType, balance);
     },
     reset(state: State) {
-        Object.assign(state, getInitialState());
+        const initialState = getInitialState();
+        Object.assign(state, {
+            ...initialState,
+            address: state.address,
+            walletType: state.walletType,
+        });
     },
 };
 
@@ -280,8 +285,6 @@ export const actions = {
     },
     async setup({ commit, dispatch }: ActionContext<State, State>): Promise<void> {
         commit('reset');
-
-        await dispatch('autoConnect');
         await dispatch('fetchWalletBalances');
         await dispatch('fetchTokenAddressDai');
     },
