@@ -19,7 +19,7 @@ const getCalleeData = async function (
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
-    const minProfit = 0;
+    const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'address[]', 'address[]'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,

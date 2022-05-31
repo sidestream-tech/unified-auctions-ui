@@ -9,6 +9,7 @@ import {
     restartAuction,
     enrichAuctionWithPriceDropAndMarketValue,
     fetchTakeEvents,
+    fetchSingleAuctionById,
 } from 'auctions-core/src/auctions';
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
@@ -26,9 +27,11 @@ interface State {
     auctionStorage: Record<string, AuctionTransaction>;
     takeEventStorage: Record<string, TakeEvent[]>;
     areAuctionsFetching: boolean;
+    isSelectedAuctionFetching: boolean;
     areTakeEventsFetching: boolean;
     isBidding: boolean;
     error: string | null;
+    auctionErrors: Record<string, string | undefined>;
     restartingAuctionsIds: string[];
     lastUpdated: Date | undefined;
 }
@@ -37,9 +40,11 @@ const getInitialState = (): State => ({
     auctionStorage: {},
     takeEventStorage: {},
     areAuctionsFetching: false,
+    isSelectedAuctionFetching: false,
     areTakeEventsFetching: false,
     isBidding: false,
     error: null,
+    auctionErrors: {},
     restartingAuctionsIds: [],
     lastUpdated: undefined,
 });
@@ -72,6 +77,9 @@ export const getters = {
     getAreAuctionsFetching(state: State) {
         return state.areAuctionsFetching;
     },
+    getIsSelectedAuctionFetching(state: State) {
+        return state.isSelectedAuctionFetching;
+    },
     getAreTakeEventsFetching(state: State) {
         return state.areTakeEventsFetching;
     },
@@ -80,6 +88,9 @@ export const getters = {
     },
     getError(state: State) {
         return state.error;
+    },
+    getAuctionErrors(state: State) {
+        return state.auctionErrors;
     },
     getLastUpdated(state: State) {
         return state.lastUpdated;
@@ -131,11 +142,14 @@ export const mutations = {
             state.restartingAuctionsIds = state.restartingAuctionsIds.filter(auctionId => auctionId !== id);
         }
     },
+    refreshLastUpdated(state: State) {
+        state.lastUpdated = new Date();
+    },
     setAreAuctionsFetching(state: State, areFetching: boolean) {
-        if (areFetching === false) {
-            state.lastUpdated = new Date();
-        }
         state.areAuctionsFetching = areFetching;
+    },
+    setIsSelectedAuctionFetching(state: State, isFetching: boolean) {
+        state.isSelectedAuctionFetching = isFetching;
     },
     setAreTakeEventsFetching(state: State, areFetching: boolean) {
         state.areTakeEventsFetching = areFetching;
@@ -146,13 +160,24 @@ export const mutations = {
     setError(state: State, error: string) {
         state.error = error;
     },
+    setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
+        Vue.set(state.auctionErrors, auctionId, error);
+    },
     reset(state: State) {
         Object.assign(state, getInitialState());
     },
 };
 
 export const actions = {
-    async update({ commit, rootGetters }: ActionContext<State, State>) {
+    async update({ rootState, dispatch }: ActionContext<State, any>) {
+        const selectedAuctionId = rootState.route.query.auction;
+        if (!selectedAuctionId) {
+            await dispatch('updateAllAuctions');
+        } else {
+            await dispatch('updateSingleAuction', selectedAuctionId);
+        }
+    },
+    async updateAllAuctions({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
@@ -166,11 +191,29 @@ export const actions = {
             });
             commit('setError', null);
             commit('setAuctions', auctions);
-        } catch (error) {
+        } catch (error: any) {
             console.error('fetch auction error', error);
             commit('setError', error.message);
         } finally {
+            commit('refreshLastUpdated');
             commit('setAreAuctionsFetching', false);
+        }
+    },
+    async updateSingleAuction({ commit, rootGetters }: ActionContext<State, State>, auctionId: string) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        commit('setIsSelectedAuctionFetching', true);
+        try {
+            const auction = await fetchSingleAuctionById(network, auctionId);
+            commit('setAuction', auction);
+            commit('setErrorByAuctionId', { auctionId, error: undefined });
+        } catch (error: any) {
+            console.error('fetch auction error', error);
+            commit('setErrorByAuctionId', { auctionId, error: error.message });
+        } finally {
+            commit('setIsSelectedAuctionFetching', false);
         }
     },
     async fetch({ dispatch }: ActionContext<State, State>) {
@@ -267,7 +310,7 @@ export const actions = {
         try {
             await restartAuction(network, auction, walletAddress, notifier);
             await dispatch('fetchWithoutLoading');
-        } catch (error) {
+        } catch (error: any) {
             commit('removeAuctionRestarting', id);
             console.error(`Auction redo error: ${error.message}`);
         }
@@ -285,7 +328,7 @@ export const actions = {
         try {
             const updatedAuction = await enrichAuctionWithPriceDropAndMarketValue(auction, network);
             commit('setAuction', updatedAuction);
-        } catch (error) {
+        } catch (error: any) {
             console.warn(
                 `Updating price for ${auction.id} failed with error:`,
                 error instanceof Error && error.message

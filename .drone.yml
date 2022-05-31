@@ -24,6 +24,8 @@ data:
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/staging_banner_url
         - key: DEFAULT_ETHEREUM_NETWORK
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/default_etherum_network
+        - key: HEAPIO_ID
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/heapio_id
       tags_to_cache_from:
         - "main"
       trigger:
@@ -86,6 +88,8 @@ data:
           value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/contact_email
         - key: DEFAULT_ETHEREUM_NETWORK
           value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/default_etherum_network
+        - key: HEAPIO_ID
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/heapio_id
       tags_to_cache_from:
         - "main"
       trigger:
