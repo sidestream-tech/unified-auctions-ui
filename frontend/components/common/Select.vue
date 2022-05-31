@@ -89,6 +89,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
     },
 
     data() {
@@ -108,7 +112,11 @@ export default Vue.extend({
     watch: {
         localVisible: {
             handler(newVisible) {
-                this.$emit('update:visible', newVisible);
+                if (this.disabled) {
+                    this.localVisible = false;
+                } else {
+                    this.$emit('update:visible', newVisible);
+                }
             },
         },
         visible: {
