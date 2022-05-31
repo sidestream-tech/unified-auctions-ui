@@ -360,6 +360,6 @@ export const actions = {
     async setup({ commit, dispatch }: ActionContext<State, State>) {
         commit('reset');
 
-        await dispatch('fetch');
+        await dispatch('update');
     },
 };

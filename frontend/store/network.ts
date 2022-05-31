@@ -91,19 +91,12 @@ export const actions = {
         commit('setIsChangingNetwork', true);
         try {
             await dispatch('setWalletNetwork', newNetwork);
-            await window.$nuxt.$router.replace({
+            await window.$nuxt.$router.push({
                 path: rootState.route.path,
                 query: {
                     network: newNetwork,
                 },
             });
-            const waitForNetworkUpdates = setInterval(() => {
-                if (getters.getWalletNetwork === newNetwork) {
-                    clearInterval(waitForNetworkUpdates);
-                    dispatch('setup').catch(() => {});
-                    commit('setIsChangingNetwork', false);
-                }
-            }, 200);
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
             commit('setIsChangingNetwork', false);
@@ -121,12 +114,12 @@ export const actions = {
     async fixWalletNetwork({ dispatch, getters }: ActionContext<State, State>): Promise<void> {
         try {
             await dispatch('setWalletNetwork', getters.getPageNetwork);
-            await dispatch('setup');
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
         }
     },
-    async setup({ dispatch }: ActionContext<State, State>): Promise<void> {
+    async setup({ commit, dispatch }: ActionContext<State, State>): Promise<void> {
+        commit('setIsChangingNetwork', false);
         await dispatch('wallet/setup', undefined, { root: true });
         await dispatch('auctions/setup', undefined, { root: true });
         await dispatch('authorizations/setup', undefined, { root: true });

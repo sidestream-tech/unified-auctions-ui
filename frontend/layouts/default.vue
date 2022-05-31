@@ -117,6 +117,14 @@ export default Vue.extend({
             return this.$nuxt?.context?.isDev;
         },
     },
+    created() {
+        this.$store.watch(
+            state => state.network.walletChainId,
+            () => {
+                this.$store.dispatch('network/setup');
+            }
+        );
+    },
     methods: {
         ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
