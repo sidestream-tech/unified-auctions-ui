@@ -4,7 +4,7 @@ const KEEPER_WALLET_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd
 const URL_TO_VISIT = 'http:///localhost:3000/collateral?network=localhost';
 
 describe('Some buttons are clicked', function () {
-    let signerAddress;
+    let signerAddress: string;
     it('Clicks the button', async function () {
         setSigner(ETHEREUM_NETWORK, createSigner(ETHEREUM_NETWORK, KEEPER_WALLET_PRIVATE_KEY));
         const signer = await getSigner(ETHEREUM_NETWORK);
