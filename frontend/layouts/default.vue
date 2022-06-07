@@ -126,7 +126,7 @@ export default Vue.extend({
         },
     },
     methods: {
-        ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork', 'setup']),
+        ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
             this.$store.commit('cookies/acceptTerms');
