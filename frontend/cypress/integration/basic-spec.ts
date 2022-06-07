@@ -5,20 +5,18 @@ const URL_TO_VISIT = 'http:///localhost:3000/collateral?network=localhost';
 
 describe('Some buttons are clicked', function () {
     let signerAddress;
-    beforeEach(() => {
+    it('Clicks the button', async function () {
         setSigner(ETHEREUM_NETWORK, createSigner(ETHEREUM_NETWORK, KEEPER_WALLET_PRIVATE_KEY));
-        getSigner(ETHEREUM_NETWORK).then(signer =>
-            signer.getAddress().then(addr => {
-                signerAddress = addr;
-            })
-        );
-    });
-    it('Clicks the button', function () {
+        const signer = await getSigner(ETHEREUM_NETWORK);
+        signerAddress = await signer.getAddress();
         cy.visit(URL_TO_VISIT);
         cy.window()
             .its('$nuxt')
             .then(nuxt => nuxt.$store.dispatch('wallet/setAddress', signerAddress));
-        cy.wait(120000);
-        cy.get('table').first().should('contain.text', 'ETH');
+        cy.get('table').first({ timeout: 140000 }).should('contain.text', 'ETH');
+        cy.get('button').eq(6).should('contain.text', 'participate').click();
+        cy.window()
+            .its('$nuxt')
+            .then(nuxt => nuxt.$store.dispatch('authorizations/authorizeWallet'));
     });
 });
