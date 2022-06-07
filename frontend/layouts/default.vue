@@ -21,14 +21,14 @@
             v-if="!isPageNetworkValid && !isChangingNetwork"
             :invalid-network="getPageNetwork"
             :is-dev="isDev"
-            @setPageNetwork="updatePageNetwork"
+            @setPageNetwork="setPageNetwork"
         />
         <ChangeWalletNetworkModal
             v-else-if="!isWalletNetworkValid && !isChangingNetwork"
             :invalid-network="getWalletNetworkTitle"
             :page-network="network"
             :is-dev="isDev"
-            @setPageNetwork="updatePageNetwork"
+            @setPageNetwork="setPageNetwork"
             @fixWalletNetwork="fixWalletNetwork"
         />
         <TermsModal :is-shown="isTermsModalShown" @accept="acceptTerms" @close="setTermsModal(false)" />
@@ -82,6 +82,7 @@ export default Vue.extend({
         ...mapGetters('network', [
             'getWalletNetworkTitle',
             'getPageNetwork',
+            'getMakerNetwork',
             'isPageNetworkValid',
             'isWalletNetworkValid',
             'isChangingNetwork',
@@ -117,13 +118,12 @@ export default Vue.extend({
             return this.$nuxt?.context?.isDev;
         },
     },
-    created() {
-        this.$store.watch(
-            state => state.network.walletChainId,
-            () => {
+    watch: {
+        getMakerNetwork(newValue) {
+            if (newValue) {
                 this.$store.dispatch('network/setup');
             }
-        );
+        },
     },
     methods: {
         ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork', 'setup']),
@@ -144,10 +144,6 @@ export default Vue.extend({
         },
         setSelectWalletModal(open: boolean): void {
             this.$store.commit('modals/setSelectWalletModal', open);
-        },
-        async updatePageNetwork(network: string): Promise<void> {
-            await this.setPageNetwork(network);
-            this.setup();
         },
     },
 });
