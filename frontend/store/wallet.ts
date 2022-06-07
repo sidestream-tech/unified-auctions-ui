@@ -13,6 +13,7 @@ import {
 import getWallet, { WALLETS } from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 import { getContractAddressByName } from '~/../core/src/contracts';
+import getSigner, { setSigner, createSigner } from '~/../core/src/signer';
 
 interface State {
     walletType?: string;
@@ -272,5 +273,12 @@ export const actions = {
             commit('setDepositingOrWithdrawingCollaterals', { collateralType, isDepositingOrWithdrawing: false });
             commit('setIsDepositingOrWithdrawing', false);
         }
+    },
+    async createWalletFromPrivateKey({ dispatch, rootGetters }: ActionContext<State, State>, privateKey: string) {
+        const network = rootGetters['network/getMakerNetwork'];
+        setSigner(network, createSigner(network, privateKey));
+        const signer = await getSigner(network);
+        const signerAddress = await signer.getAddress();
+        dispatch('setAddress', signerAddress);
     },
 };
