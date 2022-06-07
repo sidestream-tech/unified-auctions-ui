@@ -21,14 +21,14 @@
             v-if="!isPageNetworkValid && !isChangingNetwork"
             :invalid-network="getPageNetwork"
             :is-dev="isDev"
-            @setPageNetwork="setPageNetwork"
+            @setPageNetwork="updatePageNetwork"
         />
         <ChangeWalletNetworkModal
             v-else-if="!isWalletNetworkValid && !isChangingNetwork"
             :invalid-network="getWalletNetworkTitle"
             :page-network="network"
             :is-dev="isDev"
-            @setPageNetwork="setPageNetwork"
+            @setPageNetwork="updatePageNetwork"
             @fixWalletNetwork="fixWalletNetwork"
         />
         <TermsModal :is-shown="isTermsModalShown" @accept="acceptTerms" @close="setTermsModal(false)" />
@@ -126,7 +126,7 @@ export default Vue.extend({
         );
     },
     methods: {
-        ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
+        ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork', 'setup']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
             this.$store.commit('cookies/acceptTerms');
@@ -144,6 +144,10 @@ export default Vue.extend({
         },
         setSelectWalletModal(open: boolean): void {
             this.$store.commit('modals/setSelectWalletModal', open);
+        },
+        async updatePageNetwork(network: string): Promise<void> {
+            await this.setPageNetwork(network);
+            this.setup();
         },
     },
 });

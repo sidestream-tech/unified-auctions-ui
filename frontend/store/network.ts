@@ -91,7 +91,7 @@ export const actions = {
         commit('setIsChangingNetwork', true);
         try {
             await dispatch('setWalletNetwork', newNetwork);
-            await window.$nuxt.$router.push({
+            await window.$nuxt.$router.replace({
                 path: rootState.route.path,
                 query: {
                     network: newNetwork,
