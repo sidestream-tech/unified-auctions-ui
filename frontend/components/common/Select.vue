@@ -89,7 +89,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        disabled: {
+        isLoading: {
             type: Boolean,
             default: false,
         },
@@ -112,7 +112,7 @@ export default Vue.extend({
     watch: {
         localVisible: {
             handler(newVisible) {
-                if (this.disabled) {
+                if (this.isLoading) {
                     this.localVisible = false;
                 } else {
                     this.$emit('update:visible', newVisible);

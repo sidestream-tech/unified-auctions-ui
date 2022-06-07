@@ -2,7 +2,7 @@
     <Select
         :value="network"
         :options="options"
-        :disabled="isChangingNetwork"
+        :is-loading="isChangingNetwork"
         title="Select Network"
         @input="$emit('update:network', $event)"
     >
