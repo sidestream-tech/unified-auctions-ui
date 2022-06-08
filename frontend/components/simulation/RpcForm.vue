@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Input, message } from 'ant-design-vue';
+import { Input } from 'ant-design-vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 
@@ -59,10 +59,6 @@ export default Vue.extend({
     },
     methods: {
         submitForm() {
-            if (!this.inputUrl.startsWith('https://')) {
-                message.error('RPC url should start with https://');
-                return;
-            }
             this.$emit('submit', this.inputUrl);
         },
     },
