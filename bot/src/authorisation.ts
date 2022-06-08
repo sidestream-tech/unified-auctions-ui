@@ -5,11 +5,11 @@ import {
     getCollateralAuthorizationStatus,
     getWalletAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-import { ETHEREUM_NETWORK, KEEPER_PREAUTHORIZE } from './variables';
+import { KEEPER_PREAUTHORIZE } from './variables';
 import { getWhitelistedCollaterals } from './whitelist';
 
-export async function checkAndAuthorizeWallet(walletAddress: string): Promise<boolean> {
-    const isWalletAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
+export async function checkAndAuthorizeWallet(walletAddress: string, network: string): Promise<boolean> {
+    const isWalletAuth = await getWalletAuthorizationStatus(network, walletAddress);
 
     if (isWalletAuth) {
         console.info(`keeper: wallet "${walletAddress}" has already been authorized`);
@@ -17,14 +17,18 @@ export async function checkAndAuthorizeWallet(walletAddress: string): Promise<bo
     }
 
     console.info(`keeper: wallet "${walletAddress}" has not been authorized yet. Attempting authorization now...`);
-    const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, walletAddress, false);
+    const transactionHash = await authorizeWallet(network, walletAddress, false);
     console.info(`keeper: wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
     return true;
 }
 
-export async function checkAndAuthorizeCollateral(walletAddress: string, collateralType: string): Promise<boolean> {
+export async function checkAndAuthorizeCollateral(
+    walletAddress: string,
+    collateralType: string,
+    network: string
+): Promise<boolean> {
     // get collateral authorization status
-    const isCollateralAuth = await getCollateralAuthorizationStatus(ETHEREUM_NETWORK, collateralType, walletAddress);
+    const isCollateralAuth = await getCollateralAuthorizationStatus(network, collateralType, walletAddress);
 
     // try to authorize the collateral then return
     if (isCollateralAuth) {
@@ -37,33 +41,28 @@ export async function checkAndAuthorizeCollateral(walletAddress: string, collate
     console.info(
         `keeper: collateral "${collateralType}" has not been authorized on wallet "${walletAddress}" yet. Attempting authorization now...`
     );
-    const collateralTransactionHash = await authorizeCollateral(
-        ETHEREUM_NETWORK,
-        walletAddress,
-        collateralType,
-        false
-    );
+    const collateralTransactionHash = await authorizeCollateral(network, walletAddress, collateralType, false);
     console.info(
         `keeper: collateral "${collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
     );
     return true;
 }
 
-export async function executePreAuthorizationsIfRequested() {
-    if (KEEPER_PREAUTHORIZE !== true) {
+export async function executePreAuthorizationsIfRequested(network: string) {
+    if (!KEEPER_PREAUTHORIZE) {
         return;
     }
 
-    const collaterals = await getWhitelistedCollaterals();
+    const collaterals = await getWhitelistedCollaterals(network);
     console.info(
         `keeper: "KEEPER_PREAUTHORIZE" is true. Attempting to authorize wallet and collaterals: "${collaterals.join(
             ', '
         )}"`
     );
-    const signer = await getSigner(ETHEREUM_NETWORK);
+    const signer = await getSigner(network);
     const walletAddress = await signer.getAddress();
-    await checkAndAuthorizeWallet(walletAddress);
+    await checkAndAuthorizeWallet(walletAddress, network);
     for (const collateral of collaterals) {
-        await checkAndAuthorizeCollateral(walletAddress, collateral);
+        await checkAndAuthorizeCollateral(walletAddress, collateral, network);
     }
 }

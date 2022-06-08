@@ -3,10 +3,11 @@ import { createProvider } from './provider';
 
 const signers: Record<string, Promise<ethers.Signer>> = {};
 
-export const createSigner = async function (privateKey: string): Promise<ethers.Signer> {
-    const provider = await createProvider();
-    const signer = new ethers.Wallet(privateKey, provider);
-    return signer;
+export const createSigner = async function (
+    privateKey: string,
+    provider?: ethers.providers.BaseProvider
+): Promise<ethers.Signer> {
+    return new ethers.Wallet(privateKey, provider || (await createProvider()));
 };
 
 export function setSigner(network: string, signer: Promise<ethers.Signer>) {

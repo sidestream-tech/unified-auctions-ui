@@ -1,46 +1,56 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
 import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
-import { ETHEREUM_NETWORK, KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
+import { createProvider, getChainIdFromProvider } from 'auctions-core/dist/src/provider';
+import { getNetworkTitleAndEtherscanURLByChainId } from 'auctions-core/dist/src/constants/NETWORKS';
+import { KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
 import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from './authorisation';
 
 let isSetupCompleted = false;
 const currentlyExecutedAuctions = new Set();
 
 export const setupKeeper = async function () {
-    if (!KEEPER_WALLET_PRIVATE_KEY) {
-        console.warn('keeper: KEEPER_WALLET_PRIVATE_KEY variable is not set, keeper will not run');
-        return;
-    }
-    if (Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI)) {
-        console.warn('keeper: KEEPER_MINIMUM_NET_PROFIT_DAI is not set or not a number, keeper will not run');
-        return;
-    }
     try {
-        setSigner(ETHEREUM_NETWORK, createSigner(KEEPER_WALLET_PRIVATE_KEY));
-        const signer = await getSigner(ETHEREUM_NETWORK);
+        const provider = await createProvider();
+        const chainId = await getChainIdFromProvider(provider);
+        const networkInfo = getNetworkTitleAndEtherscanURLByChainId(chainId);
+        const networkTitle = networkInfo?.title || chainId;
+
+        if (!KEEPER_WALLET_PRIVATE_KEY) {
+            console.warn('keeper: KEEPER_WALLET_PRIVATE_KEY variable is not set, keeper will not run');
+            isSetupCompleted = true;
+            return networkTitle;
+        }
+        if (Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI)) {
+            console.warn('keeper: KEEPER_MINIMUM_NET_PROFIT_DAI is not set or not a number, keeper will not run');
+            return networkTitle;
+        }
+
+        setSigner(networkTitle, createSigner(KEEPER_WALLET_PRIVATE_KEY));
+        const signer = await getSigner(networkTitle);
         const address = await signer.getAddress();
         isSetupCompleted = true;
         console.info(
             `keeper: setup complete: using wallet "${address}", looking for minimum clear profit of "${KEEPER_MINIMUM_NET_PROFIT_DAI}" DAI`
         );
+        return networkTitle;
     } catch (error) {
-        console.warn(
+        throw new Error(
             `keeper: setup error, keeper will not run, please check that KEEPER_WALLET_PRIVATE_KEY is valid. (${error})`
         );
     }
 };
 
-const checkAndParticipateIfPossible = async function (auction: AuctionInitialInfo) {
+const checkAndParticipateIfPossible = async function (auction: AuctionInitialInfo, network: string) {
     // check if setupKeeper hasn't run
     if (!isSetupCompleted) {
         return;
     }
 
-    const signer = await getSigner(ETHEREUM_NETWORK);
+    const signer = await getSigner(network);
 
     // enrich the auction with more numbers
-    const auctionTransaction = await enrichAuction(ETHEREUM_NETWORK, auction);
+    const auctionTransaction = await enrichAuction(network, auction);
 
     // check if auction became inactive or finished
     if (auctionTransaction.isFinished) {
@@ -87,31 +97,32 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
     const walletAddress = await signer.getAddress();
 
     // try to authorize the wallet then return
-    const wasWalletNewlyAuthorized = await checkAndAuthorizeWallet(walletAddress);
+    const wasWalletNewlyAuthorized = await checkAndAuthorizeWallet(walletAddress, network);
     if (wasWalletNewlyAuthorized) {
         // restart auction evaluation in case authorization was executed
-        await checkAndParticipateIfPossible(auction);
+        await checkAndParticipateIfPossible(auction, network);
         return;
     }
 
     // check the collateral authorization status and authorize if needed
     const wasCollateralNewlyAuthorized = await checkAndAuthorizeCollateral(
         walletAddress,
-        auctionTransaction.collateralType
+        auctionTransaction.collateralType,
+        network
     );
     if (wasCollateralNewlyAuthorized) {
         // restart auction evaluation in case authorization was executed
-        await checkAndParticipateIfPossible(auction);
+        await checkAndParticipateIfPossible(auction, network);
         return;
     }
 
     // bid on the Auction
     console.info(`keeper: auction "${auctionTransaction.id}": attempting swap execution`);
-    const bidHash = await bidWithCallee(ETHEREUM_NETWORK, auctionTransaction, walletAddress);
+    const bidHash = await bidWithCallee(network, auctionTransaction, walletAddress);
     console.info(`keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`);
 };
 
-const participateInAuction = async function (auction: AuctionInitialInfo) {
+const participateInAuction = async function (auction: AuctionInitialInfo, network: string) {
     // check if this auction is currently executed to avoid double execution
     if (currentlyExecutedAuctions.has(auction.id)) {
         return;
@@ -120,7 +131,7 @@ const participateInAuction = async function (auction: AuctionInitialInfo) {
 
     // execute
     try {
-        await checkAndParticipateIfPossible(auction);
+        await checkAndParticipateIfPossible(auction, network);
     } catch (error) {
         console.error(`keeper: unexpected error: ${(error instanceof Error && error.message) || 'unknown'}`);
     }
@@ -129,9 +140,9 @@ const participateInAuction = async function (auction: AuctionInitialInfo) {
     currentlyExecutedAuctions.delete(auction.id);
 };
 
-export const participate = async function (auctions: AuctionInitialInfo[]) {
+export const participate = async function (auctions: AuctionInitialInfo[], network: string) {
     for (const auction of auctions) {
-        await participateInAuction(auction);
+        await participateInAuction(auction, network);
     }
 };
 

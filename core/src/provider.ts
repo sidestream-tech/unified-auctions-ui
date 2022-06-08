@@ -33,7 +33,7 @@ const getProvider = function (network: string): Promise<ethers.providers.BasePro
 
 export const getChainIdFromProvider = async function (provider: ethers.providers.BaseProvider) {
     const networkInfo = await provider.getNetwork();
-    return networkInfo.chainId || undefined;
+    return `0x${(networkInfo.chainId || 0).toString(16)}`;
 };
 
 export default getProvider;

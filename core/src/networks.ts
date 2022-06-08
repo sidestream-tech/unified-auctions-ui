@@ -7,17 +7,14 @@ const callbacks: ((networks: Record<string, NetworkConfig>) => void)[] = [];
 
 export const subscribeToNetworks = function (callback: (networks: Record<string, NetworkConfig>) => void) {
     callbacks.push(callback);
-    console.log(callbacks);
 };
 
 const sendNetworksToSubscribers = function () {
-    console.log(networks);
-    console.log(callbacks);
     callbacks.forEach(callback => callback(networks));
 };
 
 export const addNetwork = async function (provider: any, rpcURL: string) {
-    const chainId = '0x' + ((await getChainIdFromProvider(provider)) || 0).toString(16);
+    const chainId = await getChainIdFromProvider(provider);
     const networkInfo = getNetworkTitleAndEtherscanURLByChainId(chainId);
 
     networks[networkInfo?.title || chainId] = {
