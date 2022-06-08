@@ -2,8 +2,8 @@ import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
 import {
     getNetworkConfigByType,
+    getNetworkTitleAndEtherscanURLByChainId,
     getNetworkTypeByChainId,
-    getNetworkTitleByChainId,
 } from 'auctions-core/src/constants/NETWORKS';
 import getWallet from '~/lib/wallet';
 
@@ -28,7 +28,7 @@ export const getters = {
         return getNetworkTypeByChainId(state.walletChainId);
     },
     getWalletNetworkTitle(_state: State, getters: any) {
-        return getNetworkTitleByChainId(getters.getWalletChainId) || getters.getWalletChainId;
+        return getNetworkTitleAndEtherscanURLByChainId(getters.getWalletChainId)?.title || getters.getWalletChainId;
     },
     getPageNetwork(_state: State, _getters: any, rootState: any) {
         const pageNetwork = rootState.route.query.network;

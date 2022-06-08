@@ -1,6 +1,6 @@
 import memoizee from 'memoizee';
 import getProvider from './provider';
-import { getNetworkConfigByType } from './constants/NETWORKS';
+import { getNetworkConfigByType } from './networks';
 
 const CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS = 60 * 1000;
 

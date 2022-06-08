@@ -1,5 +1,4 @@
 import { setTimeout as delay } from 'timers/promises';
-import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 import { getAllAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
 import notify from './notify';
 import participate, { setupKeeper } from './keeper';
@@ -28,7 +27,6 @@ const loop = async function (): Promise<void> {
 
 const start = async function (): Promise<void> {
     await delay(SETUP_DELAY);
-    getNetworkConfigByType(ETHEREUM_NETWORK);
     setupWhitelist();
     await setupTwitter();
     await setupKeeper();

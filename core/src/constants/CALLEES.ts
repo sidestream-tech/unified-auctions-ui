@@ -1,6 +1,6 @@
 import type { CalleeAddresses } from '../types';
 import { getCollateralConfigByType } from './COLLATERALS';
-import { getNetworkConfigByType } from './NETWORKS';
+import { getNetworkConfigByType } from '../networks';
 
 const CALLEES: Record<string, CalleeAddresses | undefined> = {
     '0x1': {

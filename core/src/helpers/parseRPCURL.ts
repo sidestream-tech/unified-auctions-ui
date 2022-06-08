@@ -1,6 +1,6 @@
 const INFURA_URL_PROJECT_ID_IDENTIFIER = 'v3/';
 
-export const parseURLForInfuraId = function (rpcUrl: string) {
+export const parseRPCURLForInfuraId = function (rpcUrl: string) {
     if (!rpcUrl.includes('infura.io/v3')) {
         return undefined;
     }

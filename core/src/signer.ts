@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
-import { getNetworkConfigByType } from './constants/NETWORKS';
 import { createProvider } from './provider';
+import { getNetworkConfigByType } from './networks';
 
 const signers: Record<string, Promise<ethers.Signer>> = {};
 
-export const createSigner = async function (rpcURL: string, privateKey: string): Promise<ethers.Signer> {
-    const provider = await createProvider(rpcURL);
+export const createSigner = async function (privateKey: string): Promise<ethers.Signer> {
+    const provider = await createProvider();
     const signer = new ethers.Wallet(privateKey, provider);
     return signer;
 };

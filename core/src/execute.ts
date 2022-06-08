@@ -3,7 +3,7 @@ import memoizee from 'memoizee';
 import getContract from './contracts';
 import trackTransaction from './tracker';
 import { getGasParametersForTransaction } from './gas';
-import { getNetworkConfigByType } from './constants/NETWORKS';
+import { getNetworkConfigByType } from './networks';
 
 const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
     const networkConfig = getNetworkConfigByType(network);

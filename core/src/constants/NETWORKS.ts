@@ -35,22 +35,32 @@ const NETWORKS: Record<string, NetworkConfig> = {
     },
 };
 
-const NETWORK_TITLES: Record<string, string | undefined> = {
+const NETWORK_INFO: Record<string, { title: string; etherscanURL: string }> = {
     // full list can be found on https://chainlist.org
-    '0x1': 'mainnet',
-    '0x2a': 'kovan',
-    '0x3': 'ropsten',
-    '0x4': 'rinkeby',
-    '0x5': 'goerli',
-    '0x539': 'localhost',
-};
-
-export const getDecimalChainIdByNetworkType = function (networkType: string): number {
-    const network = NETWORKS[networkType];
-    if (!network || !network.chainId) {
-        throw new Error(`No network with name "${networkType}" can be found`);
-    }
-    return parseInt(network.chainId, 16);
+    '0x1': {
+        title: 'mainnet',
+        etherscanURL: 'https://etherscan.io',
+    },
+    '0x2a': {
+        title: 'kovan',
+        etherscanURL: 'https://kovan.etherscan.io',
+    },
+    '0x3': {
+        title: 'ropsten',
+        etherscanURL: 'https://ropsten.etherscan.io',
+    },
+    '0x4': {
+        title: 'rinkeby',
+        etherscanURL: 'https://rinkeby.etherscan.io',
+    },
+    '0x5': {
+        title: 'goerli',
+        etherscanURL: 'https://goerli.etherscan.io',
+    },
+    '0x539': {
+        title: 'localhost',
+        etherscanURL: '',
+    },
 };
 
 export const getChainIdByNetworkType = function (networkType: string | undefined): string | undefined {
@@ -73,18 +83,9 @@ export const getNetworkConfigByType = function (networkType: string | undefined)
     return NETWORKS[networkType];
 };
 
-export const getNetworkTitleByChainId = function (chainId: string | undefined) {
+export const getNetworkTitleAndEtherscanURLByChainId = function (chainId: string | undefined) {
     if (!chainId) {
         return;
     }
-    return NETWORK_TITLES[chainId];
-};
-
-export const getNetworks = function (isDev: boolean): Record<string, NetworkConfig> {
-    if (isDev) {
-        return NETWORKS;
-    }
-    //eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { localhost, ...otherNetworks } = NETWORKS;
-    return otherNetworks;
+    return NETWORK_INFO[chainId];
 };
