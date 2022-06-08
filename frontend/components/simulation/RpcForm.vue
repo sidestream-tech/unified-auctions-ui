@@ -59,7 +59,7 @@ export default Vue.extend({
     },
     methods: {
         submitForm() {
-            this.$emit('submit', this.inputUrl);
+            this.$emit('submit', this.inputUrl.trim());
         },
     },
 });

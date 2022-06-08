@@ -101,7 +101,7 @@ export default Vue.extend({
         submitForm() {
             this.$emit('submit', {
                 token: this.inputToken.trim(),
-                simulationId: this.simulationId,
+                simulationId: this.simulationId.trim(),
             });
         },
     },
