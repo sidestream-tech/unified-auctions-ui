@@ -7,13 +7,18 @@
             </label>
             <label class="w-full md:w-1/2">
                 <TextBlock class="font-semibold text-xs">Simulation id</TextBlock>
-                <Select
-                    :value="selectedSimulationId"
-                    :disabled="isLoading || disabled || noSimulationsAvailable || isStarted"
-                    :loading="isLoading"
-                    :options="simulations"
-                    @change="selectedSimulationId = $event"
-                />
+                <Dropdown :trigger="['click']" :disabled="isLoading || disabled || isStarted" placement="bottomCenter">
+                    <Input v-model="simulationId">
+                        <template v-if="!noSimulationsAvailable" #suffix>
+                            <Icon type="down" :style="{ color: '#ccc' }" />
+                        </template>
+                    </Input>
+                    <Menu v-if="!noSimulationsAvailable" slot="overlay" @click="simulationId = $event.key">
+                        <Item v-for="simulation in simulations" :key="simulation.value">
+                            {{ simulation.label }}
+                        </Item>
+                    </Menu>
+                </Dropdown>
             </label>
         </div>
         <BaseButton
@@ -33,7 +38,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Input, Select } from 'ant-design-vue';
+import { Icon, Input, Dropdown, Menu } from 'ant-design-vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 
@@ -41,8 +46,11 @@ export default Vue.extend({
     components: {
         Input,
         BaseButton,
-        Select,
         TextBlock,
+        Icon,
+        Dropdown,
+        Menu,
+        Item: Menu.Item,
     },
     props: {
         token: {
@@ -69,7 +77,7 @@ export default Vue.extend({
     data() {
         return {
             inputToken: this.token,
-            selectedSimulationId: this.simulationIds.split(',')[0],
+            simulationId: '',
         };
     },
     computed: {
@@ -86,14 +94,14 @@ export default Vue.extend({
             return this.simulations.length < 1;
         },
         hasValidVariables(): boolean {
-            return !!this.selectedSimulationId && !!this.inputToken.trim();
+            return !!this.simulationId && !!this.inputToken.trim();
         },
     },
     methods: {
         submitForm() {
             this.$emit('submit', {
                 token: this.inputToken.trim(),
-                simulationId: this.selectedSimulationId,
+                simulationId: this.simulationId,
             });
         },
     },
