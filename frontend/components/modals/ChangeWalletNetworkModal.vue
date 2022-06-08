@@ -34,6 +34,7 @@
 import { Modal, Alert } from 'ant-design-vue';
 import Vue from 'vue';
 import { getNetworks } from 'auctions-core/src/networks';
+import { NetworkConfig } from 'auctions-core/dist/src/types';
 import BaseButton from '~/components/common/BaseButton';
 
 export default Vue.extend({
@@ -47,6 +48,10 @@ export default Vue.extend({
         pageNetwork: {
             type: String,
             required: true,
+        },
+        networks: {
+            type: Object as Vue.PropType<Record<string, NetworkConfig>>,
+            default: () => ({}),
         },
         isDev: {
             type: Boolean,

@@ -29,6 +29,7 @@
                         <NetworkSelector
                             v-if="!isUnifiedPage && !isMinimal"
                             :network="network"
+                            :networks="networks"
                             :is-dev="isDev"
                             @update:network="$emit('update:network', $event)"
                         />
@@ -57,6 +58,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { NetworkConfig } from 'auctions-core/dist/src/types';
 import StagingBanner from './StagingBanner.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
 import BaseSwitch from '~/components/common/BaseSwitch.vue';
@@ -111,6 +113,10 @@ export default Vue.extend({
         stagingBannerUrl: {
             type: String,
             default: undefined,
+        },
+        networks: {
+            type: Object as Vue.PropType<Record<string, NetworkConfig>>,
+            default: () => ({}),
         },
         isDev: {
             type: Boolean,

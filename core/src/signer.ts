@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
 import { createProvider } from './provider';
-import { getNetworkConfigByType } from './networks';
 
 const signers: Record<string, Promise<ethers.Signer>> = {};
 
@@ -15,7 +14,6 @@ export function setSigner(network: string, signer: Promise<ethers.Signer>) {
 }
 
 const getSigner = function (network: string): Promise<ethers.Signer> {
-    getNetworkConfigByType(network);
     if (!signers[network]) {
         throw new Error(`No signer has been created for the "${network}" network`);
     }

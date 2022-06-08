@@ -10,6 +10,7 @@
 import Vue from 'vue';
 import { Icon } from 'ant-design-vue';
 import { getNetworks } from 'auctions-core/src/networks';
+import { NetworkConfig } from 'auctions-core/dist/src/types';
 import Select from '~/components/common/Select.vue';
 
 export default Vue.extend({
@@ -22,6 +23,10 @@ export default Vue.extend({
         network: {
             type: String,
             default: null,
+        },
+        networks: {
+            type: Object as Vue.PropType<Record<string, NetworkConfig>>,
+            default: () => ({}),
         },
         isDev: {
             type: Boolean,

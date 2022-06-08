@@ -10,6 +10,7 @@
             :has-accepted-terms="hasAcceptedTerms"
             :staging-banner-url="stagingBannerURL"
             :is-dev="isDev"
+            :networks="getAllNetworks"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
             @openWalletModal="openWalletModal"
@@ -20,12 +21,14 @@
             v-if="!isPageNetworkValid"
             :invalid-network="getPageNetwork"
             :is-dev="isDev"
+            :networks="getAllNetworks"
             @setPageNetwork="setPageNetwork"
         />
         <ChangeWalletNetworkModal
             v-else-if="!isWalletNetworkValid"
             :invalid-network="getWalletNetworkTitle"
             :page-network="network"
+            :networks="getAllNetworks"
             :is-dev="isDev"
             @setPageNetwork="setPageNetwork"
             @fixWalletNetwork="fixWalletNetwork"
@@ -79,6 +82,7 @@ export default Vue.extend({
             hasAcceptedTerms: 'hasAcceptedTerms',
         }),
         ...mapGetters('network', [
+            'getAllNetworks',
             'getWalletNetworkTitle',
             'getPageNetwork',
             'isPageNetworkValid',

@@ -5,19 +5,26 @@ import {
     getNetworkTitleAndEtherscanURLByChainId,
     getNetworkTypeByChainId,
 } from 'auctions-core/src/constants/NETWORKS';
+import { NetworkConfig } from 'auctions-core/dist/src/types';
+import { subscribeToNetworks } from 'auctions-core/dist/src/networks';
 import getWallet from '~/lib/wallet';
 
 const DEFAULT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
 
 interface State {
     walletChainId: string | undefined;
+    networks: Record<string, NetworkConfig>;
 }
 
 export const state = (): State => ({
     walletChainId: undefined,
+    networks: {},
 });
 
 export const getters = {
+    getAllNetworks(state: State) {
+        return state.networks;
+    },
     getWalletChainId(state: State) {
         return state.walletChainId;
     },
@@ -63,6 +70,9 @@ export const getters = {
 };
 
 export const mutations = {
+    setAllNetworks(state: State, networks: Record<string, NetworkConfig>) {
+        state.networks = networks;
+    },
     setWalletChainId(state: State, walletChainId: string): void {
         state.walletChainId = walletChainId;
     },
@@ -103,5 +113,10 @@ export const actions = {
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
         }
+    },
+    setup({ commit }: ActionContext<State, any>) {
+        subscribeToNetworks(networks => {
+            commit('setAllNetworks', networks);
+        });
     },
 };

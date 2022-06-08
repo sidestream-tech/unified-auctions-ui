@@ -32,6 +32,7 @@
 import { Modal, Alert } from 'ant-design-vue';
 import Vue from 'vue';
 import { getNetworks } from 'auctions-core/src/networks';
+import { NetworkConfig } from 'auctions-core/dist/src/types';
 
 export default Vue.extend({
     name: 'ChangePageNetworkModal',
@@ -40,6 +41,10 @@ export default Vue.extend({
         invalidNetwork: {
             type: String,
             default: '',
+        },
+        networks: {
+            type: Object as Vue.PropType<Record<string, NetworkConfig>>,
+            default: () => ({}),
         },
         isDev: {
             type: Boolean,
