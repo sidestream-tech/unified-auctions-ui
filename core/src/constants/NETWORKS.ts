@@ -30,6 +30,21 @@ const NETWORKS: Record<string, { title: string; etherscanURL: string; gasPrice?:
     },
 };
 
+export const INFURA_NETWORK_RPCS: { network: string; url: string }[] = [
+    {
+        network: 'mainnet',
+        url: 'https://mainnet.infura.io/v3',
+    },
+    {
+        network: 'kovan',
+        url: 'https://kovan.infura.io/v3',
+    },
+    {
+        network: 'goerli',
+        url: 'https://goerli.infura.io/v3',
+    },
+];
+
 export const getNetworkInfoByChainId = function (chainId: string | undefined) {
     if (!chainId) {
         return;

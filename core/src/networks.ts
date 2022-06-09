@@ -1,7 +1,8 @@
 import { NetworkConfig } from './types';
 import { getChainIdFromProvider } from './provider';
-import { getNetworkInfoByChainId } from './constants/NETWORKS';
+import { getNetworkInfoByChainId, INFURA_NETWORK_RPCS } from './constants/NETWORKS';
 import { ethers } from 'ethers';
+import { parseRPCURLForInfuraParameters } from './helpers/parseRPCURL';
 
 const networks: NetworkConfig[] = [];
 
@@ -41,14 +42,35 @@ export const getDecimalChainIdByNetworkType = function (networkType: string): nu
     return parseInt(networkConfig.chainId, 16);
 };
 
+const sortInfuraNetworksByDefaultNetwork = function (
+    array: { network: string; url: string }[],
+    defaultNetwork: string
+) {
+    return array.sort((networkOne, networkTwo) => {
+        if (networkTwo.network === defaultNetwork) {
+            return 1;
+        }
+        if (networkOne.network === defaultNetwork) {
+            return -1;
+        }
+        return 0;
+    });
+};
+
 const setupNetworks = async function () {
     const rpcUrl = process.env.RPC_URL;
     if (!rpcUrl) {
         throw new Error(`No "RPC_URL" was defined.`);
     }
 
-    // TODO: Parse if it is a MetaMask URL and add all three MetaMask networks automatically
-    await addNetwork(rpcUrl);
+    const { projectId, defaultNetwork } = parseRPCURLForInfuraParameters(rpcUrl);
+    if (projectId && defaultNetwork) {
+        for (const { url } of sortInfuraNetworksByDefaultNetwork(INFURA_NETWORK_RPCS, defaultNetwork)) {
+            await addNetwork(`${url}/${projectId}`);
+        }
+    } else {
+        await addNetwork(rpcUrl);
+    }
     return networks;
 };
 
