@@ -57,7 +57,7 @@ To run the tests in the headless mode (in terminal, without opening browsers) do
 > cd ../hardhat
 > npm run dev
 # Terminal session 3
-> npx cypress run
+> npm run e2e
 ```
 
 `cypress run` by default records a video. The video recording is [disabled](https://docs.cypress.io/guides/guides/screenshots-and-videos#Videos) in `cypress/cypress.json` config.
