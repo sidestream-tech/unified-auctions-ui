@@ -2,8 +2,10 @@ import { BigNumber } from 'ethers';
 import { expect } from 'chai';
 
 describe('Collateral auctions', function () {
+    // Set the private key to one of the deterministic hardhat keys.
+    // see https://hardhat.org/hardhat-network#running-stand-alone-in-order-to-support-wallets-and-other-software
     const KEEPER_WALLET_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82';
-    const URL_TO_VISIT = 'http:///localhost:3000/collateral?network=localhost';
+    const URL_TO_VISIT = `${process.env.FRONTEND_URL || 'localhost:3000'}/collateral?network=localhost`;
     let daiBalanceBefore: Record<string, BigNumber>;
     let daiBalanceAfter: Record<string, BigNumber>;
 
