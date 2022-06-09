@@ -232,7 +232,7 @@ export const actions = {
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
-        const walletAddress = getWallet().address;
+        const walletAddress = rootGetters['wallet/getAddress'];
         if (!walletAddress) {
             message.error('Bidding error: can not find wallet');
             return;
@@ -266,7 +266,7 @@ export const actions = {
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
-        const walletAddress = getWallet().address;
+        const walletAddress = rootGetters['wallet/getAddress'];
         if (!walletAddress) {
             message.error('Bidding error: can not find wallet');
             return;
@@ -296,7 +296,7 @@ export const actions = {
             message.error(`Auction reset error: can not find auction with id "${id}"`);
             return;
         }
-        const walletAddress = getWallet().address;
+        const walletAddress = rootGetters['wallet/getAddress'];
         if (!walletAddress) {
             message.error('Bidding error: can not find wallet');
             return;

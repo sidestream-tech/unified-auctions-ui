@@ -28,6 +28,7 @@
         "types": [
             "@nuxt/types",
             "@types/node",
+            "@types/chai",
             "cypress"
         ]
     },
