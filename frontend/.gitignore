@@ -92,3 +92,4 @@ sw.*
 # cypress videos
 cypress/videos
 cypress/screenshots
+cypress/support

@@ -27,7 +27,7 @@ describe('Collateral auctions', function () {
             });
 
         cy.get('a').eq(1).should('contain.text', 'Participate').click();
-        cy.get('button.Button').eq(3).should('contain.text', 'Directly swap').click();
+        cy.get('div.justify-end').contains('Directly swap').click();
         cy.get('button.Button')
             .eq(5)
             .should('contain.text', 'Authorize DAI Transactions')
