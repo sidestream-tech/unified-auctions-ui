@@ -51,11 +51,12 @@ The e2e testing is achieved via `cypress` tool. The directory that contains the 
 To run the tests in the headless mode (in terminal, without opening browsers) do:
 
 ```sh
-> cd frontend
+# Terminal session 1
 > npm run dev
+# Terminal session 2
 > cd ../hardhat
 > npm run dev
-> cd ../cypress
+# Terminal session 3
 > npx cypress run
 ```
 
@@ -69,6 +70,5 @@ To add a test, put the file with the test in the directory `cypress/integration`
 While debugging/creating the test, one can run it in the browser environment for the direct interaction. Beware that this could make the test run slower.
 
 ```sh
-> cd cypress
 > npx cypress open
 ```
