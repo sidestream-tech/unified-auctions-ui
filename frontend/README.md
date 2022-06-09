@@ -42,3 +42,33 @@ Help on both things is given in the linked resources above.
 - `DEFAULT_ETHEREUM_NETWORK`: (optional, default `mainnet`) Can be set to change the default ethereum network
 - `MAX_PRIORITY_FEE_PER_GAS_WEI`: (optional, default can be found in core/src/gas.ts) – [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559) `max_priority_fee_per_gas` value
 - `HEAPIO_ID`: (optional) [HeapIO analytics](https://heapanalytics.com/) Project's Environment ID. Required for tracking analytics.
+
+## End-to-end testing
+
+**Running tests locally**
+
+The e2e testing is achieved via `cypress` tool. The directory that contains the tests is, correspondingly, `cypress/`.
+To run the tests in the headless mode (in terminal, without opening browsers) do:
+
+```sh
+> cd frontend
+> npm run dev
+> cd ../hardhat
+> npm run dev
+> cd ../cypress
+> npx cypress run
+```
+
+`cypress run` by default records a video. The video recording is [disabled](https://docs.cypress.io/guides/guides/screenshots-and-videos#Videos) in `cypress/cypress.json` config.
+
+The e2e tests should be executed on the freshly started hardhat network - this is due to the fact that the test changes the state of the chain, so the state has to be reset on every run of the e2e suite. That can be achieved either via programmatic means or manual restarts (manual restart is less preferred.)
+
+**Creating tests**
+
+To add a test, put the file with the test in the directory `cypress/integration`. Make sure to name it with postfix `-spec`.
+While debugging/creating the test, one can run it in the browser environment for the direct interaction. Beware that this could make the test run slower.
+
+```sh
+> cd cypress
+> npx cypress open
+```
