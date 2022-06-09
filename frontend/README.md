@@ -60,8 +60,6 @@ To run the tests in the headless mode (in terminal, without opening browsers) do
 > npm run e2e
 ```
 
-`cypress run` by default records a video. The video recording is [disabled](https://docs.cypress.io/guides/guides/screenshots-and-videos#Videos) in `cypress/cypress.json` config.
-
 The e2e tests should be executed on the freshly started hardhat network - this is due to the fact that the test changes the state of the chain, so the state has to be reset on every run of the e2e suite. That can be achieved either via programmatic means or manual restarts (manual restart is less preferred.)
 
 **Creating tests**
