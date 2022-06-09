@@ -20,7 +20,7 @@ const loop = async function (): Promise<void> {
         }
         const newAuctions = getNewAuctionsFromActiveAuctions(activeAuctions);
         newAuctions.map(notify);
-        participate(activeAuctions);
+        participate(activeAuctions).catch(() => {});
     } catch (error) {
         console.error('loop error:', error);
     }
@@ -33,7 +33,7 @@ const start = async function (): Promise<void> {
     await setupTwitter();
     await setupKeeper();
     await executePreAuthorizationsIfRequested();
-    loop();
+    loop().catch(() => {});
     setInterval(loop, REFETCH_INTERVAL);
 };
 

@@ -8,5 +8,11 @@
       "@@/*": ["./*"]
     }
   },
-  "exclude": ["node_modules", ".nuxt", "dist"]
+  "exclude": ["node_modules", ".nuxt", "dist"],
+  "include": [
+      "**/*.js",
+      "**/*.vue",
+      ".eslintrc.js",
+      ".eslintrc.typescript.js"
+  ],
 }

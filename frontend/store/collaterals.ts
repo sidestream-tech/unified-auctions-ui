@@ -97,16 +97,16 @@ export const actions = {
             commit('updateCollateral', updated);
         }
     },
-    fetchCollateralStatuses({ dispatch, rootGetters }: ActionContext<State, State>) {
+    async fetchCollateralStatuses({ dispatch, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
         for (const collateralType of getAllCollateralTypes()) {
-            dispatch('resetCollateralStatus', collateralType);
+            await dispatch('resetCollateralStatus', collateralType);
         }
         for (const collateralType of getAllCollateralTypes()) {
-            dispatch('fetchCollateralStatus', collateralType);
+            await dispatch('fetchCollateralStatus', collateralType);
         }
     },
     resetCollateralStatus({ commit }: ActionContext<State, State>, collateralType: string) {
