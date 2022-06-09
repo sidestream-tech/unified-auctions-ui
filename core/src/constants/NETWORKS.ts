@@ -51,3 +51,10 @@ export const getNetworkInfoByChainId = function (chainId: string | undefined) {
     }
     return NETWORKS[chainId];
 };
+
+export const getNetworkTitleByChainId = function (chainId: string | undefined) {
+    if (!chainId) {
+        return;
+    }
+    return NETWORKS[chainId].title;
+};

@@ -34,6 +34,11 @@ export const getNetworkConfigByType = function (networkType: string | undefined)
     return networkConfig;
 };
 
+export const getNetworkTypeByChainId = function (chainId: string | undefined): string | undefined {
+    const networkEntry = Object.entries(networks).find(([_, networkObject]) => networkObject.chainId === chainId);
+    return networkEntry && networkEntry[0];
+};
+
 export const getDecimalChainIdByNetworkType = function (networkType: string): number {
     const networkConfig = getNetworkConfigByType(networkType);
     if (!networkConfig || !networkConfig.chainId) {

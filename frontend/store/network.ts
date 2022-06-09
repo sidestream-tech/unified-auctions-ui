@@ -1,29 +1,28 @@
 import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
-import {
-    getNetworkConfigByType,
-    getNetworkTitleAndEtherscanURLByChainId,
-    getNetworkTypeByChainId,
-} from 'auctions-core/src/constants/NETWORKS';
 import { NetworkConfig } from 'auctions-core/dist/src/types';
-import { subscribeToNetworks } from 'auctions-core/dist/src/networks';
+import setupNetworks, { getNetworkConfigByType, getNetworkTypeByChainId } from 'auctions-core/src/networks';
+import { getNetworkTitleByChainId } from 'auctions-core/src/constants/NETWORKS';
 import getWallet from '~/lib/wallet';
-
-const DEFAULT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
 
 interface State {
     walletChainId: string | undefined;
+    defaultNetwork: string | undefined;
     networks: Record<string, NetworkConfig>;
 }
 
 export const state = (): State => ({
     walletChainId: undefined,
+    defaultNetwork: undefined,
     networks: {},
 });
 
 export const getters = {
     getAllNetworks(state: State) {
         return state.networks;
+    },
+    getNetworkConfigByType(state: State, networkType: string) {
+        return state.networks[networkType] || undefined;
     },
     getWalletChainId(state: State) {
         return state.walletChainId;
@@ -35,12 +34,12 @@ export const getters = {
         return getNetworkTypeByChainId(state.walletChainId);
     },
     getWalletNetworkTitle(_state: State, getters: any) {
-        return getNetworkTitleAndEtherscanURLByChainId(getters.getWalletChainId)?.title || getters.getWalletChainId;
+        return getNetworkTitleByChainId(getters.getWalletChainId) || getters.getWalletChainId;
     },
-    getPageNetwork(_state: State, _getters: any, rootState: any) {
+    getPageNetwork(state: State, _getters: any, rootState: any) {
         const pageNetwork = rootState.route.query.network;
         if (!pageNetwork) {
-            return DEFAULT_NETWORK;
+            return state.defaultNetwork;
         }
         return pageNetwork;
     },
@@ -76,9 +75,16 @@ export const mutations = {
     setWalletChainId(state: State, walletChainId: string): void {
         state.walletChainId = walletChainId;
     },
+    setDefaultNetwork(state: State, network: string) {
+        state.defaultNetwork = network;
+    },
 };
 
 export const actions = {
+    async setupNetworks({ commit }: ActionContext<State, any>) {
+        const networks = await setupNetworks();
+        commit('setAllNetworks', networks);
+    },
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);
     },
@@ -113,10 +119,5 @@ export const actions = {
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
         }
-    },
-    setup({ commit }: ActionContext<State, any>) {
-        subscribeToNetworks(networks => {
-            commit('setAllNetworks', networks);
-        });
     },
 };

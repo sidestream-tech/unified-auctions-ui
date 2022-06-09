@@ -11,7 +11,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 
 const TRIM_POSITION_FROM_START = 5;
 const TRIM_POSITION_FROM_END = 4;
@@ -64,8 +63,8 @@ export default Vue.extend({
                 return 'https://etherscan.io';
             }
             try {
-                if (getNetworkConfigByType(network)) {
-                    return getNetworkConfigByType(network).etherscanUrl;
+                if (this.$store.getters['network/getNetworkConfigByType'](network)) {
+                    return this.$store.getters['network/getNetworkConfigByType'](network).etherscanUrl;
                 }
             } catch (error) {
                 console.error(`Network Config error: ${error}`);

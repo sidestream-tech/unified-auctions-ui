@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { message } from 'ant-design-vue';
-import { getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/constants/NETWORKS';
 import { setSigner } from 'auctions-core/src/signer';
+import { getNetworkConfigByType, getNetworkTypeByChainId } from 'auctions-core/src/networks';
 import MetaMaskLogo from '~/assets/icons/wallets/metamask.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
 
@@ -66,7 +66,7 @@ export default class MetaMask extends AbstractWallet {
             return;
         }
         const provider = this.getProvider();
-        const chainId = getChainIdByNetworkType(network);
+        const chainId = getNetworkConfigByType(network).chainId;
         await provider.send('wallet_switchEthereumChain', [{ chainId }]);
     }
 
