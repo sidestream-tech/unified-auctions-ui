@@ -14,7 +14,6 @@ import {
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import BigNumber from 'auctions-core/src/bignumber';
-import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
