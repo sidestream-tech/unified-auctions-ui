@@ -3,7 +3,7 @@ import { getChainIdFromProvider } from './provider';
 import { getNetworkInfoByChainId } from './constants/NETWORKS';
 import { ethers } from 'ethers';
 
-const networks: Record<string, NetworkConfig> = {};
+const networks: NetworkConfig[] = [];
 
 export const addNetwork = async function (rpcURL: string) {
     const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcURL });
@@ -13,28 +13,32 @@ export const addNetwork = async function (rpcURL: string) {
     const networkInfo = getNetworkInfoByChainId(chainId);
     const networkTitle = networkInfo?.title || chainId;
 
-    networks[networkTitle] = {
+    networks.push({
         chainId: chainId,
         title: networkTitle,
         url: rpcURL,
         etherscanUrl: networkInfo?.etherscanURL || '',
         isFork: networkTitle === 'localhost', // TODO: Find a better way to determine if network is a fork.
-    };
+    });
 };
 
 export const getNetworkConfigByType = function (networkType: string | undefined): NetworkConfig {
-    if (!networkType || !networks[networkType]) {
+    const networkConfig = networks.find(network => {
+        return network.title === networkType;
+    });
+
+    if (!networkType || !networkConfig) {
         throw new Error(`No network found with name "${networkType}"`);
     }
-    return networks[networkType];
+    return networkConfig;
 };
 
 export const getDecimalChainIdByNetworkType = function (networkType: string): number {
-    const network = networks[networkType];
-    if (!network || !network.chainId) {
+    const networkConfig = getNetworkConfigByType(networkType);
+    if (!networkConfig || !networkConfig.chainId) {
         throw new Error(`No network with name "${networkType}" can be found`);
     }
-    return parseInt(network.chainId, 16);
+    return parseInt(networkConfig.chainId, 16);
 };
 
 const setupNetworks = async function () {

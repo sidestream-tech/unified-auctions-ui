@@ -30,7 +30,7 @@ const loop = async function (network: string): Promise<void> {
 const start = async function (): Promise<void> {
     await delay(SETUP_DELAY);
     const networks = await setupNetworks();
-    const network = Object.keys(networks)[0];
+    const network = networks[0].title;
     getNetworkConfigByType(network);
     setupWhitelist();
     await setupTwitter();
