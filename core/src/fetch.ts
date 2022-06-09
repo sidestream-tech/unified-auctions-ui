@@ -55,7 +55,7 @@ export const fetchAuctionStatus = async function (
     };
 };
 
-const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
+export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
     network: string,
     collateralType: string,
     auctionIndex: number

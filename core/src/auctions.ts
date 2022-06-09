@@ -1,6 +1,10 @@
 import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier, TakeEvent } from './types';
 import BigNumber from './bignumber';
-import fetchAuctionsByCollateralType, { fetchAuctionStatus, fetchMinimumBidDai } from './fetch';
+import fetchAuctionsByCollateralType, {
+    fetchAuctionByCollateralTypeAndAuctionIndex,
+    fetchAuctionStatus,
+    fetchMinimumBidDai,
+} from './fetch';
 import { getCalleeData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
@@ -106,6 +110,15 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
 ): Promise<Auction> {
     const enrichedAuctionWithNewPriceDrop = await enrichAuctionWithPriceDrop(auction);
     return await enrichAuctionWithMarketValues(enrichedAuctionWithNewPriceDrop, network);
+};
+
+export const fetchSingleAuctionById = async function (
+    network: string,
+    auctionId: string
+): Promise<AuctionTransaction> {
+    const { collateralType, index } = parseAuctionId(auctionId);
+    const auction = await fetchAuctionByCollateralTypeAndAuctionIndex(network, collateralType, index);
+    return enrichAuction(network, auction);
 };
 
 export const fetchAllInitialAuctions = async function (

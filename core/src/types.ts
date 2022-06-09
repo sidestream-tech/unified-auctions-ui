@@ -48,8 +48,10 @@ export declare interface Auction extends AuctionInitialInfo {
 }
 
 export declare interface TransactionFees {
-    biddingTransactionFeeETH: BigNumber;
-    biddingTransactionFeeDAI: BigNumber;
+    bidTransactionFeeETH: BigNumber;
+    bidTransactionFeeDAI: BigNumber;
+    swapTransactionFeeETH: BigNumber;
+    swapTransactionFeeDAI: BigNumber;
     authTransactionFeeETH: BigNumber;
     authTransactionFeeDAI: BigNumber;
     restartTransactionFeeETH: BigNumber;
@@ -64,8 +66,10 @@ export declare interface CollateralRow extends CollateralConfig, Partial<MakerPa
 
 export declare interface AuctionTransaction extends Auction, TransactionFees {
     transactionNetProfit: BigNumber;
-    totalFeeDAI: BigNumber;
-    totalFeeETH: BigNumber;
+    combinedBidFeesDAI: BigNumber;
+    combinedBidFeesETH: BigNumber;
+    combinedSwapFeesDAI: BigNumber;
+    combinedSwapFeesETH: BigNumber;
 }
 
 export declare interface RegularCalleeConfig {

@@ -18,7 +18,7 @@ const getCalleeData = async function (
     const route = await encodeRoute(network, collateral.exchange.route);
     const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
-    const minProfit = 0;
+    const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address', 'tuple(address,uint256)'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,

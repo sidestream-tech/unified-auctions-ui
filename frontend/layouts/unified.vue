@@ -8,16 +8,19 @@
             :staging-banner-url="stagingBannerURL"
         />
         <Nuxt />
+        <Analytics />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Header from '~/components/layout/Header.vue';
+import Analytics from '~/components/Analytics.vue';
 import '~/assets/styles/index';
 
 export default Vue.extend({
     components: {
+        Analytics,
         Header,
     },
     computed: {

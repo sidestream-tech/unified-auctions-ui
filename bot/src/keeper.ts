@@ -1,13 +1,8 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
 import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
-import {
-    authorizeCollateral,
-    authorizeWallet,
-    getCollateralAuthorizationStatus,
-    getWalletAuthorizationStatus,
-} from 'auctions-core/src/authorizations';
 import { ETHEREUM_NETWORK, KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
+import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from './authorisation';
 
 let isSetupCompleted = false;
 const currentlyExecutedAuctions = new Set();
@@ -87,40 +82,23 @@ const checkAndParticipateIfPossible = async function (auction: AuctionInitialInf
         );
     }
 
-    // get wallet authorization status
     const walletAddress = await signer.getAddress();
-    const isWalletAuth = await getWalletAuthorizationStatus(ETHEREUM_NETWORK, walletAddress);
 
     // try to authorize the wallet then return
-    if (!isWalletAuth) {
-        console.info(`keeper: wallet "${walletAddress}" has not been authorized yet. Attempting authorization now...`);
-        const transactionHash = await authorizeWallet(ETHEREUM_NETWORK, walletAddress, false);
-        console.info(`keeper: wallet "${walletAddress}" successfully authorized via "${transactionHash}" transaction`);
+    const wasWalletNewlyAuthorized = await checkAndAuthorizeWallet(walletAddress);
+    if (wasWalletNewlyAuthorized) {
+        // restart auction evaluation in case authorization was executed
         await checkAndParticipateIfPossible(auction);
         return;
     }
 
-    // get collateral authorization status
-    const isCollateralAuth = await getCollateralAuthorizationStatus(
-        ETHEREUM_NETWORK,
-        auctionTransaction.collateralType,
-        walletAddress
+    // check the collateral authorization status and authorize if needed
+    const wasCollateralNewlyAuthorized = await checkAndAuthorizeCollateral(
+        walletAddress,
+        auctionTransaction.collateralType
     );
-
-    // try to authorize the collateral then return
-    if (!isCollateralAuth) {
-        console.info(
-            `keeper: collateral "${auctionTransaction.collateralType}" has not been authorized on wallet "${walletAddress}" yet. Attempting authorization now...`
-        );
-        const collateralTransactionHash = await authorizeCollateral(
-            ETHEREUM_NETWORK,
-            walletAddress,
-            auctionTransaction.collateralType,
-            false
-        );
-        console.info(
-            `keeper: collateral "${auctionTransaction.collateralType}" successfully authorized on wallet "${walletAddress}" via "${collateralTransactionHash}" transaction`
-        );
+    if (wasCollateralNewlyAuthorized) {
+        // restart auction evaluation in case authorization was executed
         await checkAndParticipateIfPossible(auction);
         return;
     }

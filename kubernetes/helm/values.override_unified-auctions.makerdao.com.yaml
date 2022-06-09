@@ -9,4 +9,4 @@ frontend:
     image: "frontend-makerdao"
 
 bot:
-  secretChamberPath: "auction-ui/production.auction-ui.k8s.sidestream.tech/bot"
+  secretChamberPath: "auction-ui/unified-auctions.makerdao.com/bot"

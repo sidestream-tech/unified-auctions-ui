@@ -74,7 +74,7 @@
                     <td class="Body">
                         <FormatCurrency
                             v-if="transactionFees"
-                            :value="transactionFees.biddingTransactionFeeETH"
+                            :value="transactionFees.swapTransactionFeeETH"
                             currency="ETH"
                         />
                         <span v-else class="UnknownValue"> Unknown </span>
@@ -82,7 +82,7 @@
                     <td class="Body">
                         <FormatCurrency
                             v-if="transactionFees"
-                            :value="transactionFees.biddingTransactionFeeDAI"
+                            :value="transactionFees.swapTransactionFeeDAI"
                             currency="DAI"
                         />
                         <span v-else class="UnknownValue"> Unknown </span>
