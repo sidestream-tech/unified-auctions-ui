@@ -38,7 +38,7 @@ export default Vue.extend({
     props: {
         logs: {
             type: Array as Vue.PropType<string[]>,
-            default: undefined,
+            default: () => [],
         },
     },
 });
