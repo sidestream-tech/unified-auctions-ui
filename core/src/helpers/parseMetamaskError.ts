@@ -1,5 +1,7 @@
 import truncateText from './truncateText';
 
+const UNKNOWN_ERROR_TEXT = 'unknown error';
+
 const removeSpecialCharacters = function (text = '') {
     return text.replace(/['\{\}\\"]/gm, '').replace(/\[.+\]/gm, '');
 };
@@ -15,7 +17,7 @@ const getErrorDetails = function (errorMessage = '') {
     const messageStartIndex = jsonFirstIndex + START_SYMBOLS.length;
     const messageStopIndex = errorMessage.indexOf(STOP_SYMBOLS, messageStartIndex);
     const extractedContent = errorMessage.substring(messageStartIndex, messageStopIndex);
-    return removeSpecialCharacters(extractedContent);
+    return removeSpecialCharacters(extractedContent).trim();
 };
 
 const getErrorTitle = function (errorMessage = '') {
@@ -30,7 +32,7 @@ const getErrorTitle = function (errorMessage = '') {
 const parseMetamaskError = function (errorMessage = ''): unknown {
     const errorTitle = getErrorTitle(errorMessage);
     if (!errorTitle) {
-        return truncateText(errorMessage || 'Unknown error').trim();
+        return truncateText(errorMessage || UNKNOWN_ERROR_TEXT);
     }
     const errorDetails = getErrorDetails(errorMessage);
     if (!errorDetails) {
