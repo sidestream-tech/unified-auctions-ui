@@ -38,9 +38,7 @@ describe('Collateral auctions', function () {
                     .click({ timeout: 19 * 1000 })
             );
 
-        cy.get('button.Button')
-            .eq(8)
-            .should('contain.text', 'Execute')
+        cy.contains(/^Execute$/)
             .click({ timeout: 25 * 1000 })
             .then(() => {
                 cy.get('svg.CloseIcon')
@@ -53,15 +51,12 @@ describe('Collateral auctions', function () {
     }
     function testBidWithDai() {
         cy.get('a').eq(2).should('contain.text', 'Participate').click();
-        cy.get('button.Button').eq(2).should('contain.text', 'Bid with DAI').click();
-        cy.get('button.Button')
-            .eq(5)
-            .should('contain.text', 'Manage DAI in VAT')
+        cy.contains(/^Bid with DAI$/).click();
+        cy.contains(/^Manage DAI in VAT$/)
             .click()
             .then(() => {
-                cy.get('svg.animate-spin').eq(3, { timeout: PAGE_LOAD_TIMOUT_MS }).should('not.be.visible');
-                cy.contains('Allow unlimited access to DAI').click();
-                cy.get('button').eq(30).should('contain.text', 'deposit').click();
+                cy.contains('Allow unlimited access to DAI').click({ timeout: 8 * 1000 });
+                cy.contains(/^deposit$/).click();
                 cy.get('span.ant-modal-close-x').first().click();
             });
         cy.get('input.Input').first().type('100');
