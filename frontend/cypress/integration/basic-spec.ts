@@ -60,17 +60,14 @@ describe('Collateral auctions', function () {
                 cy.get('span.ant-modal-close-x').first().click();
             });
         cy.get('input.Input').first().type('100');
-        cy.contains('Authorize WSTETH-A Transactions').click();
+        cy.contains(/^Authorize .+ Transactions$/).click();
 
         cy.contains('Bid 100')
             .click({ timeout: 25 * 1000 })
             .then(() => {
-                cy.get('svg.CloseIcon')
-                    .eq(1, { timeout: 10 * 1000 })
-                    .click();
-                cy.get('svg.CloseIcon')
-                    .first({ timeout: 10 * 1000 })
-                    .click();
+                // close the popups and return to the main collateral view
+                cy.get('svg.CloseIcon').eq(1).click();
+                cy.get('svg.CloseIcon').first().click();
             });
     }
     it('participates with swap and with direct bid', function () {
