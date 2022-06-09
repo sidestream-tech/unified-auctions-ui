@@ -1,30 +1,25 @@
 import { NetworkConfig } from './types';
 import { getChainIdFromProvider } from './provider';
-import { getNetworkTitleAndEtherscanURLByChainId } from './constants/NETWORKS';
+import { getNetworkInfoByChainId } from './constants/NETWORKS';
+import { ethers } from 'ethers';
 
 const networks: Record<string, NetworkConfig> = {};
-const callbacks: ((networks: Record<string, NetworkConfig>) => void)[] = [];
 
-export const subscribeToNetworks = function (callback: (networks: Record<string, NetworkConfig>) => void) {
-    callbacks.push(callback);
-};
+export const addNetwork = async function (rpcURL: string) {
+    const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcURL });
+    await provider.ready;
 
-const sendNetworksToSubscribers = function () {
-    callbacks.forEach(callback => callback(networks));
-};
-
-export const addNetwork = async function (provider: any, rpcURL: string) {
     const chainId = await getChainIdFromProvider(provider);
-    const networkInfo = getNetworkTitleAndEtherscanURLByChainId(chainId);
+    const networkInfo = getNetworkInfoByChainId(chainId);
+    const networkTitle = networkInfo?.title || chainId;
 
-    networks[networkInfo?.title || chainId] = {
+    networks[networkTitle] = {
         chainId: chainId,
-        title: networkInfo?.title || chainId,
+        title: networkTitle,
         url: rpcURL,
         etherscanUrl: networkInfo?.etherscanURL || '',
-        isFork: false, // what exactly do we do with this information here and how could I automatically determine it?
+        isFork: networkTitle === 'localhost', // TODO: Find a better way to determine if network is a fork.
     };
-    sendNetworksToSubscribers();
 };
 
 export const getNetworkConfigByType = function (networkType: string | undefined): NetworkConfig {
@@ -42,6 +37,15 @@ export const getDecimalChainIdByNetworkType = function (networkType: string): nu
     return parseInt(network.chainId, 16);
 };
 
-export const getNetworks = function (): Record<string, NetworkConfig> {
+const setupNetworks = async function () {
+    const rpcUrl = process.env.RPC_URL;
+    if (!rpcUrl) {
+        throw new Error(`No "RPC_URL" was defined.`);
+    }
+
+    // TODO: Parse if it is a MetaMask URL and add all three MetaMask networks automatically
+    await addNetwork(rpcUrl);
     return networks;
 };
+
+export default setupNetworks;

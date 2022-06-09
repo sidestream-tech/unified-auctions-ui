@@ -1,22 +1,12 @@
 import { ethers } from 'ethers';
-//import { parseRPCURLForInfuraId } from './helpers/parseRPCURL';
-import { addNetwork } from './networks';
+import { getNetworkConfigByType } from './networks';
 
 const providers: Record<string, Promise<ethers.providers.BaseProvider>> = {};
 
-export const createProvider = async function () {
-    const rpcUrl = process.env.RPC_URL;
-    if (!rpcUrl) {
-        throw new Error('Please define a RPC URL from which to retrieve network data.');
-    }
-
-    // const infuraProjectId = parseRPCURLForInfuraId(rpcUrl);
-
-    const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcUrl });
+export const createProvider = async function (network: string) {
+    const networkConfig = getNetworkConfigByType(network);
+    const provider = new ethers.providers.StaticJsonRpcProvider({ url: networkConfig.url });
     await provider.ready;
-
-    await addNetwork(provider, rpcUrl);
-
     return provider;
 };
 
@@ -26,7 +16,7 @@ export const setProvider = function (network: string, provider: Promise<ethers.p
 
 const getProvider = function (network: string): Promise<ethers.providers.BaseProvider> {
     if (!providers[network]) {
-        setProvider(network, createProvider());
+        setProvider(network, createProvider(network));
     }
     return providers[network];
 };

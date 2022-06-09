@@ -1,43 +1,31 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
 import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
-import { createProvider, getChainIdFromProvider } from 'auctions-core/dist/src/provider';
-import { getNetworkTitleAndEtherscanURLByChainId } from 'auctions-core/dist/src/constants/NETWORKS';
 import { KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
 import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from './authorisation';
 
 let isSetupCompleted = false;
 const currentlyExecutedAuctions = new Set();
 
-export const setupKeeper = async function () {
+export const setupKeeper = async function (network: string) {
+    if (!KEEPER_WALLET_PRIVATE_KEY) {
+        console.warn('keeper: KEEPER_WALLET_PRIVATE_KEY variable is not set, keeper will not run');
+        return;
+    }
+    if (Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI)) {
+        console.warn('keeper: KEEPER_MINIMUM_NET_PROFIT_DAI is not set or not a number, keeper will not run');
+        return;
+    }
     try {
-        const provider = await createProvider();
-        const chainId = await getChainIdFromProvider(provider);
-        const networkInfo = getNetworkTitleAndEtherscanURLByChainId(chainId);
-        const networkTitle = networkInfo?.title || chainId;
-
-        if (!KEEPER_WALLET_PRIVATE_KEY) {
-            console.warn('keeper: KEEPER_WALLET_PRIVATE_KEY variable is not set, keeper will not run');
-            isSetupCompleted = true;
-            return networkTitle;
-        }
-        if (Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI)) {
-            console.warn('keeper: KEEPER_MINIMUM_NET_PROFIT_DAI is not set or not a number, keeper will not run');
-            return networkTitle;
-        }
-
-        setSigner(networkTitle, createSigner(KEEPER_WALLET_PRIVATE_KEY));
-        const signer = await getSigner(networkTitle);
+        setSigner(network, createSigner(network, KEEPER_WALLET_PRIVATE_KEY));
+        const signer = await getSigner(network);
         const address = await signer.getAddress();
         isSetupCompleted = true;
         console.info(
             `keeper: setup complete: using wallet "${address}", looking for minimum clear profit of "${KEEPER_MINIMUM_NET_PROFIT_DAI}" DAI`
         );
-        return networkTitle;
     } catch (error) {
-        throw new Error(
-            `keeper: setup error, keeper will not run, please check that KEEPER_WALLET_PRIVATE_KEY is valid. (${error})`
-        );
+        console.warn('keeper: setup error, keeper will not run, please check that KEEPER_WALLET_PRIVATE_KEY is valid');
     }
 };
 

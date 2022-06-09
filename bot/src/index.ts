@@ -1,4 +1,5 @@
 import { setTimeout as delay } from 'timers/promises';
+import setupNetworks, { getNetworkConfigByType } from 'auctions-core/dist/src/networks';
 import { getAllAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
 import notify from './notify';
 import participate, { setupKeeper } from './keeper';
@@ -28,9 +29,12 @@ const loop = async function (network: string): Promise<void> {
 
 const start = async function (): Promise<void> {
     await delay(SETUP_DELAY);
-    const network = await setupKeeper();
+    const networks = await setupNetworks();
+    const network = Object.keys(networks)[0];
+    getNetworkConfigByType(network);
     setupWhitelist();
     await setupTwitter();
+    await setupKeeper(network);
     await executePreAuthorizationsIfRequested(network);
     loop(network);
     setInterval(() => loop(network), REFETCH_INTERVAL);
