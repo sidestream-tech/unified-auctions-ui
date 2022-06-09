@@ -3,6 +3,7 @@ import { expect } from 'chai';
 
 const HARDHAT_WALLET_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82';
 const URL_TO_VISIT = `${process.env.FRONTEND_URL || 'localhost:3000'}/collateral?network=localhost`;
+const PAGE_LOAD_TIMOUT_MS = 140 * 1000;
 
 describe('Collateral auctions', function () {
     // Set the private key to one of the deterministic hardhat keys.
@@ -17,7 +18,7 @@ describe('Collateral auctions', function () {
             .then(function (nuxt) {
                 nuxt.$store.dispatch('wallet/createWalletFromPrivateKey', HARDHAT_WALLET_PRIVATE_KEY);
             });
-        cy.get('table').first({ timeout: 140000 }).should('contain.text', 'ETH');
+        cy.get('table').first({ timeout: PAGE_LOAD_TIMOUT_MS }).should('contain.text', 'ETH');
 
         cy.window()
             .its('$nuxt')
@@ -36,16 +37,20 @@ describe('Collateral auctions', function () {
                     .get('button.Button')
                     .eq(6)
                     .should('contain.text', 'Authorize ETH-C Transactions')
-                    .click({ timeout: 19000 })
+                    .click({ timeout: 19 * 1000 })
             );
 
         cy.get('button.Button')
             .eq(8)
             .should('contain.text', 'Execute')
-            .click({ timeout: 25000 })
+            .click({ timeout: 25 * 1000 })
             .then(() => {
-                cy.get('svg.CloseIcon').eq(1, { timeout: 10000 }).click();
-                cy.get('svg.CloseIcon').first({ timeout: 10000 }).click();
+                cy.get('svg.CloseIcon')
+                    .eq(1, { timeout: 10 * 1000 })
+                    .click();
+                cy.get('svg.CloseIcon')
+                    .first({ timeout: 10 * 1000 })
+                    .click();
             });
     }
     function testBidWithDai() {
@@ -56,7 +61,7 @@ describe('Collateral auctions', function () {
             .should('contain.text', 'Manage DAI in VAT')
             .click()
             .then(() => {
-                cy.get('svg.animate-spin').eq(3, { timeout: 140000 }).should('not.be.visible');
+                cy.get('svg.animate-spin').eq(3, { timeout: PAGE_LOAD_TIMOUT_MS }).should('not.be.visible');
                 cy.contains('Allow unlimited access to DAI').click();
                 cy.get('button').eq(30).should('contain.text', 'deposit').click();
                 cy.get('span.ant-modal-close-x').first().click();
@@ -65,10 +70,14 @@ describe('Collateral auctions', function () {
         cy.contains('Authorize WSTETH-A Transactions').click();
 
         cy.contains('Bid 100')
-            .click({ timeout: 25000 })
+            .click({ timeout: 25 * 1000 })
             .then(() => {
-                cy.get('svg.CloseIcon').eq(1, { timeout: 10000 }).click();
-                cy.get('svg.CloseIcon').first({ timeout: 10000 }).click();
+                cy.get('svg.CloseIcon')
+                    .eq(1, { timeout: 10 * 1000 })
+                    .click();
+                cy.get('svg.CloseIcon')
+                    .first({ timeout: 10 * 1000 })
+                    .click();
             });
     }
     it('participates with swap and with direct bid', function () {
