@@ -30,7 +30,10 @@ describe('Collateral auctions', function () {
         cy.get('a').eq(1).should('contain.text', 'Participate').click();
         cy.get('div.justify-end').contains('Directly swap').click();
         cy.get('div').contains('Authorize DAI Transactions').click();
-        cy.get('div').contains('Authorize ETH-C Transactions').click({ timeout: CLICK_TIMEOUT });
+        cy.get('div.BasePanel')
+            .not('div.WalletAuthorizationCheckPanel')
+            .contains(/^Authorize .+ Transactions$/)
+            .click({ timeout: CLICK_TIMEOUT });
 
         cy.contains(/^Execute$/).click({ timeout: CLICK_TIMEOUT });
         cy.get('svg.CloseIcon').eq(1).click();
