@@ -1,7 +1,7 @@
 import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
 import { NetworkConfig } from 'auctions-core/dist/src/types';
-import setupNetworks, { getNetworkConfigByType, getNetworkTypeByChainId } from 'auctions-core/src/networks';
+import setupNetworks from 'auctions-core/src/networks';
 import { getNetworkTitleByChainId } from 'auctions-core/src/constants/NETWORKS';
 import getWallet from '~/lib/wallet';
 
@@ -31,7 +31,10 @@ export const getters = {
         return !!getters.getWalletChainId;
     },
     getWalletNetwork(state: State) {
-        return getNetworkTypeByChainId(state.walletChainId);
+        const networkEntry = Object.entries(state.networks).find(
+            ([_, networkObject]) => networkObject.chainId === state.walletChainId
+        );
+        return networkEntry && networkEntry[0];
     },
     getWalletNetworkTitle(_state: State, getters: any) {
         return getNetworkTitleByChainId(getters.getWalletChainId) || getters.getWalletChainId;
@@ -43,13 +46,12 @@ export const getters = {
         }
         return pageNetwork;
     },
-    isPageNetworkValid(_state: State, getters: any) {
-        try {
-            getNetworkConfigByType(getters.getPageNetwork);
-            return true;
-        } catch {
-            return false;
-        }
+    isPageNetworkValid(state: State, getters: any) {
+        const networkConfig = Object.values(state.networks).find(network => {
+            return network.title === getters.getPageNetwork;
+        });
+
+        return !!networkConfig;
     },
     isWalletNetworkValid(_state: State, getters: any) {
         if (!getters.isWalletConnected) {
