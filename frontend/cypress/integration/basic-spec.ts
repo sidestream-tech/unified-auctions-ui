@@ -3,7 +3,7 @@ import { expect } from 'chai';
 
 const HARDHAT_WALLET_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82';
 const URL_TO_VISIT = `${process.env.HOST || 'localhost'}:${process.env.PORT || '3000'}/collateral?network=localhost`;
-const PAGE_LOAD_TIMOUT_MS = 140 * 1000;
+const PAGE_LOAD_TIMEOUT_MS = 140 * 1000;
 const CLICK_TIMEOUT = 15 * 1000;
 
 describe('Collateral auctions', function () {
@@ -19,7 +19,7 @@ describe('Collateral auctions', function () {
             .then(function (nuxt) {
                 nuxt.$store.dispatch('wallet/createWalletFromPrivateKey', HARDHAT_WALLET_PRIVATE_KEY);
             });
-        cy.get('table').first({ timeout: PAGE_LOAD_TIMOUT_MS }).should('contain.text', 'ETH');
+        cy.get('table').first({ timeout: PAGE_LOAD_TIMEOUT_MS }).should('contain.text', 'ETH');
 
         cy.window()
             .its('$nuxt')
