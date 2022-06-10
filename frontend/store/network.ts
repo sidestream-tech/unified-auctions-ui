@@ -7,14 +7,12 @@ import getWallet from '~/lib/wallet';
 
 interface State {
     walletChainId: string | undefined;
-    defaultNetwork: string | undefined;
-    networks: Record<string, NetworkConfig>;
+    networks: NetworkConfig[];
 }
 
 export const state = (): State => ({
     walletChainId: undefined,
-    defaultNetwork: undefined,
-    networks: {},
+    networks: [],
 });
 
 export const getters = {
@@ -22,7 +20,9 @@ export const getters = {
         return state.networks;
     },
     getNetworkConfigByType(state: State, networkType: string) {
-        return state.networks[networkType] || undefined;
+        return state.networks.find(network => {
+            return network.title === networkType;
+        });
     },
     getWalletChainId(state: State) {
         return state.walletChainId;
@@ -42,7 +42,7 @@ export const getters = {
     getPageNetwork(state: State, _getters: any, rootState: any) {
         const pageNetwork = rootState.route.query.network;
         if (!pageNetwork) {
-            return state.defaultNetwork;
+            return state.networks[0];
         }
         return pageNetwork;
     },
@@ -51,7 +51,7 @@ export const getters = {
             return network.title === getters.getPageNetwork;
         });
 
-        return !!networkConfig;
+        return !networkConfig;
     },
     isWalletNetworkValid(_state: State, getters: any) {
         if (!getters.isWalletConnected) {
@@ -71,14 +71,11 @@ export const getters = {
 };
 
 export const mutations = {
-    setAllNetworks(state: State, networks: Record<string, NetworkConfig>) {
+    setAllNetworks(state: State, networks: NetworkConfig[]) {
         state.networks = networks;
     },
     setWalletChainId(state: State, walletChainId: string): void {
         state.walletChainId = walletChainId;
-    },
-    setDefaultNetwork(state: State, network: string) {
-        state.defaultNetwork = network;
     },
 };
 

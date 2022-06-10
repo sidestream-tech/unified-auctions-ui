@@ -33,7 +33,6 @@
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
 import Vue from 'vue';
-import { getNetworks } from 'auctions-core/src/networks';
 import { NetworkConfig } from 'auctions-core/dist/src/types';
 import BaseButton from '~/components/common/BaseButton';
 
@@ -50,8 +49,8 @@ export default Vue.extend({
             required: true,
         },
         networks: {
-            type: Object as Vue.PropType<Record<string, NetworkConfig>>,
-            default: () => ({}),
+            type: Array as Vue.PropType<NetworkConfig[]>,
+            default: () => [],
         },
         isDev: {
             type: Boolean,
@@ -61,8 +60,8 @@ export default Vue.extend({
     data() {
         return {
             options: [
-                ...Object.entries(getNetworks(this.isDev)).map(([name, propeties]) => {
-                    return { label: propeties.title, value: name };
+                ...this.networks.map(([name, properties]) => {
+                    return { label: properties.title, value: name as string | null };
                 }),
             ],
         };

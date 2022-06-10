@@ -119,7 +119,7 @@ export default Vue.extend({
             return this.$nuxt?.context?.isDev;
         },
     },
-    mounted() {
+    beforeMount() {
         this.$store.dispatch('network/setupNetworks');
     },
     methods: {

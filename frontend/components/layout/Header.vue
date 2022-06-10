@@ -115,8 +115,8 @@ export default Vue.extend({
             default: undefined,
         },
         networks: {
-            type: Object as Vue.PropType<Record<string, NetworkConfig>>,
-            default: () => ({}),
+            type: Array as Vue.PropType<NetworkConfig[]>,
+            default: () => [],
         },
         isDev: {
             type: Boolean,

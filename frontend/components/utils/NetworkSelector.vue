@@ -9,7 +9,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Icon } from 'ant-design-vue';
-import { getNetworks } from 'auctions-core/src/networks';
 import { NetworkConfig } from 'auctions-core/dist/src/types';
 import Select from '~/components/common/Select.vue';
 
@@ -25,8 +24,8 @@ export default Vue.extend({
             default: null,
         },
         networks: {
-            type: Object as Vue.PropType<Record<string, NetworkConfig>>,
-            default: () => ({}),
+            type: Array as Vue.PropType<NetworkConfig[]>,
+            default: () => [],
         },
         isDev: {
             type: Boolean,
@@ -36,8 +35,8 @@ export default Vue.extend({
     data() {
         return {
             options: [
-                ...Object.entries(getNetworks(this.isDev)).map(([name, propeties]) => {
-                    return { label: propeties.title, value: name as string | null };
+                ...this.networks.map(([name, properties]) => {
+                    return { label: properties.title, value: name as string | null };
                 }),
             ],
         };
