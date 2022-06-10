@@ -16,7 +16,8 @@ export default {
         STAGING_BANNER_URL: process.env.STAGING_BANNER_URL || undefined,
         DEFAULT_ETHEREUM_NETWORK: process.env.DEFAULT_ETHEREUM_NETWORK || 'mainnet',
         HEAPIO_ID: process.env.HEAPIO_ID || undefined,
-        FRONTEND_URL: process.env.FRONTEND_URL || 'localhost:3000',
+        HOST: process.env.HOST || 'localhost',
+        PORT: process.env.PORT || '3000',
     },
 
     publicRuntimeConfig: {
