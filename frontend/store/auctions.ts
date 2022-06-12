@@ -194,7 +194,7 @@ export const actions = {
             commit('setAreAuctionsFetching', false);
         }
     },
-    async updateSingleAuction({ commit, rootGetters }: ActionContext<State, State>, auctionId: string) {
+    async updateSingleAuction({ commit, dispatch, rootGetters }: ActionContext<State, State>, auctionId: string) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
@@ -205,6 +205,7 @@ export const actions = {
             commit('setAuction', auction);
             commit('setErrorByAuctionId', { auctionId, error: undefined });
         } catch (error: any) {
+            await dispatch('fetchTakeEventsByAuctionId', auctionId);
             console.error('fetch auction error', error);
             commit('setErrorByAuctionId', { auctionId, error: error.message });
         } finally {
