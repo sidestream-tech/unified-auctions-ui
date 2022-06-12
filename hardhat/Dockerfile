@@ -11,8 +11,6 @@ RUN npm ci
 
 COPY . ${APP_ROOT}
 
-RUN npm ci
-
 EXPOSE 8545
 
 CMD [ "npm", "run", "dev" ]

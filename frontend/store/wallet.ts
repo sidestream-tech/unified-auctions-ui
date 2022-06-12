@@ -274,11 +274,15 @@ export const actions = {
             commit('setIsDepositingOrWithdrawing', false);
         }
     },
-    async createWalletFromPrivateKey({ dispatch, rootGetters }: ActionContext<State, State>, privateKey: string) {
+    async createWalletFromPrivateKey(
+        { dispatch, getters, rootGetters }: ActionContext<State, State>,
+        privateKey: string
+    ) {
         const network = rootGetters['network/getMakerNetwork'];
         setSigner(network, createSigner(network, privateKey));
         const signer = await getSigner(network);
         const signerAddress = await signer.getAddress();
         dispatch('setAddress', signerAddress);
+        return getters.getAddress;
     },
 };
