@@ -305,7 +305,7 @@ data:
 
   pipelines:
     - kind: pipeline
-      type: kubernetes ## change docker to get more resources
+      type: docker ## needs more resources, `docker` is used instead of `kubernetes`
       name: e2e-test
       environment:
         FRONTEND_URL: "http://localhost:3000"
