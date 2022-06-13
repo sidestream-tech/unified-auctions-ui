@@ -3,10 +3,9 @@ import { fetchWalletBalances } from '~/../core/src/wallet';
 import { WalletBalances } from '~/../core/src/types';
 
 const HARDHAT_WALLET_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82';
-const E2E_NETWORK = 'localhost';
-const URL_TO_VISIT = `${process.env.HOST || 'localhost'}:${
-    process.env.PORT || '3000'
-}/collateral?network=${E2E_NETWORK}`;
+const E2E_NETWORK = process.env.E2E_NETWORK || 'localhost';
+const E2E_FRONTEND_URL = process.env.E2E_FRONTEND_URL || 'localhost:3000';
+const URL_TO_VISIT = `${E2E_FRONTEND_URL}/collateral?network=${E2E_NETWORK}`;
 const PAGE_LOAD_TIMEOUT_MS = 140 * 1000;
 const CLICK_TIMEOUT = 30 * 1000;
 
