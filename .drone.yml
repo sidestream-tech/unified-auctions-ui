@@ -94,7 +94,7 @@ data:
         - "pr-${DRONE_PULL_REQUEST}"
       labels:
         - key: org.opencontainers.image.source
-          value: https://github.com/sidestream-tech/unified-auctions-ui/
+          value: https://github.com/sidestream-tech/unified-auctions-ui/frontend
       path_to_dockerfile: frontend/Dockerfile.e2e
       path_to_context: ./frontend/
       tags_to_cache_from:
