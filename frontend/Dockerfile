@@ -38,8 +38,7 @@ FROM cypress/included:3.2.0 AS e2e
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
-RUN npm install --save-dev webpack typescript ts-loader
-RUN npm install --save-dev @cypress/webpack-preprocessor
+RUN npm ci
 
 ENTRYPOINT [ "/bin/sh" ]
 
