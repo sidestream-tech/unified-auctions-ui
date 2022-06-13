@@ -321,10 +321,8 @@ data:
             - E2E_FRONTEND_URL="frontend:3000"
           commands:
             # Proper ready check would only be possible with psql installed in image
-            - sleep 21
+            - sleep 20
             - cd e2e
-            # TODO: This should be a dev-stage in the dockerfile that is built above!
-            #       See https://github.com/sidestream-tech/audit-tool/issues/127 for more
             - npm i
             - npx cypress run
 
