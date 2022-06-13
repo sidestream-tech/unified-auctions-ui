@@ -3,4 +3,3 @@ RUN mkdir -p /cypress
 
 WORKDIR /cypress
 COPY . .
-CMD ['ls']
