@@ -2,6 +2,6 @@ FROM cypress/included:3.2.0 as cypress-base
 
 RUN mkdir -p /cypress
 WORKDIR /cypress
-COPY ./frontend/ .
+COPY . .
 
 ENTRYPOINT ["/bin/bash"]
