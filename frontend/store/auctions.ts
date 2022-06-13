@@ -14,7 +14,6 @@ import {
 import { checkAllCalcParameters } from 'auctions-core/src/params';
 import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import BigNumber from 'auctions-core/src/bignumber';
-import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
@@ -233,7 +232,7 @@ export const actions = {
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
-        const walletAddress = getWallet().address;
+        const walletAddress = rootGetters['wallet/getAddress'];
         if (!walletAddress) {
             message.error('Bidding error: can not find wallet');
             return;
@@ -267,7 +266,7 @@ export const actions = {
             return;
         }
         const network = rootGetters['network/getMakerNetwork'];
-        const walletAddress = getWallet().address;
+        const walletAddress = rootGetters['wallet/getAddress'];
         if (!walletAddress) {
             message.error('Bidding error: can not find wallet');
             return;
@@ -297,7 +296,7 @@ export const actions = {
             message.error(`Auction reset error: can not find auction with id "${id}"`);
             return;
         }
-        const walletAddress = getWallet().address;
+        const walletAddress = rootGetters['wallet/getAddress'];
         if (!walletAddress) {
             message.error('Bidding error: can not find wallet');
             return;
