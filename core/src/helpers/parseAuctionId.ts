@@ -10,7 +10,7 @@ function parseAuctionId(id: string): { collateralType: string; index: number } {
 
     // Check if auction id is a valid auction id
     if (Number.isNaN(parseInt(index))) {
-        throw new Error(`"${index}" is not a valid Auction Index!`);
+        throw new Error(`"${index}" is not a valid auction id`);
     }
 
     return {
