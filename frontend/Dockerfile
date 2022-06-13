@@ -35,7 +35,6 @@ CMD ["npm", "run", "dev"]
 
 FROM cypress/included:9.0.0 AS e2e
 
-RUN tsc --version
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
