@@ -35,11 +35,11 @@ CMD ["npm", "run", "dev"]
 
 FROM cypress/included:9.0.0 AS e2e
 
-RUN npm i typescript -g
 RUN tsc --version
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
+RUN npm i typescript
 RUN npm i
 
 ENTRYPOINT [ "/bin/sh" ]
