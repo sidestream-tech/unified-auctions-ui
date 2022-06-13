@@ -320,7 +320,8 @@ data:
             E2E_NETWORK: "hardhat"
             E2E_FRONTEND_URL: "frontend:3000"
           commands:
-            - ls
+            - cd frontend/cypress
+            - cypress run
 
       services:
         - name: frontend
@@ -336,3 +337,5 @@ data:
 
       depends_on:
         - publish-frontend-on-pr-push
+        - publish-hardhat-on-pr-push
+        - publish-cypress-on-pr-push
