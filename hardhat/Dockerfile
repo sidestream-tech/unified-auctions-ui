@@ -10,7 +10,7 @@ WORKDIR /hardhat
 COPY ./hardhat/package.json .
 COPY ./hardhat/package-lock.json .
 
-COPY ./core /core
+COPY ./hardhat /hardhat
 
 RUN npm ci
 
