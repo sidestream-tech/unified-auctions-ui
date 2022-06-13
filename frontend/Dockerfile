@@ -33,7 +33,7 @@ COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
 CMD ["npm", "run", "dev"]
 
-FROM cypress/included:3.2.0 AS e2e
+FROM cypress/included:6.2.1 AS e2e
 
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
