@@ -1,9 +1,7 @@
 FROM cypress/included:3.2.0 as cypress-base
 RUN mkdir -p /cypress
 
-COPY ./frontend/cypress/cypress.json .
-RUN ls
+COPY ./cypress/cypress.json .
 
 WORKDIR /cypress
-COPY ./frontend/cypress .
-RUN ls
+COPY ./cypress .
