@@ -319,12 +319,6 @@ data:
           environment:
             E2E_NETWORK: "hardhat"
             E2E_FRONTEND_URL: "frontend:3000"
-          commands:
-            # Proper ready check would only be possible with psql installed in image
-            - sleep 20
-            - cd e2e
-            - npm i
-            - npx cypress run
 
       services:
         - name: frontend
