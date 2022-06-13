@@ -1,16 +1,25 @@
-FROM node:16.9.1 as dependency-base
+ARG NODE_VERSION=node:16.9.1
 
-ENV APP_ROOT /hardhat
+FROM $NODE_VERSION AS dependency-base
 
-RUN mkdir ${APP_ROOT}
-WORKDIR ${APP_ROOT}
+# create destination directory
+RUN mkdir -p /hardhat
 
-COPY ./frontend/hardhat/package.json .
-COPY ./frontend/hardhat/package-lock.json .
+# copy the core, note .dockerignore
+WORKDIR /hardhat
+COPY ./hardhat/package.json .
+COPY ./hardhat/package-lock.json .
+
+COPY ./core /core
+
 RUN npm ci
 
-COPY . ${APP_ROOT}
+COPY ./frontend /frontend
 
+FROM $NODE_VERSION AS development
+
+COPY --from=dependency-base /hardhat /hardhat
+
+WORKDIR /hardhat
 EXPOSE 8545
-
-CMD [ "npm", "run", "dev" ]
+CMD ["npm", "run", "dev"]
