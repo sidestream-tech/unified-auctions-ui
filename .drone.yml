@@ -321,7 +321,7 @@ data:
             E2E_FRONTEND_URL: "frontend:3000"
           commands:
             - cd frontend
-            - npx cypress run
+            - npm run e2e
 
       services:
         - name: frontend
