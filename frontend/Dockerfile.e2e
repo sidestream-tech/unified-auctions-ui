@@ -1,5 +1,5 @@
 FROM cypress/included:3.2.0 as cypress-base
-RUN mkdir -p /e2e
-WORKDIR /e2e
+RUN mkdir -p /cypress
 
-COPY /cypress .
+COPY /cypress.json .
+COPY /cypress /cypress
