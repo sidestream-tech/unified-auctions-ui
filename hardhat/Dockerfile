@@ -1,6 +1,6 @@
 FROM node:16.9.1 as dependency-base
 
-ENV APP_ROOT /app
+ENV APP_ROOT /hardhat
 
 RUN mkdir ${APP_ROOT}
 WORKDIR ${APP_ROOT}
