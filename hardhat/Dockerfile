@@ -5,8 +5,8 @@ ENV APP_ROOT /hardhat
 RUN mkdir ${APP_ROOT}
 WORKDIR ${APP_ROOT}
 
-COPY package.json .
-COPY package-lock.json .
+COPY ./frontend/hardhat/package.json .
+COPY ./frontend/hardhat/package-lock.json .
 RUN npm ci
 
 COPY . ${APP_ROOT}
