@@ -94,9 +94,9 @@ data:
         - "pr-${DRONE_PULL_REQUEST}"
       labels:
         - key: org.opencontainers.image.source
-          value: https://github.com/sidestream-tech/unified-auctions-ui/frontend
-      path_to_dockerfile: frontend/Dockerfile.e2e
-      path_to_context: ./frontend/
+          value: https://github.com/sidestream-tech/unified-auctions-ui
+      path_to_dockerfile: frontend/Dockerfile
+      path_to_context: ./
       tags_to_cache_from:
         - "main"
       trigger:
@@ -320,7 +320,6 @@ data:
             E2E_NETWORK: "hardhat"
             E2E_FRONTEND_URL: "frontend:3000"
           commands:
-            - cd frontend
             - cypress run
 
       services:
