@@ -1,85 +1,81 @@
-import { BigNumber } from 'ethers';
 import { expect } from 'chai';
+import { fetchWalletBalances } from '~/../core/src/wallet';
+import { WalletBalances } from '~/../core/src/types';
+
+const HARDHAT_WALLET_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82';
+const E2E_NETWORK = 'localhost';
+const URL_TO_VISIT = `${process.env.HOST || 'localhost'}:${
+    process.env.PORT || '3000'
+}/collateral?network=${E2E_NETWORK}`;
+const PAGE_LOAD_TIMEOUT_MS = 140 * 1000;
+const CLICK_TIMEOUT = 30 * 1000;
 
 describe('Collateral auctions', function () {
     // Set the private key to one of the deterministic hardhat keys.
     // see https://hardhat.org/hardhat-network#running-stand-alone-in-order-to-support-wallets-and-other-software
-    const KEEPER_WALLET_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82';
-    const NETWORK = process.env.FORKED_NETWORK || 'localhost';
-    const URL_TO_VISIT = `${process.env.FRONTEND_URL || 'localhost:3000'}/collateral?network=${NETWORK}`;
-    let daiBalanceBefore: Record<string, BigNumber>;
-    let daiBalanceAfter: Record<string, BigNumber>;
+    let walletBalanceBefore: WalletBalances;
+    let walletBalanceAfter: WalletBalances;
+    let walletAddress: string;
 
     function testSwapProfit() {
-        cy.visit(URL_TO_VISIT);
-        cy.window()
-            .its('$nuxt')
-            .then(function (nuxt) {
-                nuxt.$store.dispatch('wallet/createWalletFromPrivateKey', KEEPER_WALLET_PRIVATE_KEY);
-            });
-        cy.get('table').first({ timeout: 140000 }).should('contain.text', 'ETH');
-
-        cy.window()
-            .its('$nuxt')
-            .then(function (nuxt) {
-                daiBalanceBefore = nuxt.$store.getters['wallet/walletBalances'];
-            });
-
+        cy.get('table').first({ timeout: PAGE_LOAD_TIMEOUT_MS }).should('contain.text', 'ETH');
+        cy.wrap(null).then(async function () {
+            walletBalanceBefore = await fetchWalletBalances(E2E_NETWORK, walletAddress);
+        });
         cy.get('a').eq(1).should('contain.text', 'Participate').click();
-        cy.get('button.Button').eq(3).should('contain.text', 'Directly swap').click();
-        cy.get('button.Button')
-            .eq(5)
-            .should('contain.text', 'Authorize DAI Transactions')
-            .click()
-            .then(() =>
-                cy
-                    .get('button.Button')
-                    .eq(6)
-                    .should('contain.text', 'Authorize ETH-C Transactions')
-                    .click({ timeout: 19000 })
-            );
+        cy.get('div.justify-end').contains('Directly swap').click();
+        cy.get('div').contains('Authorize DAI Transactions').click();
+        cy.get('div.BasePanel')
+            .not('div.WalletAuthorizationCheckPanel')
+            .contains(/^Authorize .+ Transactions$/)
+            .click({ timeout: CLICK_TIMEOUT });
 
-        cy.get('button.Button')
-            .eq(8)
-            .should('contain.text', 'Execute')
-            .click({ timeout: 25000 })
-            .then(() => {
-                cy.get('svg.CloseIcon').eq(1, { timeout: 10000 }).click();
-                cy.get('svg.CloseIcon').first({ timeout: 10000 }).click();
-            });
+        cy.contains(/^Execute$/).click({ timeout: CLICK_TIMEOUT });
+        cy.get('svg.CloseIcon').eq(1).click();
+        cy.get('svg.CloseIcon').first().click();
     }
     function testBidWithDai() {
         cy.get('a').eq(2).should('contain.text', 'Participate').click();
-        cy.get('button.Button').eq(2).should('contain.text', 'Bid with DAI').click();
-        cy.get('button.Button')
-            .eq(5)
-            .should('contain.text', 'Manage DAI in VAT')
-            .click()
-            .then(() => {
-                cy.get('svg.animate-spin').eq(3, { timeout: 140000 }).should('not.be.visible');
-                cy.contains('Allow unlimited access to DAI').click();
-                cy.get('button').eq(30).should('contain.text', 'deposit').click();
-                cy.get('span.ant-modal-close-x').first().click();
-            });
+        cy.contains(/^Bid with DAI$/).click();
+        cy.contains(/^Manage DAI in VAT$/).click();
+        cy.contains('Allow unlimited access to DAI').click({ timeout: CLICK_TIMEOUT });
+        cy.contains(/^deposit$/).click();
+        cy.get('span.ant-modal-close-x').first().click();
+        cy.wait(2000);
         cy.get('input.Input').first().type('100');
-        cy.contains('Authorize WSTETH-A Transactions').click();
+        cy.contains(/^Authorize .+ Transactions$/).click();
 
-        cy.contains('Bid 100')
-            .click({ timeout: 25000 })
-            .then(() => {
-                cy.get('svg.CloseIcon').eq(1, { timeout: 10000 }).click();
-                cy.get('svg.CloseIcon').first({ timeout: 10000 }).click();
-            });
+        cy.get('div.flex.flex-row-reverse').contains('Bid').click({ timeout: CLICK_TIMEOUT });
+        // close the popups and return to the main collateral view
+        cy.get('svg.CloseIcon').eq(1).click();
+        cy.get('svg.CloseIcon').first().click();
     }
     it('participates with swap and with direct bid', function () {
-        testSwapProfit();
-        testBidWithDai();
+        cy.visit(URL_TO_VISIT);
         cy.window()
             .its('$nuxt')
-            .then(function (nuxt) {
-                daiBalanceAfter = nuxt.$store.getters['wallet/walletBalances'];
-                // eslint-disable-next-line no-unused-expressions
-                expect(daiBalanceAfter.walletVatDAI.gt(daiBalanceBefore.walletVatDAI)).to.be.true;
+            .then(async function (nuxt) {
+                walletAddress = await nuxt.$store.dispatch(
+                    'wallet/createWalletFromPrivateKey',
+                    HARDHAT_WALLET_PRIVATE_KEY
+                );
             });
+        testSwapProfit();
+        cy.wrap(null).then(async function () {
+            walletBalanceAfter = await fetchWalletBalances(E2E_NETWORK, walletAddress);
+            const daiOwnedBefore = walletBalanceBefore.walletDAI;
+            const daiOwnedAfter = walletBalanceAfter.walletDAI;
+            // eslint-disable-next-line no-unused-expressions
+            expect(daiOwnedAfter.gt(daiOwnedBefore)).to.be.true;
+            walletBalanceBefore = JSON.parse(JSON.stringify(walletBalanceAfter));
+        });
+        testBidWithDai();
+        cy.wrap(null).then(async function () {
+            walletBalanceAfter = await fetchWalletBalances(E2E_NETWORK, walletAddress);
+            const daiOwnedBefore = walletBalanceBefore.walletDAI; // before the dai was not moved into vat yet
+            const daiOwnedAfter = walletBalanceAfter.walletVatDAI; // here the dai is already in the vat
+            // eslint-disable-next-line no-unused-expressions
+            expect(daiOwnedAfter.lt(daiOwnedBefore)).to.be.true;
+        });
     });
 });

@@ -17,7 +17,8 @@
     "lint": "npm run lint:js && npm run lint:style",
     "test": "jest",
     "storybook": "start-storybook --port 8025 --ci",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "e2e": "cypress run"
   },
   "repository": {
     "url": "https://github.com/sidestream-tech/unified-auctions-ui"
