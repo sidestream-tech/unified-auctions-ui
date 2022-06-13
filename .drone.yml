@@ -88,7 +88,7 @@ data:
 
     # frontend/cypress:pr-$PULL_REQUEST_NUMBER
     - name: publish-cypress-on-pr-push
-      target: cypress-base
+      target: e2e
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend/cypress
       tags:
         - "pr-${DRONE_PULL_REQUEST}"
