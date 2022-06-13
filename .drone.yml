@@ -319,6 +319,8 @@ data:
           environment:
             E2E_NETWORK: "hardhat"
             E2E_FRONTEND_URL: "frontend:3000"
+          commands:
+            - ls
 
       services:
         - name: frontend
