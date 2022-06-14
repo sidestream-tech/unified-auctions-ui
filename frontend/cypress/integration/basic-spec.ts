@@ -3,9 +3,9 @@ import { fetchWalletBalances } from '~/../core/src/wallet';
 import { WalletBalances } from '~/../core/src/types';
 
 const HARDHAT_WALLET_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82';
-const E2E_NETWORK = process.env.E2E_NETWORK || 'localhost';
-const E2E_FRONTEND_URL = process.env.E2E_FRONTEND_URL || 'localhost:3000';
-const URL_TO_VISIT = `${E2E_FRONTEND_URL}/collateral?network=${E2E_NETWORK}`;
+const CYPRESS_NETWORK = Cypress.env('NETWORK') || 'localhost';
+const CYPRESS_FRONTEND_URL = Cypress.env('FRONTEND_URL') || 'localhost:3000';
+const URL_TO_VISIT = `${CYPRESS_FRONTEND_URL}/collateral?network=${CYPRESS_NETWORK}`;
 const PAGE_LOAD_TIMEOUT_MS = 140 * 1000;
 const CLICK_TIMEOUT = 30 * 1000;
 
@@ -19,7 +19,7 @@ describe('Collateral auctions', function () {
     function testSwapProfit() {
         cy.get('table').first({ timeout: PAGE_LOAD_TIMEOUT_MS }).should('contain.text', 'ETH');
         cy.wrap(null).then(async function () {
-            walletBalanceBefore = await fetchWalletBalances(E2E_NETWORK, walletAddress);
+            walletBalanceBefore = await fetchWalletBalances(CYPRESS_NETWORK, walletAddress);
         });
         cy.get('a').eq(1).should('contain.text', 'Participate').click();
         cy.get('div.justify-end').contains('Directly swap').click();
@@ -61,7 +61,7 @@ describe('Collateral auctions', function () {
             });
         testSwapProfit();
         cy.wrap(null).then(async function () {
-            walletBalanceAfter = await fetchWalletBalances(E2E_NETWORK, walletAddress);
+            walletBalanceAfter = await fetchWalletBalances(CYPRESS_NETWORK, walletAddress);
             const daiOwnedBefore = walletBalanceBefore.walletDAI;
             const daiOwnedAfter = walletBalanceAfter.walletDAI;
             // eslint-disable-next-line no-unused-expressions
@@ -70,7 +70,7 @@ describe('Collateral auctions', function () {
         });
         testBidWithDai();
         cy.wrap(null).then(async function () {
-            walletBalanceAfter = await fetchWalletBalances(E2E_NETWORK, walletAddress);
+            walletBalanceAfter = await fetchWalletBalances(CYPRESS_NETWORK, walletAddress);
             const daiOwnedBefore = walletBalanceBefore.walletDAI; // before the dai was not moved into vat yet
             const daiOwnedAfter = walletBalanceAfter.walletVatDAI; // here the dai is already in the vat
             // eslint-disable-next-line no-unused-expressions

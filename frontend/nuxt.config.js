@@ -16,8 +16,8 @@ export default {
         STAGING_BANNER_URL: process.env.STAGING_BANNER_URL || undefined,
         DEFAULT_ETHEREUM_NETWORK: process.env.DEFAULT_ETHEREUM_NETWORK || 'mainnet',
         HEAPIO_ID: process.env.HEAPIO_ID || undefined,
-        E2E_NETWORK: process.env.E2E_NETWORK || 'localhost',
-        E2E_FRONTEND_URL: process.env.E2E_FRONTEND_URL || 'localhost:3000',
+        CYPRESS_NETWORK: process.env.CYPRESS_NETWORK || 'localhost',
+        CYPRESS_FRONTEND_URL: process.env.CYPRESS_FRONTEND_URL || 'localhost:3000',
     },
 
     publicRuntimeConfig: {

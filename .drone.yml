@@ -308,8 +308,8 @@ data:
       type: docker ## needs more resources, `docker` is used instead of `kubernetes`
       name: e2e-test
       environment:
-        E2E_NETWORK: "hardhat"
-        E2E_FRONTEND_URL: "frontend:3000"
+        CYPRESS_NETWORK: "hardhat"
+        CYPRESS_FRONTEND_URL: "frontend:3000"
       trigger:
         event:
           - pull_request
@@ -317,7 +317,7 @@ data:
         - name: test-e2e
           image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend/cypress:pr-${DRONE_PULL_REQUEST}
           commands:
-            - echo $E2E_NETWORK
+            - echo $CYPRESS_NETWORK
             - cd frontend
             - npm install
             - npm run e2e
