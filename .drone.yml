@@ -326,9 +326,9 @@ data:
 
       services:
         - name: frontend
-          image: ghcr.io/sidestream-tech/audit-tool/frontend:pr-${DRONE_PULL_REQUEST}
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:pr-${DRONE_PULL_REQUEST}
         - name: hardhat
-          image: ghcr.io/sidestream-tech/audit-tool/hardhat:pr-${DRONE_PULL_REQUEST}
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:pr-${DRONE_PULL_REQUEST}
 
       depends_on:
         - publish-frontend-on-pr-push
