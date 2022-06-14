@@ -5,7 +5,7 @@ import { WalletBalances } from '~/../core/src/types';
 const HARDHAT_WALLET_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82';
 const CYPRESS_NETWORK = Cypress.env('NETWORK') || 'localhost';
 const CYPRESS_FRONTEND_URL = Cypress.env('FRONTEND_URL') || 'localhost:3000';
-const URL_TO_VISIT = `${CYPRESS_FRONTEND_URL}/collateral?network=${CYPRESS_NETWORK}`;
+const URL_TO_VISIT = `http://${CYPRESS_FRONTEND_URL}/collateral?network=${CYPRESS_NETWORK}`;
 const PAGE_LOAD_TIMEOUT_MS = 140 * 1000;
 const CLICK_TIMEOUT = 30 * 1000;
 
