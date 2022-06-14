@@ -37,6 +37,7 @@ FROM cypress/included:9.0.0 AS e2e
 
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
+RUN npm i
 WORKDIR /frontend
 
 ENTRYPOINT [ "/bin/sh" ]
