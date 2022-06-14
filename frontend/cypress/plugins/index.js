@@ -16,13 +16,7 @@
  * @type {Cypress.PluginConfig}
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const webpackPreprocessor = require('@cypress/webpack-batteries-included-preprocessor');
-
-module.exports = on => {
-    on(
-        'file:preprocessor',
-        webpackPreprocessor({
-            typescript: require.resolve('typescript'),
-        })
-    );
+module.exports = (on, config) => {
+    // `on` is used to hook into various events Cypress emits
+    // `config` is the resolved Cypress config
 };
