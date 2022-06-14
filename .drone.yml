@@ -321,7 +321,7 @@ data:
             # This should be managed on the dev-stage but as of now not
             # apparently not possible due to internal structure
             - npm install
-            - sleep 20
+            - curl http://frontend:3000/
             - npm run e2e
 
       services:
