@@ -321,6 +321,7 @@ data:
             E2E_FRONTEND_URL: "frontend:3000"
           commands:
             - cd frontend
+            - npm install
             - npm list
             - npm list --dev
             - npm run e2e
