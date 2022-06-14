@@ -317,6 +317,7 @@ data:
         - name: test-e2e
           image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend/cypress:pr-${DRONE_PULL_REQUEST}
           commands:
+            - echo E2E_NETWORK
             - cd frontend
             - npm install
             - npm run e2e
