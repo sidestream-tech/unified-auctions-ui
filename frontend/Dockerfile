@@ -39,7 +39,6 @@ COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
 RUN npm install typescript
-RUN npm install --save-dev cypress-cucumber-preprocessor
 
 ENTRYPOINT [ "/bin/sh" ]
 
