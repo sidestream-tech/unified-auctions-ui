@@ -320,7 +320,6 @@ data:
             E2E_NETWORK: "hardhat"
             E2E_FRONTEND_URL: "frontend:3000"
           commands:
-            - npx tsc --version
             - cd frontend
             - npm run e2e
 
