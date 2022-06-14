@@ -320,6 +320,7 @@ data:
             E2E_NETWORK: "hardhat"
             E2E_FRONTEND_URL: "frontend:3000"
           commands:
+            - tsc --version
             - cd frontend
             - npm run e2e
 
@@ -327,12 +328,10 @@ data:
         - name: frontend
           image: ghcr.io/sidestream-tech/audit-tool/frontend:pr-${DRONE_PULL_REQUEST}
           commands:
-            - npm i
             - npm run dev
         - name: hardhat
           image: ghcr.io/sidestream-tech/audit-tool/hardhat:pr-${DRONE_PULL_REQUEST}
           commands:
-            - npm i
             - npm run dev
 
       depends_on:
