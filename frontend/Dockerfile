@@ -39,6 +39,7 @@ COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
 RUN npm install typescript
+RUN npm install
 
 ENTRYPOINT [ "/bin/sh" ]
 
