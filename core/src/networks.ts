@@ -23,6 +23,16 @@ export const addNetwork = async function (rpcURL: string) {
     });
 };
 
+const addLocalhostNetwork = function () {
+    networks.push({
+        chainId: '0x539',
+        title: 'Localhost:8545',
+        url: `http://127.0.0.1:8545`,
+        etherscanUrl: '',
+        isFork: true,
+    });
+};
+
 export const getNetworkConfigByType = function (networkType: string | undefined): NetworkConfig {
     const networkConfig = networks.find(network => {
         return network.title === networkType;
@@ -62,7 +72,7 @@ const sortInfuraNetworksByDefaultNetwork = function (
     });
 };
 
-const setupNetworks = async function () {
+const setupNetworks = async function (isDev?: boolean) {
     const rpcUrl = process.env.RPC_URL;
     if (!rpcUrl) {
         throw new Error(`No "RPC_URL" was defined.`);
@@ -76,6 +86,11 @@ const setupNetworks = async function () {
     } else {
         await addNetwork(rpcUrl);
     }
+
+    if (isDev) {
+        addLocalhostNetwork();
+    }
+
     return networks;
 };
 
