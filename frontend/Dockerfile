@@ -35,6 +35,11 @@ CMD ["npm", "run", "dev"]
 
 FROM cypress/included:9.0.0 AS e2e
 
+ARG E2E_FRONTEND_URL
+ENV E2E_FRONTEND_URL=${E2E_FRONTEND_URL}
+ARG E2E_NETWORK
+ENV E2E_NETWORK=${E2E_NETWORK}
+
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
