@@ -305,7 +305,7 @@ data:
 
   pipelines:
     - kind: pipeline
-      type: docker ## needs more resources, `docker` is used instead of `kubernetes`
+      type: kubernetes
       name: e2e-test
       environment:
         CYPRESS_NETWORK: "hardhat"
