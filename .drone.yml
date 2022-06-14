@@ -73,6 +73,9 @@ data:
     - name: publish-hardhat-on-pr-push
       target: dependency-base
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat
+      build_args:
+        - key: ALCHEMY_URL
+          value_from_secret: auction-ui/localhost/hardhat
       tags:
         - "pr-${DRONE_PULL_REQUEST}"
       labels:
@@ -321,7 +324,6 @@ data:
             # This should be managed on the dev-stage but as of now not
             # apparently not possible due to internal structure
             - npm install
-            - curl http://frontend:3000/
             - npm run e2e
 
       services:

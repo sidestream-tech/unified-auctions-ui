@@ -18,6 +18,9 @@ COPY ./frontend /frontend
 
 FROM $NODE_VERSION AS development
 
+ARG ALCHEMY_URL
+ENV ALCHEMY_URL=${ALCHEMY_URL}
+
 COPY --from=dependency-base /hardhat /hardhat
 
 WORKDIR /hardhat
