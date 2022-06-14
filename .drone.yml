@@ -75,7 +75,7 @@ data:
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat
       build_args:
         - key: ALCHEMY_URL
-          value_from_secret: auction-ui/localhost/hardhat
+          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
       tags:
         - "pr-${DRONE_PULL_REQUEST}"
       labels:
