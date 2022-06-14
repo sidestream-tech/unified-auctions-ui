@@ -32,14 +32,14 @@ export default Vue.extend({
             default: false,
         },
     },
-    data() {
-        return {
-            options: [
-                ...this.networks.map(([name, properties]) => {
-                    return { label: properties.title, value: name as string | null };
+    computed: {
+        options() {
+            return [
+                ...this.networks.map((network: NetworkConfig) => {
+                    return { label: network.title, value: network.title as string | null };
                 }),
-            ],
-        };
+            ];
+        },
     },
 });
 </script>
