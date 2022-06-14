@@ -71,7 +71,7 @@ data:
 
     # hardhat:pr-$PULL_REQUEST_NUMBER
     - name: publish-hardhat-on-pr-push
-      target: dependency-base
+      target: development
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat
       build_args:
         - key: ALCHEMY_URL
