@@ -38,7 +38,7 @@ FROM cypress/included:9.0.0 AS e2e
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
-RUN npm install typescript
+RUN npm install -g typescript
 
 ENTRYPOINT [ "/bin/sh" ]
 
