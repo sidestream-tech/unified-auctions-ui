@@ -80,9 +80,10 @@ export const mutations = {
 };
 
 export const actions = {
-    async setupNetworks({ commit }: ActionContext<State, any>) {
+    async setupNetworks({ commit, dispatch }: ActionContext<State, any>) {
         const networks = await setupNetworks();
         commit('setAllNetworks', networks);
+        await dispatch('setPageNetwork', networks[0].title);
     },
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);

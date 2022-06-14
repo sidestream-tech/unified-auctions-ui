@@ -18,7 +18,7 @@
         />
         <Nuxt />
         <ChangePageNetworkModal
-            v-if="!isPageNetworkValid"
+            v-if="!isPageNetworkValid && getAllNetworks"
             :invalid-network="getPageNetwork"
             :is-dev="isDev"
             :networks="getAllNetworks"
