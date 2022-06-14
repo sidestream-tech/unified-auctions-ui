@@ -38,7 +38,7 @@ FROM cypress/included:9.0.0 AS e2e
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
-RUN npm install --save-dev @cypress/webpack-batteries-included-preprocessor @cypress/webpack-preprocessor
+RUN npm install
 
 
 ENTRYPOINT [ "/bin/sh" ]
