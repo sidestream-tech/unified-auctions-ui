@@ -320,6 +320,7 @@ data:
             - echo $CYPRESS_NETWORK
             - cd frontend
             - npm install
+            - sleep 20
             - npm run e2e
 
       services:

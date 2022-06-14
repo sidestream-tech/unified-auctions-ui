@@ -42,6 +42,7 @@ ENV CYPRESS_NETWORK=${CYPRESS_NETWORK}
 
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /frontend /frontend
+EXPOSE 3000
 WORKDIR /frontend
 RUN npm install
 
