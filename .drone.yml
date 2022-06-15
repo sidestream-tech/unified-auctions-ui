@@ -323,8 +323,6 @@ data:
             - cd frontend
             # This should be managed on the dev-stage but as of now not
             # apparently not possible due to internal structure
-            - echo $CYPRESS_NETWORK
-            - echo $CYPRESS_FRONTEND_URL
             - npm install
             - npm run e2e
 
