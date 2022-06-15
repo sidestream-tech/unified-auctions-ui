@@ -1,26 +1,22 @@
+import { SurplusAuctionEventTypes, SurplusEvent } from 'auctions-core/src/types';
 import faker from 'faker';
-import BigNumber from 'bignumber.js';
-import { SurplusEvent } from 'auctions-core/src/types';
 import { random } from 'lodash';
+import { generateFakeSurplusAuctionData } from '~/helpers/generateFakeSurplusAuction';
 
-const EVENT_TYPES = ['start', 'bid', 'collect'];
-
-export function generateFakeSurplusEvent(): SurplusEvent {
-    const transactionAddress = faker.finance.ethereumAddress();
-    const type = faker.helpers.randomize(EVENT_TYPES);
-    const walletAddress = faker.finance.ethereumAddress();
-    const amount = type === 'bid' ? new BigNumber(parseFloat(faker.finance.amount())) : undefined;
-    const date = faker.date.recent();
+export const generateFakeSurplusEvent = function (type?: SurplusAuctionEventTypes): SurplusEvent {
+    const surplusAuctionData = generateFakeSurplusAuctionData();
+    const transactionHash = faker.finance.ethereumAddress();
+    const transactionDate = faker.date.recent();
+    const generatedType = type || 'bid';
 
     return {
-        transactionAddress,
-        type,
-        walletAddress,
-        amount,
-        date,
+        ...surplusAuctionData,
+        type: generatedType,
+        transactionHash,
+        transactionDate,
     };
-}
+};
 
-export const generateFakeSurplusEvents = function (number = random(5, 15)) {
+export const generateFakeSurplusAuctionEvents = function (number = random(5, 15)) {
     return Array(number).fill(null).map(generateFakeSurplusEvent);
 };
