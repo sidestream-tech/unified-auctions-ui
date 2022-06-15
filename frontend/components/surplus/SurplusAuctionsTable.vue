@@ -12,35 +12,41 @@
             :locale="{ emptyText: 'No active auctions' }"
             class="AuctionsTable relative overflow-visible"
         >
-            <div slot="collateralAmount" slot-scope="collateralAmount, record" class="flex items-center space-x-2">
-                <currency-icon :currency-symbol="record.collateralSymbol" />
-                <format-currency :value="collateralAmount" :currency="record.collateralSymbol" />
+            <div slot="auctionAmount" slot-scope="receiveAmountDAI">
+                <format-currency v-if="receiveAmountDAI" :value="receiveAmountDAI" currency="DAI" />
+                <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="approximateUnitPrice" slot-scope="approximateUnitPrice, record">
-                <template v-if="record.isActive && !record.isFinished">
-                    <format-currency :value="approximateUnitPrice" currency="DAI" /> per
-                    <format-currency :currency="record.collateralSymbol" />
+            <div slot="highestBid" slot-scope="highestBid, record">
+                <template v-if="getIsAuctionActive(record) && highestBid">
+                    <format-currency :value="highestBid" currency="MKR" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="marketUnitPriceToUnitPriceRatio" slot-scope="marketUnitPriceToUnitPriceRatio, record">
-                <format-market-value
-                    v-if="record.isActive && record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
-                    :value="marketUnitPriceToUnitPriceRatio"
-                />
-                <span
-                    v-else-if="record.isActive && !record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
-                    class="opacity-50"
-                >
-                    Not tradable
-                </span>
+            <div slot="auctionPrice" slot-scope="auctionPrice, record">
+                <template v-if="getIsAuctionActive(record) && auctionPrice">
+                    <format-currency :value="auctionPrice" currency="DAI" /> per <format-currency currency="MKR" />
+                </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="endDate" slot-scope="endDate, record" class="text-center">
-                <span v-if="record.isFinished" class="opacity-50"> Finished </span>
-                <span v-else-if="record.isRestarting" class="opacity-50"> Restarting </span>
-                <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
-                <time-till v-else :date="endDate" />
+            <div slot="marketUnitPrice" slot-scope="marketUnitPrice, record">
+                <template v-if="getIsAuctionActive(record)">
+                    <format-market-value :value="marketUnitPrice" :inverted="true" />
+                </template>
+                <span v-else class="opacity-50">Unknown</span>
+            </div>
+            <div slot="state" slot-scope="state, record">
+                <template v-if="getIsAuctionActive(record)">
+                    <span v-if="state === 'collected'"> Collected </span>
+                    <span v-else-if="state === 'requires-restart'"> Requires Restart </span>
+                    <span v-else-if="state === 'ready-for-collection'"> Expired </span>
+                    <span v-else> Expires in </span>
+                    <time-till
+                        v-if="state === 'collected'"
+                        :date="record.events[record.events.length - 1].transactionDate"
+                    />
+                    <time-till v-else-if="state !== 'requires-restart'" :date="record.earliestEndDate" />
+                </template>
+                <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="updatingStatus" class="opacity-50 font-normal">
                 <div v-if="isLoading" class="flex items-center space-x-2">
@@ -58,9 +64,7 @@
                     "
                     class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
                 >
-                    <span v-if="record.isFinished">See details</span>
-                    <span v-else-if="record.isActive">Participate</span>
-                    <span v-else-if="!record.isActive">Restart Auction</span>
+                    <span>See details</span>
                 </nuxt-link>
             </div>
         </Table>
@@ -70,13 +74,11 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
-import { compareAsc } from 'date-fns';
 import { SurplusAuction } from 'auctions-core/src/types';
 import Loading from '~/components/common/Loading.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import CurrencyIcon from '~/components/common/CurrencyIcon.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
 
 const compareBy = function (field: string, cmp: Function = (a: number, b: number): number => a - b): Function {
@@ -84,10 +86,10 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
         const greaterVal = sortOrder === 'ascend' ? 1 : -1;
         const aVal = aAuction[field];
         const bVal = bAuction[field];
-        if (aAuction.isFinished) {
+        if (aAuction.state === 'ready-for-collection') {
             return greaterVal;
         }
-        if (!bAuction.isActive || bAuction.isFinished) {
+        if (bAuction.state !== 'requires-restart' || bAuction.state === 'ready-for-collection') {
             return -greaterVal;
         }
         if (typeof aVal === 'undefined') {
@@ -108,7 +110,6 @@ export default Vue.extend({
         TimeTill,
         FormatMarketValue,
         FormatCurrency,
-        CurrencyIcon,
         LoadingIcon,
     },
     props: {
@@ -117,7 +118,7 @@ export default Vue.extend({
             default: () => [],
         },
         selectedSurplusAuctionId: {
-            type: String,
+            type: Number,
             default: null,
         },
         showMoreRows: {
@@ -147,33 +148,39 @@ export default Vue.extend({
             return [
                 {
                     title: 'Index',
-                    dataIndex: 'index',
+                    dataIndex: 'id',
                     sorter: compareBy('index'),
                 },
                 {
                     title: 'Auction Amount',
                     dataIndex: 'receiveAmountDAI',
-                    scopedSlots: { customRender: 'receiveAmountDAI' },
+                    scopedSlots: { customRender: 'auctionAmount' },
                     sorter: compareBy('receiveAmountDAI'),
                 },
                 {
                     title: 'Highest Bid',
-                    dataIndex: 'approximateUnitPrice',
-                    scopedSlots: { customRender: 'approximateUnitPrice' },
-                    sorter: compareBy('approximateUnitPrice'),
+                    dataIndex: 'highestBid',
+                    scopedSlots: { customRender: 'highestBid' },
+                    sorter: compareBy('highestBid'),
+                },
+                {
+                    title: 'Auction Price',
+                    dataIndex: 'auctionPrice',
+                    scopedSlots: { customRender: 'auctionPrice' },
+                    sorter: compareBy('auctionPrice'),
                 },
                 {
                     title: 'Market Difference',
-                    dataIndex: 'marketUnitPriceToUnitPriceRatio',
-                    scopedSlots: { customRender: 'marketUnitPriceToUnitPriceRatio' },
-                    sorter: compareBy('marketUnitPriceToUnitPriceRatio'),
+                    dataIndex: 'marketUnitPrice',
+                    scopedSlots: { customRender: 'marketUnitPrice' },
+                    sorter: compareBy('marketUnitPrice'),
                     defaultSortOrder: 'ascend',
                 },
                 {
-                    title: 'Auction Ends',
-                    dataIndex: 'earliestEndDate',
-                    scopedSlots: { customRender: 'endDate' },
-                    sorter: compareBy('endDate', (a: Date, b: Date) => compareAsc(a, b)),
+                    title: 'State',
+                    dataIndex: 'state',
+                    scopedSlots: { customRender: 'state' },
+                    sorter: compareBy('state'),
                 },
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
@@ -203,16 +210,24 @@ export default Vue.extend({
             };
         },
         getRowClassNames(auction: SurplusAuction) {
-            console.info(auction);
             const classes = [];
-            classes.push('selected-row');
-            classes.push('bg-gray-100 dark:bg-gray-800');
+            if (this.selectedSurplusAuctionId === auction.id) {
+                classes.push('selected-row');
+            }
+            if (!this.getIsAuctionActive(auction)) {
+                classes.push('bg-gray-100 dark:bg-gray-800');
+            }
             return classes.join(' ');
         },
         getAuctionLink(auction: SurplusAuction) {
-            console.info(auction);
-            const searchParams = new URLSearchParams({ network: 'kovan', auction: 'ETH-A:3' });
-            return `/collateral?${searchParams.toString()}`;
+            const searchParams = new URLSearchParams({ network: auction.network, auction: auction.id.toString() });
+            return `/surplus?${searchParams.toString()}`;
+        },
+        getIsAuctionFinished(auction: SurplusAuction) {
+            return auction.state !== 'ready-for-collection';
+        },
+        getIsAuctionActive(auction: SurplusAuction) {
+            return auction.state !== 'requires-restart' || this.getIsAuctionFinished(auction);
         },
     },
 });
