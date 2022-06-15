@@ -1,0 +1,70 @@
+<template>
+    <div class="flex flex-col space-y-8 py-8">
+        <TextBlock v-if="isExplanationsShown" title="What is the Maker Protocol?" class="TextBlock">
+            The Maker Protocol is
+            <Explain text="a set of rules">
+                a <a href="https://changelog.makerdao.com/" target="_blank"> set of smart contracts </a> running on the
+                Ethereum blockchain</Explain
+            >
+            that defines how a cryptocurrency called DAI is kept approximately equal to USD by incentivizing market
+            players. People who help to keep DAI stable, benefit from their actions by acquiring cryptocurrency at a
+            discount. The main promise of the protocol is to provide a decentralized
+            <Explain text="stable currency">
+                <a href="https://makerdao.com/en/whitepaper#the-dai-stablecoin" target="_blank">
+                    The DAI Stablecoin
+                </a>
+                is a decentralized, unbiased, collateral-backed cryptocurrency soft-pegged to the US Dollar </Explain
+            >, which can be used to borrow money over a longer period without being affected by unpredictable exchange
+            rates.
+        </TextBlock>
+        <TextBlock v-if="isExplanationsShown" title="What are surplus auctions?" class="TextBlock">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+            et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
+            amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+            aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+            gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur
+            sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
+            voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
+            takimata sanctus est Lorem ipsum dolor sit amet.
+        </TextBlock>
+        <TextBlock v-if="isExplanationsShown" title="Why would I participate?" class="TextBlock">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+            et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
+            amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
+            aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
+            gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        </TextBlock>
+        <TextBlock v-if="isExplanationsShown" title="What is the catch?" class="TextBlock">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+            et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        </TextBlock>
+    </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import TextBlock from '~/components/common/TextBlock.vue';
+import Explain from '~/components/utils/Explain.vue';
+
+export default Vue.extend({
+    components: {
+        TextBlock,
+        Explain,
+    },
+    props: {
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
+        },
+    },
+});
+</script>
+
+<style scoped>
+.TextBlock {
+    @apply max-w-screen-sm self-center;
+}
+</style>
