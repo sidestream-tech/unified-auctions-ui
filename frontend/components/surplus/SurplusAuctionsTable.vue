@@ -131,7 +131,7 @@ export default Vue.extend({
             type: Array as PropType<SurplusAuction[]>,
             default: () => [],
         },
-        selectedSurplusAuctionId: {
+        selectedAuctionId: {
             type: Number,
             default: null,
         },
@@ -234,7 +234,7 @@ export default Vue.extend({
         },
         getRowClassNames(auction: SurplusAuction) {
             const classes = [];
-            if (this.selectedSurplusAuctionId === auction.id) {
+            if (this.selectedAuctionId === auction.id) {
                 classes.push('selected-row');
             }
             if (!this.getIsAuctionActive(auction)) {
