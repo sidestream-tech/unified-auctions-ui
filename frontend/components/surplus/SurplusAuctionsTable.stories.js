@@ -1,11 +1,14 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import SurplusAuctionsTable from '~/components/surplus/SurplusAuctionsTable';
+import { generateFakeSurplusAuctionsData } from '~/helpers/generateFakeSurplusAuction';
+
+const surplusAuctions = generateFakeSurplusAuctionsData();
 
 const common = {
     components: { SurplusAuctionsTable },
     data: () => ({
-        show: true,
+        auctions: surplusAuctions,
     }),
     methods: {
         accept: action('accept'),
@@ -15,5 +18,5 @@ const common = {
 
 storiesOf('Surplus/SurplusAuctionsTable', module).add('Default', () => ({
     ...common,
-    template: '<SurplusAuctionsTable />',
+    template: '<SurplusAuctionsTable :auctions="auctions" />',
 }));
