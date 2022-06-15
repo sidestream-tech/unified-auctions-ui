@@ -283,8 +283,11 @@ export const actions = {
             commit('setIsDepositingOrWithdrawing', false);
         }
     },
-    async setup({ commit, dispatch }: ActionContext<State, State>): Promise<void> {
+    async setup({ commit, dispatch, getters }: ActionContext<State, State>): Promise<void> {
         commit('reset');
+        if (!getters.isConnected) {
+            await dispatch('autoConnect');
+        }
         await dispatch('fetchWalletBalances');
         await dispatch('fetchTokenAddressDai');
     },

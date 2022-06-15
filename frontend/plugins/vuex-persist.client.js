@@ -16,8 +16,7 @@ export default ({ store }) => {
         }).plugin(store);
         const network = store.getters['network/getMakerNetwork'];
         if (network) {
-            store.dispatch('auctions/fetch');
-            store.dispatch('wallet/autoConnect');
+            store.dispatch('network/setup');
         }
     });
 };
