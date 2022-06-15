@@ -1,0 +1,219 @@
+<template>
+    <Loading :is-loading="showLoadingOverlay" :error="error">
+        <Table
+            ref="tableContainer"
+            :data-source="auctions"
+            :columns="columns"
+            :pagination="{ pageSize: numberOfRowsPerPage, hideOnSinglePage: true }"
+            :row-class-name="getRowClassNames"
+            :row-key="record => record.id"
+            :custom-row="customRowEvents"
+            :get-popup-container="() => $el"
+            :locale="{ emptyText: 'No active auctions' }"
+            class="AuctionsTable relative overflow-visible"
+        >
+            <div slot="collateralAmount" slot-scope="collateralAmount, record" class="flex items-center space-x-2">
+                <currency-icon :currency-symbol="record.collateralSymbol" />
+                <format-currency :value="collateralAmount" :currency="record.collateralSymbol" />
+            </div>
+            <div slot="approximateUnitPrice" slot-scope="approximateUnitPrice, record">
+                <template v-if="record.isActive && !record.isFinished">
+                    <format-currency :value="approximateUnitPrice" currency="DAI" /> per
+                    <format-currency :currency="record.collateralSymbol" />
+                </template>
+                <span v-else class="opacity-50">Unknown</span>
+            </div>
+            <div slot="marketUnitPriceToUnitPriceRatio" slot-scope="marketUnitPriceToUnitPriceRatio, record">
+                <format-market-value
+                    v-if="record.isActive && record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
+                    :value="marketUnitPriceToUnitPriceRatio"
+                />
+                <span
+                    v-else-if="record.isActive && !record.marketUnitPriceToUnitPriceRatio && !record.isFinished"
+                    class="opacity-50"
+                >
+                    Not tradable
+                </span>
+                <span v-else class="opacity-50">Unknown</span>
+            </div>
+            <div slot="endDate" slot-scope="endDate, record" class="text-center">
+                <span v-if="record.isFinished" class="opacity-50"> Finished </span>
+                <span v-else-if="record.isRestarting" class="opacity-50"> Restarting </span>
+                <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
+                <time-till v-else :date="endDate" />
+            </div>
+            <div slot="updatingStatus" class="opacity-50 font-normal">
+                <div v-if="isLoading" class="flex items-center space-x-2">
+                    <LoadingIcon class="h-4 w-4 animate animate-spin fill-current dark:text-gray-300" />
+                    <span>Updating...</span>
+                </div>
+                <span v-else-if="lastUpdated"> Last updated <TimeTill :date="lastUpdated" /></span>
+                <span v-else> Last updated unknown time ago </span>
+            </div>
+            <div slot="action" slot-scope="text, record, index" class="w-full h-full">
+                <nuxt-link
+                    :to="getAuctionLink(record)"
+                    :class="
+                        (hoveredRowIndex === index && 'bg-primary text-white dark:bg-primary-dark') || 'text-primary'
+                    "
+                    class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
+                >
+                    <span v-if="record.isFinished">See details</span>
+                    <span v-else-if="record.isActive">Participate</span>
+                    <span v-else-if="!record.isActive">Restart Auction</span>
+                </nuxt-link>
+            </div>
+        </Table>
+    </Loading>
+</template>
+
+<script lang="ts">
+import Vue, { PropType } from 'vue';
+import { Table } from 'ant-design-vue';
+import { compareAsc } from 'date-fns';
+import { SurplusAuction } from 'auctions-core/src/types';
+import Loading from './common/Loading.vue';
+import TimeTill from '~/components/common/TimeTill.vue';
+import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
+import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+import CurrencyIcon from '~/components/common/CurrencyIcon.vue';
+import LoadingIcon from '~/assets/icons/loading.svg';
+
+const compareBy = function (field: string, cmp: Function = (a: number, b: number): number => a - b): Function {
+    return (aAuction: any, bAuction: any, sortOrder: string) => {
+        const greaterVal = sortOrder === 'ascend' ? 1 : -1;
+        const aVal = aAuction[field];
+        const bVal = bAuction[field];
+        if (aAuction.isFinished) {
+            return greaterVal;
+        }
+        if (!bAuction.isActive || bAuction.isFinished) {
+            return -greaterVal;
+        }
+        if (typeof aVal === 'undefined') {
+            return greaterVal;
+        }
+        if (typeof bVal === 'undefined') {
+            return -greaterVal;
+        }
+        return cmp(aVal, bVal);
+    };
+};
+
+export default Vue.extend({
+    name: 'SurplusAuctionsTable',
+    components: {
+        Loading,
+        Table,
+        TimeTill,
+        FormatMarketValue,
+        FormatCurrency,
+        CurrencyIcon,
+        LoadingIcon,
+    },
+    props: {
+        auctions: {
+            type: Array as PropType<SurplusAuction[]>,
+            default: () => [],
+        },
+        selectedSurplusAuctionId: {
+            type: String,
+            default: null,
+        },
+        showMoreRows: {
+            type: Boolean,
+            default: false,
+        },
+        isLoading: {
+            type: Boolean,
+            default: false,
+        },
+        lastUpdated: {
+            type: Date,
+            default: null,
+        },
+        error: {
+            type: String,
+            default: null,
+        },
+    },
+    data() {
+        return {
+            hoveredRowIndex: 0,
+        };
+    },
+    computed: {
+        columns(): Object[] {
+            return [
+                {
+                    title: 'Index',
+                    dataIndex: 'index',
+                    sorter: compareBy('index'),
+                },
+                {
+                    title: 'Auction Amount',
+                    dataIndex: 'receiveAmountDAI',
+                    scopedSlots: { customRender: 'receiveAmountDAI' },
+                    sorter: compareBy('receiveAmountDAI'),
+                },
+                {
+                    title: 'Highest Bid',
+                    dataIndex: 'approximateUnitPrice',
+                    scopedSlots: { customRender: 'approximateUnitPrice' },
+                    sorter: compareBy('approximateUnitPrice'),
+                },
+                {
+                    title: 'Market Difference',
+                    dataIndex: 'marketUnitPriceToUnitPriceRatio',
+                    scopedSlots: { customRender: 'marketUnitPriceToUnitPriceRatio' },
+                    sorter: compareBy('marketUnitPriceToUnitPriceRatio'),
+                    defaultSortOrder: 'ascend',
+                },
+                {
+                    title: 'Auction Ends',
+                    dataIndex: 'earliestEndDate',
+                    scopedSlots: { customRender: 'endDate' },
+                    sorter: compareBy('endDate', (a: Date, b: Date) => compareAsc(a, b)),
+                },
+                {
+                    slots: { title: 'updatingStatus', customRender: 'action' },
+                    scopedSlots: { customRender: 'action' },
+                    width: '20%',
+                },
+            ];
+        },
+        numberOfRowsPerPage(): number {
+            return this.showMoreRows ? 15 : 10;
+        },
+        showLoadingOverlay(): boolean {
+            return this.isLoading && this.auctions.length === 0;
+        },
+    },
+    methods: {
+        customRowEvents(record: SurplusAuction, rowIndex: number): Object {
+            return {
+                on: {
+                    click: () => {
+                        this.$router?.push(this.getAuctionLink(record));
+                    },
+                    mouseenter: () => {
+                        this.hoveredRowIndex = rowIndex;
+                    },
+                },
+            };
+        },
+        getRowClassNames(auction: SurplusAuction) {
+            console.info(auction);
+            const classes = [];
+            classes.push('selected-row');
+            classes.push('bg-gray-100 dark:bg-gray-800');
+            return classes.join(' ');
+        },
+        getAuctionLink(auction: SurplusAuction) {
+            console.info(auction);
+            const searchParams = new URLSearchParams({ network: 'kovan', auction: 'ETH-A:3' });
+            return `/collateral?${searchParams.toString()}`;
+        },
+    },
+});
+</script>
