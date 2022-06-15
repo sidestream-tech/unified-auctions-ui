@@ -16,14 +16,14 @@
                 <format-currency v-if="receiveAmountDAI" :value="receiveAmountDAI" currency="DAI" />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="highestBid" slot-scope="highestBid, record">
-                <template v-if="getIsAuctionActive(record) && highestBid">
+            <div slot="highestBid" slot-scope="highestBid">
+                <template v-if="highestBid">
                     <format-currency :value="highestBid" currency="MKR" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="auctionPrice" slot-scope="auctionPrice, record">
-                <template v-if="getIsAuctionActive(record) && auctionPrice">
+            <div slot="auctionPrice" slot-scope="auctionPrice">
+                <template v-if="auctionPrice">
                     <format-currency :value="auctionPrice" currency="DAI" /> per <format-currency currency="MKR" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
@@ -35,18 +35,15 @@
                 <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="state" slot-scope="state, record">
-                <template v-if="getIsAuctionActive(record)">
-                    <span v-if="state === 'collected'"> Collected </span>
-                    <span v-else-if="state === 'requires-restart'"> Requires Restart </span>
-                    <span v-else-if="state === 'ready-for-collection'"> Expired </span>
-                    <span v-else> Expires in </span>
-                    <time-till
-                        v-if="state === 'collected'"
-                        :date="record.events[record.events.length - 1].transactionDate"
-                    />
-                    <time-till v-else-if="state !== 'requires-restart'" :date="record.earliestEndDate" />
-                </template>
-                <span v-else class="opacity-50">Unknown</span>
+                <span v-if="state === 'collected'"> Collected </span>
+                <span v-else-if="state === 'requires-restart'"> Requires Restart </span>
+                <span v-else-if="state === 'ready-for-collection'"> Expired </span>
+                <span v-else> Expires in </span>
+                <time-till
+                    v-if="state === 'collected'"
+                    :date="record.events[record.events.length - 1].transactionDate"
+                />
+                <time-till v-else-if="state !== 'requires-restart'" :date="record.earliestEndDate" />
             </div>
             <div slot="updatingStatus" class="opacity-50 font-normal">
                 <div v-if="isLoading" class="flex items-center space-x-2">
@@ -227,10 +224,10 @@ export default Vue.extend({
             return `/surplus?${searchParams.toString()}`;
         },
         getIsAuctionFinished(auction: SurplusAuction) {
-            return auction.state !== 'ready-for-collection';
+            return auction.state !== 'ready-for-collection' && auction.state !== 'collected';
         },
         getIsAuctionActive(auction: SurplusAuction) {
-            return auction.state !== 'requires-restart' || this.getIsAuctionFinished(auction);
+            return auction.state !== 'requires-restart' && this.getIsAuctionFinished(auction);
         },
     },
 });
