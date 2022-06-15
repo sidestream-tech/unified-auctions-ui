@@ -18,7 +18,7 @@ export const generateFakeSurplusAuctionData = function (): SurplusAuctionData {
     const receiveAmountDAI = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
     const auctionEndDate = faker.date.soon();
-    const bidEndDate = state === 'ready-for-collection' && faker.date.recent();
+    const bidEndDate = state === 'ready-for-collection' ? faker.date.recent() : undefined;
     const earliestEndDate = bidEndDate
         ? auctionEndDate.getUTCMilliseconds() > bidEndDate.getUTCMilliseconds()
             ? bidEndDate
@@ -55,7 +55,7 @@ export const generateFakeSurplusAuction = function (): SurplusAuction {
     const latestBids = events.filter(event => {
         return event.type === 'bid';
     });
-    const highestBid = latestBids.length > 0 && latestBids[latestBids.length - 1].bidAmountMKR;
+    const highestBid = latestBids.length > 0 ? latestBids[latestBids.length - 1].bidAmountMKR : undefined;
     const auctionPrice = highestBid ? highestBid.dividedBy(surplusAuctionData.receiveAmountDAI) : undefined;
 
     return {
