@@ -89,10 +89,6 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isLoading: {
-            type: Boolean,
-            default: false,
-        },
     },
 
     data() {
@@ -112,11 +108,7 @@ export default Vue.extend({
     watch: {
         localVisible: {
             handler(newVisible) {
-                if (this.isLoading) {
-                    this.localVisible = false;
-                } else {
-                    this.$emit('update:visible', newVisible);
-                }
+                this.$emit('update:visible', newVisible);
             },
         },
         visible: {

@@ -98,6 +98,7 @@ export const actions = {
     },
     async refetch({ dispatch }: ActionContext<State, State>) {
         await dispatch('fetchWalletAuthorizationStatus');
+        await dispatch('fetchAllowanceAmount');
         const auctionParam = window?.$nuxt?.$route?.query?.auction;
         const auctionId = Array.isArray(auctionParam) ? auctionParam[0] : auctionParam;
         const collateralType = auctionId ? auctionId.split(':')[0] : '';
@@ -247,6 +248,5 @@ export const actions = {
         commit('reset');
 
         await dispatch('refetch');
-        await dispatch('fetchAllowanceAmount');
     },
 };
