@@ -136,6 +136,12 @@ export declare interface TakeEvent {
     transactionDate?: Date;
 }
 
+export declare interface KickEvent {
+    id: number;
+    lot: number;
+    bid: number;
+}
+
 export declare interface WalletBalances {
     walletETH: BigNumber;
     walletDAI: BigNumber;

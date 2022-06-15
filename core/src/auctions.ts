@@ -1,4 +1,4 @@
-import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier, TakeEvent } from './types';
+import type { Auction, AuctionInitialInfo, AuctionTransaction, KickEvent, Notifier, TakeEvent } from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, {
     fetchAuctionByCollateralTypeAndAuctionIndex,
@@ -193,6 +193,18 @@ export const fetchTakeEvents = async function (network: string, auctionId: strin
             })
         )
     );
+};
+
+export const fetchKickEvents = async function (network: string, auctionIndex: number): Promise<Array<KickEvent>> {
+    const encodedAuctionIndex = convertNumberTo32Bytes(auctionIndex);
+
+    const contractName = 'MCD_FLAP';
+    const contract = await getContract(network, contractName);
+
+    const eventFilters: EventFilter = contract.filters.Kick(encodedAuctionIndex);
+    const events = await contract.queryFilter(eventFilters) as unknown as KickEvent[];
+
+    return await Promise.all(events);
 };
 
 export const restartAuction = async function (

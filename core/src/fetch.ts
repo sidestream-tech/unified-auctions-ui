@@ -89,6 +89,66 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
     };
 };
 
+interface SurplusAuctionData {
+    network: string;
+    index: number;
+    bidAmountMKR: BigNumber | undefined; // amount of MRK (bid)
+    receiveAmountDAI: BigNumber; // amount of DAI to be received (lot)
+    receiverAddress: string; // the address of the wallet who receives DAI (guy)
+    auctionEndDate: Date; // final date when auction will end (now + `flap.tau()` – 2 days atm) (end)
+    bidEndDate: Date; // (tic)
+    earliestEndDate: Date; // earliest of auctionEndDate and auctionEndDate
+}
+interface SurplusBid extends SurplusAuctionData {
+    type: 'start' | 'bid' | 'collect'; // as 'Kick', 'Tend', 'Deal'
+    transactionHash: string;
+    transactionDate: Date; // determined from block number (see `fetchDateByBlockNumber`)
+    // TODO: other SurplusAuctionData fields
+}
+interface SurplusEvent {
+    bid: SurplusBid[]; //TODO
+}
+interface SurplusAuction extends SurplusAuctionData {
+    events: SurplusEvent[];
+}
+
+const _getEarliestEndDate = function (first: Date, second: Date): Date {
+    if (first > second) {
+        return second;
+    }
+    return first;
+};
+export const fetchSurplusAuctionByIndex = async function (
+    network: string,
+    auctionIndex: number
+): Promise<SurplusAuction> {
+    const FLAP_NAME = 'MCD_FLAP';
+
+    const contract = await getContract(network, FLAP_NAME);
+
+    const auctionsQuantityBinary = await contract.kicks();
+    const auctionsQuantity = new BigNumber(auctionsQuantityBinary._hex.toNumber());
+    if (auctionsQuantity.lt(auctionIndex)) {
+        throw new Error('No active auction found with this id');
+    }
+
+    const auctionData = await contract.bids(auctionIndex);
+    const expirationTimeAuction = new Date(new BigNumber(auctionData.end._hex).toNumber());
+    const expirationTimeBid = new Date(new BigNumber(auctionData.tic._hex).toNumber());
+    const earliestEndDate = _getEarliestEndDate(expirationTimeAuction, expirationTimeBid);
+    return {
+        network,
+        earliestEndDate,
+        index: auctionIndex,
+        bidAmountMKR: new BigNumber(auctionData.bid._hex),
+        receiveAmountDAI: new BigNumber(auctionData.lot._hex),
+        receiverAddress: auctionData.guy,
+        auctionEndDate: expirationTimeAuction,
+        bidEndDate: expirationTimeBid,
+        events: []
+    };
+};
+
 const fetchAuctionsByCollateralType = async function (network: string, collateralType: string) {
     const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
     const activeAuctionIndexes = await contract.list();
