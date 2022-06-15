@@ -20,7 +20,7 @@
                 <template v-if="highestBid">
                     <format-currency :value="highestBid" currency="MKR" />
                 </template>
-                <span v-else class="opacity-50">Unknown</span>
+                <span v-else class="opacity-50">No bids yet</span>
             </div>
             <div slot="auctionPrice" slot-scope="auctionPrice">
                 <template v-if="auctionPrice">
@@ -86,12 +86,26 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
         const greaterVal = sortOrder === 'ascend' ? 1 : -1;
         const aVal = aAuction[field];
         const bVal = bAuction[field];
+
+        if (aAuction.state === 'collected') {
+            return greaterVal;
+        }
+        if (bAuction.state === 'collected') {
+            return -greaterVal;
+        }
         if (aAuction.state === 'ready-for-collection') {
             return greaterVal;
         }
-        if (bAuction.state !== 'requires-restart' || bAuction.state === 'ready-for-collection') {
+        if (bAuction.state === 'ready-for-collection') {
             return -greaterVal;
         }
+        if (aAuction.state === 'requires-restart') {
+            return greaterVal;
+        }
+        if (bAuction.state === 'requires-restart') {
+            return -greaterVal;
+        }
+
         if (typeof aVal === 'undefined') {
             return greaterVal;
         }
@@ -145,11 +159,17 @@ export default Vue.extend({
     },
     computed: {
         columns(): Object[] {
+            const states = this.auctions.map(auction => auction.state);
+            const uniqueStates = Array.from(new Set(states));
+            const statesFilters = uniqueStates.map(currency => ({
+                text: currency.toUpperCase(),
+                value: currency,
+            }));
             return [
                 {
                     title: 'Index',
                     dataIndex: 'id',
-                    sorter: compareBy('index'),
+                    sorter: compareBy('id'),
                 },
                 {
                     title: 'Auction Amount',
@@ -180,7 +200,10 @@ export default Vue.extend({
                     title: 'State',
                     dataIndex: 'state',
                     scopedSlots: { customRender: 'state' },
-                    sorter: compareBy('state'),
+                    filters: statesFilters,
+                    onFilter: (selectedState: string, auction: SurplusAuction) => {
+                        return auction.state.includes(selectedState);
+                    },
                 },
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
