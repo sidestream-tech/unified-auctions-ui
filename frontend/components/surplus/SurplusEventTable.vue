@@ -20,7 +20,7 @@
                         </td>
                         <td class="Body">
                             <FormatAddress type="address" :value="event.walletAddress" :shorten="true" />
-                            <span v-if="event.walletAddress === userWalletAddress">(You)</span>
+                            <span v-if="event.walletAddress === userWalletAddress" class="italic">(You)</span>
                         </td>
                         <td class="Body">
                             <FormatCurrency v-if="event.amount" :value="event.amount" currency="MKR" />
