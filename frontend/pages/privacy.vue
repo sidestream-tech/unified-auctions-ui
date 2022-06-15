@@ -15,6 +15,6 @@ export default Vue.extend({
         PrivacyContainer,
         Footer,
     },
-    layout: process.env.DEMO_MODE ? 'demoMode' : 'minimal',
+    layout: process.env.DEMO_MODE ? 'demoMode' : 'default',
 });
 </script>

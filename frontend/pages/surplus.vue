@@ -1,5 +1,5 @@
 <template>
-    <SurplusContainer :network="network" />
+    <SurplusContainer />
 </template>
 
 <script lang="ts">
