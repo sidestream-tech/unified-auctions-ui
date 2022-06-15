@@ -13,20 +13,20 @@
                 <tbody>
                     <tr v-for="(event, index) in events" :key="index">
                         <td class="Body">
-                            <FormatAddress type="tx" :value="event.transactionAddress" :shorten="true" />
+                            <FormatAddress type="tx" :value="event.transactionHash" :shorten="true" />
                         </td>
                         <td class="Body capitalize">
                             <span> {{ event.type }} </span>
                         </td>
                         <td class="Body">
-                            <FormatAddress type="address" :value="event.walletAddress" :shorten="true" />
-                            <span v-if="event.walletAddress === userWalletAddress" class="italic">(You)</span>
+                            <FormatAddress type="address" :value="event.address" :shorten="true" />
+                            <span v-if="event.address === userWalletAddress" class="italic">(You)</span>
                         </td>
                         <td class="Body">
-                            <FormatCurrency v-if="event.amount" :value="event.amount" currency="MKR" />
+                            <FormatCurrency v-if="event.bidAmountMKR" :value="event.bidAmountMKR" currency="MKR" />
                         </td>
                         <td class="Body">
-                            <TimeTill :date="event.date" />
+                            <TimeTill :date="event.transactionDate" />
                         </td>
                     </tr>
                 </tbody>
