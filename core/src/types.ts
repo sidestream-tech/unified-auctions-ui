@@ -157,15 +157,14 @@ export type SurplusAuctionStates =
     | 'just-started'
     | 'have-bids'
     | 'ready-for-collection'
-    | 'collected' // finished state
-    | 'requires-restart'; // makes this not active
+    | 'collected'
+    | 'requires-restart';
 
 export type SurplusAuctionEventTypes = 'start' | 'bid' | 'collect';
 
 export declare interface SurplusAuctionData {
-    // auction price = receiveAmountDAI / bidAmountMKR (from last bid)
     bidAmountMKR?: BigNumber;
-    receiveAmountDAI: BigNumber; // auction amount
+    receiveAmountDAI: BigNumber;
     receiverAddress: string;
     auctionEndDate: Date;
     bidEndDate?: Date;
@@ -175,6 +174,7 @@ export declare interface SurplusAuctionData {
 
 export declare interface SurplusEvent extends SurplusAuctionData {
     type: SurplusAuctionEventTypes;
+    address: string;
     transactionHash: string;
     transactionDate: Date;
 }
@@ -182,11 +182,11 @@ export declare interface SurplusEvent extends SurplusAuctionData {
 export declare interface InitialSurplusAuction extends SurplusAuctionData {
     id: number;
     network: string;
-    marketUnitPrice: BigNumber;
-    events: SurplusEvent[]; // highest bid of array (must be type bid and then take bidAmountMKR)
+    events: SurplusEvent[];
 }
 
 export declare interface SurplusAuction extends InitialSurplusAuction {
+    marketUnitPrice: BigNumber;
     highestBid?: BigNumber;
     auctionPrice?: BigNumber;
 }

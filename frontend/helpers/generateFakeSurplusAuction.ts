@@ -2,7 +2,7 @@ import { SurplusAuction, SurplusAuctionData, SurplusAuctionStates, SurplusEvent 
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
 import { random } from 'lodash';
-import { generateFakeSurplusAuctionEvents, generateFakeSurplusEvent } from '~/helpers/generateFakeSurplusEvent';
+import { generateFakeSurplusBidEvents, generateFakeSurplusEvent } from '~/helpers/generateFakeSurplusEvent';
 
 const SURPLUS_AUCTION_STATES: SurplusAuctionStates[] = [
     'just-started',
@@ -45,7 +45,7 @@ export const generateFakeSurplusAuction = function (): SurplusAuction {
     events.push(generateFakeSurplusEvent('start'));
 
     if (surplusAuctionData.state !== 'just-started') {
-        events.push(...generateFakeSurplusAuctionEvents());
+        events.push(...generateFakeSurplusBidEvents());
     }
 
     if (surplusAuctionData.state === 'collected') {

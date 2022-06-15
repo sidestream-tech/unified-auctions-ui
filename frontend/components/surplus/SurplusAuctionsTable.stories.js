@@ -11,7 +11,7 @@ const common = {
     }),
 };
 
-storiesOf('test', module).add('Default', () => ({
+storiesOf('Surplus/SurplusAuctionsTable', module).add('Default', () => ({
     ...common,
     template: '<SurplusAuctionsTable :auctions="auctions" />',
 }));
