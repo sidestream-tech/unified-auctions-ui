@@ -174,7 +174,7 @@ export declare interface SurplusAuctionData {
 
 export declare interface SurplusEvent extends SurplusAuctionData {
     type: SurplusAuctionEventTypes;
-    address?: string | null;
+    address: string;
     transactionHash: string;
     transactionDate: Date;
 }

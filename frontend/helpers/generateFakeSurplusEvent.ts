@@ -6,6 +6,7 @@ import { generateFakeSurplusAuctionData } from '~/helpers/generateFakeSurplusAuc
 export const generateFakeSurplusEvent = function (type?: SurplusAuctionEventTypes): SurplusEvent {
     const surplusAuctionData = generateFakeSurplusAuctionData();
     const transactionHash = faker.finance.ethereumAddress();
+    const address = faker.finance.ethereumAddress();
     const transactionDate = faker.date.recent();
     const generatedType = type || 'bid';
 
@@ -14,9 +15,10 @@ export const generateFakeSurplusEvent = function (type?: SurplusAuctionEventType
         type: generatedType,
         transactionHash,
         transactionDate,
+        address,
     };
 };
 
-export const generateFakeSurplusAuctionEvents = function (number = random(5, 15)) {
+export const generateFakeSurplusBidEvents = function (number = random(5, 15)) {
     return Array(number).fill(null).map(generateFakeSurplusEvent);
 };

@@ -1,14 +1,18 @@
 import { storiesOf } from '@storybook/vue';
 import SurplusEventTable from '~/components/surplus/SurplusEventTable';
-import { generateFakeSurplusEvents } from '~/helpers/generateFakeSurplusEvent';
+import { generateFakeSurplusEvent, generateFakeSurplusBidEvents } from '~/helpers/generateFakeSurplusEvent';
 
-const fakeSurplusEvents = generateFakeSurplusEvents();
+const fakeSurplusEvents = [
+    generateFakeSurplusEvent('start'),
+    ...generateFakeSurplusBidEvents(),
+    generateFakeSurplusEvent('collect'),
+];
 
 const common = {
     components: { SurplusEventTable },
     data: () => ({
         events: fakeSurplusEvents,
-        userWalletAddress: fakeSurplusEvents[1].walletAddress,
+        userWalletAddress: fakeSurplusEvents[1].address,
     }),
 };
 
