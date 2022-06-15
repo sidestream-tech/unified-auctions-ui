@@ -3,18 +3,17 @@
         <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
         <header class="bg-primary dark:bg-primary-dark">
             <nav class="flex items-center py-2 px-4 md:px-10">
-                <nuxt-link
-                    :to="isUnifiedPage ? '/' : '/collateral'"
-                    class="flex items-center text-gray-700 hover:text-gray-600 no-underline"
-                >
+                <nuxt-link :to="logoTarget" class="flex items-center text-gray-700 hover:text-gray-600 no-underline">
                     <branding-icon class="h-12 w-12" />
-                    <span v-if="isUnifiedPage" class="ml-2 mb-0 hidden md:block"> Unified Auctions </span>
-                    <span v-else class="ml-2 mb-0 hidden md:block"> Collateral auctions </span>
+                    <div v-if="isAuctionsPortal" class="ml-2 mb-0 hidden md:block">
+                        <span class="capitalize">{{ pageName }}</span> auctions
+                    </div>
+                    <span v-else class="ml-2 mb-0 hidden md:block"> Unified Auctions </span>
                 </nuxt-link>
 
                 <div class="flex-1 flex justify-end space-x-4 items-center">
                     <label
-                        v-if="!isMinimal"
+                        v-if="!isMinimalPage"
                         class="flex items-center space-x-2 cursor-pointer select-none pt-1 md:pt-0"
                     >
                         <BaseSwitch
@@ -27,14 +26,14 @@
 
                     <div class="flex space-x-4">
                         <NetworkSelector
-                            v-if="!isUnifiedPage && !isMinimal"
+                            v-if="isAuctionsPortal"
                             :network="network"
                             :is-dev="isDev"
                             @update:network="$emit('update:network', $event)"
                         />
 
                         <WalletSelector
-                            v-if="!isUnifiedPage && !isMinimal"
+                            v-if="isAuctionsPortal"
                             class="hidden sm:block"
                             :wallet-address="walletAddress"
                             :is-loading="isWalletLoading"
@@ -64,6 +63,10 @@ import NetworkSelector from '~/components/utils/NetworkSelector.vue';
 import WalletSelector from '~/components/utils/WalletSelector.vue';
 import ThemeSwitcher from '~/components/utils/ThemeSwitcher.vue';
 
+const AUCTION_PORTAL_PAGES = ['collateral', 'surplus'];
+const MINIMAL_PAGES = ['privacy'];
+const UNIFIED_PAGES = ['index'];
+
 export default Vue.extend({
     name: 'Header',
     components: {
@@ -75,11 +78,6 @@ export default Vue.extend({
         WalletSelector,
     },
     props: {
-        type: {
-            type: String,
-            default: 'default',
-            validator: type => ['default', 'unified', 'minimal'].includes(type),
-        },
         isExplanationsShown: {
             type: Boolean,
             required: true,
@@ -118,11 +116,23 @@ export default Vue.extend({
         },
     },
     computed: {
-        isUnifiedPage() {
-            return this.type === 'unified';
+        isUnifiedPage(): boolean {
+            return UNIFIED_PAGES.includes(this.pageName);
         },
-        isMinimal() {
-            return this.type === 'minimal';
+        isMinimalPage(): boolean {
+            return MINIMAL_PAGES.includes(this.pageName);
+        },
+        isAuctionsPortal(): boolean {
+            return AUCTION_PORTAL_PAGES.includes(this.pageName);
+        },
+        pageName(): string {
+            return this.$route?.name || '';
+        },
+        logoTarget(): string {
+            if (this.isAuctionsPortal) {
+                return `/${this.pageName}`;
+            }
+            return '/';
         },
     },
 });
