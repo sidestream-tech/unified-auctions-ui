@@ -8,6 +8,8 @@ import {
 import getWallet from '~/lib/wallet';
 
 const DEFAULT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
+const NETWORK_SWITCH_TIMEOUT = 8000;
+let networkChangeTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
 interface State {
     walletChainId: string | undefined;
@@ -97,6 +99,19 @@ export const actions = {
                     network: newNetwork,
                 },
             });
+            if (networkChangeTimeoutId) {
+                clearTimeout(networkChangeTimeoutId);
+            }
+
+            networkChangeTimeoutId = setTimeout(() => {
+                message.error(`Failed to change network to ${newNetwork}`);
+                commit('setIsChangingNetwork', false);
+                window.$nuxt.$router.replace({
+                    query: {
+                        network: oldNetwork,
+                    },
+                });
+            }, NETWORK_SWITCH_TIMEOUT);
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
             commit('setIsChangingNetwork', false);
