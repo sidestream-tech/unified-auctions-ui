@@ -152,3 +152,11 @@ export declare interface CollateralStatus {
     address?: string | null;
     balance?: BigNumber;
 }
+
+export declare interface SurplusEvent {
+    transactionAddress?: string;
+    type: string;
+    walletAddress?: string;
+    amount?: BigNumber;
+    date: Date;
+}
