@@ -2,7 +2,7 @@
     <BasePanel :current-state="currentStateAndTitle.name" class="WalletDaiDepositCheckPanel">
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
-            To bid on an auction with DAI, first funds need to be deposited to the
+            In order to move funds between wallet and
             <Explain text="VAT">
                 The
                 <a
@@ -11,14 +11,14 @@
                 >
                 is the core vault engine of the Maker Protocol and manages the central accounting invariants of DAI.
                 Depositing and interacting with the VAT is necessary in order to participate in auctions. </Explain
-            >. The following transaction authorizes the wallet address to deposit into the VAT. It is a prerequisite to
-            participate in the auction.
+            >, the VAT contract address needs to be authorized. Hence, the following transaction authorizes the VAT to
+            withdraw {{ currency }} from the wallet.
         </TextBlock>
         <div class="my-2 flex justify-between">
             <div>Current allowance</div>
             <div>
-                <span v-if="isUnlimitedAllowance">Unlimited DAI</span>
-                <FormatCurrency v-else :value="allowanceAmount" currency="DAI" />
+                <span v-if="isUnlimitedAllowance">Unlimited {{ currency }}</span>
+                <FormatCurrency v-else :value="allowanceAmount" :currency="currency" />
             </div>
         </div>
         <div class="flex justify-end mt-2 gap-5">
@@ -29,7 +29,7 @@
                 @click="$emit('setAllowanceAmount', alwaysValidDesiredAmount)"
             >
                 <span>Allow access to&nbsp;</span>
-                <FormatCurrency :value="alwaysValidDesiredAmount" currency="DAI" />
+                <FormatCurrency :value="alwaysValidDesiredAmount" :currency="currency" />
             </BaseButton>
             <BaseButton
                 class="w-full md:w-80"
@@ -38,7 +38,7 @@
                 :is-loading="isLoading"
                 @click="$emit('setAllowanceAmount')"
             >
-                Allow unlimited access to DAI
+                Allow unlimited access to {{ currency }}
             </BaseButton>
         </div>
     </BasePanel>
@@ -69,6 +69,10 @@ export default Vue.extend({
         desiredAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
+        },
+        currency: {
+            type: String,
+            default: 'DAI',
         },
         isLoading: {
             type: Boolean,
@@ -118,12 +122,12 @@ export default Vue.extend({
             if (!this.isEnough) {
                 return {
                     name: 'incorrect',
-                    title: 'The desired amount exceeds DAI allowance',
+                    title: `The desired amount exceeds ${this.currency} allowance`,
                 };
             }
             return {
                 name: 'correct',
-                title: 'The desired amount is within DAI allowance',
+                title: `The desired amount is within ${this.currency} allowance`,
             };
         },
         isDisabled(): boolean {
