@@ -201,21 +201,23 @@ export const fetchKickEvent = async function (network: string, auctionIndex: num
     const contract = await getContract(network, 'MCD_FLAP');
 
     const eventFilters: EventFilter = contract.filters.Kick(encodedAuctionIndex);
-    const events = await contract.queryFilter(eventFilters) as unknown as KickEvent[];
+    const events = (await contract.queryFilter(eventFilters)) as unknown as KickEvent[];
 
-    if (events.length === 0) return null;
+    if (events.length === 0) {
+        return null;
+    }
 
-    const kickEvent = events[0]
-    let eventWithDate = await enrichEventWithDate(network, {
+    const kickEvent = events[0];
+    const eventWithDate = await enrichEventWithDate(network, {
         transactionHash: kickEvent.transactionHash,
         blockNumber: kickEvent.blockNumber,
-    })
+    });
     return {
         id: kickEvent.id,
         lot: kickEvent.lot,
         bid: kickEvent.bid,
-        ...eventWithDate
-    }
+        ...eventWithDate,
+    };
 };
 
 export const restartAuction = async function (

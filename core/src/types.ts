@@ -180,7 +180,7 @@ export declare interface SurplusAuctionData {
     state: SurplusAuctionStates;
 }
 
-export declare interface SurplusEvent extends Event{
+export declare interface SurplusEvent extends Event {
     type?: SurplusAuctionEventTypes;
 }
 
@@ -193,4 +193,3 @@ export declare interface SurplusAuction extends InitialSurplusAuction {
     highestBid?: BigNumber;
     auctionPrice?: BigNumber;
 }
-

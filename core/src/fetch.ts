@@ -121,7 +121,9 @@ export const fetchSurplusAuctionByIndex = async function (
         state = 'collected';
     } else {
         const haveBids = surplusAuctionStartEvent!.bid < auctionData.bid;
-        const [stateIfExpired, stateIfNotExpired] = haveBids ? ['ready-for-collection', 'have-bids'] : ['requires-restart', 'just-started'];
+        const [stateIfExpired, stateIfNotExpired] = haveBids
+            ? ['ready-for-collection', 'have-bids']
+            : ['requires-restart', 'just-started'];
         state = (isBidExpired ? stateIfExpired : stateIfNotExpired) as SurplusAuctionStates;
     }
 
@@ -134,12 +136,14 @@ export const fetchSurplusAuctionByIndex = async function (
         receiverAddress: auctionData.guy,
         auctionEndDate: expirationTimeAuction,
         bidEndDate: expirationTimeBid,
-        events: [{
-            transactionHash: surplusAuctionStartEvent!.transactionHash,
-            blockNumber: surplusAuctionStartEvent!.blockNumber,
-            transactionDate: surplusAuctionStartEvent!.transactionDate,
-            type: 'start',
-        }],
+        events: [
+            {
+                transactionHash: surplusAuctionStartEvent!.transactionHash,
+                blockNumber: surplusAuctionStartEvent!.blockNumber,
+                transactionDate: surplusAuctionStartEvent!.transactionDate,
+                type: 'start',
+            },
+        ],
         state,
     };
 };
