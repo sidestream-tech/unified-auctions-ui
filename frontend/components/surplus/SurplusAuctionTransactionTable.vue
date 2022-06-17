@@ -4,19 +4,15 @@
             <table class="Table">
                 <tr>
                     <th class="Heading">Transaction</th>
-                    <th class="Heading">Type</th>
-                    <th class="Heading">Wallet</th>
+                    <th class="Heading">Bidder</th>
                     <th class="Heading">Amount</th>
                     <th class="Heading">When</th>
                 </tr>
-                <td v-if="!events" colspan="5" class="text-center py-4">No events were found</td>
+                <td v-if="!bidEvents || bidEvents.length === 0" colspan="5" class="text-center py-4">No bids yet</td>
                 <tbody>
-                    <tr v-for="(event, index) in events" :key="index">
+                    <tr v-for="(event, index) in bidEvents" :key="index">
                         <td class="Body">
                             <FormatAddress type="tx" :value="event.transactionHash" :shorten="true" />
-                        </td>
-                        <td class="Body capitalize">
-                            <span> {{ event.type }} </span>
                         </td>
                         <td class="Body">
                             <FormatAddress type="address" :value="event.address" :shorten="true" />
@@ -45,7 +41,7 @@ import TimeTill from '../common/TimeTill.vue';
 import Loading from '../common/Loading.vue';
 
 export default Vue.extend({
-    name: 'SurplusEventTable',
+    name: 'SurplusAuctionTransactionTable',
     components: { Loading, TimeTill, FormatCurrency, TextBlock, FormatAddress },
     props: {
         events: {
@@ -63,6 +59,16 @@ export default Vue.extend({
         error: {
             type: String,
             default: null,
+        },
+    },
+    computed: {
+        bidEvents() {
+            if (!this.events) {
+                return null;
+            }
+            return this.events.filter(event => {
+                return event.type === 'bid';
+            });
         },
     },
 });
