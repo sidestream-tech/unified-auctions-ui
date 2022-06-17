@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { TakeEvent } from 'auctions-core/dist/src/types';
+import { Event } from 'auctions-core/dist/src/types';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 
@@ -24,7 +24,7 @@ export default Vue.extend({
     components: { FormatAddress, TimeTill },
     props: {
         takeEvents: {
-            type: Array as Vue.PropType<TakeEvent[]>,
+            type: Array as Vue.PropType<Event[]>,
             required: true,
         },
     },
