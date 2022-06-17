@@ -75,6 +75,7 @@
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
 import { SurplusAuction } from 'auctions-core/src/types';
+import { compareAsc } from 'date-fns';
 import Loading from '~/components/common/Loading.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
@@ -93,16 +94,16 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
         if (bAuction.state === 'collected') {
             return -greaterVal;
         }
-        if (aAuction.state === 'ready-for-collection') {
-            return greaterVal;
-        }
-        if (bAuction.state === 'ready-for-collection') {
-            return -greaterVal;
-        }
         if (aAuction.state === 'requires-restart') {
             return greaterVal;
         }
         if (bAuction.state === 'requires-restart') {
+            return -greaterVal;
+        }
+        if (aAuction.state === 'ready-for-collection') {
+            return greaterVal;
+        }
+        if (bAuction.state === 'ready-for-collection') {
             return -greaterVal;
         }
 
@@ -161,9 +162,9 @@ export default Vue.extend({
         columns(): Object[] {
             const states = this.auctions.map(auction => auction.state);
             const uniqueStates = Array.from(new Set(states));
-            const statesFilters = uniqueStates.map(currency => ({
-                text: currency.toUpperCase(),
-                value: currency,
+            const statesFilters = uniqueStates.map(state => ({
+                text: state.toUpperCase(),
+                value: state,
             }));
             return [
                 {
@@ -194,7 +195,6 @@ export default Vue.extend({
                     dataIndex: 'marketUnitPrice',
                     scopedSlots: { customRender: 'marketUnitPrice' },
                     sorter: compareBy('marketUnitPrice'),
-                    defaultSortOrder: 'ascend',
                 },
                 {
                     title: 'State',
@@ -204,6 +204,8 @@ export default Vue.extend({
                     onFilter: (selectedState: string, auction: SurplusAuction) => {
                         return auction.state.includes(selectedState);
                     },
+                    sorter: compareBy('earliestEndDate', (a: Date, b: Date) => compareAsc(a, b)),
+                    defaultSortOrder: 'ascend',
                 },
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
