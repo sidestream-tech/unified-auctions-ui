@@ -119,6 +119,12 @@ export default Vue.extend({
                     title: 'Please enter the desired value first',
                 };
             }
+            if (this.desiredAmount.isLessThan(0)) {
+                return {
+                    name: 'incorrect',
+                    title: 'The amount can not be negative',
+                };
+            }
             if (!this.isEnough) {
                 return {
                     name: 'incorrect',

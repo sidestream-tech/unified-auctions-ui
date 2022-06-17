@@ -27,7 +27,7 @@
                 </div>
             </div>
         </TextBlock>
-        <TextBlock v-if="isExplanationsShown">
+        <TextBlock v-if="isExplanationsShown" class="mt-4">
             If you do not have MKR funds to deposit yet, you can obtain it for example by purchasing it on a
             decentralized exchange like
             <a href="https://uniswap.org/" target="_blank">uniswap.org</a>
