@@ -163,7 +163,8 @@ export type SurplusAuctionStates =
 export type SurplusAuctionEventTypes = 'start' | 'bid' | 'collect';
 
 export declare interface SurplusAuctionData {
-    bidAmountMKR?: BigNumber;
+    id: number;
+    network: string;
     receiveAmountDAI: BigNumber;
     receiverAddress: string;
     auctionEndDate: Date;
@@ -172,21 +173,20 @@ export declare interface SurplusAuctionData {
     state: SurplusAuctionStates;
 }
 
-export declare interface SurplusEvent extends SurplusAuctionData {
+export declare interface SurplusEvent {
     type: SurplusAuctionEventTypes;
+    bidAmountMKR?: BigNumber;
     address: string;
     transactionHash: string;
     transactionDate: Date;
 }
 
 export declare interface InitialSurplusAuction extends SurplusAuctionData {
-    id: number;
-    network: string;
-    marketUnitPrice: BigNumber;
     events: SurplusEvent[];
 }
 
 export declare interface SurplusAuction extends InitialSurplusAuction {
+    marketUnitPrice: BigNumber;
     highestBid?: BigNumber;
     auctionPrice?: BigNumber;
 }
