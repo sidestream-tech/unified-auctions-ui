@@ -1,4 +1,10 @@
-import type { AuctionInitialInfo, AuctionStatus, InitialSurplusAuction, SurplusAuctionStates } from './types';
+import type {
+    AuctionInitialInfo,
+    AuctionStatus,
+    InitialSurplusAuction,
+    KickEvent,
+    SurplusAuctionStates,
+} from './types';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import getContract, { getClipperNameByCollateralType } from './contracts';
@@ -109,7 +115,7 @@ export const fetchSurplusAuctionByIndex = async function (
     }
 
     const auctionData = await contract.bids(auctionIndex);
-    const surplusAuctionStartEvent = await fetchKickEvent(network, auctionIndex);
+    const surplusAuctionStartEvent = (await fetchKickEvent(network, auctionIndex)) as KickEvent;
     const expirationTimeAuction = new Date(new BigNumber(auctionData.end._hex).toNumber());
     const expirationTimeBid = new Date(new BigNumber(auctionData.tic._hex).toNumber());
     const earliestEndDate = _getEarliestEndDate(expirationTimeAuction, expirationTimeBid);
@@ -120,7 +126,7 @@ export const fetchSurplusAuctionByIndex = async function (
     if (!auctionData) {
         state = 'collected';
     } else {
-        const haveBids = surplusAuctionStartEvent!.bid < auctionData.bid;
+        const haveBids = surplusAuctionStartEvent.bid < auctionData.bid;
         const [stateIfExpired, stateIfNotExpired] = haveBids
             ? ['ready-for-collection', 'have-bids']
             : ['requires-restart', 'just-started'];
@@ -138,9 +144,9 @@ export const fetchSurplusAuctionByIndex = async function (
         bidEndDate: expirationTimeBid,
         events: [
             {
-                transactionHash: surplusAuctionStartEvent!.transactionHash,
-                blockNumber: surplusAuctionStartEvent!.blockNumber,
-                transactionDate: surplusAuctionStartEvent!.transactionDate,
+                transactionHash: surplusAuctionStartEvent.transactionHash,
+                blockNumber: surplusAuctionStartEvent.blockNumber,
+                transactionDate: surplusAuctionStartEvent.transactionDate,
                 type: 'start',
             },
         ],
