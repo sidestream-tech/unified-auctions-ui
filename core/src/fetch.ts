@@ -12,6 +12,7 @@ import { RAD, RAD_NUMBER_OF_DIGITS, RAY, WAD } from './constants/UNITS';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
 import { fetchKickEvent } from './auctions';
+import { getEarliestDate } from './helpers/getEarliestDate';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
@@ -96,12 +97,6 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
     };
 };
 
-const _getEarliestEndDate = function (first: Date, second: Date): Date {
-    if (first > second) {
-        return second;
-    }
-    return first;
-};
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
     auctionIndex: number
@@ -118,7 +113,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const surplusAuctionStartEvent = (await fetchKickEvent(network, auctionIndex)) as KickEvent;
     const expirationTimeAuction = new Date(new BigNumber(auctionData.end._hex).toNumber());
     const expirationTimeBid = new Date(new BigNumber(auctionData.tic._hex).toNumber());
-    const earliestEndDate = _getEarliestEndDate(expirationTimeAuction, expirationTimeBid);
+    const earliestEndDate = getEarliestDate(expirationTimeAuction, expirationTimeBid);
 
     const isBidExpired = new Date() > earliestEndDate;
 
