@@ -1,4 +1,4 @@
-import type { Auction, AuctionInitialInfo, AuctionTransaction, KickEvent, Notifier, TakeEvent } from './types';
+import type { Auction, AuctionInitialInfo, AuctionTransaction, KickEvent, Notifier, Event } from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, {
     fetchAuctionByCollateralTypeAndAuctionIndex,
@@ -167,15 +167,15 @@ export const enrichAuction = async function (
     return auctionWithFees;
 };
 
-const enrichTakeEventWithDate = async function (network: string, takeEvent: TakeEvent): Promise<TakeEvent> {
-    const date = await fetchDateByBlockNumber(network, takeEvent.blockNumber);
+const enrichEventWithDate = async function (network: string, event: Event): Promise<Event> {
+    const date = await fetchDateByBlockNumber(network, event.blockNumber);
     return {
-        ...takeEvent,
+        ...event,
         transactionDate: date,
     };
 };
 
-export const fetchTakeEvents = async function (network: string, auctionId: string): Promise<Array<TakeEvent>> {
+export const fetchTakeEvents = async function (network: string, auctionId: string): Promise<Array<Event>> {
     const { collateralType, index } = parseAuctionId(auctionId);
     const encodedAuctionIndex = convertNumberTo32Bytes(index);
 
@@ -187,7 +187,7 @@ export const fetchTakeEvents = async function (network: string, auctionId: strin
 
     return await Promise.all(
         events.map(event =>
-            enrichTakeEventWithDate(network, {
+            enrichEventWithDate(network, {
                 transactionHash: event.transactionHash,
                 blockNumber: event.blockNumber,
             })
@@ -195,16 +195,27 @@ export const fetchTakeEvents = async function (network: string, auctionId: strin
     );
 };
 
-export const fetchKickEvents = async function (network: string, auctionIndex: number): Promise<Array<KickEvent>> {
+export const fetchKickEvent = async function (network: string, auctionIndex: number): Promise<KickEvent | null> {
     const encodedAuctionIndex = convertNumberTo32Bytes(auctionIndex);
 
-    const contractName = 'MCD_FLAP';
-    const contract = await getContract(network, contractName);
+    const contract = await getContract(network, 'MCD_FLAP');
 
     const eventFilters: EventFilter = contract.filters.Kick(encodedAuctionIndex);
     const events = await contract.queryFilter(eventFilters) as unknown as KickEvent[];
 
-    return await Promise.all(events);
+    if (events.length === 0) return null;
+
+    const kickEvent = events[0]
+    let eventWithDate = await enrichEventWithDate(network, {
+        transactionHash: kickEvent.transactionHash,
+        blockNumber: kickEvent.blockNumber,
+    })
+    return {
+        id: kickEvent.id,
+        lot: kickEvent.lot,
+        bid: kickEvent.bid,
+        ...eventWithDate
+    }
 };
 
 export const restartAuction = async function (

@@ -1,10 +1,11 @@
-import type { AuctionInitialInfo, AuctionStatus } from './types';
+import type { AuctionInitialInfo, AuctionStatus, InitialSurplusAuction, SurplusAuctionStates } from './types';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import getContract, { getClipperNameByCollateralType } from './contracts';
 import { RAD, RAD_NUMBER_OF_DIGITS, RAY, WAD } from './constants/UNITS';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
+import { fetchKickEvent } from './auctions';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
@@ -89,29 +90,6 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
     };
 };
 
-interface SurplusAuctionData {
-    network: string;
-    index: number;
-    bidAmountMKR: BigNumber | undefined; // amount of MRK (bid)
-    receiveAmountDAI: BigNumber; // amount of DAI to be received (lot)
-    receiverAddress: string; // the address of the wallet who receives DAI (guy)
-    auctionEndDate: Date; // final date when auction will end (now + `flap.tau()` – 2 days atm) (end)
-    bidEndDate: Date; // (tic)
-    earliestEndDate: Date; // earliest of auctionEndDate and auctionEndDate
-}
-interface SurplusBid extends SurplusAuctionData {
-    type: 'start' | 'bid' | 'collect'; // as 'Kick', 'Tend', 'Deal'
-    transactionHash: string;
-    transactionDate: Date; // determined from block number (see `fetchDateByBlockNumber`)
-    // TODO: other SurplusAuctionData fields
-}
-interface SurplusEvent {
-    bid: SurplusBid[]; //TODO
-}
-interface SurplusAuction extends SurplusAuctionData {
-    events: SurplusEvent[];
-}
-
 const _getEarliestEndDate = function (first: Date, second: Date): Date {
     if (first > second) {
         return second;
@@ -121,10 +99,8 @@ const _getEarliestEndDate = function (first: Date, second: Date): Date {
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
     auctionIndex: number
-): Promise<SurplusAuction> {
-    const FLAP_NAME = 'MCD_FLAP';
-
-    const contract = await getContract(network, FLAP_NAME);
+): Promise<InitialSurplusAuction> {
+    const contract = await getContract(network, 'MCD_FLAP');
 
     const auctionsQuantityBinary = await contract.kicks();
     const auctionsQuantity = new BigNumber(auctionsQuantityBinary._hex.toNumber());
@@ -133,19 +109,38 @@ export const fetchSurplusAuctionByIndex = async function (
     }
 
     const auctionData = await contract.bids(auctionIndex);
+    const surplusAuctionStartEvent = await fetchKickEvent(network, auctionIndex);
     const expirationTimeAuction = new Date(new BigNumber(auctionData.end._hex).toNumber());
     const expirationTimeBid = new Date(new BigNumber(auctionData.tic._hex).toNumber());
     const earliestEndDate = _getEarliestEndDate(expirationTimeAuction, expirationTimeBid);
+
+    const isBidExpired = new Date() > earliestEndDate;
+
+    let state: SurplusAuctionStates;
+    if (!auctionData) {
+        state = 'collected';
+    } else {
+        const haveBids = surplusAuctionStartEvent!.bid < auctionData.bid;
+        const [stateIfExpired, stateIfNotExpired] = haveBids ? ['ready-for-collection', 'have-bids'] : ['requires-restart', 'just-started'];
+        state = (isBidExpired ? stateIfExpired : stateIfNotExpired) as SurplusAuctionStates;
+    }
+
     return {
         network,
         earliestEndDate,
-        index: auctionIndex,
+        id: auctionIndex,
         bidAmountMKR: new BigNumber(auctionData.bid._hex),
         receiveAmountDAI: new BigNumber(auctionData.lot._hex),
         receiverAddress: auctionData.guy,
         auctionEndDate: expirationTimeAuction,
         bidEndDate: expirationTimeBid,
-        events: []
+        events: [{
+            transactionHash: surplusAuctionStartEvent!.transactionHash,
+            blockNumber: surplusAuctionStartEvent!.blockNumber,
+            transactionDate: surplusAuctionStartEvent!.transactionDate,
+            type: 'start',
+        }],
+        state,
     };
 };
 

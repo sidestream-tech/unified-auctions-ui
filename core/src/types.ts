@@ -130,13 +130,13 @@ export declare interface Notifier {
     (messageType: 'loading' | 'error' | 'success' | 'info', messageContent: MessageContent): void;
 }
 
-export declare interface TakeEvent {
+export declare interface Event {
     transactionHash: string;
     blockNumber: number;
     transactionDate?: Date;
 }
 
-export declare interface KickEvent {
+export declare interface KickEvent extends Event {
     id: number;
     lot: number;
     bid: number;
@@ -158,3 +158,39 @@ export declare interface CollateralStatus {
     address?: string | null;
     balance?: BigNumber;
 }
+
+export type SurplusAuctionStates =
+    | 'just-started'
+    | 'have-bids'
+    | 'ready-for-collection'
+    | 'collected'
+    | 'requires-restart';
+
+export type SurplusAuctionEventTypes = 'start' | 'bid' | 'collect';
+
+export declare interface SurplusAuctionData {
+    id: number;
+    network: string;
+    bidAmountMKR?: BigNumber;
+    receiveAmountDAI: BigNumber;
+    receiverAddress: string;
+    auctionEndDate: Date;
+    bidEndDate?: Date;
+    earliestEndDate: Date;
+    state: SurplusAuctionStates;
+}
+
+export declare interface SurplusEvent extends Event{
+    type?: SurplusAuctionEventTypes;
+}
+
+export declare interface InitialSurplusAuction extends SurplusAuctionData {
+    events: SurplusEvent[];
+}
+
+export declare interface SurplusAuction extends InitialSurplusAuction {
+    marketUnitPrice: BigNumber;
+    highestBid?: BigNumber;
+    auctionPrice?: BigNumber;
+}
+
