@@ -13,8 +13,8 @@ const SURPLUS_AUCTION_STATES: SurplusAuctionStates[] = [
 ];
 
 export const generateFakeSurplusAuctionData = function (): SurplusAuctionData {
+    const id = faker.datatype.number();
     const state: SurplusAuctionStates = faker.helpers.randomize(SURPLUS_AUCTION_STATES);
-    const bidAmountMKR = new BigNumber(parseFloat(faker.finance.amount()));
     const receiveAmountDAI = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
     const auctionEndDate = faker.date.soon();
@@ -26,7 +26,8 @@ export const generateFakeSurplusAuctionData = function (): SurplusAuctionData {
         : auctionEndDate;
 
     return {
-        bidAmountMKR,
+        id,
+        network: 'mainnet',
         receiveAmountDAI,
         receiverAddress,
         auctionEndDate,
@@ -38,10 +39,10 @@ export const generateFakeSurplusAuctionData = function (): SurplusAuctionData {
 
 export const generateFakeSurplusAuction = function (): SurplusAuction {
     const surplusAuctionData = generateFakeSurplusAuctionData();
-    const id = faker.datatype.number();
     const marketUnitPrice = new BigNumber(parseFloat(faker.finance.amount()));
     const events: SurplusEvent[] = [];
 
+    // Simulate event fetching
     events.push(generateFakeSurplusEvent('start'));
 
     if (surplusAuctionData.state !== 'just-started') {
@@ -52,6 +53,7 @@ export const generateFakeSurplusAuction = function (): SurplusAuction {
         events.push(generateFakeSurplusEvent('collect'));
     }
 
+    // Calculate latest bid and auction price
     const latestBids = events.filter(event => {
         return event.type === 'bid';
     });
@@ -60,8 +62,6 @@ export const generateFakeSurplusAuction = function (): SurplusAuction {
 
     return {
         ...surplusAuctionData,
-        id,
-        network: 'mainnet',
         marketUnitPrice,
         events,
         highestBid,
