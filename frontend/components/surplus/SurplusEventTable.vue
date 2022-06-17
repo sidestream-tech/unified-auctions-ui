@@ -9,7 +9,9 @@
                     <th class="Heading">Amount</th>
                     <th class="Heading">When</th>
                 </tr>
-                <td v-if="!events" colspan="5" class="text-center py-4">No events were found</td>
+                <td v-if="!events || events.length === 0" colspan="5" class="text-center py-4">
+                    No events were found
+                </td>
                 <tbody>
                     <tr v-for="(event, index) in events" :key="index">
                         <td class="Body">

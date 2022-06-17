@@ -21,6 +21,14 @@ storiesOf('Surplus/SurplusEventTable', module)
         ...common,
         template: `<SurplusEventTable :events="events" :userWalletAddress="userWalletAddress" />`,
     }))
+    .add('No Data', () => ({
+        ...common,
+        template: `<SurplusEventTable />`,
+    }))
+    .add('Empty Array', () => ({
+        ...common,
+        template: `<SurplusEventTable :events="[]" />`,
+    }))
     .add('Loading', () => ({
         ...common,
         template: `<SurplusEventTable :isLoading="true" />`,
