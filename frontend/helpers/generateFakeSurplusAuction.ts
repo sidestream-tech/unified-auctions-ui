@@ -37,7 +37,7 @@ export const generateFakeSurplusAuctionData = function (): SurplusAuctionData {
     };
 };
 
-export const generateFakeSurplusAuction = function (): SurplusAuction {
+export const generateFakeSurplusAuction = function (noEvents?: boolean): SurplusAuction {
     const surplusAuctionData = generateFakeSurplusAuctionData();
     const marketUnitPrice = new BigNumber(parseFloat(faker.finance.amount()));
     const events: SurplusEvent[] = [];
@@ -45,12 +45,14 @@ export const generateFakeSurplusAuction = function (): SurplusAuction {
     // Simulate event fetching
     events.push(generateFakeSurplusEvent('start'));
 
-    if (surplusAuctionData.state !== 'just-started') {
-        events.push(...generateFakeSurplusBidEvents());
-    }
+    if (!noEvents) {
+        if (surplusAuctionData.state !== 'just-started') {
+            events.push(...generateFakeSurplusBidEvents());
+        }
 
-    if (surplusAuctionData.state === 'collected') {
-        events.push(generateFakeSurplusEvent('collect'));
+        if (surplusAuctionData.state === 'collected') {
+            events.push(generateFakeSurplusEvent('collect'));
+        }
     }
 
     // Calculate latest bid and auction price
