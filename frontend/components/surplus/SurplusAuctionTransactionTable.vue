@@ -131,6 +131,7 @@ export default Vue.extend({
 }
 
 .Heading {
+    width: 25%;
     @apply Element text-gray-700 dark:text-gray-100;
 }
 
