@@ -61,20 +61,20 @@ describe('Collateral auctions', function () {
             });
         testSwapProfit();
         cy.wrap(null).then(async function () {
+            cy.wait(60  * 1000)
             walletBalanceAfter = await fetchWalletBalances(CYPRESS_NETWORK, walletAddress);
             const daiOwnedBefore = walletBalanceBefore.walletDAI;
             const daiOwnedAfter = walletBalanceAfter.walletDAI;
-            cy.wait(10000)
             // eslint-disable-next-line no-unused-expressions
             expect(daiOwnedAfter.gt(daiOwnedBefore)).to.be.true;
             walletBalanceBefore = JSON.parse(JSON.stringify(walletBalanceAfter));
         });
         testBidWithDai();
         cy.wrap(null).then(async function () {
+            cy.wait(60  * 1000)
             walletBalanceAfter = await fetchWalletBalances(CYPRESS_NETWORK, walletAddress);
             const daiOwnedBefore = walletBalanceBefore.walletDAI; // before the dai was not moved into vat yet
             const daiOwnedAfter = walletBalanceAfter.walletVatDAI; // here the dai is already in the vat
-            cy.wait(10000)
             // eslint-disable-next-line no-unused-expressions
             expect(daiOwnedAfter.lt(daiOwnedBefore)).to.be.true;
         });
