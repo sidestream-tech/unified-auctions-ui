@@ -117,6 +117,29 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
     };
 };
 
+const STATES_FILTERS: { text: string; value: string }[] = [
+    {
+        text: 'No bids yet',
+        value: 'just-started',
+    },
+    {
+        text: 'With bids',
+        value: 'have-bids',
+    },
+    {
+        text: 'Ready for collection',
+        value: 'ready-for-collection',
+    },
+    {
+        text: 'Requires restart',
+        value: 'requires-restart',
+    },
+    {
+        text: 'Collected',
+        value: 'collected',
+    },
+];
+
 export default Vue.extend({
     name: 'SurplusAuctionsTable',
     components: {
@@ -162,10 +185,9 @@ export default Vue.extend({
         columns(): Object[] {
             const states = this.auctions.map(auction => auction.state);
             const uniqueStates = Array.from(new Set(states));
-            const statesFilters = uniqueStates.map(state => ({
-                text: state.toUpperCase(),
-                value: state,
-            }));
+            const statesFilters = STATES_FILTERS.filter(state => {
+                return !!uniqueStates.includes(state.value);
+            });
             return [
                 {
                     title: 'Index',
