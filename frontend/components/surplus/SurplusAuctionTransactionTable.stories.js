@@ -1,20 +1,28 @@
 import { storiesOf } from '@storybook/vue';
 import SurplusAuctionTransactionTable from '~/components/surplus/SurplusAuctionTransactionTable';
-import { generateFakeSurplusBidEvents, generateFakeSurplusEvent } from '~/helpers/generateFakeSurplusEvent';
+import { generateFakeSurplusBidEvents } from '~/helpers/generateFakeSurplusEvent';
 
-const fakeSurplusEvents = [...generateFakeSurplusBidEvents(5)];
+const fakeSurplusEvents = [...generateFakeSurplusBidEvents(10)];
 
 const common = {
     components: { SurplusAuctionTransactionTable },
     data: () => ({
         events: fakeSurplusEvents,
-        userWalletAddress: fakeSurplusEvents[1].address,
+        userWalletAddress: fakeSurplusEvents[8].address,
     }),
 };
 
 storiesOf('Surplus/SurplusAuctionTransactionTable', module)
-    .add('Default', () => ({
+    .add('Over 5 Events', () => ({
         ...common,
+        template: `<SurplusAuctionTransactionTable :events="events" :userWalletAddress="userWalletAddress" />`,
+    }))
+    .add('5 Events and under', () => ({
+        ...common,
+        data: () => ({
+            events: generateFakeSurplusBidEvents(5),
+            userWalletAddress: fakeSurplusEvents[0].address,
+        }),
         template: `<SurplusAuctionTransactionTable :events="events" :userWalletAddress="userWalletAddress" />`,
     }))
     .add('No Data', () => ({
@@ -25,19 +33,11 @@ storiesOf('Surplus/SurplusAuctionTransactionTable', module)
         ...common,
         template: `<SurplusAuctionTransactionTable :events="[]" />`,
     }))
-    .add('With Start and Collect Events', () => ({
-        ...common,
-        data: () => ({
-            events: [generateFakeSurplusEvent('start'), ...fakeSurplusEvents, generateFakeSurplusEvent('collect')],
-            userWalletAddress: fakeSurplusEvents[1].address,
-        }),
-        template: `<SurplusAuctionTransactionTable :events="events" :userWalletAddress="userWalletAddress" />`,
-    }))
     .add('Loading', () => ({
         ...common,
         template: `<SurplusAuctionTransactionTable :isLoading="true" />`,
     }))
     .add('Error', () => ({
         ...common,
-        template: `<SurplusAuctionTransactionTable error="Error while retrieving events. This is a demo error message, no real error occurred." />`,
+        template: `<SurplusAuctionTransactionTable error="Error while retrieving events." />`,
     }));

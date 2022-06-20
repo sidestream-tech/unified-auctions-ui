@@ -12,7 +12,7 @@ const formatDuration = function (duration: Duration): string {
     return output.join(' ');
 };
 
-export const formatInterval = function (startDate: Date, endDate: Date): string {
+export const formatInterval = function (startDate: Date, endDate: Date, strict?: Boolean): string {
     if (startDate < endDate) {
         const duration = intervalToDuration({
             start: startDate,
@@ -20,6 +20,10 @@ export const formatInterval = function (startDate: Date, endDate: Date): string 
         });
         return formatDuration(duration);
     } else {
+        if (strict) {
+            const duration = intervalToDuration({ start: endDate, end: startDate });
+            return `${formatDuration(duration)} ago`;
+        }
         return formatDistance(endDate, startDate, {
             addSuffix: true,
         });

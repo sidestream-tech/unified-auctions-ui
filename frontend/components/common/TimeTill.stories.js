@@ -10,6 +10,20 @@ storiesOf('Common/TimeTill', module)
         }),
         template: `<TimeTill :date="date"/>`,
     }))
+    .add('Recent', () => ({
+        components: { TimeTill },
+        data: () => ({
+            date: faker.date.recent(),
+        }),
+        template: `<TimeTill :date="date"/>`,
+    }))
+    .add('Recent strict', () => ({
+        components: { TimeTill },
+        data: () => ({
+            date: faker.date.recent(),
+        }),
+        template: `<TimeTill :date="date" :strict="true"/>`,
+    }))
     .add('Ending soon', () => ({
         components: { TimeTill },
         data: () => ({
