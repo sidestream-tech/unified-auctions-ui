@@ -29,7 +29,7 @@
                 <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="marketUnitPrice" slot-scope="marketUnitPrice, record">
-                <template v-if="getIsAuctionActive(record)">
+                <template v-if="getIsAuctionActive(record) && marketUnitPrice">
                     <format-market-value :value="marketUnitPrice" :inverted="true" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>

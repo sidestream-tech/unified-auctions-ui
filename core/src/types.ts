@@ -186,7 +186,7 @@ export declare interface InitialSurplusAuction extends SurplusAuctionData {
 }
 
 export declare interface SurplusAuction extends InitialSurplusAuction {
-    marketUnitPrice: BigNumber;
+    marketUnitPrice?: BigNumber;
     highestBid?: BigNumber;
     auctionPrice?: BigNumber;
 }

@@ -39,7 +39,8 @@ export const generateFakeSurplusAuctionData = function (): SurplusAuctionData {
 
 export const generateFakeSurplusAuction = function (): SurplusAuction {
     const surplusAuctionData = generateFakeSurplusAuctionData();
-    const marketUnitPrice = new BigNumber(parseFloat(faker.finance.amount()));
+    const marketUnitPrice =
+        surplusAuctionData.state === 'have-bids' ? new BigNumber(parseFloat(faker.finance.amount())) : undefined;
     const events: SurplusEvent[] = [];
 
     // Simulate event fetching
