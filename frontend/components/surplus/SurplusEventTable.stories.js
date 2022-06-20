@@ -35,5 +35,5 @@ storiesOf('Surplus/SurplusEventTable', module)
     }))
     .add('Error', () => ({
         ...common,
-        template: `<SurplusEventTable error="Error while retrieving events. This is a demo error message, no real error occurred." />`,
+        template: `<SurplusEventTable error="Error while retrieving events." />`,
     }));

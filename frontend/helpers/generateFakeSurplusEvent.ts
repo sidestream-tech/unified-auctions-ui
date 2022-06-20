@@ -4,11 +4,11 @@ import { random } from 'lodash';
 import BigNumber from 'bignumber.js';
 
 export const generateFakeSurplusEvent = function (type?: SurplusAuctionEventTypes): SurplusEvent {
-    const bidAmountMKR = new BigNumber(faker.finance.amount());
     const transactionHash = faker.finance.ethereumAddress();
     const address = faker.finance.ethereumAddress();
     const transactionDate = faker.date.recent();
     const generatedType = type || 'bid';
+    const bidAmountMKR = generatedType === 'bid' ? new BigNumber(faker.finance.amount()) : undefined;
 
     return {
         bidAmountMKR,

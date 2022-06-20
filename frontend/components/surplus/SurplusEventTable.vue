@@ -4,9 +4,8 @@
             <table class="Table">
                 <tr>
                     <th class="Heading">Transaction</th>
-                    <th class="Heading">Type</th>
+                    <th class="Heading">Event</th>
                     <th class="Heading">Wallet</th>
-                    <th class="Heading">Amount</th>
                     <th class="Heading">When</th>
                 </tr>
                 <td v-if="!events || events.length === 0" colspan="5" class="text-center py-4">
@@ -19,16 +18,14 @@
                         </td>
                         <td class="Body capitalize">
                             <span> {{ event.type }} </span>
+                            <FormatCurrency v-if="event.bidAmountMKR" :value="event.bidAmountMKR" currency="MKR" />
                         </td>
                         <td class="Body">
                             <FormatAddress type="address" :value="event.address" :shorten="true" />
                             <span v-if="event.address === userWalletAddress" class="italic">(You)</span>
                         </td>
                         <td class="Body">
-                            <FormatCurrency v-if="event.bidAmountMKR" :value="event.bidAmountMKR" currency="MKR" />
-                        </td>
-                        <td class="Body">
-                            <TimeTill :date="event.transactionDate" />
+                            <TimeTill :date="event.transactionDate" :strict="true" />
                         </td>
                     </tr>
                 </tbody>
