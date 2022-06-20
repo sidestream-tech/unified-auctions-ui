@@ -308,7 +308,7 @@ data:
 
   pipelines:
     - kind: pipeline
-      type: docker
+      type: kubernetes
       name: e2e-test
       environment:
         CYPRESS_NETWORK: "localhost"
