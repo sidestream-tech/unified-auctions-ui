@@ -1,9 +1,6 @@
 import type {
     AuctionInitialInfo,
     AuctionStatus,
-    InitialSurplusAuction,
-    KickEvent,
-    SurplusAuctionStates,
 } from './types';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
@@ -11,8 +8,6 @@ import getContract, { getClipperNameByCollateralType } from './contracts';
 import { RAD, RAD_NUMBER_OF_DIGITS, RAY, WAD } from './constants/UNITS';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
-import { fetchKickEvent } from './auctions';
-import { getEarliestDate } from './helpers/getEarliestDate';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
@@ -94,64 +89,6 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
         isFinished: false,
         isRestarting: false,
         fetchedAt,
-    };
-};
-
-export const fetchSurplusAuctionByIndex = async function (
-    network: string,
-    auctionIndex: number
-): Promise<InitialSurplusAuction> {
-    const contract = await getContract(network, 'MCD_FLAP');
-
-    const auctionsQuantityBinary = await contract.kicks();
-    const auctionsQuantity = new BigNumber(auctionsQuantityBinary._hex);
-    if (auctionsQuantity.lt(auctionIndex)) {
-        throw new Error('No active auction found with this id');
-    }
-
-    const auctionData = await contract.bids(auctionIndex);
-    const isAuctionDeleted = new BigNumber(auctionData.lot).eq(0);
-    const surplusAuctionStartEvent = (await fetchKickEvent(network, auctionIndex)) as KickEvent;
-    const baseAuctionInfo: InitialSurplusAuction = {
-        network,
-        id: auctionIndex,
-        state: 'collected',
-        events: [
-            {
-                transactionHash: surplusAuctionStartEvent.transactionHash,
-                blockNumber: surplusAuctionStartEvent.blockNumber,
-                transactionDate: surplusAuctionStartEvent.transactionDate,
-                type: 'start',
-            },
-        ],
-    };
-
-    if (isAuctionDeleted) {
-        return baseAuctionInfo;
-    }
-
-    const expirationTimeAuction = new Date(auctionData.end * 1000);
-    const expirationTimeBid = new Date(auctionData.tic * 1000);
-    const earliestEndDate = getEarliestDate(expirationTimeAuction, expirationTimeBid);
-
-    const isBidExpired = new Date() > earliestEndDate;
-
-    let state: SurplusAuctionStates;
-    const haveBids = surplusAuctionStartEvent.args.bid < auctionData.bid;
-    const [stateIfExpired, stateIfNotExpired] = haveBids
-        ? ['ready-for-collection', 'have-bids']
-        : ['requires-restart', 'just-started'];
-    state = (isBidExpired ? stateIfExpired : stateIfNotExpired) as SurplusAuctionStates;
-
-    return {
-        ...baseAuctionInfo,
-        earliestEndDate,
-        bidAmountMKR: new BigNumber(auctionData.bid._hex),
-        receiveAmountDAI: new BigNumber(auctionData.lot._hex),
-        receiverAddress: auctionData.guy,
-        auctionEndDate: expirationTimeAuction,
-        bidEndDate: expirationTimeBid,
-        state,
     };
 };
 
