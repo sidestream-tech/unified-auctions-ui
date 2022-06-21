@@ -104,13 +104,15 @@ export const actions = {
             }
 
             networkChangeTimeoutId = setTimeout(() => {
-                message.error(`Failed to change network to ${newNetwork}`);
-                commit('setIsChangingNetwork', false);
-                window.$nuxt.$router.replace({
-                    query: {
-                        network: oldNetwork,
-                    },
-                });
+                if (getters.getMakerNetwork === undefined) {
+                    message.error(`Failed to change network to ${newNetwork}`);
+                    commit('setIsChangingNetwork', false);
+                    window.$nuxt.$router.replace({
+                        query: {
+                            network: oldNetwork,
+                        },
+                    });
+                }
             }, NETWORK_SWITCH_TIMEOUT);
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
