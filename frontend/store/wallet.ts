@@ -13,7 +13,6 @@ import {
 import getWallet, { WALLETS } from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 import { getContractAddressByName } from '~/../core/src/contracts';
-import { fetchSurplusAuctionByIndex } from 'auctions-core/src/fetch'
 
 interface State {
     walletType?: string;
