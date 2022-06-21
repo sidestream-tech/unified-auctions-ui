@@ -5,7 +5,7 @@
         :class="{ dark: isDarkMode }"
         title="Collaterals in VAT"
         :dialog-style="{ top: '60px' }"
-        :width="620"
+        :width="650"
         destroy-on-close
         @cancel="$emit('cancel')"
     >
