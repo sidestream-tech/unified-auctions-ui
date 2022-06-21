@@ -1,4 +1,4 @@
-import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier, Event } from './types';
+import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier, TakeEvent } from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, {
     fetchAuctionByCollateralTypeAndAuctionIndex,
@@ -167,15 +167,15 @@ export const enrichAuction = async function (
     return auctionWithFees;
 };
 
-const enrichEventWithDate = async function (network: string, event: Event): Promise<Event> {
-    const date = await fetchDateByBlockNumber(network, event.blockNumber);
+const enrichTakeEventWithDate = async function (network: string, takeEvent: TakeEvent): Promise<TakeEvent> {
+    const date = await fetchDateByBlockNumber(network, takeEvent.blockNumber);
     return {
-        ...event,
+        ...takeEvent,
         transactionDate: date,
     };
 };
 
-export const fetchTakeEvents = async function (network: string, auctionId: string): Promise<Array<Event>> {
+export const fetchTakeEvents = async function (network: string, auctionId: string): Promise<Array<TakeEvent>> {
     const { collateralType, index } = parseAuctionId(auctionId);
     const encodedAuctionIndex = convertNumberTo32Bytes(index);
 
@@ -187,7 +187,7 @@ export const fetchTakeEvents = async function (network: string, auctionId: strin
 
     return await Promise.all(
         events.map(event =>
-            enrichEventWithDate(network, {
+            enrichTakeEventWithDate(network, {
                 transactionHash: event.transactionHash,
                 blockNumber: event.blockNumber,
             })
