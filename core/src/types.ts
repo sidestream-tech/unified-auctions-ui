@@ -136,14 +136,6 @@ export declare interface Event {
     transactionDate?: Date;
 }
 
-export declare interface KickEvent extends Event {
-    args: {
-        id: number;
-        lot: number;
-        bid: number;
-    };
-}
-
 export declare interface WalletBalances {
     walletETH: BigNumber;
     walletDAI: BigNumber;
@@ -182,16 +174,6 @@ export declare interface SurplusAuctionData {
     state: SurplusAuctionStates;
 }
 
-export declare interface SurplusEvent extends Event {
-    type?: SurplusAuctionEventTypes;
-}
-
-export declare interface InitialSurplusAuction extends SurplusAuctionData {
-    events: SurplusEvent[];
-}
-
-export declare interface SurplusAuction extends InitialSurplusAuction {
+export declare interface SurplusAuction extends SurplusAuctionData {
     marketUnitPrice: BigNumber;
-    highestBid?: BigNumber;
-    auctionPrice?: BigNumber;
 }

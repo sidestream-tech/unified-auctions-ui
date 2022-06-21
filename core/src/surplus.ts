@@ -1,5 +1,4 @@
-import type { InitialSurplusAuction, KickEvent, SurplusAuctionStates } from './types';
-import { fetchKickEvent } from './auctions';
+import type { SurplusAuctionData, SurplusAuctionStates } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -7,7 +6,7 @@ import getContract from './contracts';
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
     auctionIndex: number
-): Promise<InitialSurplusAuction> {
+): Promise<SurplusAuctionData> {
     const contract = await getContract(network, 'MCD_FLAP');
 
     const auctionsQuantityBinary = await contract.kicks();
@@ -18,19 +17,10 @@ export const fetchSurplusAuctionByIndex = async function (
 
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionDeleted = new BigNumber(auctionData.lot).eq(0);
-    const surplusAuctionStartEvent = (await fetchKickEvent(network, auctionIndex)) as KickEvent;
-    const baseAuctionInfo: InitialSurplusAuction = {
+    const baseAuctionInfo: SurplusAuctionData = {
         network,
         id: auctionIndex,
         state: 'collected',
-        events: [
-            {
-                transactionHash: surplusAuctionStartEvent.transactionHash,
-                blockNumber: surplusAuctionStartEvent.blockNumber,
-                transactionDate: surplusAuctionStartEvent.transactionDate,
-                type: 'start',
-            },
-        ],
     };
 
     if (isAuctionDeleted) {
@@ -43,7 +33,7 @@ export const fetchSurplusAuctionByIndex = async function (
 
     const isBidExpired = new Date() > earliestEndDate;
 
-    const haveBids = surplusAuctionStartEvent.args.bid < auctionData.bid;
+    const haveBids = auctionData.tic === 0;
     const [stateIfExpired, stateIfNotExpired] = haveBids
         ? ['ready-for-collection', 'have-bids']
         : ['requires-restart', 'just-started'];
