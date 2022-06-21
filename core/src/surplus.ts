@@ -39,7 +39,7 @@ export const fetchSurplusAuctionByIndex = async function (
         : ['requires-restart', 'just-started'];
     const state: SurplusAuctionStates = (isBidExpired ? stateIfExpired : stateIfNotExpired) as SurplusAuctionStates;
 
-    const ret = {
+    return {
         ...baseAuctionInfo,
         earliestEndDate,
         bidAmountMKR: new BigNumber(auctionData.bid._hex),
@@ -49,6 +49,4 @@ export const fetchSurplusAuctionByIndex = async function (
         bidEndDate: expirationTimeBid,
         state,
     };
-    console.log(ret)
-    return ret
 };
