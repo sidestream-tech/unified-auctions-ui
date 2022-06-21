@@ -123,9 +123,6 @@ export default Vue.extend({
             this.fetchRelatedData();
         },
     },
-    mounted() {
-        this.subscribeToNetworkUpdates();
-    },
     methods: {
         ...mapActions('authorizations', [
             'authorizeWallet',
@@ -150,9 +147,6 @@ export default Vue.extend({
         },
         openWalletModal(): void {
             this.$store.commit('modals/setWalletModal', true);
-        },
-        subscribeToNetworkUpdates(): void {
-            this.$store.dispatch('network/setup');
         },
         disconnect(): void {
             this.$store.dispatch('wallet/disconnect');
