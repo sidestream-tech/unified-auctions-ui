@@ -137,9 +137,11 @@ export declare interface Event {
 }
 
 export declare interface KickEvent extends Event {
-    id: number;
-    lot: number;
-    bid: number;
+    args: {
+        id: number;
+        lot: number;
+        bid: number;
+    }
 }
 
 export declare interface WalletBalances {
@@ -172,11 +174,11 @@ export declare interface SurplusAuctionData {
     id: number;
     network: string;
     bidAmountMKR?: BigNumber;
-    receiveAmountDAI: BigNumber;
-    receiverAddress: string;
-    auctionEndDate: Date;
+    receiveAmountDAI?: BigNumber;
+    receiverAddress?: string;
+    auctionEndDate?: Date;
     bidEndDate?: Date;
-    earliestEndDate: Date;
+    earliestEndDate?: Date;
     state: SurplusAuctionStates;
 }
 
