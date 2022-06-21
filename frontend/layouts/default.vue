@@ -119,9 +119,6 @@ export default Vue.extend({
             return this.$nuxt?.context?.isDev;
         },
     },
-    beforeMount() {
-        this.$store.dispatch('network/setupNetworks');
-    },
     methods: {
         ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
