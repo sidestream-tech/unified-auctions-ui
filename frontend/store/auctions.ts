@@ -310,7 +310,7 @@ export const actions = {
         commit('addAuctionRestarting', id);
         try {
             await restartAuction(network, auction, walletAddress, notifier);
-            await dispatch('fetchWithoutLoading');
+            await dispatch('update');
         } catch (error: any) {
             commit('removeAuctionRestarting', id);
             console.error(`Auction redo error: ${error.message}`);
