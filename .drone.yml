@@ -311,7 +311,7 @@ data:
       type: kubernetes
       name: e2e-test
       environment:
-        CYPRESS_NETWORK: "hardhat:8545"
+        CYPRESS_NETWORK: "localhost"
         CYPRESS_FRONTEND_URL: "frontend:3000"
       trigger:
         event:
