@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import CalleeTable from './CalleeTable';
-import { getCalleesByNetworkType } from '~/../core/src/constants/CALLEES';
+import { getCalleesByChainId } from '~/../core/src/constants/CALLEES';
 
 const common = {
     components: { CalleeTable },
@@ -11,7 +11,7 @@ storiesOf('CalleeTable', module)
         ...common,
         computed: {
             callees() {
-                return getCalleesByNetworkType('mainnet');
+                return getCalleesByChainId('0x1');
             },
         },
         template: '<CalleeTable :callees="callees" />',
@@ -20,7 +20,7 @@ storiesOf('CalleeTable', module)
         ...common,
         computed: {
             callees() {
-                return getCalleesByNetworkType('kovan');
+                return getCalleesByChainId('0x2a');
             },
         },
         template: '<CalleeTable :callees="callees" />',
@@ -29,7 +29,7 @@ storiesOf('CalleeTable', module)
         ...common,
         computed: {
             callees() {
-                return getCalleesByNetworkType('goerli');
+                return getCalleesByChainId('0x5');
             },
         },
         template: '<CalleeTable :callees="callees" />',

@@ -5,7 +5,7 @@ import TermsModal from './TermsModal';
 const common = {
     components: { TermsModal },
     data: () => ({
-        show: true,
+        isShown: true,
     }),
     methods: {
         accept: action('accept'),
@@ -15,5 +15,5 @@ const common = {
 
 storiesOf('Modals/TermsModal', module).add('Default', () => ({
     ...common,
-    template: '<TermsModal :show="show" @accept="accept" @close="close"/>',
+    template: '<TermsModal :isShown="isShown" @accept="accept" @close="close"/>',
 }));

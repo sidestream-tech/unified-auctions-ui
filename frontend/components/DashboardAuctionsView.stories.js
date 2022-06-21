@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import DashboardAuctionsView from './DashboardAuctionsView.vue';
 import { generateFakeCollaterals } from '~/helpers/generateFakeCollateral';
-import { getCalleesByNetworkType } from '~/../core/src/constants/CALLEES';
+import { getCalleesByChainId } from '~/../core/src/constants/CALLEES';
 
 const collaterals = generateFakeCollaterals();
 
@@ -12,7 +12,7 @@ const common = {
     }),
     computed: {
         callees() {
-            return getCalleesByNetworkType('mainnet');
+            return getCalleesByChainId('0x1');
         },
     },
 };

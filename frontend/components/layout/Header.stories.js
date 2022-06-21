@@ -1,6 +1,9 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import Header from '~/components/layout/Header';
+import { generateFakeNetworks } from '~/helpers/generateFakeNetwork';
+
+const networks = generateFakeNetworks(3);
 
 const common = {
     components: { Header },
@@ -11,6 +14,7 @@ const common = {
     data: () => ({
         network: null,
         isExplanationsShown: true,
+        networks,
     }),
 };
 
@@ -18,6 +22,7 @@ storiesOf('Layout/Header', module)
     .add('Default', () => ({
         ...common,
         template: `<Header
+        :networks="networks"
         :network.sync="network"
         :isExplanationsShown.sync="isExplanationsShown"
         @update:network="updateNetwork"
@@ -27,6 +32,7 @@ storiesOf('Layout/Header', module)
     .add('Dev Mode', () => ({
         ...common,
         template: `<Header
+        :networks="networks"
         :network.sync="network"
         :isExplanationsShown.sync="isExplanationsShown"
         @update:network="updateNetwork"

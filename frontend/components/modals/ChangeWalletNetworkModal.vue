@@ -12,7 +12,7 @@
             <template #message>
                 Connected wallet is set to "<span class="font-medium">{{ invalidNetwork }}</span
                 >" network,
-                <template v-if="!isWalletNetworkSuppotedByTheWebsite"> which is not supported. </template>
+                <template v-if="!isWalletNetworkSupportedByTheWebsite"> which is not supported. </template>
                 <template v-else>
                     which doesn't match "<span class="font-medium">{{ pageNetwork }}</span
                     >" network of the website.
@@ -20,7 +20,7 @@
             </template>
         </Alert>
         <div class="flex justify-end p-5 gap-5">
-            <BaseButton v-if="isWalletNetworkSuppotedByTheWebsite" @click="$emit('setPageNetwork', invalidNetwork)">
+            <BaseButton v-if="isWalletNetworkSupportedByTheWebsite" @click="$emit('setPageNetwork', invalidNetwork)">
                 Navigate to "{{ invalidNetwork }}"
             </BaseButton>
             <BaseButton type="primary" @click="$emit('fixWalletNetwork')">
@@ -33,7 +33,7 @@
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
 import Vue from 'vue';
-import { NetworkConfig } from 'auctions-core/dist/src/types';
+import { NetworkConfig } from 'auctions-core/src/types';
 import BaseButton from '~/components/common/BaseButton';
 
 export default Vue.extend({
@@ -60,15 +60,19 @@ export default Vue.extend({
     data() {
         return {
             options: [
-                ...this.networks.map(([name, properties]) => {
-                    return { label: properties.title, value: name as string | null };
+                ...this.networks.map((network: NetworkConfig) => {
+                    return { label: network.title, value: network.title as string | null };
                 }),
             ],
         };
     },
     computed: {
-        isWalletNetworkSuppotedByTheWebsite(): boolean {
-            return !!getNetworks(this.isDev)[this.invalidNetwork];
+        isWalletNetworkSupportedByTheWebsite(): boolean {
+            return (
+                this.networks.filter(network => {
+                    return network.title === this.invalidNetwork;
+                }).length !== 0
+            );
         },
     },
 });

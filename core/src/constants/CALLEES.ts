@@ -32,6 +32,14 @@ export const getCalleesByNetworkType = function (network: string): CalleeAddress
     return networkCallees;
 };
 
+export const getCalleesByChainId = function (chainId: string): CalleeAddresses {
+    const networkCallees = CALLEES[chainId];
+    if (!networkCallees) {
+        throw new Error(`Can not find callee addresses for the network with chainId "${chainId}"`);
+    }
+    return networkCallees;
+};
+
 export const getCalleeAddressByCollateralType = function (network: string, collateralType: string): string {
     const networkCallees = getCalleesByNetworkType(network);
     const collateral = getCollateralConfigByType(collateralType);

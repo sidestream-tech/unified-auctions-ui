@@ -90,7 +90,6 @@ export default Vue.extend({
             default: false,
         },
     },
-
     data() {
         return {
             localVisible: false,

@@ -3,5 +3,5 @@ import WalletSelector from './WalletSelector.vue';
 
 storiesOf('Modals/WalletSelector', module).add('Default', () => ({
     components: { WalletSelector },
-    template: `<WalletSelector/>`,
+    template: `<WalletSelector :isModalOpen="true" />`,
 }));
