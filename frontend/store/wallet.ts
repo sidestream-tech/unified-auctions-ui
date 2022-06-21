@@ -13,6 +13,7 @@ import {
 import getWallet, { WALLETS } from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 import { getContractAddressByName } from '~/../core/src/contracts';
+import { fetchSurplusAuctionByIndex } from 'auctions-core/src/surplus';
 
 interface State {
     walletType?: string;
@@ -127,6 +128,7 @@ export const mutations = {
 
 export const actions = {
     async autoConnect({ dispatch }: ActionContext<State, State>) {
+        await fetchSurplusAuctionByIndex('localhost', 2328)
         for (const wallet of WALLETS) {
             if (!wallet.isConnected || !wallet.isLoggedIn) {
                 continue;

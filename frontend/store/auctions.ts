@@ -1,4 +1,4 @@
-import type { Auction, AuctionTransaction, Event } from 'auctions-core/src/types';
+import type { Auction, AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
@@ -25,7 +25,7 @@ let updateAuctionsPricesIntervalId: ReturnType<typeof setInterval> | undefined;
 
 interface State {
     auctionStorage: Record<string, AuctionTransaction>;
-    takeEventStorage: Record<string, Event[]>;
+    takeEventStorage: Record<string, TakeEvent[]>;
     areAuctionsFetching: boolean;
     isSelectedAuctionFetching: boolean;
     areTakeEventsFetching: boolean;
@@ -63,7 +63,7 @@ export const getters = {
             };
         });
     },
-    getTakeEventStorage(state: State): Record<string, Event[]> {
+    getTakeEventStorage(state: State): Record<string, TakeEvent[]> {
         return state.takeEventStorage;
     },
     getAuctionById: (state: State) => (id: string) => {
@@ -122,7 +122,7 @@ export const mutations = {
     setAuction(state: State, auction: AuctionTransaction) {
         Vue.set(state.auctionStorage, auction.id, auction);
     },
-    setTakeEvents(state: State, { id, events }: { id: string; events: Event[] }) {
+    setTakeEvents(state: State, { id, events }: { id: string; events: TakeEvent[] }) {
         Vue.set(state.takeEventStorage, id, events);
     },
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {

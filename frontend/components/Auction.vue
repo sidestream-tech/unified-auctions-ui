@@ -264,7 +264,7 @@
 </template>
 
 <script lang="ts">
-import type { AuctionTransaction, Event } from 'auctions-core/src/types';
+import type { AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert, Tooltip, Popover } from 'ant-design-vue';
 import PriceDropAnimation from './utils/PriceDropAnimation.vue';
@@ -311,7 +311,7 @@ export default Vue.extend({
             required: true,
         },
         takeEvents: {
-            type: Array as Vue.PropType<Event[]>,
+            type: Array as Vue.PropType<TakeEvent[]>,
             default: null,
         },
         error: {
