@@ -82,10 +82,7 @@ export const actions = {
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);
     },
-    async setPageNetwork(
-        { getters, dispatch, commit, rootState }: ActionContext<State, any>,
-        newNetwork: string
-    ): Promise<void> {
+    async setPageNetwork({ getters, dispatch, commit }: ActionContext<State, any>, newNetwork: string): Promise<void> {
         const oldNetwork = getters.getPageNetwork;
         if (newNetwork === oldNetwork) {
             return;
@@ -93,26 +90,27 @@ export const actions = {
         commit('setIsChangingNetwork', true);
         try {
             await dispatch('setWalletNetwork', newNetwork);
-            await window.$nuxt.$router.replace({
-                path: rootState.route.path,
+            window.$nuxt.$router.push({
                 query: {
                     network: newNetwork,
                 },
             });
+
             if (networkChangeTimeoutId) {
                 clearTimeout(networkChangeTimeoutId);
             }
 
             networkChangeTimeoutId = setTimeout(() => {
-                if (getters.getMakerNetwork === undefined) {
-                    message.error(`Failed to change network to ${newNetwork}`);
-                    commit('setIsChangingNetwork', false);
-                    window.$nuxt.$router.replace({
-                        query: {
-                            network: oldNetwork,
-                        },
-                    });
+                if (getters.getMakerNetwork || getters.getMakerNetwork === newNetwork) {
+                    return;
                 }
+                message.error(`Failed to change network to ${newNetwork}`);
+                commit('setIsChangingNetwork', false);
+                window.$nuxt.$router.push({
+                    query: {
+                        network: oldNetwork,
+                    },
+                });
             }, NETWORK_SWITCH_TIMEOUT);
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
@@ -121,6 +119,7 @@ export const actions = {
     },
     async setWalletNetwork(_: ActionContext<State, State>, newNetwork: string): Promise<void> {
         let wallet;
+
         try {
             wallet = getWallet();
         } catch {}
@@ -136,6 +135,10 @@ export const actions = {
         }
     },
     async setup({ commit, dispatch }: ActionContext<State, State>): Promise<void> {
+        if (networkChangeTimeoutId) {
+            clearTimeout(networkChangeTimeoutId);
+        }
+
         commit('setIsChangingNetwork', false);
         await dispatch('wallet/setup', undefined, { root: true });
         await dispatch('auctions/setup', undefined, { root: true });

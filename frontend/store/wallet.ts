@@ -283,12 +283,21 @@ export const actions = {
             commit('setIsDepositingOrWithdrawing', false);
         }
     },
+    async refetch({ dispatch }: ActionContext<State, State>): Promise<void> {
+        await dispatch('fetchWalletBalances');
+        await dispatch('fetchTokenAddressDai');
+        const auctionParam = window?.$nuxt?.$route?.query?.auction;
+        const auctionId = Array.isArray(auctionParam) ? auctionParam[0] : auctionParam;
+        const collateralType = auctionId ? auctionId.split(':')[0] : '';
+        if (collateralType) {
+            await dispatch('fetchCollateralVatBalance', collateralType);
+        }
+    },
     async setup({ commit, dispatch, getters }: ActionContext<State, State>): Promise<void> {
         commit('reset');
         if (!getters.isConnected) {
             await dispatch('autoConnect');
         }
-        await dispatch('fetchWalletBalances');
-        await dispatch('fetchTokenAddressDai');
+        await dispatch('refetch');
     },
 };
