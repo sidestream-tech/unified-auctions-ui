@@ -214,7 +214,6 @@ export const fetchKickEvent = async function (network: string, auctionIndex: num
         args: kickEvent.args,
         ...eventWithDate,
     };
-;
 };
 
 export const restartAuction = async function (

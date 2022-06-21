@@ -43,12 +43,11 @@ export const fetchSurplusAuctionByIndex = async function (
 
     const isBidExpired = new Date() > earliestEndDate;
 
-    let state: SurplusAuctionStates;
     const haveBids = surplusAuctionStartEvent.args.bid < auctionData.bid;
     const [stateIfExpired, stateIfNotExpired] = haveBids
         ? ['ready-for-collection', 'have-bids']
         : ['requires-restart', 'just-started'];
-    state = (isBidExpired ? stateIfExpired : stateIfNotExpired) as SurplusAuctionStates;
+    const state: SurplusAuctionStates = (isBidExpired ? stateIfExpired : stateIfNotExpired) as SurplusAuctionStates;
 
     return {
         ...baseAuctionInfo,

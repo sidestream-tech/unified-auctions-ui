@@ -141,7 +141,7 @@ export declare interface KickEvent extends Event {
         id: number;
         lot: number;
         bid: number;
-    }
+    };
 }
 
 export declare interface WalletBalances {

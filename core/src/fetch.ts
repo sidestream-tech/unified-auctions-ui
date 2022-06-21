@@ -1,7 +1,4 @@
-import type {
-    AuctionInitialInfo,
-    AuctionStatus,
-} from './types';
+import type { AuctionInitialInfo, AuctionStatus } from './types';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import getContract, { getClipperNameByCollateralType } from './contracts';
