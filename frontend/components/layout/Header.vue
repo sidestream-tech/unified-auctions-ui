@@ -123,7 +123,7 @@ export default Vue.extend({
             return MINIMAL_PAGES.includes(this.pageName);
         },
         isAuctionsPortal(): boolean {
-            return AUCTION_PORTAL_PAGES.includes(this.pageName) || (!this.isUnifiedPage && !this.isMinimalPage);
+            return AUCTION_PORTAL_PAGES.includes(this.pageName);
         },
         pageName(): string {
             return this.$route?.name || '';
