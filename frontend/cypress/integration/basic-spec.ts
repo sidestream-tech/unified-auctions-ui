@@ -64,9 +64,8 @@ describe('Collateral auctions', function () {
             walletBalanceAfter = await fetchWalletBalances(CYPRESS_NETWORK, walletAddress);
             const daiOwnedBefore = walletBalanceBefore.walletDAI;
             const daiOwnedAfter = walletBalanceAfter.walletDAI;
-            cy.task('log', `wallet balance before is ${daiOwnedBefore}, after is ${daiOwnedAfter}`);
             // eslint-disable-next-line no-unused-expressions
-            expect(daiOwnedAfter.gt(daiOwnedBefore), 'account balance increased').to.be.true;
+            expect(daiOwnedAfter.gt(daiOwnedBefore), `account balance after ${daiOwnedAfter} is greater than before ${daiOwnedBefore}`).to.be.true;
             walletBalanceBefore = JSON.parse(JSON.stringify(walletBalanceAfter));
         });
         testBidWithDai();
@@ -74,9 +73,8 @@ describe('Collateral auctions', function () {
             walletBalanceAfter = await fetchWalletBalances(CYPRESS_NETWORK, walletAddress);
             const daiOwnedBefore = walletBalanceBefore.walletDAI; // before the dai was not moved into vat yet
             const daiOwnedAfter = walletBalanceAfter.walletVatDAI; // here the dai is already in the vat
-            cy.task('log', `wallet balance before is ${daiOwnedBefore}, after is ${daiOwnedAfter}`);
             // eslint-disable-next-line no-unused-expressions
-            expect(daiOwnedAfter.lt(daiOwnedBefore), 'account balance decreased').to.be.true;
+            expect(daiOwnedAfter.lt(daiOwnedBefore), `account balance after ${daiOwnedAfter} is less than before ${daiOwnedBefore}`).to.be.true;
         });
     });
 });
