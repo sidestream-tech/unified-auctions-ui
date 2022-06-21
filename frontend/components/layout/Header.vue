@@ -117,7 +117,7 @@ export default Vue.extend({
     },
     computed: {
         isUnifiedPage(): boolean {
-            return UNIFIED_PAGES.includes(this.pageName);
+            return UNIFIED_PAGES.includes(this.pageName) || (!this.isAuctionsPortal && !this.isMinimalPage);
         },
         isMinimalPage(): boolean {
             return MINIMAL_PAGES.includes(this.pageName);
