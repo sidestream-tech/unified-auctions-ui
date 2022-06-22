@@ -29,7 +29,7 @@ const NETWORKS: Record<string, NetworkConfig> = {
     localhost: {
         chainId: '0x539',
         title: 'Localhost:8545',
-        url: `http://127.0.0.1:8545`,
+        url: `http://hardhat:8545`,
         etherscanUrl: '',
         isFork: true,
     },
