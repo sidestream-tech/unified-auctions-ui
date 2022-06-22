@@ -3,14 +3,15 @@ import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
 import { Contract } from 'ethers';
+import getNetworkDate from './date';
 
-const surplusAuctionLastIndex = async (contract: Contract) => {
+const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
-    return new BigNumber(auctionsQuantityBinary._hex);
+    return new BigNumber(auctionsQuantityBinary._hex).toNumber();
 };
 
-const getAuctionState = (earliestEndDate: Date, greatestBid: number) => {
-    const isBidExpired = new Date() > earliestEndDate;
+const getAuctionState = (network: string, earliestEndDate: Date, greatestBid: number) => {
+    const isBidExpired = getNetworkDate(network) > earliestEndDate;
     const haveBids = greatestBid === 0;
     if (haveBids) {
         if (isBidExpired) {
@@ -44,8 +45,8 @@ export const fetchSurplusAuctionByIndex = async function (
     };
 
     if (isAuctionDeleted) {
-        const auctionLastIndex = await surplusAuctionLastIndex(contract);
-        if (auctionLastIndex.lt(auctionIndex)) {
+        const auctionLastIndex = await getSurplusAuctionLastIndex(contract);
+        if (auctionLastIndex < auctionIndex) {
             throw new Error('No active auction found with this id');
         }
         return { ...baseAuctionInfo, state: 'collected' };
@@ -54,7 +55,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const auctionEndDate = new Date(auctionData.end * 1000);
     const bidEndDate = new Date(auctionData.tic * 1000);
     const earliestEndDate = getEarliestDate(auctionEndDate, bidEndDate);
-    const state = getAuctionState(earliestEndDate, auctionData.tic);
+    const state = getAuctionState(network, earliestEndDate, auctionData.tic);
 
     return {
         ...baseAuctionInfo,
@@ -82,7 +83,7 @@ const getActiveSurplusAuctionOrNull = async (
 
 export const fetchActiveSurplusAuctions = async function (network: string): Promise<SurplusAuction[]> {
     const contract = await getContract(network, 'MCD_FLAP');
-    const auctionLastIndex = (await surplusAuctionLastIndex(contract)).toNumber();
+    const auctionLastIndex = (await getSurplusAuctionLastIndex(contract));
 
     let auctionIndexToFetch = auctionLastIndex;
     const surplusAuctions: SurplusAuction[] = [];
