@@ -1,9 +1,21 @@
 <template>
-    <Select :value="network" :options="options" title="Select Network" @input="$emit('update:network', $event)">
-        <template #text-prefix>
-            <icon type="share-alt" class="pr-2 text-3xl md:text-sm" />
-        </template>
-    </Select>
+    <div>
+        <Select
+            v-if="!isChangingNetwork"
+            :value="network"
+            :options="options"
+            title="Select Network"
+            @input="$emit('update:network', $event)"
+        >
+            <template #text-prefix>
+                <icon type="share-alt" class="pr-2 text-3xl md:text-sm" />
+            </template>
+        </Select>
+        <div v-else>
+            <icon type="loading" class="pr-2 text-3xl md:text-sm" />
+            <span>Switching...</span>
+        </div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -24,6 +36,10 @@ export default Vue.extend({
             default: null,
         },
         isDev: {
+            type: Boolean,
+            default: false,
+        },
+        isChangingNetwork: {
             type: Boolean,
             default: false,
         },

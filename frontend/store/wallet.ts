@@ -28,7 +28,7 @@ interface State {
     collateralVatBalanceStore: Record<string, BigNumber | undefined>;
 }
 
-export const state = (): State => ({
+const getInitialState = (): State => ({
     address: undefined,
     walletType: undefined,
     isConnecting: false,
@@ -40,6 +40,8 @@ export const state = (): State => ({
     isFetchingCollateralVatBalance: false,
     collateralVatBalanceStore: {},
 });
+
+export const state = (): State => getInitialState();
 
 export const getters = {
     getAddress(state: State) {
@@ -123,6 +125,14 @@ export const mutations = {
     ): void {
         state.collateralVatBalanceStore[collateralType] = balance;
         Vue.set(state.collateralVatBalanceStore, collateralType, balance);
+    },
+    reset(state: State) {
+        const initialState = getInitialState();
+        Object.assign(state, {
+            ...initialState,
+            address: state.address,
+            walletType: state.walletType,
+        });
     },
 };
 
@@ -284,5 +294,22 @@ export const actions = {
         const signerAddress = await signer.getAddress();
         dispatch('setAddress', signerAddress);
         return getters.getAddress;
+    }
+    async refetch({ dispatch }: ActionContext<State, State>): Promise<void> {
+        await dispatch('fetchWalletBalances');
+        await dispatch('fetchTokenAddressDai');
+        const auctionParam = window?.$nuxt?.$route?.query?.auction;
+        const auctionId = Array.isArray(auctionParam) ? auctionParam[0] : auctionParam;
+        const collateralType = auctionId ? auctionId.split(':')[0] : '';
+        if (collateralType) {
+            await dispatch('fetchCollateralVatBalance', collateralType);
+        }
+    },
+    async setup({ commit, dispatch, getters }: ActionContext<State, State>): Promise<void> {
+        commit('reset');
+        if (!getters.isConnected) {
+            await dispatch('autoConnect');
+        }
+        await dispatch('refetch');
     },
 };
