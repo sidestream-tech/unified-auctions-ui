@@ -26,14 +26,14 @@
 
                     <div class="flex space-x-4">
                         <NetworkSelector
-                            v-if="isAuctionsPortal"
+                            v-if="isAuctionsPortal || isDefaultHeader"
                             :network="network"
                             :is-dev="isDev"
                             @update:network="$emit('update:network', $event)"
                         />
 
                         <WalletSelector
-                            v-if="isAuctionsPortal"
+                            v-if="isAuctionsPortal || isDefaultHeader"
                             class="hidden sm:block"
                             :wallet-address="walletAddress"
                             :is-loading="isWalletLoading"
@@ -117,13 +117,16 @@ export default Vue.extend({
     },
     computed: {
         isUnifiedPage(): boolean {
-            return UNIFIED_PAGES.includes(this.pageName) || (!this.isAuctionsPortal && !this.isMinimalPage);
+            return UNIFIED_PAGES.includes(this.pageName);
         },
         isMinimalPage(): boolean {
             return MINIMAL_PAGES.includes(this.pageName);
         },
         isAuctionsPortal(): boolean {
             return AUCTION_PORTAL_PAGES.includes(this.pageName);
+        },
+        isDefaultHeader(): boolean {
+            return !this.isUnifiedPage && !this.isMinimalPage && !this.isAuctionsPortal;
         },
         pageName(): string {
             return this.$route?.name || '';
