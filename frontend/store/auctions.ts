@@ -16,6 +16,7 @@ import { checkAllSupportedCollaterals } from 'auctions-core/src/addresses';
 import BigNumber from 'auctions-core/src/bignumber';
 import getWallet from '~/lib/wallet';
 import notifier from '~/lib/notifier';
+import {fetchActiveSurplusAuctions} from 'auctions-core/src/surplus';
 
 const REFETCH_INTERVAL = 30 * 1000;
 const TIMER_INTERVAL = 1000;
@@ -353,4 +354,8 @@ export const actions = {
             commit('setAreTakeEventsFetching', false);
         }
     },
+    async fetchSurplusAuctions() {
+        const auctions = await fetchActiveSurplusAuctions('localhost');
+        return auctions
+    }
 };
