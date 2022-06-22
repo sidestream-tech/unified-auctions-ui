@@ -69,11 +69,7 @@ export const fetchSurplusAuctionByIndex = async function (
     };
 };
 
-const getActiveSurplusAuctionOrNull = async (
-    network: string,
-    auctionIndex: number,
-    contract?: Contract
-) => {
+const getActiveSurplusAuctionOrNull = async (network: string, auctionIndex: number, contract?: Contract) => {
     const auction = await fetchSurplusAuctionByIndex(network, auctionIndex, contract);
     if (auction.state === 'collected') {
         return;
@@ -83,13 +79,13 @@ const getActiveSurplusAuctionOrNull = async (
 
 export const fetchActiveSurplusAuctions = async function (network: string): Promise<SurplusAuction[]> {
     const contract = await getContract(network, 'MCD_FLAP');
-    const auctionLastIndex = (await getSurplusAuctionLastIndex(contract));
+    const auctionLastIndex = await getSurplusAuctionLastIndex(contract);
 
-    let auctionIndexToFetch = auctionLastIndex;
+    const auctionIndexToFetch = auctionLastIndex;
     const surplusAuctions: SurplusAuction[] = [];
     let currentSurplusAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
-        currentSurplusAuction = await getActiveSurplusAuctionOrNull(network, auctionIndexToFetch, contract)
+        currentSurplusAuction = await getActiveSurplusAuctionOrNull(network, auctionIndexToFetch, contract);
         if (!currentSurplusAuction) {
             break;
         }
