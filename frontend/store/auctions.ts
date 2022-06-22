@@ -359,11 +359,6 @@ export const actions = {
             commit('setAreTakeEventsFetching', false);
         }
     },
-    async fetchSurplusAuctions({ rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['network/getMakerNetwork'];
-        const auctions = await fetchActiveSurplusAuctions(network);
-        return auctions;
-    },
     async setup({ commit, dispatch }: ActionContext<State, State>) {
         commit('reset');
 
