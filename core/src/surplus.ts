@@ -47,7 +47,7 @@ export const fetchSurplusAuctionByIndex = async function (
     if (isAuctionDeleted) {
         const auctionLastIndex = await getSurplusAuctionLastIndex(contract);
         if (auctionLastIndex < auctionIndex) {
-            throw new Error('No active auction found with this id');
+            throw new Error('No active auction exists this id');
         }
         return { ...baseAuctionInfo, state: 'collected' };
     }
