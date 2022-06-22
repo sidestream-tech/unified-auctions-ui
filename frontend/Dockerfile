@@ -33,7 +33,7 @@ COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
 CMD ["npm", "run", "dev"]
 
-FROM cypress/included:9.0.0 AS e2e
+FROM cypress/included:9.5.1 AS e2e
 
 ARG CYPRESS_FRONTEND_URL
 ENV CYPRESS_FRONTEND_URL=${CYPRESS_FRONTEND_URL}
