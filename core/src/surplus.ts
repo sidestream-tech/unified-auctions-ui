@@ -15,7 +15,7 @@ export const fetchSurplusAuctionByIndex = async function (
 ): Promise<SurplusAuction | SurplusAuctionUnexistant> {
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionData = await contract.bids(auctionIndex);
-    const isAuctionDeleted = new BigNumber(auctionData.lot).eq(0);
+    const isAuctionDeleted = new BigNumber(auctionData.end).eq(0);
     const baseAuctionInfo: SurplusAuctionBaseData = {
         network,
         id: auctionIndex,
@@ -29,9 +29,9 @@ export const fetchSurplusAuctionByIndex = async function (
         return { ...baseAuctionInfo, state: 'collected'};
     }
 
-    const expirationTimeAuction = new Date(auctionData.end * 1000);
-    const expirationTimeBid = new Date(auctionData.tic * 1000);
-    const earliestEndDate = getEarliestDate(expirationTimeAuction, expirationTimeBid);
+    const auctionEndDate = new Date(auctionData.end * 1000);
+    const bidEndDate = new Date(auctionData.tic * 1000);
+    const earliestEndDate = getEarliestDate(auctionEndDate, bidEndDate);
 
     const isBidExpired = new Date() > earliestEndDate;
 
@@ -47,8 +47,8 @@ export const fetchSurplusAuctionByIndex = async function (
         bidAmountMKR: new BigNumber(auctionData.bid._hex),
         receiveAmountDAI: new BigNumber(auctionData.lot._hex),
         receiverAddress: auctionData.guy,
-        auctionEndDate: expirationTimeAuction,
-        bidEndDate: expirationTimeBid,
+        auctionEndDate,
+        bidEndDate,
         state,
     };
 };
