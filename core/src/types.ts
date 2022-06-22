@@ -153,11 +153,7 @@ export declare interface CollateralStatus {
     balance?: BigNumber;
 }
 
-export type SurplusAuctionStates =
-    | 'just-started'
-    | 'have-bids'
-    | 'ready-for-collection'
-    | 'requires-restart';
+export type SurplusAuctionStates = 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart';
 
 export type SurplusAuctionEventTypes = 'start' | 'bid' | 'collect';
 
@@ -180,5 +176,5 @@ export declare interface SurplusAuction extends SurplusAuctionFullData {
 }
 
 export declare interface SurplusAuctionUnexistant {
-    state: 'collected'
+    state: 'collected';
 }

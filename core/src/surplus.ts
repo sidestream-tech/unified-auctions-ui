@@ -85,7 +85,7 @@ export const fetchActiveSurplusAuctions = async function (network: string): Prom
     const auctionLastIndex = (await surplusAuctionLastIndex(contract)).toNumber();
 
     let auctionIndexToFetch = auctionLastIndex;
-    let surplusAuctions: SurplusAuction[] = [];
+    const surplusAuctions: SurplusAuction[] = [];
     let currentSurplusAuction;
     while ((currentSurplusAuction = await getActiveSurplusAuctionOrNull(network, auctionIndexToFetch, contract))) {
         surplusAuctions.push(currentSurplusAuction);
