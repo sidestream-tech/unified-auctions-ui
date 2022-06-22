@@ -36,7 +36,7 @@ interface State {
     lastUpdated: Date | undefined;
 }
 
-export const state = (): State => ({
+const getInitialState = (): State => ({
     auctionStorage: {},
     takeEventStorage: {},
     areAuctionsFetching: false,
@@ -48,6 +48,8 @@ export const state = (): State => ({
     restartingAuctionsIds: [],
     lastUpdated: undefined,
 });
+
+export const state = (): State => getInitialState();
 
 export const getters = {
     listAuctions(state: State): AuctionTransaction[] {
@@ -160,6 +162,9 @@ export const mutations = {
     },
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
         Vue.set(state.auctionErrors, auctionId, error);
+    },
+    reset(state: State) {
+        Object.assign(state, getInitialState());
     },
 };
 
@@ -305,7 +310,7 @@ export const actions = {
         commit('addAuctionRestarting', id);
         try {
             await restartAuction(network, auction, walletAddress, notifier);
-            await dispatch('fetchWithoutLoading');
+            await dispatch('update');
         } catch (error: any) {
             commit('removeAuctionRestarting', id);
             console.error(`Auction redo error: ${error.message}`);
@@ -352,5 +357,10 @@ export const actions = {
         } finally {
             commit('setAreTakeEventsFetching', false);
         }
+    },
+    async setup({ commit, dispatch }: ActionContext<State, State>) {
+        commit('reset');
+
+        await dispatch('fetch');
     },
 };

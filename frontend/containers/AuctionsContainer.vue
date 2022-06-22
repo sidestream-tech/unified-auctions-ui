@@ -158,10 +158,8 @@ export default Vue.extend({
             if (!this.fetchedSelectedAuctionId || !this.walletAddress) {
                 return;
             }
-            this.fetchWalletBalances();
-            this.fetchWalletAuthorizationStatus();
-            this.fetchCollateralAuthorizationStatus(this.selectedAuction.collateralType);
-            this.fetchCollateralVatBalance(this.selectedAuction.collateralType);
+            this.$store.dispatch('wallet/setup');
+            this.$store.dispatch('authorizations/setup');
         },
     },
 });

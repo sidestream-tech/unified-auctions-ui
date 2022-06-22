@@ -15,10 +15,18 @@ interface State {
     collateralStatusesStorage: Record<string, CollateralStatus>;
 }
 
-export const state = (): State => ({
-    collaterals: [],
+const getInitialState = (): State => ({
+    collaterals: Object.values(COLLATERALS).map(
+        collateral =>
+            ({
+                ilk: collateral.ilk,
+                symbol: collateral.symbol,
+            } as CollateralRow)
+    ),
     collateralStatusesStorage: {},
 });
+
+export const state = (): State => getInitialState();
 
 export const getters = {
     collaterals(state: State) {
@@ -58,6 +66,9 @@ export const mutations = {
     },
     setCollateralStatus(state: State, collateralStatus: CollateralStatus) {
         Vue.set(state.collateralStatusesStorage, collateralStatus.type, collateralStatus);
+    },
+    reset(state: State) {
+        Object.assign(state, getInitialState());
     },
 };
 
@@ -146,12 +157,9 @@ export const actions = {
         }
     },
     async setup({ commit, dispatch }: ActionContext<State, State>) {
-        const collaterals = Object.values(COLLATERALS).map(collateral => ({
-            ilk: collateral.ilk,
-            symbol: collateral.symbol,
-        }));
-        commit('setCollaterals', collaterals);
+        commit('reset');
 
         await dispatch('fetchCoreValues');
+        await dispatch('fetchCollateralStatuses');
     },
 };
