@@ -294,7 +294,7 @@ export const actions = {
         const signerAddress = await signer.getAddress();
         dispatch('setAddress', signerAddress);
         return getters.getAddress;
-    }
+    },
     async refetch({ dispatch }: ActionContext<State, State>): Promise<void> {
         await dispatch('fetchWalletBalances');
         await dispatch('fetchTokenAddressDai');
