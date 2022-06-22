@@ -10,8 +10,8 @@ const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> =
     return new BigNumber(auctionsQuantityBinary._hex).toNumber();
 };
 
-const getAuctionState = (network: string, earliestEndDate: Date, greatestBid: number) => {
-    const isBidExpired = getNetworkDate(network) > earliestEndDate;
+const getAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
+    const isBidExpired = (await getNetworkDate(network)) > earliestEndDate;
     const haveBids = greatestBid === 0;
     if (haveBids) {
         if (isBidExpired) {
@@ -55,7 +55,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const auctionEndDate = new Date(auctionData.end * 1000);
     const bidEndDate = new Date(auctionData.tic * 1000);
     const earliestEndDate = getEarliestDate(auctionEndDate, bidEndDate);
-    const state = getAuctionState(network, earliestEndDate, auctionData.tic);
+    const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
 
     return {
         ...baseAuctionInfo,
