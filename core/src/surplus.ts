@@ -28,7 +28,7 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
     auctionIndex: number,
-    contractOrNull: Contract | null = null
+    contractOrNull?: Contract
 ): Promise<SurplusAuction | SurplusAuctionUnexistant> {
     let contract: Contract;
     if (!!contractOrNull) {
