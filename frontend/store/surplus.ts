@@ -35,4 +35,4 @@ export const actions = {
         const auctions = await fetchActiveSurplusAuctions(network);
         return auctions;
     },
-}
+};
