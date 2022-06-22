@@ -72,11 +72,11 @@ export const fetchSurplusAuctionByIndex = async function (
 const getActiveSurplusAuctionOrNull = async (
     network: string,
     auctionIndex: number,
-    contractOrNull: Contract | null = null
+    contract?: Contract
 ) => {
-    const auction = await fetchSurplusAuctionByIndex(network, auctionIndex, contractOrNull);
+    const auction = await fetchSurplusAuctionByIndex(network, auctionIndex, contract);
     if (auction.state === 'collected') {
-        return null;
+        return;
     }
     return auction;
 };
@@ -88,9 +88,12 @@ export const fetchActiveSurplusAuctions = async function (network: string): Prom
     let auctionIndexToFetch = auctionLastIndex;
     const surplusAuctions: SurplusAuction[] = [];
     let currentSurplusAuction;
-    while ((currentSurplusAuction = await getActiveSurplusAuctionOrNull(network, auctionIndexToFetch, contract))) {
+    for (let i = auctionLastIndex; i > 0; i--) {
+        currentSurplusAuction = await getActiveSurplusAuctionOrNull(network, auctionIndexToFetch, contract)
+        if (!currentSurplusAuction) {
+            break;
+        }
         surplusAuctions.push(currentSurplusAuction);
-        --auctionIndexToFetch;
     }
     return surplusAuctions;
 };
