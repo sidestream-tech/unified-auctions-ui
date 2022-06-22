@@ -155,14 +155,12 @@ export declare interface CollateralStatus {
 
 export type SurplusAuctionStates = 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart';
 
-export type SurplusAuctionEventTypes = 'start' | 'bid' | 'collect';
-
 export declare interface SurplusAuctionBaseData {
     id: number;
     network: string;
 }
 
-export declare interface SurplusAuctionFullData {
+export declare interface SurplusAuctionFullData extends SurplusAuctionBaseData {
     bidAmountMKR: BigNumber;
     receiveAmountDAI: BigNumber;
     receiverAddress: string;
