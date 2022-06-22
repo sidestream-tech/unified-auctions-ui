@@ -101,10 +101,8 @@ export default Vue.extend({
             this.$store.commit('modals/setWalletModal', open);
         },
         fetchRelatedData(): void {
-            this.$store.dispatch('wallet/fetchWalletBalances');
-            this.$store.dispatch('wallet/fetchTokenAddressDai');
-            this.$store.dispatch('authorizations/fetchAllowanceAmount');
-            this.$store.dispatch('authorizations/fetchWalletAuthorizationStatus');
+            this.$store.dispatch('wallet/setup');
+            this.$store.dispatch('authorizations/setup');
         },
     },
 });
