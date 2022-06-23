@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import type { SurplusAuctionFullData } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import { fetchActiveSurplusAuctions } from 'auctions-core/src/surplus';
@@ -20,7 +21,7 @@ export const getters = {
 
 export const mutations = {
     addAuctionToStorage(state: State, auction: SurplusAuctionFullData) {
-        state.auctionStorage[auction.id] = auction;
+        Vue.set(state.auctionStorage, auction.id, auction);
     },
 };
 
