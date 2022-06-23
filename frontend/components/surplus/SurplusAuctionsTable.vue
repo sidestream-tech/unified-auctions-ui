@@ -24,13 +24,13 @@
             </div>
             <div slot="auctionPrice" slot-scope="auctionPrice">
                 <template v-if="auctionPrice">
-                    <format-currency :value="auctionPrice" currency="DAI" /> per <format-currency currency="MKR" />
+                    <format-currency :value="auctionPrice" currency="MKR" /> per <format-currency currency="DAI" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="marketUnitPrice" slot-scope="marketUnitPrice, record">
                 <template v-if="getIsAuctionActive(record) && marketUnitPrice">
-                    <format-market-value :value="marketUnitPrice" :inverted="true" />
+                    <format-market-value :value="marketUnitPrice" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
