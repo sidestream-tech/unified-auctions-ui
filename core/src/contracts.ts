@@ -12,6 +12,9 @@ import MCD_DOG from './abis/MCD_DOG.json';
 import MCD_FLAP from './abis/MCD_FLAP.json';
 import WSTETH from './abis/WSTETH.json';
 import getSigner from './signer';
+import memoizee from 'memoizee';
+
+const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
     const suffix = collateralType.toUpperCase().replace('-', '_');
@@ -58,12 +61,18 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     throw new Error(`No contract interface found for "${contractName}"`);
 };
 
-const getContract = async function (network: string, contractName: string, useSigner = false): Promise<Contract> {
+const _getContract = async function (network: string, contractName: string, useSigner = false): Promise<Contract> {
     const contractAddress = await getContractAddressByName(network, contractName);
     const contractInterface = await getContractInterfaceByName(contractName);
     const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
     const contract = await new ethers.Contract(contractAddress, contractInterface, signerOrProvider);
     return contract;
 };
+
+const getContract = memoizee(_getContract, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 3,
+});
 
 export default getContract;
