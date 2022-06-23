@@ -39,11 +39,7 @@
                 <span v-else-if="state === 'requires-restart'"> Requires Restart </span>
                 <span v-else-if="state === 'ready-for-collection'"> Expired </span>
                 <span v-else> Expires in </span>
-                <time-till
-                    v-if="state === 'collected'"
-                    :date="record.events[record.events.length - 1].transactionDate"
-                />
-                <time-till v-else-if="state !== 'requires-restart'" :date="record.earliestEndDate" />
+                <time-till v-if="state !== 'requires-restart'" :date="record.earliestEndDate" />
             </div>
             <div slot="updatingStatus" class="opacity-50 font-normal">
                 <div v-if="isLoading" class="flex items-center space-x-2">
