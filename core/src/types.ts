@@ -153,7 +153,12 @@ export declare interface CollateralStatus {
     balance?: BigNumber;
 }
 
-export type SurplusAuctionStates = 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart' | 'collected';
+export type SurplusAuctionStates =
+    | 'just-started'
+    | 'have-bids'
+    | 'ready-for-collection'
+    | 'requires-restart'
+    | 'collected';
 
 export declare interface SurplusAuctionBaseData {
     id: number;

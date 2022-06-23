@@ -15,22 +15,20 @@ export const state = (): State => getInitialState();
 export const getters = {
     auctionStorage(state: State) {
         return state.auctionStorage;
-    }
-}
+    },
+};
 
 export const mutations = {
     addAuctionToStorage(state: State, auction: SurplusAuctionFullData) {
-        state.auctionStorage[auction.id] = auction
-    }
-}
+        state.auctionStorage[auction.id] = auction;
+    },
+};
 
 export const actions = {
     async fetchSurplusAuctions({ rootGetters, commit }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         const auctions = await fetchActiveSurplusAuctions(network);
-        auctions.forEach(
-            auction => commit('addAuctionToStorage', auction)
-        )
+        auctions.forEach(auction => commit('addAuctionToStorage', auction));
         return auctions;
     },
 };
