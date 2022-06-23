@@ -16,15 +16,15 @@
                 <format-currency v-if="receiveAmountDAI" :value="receiveAmountDAI" currency="DAI" />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="highestBid" slot-scope="highestBid">
-                <template v-if="highestBid">
-                    <format-currency :value="highestBid" currency="MKR" />
+            <div slot="bidAmountMKR" slot-scope="bidAmountMKR">
+                <template v-if="bidAmountMKR">
+                    <format-currency :value="bidAmountMKR" currency="MKR" />
                 </template>
                 <span v-else class="opacity-50">No bids yet</span>
             </div>
-            <div slot="auctionPrice" slot-scope="auctionPrice">
-                <template v-if="auctionPrice">
-                    <format-currency :value="auctionPrice" currency="MKR" /> per <format-currency currency="DAI" />
+            <div slot="unitPrice" slot-scope="unitPrice">
+                <template v-if="unitPrice">
+                    <format-currency :value="unitPrice" currency="MKR" /> per <format-currency currency="DAI" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -202,15 +202,15 @@ export default Vue.extend({
                 },
                 {
                     title: 'Highest Bid',
-                    dataIndex: 'highestBid',
-                    scopedSlots: { customRender: 'highestBid' },
-                    sorter: compareBy('highestBid'),
+                    dataIndex: 'bidAmountMKR',
+                    scopedSlots: { customRender: 'bidAmountMKR' },
+                    sorter: compareBy('bidAmountMKR'),
                 },
                 {
                     title: 'Auction Price',
-                    dataIndex: 'auctionPrice',
-                    scopedSlots: { customRender: 'auctionPrice' },
-                    sorter: compareBy('auctionPrice'),
+                    dataIndex: 'unitPrice',
+                    scopedSlots: { customRender: 'unitPrice' },
+                    sorter: compareBy('unitPrice'),
                 },
                 {
                     title: 'Market Difference',
