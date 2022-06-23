@@ -1,4 +1,4 @@
-import type { SurplusAuction, SurplusAuctionUnexistant, SurplusAuctionBaseData } from './types';
+import type { SurplusAuction, SurplusAuctionCollected, SurplusAuctionBaseData } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -29,7 +29,7 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
     auctionIndex: number
-): Promise<SurplusAuction | SurplusAuctionUnexistant> {
+): Promise<SurplusAuction | SurplusAuctionCollected> {
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionDeleted = new BigNumber(auctionData.end).eq(0);

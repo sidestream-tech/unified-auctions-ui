@@ -173,6 +173,6 @@ export declare interface SurplusAuction extends SurplusAuctionFullData {
     state: SurplusAuctionStates;
 }
 
-export declare interface SurplusAuctionUnexistant {
+export declare interface SurplusAuctionCollected {
     state: 'collected';
 }
