@@ -4,6 +4,7 @@ import BigNumber from './bignumber';
 import getContract from './contracts';
 import { Contract } from 'ethers';
 import getNetworkDate from './date';
+import { RAD, WAD } from './constants/UNITS';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
@@ -60,8 +61,8 @@ export const fetchSurplusAuctionByIndex = async function (
     return {
         ...baseAuctionInfo,
         earliestEndDate,
-        bidAmountMKR: new BigNumber(auctionData.bid._hex),
-        receiveAmountDAI: new BigNumber(auctionData.lot._hex),
+        bidAmountMKR: new BigNumber(auctionData.bid._hex).div(WAD),
+        receiveAmountDAI: new BigNumber(auctionData.lot._hex).div(RAD),
         receiverAddress: auctionData.guy,
         auctionEndDate,
         bidEndDate,
@@ -69,7 +70,7 @@ export const fetchSurplusAuctionByIndex = async function (
     };
 };
 
-const getActiveSurplusAuctionOrNull = async (network: string, auctionIndex: number, contract?: Contract) => {
+const getActiveSurplusAuctionOrUndefined = async (network: string, auctionIndex: number, contract?: Contract) => {
     const auction = await fetchSurplusAuctionByIndex(network, auctionIndex, contract);
     if (auction.state === 'collected') {
         return;
@@ -81,11 +82,10 @@ export const fetchActiveSurplusAuctions = async function (network: string): Prom
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionLastIndex = await getSurplusAuctionLastIndex(contract);
 
-    const auctionIndexToFetch = auctionLastIndex;
     const surplusAuctions: SurplusAuction[] = [];
     let currentSurplusAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
-        currentSurplusAuction = await getActiveSurplusAuctionOrNull(network, auctionIndexToFetch, contract);
+        currentSurplusAuction = await getActiveSurplusAuctionOrUndefined(network, i, contract);
         if (!currentSurplusAuction) {
             break;
         }
