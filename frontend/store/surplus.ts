@@ -29,7 +29,7 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const auctions = await fetchActiveSurplusAuctions(network);
         auctions.forEach(
-            auction => commit('surplus/addAuctionToStorage', auction)
+            auction => commit('addAuctionToStorage', auction)
         )
         return auctions;
     },
