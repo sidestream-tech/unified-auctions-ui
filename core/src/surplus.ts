@@ -1,4 +1,4 @@
-import type { SurplusAuction, SurplusAuctionCollected, SurplusAuctionBaseData } from './types';
+import type { SurplusAuction, SurplusAuctionCollected, SurplusAuctionBase } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -33,7 +33,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionDeleted = new BigNumber(auctionData.end).eq(0);
-    const baseAuctionInfo: SurplusAuctionBaseData = {
+    const baseAuctionInfo: SurplusAuctionBase = {
         network,
         id: auctionIndex,
     };
