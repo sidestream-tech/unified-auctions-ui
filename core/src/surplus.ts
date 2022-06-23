@@ -28,16 +28,9 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
 
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
-    auctionIndex: number,
-    contractOrNull?: Contract
+    auctionIndex: number
 ): Promise<SurplusAuction | SurplusAuctionUnexistant> {
-    let contract: Contract;
-    if (!!contractOrNull) {
-        contract = contractOrNull;
-    } else {
-        contract = await getContract(network, 'MCD_FLAP');
-    }
-
+    const contract = await getContract(network, 'MCD_FLAP');
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionDeleted = new BigNumber(auctionData.end).eq(0);
     const baseAuctionInfo: SurplusAuctionBaseData = {
@@ -70,8 +63,8 @@ export const fetchSurplusAuctionByIndex = async function (
     };
 };
 
-const getActiveSurplusAuctionOrUndefined = async (network: string, auctionIndex: number, contract?: Contract) => {
-    const auction = await fetchSurplusAuctionByIndex(network, auctionIndex, contract);
+const getActiveSurplusAuctionOrUndefined = async (network: string, auctionIndex: number) => {
+    const auction = await fetchSurplusAuctionByIndex(network, auctionIndex);
     if (auction.state === 'collected') {
         return;
     }
@@ -85,7 +78,7 @@ export const fetchActiveSurplusAuctions = async function (network: string): Prom
     const surplusAuctions: SurplusAuction[] = [];
     let currentSurplusAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
-        currentSurplusAuction = await getActiveSurplusAuctionOrUndefined(network, i, contract);
+        currentSurplusAuction = await getActiveSurplusAuctionOrUndefined(network, i);
         if (!currentSurplusAuction) {
             break;
         }
