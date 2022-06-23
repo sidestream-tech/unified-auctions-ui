@@ -1,12 +1,16 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
-        <template #title> {{ currentStateAndTitle.title }} </template>
-        <TextBlock v-if="currentStateAndTitle.name === 'Auctioned DAI is ready to be collected'">
-            Since the end of the auction at DATE, the winner can now collect the auction amount.
+        <template #title>
+            {{ currentStateAndTitle.title }}
+            <time-till v-if="auction.state === 'have-bids'" :date="auction.earliestEndDate" />
+        </template>
+        <TextBlock v-if="auction.state === 'ready-for-collection'">
+            Since the end of the auction at {{ auction.earliestEndDate.toUTCString() }}, the winner can now collect the
+            auction amount.
         </TextBlock>
         <TextBlock v-else>
             If no one else bids on the auction, the winner be able to collect the auction amount when the auction is
-            ended after DATE
+            ended after {{ auction.earliestEndDate.toUTCString() }}
         </TextBlock>
         <div class="flex justify-end gap-5">
             <BaseButton
@@ -30,10 +34,11 @@ import BasePanel from '../common/BasePanel.vue';
 import TextBlock from '../common/TextBlock.vue';
 import FormatCurrency from '../utils/FormatCurrency.vue';
 import BaseButton from '../common/BaseButton';
+import TimeTill from '../common/TimeTill.vue';
 
 export default Vue.extend({
     name: 'CollectSurplusAuctionPanel',
-    components: { FormatCurrency, TextBlock, BasePanel, BaseButton },
+    components: { TimeTill, FormatCurrency, TextBlock, BasePanel, BaseButton },
     props: {
         auction: {
             type: Object as Vue.PropType<SurplusAuction>,
