@@ -14,8 +14,6 @@ import WSTETH from './abis/WSTETH.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
-const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
-
 export const getClipperNameByCollateralType = function (collateralType: string): string {
     const suffix = collateralType.toUpperCase().replace('-', '_');
     return `MCD_CLIP_${suffix}`;
@@ -70,7 +68,6 @@ const _getContract = async function (network: string, contractName: string, useS
 };
 
 const getContract = memoizee(_getContract, {
-    maxAge: CACHE_EXPIRY_MS,
     promise: true,
     length: 3,
 });
