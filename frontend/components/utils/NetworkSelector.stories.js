@@ -20,6 +20,13 @@ storiesOf('Utils/NetworkSelector', module)
         ...common,
         template: '<network-selector :networks="networks" @select="select"/>',
     }))
+    .add('Changing Network', () => ({
+        ...common,
+        data: () => ({
+            isChangingNetwork: true,
+        }),
+        template: '<network-selector @select="select" :is-changing-network="isChangingNetwork" />',
+    }))
     .add('Dev Mode', () => ({
         ...common,
         template: '<network-selector :networks="networks" @select="select" is-dev />',

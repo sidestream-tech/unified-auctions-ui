@@ -11,6 +11,7 @@
             :staging-banner-url="stagingBannerURL"
             :is-dev="isDev"
             :networks="getAllNetworks"
+            :is-changing-network="isChangingNetwork"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
             @openWalletModal="openWalletModal"
@@ -18,14 +19,14 @@
         />
         <Nuxt />
         <ChangePageNetworkModal
-            v-if="!isPageNetworkValid && getAllNetworks"
+            v-if="!isPageNetworkValid && getAllNetworks && !isChangingNetwork"
             :invalid-network="getPageNetwork"
             :is-dev="isDev"
             :networks="getAllNetworks"
             @setPageNetwork="setPageNetwork"
         />
         <ChangeWalletNetworkModal
-            v-else-if="!isWalletNetworkValid"
+            v-else-if="!isWalletNetworkValid && !isChangingNetwork"
             :invalid-network="getWalletNetworkTitle"
             :page-network="network"
             :networks="getAllNetworks"
@@ -85,8 +86,10 @@ export default Vue.extend({
             'getAllNetworks',
             'getWalletNetworkTitle',
             'getPageNetwork',
+            'getMakerNetwork',
             'isPageNetworkValid',
             'isWalletNetworkValid',
+            'isChangingNetwork',
         ]),
         isExplanationsShown: {
             get() {
@@ -117,6 +120,13 @@ export default Vue.extend({
         },
         isDev() {
             return this.$nuxt?.context?.isDev;
+        },
+    },
+    watch: {
+        getMakerNetwork(newValue) {
+            if (newValue) {
+                this.$store.dispatch('network/setup');
+            }
         },
     },
     methods: {

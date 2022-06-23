@@ -36,7 +36,7 @@ interface State {
     lastUpdated: Date | undefined;
 }
 
-export const state = (): State => ({
+const getInitialState = (): State => ({
     auctionStorage: {},
     takeEventStorage: {},
     areAuctionsFetching: false,
@@ -48,6 +48,8 @@ export const state = (): State => ({
     restartingAuctionsIds: [],
     lastUpdated: undefined,
 });
+
+export const state = (): State => getInitialState();
 
 export const getters = {
     listAuctions(state: State): AuctionTransaction[] {
@@ -161,6 +163,9 @@ export const mutations = {
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
         Vue.set(state.auctionErrors, auctionId, error);
     },
+    reset(state: State) {
+        Object.assign(state, getInitialState());
+    },
 };
 
 export const actions = {
@@ -194,7 +199,7 @@ export const actions = {
             commit('setAreAuctionsFetching', false);
         }
     },
-    async updateSingleAuction({ commit, rootGetters }: ActionContext<State, State>, auctionId: string) {
+    async updateSingleAuction({ commit, dispatch, rootGetters }: ActionContext<State, State>, auctionId: string) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
@@ -205,6 +210,7 @@ export const actions = {
             commit('setAuction', auction);
             commit('setErrorByAuctionId', { auctionId, error: undefined });
         } catch (error: any) {
+            await dispatch('fetchTakeEventsByAuctionId', auctionId);
             console.error('fetch auction error', error);
             commit('setErrorByAuctionId', { auctionId, error: error.message });
         } finally {
@@ -305,7 +311,7 @@ export const actions = {
         commit('addAuctionRestarting', id);
         try {
             await restartAuction(network, auction, walletAddress, notifier);
-            await dispatch('fetchWithoutLoading');
+            await dispatch('update');
         } catch (error: any) {
             commit('removeAuctionRestarting', id);
             console.error(`Auction redo error: ${error.message}`);
@@ -352,5 +358,10 @@ export const actions = {
         } finally {
             commit('setAreTakeEventsFetching', false);
         }
+    },
+    async setup({ commit, dispatch }: ActionContext<State, State>) {
+        commit('reset');
+
+        await dispatch('fetch');
     },
 };

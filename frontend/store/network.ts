@@ -8,11 +8,13 @@ import getWallet from '~/lib/wallet';
 interface State {
     walletChainId: string | undefined;
     networks: NetworkConfig[];
+    isChangingNetwork: boolean;
 }
 
 export const state = (): State => ({
     walletChainId: undefined,
     networks: [],
+    isChangingNetwork: false,
 });
 
 export const getters = {
@@ -68,6 +70,9 @@ export const getters = {
         }
         return getters.getPageNetwork;
     },
+    isChangingNetwork(state: State) {
+        return state.isChangingNetwork;
+    },
 };
 
 export const mutations = {
@@ -76,6 +81,9 @@ export const mutations = {
     },
     setWalletChainId(state: State, walletChainId: string): void {
         state.walletChainId = walletChainId;
+    },
+    setIsChangingNetwork(state: State, isChangingNetwork: boolean): void {
+        state.isChangingNetwork = isChangingNetwork;
     },
 };
 
@@ -88,23 +96,44 @@ export const actions = {
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);
     },
-    async setPageNetwork(
-        { getters, dispatch, rootState }: ActionContext<State, any>,
-        newNetwork: string
-    ): Promise<void> {
+    async setPageNetwork({ getters, dispatch, commit }: ActionContext<State, any>, newNetwork: string): Promise<void> {
         const oldNetwork = getters.getPageNetwork;
         if (newNetwork === oldNetwork) {
             return;
         }
+        commit('setIsChangingNetwork', true);
         try {
             await dispatch('setWalletNetwork', newNetwork);
-            window.location.href = `${rootState.route.path}?network=${newNetwork}`;
+            window.$nuxt.$router.push({
+                query: {
+                    network: newNetwork,
+                },
+            });
+
+            if (networkChangeTimeoutId) {
+                clearTimeout(networkChangeTimeoutId);
+            }
+
+            networkChangeTimeoutId = setTimeout(() => {
+                if (getters.getMakerNetwork || getters.getMakerNetwork === newNetwork) {
+                    return;
+                }
+                message.error(`Failed to change network to ${newNetwork}`);
+                commit('setIsChangingNetwork', false);
+                window.$nuxt.$router.push({
+                    query: {
+                        network: oldNetwork,
+                    },
+                });
+            }, NETWORK_SWITCH_TIMEOUT);
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
+            commit('setIsChangingNetwork', false);
         }
     },
     async setWalletNetwork(_: ActionContext<State, State>, newNetwork: string): Promise<void> {
         let wallet;
+
         try {
             wallet = getWallet();
         } catch {}
@@ -115,9 +144,19 @@ export const actions = {
     async fixWalletNetwork({ dispatch, getters }: ActionContext<State, State>): Promise<void> {
         try {
             await dispatch('setWalletNetwork', getters.getPageNetwork);
-            window.location.reload();
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
         }
+    },
+    async setup({ commit, dispatch }: ActionContext<State, State>): Promise<void> {
+        if (networkChangeTimeoutId) {
+            clearTimeout(networkChangeTimeoutId);
+        }
+
+        commit('setIsChangingNetwork', false);
+        await dispatch('wallet/setup', undefined, { root: true });
+        await dispatch('auctions/setup', undefined, { root: true });
+        await dispatch('authorizations/setup', undefined, { root: true });
+        await dispatch('gas/setup', undefined, { root: true });
     },
 };

@@ -63,6 +63,10 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
     const maximumAuctionDurationInSeconds = await fetchMaximumAuctionDurationInSeconds(network, collateralType);
     const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
     const auctionData = await contract.sales(auctionIndex);
+    const startUnixTimestamp = new BigNumber(auctionData.tic._hex).toNumber();
+    if (startUnixTimestamp === 0) {
+        throw new Error('No active auction found with this id');
+    }
     const startTimestamp = new BigNumber(auctionData.tic._hex).times(1000).toNumber();
     const endDate = new Date(startTimestamp + maximumAuctionDurationInSeconds * 1000);
     const fetchedAt = new Date();
