@@ -92,3 +92,57 @@ export const fetchAllowanceAmount = async function (network: string, walletAddre
     const allowanceRaw = await DAIcontract.allowance(walletAddress, joinDaiAddress);
     return new BigNumber(allowanceRaw._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
 };
+
+const _authorizeSurplus = async function (
+    network: string,
+    walletAddress: string,
+    revoke: boolean,
+    notifier?: Notifier
+): Promise<string> {
+    walletAddress; // so the memoizee cache is invalidated if another address is used
+    const joinDaiAddress = await getContractAddressByName(network, 'MCD_FLAP');
+    const contractMethod = revoke ? 'nope' : 'hope';
+    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
+    await getWalletAuthorizationStatus.clear();
+    return transaction;
+};
+
+const _getSurplusAuthorizationStatus = async function (
+    network: string,
+    walletAddress: string
+): Promise<boolean> {
+    const clipperAddress = await getContractAddressByName(network, 'MCD_FLAP');
+    const contract = await getContract(network, 'MCD_VAT');
+    const authorizationStatus = await contract.can(walletAddress, clipperAddress);
+    return authorizationStatus.toNumber() === 1;
+};
+
+export const getSurplusAuthorizationStatus = memoizee(_getSurplusAuthorizationStatus, {
+    promise: true,
+    length: 2,
+});
+
+export const authorizeSurplus = memoizee(_authorizeSurplus, {
+    promise: true,
+    length: 3,
+});
+
+export const setAllowanceAmountSurplus = async function (
+    network: string,
+    walletAddress: string,
+    amount?: BigNumber | string,
+    notifier?: Notifier
+): Promise<string> {
+    walletAddress; // so the memoizee cache is invalidated if another address is used
+    const flapAddress = await getContractAddressByName(network, 'MCD_FLAP');
+    const amountRaw = amount ? new BigNumber(amount).shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0) : MAX.toFixed(0);
+    return await executeTransaction(network, 'MKR', 'approve', [flapAddress, amountRaw], notifier);
+};
+
+export const fetchAllowanceAmountSurplus = async function (network: string, walletAddress: string): Promise<BigNumber> {
+    const joinDaiAddress = await getContractAddressByName(network, 'MCD_FLAP');
+    const DAIcontract = await getContract(network, 'MKR');
+    const allowanceRaw = await DAIcontract.allowance(walletAddress, joinDaiAddress);
+    return new BigNumber(allowanceRaw._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+};
+
