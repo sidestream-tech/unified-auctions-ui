@@ -10,6 +10,7 @@ import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import MCD_CLIP from './abis/MCD_CLIP.json';
 import MCD_DOG from './abis/MCD_DOG.json';
 import MCD_FLAP from './abis/MCD_FLAP.json';
+import MCD_GOV from './abis/MCD_GOV.json';
 import WSTETH from './abis/WSTETH.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
@@ -55,6 +56,9 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     }
     if (contractName.startsWith('MCD_CLIP_')) {
         return MCD_CLIP;
+    }
+    if (contractName === 'MCD_GOV') {
+        return MCD_GOV;
     }
     throw new Error(`No contract interface found for "${contractName}"`);
 };
