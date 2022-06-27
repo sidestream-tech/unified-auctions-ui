@@ -47,8 +47,8 @@ export const fetchSurplusAuctionByIndex = async function (
     }
 
     const auctionEndDate = new Date(auctionData.end * 1000);
-    const bidEndDate = new Date(auctionData.tic * 1000);
-    const earliestEndDate = getEarliestDate(auctionEndDate, bidEndDate);
+    const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
+    const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
     const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
 
     return {
