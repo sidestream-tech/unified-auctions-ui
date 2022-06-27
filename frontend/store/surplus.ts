@@ -28,6 +28,9 @@ export const mutations = {
 export const actions = {
     async fetchSurplusAuctions({ rootGetters, commit }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            throw new Error('Network is not defined.')
+        }
         const auctions = await fetchActiveSurplusAuctions(network);
         auctions.forEach(auction => commit('addAuctionToStorage', auction));
         return auctions;
