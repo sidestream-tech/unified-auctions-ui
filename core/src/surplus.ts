@@ -1,4 +1,4 @@
-import type { SurplusAuction, SurplusAuctionCollected, SurplusAuctionBase } from './types';
+import type { SurplusAuction, SurplusAuctionBase } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
