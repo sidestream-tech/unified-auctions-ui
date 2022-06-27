@@ -134,10 +134,7 @@ export const setAllowanceAmountMKR = async function (
     return await executeTransaction(network, 'MCD_GOV', 'approve(address)', [flapAddress], notifier);
 };
 
-export const fetchAllowanceAmountMKR = async function (
-    network: string,
-    walletAddress: string
-): Promise<BigNumber> {
+export const fetchAllowanceAmountMKR = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_FLAP');
     const MKRContract = await getContract(network, 'MCD_GOV');
     const allowanceRaw = await MKRContract.allowance(walletAddress, joinDaiAddress);
