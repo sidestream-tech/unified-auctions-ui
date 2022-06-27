@@ -4,14 +4,24 @@
             {{ currentStateAndTitle.title }}
             <time-till v-if="auction.state === 'have-bids'" :date="auction.earliestEndDate" />
         </template>
-        <TextBlock v-if="auction.state === 'ready-for-collection'">
-            Since the end of the auction at {{ auction.earliestEndDate.toUTCString() }}, the winner can now collect the
-            auction amount.
+
+        <TextBlock v-if="auction.state === 'ready-for-collection' || auction.state === 'collected'">
+            <div v-if="isCurrentWalletHighestBidder">
+                Since the auction ended at {{ auction.earliestEndDate.toUTCString() }}, you can now collect the auction
+                amount.
+            </div>
+
+            <div v-else>
+                Since the auction ended at {{ auction.earliestEndDate.toUTCString() }}, you can now collect the auction
+                amount. Note however that the auction amount will be transferred to the highest bidder's wallet.
+            </div>
         </TextBlock>
+
         <TextBlock v-else>
-            If no one else bids on the auction, the winner be able to collect the auction amount when the auction is
-            ended after {{ auction.earliestEndDate.toUTCString() }}
+            If no one else bids on the auction, one will be able to collect the auction amount when the auction is
+            ended after {{ auction.earliestEndDate.toUTCString() }}.
         </TextBlock>
+
         <div class="flex justify-end gap-5">
             <BaseButton
                 class="w-full md:w-80"
@@ -33,7 +43,7 @@ import { SurplusAuction } from 'auctions-core/src/types';
 import BasePanel from '../common/BasePanel.vue';
 import TextBlock from '../common/TextBlock.vue';
 import FormatCurrency from '../utils/FormatCurrency.vue';
-import BaseButton from '../common/BaseButton';
+import BaseButton from '../common/BaseButton.vue';
 import TimeTill from '../common/TimeTill.vue';
 
 export default Vue.extend({
