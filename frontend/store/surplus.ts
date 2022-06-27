@@ -3,7 +3,7 @@ import type { SurplusAuction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import notifier from '~/lib/notifier';
 import { fetchActiveSurplusAuctions } from 'auctions-core/src/surplus';
-import { setAllowanceAmountSurplus, fetchAllowanceAmountSurplus, authorizeSurplus, getSurplusAuthorizationStatus } from 'auctions-core/src/authorizations';
+import { setAllowanceAmountMKR, fetchAllowanceAmountMKR, authorizeSurplus, getSurplusAuthorizationStatus } from 'auctions-core/src/authorizations';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
@@ -40,8 +40,8 @@ export const actions = {
     async giveAllowanceMKR( {rootGetters}: ActionContext<State, State>){
         const network = rootGetters['network/getMakerNetwork'];
         const wallet = rootGetters['wallet/getAddress'];
-        await setAllowanceAmountSurplus(network, wallet, notifier)
-        const allowance = await fetchAllowanceAmountSurplus(network, wallet)
+        await setAllowanceAmountMKR(network, wallet, notifier)
+        const allowance = await fetchAllowanceAmountMKR(network, wallet)
         console.log(allowance.toNumber())
     },
     async authorizeSurplusAuctions({ rootGetters, dispatch }: ActionContext<State, State>) {
@@ -55,7 +55,7 @@ export const actions = {
             console.error(`Wallet authorization error: ${error.message}`);
         }
     },
-    async deauthorizeSurplusAuctions({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+    async deauthorizeSurplusAuctions({ dispatch, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
         try {
@@ -66,7 +66,7 @@ export const actions = {
             console.error(`Wallet authorization error: ${error.message}`);
         }
     },
-    async fetchSurplusAuthorizationStatus({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+    async fetchSurplusAuthorizationStatus({ dispatch, rootGetters }: ActionContext<State, State>) {
         const walletAddress = rootGetters['wallet/getAddress'];
         const network = rootGetters['network/getMakerNetwork'];
         try {

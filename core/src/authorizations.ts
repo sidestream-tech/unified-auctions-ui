@@ -74,7 +74,7 @@ export const getCollateralAuthorizationStatus = memoizee(_getCollateralAuthoriza
     length: 3,
 });
 
-export const setAllowanceAmount = async function (
+export const setAllowanceAmountDAI = async function (
     network: string,
     walletAddress: string,
     amount?: BigNumber | string,
@@ -86,7 +86,7 @@ export const setAllowanceAmount = async function (
     return await executeTransaction(network, 'MCD_DAI', 'approve', [joinDaiAddress, amountRaw], notifier);
 };
 
-export const fetchAllowanceAmount = async function (network: string, walletAddress: string): Promise<BigNumber> {
+export const fetchAllowanceAmountDAI = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const DAIcontract = await getContract(network, 'MCD_DAI');
     const allowanceRaw = await DAIcontract.allowance(walletAddress, joinDaiAddress);
@@ -124,7 +124,7 @@ export const authorizeSurplus = memoizee(_authorizeSurplus, {
     length: 3,
 });
 
-export const setAllowanceAmountSurplus = async function (
+export const setAllowanceAmountMKR = async function (
     network: string,
     walletAddress: string,
     notifier?: Notifier
@@ -134,7 +134,7 @@ export const setAllowanceAmountSurplus = async function (
     return await executeTransaction(network, 'MCD_GOV', 'approve(address)', [flapAddress], notifier);
 };
 
-export const fetchAllowanceAmountSurplus = async function (
+export const fetchAllowanceAmountMKR = async function (
     network: string,
     walletAddress: string
 ): Promise<BigNumber> {
