@@ -130,7 +130,7 @@ export const setAllowanceAmountMKR = async function (
     notifier?: Notifier
 ): Promise<string> {
     walletAddress; // so the memoizee cache is invalidated if another address is used
-    const flapAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
+    const flapAddress = await getContractAddressByName(network, 'MCD_FLAP');
     return await executeTransaction(network, 'MCD_GOV', 'approve(address)', [flapAddress], notifier);
 };
 
@@ -138,7 +138,7 @@ export const fetchAllowanceAmountMKR = async function (
     network: string,
     walletAddress: string
 ): Promise<BigNumber> {
-    const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
+    const joinDaiAddress = await getContractAddressByName(network, 'MCD_FLAP');
     const MKRContract = await getContract(network, 'MCD_GOV');
     const allowanceRaw = await MKRContract.allowance(walletAddress, joinDaiAddress);
     return new BigNumber(allowanceRaw._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
