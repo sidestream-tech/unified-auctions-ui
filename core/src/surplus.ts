@@ -1,10 +1,11 @@
-import type { SurplusAuction, SurplusAuctionBase } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
 import { Contract } from 'ethers';
 import getNetworkDate from './date';
-import { RAD, WAD } from './constants/UNITS';
+import { RAD, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import executeTransaction from './execute';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
@@ -13,7 +14,7 @@ const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> =
 
 const getAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
     const isBidExpired = (await getNetworkDate(network)) > earliestEndDate;
-    const haveBids = greatestBid === 0;
+    const haveBids = greatestBid !== 0;
     if (haveBids) {
         if (isBidExpired) {
             return 'ready-for-collection';
@@ -85,4 +86,61 @@ export const fetchActiveSurplusAuctions = async function (network: string): Prom
         surplusAuctions.push(currentSurplusAuction);
     }
     return surplusAuctions;
+};
+
+const surplusAuctionRestartedCallback = async function (
+    network: string,
+    auctionIndex: number
+): Promise<SurplusAuction> {
+    const restartedAuction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
+    if (!restartedAuction) {
+        throw new Error('Failed to refetch the restarted auction.');
+    }
+    return restartedAuction;
+};
+
+export const restartSurplusAuction = async function (
+    network: string,
+    auctionIndex: number,
+    notifier?: Notifier
+): Promise<SurplusAuction> {
+    const auction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
+    if (!auction || auction!.state !== 'requires-restart') {
+        throw new Error("Can't restart the active auction");
+    }
+    await executeTransaction(network, 'MCD_FLAP', 'tick', [new BigNumber(auctionIndex).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)], notifier);
+    return await surplusAuctionRestartedCallback(network, auctionIndex);
+};
+
+export const bidToSurplusAuction = async function (
+    network: string,
+    auctionIndex: number,
+    bet: string,
+    notifier?: Notifier
+) {
+    const auction = await getActiveSurplusAuctionOrUndefined(network, Number(auctionIndex));
+    if (!auction) {
+        throw new Error('Did not find the auction to bid on.');
+    }
+    const transactionParameters = [
+        new BigNumber(auctionIndex).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        auction.receiveAmountDAI.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        new BigNumber(bet).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+    ];
+    console.log(transactionParameters)
+    await executeTransaction(network, 'MCD_FLAP', 'tend', transactionParameters, notifier);
+};
+
+export const collectSurplusAuction = async function (network: string, auctionIndex: number, notifier?: Notifier) {
+    const auction = await getActiveSurplusAuctionOrUndefined(network, Number(auctionIndex));
+    if (!auction || auction.state !== 'ready-for-collection') {
+        throw new Error('Did not find the auction to collect.');
+    }
+    await executeTransaction(
+        network,
+        'MCD_FLAP',
+        'tend',
+        [new BigNumber(auctionIndex).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)],
+        notifier
+    );
 };

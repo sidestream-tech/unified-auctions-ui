@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import type { SurplusAuction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
-import { fetchActiveSurplusAuctions } from 'auctions-core/src/surplus';
+import { fetchActiveSurplusAuctions, restartSurplusAuction, bidToSurplusAuction, collectSurplusAuction } from 'auctions-core/src/surplus';
 import {
     setAllowanceAmountMKR,
     fetchAllowanceAmountMKR,
@@ -12,7 +12,6 @@ import notifier from '~/lib/notifier';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
-
 interface State {
     auctionStorage: Record<string, SurplusAuction>;
 }
@@ -86,4 +85,26 @@ export const actions = {
             await dispatch('fetchSurplusAuthorizationStatus');
         }
     },
+    async restartAuction({ rootGetters }: ActionContext<State, State>, auctionIndex: number){
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        return await restartSurplusAuction(network, auctionIndex, notifier)
+    },
+    async betOnAuction({ rootGetters }: ActionContext<State, State>, {auctionIndex, bet}:{auctionIndex: number; bet: string}){
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        console.log(bet)
+        bidToSurplusAuction(network, auctionIndex, bet)
+    },
+    async collectAuction({ rootGetters }: ActionContext<State, State>, auctionIndex: number){
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        collectSurplusAuction(network, auctionIndex)
+    }
 };
