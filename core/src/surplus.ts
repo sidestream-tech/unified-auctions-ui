@@ -1,4 +1,4 @@
-import type { SurplusAuction, SurplusAuctionCollected, SurplusAuctionBase } from './types';
+import type { SurplusAuction, SurplusAuctionBase } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -29,16 +29,16 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
     auctionIndex: number
-): Promise<SurplusAuction | SurplusAuctionCollected> {
+): Promise<SurplusAuction> {
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionData = await contract.bids(auctionIndex);
-    const isAuctionDeleted = new BigNumber(auctionData.end).eq(0);
+    const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
     const baseAuctionInfo: SurplusAuctionBase = {
         network,
         id: auctionIndex,
     };
 
-    if (isAuctionDeleted) {
+    if (isAuctionCollected) {
         const auctionLastIndex = await getSurplusAuctionLastIndex(contract);
         if (auctionLastIndex < auctionIndex) {
             throw new Error('No active auction exists with this id');
@@ -47,8 +47,8 @@ export const fetchSurplusAuctionByIndex = async function (
     }
 
     const auctionEndDate = new Date(auctionData.end * 1000);
-    const bidEndDate = new Date(auctionData.tic * 1000);
-    const earliestEndDate = getEarliestDate(auctionEndDate, bidEndDate);
+    const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
+    const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
     const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
 
     return {
