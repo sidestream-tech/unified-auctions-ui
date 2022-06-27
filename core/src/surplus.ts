@@ -13,7 +13,7 @@ const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> =
 
 const getAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
     const isBidExpired = (await getNetworkDate(network)) > earliestEndDate;
-    const haveBids = greatestBid === 0;
+    const haveBids = greatestBid !== 0;
     if (haveBids) {
         if (isBidExpired) {
             return 'ready-for-collection';
