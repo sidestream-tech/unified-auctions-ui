@@ -5,13 +5,16 @@
             In order to win the auction, participants can bid on the auction. In case someone puts a higher bid on the
             auction, you receive your MKR back, only losing the transaction fees.
         </TextBlock>
-        <SurplusAuctionTransactionTable
-            class="my-3"
-            :user-wallet-address="userWalletAddress"
-            :events="bidEvents"
-            :is-loading="isLoading"
-            :error="error"
-        />
+
+        <TextBlock class="my-3">
+            Current Highest Bid
+            <span v-if="latestBid === null" class="flex justify-end gap-5"> There were no bids yet </span>
+
+            <span v-else class="flex justify-end gap-5">
+                <FormatCurrency :value="latestBid" currency="MKR" />
+            </span>
+        </TextBlock>
+
         <div class="flex justify-end gap-5">
             <BaseButton
                 class="w-full md:w-80"
@@ -25,7 +28,7 @@
                     >Bid <FormatCurrency :value="bidAmount" currency="MKR" /> on
                     <FormatCurrency :value="auction.receiveAmountDAI" currency="DAI"
                 /></span>
-                <span v-else-if="error">Error</span>
+                <span v-else-if="error">Unknown</span>
                 <span v-else>Loading...</span>
             </BaseButton>
         </div>
@@ -38,13 +41,12 @@ import { SurplusAuction } from 'auctions-core/dist/src/types';
 import BigNumber from 'bignumber.js';
 import BasePanel from '../common/BasePanel.vue';
 import TextBlock from '../common/TextBlock.vue';
-import SurplusAuctionTransactionTable from '../surplus/SurplusAuctionTransactionTable.vue';
 import BaseButton from '../common/BaseButton.vue';
 import FormatCurrency from '../utils/FormatCurrency.vue';
 
 export default Vue.extend({
     name: 'HighestBidCheckPanel',
-    components: { FormatCurrency, SurplusAuctionTransactionTable, BaseButton, TextBlock, BasePanel },
+    components: { FormatCurrency, BaseButton, TextBlock, BasePanel },
     props: {
         auction: {
             type: Object as Vue.PropType<SurplusAuction>,
