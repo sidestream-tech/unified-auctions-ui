@@ -2,19 +2,18 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import WalletMkrDepositCheckPanel from './WalletMkrDepositCheckPanel';
-
-const MAINNET_MKR_TOKEN_ADDRESS = '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2';
+import WalletDepositCheckPanel from './WalletDepositCheckPanel';
 
 const common = {
-    components: { WalletMkrDepositCheckPanel },
+    components: { WalletDepositCheckPanel },
     data() {
         return {
-            walletMkr: new BigNumber(faker.finance.amount(0, 100)),
-            walletVatMkr: new BigNumber(faker.finance.amount(0, 100)),
+            walletAmount: new BigNumber(faker.finance.amount(0, 100)),
+            walletVatAmount: new BigNumber(faker.finance.amount(0, 100)),
             desiredAmount: new BigNumber(faker.finance.amount(101, 200)),
             network: 'mainnet',
-            tokenAddressMkr: MAINNET_MKR_TOKEN_ADDRESS,
+            tokenAddress: faker.finance.ethereumAddress(),
+            currency: 'DAI',
             isExplanationsShown: true,
             disabled: false,
             isLoading: false,
@@ -30,22 +29,22 @@ const common = {
         isCorrect: action('isCorrect'),
     },
     template: `
-        <WalletMkrDepositCheckPanel
+        <WalletDepositCheckPanel
         v-bind="$data"
         @refresh="refresh"
         @update:isCorrect="isCorrect"
         />`,
 };
 
-storiesOf('Panels/WalletMkrDepositCheckPanel', module)
-    .add('Insufficient amount of MKR present', () => ({
+storiesOf('Panels/WalletDepositCheckPanel', module)
+    .add('Insufficient amount present', () => ({
         ...common,
     }))
-    .add('Sufficient amount of MKR present', () => ({
+    .add('Sufficient amount present', () => ({
         ...common,
         data: () => ({
             ...common.data(),
-            walletMkr: new BigNumber(100),
+            walletAmount: new BigNumber(100),
             desiredAmount: new BigNumber(10),
         }),
     }))
@@ -74,8 +73,15 @@ storiesOf('Panels/WalletMkrDepositCheckPanel', module)
         ...common,
         data: () => ({
             ...common.data(),
-            walletMkr: undefined,
-            walletVatMkr: undefined,
+            walletAmount: undefined,
+            walletVatAmount: undefined,
+        }),
+    }))
+    .add('MKR Token', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            currency: 'MKR',
         }),
     }))
     .add('Loading', () => ({

@@ -23,11 +23,11 @@
                 :disabled="!canDeposit || isAllowanceAmountLoading"
             />
             <div v-if="selectedMethod === 'deposit'">
-                <WalletDaiDepositCheckPanel
+                <WalletDepositCheckPanel
                     :is-correct.sync="isWalletDaiCheckPassed"
-                    :wallet-dai="maxDeposit"
+                    :wallet-amount="maxDeposit"
                     :desired-amount="depositAmount || maxDeposit"
-                    :token-address-dai="tokenAddressDai"
+                    :token-address="tokenAddressDai"
                     :network="network"
                     :is-loading="isLoading"
                     :is-explanations-shown="isExplanationsShown"
@@ -88,7 +88,7 @@ import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import BaseValueInput from '~/components/common/BaseValueInput.vue';
-import WalletDaiDepositCheckPanel from '~/components/panels/WalletDaiDepositCheckPanel.vue';
+import WalletDepositCheckPanel from '~/components/panels/WalletDepositCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
 import WalletVatDaiWithdrawCheckPanel from '~/components/panels/WalletVatDaiWithdrawCheckPanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
@@ -101,7 +101,7 @@ export default Vue.extend({
         TextBlock,
         RadioGroup: Radio.Group,
         RadioButton: Radio.Button,
-        WalletDaiDepositCheckPanel,
+        WalletDepositCheckPanel,
         AllowanceAmountCheckPanel,
         WalletVatDaiWithdrawCheckPanel,
         WalletAuthorizationCheckPanel,

@@ -1,39 +1,49 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
-        <TextBlock>
-            <div class="flex justify-between">
-                <span>MKR amount in the wallet</span>
-                <format-currency v-if="walletMkr" :value="walletMkr" currency="MKR" />
-                <div v-else>
-                    <span class="opacity-75">Unknown</span>
-                    <span>MKR</span>
+        <div class="flex flex-col gap-2">
+            <TextBlock v-if="currency === 'MKR'">
+                <div class="flex justify-between">
+                    <span>{{ currency }} amount in the wallet</span>
+                    <format-currency v-if="walletAmount" :value="walletAmount" :currency="currency" />
+                    <div v-else>
+                        <span class="opacity-75">Unknown</span>
+                        <span>{{ currency }}</span>
+                    </div>
                 </div>
-            </div>
-            <div class="flex justify-between">
-                <span>Currently deposited in VAT</span>
-                <format-currency v-if="walletVatMkr" :value="walletVatMkr" currency="MKR" />
-                <div v-else>
-                    <span class="opacity-75">Unknown</span>
-                    <span>MKR</span>
+                <div class="flex justify-between">
+                    <span>Currently deposited in VAT</span>
+                    <format-currency v-if="walletVatAmount" :value="walletVatAmount" :currency="currency" />
+                    <div v-else>
+                        <span class="opacity-75">Unknown</span>
+                        <span>{{ currency }}</span>
+                    </div>
                 </div>
-            </div>
-            <div class="flex justify-between">
-                <span>Minimum to deposit</span>
-                <format-currency v-if="minimumDepositMkr" :value="minimumDepositMkr" currency="MKR" />
-                <div v-else>
-                    <span class="opacity-75">Unknown</span>
-                    <span>MKR</span>
+                <div class="flex justify-between">
+                    <span>Minimum to deposit</span>
+                    <format-currency v-if="minimumDepositAmount" :value="minimumDepositAmount" :currency="currency" />
+                    <div v-else>
+                        <span class="opacity-75">Unknown</span>
+                        <span>{{ currency }}</span>
+                    </div>
                 </div>
-            </div>
-        </TextBlock>
-        <TextBlock v-if="isExplanationsShown" class="mt-4">
-            If you do not have MKR funds to deposit yet, you can obtain it for example by purchasing it on a
-            decentralized exchange like
-            <a href="https://uniswap.org/" target="_blank">uniswap.org</a>
-            (correct MKR token address used on the “{{ networkTitle }}” network is
-            <FormatAddress type="address" :value="tokenAddressMkr" shorten />)
-        </TextBlock>
+            </TextBlock>
+            <TextBlock v-if="isExplanationsShown">
+                If you do not have {{ currency }} funds to deposit yet, you can obtain them:
+                <ul class="list-disc list-inside">
+                    <li v-if="currency === 'DAI'">
+                        By borrowing DAI against a collateral in the
+                        <a href="https://oasis.app/" target="_blank">oasis.app</a>
+                    </li>
+                    <li>
+                        By purchasing it on a decentralized exchange like
+                        <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct {{ currency }} token
+                        address used on the “{{ networkTitle }}” network is
+                        <FormatAddress type="address" :value="tokenAddress" shorten />)
+                    </li>
+                </ul>
+            </TextBlock>
+        </div>
         <div class="flex justify-end mt-2">
             <BaseButton :disabled="disabled" :is-loading="isLoading" @click="$emit('refresh')">
                 Refresh wallet balance
@@ -61,11 +71,11 @@ export default Vue.extend({
         FormatCurrency,
     },
     props: {
-        walletMkr: {
+        walletAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        walletVatMkr: {
+        walletVatAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
@@ -77,9 +87,13 @@ export default Vue.extend({
             type: String,
             default: undefined,
         },
-        tokenAddressMkr: {
+        tokenAddress: {
             type: String,
             default: '',
+        },
+        currency: {
+            type: String,
+            default: 'DAI',
         },
         disabled: {
             type: Boolean,
@@ -95,14 +109,14 @@ export default Vue.extend({
         },
     },
     computed: {
-        minimumDepositMkr(): BigNumber | undefined {
-            if (!this.desiredAmount || !this.walletVatMkr || this.desiredAmount.isLessThan(0)) {
+        minimumDepositAmount(): BigNumber | undefined {
+            if (!this.desiredAmount || !this.walletVatAmount || this.desiredAmount.isLessThan(0)) {
                 return undefined;
             }
-            return BigNumber.maximum(0, this.desiredAmount.minus(this.walletVatMkr));
+            return BigNumber.maximum(0, this.desiredAmount.minus(this.walletVatAmount));
         },
         currentStateAndTitle(): PanelProps {
-            if (!this.walletMkr) {
+            if (!this.walletAmount) {
                 return {
                     name: 'inactive',
                     title: 'Please connect a wallet',
@@ -120,16 +134,16 @@ export default Vue.extend({
                     title: 'The amount can not be negative',
                 };
             }
-            const isTooSmall = this.desiredAmount.isGreaterThan(this.walletMkr);
+            const isTooSmall = this.desiredAmount.isGreaterThan(this.walletAmount);
             if (isTooSmall) {
                 return {
                     name: 'incorrect',
-                    title: 'The sufficient amount of MKR is not present in the connected wallet',
+                    title: `The sufficient amount of ${this.currency} is not present in the connected wallet`,
                 };
             }
             return {
                 name: 'correct',
-                title: 'The sufficient amount of MKR is present in the connected wallet',
+                title: `The sufficient amount of ${this.currency} is present in the connected wallet`,
             };
         },
         networkTitle(): string {

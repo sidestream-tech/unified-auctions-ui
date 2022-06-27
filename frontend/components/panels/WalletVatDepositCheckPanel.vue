@@ -1,13 +1,14 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
-        <WalletMkrDepositCheckPanel
-            :is-correct.sync="isEnoughMkrInWallet"
-            :wallet-mkr="walletMkr"
-            :wallet-vat-mkr="walletVatMkr"
+        <WalletDepositCheckPanel
+            :is-correct.sync="isEnoughInWallet"
+            :wallet-amount="walletAmount"
+            :wallet-vat-amount="walletVatAmount"
             :desired-amount="desiredAmount"
             :network="network"
-            :token-address-mkr="tokenAddressMkr"
+            :token-address="tokenAddress"
+            :currency="currency"
             :disabled="disabled"
             :is-loading="isLoading"
             :is-explanations-shown="isExplanationsShown"
@@ -16,36 +17,37 @@
         <AllowanceAmountCheckPanel
             :is-correct.sync="isAmountWithinAllowance"
             :allowance-amount="allowanceAmount"
-            :desired-amount="desiredAmount"
-            currency="MKR"
+            :desired-amount="minimumDepositAmount"
+            :currency="currency"
             :is-loading="isLoading"
-            :disabled="disabled || !isEnoughMkrInWallet"
+            :disabled="disabled || !isEnoughInWallet"
             :is-explanations-shown="isExplanationsShown"
             @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
         />
         <TextBlock v-if="isExplanationsShown && !isEnoughDeposited" class="mt-2">
-            The amount of <format-currency :value="desiredAmount" currency="MKR" /> is not present in the VAT and needs
-            to be deposited there before the participation can happen.
+            The amount of <format-currency :value="desiredAmount" :currency="currency" /> is not present in the VAT and
+            needs to be deposited there before the participation can happen.
         </TextBlock>
         <Button
             type="primary"
             class="w-full mt-2"
-            :disabled="disabled || !isAmountWithinAllowance || !isEnoughMkrInWallet || isEnoughDeposited"
+            :disabled="disabled || !isAmountWithinAllowance || !isEnoughInWallet || isEnoughDeposited"
             :is-loading="isLoading"
             @click="$emit('deposit')"
         >
-            Deposit <format-currency :value="desiredAmount" currency="MKR" class="ml-1" />
+            Deposit <format-currency :value="minimumDepositAmount" :currency="currency" class="ml-1" />
         </Button>
     </BasePanel>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import Button from '~/components/common/BaseButton.vue';
 import BasePanel from '~/components/common/BasePanel.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import WalletMkrDepositCheckPanel from '~/components/panels/WalletMkrDepositCheckPanel.vue';
+import WalletDepositCheckPanel from '~/components/panels/WalletDepositCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
 
 export default Vue.extend({
@@ -54,15 +56,15 @@ export default Vue.extend({
         BasePanel,
         TextBlock,
         FormatCurrency,
-        WalletMkrDepositCheckPanel,
+        WalletDepositCheckPanel,
         AllowanceAmountCheckPanel,
     },
     props: {
-        walletMkr: {
+        walletAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        walletVatMkr: {
+        walletVatAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
@@ -78,9 +80,13 @@ export default Vue.extend({
             type: String,
             default: undefined,
         },
-        tokenAddressMkr: {
+        tokenAddress: {
             type: String,
             default: '',
+        },
+        currency: {
+            type: String,
+            default: 'DAI',
         },
         disabled: {
             type: Boolean,
@@ -97,20 +103,26 @@ export default Vue.extend({
     },
     data: () => ({
         isAmountWithinAllowance: false,
-        isEnoughMkrInWallet: false,
+        isEnoughInWallet: false,
     }),
     computed: {
+        minimumDepositAmount(): BigNumber | undefined {
+            if (!this.desiredAmount || !this.walletVatAmount) {
+                return undefined;
+            }
+            return BigNumber.maximum(0, this.desiredAmount.minus(this.walletVatAmount));
+        },
         isDesiredAmountValid(): boolean {
             return this.desiredAmount && !this.desiredAmount.isNaN();
         },
         isEnoughDeposited(): boolean {
-            if (!this.walletVatMkr || !this.isDesiredAmountValid || this.desiredAmount.isLessThan(0)) {
+            if (!this.walletVatAmount || !this.isDesiredAmountValid || this.desiredAmount.isLessThan(0)) {
                 return false;
             }
-            return this.desiredAmount.isLessThan(this.walletVatMkr);
+            return this.desiredAmount.isLessThan(this.walletVatAmount);
         },
         currentStateAndTitle(): PanelProps {
-            if (!this.walletMkr) {
+            if (!this.walletAmount) {
                 return {
                     name: 'inactive',
                     title: 'Please connect a wallet',
@@ -131,12 +143,12 @@ export default Vue.extend({
             if (!this.isEnoughDeposited) {
                 return {
                     name: 'incorrect',
-                    title: 'The amount of MKR is not present in the VAT',
+                    title: `The amount of ${this.currency} is not present in the VAT`,
                 };
             }
             return {
                 name: 'correct',
-                title: 'The amount of MKR is present in the VAT',
+                title: `The amount of ${this.currency} is present in the VAT`,
             };
         },
     },
