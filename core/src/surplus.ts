@@ -29,16 +29,16 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
     auctionIndex: number
-): Promise<SurplusAuction | SurplusAuctionCollected> {
+): Promise<SurplusAuction> {
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionData = await contract.bids(auctionIndex);
-    const isAuctionDeleted = new BigNumber(auctionData.end).eq(0);
+    const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
     const baseAuctionInfo: SurplusAuctionBase = {
         network,
         id: auctionIndex,
     };
 
-    if (isAuctionDeleted) {
+    if (isAuctionCollected) {
         const auctionLastIndex = await getSurplusAuctionLastIndex(contract);
         if (auctionLastIndex < auctionIndex) {
             throw new Error('No active auction exists with this id');
