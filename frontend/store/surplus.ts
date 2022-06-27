@@ -1,9 +1,14 @@
 import Vue from 'vue';
 import type { SurplusAuction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
-import notifier from '~/lib/notifier';
 import { fetchActiveSurplusAuctions } from 'auctions-core/src/surplus';
-import { setAllowanceAmountMKR, fetchAllowanceAmountMKR, authorizeSurplus, getSurplusAuthorizationStatus } from 'auctions-core/src/authorizations';
+import {
+    setAllowanceAmountMKR,
+    fetchAllowanceAmountMKR,
+    authorizeSurplus,
+    getSurplusAuthorizationStatus,
+} from 'auctions-core/src/authorizations';
+import notifier from '~/lib/notifier';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
@@ -40,12 +45,12 @@ export const actions = {
         auctions.forEach(auction => commit('addAuctionToStorage', auction));
         return auctions;
     },
-    async giveAllowanceMKR( {rootGetters}: ActionContext<State, State>){
+    async giveAllowanceMKR({ rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         const wallet = rootGetters['wallet/getAddress'];
-        await setAllowanceAmountMKR(network, wallet, notifier)
-        const allowance = await fetchAllowanceAmountMKR(network, wallet)
-        console.log(allowance.toNumber())
+        await setAllowanceAmountMKR(network, wallet, notifier);
+        const allowance = await fetchAllowanceAmountMKR(network, wallet);
+        console.log(allowance.toNumber());
     },
     async authorizeSurplusAuctions({ rootGetters, dispatch }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
@@ -53,7 +58,7 @@ export const actions = {
         try {
             await authorizeSurplus(network, walletAddress, false, notifier);
             const k = await dispatch('fetchSurplusAuthorizationStatus');
-            console.log(k)
+            console.log(k);
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
         }
@@ -64,7 +69,7 @@ export const actions = {
         try {
             await authorizeSurplus(network, walletAddress, true, notifier);
             const k = await dispatch('fetchSurplusAuthorizationStatus');
-            console.log(k)
+            console.log(k);
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
         }
