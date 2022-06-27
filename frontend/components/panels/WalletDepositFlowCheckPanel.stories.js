@@ -2,10 +2,10 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import WalletVatDepositCheckPanel from './WalletVatDepositCheckPanel';
+import WalletDepositFlowCheckPanel from './WalletDepositFlowCheckPanel';
 
 const common = {
-    components: { WalletVatDepositCheckPanel },
+    components: { WalletDepositFlowCheckPanel },
     data() {
         return {
             walletAmount: new BigNumber(faker.finance.amount(0, 100)),
@@ -45,7 +45,7 @@ const common = {
         isCorrect: action('isCorrect'),
     },
     template: `
-        <WalletVatDepositCheckPanel
+        <WalletDepositFlowCheckPanel
         v-bind="$data"
         @refresh="refresh"
         @setAllowanceAmount="setAllowanceAmount"
@@ -54,7 +54,7 @@ const common = {
         />`,
 };
 
-storiesOf('Panels/WalletVatDepositCheckPanel', module)
+storiesOf('Panels/WalletDepositFlowCheckPanel', module)
     .add('Insufficient MKR in wallet', () => ({
         ...common,
     }))

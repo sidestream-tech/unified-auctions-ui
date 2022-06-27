@@ -1,7 +1,7 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
-        <WalletDepositCheckPanel
+        <WalletVatCheckPanel
             :is-correct.sync="isEnoughInWallet"
             :wallet-amount="walletAmount"
             :wallet-vat-amount="walletVatAmount"
@@ -47,7 +47,7 @@ import Button from '~/components/common/BaseButton.vue';
 import BasePanel from '~/components/common/BasePanel.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import WalletDepositCheckPanel from '~/components/panels/WalletDepositCheckPanel.vue';
+import WalletVatCheckPanel from '~/components/panels/WalletVatCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
 
 export default Vue.extend({
@@ -56,7 +56,7 @@ export default Vue.extend({
         BasePanel,
         TextBlock,
         FormatCurrency,
-        WalletDepositCheckPanel,
+        WalletVatCheckPanel,
         AllowanceAmountCheckPanel,
     },
     props: {
@@ -116,10 +116,7 @@ export default Vue.extend({
             return this.desiredAmount && !this.desiredAmount.isNaN();
         },
         isEnoughDeposited(): boolean {
-            if (!this.walletVatAmount || !this.isDesiredAmountValid || this.desiredAmount.isLessThan(0)) {
-                return false;
-            }
-            return this.desiredAmount.isLessThan(this.walletVatAmount);
+            return !this.minimumDepositAmount?.isGreaterThan(0);
         },
         currentStateAndTitle(): PanelProps {
             if (!this.walletAmount) {

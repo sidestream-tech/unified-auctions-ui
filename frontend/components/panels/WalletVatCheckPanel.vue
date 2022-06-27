@@ -2,7 +2,7 @@
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
         <div class="flex flex-col gap-2">
-            <TextBlock v-if="currency === 'MKR'">
+            <TextBlock v-if="isTableShown">
                 <div class="flex justify-between">
                     <span>{{ currency }} amount in the wallet</span>
                     <format-currency v-if="walletAmount" :value="walletAmount" :currency="currency" />
@@ -102,6 +102,10 @@ export default Vue.extend({
         isLoading: {
             type: Boolean,
             default: false,
+        },
+        isTableShown: {
+            type: Boolean,
+            default: true,
         },
         isExplanationsShown: {
             type: Boolean,

@@ -2,10 +2,10 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import WalletDepositCheckPanel from './WalletDepositCheckPanel';
+import WalletVatCheckPanel from './WalletVatCheckPanel';
 
 const common = {
-    components: { WalletDepositCheckPanel },
+    components: { WalletVatCheckPanel },
     data() {
         return {
             walletAmount: new BigNumber(faker.finance.amount(0, 100)),
@@ -16,6 +16,7 @@ const common = {
             currency: 'DAI',
             isExplanationsShown: true,
             disabled: false,
+            isTableShown: true,
             isLoading: false,
         };
     },
@@ -29,14 +30,14 @@ const common = {
         isCorrect: action('isCorrect'),
     },
     template: `
-        <WalletDepositCheckPanel
+        <WalletVatCheckPanel
         v-bind="$data"
         @refresh="refresh"
         @update:isCorrect="isCorrect"
         />`,
 };
 
-storiesOf('Panels/WalletDepositCheckPanel', module)
+storiesOf('Panels/WalletVatCheckPanel', module)
     .add('Insufficient amount present', () => ({
         ...common,
     }))
@@ -82,6 +83,13 @@ storiesOf('Panels/WalletDepositCheckPanel', module)
         data: () => ({
             ...common.data(),
             currency: 'MKR',
+        }),
+    }))
+    .add('Hidden Table', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            isTableShown: false,
         }),
     }))
     .add('Loading', () => ({
