@@ -9,8 +9,10 @@ import MCD_JOIN from './abis/MCD_JOIN.json';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import MCD_CLIP from './abis/MCD_CLIP.json';
 import MCD_DOG from './abis/MCD_DOG.json';
+import MCD_FLAP from './abis/MCD_FLAP.json';
 import WSTETH from './abis/WSTETH.json';
 import getSigner from './signer';
+import memoizee from 'memoizee';
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
     const suffix = collateralType.toUpperCase().replace('-', '_');
@@ -36,6 +38,9 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     if (contractName === 'MCD_DOG') {
         return MCD_DOG;
     }
+    if (contractName === 'MCD_FLAP') {
+        return MCD_FLAP;
+    }
     if (contractName === 'WSTETH') {
         return WSTETH;
     }
@@ -54,12 +59,17 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     throw new Error(`No contract interface found for "${contractName}"`);
 };
 
-const getContract = async function (network: string, contractName: string, useSigner = false): Promise<Contract> {
+const _getContract = async function (network: string, contractName: string, useSigner = false): Promise<Contract> {
     const contractAddress = await getContractAddressByName(network, contractName);
     const contractInterface = await getContractInterfaceByName(contractName);
     const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
     const contract = await new ethers.Contract(contractAddress, contractInterface, signerOrProvider);
     return contract;
 };
+
+const getContract = memoizee(_getContract, {
+    promise: true,
+    length: 3,
+});
 
 export default getContract;
