@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import type { SurplusAuction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
-import { fetchActiveSurplusAuctions, restartSurplusAuction, bidToSurplusAuction, collectSurplusAuction } from 'auctions-core/src/surplus';
+import { fetchActiveSurplusAuctions, restartSurplusAuction, bidToSurplusAuction, collectSurplusAuction , exchangeEthToMkr, approveEthToMkrSwap} from 'auctions-core/src/surplus';
 import {
     setAllowanceAmountMKR,
     fetchAllowanceAmountMKR,
@@ -106,5 +106,20 @@ export const actions = {
             return;
         }
         collectSurplusAuction(network, auctionIndex)
+    },
+    async swapEthToMkr({rootGetters}: ActionContext<State, State>){
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        const wallet = rootGetters['wallet/getAddress'];
+        await exchangeEthToMkr(network, wallet);
+    },
+    async allowSwapEthToMkr({rootGetters}: ActionContext<State, State>){
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        await approveEthToMkrSwap(network);
     }
 };
