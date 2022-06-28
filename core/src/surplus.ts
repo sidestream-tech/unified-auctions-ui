@@ -127,7 +127,6 @@ export const bidToSurplusAuction = async function (
         auction.receiveAmountDAI.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
         new BigNumber(bet).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
     ];
-    console.log(transactionParameters)
     await executeTransaction(network, 'MCD_FLAP', 'tend', transactionParameters, notifier);
 };
 
@@ -139,7 +138,7 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     await executeTransaction(
         network,
         'MCD_FLAP',
-        'tend',
+        'deal',
         [new BigNumber(auctionIndex).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)],
         notifier
     );
