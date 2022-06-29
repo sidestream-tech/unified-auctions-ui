@@ -1,7 +1,12 @@
 import Vue from 'vue';
 import type { SurplusAuction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
-import { fetchActiveSurplusAuctions, restartSurplusAuction, bidToSurplusAuction, collectSurplusAuction } from 'auctions-core/src/surplus';
+import {
+    fetchActiveSurplusAuctions,
+    restartSurplusAuction,
+    bidToSurplusAuction,
+    collectSurplusAuction,
+} from 'auctions-core/src/surplus';
 import {
     setAllowanceAmountMKR,
     fetchAllowanceAmountMKR,
@@ -45,7 +50,7 @@ export const actions = {
         return auctions;
     },
     async giveAllowanceMKR({ rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['network/getMakerNetwork']
+        const network = rootGetters['network/getMakerNetwork'];
         const wallet = rootGetters['wallet/getAddress'];
         await setAllowanceAmountMKR(network, wallet, notifier);
         await fetchAllowanceAmountMKR(network, wallet);
@@ -82,25 +87,28 @@ export const actions = {
             await dispatch('fetchSurplusAuthorizationStatus');
         }
     },
-    async restartAuction({ rootGetters }: ActionContext<State, State>, auctionIndex: number){
+    async restartAuction({ rootGetters }: ActionContext<State, State>, auctionIndex: number) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        return await restartSurplusAuction(network, auctionIndex, notifier)
+        return await restartSurplusAuction(network, auctionIndex, notifier);
     },
-    async betOnAuction({ rootGetters }: ActionContext<State, State>, {auctionIndex, bet}:{auctionIndex: number; bet: string}){
+    async betOnAuction(
+        { rootGetters }: ActionContext<State, State>,
+        { auctionIndex, bet }: { auctionIndex: number; bet: string }
+    ) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        bidToSurplusAuction(network, auctionIndex, bet)
+        await bidToSurplusAuction(network, auctionIndex, bet);
     },
-    async collectAuction({ rootGetters }: ActionContext<State, State>, auctionIndex: number){
+    async collectAuction({ rootGetters }: ActionContext<State, State>, auctionIndex: number) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        collectSurplusAuction(network, auctionIndex)
-    }
+        await collectSurplusAuction(network, auctionIndex);
+    },
 };

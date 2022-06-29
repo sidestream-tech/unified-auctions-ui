@@ -104,7 +104,7 @@ export const restartSurplusAuction = async function (
     notifier?: Notifier
 ): Promise<SurplusAuction> {
     const auction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
-    if (!auction || auction!.state !== 'requires-restart') {
+    if (auction === undefined || auction?.state !== 'requires-restart') {
         throw new Error("Can't restart the active auction");
     }
     await executeTransaction(network, 'MCD_FLAP', 'tick', [auctionIndex], notifier);
@@ -134,11 +134,5 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     if (!auction || auction.state !== 'ready-for-collection') {
         throw new Error('Did not find the auction to collect.');
     }
-    await executeTransaction(
-        network,
-        'MCD_FLAP',
-        'deal',
-        [auctionIndex],
-        notifier
-    );
+    await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], notifier);
 };
