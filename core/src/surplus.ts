@@ -4,7 +4,7 @@ import BigNumber from './bignumber';
 import getContract from './contracts';
 import { Contract } from 'ethers';
 import getNetworkDate from './date';
-import { RAD, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
@@ -52,7 +52,6 @@ export const fetchSurplusAuctionByIndex = async function (
     const auctionEndDate = new Date(auctionData.end * 1000);
     const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
     const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
-    console.log(auctionIndex)
     const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
 
     return {
@@ -111,7 +110,7 @@ export const restartSurplusAuction = async function (
     if (!auction || auction!.state !== 'requires-restart') {
         throw new Error("Can't restart the active auction");
     }
-    await executeTransaction(network, 'MCD_FLAP', 'tick', [new BigNumber(auctionIndex).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)], notifier);
+    await executeTransaction(network, 'MCD_FLAP', 'tick', [auctionIndex], notifier);
     return await surplusAuctionRestartedCallback(network, auctionIndex);
 };
 
@@ -122,14 +121,12 @@ export const bidToSurplusAuction = async function (
     notifier?: Notifier
 ) {
     const auction = await getActiveSurplusAuctionOrUndefined(network, Number(auctionIndex));
-    const now = await getNetworkDate(network)
-    console.log(now)
     if (!auction) {
         throw new Error('Did not find the auction to bid on.');
     }
     const transactionParameters = [
-        new BigNumber(auctionIndex).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
-        auction.receiveAmountDAI.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        auctionIndex,
+        auction.receiveAmountDAI.shiftedBy(RAD_NUMBER_OF_DIGITS).toFixed(0),
         new BigNumber(bet).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
     ];
     await executeTransaction(network, 'MCD_FLAP', 'tend', transactionParameters, notifier);
@@ -144,7 +141,7 @@ export const collectSurplusAuction = async function (network: string, auctionInd
         network,
         'MCD_FLAP',
         'deal',
-        [new BigNumber(auctionIndex).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)],
+        [auctionIndex],
         notifier
     );
 };
