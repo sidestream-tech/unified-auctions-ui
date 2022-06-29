@@ -13,7 +13,9 @@ const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> =
 };
 
 const getAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
-    const isBidExpired = (await getNetworkDate(network)) > earliestEndDate;
+    const now = await getNetworkDate(network)
+    const isBidExpired = (now) > earliestEndDate;
+    console.log(now, earliestEndDate, isBidExpired)
     const haveBids = greatestBid !== 0;
     if (haveBids) {
         if (isBidExpired) {
@@ -50,6 +52,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const auctionEndDate = new Date(auctionData.end * 1000);
     const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
     const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
+    console.log(auctionIndex)
     const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
 
     return {
@@ -119,6 +122,8 @@ export const bidToSurplusAuction = async function (
     notifier?: Notifier
 ) {
     const auction = await getActiveSurplusAuctionOrUndefined(network, Number(auctionIndex));
+    const now = await getNetworkDate(network)
+    console.log(now)
     if (!auction) {
         throw new Error('Did not find the auction to bid on.');
     }
