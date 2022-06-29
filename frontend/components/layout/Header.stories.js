@@ -44,7 +44,7 @@ storiesOf('Layout/Header', module)
     }))
     .add('Minimal', () => ({
         ...common,
-        tempalte: `<Header
+        template: `<Header
         type="minimal" 
         :isExplanationsShown.sync="isExplanationsShown"
         @update:isExplanationsShown="updateIsExplanationsShown"
