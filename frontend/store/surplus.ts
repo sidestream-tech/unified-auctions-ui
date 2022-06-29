@@ -45,19 +45,17 @@ export const actions = {
         return auctions;
     },
     async giveAllowanceMKR({ rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['network/getMakerNetwork'];
+        const network = rootGetters['network/getMakerNetwork']
         const wallet = rootGetters['wallet/getAddress'];
         await setAllowanceAmountMKR(network, wallet, notifier);
-        const allowance = await fetchAllowanceAmountMKR(network, wallet);
-        console.log(allowance.toNumber());
+        await fetchAllowanceAmountMKR(network, wallet);
     },
     async authorizeSurplusAuctions({ rootGetters, dispatch }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
         try {
             await authorizeSurplus(network, walletAddress, false, notifier);
-            const k = await dispatch('fetchSurplusAuthorizationStatus');
-            console.log(k);
+            await dispatch('fetchSurplusAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
         }
@@ -67,8 +65,7 @@ export const actions = {
         const walletAddress = rootGetters['wallet/getAddress'];
         try {
             await authorizeSurplus(network, walletAddress, true, notifier);
-            const k = await dispatch('fetchSurplusAuthorizationStatus');
-            console.log(k);
+            await dispatch('fetchSurplusAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
         }
@@ -97,7 +94,6 @@ export const actions = {
         if (!network) {
             return;
         }
-        console.log(bet)
         bidToSurplusAuction(network, auctionIndex, bet)
     },
     async collectAuction({ rootGetters }: ActionContext<State, State>, auctionIndex: number){
