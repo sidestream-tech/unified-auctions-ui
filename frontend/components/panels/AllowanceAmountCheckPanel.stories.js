@@ -73,6 +73,13 @@ storiesOf('Panels/AllowanceAmountCheckPanel', module)
             desiredAmount: new BigNumber(NaN),
         }),
     }))
+    .add('MKR Currency', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            currency: 'MKR',
+        }),
+    }))
     .add('Loading', () => ({
         ...common,
         data: () => ({
