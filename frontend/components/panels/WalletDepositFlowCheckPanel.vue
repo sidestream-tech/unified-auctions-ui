@@ -116,7 +116,7 @@ export default Vue.extend({
             return this.desiredAmount && !this.desiredAmount.isNaN();
         },
         isEnoughDeposited(): boolean {
-            return !this.minimumDepositAmount?.isGreaterThan(0);
+            return this.minimumDepositAmount?.isZero() || false;
         },
         currentStateAndTitle(): PanelProps {
             if (!this.walletAmount) {
