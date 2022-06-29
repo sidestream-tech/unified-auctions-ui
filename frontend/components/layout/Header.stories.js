@@ -42,6 +42,14 @@ storiesOf('Layout/Header', module)
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
     }))
+    .add('Minimal', () => ({
+        ...common,
+        tempalte: `<Header
+        type="minimal" 
+        :isExplanationsShown.sync="isExplanationsShown"
+        @update:isExplanationsShown="updateIsExplanationsShown"
+        />`,
+    }))
     .add('With Staging header', () => ({
         ...common,
         template: `<Header

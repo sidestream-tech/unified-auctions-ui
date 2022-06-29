@@ -63,10 +63,6 @@ import NetworkSelector from '~/components/utils/NetworkSelector.vue';
 import WalletSelector from '~/components/utils/WalletSelector.vue';
 import ThemeSwitcher from '~/components/utils/ThemeSwitcher.vue';
 
-const AUCTION_PORTAL_PAGES = ['collateral', 'surplus'];
-const MINIMAL_PAGES = ['privacy'];
-const UNIFIED_PAGES = ['index'];
-
 export default Vue.extend({
     name: 'Header',
     components: {
@@ -78,6 +74,10 @@ export default Vue.extend({
         WalletSelector,
     },
     props: {
+        type: {
+            type: String,
+            default: 'default',
+        },
         isExplanationsShown: {
             type: Boolean,
             required: true,
@@ -117,16 +117,16 @@ export default Vue.extend({
     },
     computed: {
         isUnifiedPage(): boolean {
-            return UNIFIED_PAGES.includes(this.pageName);
+            return this.type === 'unified';
         },
         isMinimalPage(): boolean {
-            return MINIMAL_PAGES.includes(this.pageName);
+            return this.type === 'minimal';
         },
         isAuctionsPortal(): boolean {
-            return AUCTION_PORTAL_PAGES.includes(this.pageName);
+            return this.type === 'auctions';
         },
         isDefaultHeader(): boolean {
-            return !this.isUnifiedPage && !this.isMinimalPage && !this.isAuctionsPortal;
+            return this.type === 'default';
         },
         pageName(): string {
             return this.$route?.name || '';

@@ -3,6 +3,7 @@
         <Header
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
+            :type="headerType"
             :network.sync="network"
             :dark-mode.sync="isDarkMode"
             :wallet-address="walletAddress"
@@ -54,6 +55,10 @@ import WalletModalContainer from '~/containers/WalletModalContainer.vue';
 import ManageCollateralModalContainer from '~/containers/ManageCollateralModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
 import Analytics from '~/components/Analytics.vue';
+
+const AUCTION_PORTAL_PAGES = ['collateral', 'surplus'];
+const MINIMAL_PAGES = ['privacy'];
+const UNIFIED_PAGES = ['index'];
 
 export default Vue.extend({
     components: {
@@ -113,6 +118,21 @@ export default Vue.extend({
         },
         isDev() {
             return this.$nuxt?.context?.isDev;
+        },
+        pageName(): string {
+            return this.$route?.name || '';
+        },
+        headerType(): string {
+            if (AUCTION_PORTAL_PAGES.includes(this.pageName)) {
+                return 'auctions';
+            }
+            if (MINIMAL_PAGES.includes(this.pageName)) {
+                return 'minimal';
+            }
+            if (UNIFIED_PAGES.includes(this.pageName)) {
+                return 'unified';
+            }
+            return 'default';
         },
     },
     methods: {
