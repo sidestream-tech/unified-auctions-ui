@@ -5,12 +5,12 @@
         :class="{ dark: isDarkMode }"
         title="Collaterals in VAT"
         :dialog-style="{ top: '60px' }"
-        :width="620"
+        :width="650"
         destroy-on-close
         @cancel="$emit('cancel')"
     >
         <ManageCollateralTable
-            class="p-4"
+            class="p-4 overflow-auto"
             :is-explanations-shown="isExplanationsShown"
             :collateral-statuses="collateralStatuses"
             @authorizeCollateral="$emit('authorizeCollateral', $event)"

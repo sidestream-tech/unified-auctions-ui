@@ -29,6 +29,7 @@
                             v-if="isAuctionsPortal || isDefaultHeader"
                             :network="network"
                             :is-dev="isDev"
+                            :is-changing-network="isChangingNetwork"
                             @update:network="$emit('update:network', $event)"
                         />
 
@@ -111,6 +112,10 @@ export default Vue.extend({
             default: undefined,
         },
         isDev: {
+            type: Boolean,
+            default: false,
+        },
+        isChangingNetwork: {
             type: Boolean,
             default: false,
         },
