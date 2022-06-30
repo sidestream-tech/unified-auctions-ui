@@ -320,12 +320,12 @@ data:
         NETWORK: "hardhat"
       steps:
         - name: core-integration-test
-          image: ghcr.io/sidestream-tech/audit-tool/core:pr-${DRONE_PULL_REQUEST}
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/core:pr-${DRONE_PULL_REQUEST}
           commands:
             # Proper ready check would only be possible with psql installed in image
             - sleep 20
             # TODO: This should be a dev-stage in the dockerfile that is built above!
-            #       See https://github.com/sidestream-tech/audit-tool/issues/127 for more
+            #       See https://github.com/sidestream-tech/unified-auctions-ui/issues/127 for more
             - npm i
             - npm run test ${NETWORK}
 
