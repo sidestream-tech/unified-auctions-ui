@@ -324,7 +324,7 @@ data:
           image: ghcr.io/sidestream-tech/unified-auctions-ui/core:pr-${DRONE_PULL_REQUEST}
           commands:
             # Proper ready check would only be possible with psql installed in image
-            - cat /etc/hosts
+            - ping http://hardhat_service:8545
             - cd core
             - sleep 20
             # TODO: This should be a dev-stage in the dockerfile that is built above!
