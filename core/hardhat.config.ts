@@ -1,5 +1,5 @@
-import dotenv from "dotenv";
-import "@nomiclabs/hardhat-waffle";
+import dotenv from 'dotenv';
+import '@nomiclabs/hardhat-waffle';
 
 dotenv.config();
 
@@ -7,5 +7,5 @@ dotenv.config();
  * @type import('hardhat/config').HardhatUserConfig
  */
 export default {
-  solidity: "0.8.4",
+    solidity: '0.8.4',
 };
