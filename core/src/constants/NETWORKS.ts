@@ -1,6 +1,9 @@
 import type { NetworkConfig } from '../types';
 
-const LOCAL_NETWORK_URL = process.env.LOCAL_NETWORK_URL || 'http://127.0.0.1:8545';
+const _NETWORK_HOST = process.env.NETWORK_HOST || "127.0.0.1"
+const _NETWORK_PORT = process.env.NETWORK_PORT || "8545";
+const LOCAL_NETWORK_URL = `http://${_NETWORK_HOST}:${_NETWORK_PORT}`;
+
 export const CHAINLOG_ADDRESS = '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F';
 
 const NETWORKS: Record<string, NetworkConfig> = {
