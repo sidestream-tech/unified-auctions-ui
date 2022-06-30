@@ -311,7 +311,7 @@ data:
 
   pipelines:
     - kind: pipeline
-      type: kubernetes
+      type: docker
       name: core-integration-test
       trigger:
         event:
