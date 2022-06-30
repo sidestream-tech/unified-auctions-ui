@@ -21,7 +21,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Icon } from 'ant-design-vue';
-import { NetworkConfig } from 'auctions-core/dist/src/types';
+import { NetworkConfig } from 'auctions-core//src/types';
 import Select from '~/components/common/Select.vue';
 
 export default Vue.extend({

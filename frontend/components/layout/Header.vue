@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { NetworkConfig } from 'auctions-core/dist/src/types';
+import { NetworkConfig } from 'auctions-core//src/types';
 import StagingBanner from './StagingBanner.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
 import BaseSwitch from '~/components/common/BaseSwitch.vue';

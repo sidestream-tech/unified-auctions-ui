@@ -1,6 +1,6 @@
 import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
-import { NetworkConfig } from 'auctions-core/dist/src/types';
+import { NetworkConfig } from 'auctions-core//src/types';
 import setupNetworks from 'auctions-core/src/networks';
 import { getNetworkTitleByChainId } from 'auctions-core/src/constants/NETWORKS';
 import getWallet from '~/lib/wallet';
