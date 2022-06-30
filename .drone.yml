@@ -69,6 +69,52 @@ data:
         event:
           - pull_request
 
+    # core:pr-$PULL_REQUEST_NUMBER
+    - name: publish-core-on-pr-push
+      target: development
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/core
+      tags:
+        - "pr-${DRONE_PULL_REQUEST}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/unified-auctions-ui
+      path_to_dockerfile: core/Dockerfile
+      path_to_context: ./
+      build_args:
+        - key: PRODUCTION_DOMAIN
+          value: "null.sidestream.tech"
+        - key: INFURA_PROJECT_ID
+          value: "key-not-provided"
+        - key: CONTACT_EMAIL
+          value: "development@sidestream.tech"
+        - key: ALCHEMY_URL
+          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
+
+    # hardhat:pr-$PULL_REQUEST_NUMBER
+    - name: publish-hardhat-on-pr-push
+      target: development
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat
+      build_args:
+        - key: ALCHEMY_URL
+          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+      tags:
+        - "pr-${DRONE_PULL_REQUEST}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/unified-auctions-ui
+      path_to_dockerfile: hardhat/Dockerfile
+      path_to_context: ./
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
+
     # frontend-makerdao:$RELEASE_TAG
     - name: publish-frontend-makerdao-on-tag
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend-makerdao
@@ -268,3 +314,30 @@ data:
       trigger:
         event:
           - pull_request
+
+  pipelines:
+    - kind: pipeline
+      type: kubernetes
+      name: core-integration-test
+      trigger:
+        event:
+          - pull_request
+      steps:
+        - name: core-integration-test
+          image: ghcr.io/sidestream-tech/audit-tool/core:pr-${DRONE_PULL_REQUEST}
+          commands:
+            # Proper ready check would only be possible with psql installed in image
+            - sleep 20
+            - cd app
+            # TODO: This should be a dev-stage in the dockerfile that is built above!
+            #       See https://github.com/sidestream-tech/audit-tool/issues/127 for more
+            - npm i
+            - npm run test
+
+      services:
+        - name: hardhat
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:pr-${DRONE_PULL_REQUEST}
+
+      depends_on:
+        - publish-core-on-pr-push
+        - publish-hardhat-on-pr-push
