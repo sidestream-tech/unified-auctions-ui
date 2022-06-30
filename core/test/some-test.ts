@@ -6,7 +6,7 @@ const ALCHEMY_URL = process.env.ALCHEMY_URL;
 
 describe('Some', () => {
     it('tests', async () => {
-        await hre.network.provider.request({
+        const reset = await hre.network.provider.request({
             method: 'hardhat_reset',
             params: [
                 {
@@ -17,6 +17,7 @@ describe('Some', () => {
                 },
             ],
         });
+        expect(reset).to.be.true;
         const contracts = await fetchActiveSurplusAuctions('localhost');
         expect(contracts.length).to.equal(5);
     });
