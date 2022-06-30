@@ -317,7 +317,8 @@ data:
         event:
           - pull_request
       environment:
-        NETWORK: "hardhat"
+        NETWORK: "hardhat_service"
+        LOCAL_NETWORK_URL: "http://hardhat_service:8545"
       steps:
         - name: core-integration-test
           image: ghcr.io/sidestream-tech/unified-auctions-ui/core:pr-${DRONE_PULL_REQUEST}
@@ -332,7 +333,7 @@ data:
             - npm run test $NETWORK
 
       services:
-        - name: hardhat
+        - name: hardhat_service  # named with 'service' to avoid duplication with the default value
           image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:pr-${DRONE_PULL_REQUEST}
 
       depends_on:
