@@ -322,6 +322,8 @@ data:
       trigger:
         event:
           - pull_request
+      environment:
+        NETWORK: "hardhat"
       steps:
         - name: core-integration-test
           image: ghcr.io/sidestream-tech/audit-tool/core:pr-${DRONE_PULL_REQUEST}
@@ -331,7 +333,7 @@ data:
             # TODO: This should be a dev-stage in the dockerfile that is built above!
             #       See https://github.com/sidestream-tech/audit-tool/issues/127 for more
             - npm i
-            - npm run test -- --network hardhat
+            - npm run test ${NETWORK}
 
       services:
         - name: hardhat

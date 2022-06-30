@@ -18,5 +18,11 @@ FROM $NODE_VERSION AS development
 
 ARG ALCHEMY_URL
 ENV ALCHEMY_URL=${ALCHEMY_URL}
+ARG NETWORK
+ENV NETWORK=${NETWORK}
 
 COPY --from=dependency-base /core /core
+
+WORKDIR /core
+
+CMD [ "npm", "run", "test", "${NETWORK}" ]
