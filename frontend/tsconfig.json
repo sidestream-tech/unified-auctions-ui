@@ -27,7 +27,9 @@
         },
         "types": [
             "@nuxt/types",
-            "@types/node"
+            "@types/node",
+            "@types/chai",
+            "cypress"
         ]
     },
     "include": [

@@ -33,6 +33,22 @@ COPY --from=dependency-base /frontend /frontend
 WORKDIR /frontend
 CMD ["npm", "run", "dev"]
 
+FROM cypress/included:10.1.0 AS e2e
+
+ARG CYPRESS_FRONTEND_URL
+ENV CYPRESS_FRONTEND_URL=${CYPRESS_FRONTEND_URL}
+ARG CYPRESS_NETWORK
+ENV CYPRESS_NETWORK=${CYPRESS_NETWORK}
+
+COPY --from=dependency-base /core /core
+COPY --from=dependency-base /frontend /frontend
+EXPOSE 3000
+WORKDIR /frontend
+RUN npm install
+
+
+ENTRYPOINT [ "/bin/sh" ]
+
 FROM dependency-base AS production-base
 
 # bake env variables

@@ -69,6 +69,43 @@ data:
         event:
           - pull_request
 
+    # hardhat:pr-$PULL_REQUEST_NUMBER
+    - name: publish-hardhat-on-pr-push
+      target: development
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat
+      build_args:
+        - key: ALCHEMY_URL
+          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+      tags:
+        - "pr-${DRONE_PULL_REQUEST}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/unified-auctions-ui
+      path_to_dockerfile: hardhat/Dockerfile
+      path_to_context: ./
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
+
+    # frontend/cypress:pr-$PULL_REQUEST_NUMBER
+    - name: publish-cypress-on-pr-push
+      target: e2e
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend/cypress
+      tags:
+        - "pr-${DRONE_PULL_REQUEST}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/unified-auctions-ui
+      path_to_dockerfile: frontend/Dockerfile
+      path_to_context: ./
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
+
     # frontend-makerdao:$RELEASE_TAG
     - name: publish-frontend-makerdao-on-tag
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend-makerdao
@@ -191,8 +228,8 @@ data:
         aws_target_eks_cluster_name: eks-cluster-sidestream
         aws_ssm_path_to_base64_encoded_secrets_yaml: auction-ui/secrets.yaml
         value_files:
-        - values.yaml
-        - values.override_main.auction-ui.k8s.sidestream.tech.yaml
+          - values.yaml
+          - values.override_main.auction-ui.k8s.sidestream.tech.yaml
         target_namespace: "auction-ui-main"
         release_name: "auction-ui"
         values_to_set:
@@ -211,8 +248,8 @@ data:
         aws_target_eks_cluster_name: eks-cluster-sidestream
         aws_ssm_path_to_base64_encoded_secrets_yaml: auction-ui/secrets.yaml
         value_files:
-        - values.yaml
-        - values.override_unified-auctions.makerdao.com.yaml
+          - values.yaml
+          - values.override_unified-auctions.makerdao.com.yaml
         target_namespace: "auction-ui-production"
         release_name: "auction-ui"
         values_to_set:
@@ -268,3 +305,34 @@ data:
       trigger:
         event:
           - pull_request
+
+  pipelines:
+    - kind: pipeline
+      type: kubernetes
+      name: e2e-test
+      environment:
+        CYPRESS_NETWORK: "localhost"
+        CYPRESS_FRONTEND_URL: "frontend:3000"
+      trigger:
+        event:
+          - pull_request
+      steps:
+        - name: test-e2e
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend/cypress:pr-${DRONE_PULL_REQUEST}
+          commands:
+            - cd frontend
+            # This should be managed on the dev-stage but as of now not
+            # apparently not possible due to internal structure
+            - npm install
+            - npm run e2e
+
+      services:
+        - name: frontend
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:pr-${DRONE_PULL_REQUEST}
+        - name: hardhat
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:pr-${DRONE_PULL_REQUEST}
+
+      depends_on:
+        - publish-frontend-on-pr-push
+        - publish-hardhat-on-pr-push
+        - publish-cypress-on-pr-push
