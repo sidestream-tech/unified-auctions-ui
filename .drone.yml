@@ -334,6 +334,7 @@ data:
       services:
         - name: hardhat_service  # named with 'service' to avoid duplication with the default value
           image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:pr-${DRONE_PULL_REQUEST}
+          expose: 8545
 
       depends_on:
         - publish-core-on-pr-push
