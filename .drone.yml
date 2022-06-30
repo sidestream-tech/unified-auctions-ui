@@ -317,14 +317,13 @@ data:
         event:
           - pull_request
       environment:
-        NETWORK_HOST: "hardhat_service"
+        NETWORK_HOST: "hardhat-service"
         NETWORK_PORT: "8545"
       steps:
         - name: core-integration-test
           image: ghcr.io/sidestream-tech/unified-auctions-ui/core:pr-${DRONE_PULL_REQUEST}
           commands:
             # Proper ready check would only be possible with psql installed in image
-            - ping http://hardhat_service:8545
             - cd core
             - sleep 20
             # TODO: This should be a dev-stage in the dockerfile that is built above!
@@ -333,7 +332,7 @@ data:
             - npm run test hardhat_service
 
       services:
-        - name: hardhat_service  # named with 'service' to avoid duplication with the default value
+        - name: hardhat-service  # named with 'service' to avoid duplication with the default value
           image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:pr-${DRONE_PULL_REQUEST}
           expose: 8545
 
