@@ -5,6 +5,9 @@ import setupNetworks from 'auctions-core/src/networks';
 import { getNetworkTitleByChainId } from 'auctions-core/src/constants/NETWORKS';
 import getWallet from '~/lib/wallet';
 
+const NETWORK_SWITCH_TIMEOUT = 8000;
+let networkChangeTimeoutId: ReturnType<typeof setTimeout> | undefined;
+
 interface State {
     walletChainId: string | undefined;
     networks: NetworkConfig[];
