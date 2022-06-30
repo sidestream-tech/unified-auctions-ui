@@ -317,8 +317,8 @@ data:
         event:
           - pull_request
       environment:
-        NETWORK: "hardhat_service"
-        LOCAL_NETWORK_URL: "http://hardhat_service:8545"
+        NETWORK_HOST: "hardhat_service"
+        NETWORK_PORT: "8545"
       steps:
         - name: core-integration-test
           image: ghcr.io/sidestream-tech/unified-auctions-ui/core:pr-${DRONE_PULL_REQUEST}
@@ -329,8 +329,7 @@ data:
             # TODO: This should be a dev-stage in the dockerfile that is built above!
             #       See https://github.com/sidestream-tech/unified-auctions-ui/issues/127 for more
             - npm i
-            - echo $NETWORK
-            - npm run test $NETWORK
+            - npm run test hardhat_service
 
       services:
         - name: hardhat_service  # named with 'service' to avoid duplication with the default value
