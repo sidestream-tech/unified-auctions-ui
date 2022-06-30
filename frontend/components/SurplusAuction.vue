@@ -5,7 +5,7 @@
         </div>
         <div v-if="auction">
             <div v-if="!auction.isActive">
-                <SurplusAuctionRestartPanel
+                <AuctionRestartPanel
                     :wallet-address="walletAddress"
                     :transaction-fee="auction.restartTransactionFeeETH"
                     :is-explanations-shown="isExplanationsShown"
@@ -95,12 +95,6 @@
                                 <td>Estimated Profitability Time</td>
                                 <td>
                                     <time-till-profitable :auction="auction" />
-                                </td>
-                            </tr>
-                            <tr class="bg-gray-100 dark:bg-gray-800">
-                                <td>Vault type</td>
-                                <td>
-                                    <format-currency :currency="auction.collateralType" />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
@@ -281,13 +275,13 @@ import Loading from '~/components/common/Loading.vue';
 // import Explain from '~/components/utils/Explain.vue';
 import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
 import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
-import SurplusAuctionRestartPanel from '~/components/panels/SurplusAuctionRestartPanel.vue';
+import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
 
 export default Vue.extend({
     name: 'SurplusAuction',
     components: {
-        SurplusAuctionRestartPanel,
+        AuctionRestartPanel,
         AuctionEventsBlock,
         PriceDropAnimation,
         // Explain,
