@@ -81,12 +81,6 @@ data:
       path_to_dockerfile: core/Dockerfile
       path_to_context: ./
       build_args:
-        - key: PRODUCTION_DOMAIN
-          value: "null.sidestream.tech"
-        - key: INFURA_PROJECT_ID
-          value: "key-not-provided"
-        - key: CONTACT_EMAIL
-          value: "development@sidestream.tech"
         - key: ALCHEMY_URL
           value_from_secret: auction-ui/localhost/hardhat/alchemy_url
       tags_to_cache_from:
