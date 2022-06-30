@@ -332,7 +332,7 @@ data:
             # TODO: This should be a dev-stage in the dockerfile that is built above!
             #       See https://github.com/sidestream-tech/audit-tool/issues/127 for more
             - npm i
-            - npm run test
+            - npm run test -- --network hardhat
 
       services:
         - name: hardhat

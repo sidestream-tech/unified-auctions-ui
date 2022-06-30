@@ -7,7 +7,7 @@
     "dev": "tsc-watch --noClear",
     "build": "tsc --build tsconfig.json",
     "start": "node .",
-    "test": "npx hardhat --network localhost test",
+    "test": "npx hardhat test",
     "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0"
   },
   "engines": {
