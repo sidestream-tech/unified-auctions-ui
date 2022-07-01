@@ -69,6 +69,46 @@ data:
         event:
           - pull_request
 
+    # core:pr-$PULL_REQUEST_NUMBER
+    - name: publish-core-on-pr-push
+      target: development
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/core
+      tags:
+        - "pr-${DRONE_PULL_REQUEST}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/unified-auctions-ui
+      path_to_dockerfile: core/Dockerfile
+      path_to_context: ./
+      build_args:
+        - key: ALCHEMY_URL
+          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
+
+    # hardhat:pr-$PULL_REQUEST_NUMBER
+    - name: publish-hardhat-on-pr-push
+      target: development
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat
+      build_args:
+        - key: ALCHEMY_URL
+          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+      tags:
+        - "pr-${DRONE_PULL_REQUEST}"
+      labels:
+        - key: org.opencontainers.image.source
+          value: https://github.com/sidestream-tech/unified-auctions-ui
+      path_to_dockerfile: hardhat/Dockerfile
+      path_to_context: ./
+      tags_to_cache_from:
+        - "main"
+      trigger:
+        event:
+          - pull_request
+
     # frontend-makerdao:$RELEASE_TAG
     - name: publish-frontend-makerdao-on-tag
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/frontend-makerdao
@@ -268,3 +308,31 @@ data:
       trigger:
         event:
           - pull_request
+
+  pipelines:
+    - kind: pipeline
+      type: kubernetes
+      name: core-integration-test
+      trigger:
+        event:
+          - pull_request
+      environment:
+        NETWORK_HOST: "hardhat-service"
+        NETWORK_PORT: "8545"
+      steps:
+        - name: core-integration-test
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/core:pr-${DRONE_PULL_REQUEST}
+          commands:
+            - cd core
+            - sleep 20
+            - npm i
+            - npm run test hardhat-service
+
+      services:
+        - name: hardhat-service  # named with 'service' to avoid duplication with the default value
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:pr-${DRONE_PULL_REQUEST}
+          expose: 8545
+
+      depends_on:
+        - publish-core-on-pr-push
+        - publish-hardhat-on-pr-push
