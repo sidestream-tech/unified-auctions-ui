@@ -218,7 +218,6 @@ export const actions = {
         }
     },
     async fetch({ dispatch }: ActionContext<State, State>) {
-        await dispatch('network/setupNetworks', undefined, { root: true });
         await dispatch('update');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);

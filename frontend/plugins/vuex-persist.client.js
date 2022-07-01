@@ -14,9 +14,6 @@ export default ({ store }) => {
             },
             modules: ['cookies'],
         }).plugin(store);
-        const network = store.getters['network/getMakerNetwork'];
-        if (network) {
-            store.dispatch('network/setup');
-        }
+        store.dispatch('network/setup');
     });
 };

@@ -21,6 +21,9 @@ export default class MetaMask extends AbstractWallet {
         if (!window.ethereum) {
             return false;
         }
+        if (typeof window.ethereum?.isConnected !== 'function') {
+            return false;
+        }
         return window.ethereum.isConnected();
     }
 

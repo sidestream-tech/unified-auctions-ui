@@ -4,7 +4,7 @@ import { getNetworkInfoByChainId, INFURA_NETWORK_RPCS } from './constants/NETWOR
 import { ethers } from 'ethers';
 import { parseRPCURLForInfuraParameters } from './helpers/parseRPCURL';
 
-const networks: NetworkConfig[] = [];
+const networks: Record<string, NetworkConfig> = {};
 
 export const addNetwork = async function (rpcURL: string) {
     const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcURL });
@@ -14,30 +14,27 @@ export const addNetwork = async function (rpcURL: string) {
     const networkInfo = getNetworkInfoByChainId(chainId);
     const networkTitle = networkInfo?.title || chainId;
 
-    networks.push({
+    networks[networkTitle] = {
         chainId: chainId,
         title: networkTitle,
         url: rpcURL,
         etherscanUrl: networkInfo?.etherscanURL || '',
         isFork: networkTitle === 'localhost', // TODO: Find a better way to determine if network is a fork.
-    });
+    };
 };
 
 const addLocalhostNetwork = function () {
-    networks.push({
+    networks['localhost'] = {
         chainId: '0x539',
         title: 'Localhost:8545',
         url: `http://127.0.0.1:8545`,
         etherscanUrl: '',
         isFork: true,
-    });
+    };
 };
 
 export const getNetworkConfigByType = function (networkType: string | undefined): NetworkConfig {
-    const networkConfig = networks.find(network => {
-        return network.title === networkType;
-    });
-
+    const networkConfig = networks[networkType ?? ''];
     if (!networkType || !networkConfig) {
         throw new Error(`No network found with name "${networkType}"`);
     }
@@ -45,7 +42,7 @@ export const getNetworkConfigByType = function (networkType: string | undefined)
 };
 
 export const getNetworkTypeByChainId = function (chainId: string | undefined): string | undefined {
-    const networkEntry = Object.entries(networks).find(([_, networkObject]) => networkObject.chainId === chainId);
+    const networkEntry = Object.entries(networks).find(([_, networkConfig]) => networkConfig.chainId === chainId);
     return networkEntry && networkEntry[0];
 };
 
@@ -57,30 +54,14 @@ export const getDecimalChainIdByNetworkType = function (networkType: string): nu
     return parseInt(networkConfig.chainId, 16);
 };
 
-const sortInfuraNetworksByDefaultNetwork = function (
-    array: { network: string; url: string }[],
-    defaultNetwork: string
-) {
-    return array.sort((networkOne, networkTwo) => {
-        if (networkTwo.network === defaultNetwork) {
-            return 1;
-        }
-        if (networkOne.network === defaultNetwork) {
-            return -1;
-        }
-        return 0;
-    });
-};
-
-const setupNetworks = async function (isDev?: boolean) {
-    const rpcUrl = process.env.RPC_URL;
+const setupNetworks = async function (rpcUrl?: string, isDev?: boolean) {
     if (!rpcUrl) {
-        throw new Error(`No "RPC_URL" was defined.`);
+        throw new Error(`No RPC_URL env variable was provided`);
     }
 
     const { projectId, defaultNetwork } = parseRPCURLForInfuraParameters(rpcUrl);
     if (projectId && defaultNetwork) {
-        for (const { url } of sortInfuraNetworksByDefaultNetwork(INFURA_NETWORK_RPCS, defaultNetwork)) {
+        for (const { url } of INFURA_NETWORK_RPCS) {
             await addNetwork(`${url}/${projectId}`);
         }
     } else {
@@ -91,7 +72,7 @@ const setupNetworks = async function (isDev?: boolean) {
         addLocalhostNetwork();
     }
 
-    return networks;
+    return { defaultNetwork, networks };
 };
 
 export default setupNetworks;

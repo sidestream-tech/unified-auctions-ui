@@ -79,7 +79,7 @@ export const getters = {
 };
 
 export const mutations = {
-    setAllNetworks(state: State, networks: NetworkConfig[]) {
+    setNetworks(state: State, networks: NetworkConfig[]) {
         state.networks = networks;
     },
     setWalletChainId(state: State, walletChainId: string): void {
@@ -91,10 +91,9 @@ export const mutations = {
 };
 
 export const actions = {
-    async setupNetworks({ commit, dispatch }: ActionContext<State, any>) {
-        const networks = await setupNetworks();
-        commit('setAllNetworks', networks);
-        await dispatch('setPageNetwork', networks[0].title);
+    async setupNetworks({ commit }: ActionContext<State, any>) {
+        const networks = await setupNetworks(process.env.RPC_URL);
+        commit('setNetworks', networks);
     },
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);
@@ -155,7 +154,7 @@ export const actions = {
         if (networkChangeTimeoutId) {
             clearTimeout(networkChangeTimeoutId);
         }
-
+        await dispatch('setupNetworks');
         commit('setIsChangingNetwork', false);
         await dispatch('wallet/setup', undefined, { root: true });
         await dispatch('auctions/setup', undefined, { root: true });
