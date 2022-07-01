@@ -84,7 +84,6 @@
 import Vue from 'vue';
 import { Radio } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
-import { getNetworkConfigByType } from 'auctions-core/src/network';
 import TextBlock from '~/components/common/TextBlock.vue';
 import BaseButton from '~/components/common/BaseButton.vue';
 import BaseValueInput from '~/components/common/BaseValueInput.vue';
@@ -214,11 +213,7 @@ export default Vue.extend({
             return false;
         },
         networkTitle(): string {
-            try {
-                return getNetworkConfigByType(this.network).title;
-            } catch {
-                return this.network;
-            }
+            return this.network;
         },
     },
     methods: {

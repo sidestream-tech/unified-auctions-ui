@@ -26,6 +26,9 @@ export const getters = {
     networks(state: State) {
         return state.networks;
     },
+    getNetworkConfigByType: (state: State) => (network: string) => {
+        return state.networks.find(n => n.type === network);
+    },
     getWalletChainId(state: State) {
         return state.walletChainId;
     },
