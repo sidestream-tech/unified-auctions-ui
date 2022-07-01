@@ -38,7 +38,7 @@ const common = {
         },
     },
     template: `
-        <AuctionRestartPanel
+        <SurplusAuctionRestartPanel
             v-bind="$data"
             @restart="restart"
             @connectWallet="connectWallet"
