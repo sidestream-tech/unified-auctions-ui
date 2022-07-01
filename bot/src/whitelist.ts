@@ -1,5 +1,5 @@
 import { getCollateralConfigByType } from 'auctions-core/src/constants/COLLATERALS';
-import { getSupportedCollateralTypes } from 'auctions-core/dist/src/addresses';
+import { getSupportedCollateralTypes } from 'auctions-core/src/addresses';
 import { ETHEREUM_NETWORK, WHITELISTED_COLLATERALS } from './variables';
 
 const validateWhitelist = function (whitelist: string[]) {

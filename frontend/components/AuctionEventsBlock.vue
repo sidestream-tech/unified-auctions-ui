@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { TakeEvent } from 'auctions-core/dist/src/types';
+import { TakeEvent } from 'auctions-core/src/types';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 

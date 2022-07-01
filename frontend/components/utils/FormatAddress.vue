@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
+import { getNetworkConfigByType } from 'auctions-core/src/network';
 
 const TRIM_POSITION_FROM_START = 5;
 const TRIM_POSITION_FROM_END = 4;

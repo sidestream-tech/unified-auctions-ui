@@ -1,24 +1,25 @@
 import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
-import {
-    getNetworkConfigByType,
-    getNetworkTypeByChainId,
-    getNetworkTitleByChainId,
-} from 'auctions-core/src/constants/NETWORKS';
+import { getNetworkConfigByType, getNetworkTypeByChainId } from 'auctions-core/src/network';
+import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
 import getWallet from '~/lib/wallet';
+import { NetworkConfig } from '~/../core/src/types';
 
-const DEFAULT_NETWORK = process.env.DEFAULT_ETHEREUM_NETWORK;
 const NETWORK_SWITCH_TIMEOUT = 8000;
 let networkChangeTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
 interface State {
     walletChainId: string | undefined;
     isChangingNetwork: boolean;
+    networks: NetworkConfig[];
+    defaultNetwork?: string;
 }
 
 export const state = (): State => ({
     walletChainId: undefined,
     isChangingNetwork: false,
+    networks: [],
+    defaultNetwork: undefined,
 });
 
 export const getters = {
@@ -32,12 +33,12 @@ export const getters = {
         return getNetworkTypeByChainId(state.walletChainId);
     },
     getWalletNetworkTitle(_state: State, getters: any) {
-        return getNetworkTitleByChainId(getters.getWalletChainId) || getters.getWalletChainId;
+        return getNetworkTypeByChainId(getters.getWalletChainId) || getters.getWalletChainId;
     },
-    getPageNetwork(_state: State, _getters: any, rootState: any) {
+    getPageNetwork(state: State, _getters: any, rootState: any) {
         const pageNetwork = rootState.route.query.network;
         if (!pageNetwork) {
-            return DEFAULT_NETWORK;
+            return state.defaultNetwork;
         }
         return pageNetwork;
     },
@@ -76,9 +77,32 @@ export const mutations = {
     setIsChangingNetwork(state: State, isChangingNetwork: boolean): void {
         state.isChangingNetwork = isChangingNetwork;
     },
+    setListOfNetworks(state: State, networks: NetworkConfig[]): void {
+        state.networks = networks;
+    },
+    setDefaultNetwork(state: State, defaultNetwork: string): void {
+        state.defaultNetwork = defaultNetwork;
+    },
 };
 
 export const actions = {
+    async setup({ dispatch }: ActionContext<State, State>, isDev?: boolean): Promise<void> {
+        await dispatch('setupNetworks', isDev);
+        await dispatch('wallet/setup', undefined, { root: true });
+        await dispatch('auctions/setup', undefined, { root: true });
+        await dispatch('authorizations/setup', undefined, { root: true });
+        await dispatch('gas/setup', undefined, { root: true });
+    },
+    async setupNetworks({ commit }: ActionContext<State, State>, isDev?: boolean) {
+        commit('setIsChangingNetwork', true);
+        if (networkChangeTimeoutId) {
+            clearTimeout(networkChangeTimeoutId);
+        }
+        const { networks, defaultNetwork } = await setupRpcUrlAndGetNetworks(process.env.RPC_URL, isDev);
+        commit('setListOfNetworks', networks);
+        commit('setDefaultNetwork', defaultNetwork);
+        commit('setIsChangingNetwork', false);
+    },
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);
     },
@@ -133,16 +157,5 @@ export const actions = {
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
         }
-    },
-    async setup({ commit, dispatch }: ActionContext<State, State>): Promise<void> {
-        if (networkChangeTimeoutId) {
-            clearTimeout(networkChangeTimeoutId);
-        }
-
-        commit('setIsChangingNetwork', false);
-        await dispatch('wallet/setup', undefined, { root: true });
-        await dispatch('auctions/setup', undefined, { root: true });
-        await dispatch('authorizations/setup', undefined, { root: true });
-        await dispatch('gas/setup', undefined, { root: true });
     },
 };

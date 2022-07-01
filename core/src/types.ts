@@ -93,6 +93,7 @@ export declare interface CollateralConfig {
 
 export declare interface NetworkConfig {
     chainId: string;
+    type: string;
     title: string;
     url: string;
     gasPrice?: number;

@@ -31,7 +31,7 @@
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
 import Vue from 'vue';
-import { getNetworks } from 'auctions-core/src/constants/NETWORKS';
+import { getNetworks } from 'auctions-core/src/network';
 
 export default Vue.extend({
     name: 'ChangePageNetworkModal',

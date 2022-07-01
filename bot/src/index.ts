@@ -1,5 +1,5 @@
 import { setTimeout as delay } from 'timers/promises';
-import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
+import { getNetworkConfigByType } from 'auctions-core/src/network';
 import { getAllAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
 import notify from './notify';
 import participate, { setupKeeper } from './keeper';

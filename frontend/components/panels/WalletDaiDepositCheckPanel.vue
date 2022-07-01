@@ -27,7 +27,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
+import { getNetworkConfigByType } from 'auctions-core/src/network';
 import BaseButton from '~/components/common/BaseButton.vue';
 import BasePanel from '~/components/common/BasePanel.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
