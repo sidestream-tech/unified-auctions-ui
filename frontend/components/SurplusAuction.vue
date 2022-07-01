@@ -4,12 +4,11 @@
             <Alert v-if="auctionError && auctionError.showBanner" :message="auctionError.error" type="error" />
         </div>
         <div v-if="auction">
-            <div v-if="!auction.isActive">
-                <AuctionRestartPanel
+            <div v-if="auction.state != 'collected'">
+                <SurplusAuctionRestartPanel
                     :wallet-address="walletAddress"
-                    :transaction-fee="auction.restartTransactionFeeETH"
                     :is-explanations-shown="isExplanationsShown"
-                    :is-restarting="auction.isRestarting"
+                    :is-restarting="auction.state === 'requires-restart'"
                     @restart="$emit('restart', auctionId)"
                     @connectWallet="$emit('connect')"
                     @disconnectWallet="$emit('disconnect')"
@@ -20,15 +19,12 @@
                     <tbody>
                         <tr>
                             <td>Auction State</td>
-                            <td>Ends in <time-till :date="auction.endDate" /></td>
+                            <td>Ends in <time-till :date="auction.auctionEndDate" /></td>
                         </tr>
                         <tr>
                             <td>Auction Amount</td>
                             <td>
-                                <format-currency
-                                    :value="auction.collateralAmount"
-                                    :currency="auction.collateralSymbol"
-                                />
+                                <format-currency :value="auction.receiveAmountDAI" :currency="DAI" />
                             </td>
                         </tr>
                         <tr>
@@ -40,10 +36,12 @@
                         <tr>
                             <td>Auction Price</td>
                             <td>
-                                <template v-if="auction.isActive">
-                                    <format-currency :value="auction.approximateUnitPrice" currency="MKR" />
-                                    per
-                                    <format-currency :currency="auction.collateralSymbol" />
+                                <template v-if="auction.state != 'collected'">
+                                    <format-currency
+                                        :value="auction.bidAmountMKR.dividedBy(auction.receiveAmountDAI)"
+                                        currency="MKR"
+                                    />
+                                    per <format-currency :currency="DAI" />
                                     <PriceDropAnimation :auction="auction" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
@@ -52,9 +50,9 @@
                         <tr>
                             <td>Price On Uniswap</td>
                             <td>
-                                <template v-if="auction.isActive && auction.marketUnitPrice">
+                                <template v-if="auction.state != 'collected' && auction.marketUnitPrice">
                                     <format-currency :value="auction.marketUnitPrice" currency="MKR" /> per
-                                    <format-currency :currency="auction.collateralSymbol" />
+                                    <format-currency :currency="DAI" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
@@ -65,16 +63,6 @@
                                 <template v-if="auction.isActive && auction.marketUnitPriceToUnitPriceRatio">
                                     <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" />
                                 </template>
-                                <span
-                                    v-else-if="
-                                        auction.isActive &&
-                                        !auction.marketUnitPriceToUnitPriceRatio &&
-                                        !auction.isFinished
-                                    "
-                                    class="opacity-50"
-                                >
-                                    Not tradable
-                                </span>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
@@ -98,23 +86,26 @@
                 <TextBlock class="mt-4">
                     <template v-if="!error">
                         The auctioned surplus auction contains
-                        <format-currency :value="auction.collateralAmount" :currency="auction.collateralSymbol" />.
-                        <span v-if="auction.isActive || auction.isFinished">
+                        <format-currency :value="auction.receiveAmountDAI" :currency="DAI" />.
+                        <span v-if="auction.state != 'requires-restart'">
                             The highest bid for it is
-                            <format-currency :value="auction.approximateUnitPrice" currency="MKR" />. This equals
-                            <format-currency :value="auction.approximateUnitPrice" currency="MKR" /> per
-                            <format-currency :currency="auction.collateralSymbol" />, or approximately
-                            <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you buy
-                            <format-currency :currency="auction.collateralSymbol" /> on another exchange platform such
-                            as Uniswap.
+                            <format-currency :value="auction.bidAmountMKR" currency="MKR" />. This equals
+                            <format-currency
+                                :value="auction.bidAmountMKR.dividedBy(auction.receiveAmountDAI)"
+                                currency="MKR"
+                            />
+                            per <format-currency :currency="DAI" />, or approximately
+                            <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you
+                            exchange <format-currency :currency="MKR" /> to <format-currency :currency="DAI" /> on an
+                            exchange platform such as Uniswap.
                         </span>
                         <span v-else>
                             This auction requires to be restarted in order to determine prices properly.
                         </span>
                     </template>
                     <template v-else>
-                        This auction was finished at {{ auction.endDate.toUTCString() }} at a closing auction price of
-                        <format-currency :value="auction.approximateUnitPrice" currency="MKR" />.
+                        This auction was finished at {{ auction.auctionEndDate.toUTCString() }} at a closing auction
+                        price of <format-currency :value="auction.bidAmountMKR" currency="MKR" />.
                     </template>
                 </TextBlock>
             </template>
@@ -133,69 +124,46 @@
                         </div>
                     </Tooltip>
                 </div>
-                <div v-if="auction.transactionAddress" class="flex w-full justify-end">
-                    <span>
-                        Transaction <format-address shorten :value="auction.transactionAddress" /> was successfully
-                        executed.
-                        <format-address explicit :value="auction.transactionAddress" />
-                    </span>
-                </div>
             </TextBlock>
         </div>
-        <AuctionEventsBlock v-else-if="takeEvents && takeEvents.length > 0" :take-events="takeEvents" />
-        <Loading
-            v-else-if="areAuctionsFetching || areTakeEventsFetching"
-            is-loading
-            class="w-full self-center Loading h-48"
-        />
     </TextBlock>
 </template>
 
 <script lang="ts">
-import type { AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
 import Vue from 'vue';
+import type { SurplusAuction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
 import PriceDropAnimation from './utils/PriceDropAnimation.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import Button from '~/components/common/BaseButton.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import Loading from '~/components/common/Loading.vue';
-import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
-import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
+import SurplusAuctionRestartPanel from '~/components/panels/SurplusAuctionRestartPanel.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
 
 export default Vue.extend({
     name: 'SurplusAuction',
     components: {
-        AuctionRestartPanel,
-        AuctionEventsBlock,
+        SurplusAuctionRestartPanel,
         PriceDropAnimation,
-        Loading,
         FormatCurrency,
         TextBlock,
         TimeTill,
         Button,
         FormatMarketValue,
-        FormatAddress,
         Alert,
         Tooltip,
         LoadingIcon,
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<AuctionTransaction>,
+            type: Object as Vue.PropType<SurplusAuction>,
             default: null,
         },
         auctionId: {
             type: String,
             required: true,
-        },
-        takeEvents: {
-            type: Array as Vue.PropType<TakeEvent[]>,
-            default: null,
         },
         error: {
             type: String,
@@ -204,14 +172,6 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
-        },
-        areAuctionsFetching: {
-            type: Boolean,
-            default: false,
-        },
-        areTakeEventsFetching: {
-            type: Boolean,
-            default: false,
         },
         walletAddress: {
             type: String,
@@ -230,19 +190,19 @@ export default Vue.extend({
                     error: this.error,
                     showBanner: true,
                 };
-            } else if (!this.areAuctionsFetching && !this.areTakeEventsFetching && !this.auction && !this.takeEvents) {
+            } else if (!this.auction) {
                 return {
                     error: 'This auction was not found',
                     showBanner: true,
                 };
-            } else if (this.auction?.isFinished || (!this.auction && this.takeEvents)) {
+            } else if (this.auction.state === 'collected') {
                 return {
                     error: 'This auction is finished',
                     showBanner: true,
                 };
-            } else if (!this.auction?.isActive && !this.areAuctionsFetching && !this.areTakeEventsFetching) {
+            } else if (this.auction.state === 'requires-restart') {
                 return {
-                    error: 'This auction is inactive and must be restarted',
+                    error: 'This auction must be restarted',
                     showBanner: false,
                 };
             }
