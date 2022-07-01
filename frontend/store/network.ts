@@ -1,6 +1,6 @@
 import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
-import { getNetworkConfigByType, getNetworkTypeByChainId } from 'auctions-core/src/network';
+import { getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
 import getWallet from '~/lib/wallet';
 import { NetworkConfig } from '~/../core/src/types';
@@ -23,6 +23,9 @@ export const state = (): State => ({
 });
 
 export const getters = {
+    networks(state: State) {
+        return state.networks;
+    },
     getWalletChainId(state: State) {
         return state.walletChainId;
     },
@@ -42,10 +45,9 @@ export const getters = {
         }
         return pageNetwork;
     },
-    isPageNetworkValid(_state: State, getters: any) {
+    isPageNetworkValid(state: State, getters: any) {
         try {
-            getNetworkConfigByType(getters.getPageNetwork);
-            return true;
+            return state.networks.some(n => n.type === getters.getPageNetwork);
         } catch {
             return false;
         }
