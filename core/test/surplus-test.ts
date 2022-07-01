@@ -38,7 +38,7 @@ async function swapToMKR(
     notifier?: Notifier
 ) {
     const signer = await getSigner(network);
-    const address = await signer.getAddress()
+    const address = await signer.getAddress();
     const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
     const UNISWAP_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
     const MKR_ADDRESS = '0xC4269cC7acDEdC3794b221aA4D9205F564e27f0d';
@@ -57,32 +57,27 @@ async function swapToMKR(
     await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
 
     // Get some eth
-    transactionPromise = CONTRACT_WETH['deposit'](
-        {
-            value: ethers.utils.parseEther("23"),
-        }
-    );
+    transactionPromise = CONTRACT_WETH['deposit']({
+        value: ethers.utils.parseEther('23'),
+    });
     await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
-    console.log('fetching balance')
+    console.log('fetching balance');
 
     // get some mkr
-    let deadline = await getNetworkDate(network);
+    const deadline = await getNetworkDate(network);
     deadline.setHours(deadline.getDate() + 1);
     const transactionParamsSwapMkr = [
-        new BigNumber( amountPaidETH ).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        new BigNumber(amountPaidETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
         new BigNumber(minAmountMKRReceived).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
         [WETH_ADDRESS, MKR_ADDRESS],
         address,
-        new BigNumber(Math.floor(deadline.getTime() / 1000)).toFixed(0)
-    ]
+        new BigNumber(Math.floor(deadline.getTime() / 1000)).toFixed(0),
+    ];
     const gasParametersSwapMKR = await getGasParametersForTransaction(network);
-    transactionPromise = CONTRACT_UNISWAP['swapExactTokensForTokens'](
-        ...transactionParamsSwapMkr,
-        {
-            ...gasParametersSwapMKR,
-            type: gasParametersSwapMKR.gasPrice ? undefined : 2,
-        }
-    );
+    transactionPromise = CONTRACT_UNISWAP['swapExactTokensForTokens'](...transactionParamsSwapMkr, {
+        ...gasParametersSwapMKR,
+        type: gasParametersSwapMKR.gasPrice ? undefined : 2,
+    });
     await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
 }
 
@@ -109,7 +104,7 @@ describe('Surplus Auction', () => {
     it('participates in active auction', async () => {
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'localhost');
         await setAllowanceAmountMKR('localhost', address);
-        await swapToMKR('localhost', 29)
+        await swapToMKR('localhost', 29);
         await bidToSurplusAuction('localhost', 2328, '21');
         const auctions = await fetchActiveSurplusAuctions('localhost');
         const currentAuction = auctions[0] as SurplusAuctionActive;

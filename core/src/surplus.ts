@@ -6,6 +6,13 @@ import { Contract } from 'ethers';
 import getNetworkDate from './date';
 import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
+import getSigner from './signer';
+import { getGasParametersForTransaction } from './gas';
+import trackTransaction from './tracker';
+import { getNetworkConfigByType } from './constants/NETWORKS';
+import { ethers } from 'hardhat';
+import WETH from './abis/WETH.json';
+import UNISWAP from './abis/UNISWAP.json';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
@@ -135,4 +142,54 @@ export const collectSurplusAuction = async function (network: string, auctionInd
         throw new Error('Did not find the auction to collect.');
     }
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], notifier);
+};
+
+const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
+    const networkConfig = getNetworkConfigByType(network);
+    if (networkConfig.isFork) {
+        return false;
+    }
+    return confirmTransaction;
+};
+export const swapToMKR = async function (
+    network: string,
+    amountPaidETH: string | number,
+    minAmountMKRReceived: string | number = 20,
+    notifier?: Notifier
+) {
+    const signer = await getSigner(network);
+    const address = await signer.getAddress();
+    const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
+    const UNISWAP_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
+    const MKR_ADDRESS = '0xC4269cC7acDEdC3794b221aA4D9205F564e27f0d';
+    const CONTRACT_WETH = await new Contract(WETH_ADDRESS, WETH, signer);
+    const CONTRACT_UNISWAP = await new Contract(UNISWAP_ADDRESS, UNISWAP, signer);
+
+    // Allow operations with the uniswap to swap from weth
+    const gasParameters = await getGasParametersForTransaction(network);
+    let transactionPromise = CONTRACT_WETH['approve'](
+        ...[UNISWAP_ADDRESS, new BigNumber(amountPaidETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)],
+        {
+            ...gasParameters,
+            type: gasParameters.gasPrice ? undefined : 2,
+        }
+    );
+
+    await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
+
+    // get some mkr
+    const deadline = await getNetworkDate(network);
+    deadline.setHours(deadline.getDate() + 1);
+    const transactionParamsSwapMkr = [
+        new BigNumber(minAmountMKRReceived).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        [WETH_ADDRESS, MKR_ADDRESS],
+        address,
+        new BigNumber(Math.floor(deadline.getTime() / 1000)).toFixed(0),
+    ];
+    const gasParametersSwapMKR = await getGasParametersForTransaction(network);
+    transactionPromise = CONTRACT_UNISWAP['swapETHForExactTokens'](...transactionParamsSwapMkr, {
+        ...gasParametersSwapMKR,
+        type: gasParametersSwapMKR.gasPrice ? undefined : 2,
+    });
+    await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
 };
