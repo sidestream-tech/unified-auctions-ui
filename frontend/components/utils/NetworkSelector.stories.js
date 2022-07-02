@@ -7,7 +7,9 @@ const common = {
     components: { NetworkSelector },
     methods: {
         select: action('select'),
-        networks: generateFakeNetworks(),
+    },
+    computed: {
+        networks: () => generateFakeNetworks(),
     },
 };
 
