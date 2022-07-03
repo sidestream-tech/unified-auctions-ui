@@ -26,7 +26,7 @@ const common = {
     },
 };
 
-storiesOf('Surplus/HighestBidCheckPanel', module)
+storiesOf('Panels/HighestBidCheckPanel', module)
     .add('No Wallet, No Bids', () => ({
         ...common,
         data: () => ({

@@ -82,25 +82,17 @@ export default Vue.extend({
         },
     },
     computed: {
-        bidEvents() {
-            if (!this.auction || !this.auction.events) {
-                return [];
-            }
-            return this.auction.events.filter(event => {
-                return event.type === 'bid';
-            });
-        },
         latestBid() {
-            if (!this.bidEvents || this.bidEvents.length === 0) {
+            if (!this.auction || !this.auction.bidAmountMKR) {
                 return null;
             }
-            return this.bidEvents[this.bidEvents.length - 1];
+            return this.auction.bidAmountMKR;
         },
         isUserLatestBidder() {
             if (!this.latestBid) {
                 return false;
             }
-            return this.latestBid.address === this.userWalletAddress;
+            return this.auction.receiverAddress === this.userWalletAddress;
         },
         currentStateAndTitle(): PanelProps {
             if (!this.userWalletAddress && !this.latestBid) {
@@ -118,7 +110,7 @@ export default Vue.extend({
             if (!this.userWalletAddress) {
                 return {
                     name: 'inactive',
-                    title: `Highest bid by ${this.latestBid.address}`,
+                    title: `Highest bid by ${this.auction.receiverAddress}`,
                 };
             }
             if (this.isUserLatestBidder) {
