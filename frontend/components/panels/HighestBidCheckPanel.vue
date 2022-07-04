@@ -8,9 +8,9 @@
 
         <TextBlock class="my-3">
             Current Highest Bid
-            <span v-if="latestBid === null" class="flex justify-end gap-5"> There were no bids yet </span>
+            <span v-if="latestBid === null" class="flex justify-end text-gray-400"> There were no bids yet </span>
 
-            <span v-else class="flex justify-end gap-5">
+            <span v-else class="flex justify-end">
                 <FormatCurrency :value="latestBid" currency="MKR" />
             </span>
         </TextBlock>

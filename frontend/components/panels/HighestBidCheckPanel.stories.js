@@ -6,20 +6,14 @@ import HighestBidCheckPanel from '~/components/panels/HighestBidCheckPanel';
 import { generateFakeSurplusAuction } from '~/helpers/generateFakeSurplusAuction';
 
 const fakeSurplusAuction = generateFakeSurplusAuction();
-const fakeSurplusAuctionNoBids = generateFakeSurplusAuction(true);
-const fakeSurplusAuctionBidEvents = fakeSurplusAuction.events.filter(event => {
-    return event.type === 'bid';
-});
 
 const common = {
     components: { HighestBidCheckPanel },
     data: () => ({
         isExplanationsShown: true,
         auction: fakeSurplusAuction,
-        bidAmount: new BigNumber(fakeSurplusAuction.events[fakeSurplusAuction.events.length - 1].bidAmountMKR).times(
-            1.1
-        ),
-        userWalletAddress: fakeSurplusAuctionBidEvents[0].address,
+        bidAmount: new BigNumber(fakeSurplusAuction.bidAmountMKR).times(1.1),
+        userWalletAddress: faker.finance.ethereumAddress(),
     }),
     methods: {
         bid: action('bid'),
@@ -30,7 +24,7 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     .add('No Wallet, No Bids', () => ({
         ...common,
         data: () => ({
-            auction: fakeSurplusAuctionNoBids,
+            auction: null,
             bidAmount: new BigNumber(56).times(1.1),
         }),
         template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" />`,
@@ -42,7 +36,7 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     .add('No bids yet', () => ({
         ...common,
         data: () => ({
-            auction: fakeSurplusAuctionNoBids,
+            auction: null,
             bidAmount: new BigNumber(56).times(1.1),
             userWalletAddress: faker.finance.ethereumAddress(),
         }),
@@ -60,10 +54,8 @@ storiesOf('Panels/HighestBidCheckPanel', module)
         ...common,
         data: () => ({
             auction: fakeSurplusAuction,
-            bidAmount: new BigNumber(
-                fakeSurplusAuction.events[fakeSurplusAuction.events.length - 1].bidAmountMKR
-            ).times(1.1),
-            userWalletAddress: fakeSurplusAuctionBidEvents[fakeSurplusAuctionBidEvents.length - 1].address,
+            bidAmount: new BigNumber(fakeSurplusAuction.bidAmountMKR).times(1.1),
+            userWalletAddress: fakeSurplusAuction.receiverAddress,
         }),
         template: `<HighestBidCheckPanel :auction="auction" :userWalletAddress="userWalletAddress" :bidAmount="bidAmount" />`,
     }))

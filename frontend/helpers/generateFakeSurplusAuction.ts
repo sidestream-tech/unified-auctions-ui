@@ -1,8 +1,7 @@
-import { SurplusAuction, SurplusAuctionData, SurplusAuctionStates, SurplusEvent } from 'auctions-core/src/types';
+import { SurplusAuction, SurplusAuctionStates } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
 import { random } from 'lodash';
-import { generateFakeSurplusBidEvents, generateFakeSurplusEvent } from '~/helpers/generateFakeSurplusEvent';
 
 const SURPLUS_AUCTION_STATES: SurplusAuctionStates[] = [
     'just-started',
@@ -12,9 +11,10 @@ const SURPLUS_AUCTION_STATES: SurplusAuctionStates[] = [
     'requires-restart',
 ];
 
-export const generateFakeSurplusAuctionData = function (): SurplusAuctionData {
+export const generateFakeSurplusAuction = function (): SurplusAuction {
     const id = faker.datatype.number();
     const state: SurplusAuctionStates = faker.helpers.randomize(SURPLUS_AUCTION_STATES);
+    const bidAmountMKR = new BigNumber(parseFloat(faker.finance.amount()));
     const receiveAmountDAI = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
     const auctionEndDate = faker.date.soon();
@@ -28,46 +28,13 @@ export const generateFakeSurplusAuctionData = function (): SurplusAuctionData {
     return {
         id,
         network: 'mainnet',
+        bidAmountMKR,
         receiveAmountDAI,
         receiverAddress,
         auctionEndDate,
         bidEndDate,
         earliestEndDate,
         state,
-    };
-};
-
-export const generateFakeSurplusAuction = function (noEvents?: boolean): SurplusAuction {
-    const surplusAuctionData = generateFakeSurplusAuctionData();
-    const marketUnitPrice = new BigNumber(parseFloat(faker.finance.amount()));
-    const events: SurplusEvent[] = [];
-
-    // Simulate event fetching
-    events.push(generateFakeSurplusEvent('start'));
-
-    if (!noEvents) {
-        if (surplusAuctionData.state !== 'just-started') {
-            events.push(...generateFakeSurplusBidEvents());
-        }
-
-        if (surplusAuctionData.state === 'collected') {
-            events.push(generateFakeSurplusEvent('collect'));
-        }
-    }
-
-    // Calculate latest bid and auction price
-    const latestBids = events.filter(event => {
-        return event.type === 'bid';
-    });
-    const highestBid = latestBids.length > 0 ? latestBids[latestBids.length - 1].bidAmountMKR : undefined;
-    const auctionPrice = highestBid ? highestBid.dividedBy(surplusAuctionData.receiveAmountDAI) : undefined;
-
-    return {
-        ...surplusAuctionData,
-        marketUnitPrice,
-        events,
-        highestBid,
-        auctionPrice,
     };
 };
 
