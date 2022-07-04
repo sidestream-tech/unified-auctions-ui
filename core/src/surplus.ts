@@ -136,4 +136,3 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     }
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], notifier);
 };
-
