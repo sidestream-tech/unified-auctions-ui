@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { fetchActiveSurplusAuctions, bidToSurplusAuction } from '../src/surplus';
+import { fetchActiveSurplusAuctions, bidToSurplusAuction, collectSurplusAuction, fetchSurplusAuctionByIndex } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import getSigner, { setSigner, createSigner } from '../src/signer';
 import { swapToMKR } from './helpers/swap';
@@ -46,4 +46,16 @@ describe('Surplus Auction', () => {
         expect(currentAuction.id).to.equal(2328);
         expect(currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
+    it('collects the conluded auction', async () => {
+        const auctionsBeforeCollection = await fetchActiveSurplusAuctions('localhost');
+        expect(auctionsBeforeCollection.length).to.equal(5);
+        expect(auctionsBeforeCollection[1].id).to.equal(2327);
+        expect(auctionsBeforeCollection[1].state).to.equal('ready-for-collection');
+
+        await collectSurplusAuction('localhost', auctionsBeforeCollection[1].id)
+
+        const auctionAfterCollection = await fetchSurplusAuctionByIndex('localhost', 2327);
+        expect(auctionAfterCollection.id).to.equal(2327);
+        expect(auctionAfterCollection.state).to.equal('collected');
+    })
 });
