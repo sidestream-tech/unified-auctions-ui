@@ -1,6 +1,6 @@
 import { getCollateralConfigByType } from 'auctions-core/src/constants/COLLATERALS';
 import { getSupportedCollateralTypes } from 'auctions-core/src/addresses';
-import { ETHEREUM_NETWORK, WHITELISTED_COLLATERALS } from './variables';
+import { WHITELISTED_COLLATERALS } from './variables';
 
 const validateWhitelist = function (whitelist: string[]) {
     const unsupportedCollateralTypes: string[] = [];
@@ -22,11 +22,11 @@ const parseCollateralWhitelist = function (whitelist: string): string[] {
     return whitelist.split(',').map(item => item.trim());
 };
 
-export const getWhitelistedCollaterals = async function () {
+export const getWhitelistedCollaterals = async function (network: string) {
     if (WHITELISTED_COLLATERALS) {
         return parseCollateralWhitelist(WHITELISTED_COLLATERALS);
     }
-    return await getSupportedCollateralTypes(ETHEREUM_NETWORK);
+    return await getSupportedCollateralTypes(network);
 };
 
 export const setupWhitelist = function () {
