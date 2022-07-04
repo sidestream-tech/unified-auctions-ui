@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { message } from 'ant-design-vue';
-import { getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/constants/NETWORKS';
+import { getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { setSigner } from 'auctions-core/src/signer';
 import MetaMaskLogo from '~/assets/icons/wallets/metamask.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
@@ -19,6 +19,9 @@ export default class MetaMask extends AbstractWallet {
 
     public static get isConnected() {
         if (!window.ethereum) {
+            return false;
+        }
+        if (typeof window.ethereum?.isConnected !== 'function') {
             return false;
         }
         return window.ethereum.isConnected();

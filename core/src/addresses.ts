@@ -4,8 +4,8 @@ import memoizee from 'memoizee';
 import COLLATERALS, { getAllCollateralTypes } from './constants/COLLATERALS';
 import getProvider from './provider';
 import CHAINLOG from './abis/CHAINLOG.json';
-import { CHAINLOG_ADDRESS } from './constants/NETWORKS';
 
+const CHAINLOG_ADDRESS = '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F';
 const CHAINLOG_CACHE = 24 * 60 * 60 * 1000;
 
 const getChainLogContract = async function (network: string): Promise<Contract> {
