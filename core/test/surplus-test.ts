@@ -24,62 +24,70 @@ const canTransactionBeConfirmed = function (network: string, confirmTransaction?
 };
 
 const ALCHEMY_URL = process.env.ALCHEMY_URL;
-const HARDHAT_PRIVATE_KEY = '0x701b615bbdfb9de65240bc28bd21bbc0d996645a3dd57e7b12bc2bdf6f192c82'; // deterministic private key from hardhat.
+const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
 
 async function createWalletFromPrivateKey(privateKey: string, network: string) {
     setSigner(network, createSigner(network, privateKey));
     const signer = await getSigner(network);
     return await signer.getAddress();
 }
-async function swapToMKR(
+
+export const swapToMKR = async function (
     network: string,
-    amountPaidETH: string | number,
-    minAmountMKRReceived: string | number = 0,
+    amountPaidAllowanceETH: string | number,
+    amountReceivedMinMKR: string | number,
     notifier?: Notifier
 ) {
     const signer = await getSigner(network);
     const address = await signer.getAddress();
     const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
     const UNISWAP_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-    const MKR_ADDRESS = '0xC4269cC7acDEdC3794b221aA4D9205F564e27f0d';
-    const CONTRACT_WETH = await new Contract(WETH_ADDRESS, WETH, signer);
-    const CONTRACT_UNISWAP = await new Contract(UNISWAP_ADDRESS, UNISWAP, signer);
+    const MKR_ADDRESS = '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2';
+    const contractWeth = await new Contract(WETH_ADDRESS, WETH, signer);
+    const contractUniswap = await new Contract(UNISWAP_ADDRESS, UNISWAP, signer);
 
     // Allow operations with the uniswap to swap from weth
     const gasParameters = await getGasParametersForTransaction(network);
-    let transactionPromise = CONTRACT_WETH['approve'](
-        ...[UNISWAP_ADDRESS, new BigNumber(amountPaidETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)],
+    let transactionPromise = contractWeth['approve'](
+        ...[UNISWAP_ADDRESS, new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)],
         {
             ...gasParameters,
             type: gasParameters.gasPrice ? undefined : 2,
         }
     );
+
     await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
 
-    // Get some eth
-    transactionPromise = CONTRACT_WETH['deposit']({
-        value: ethers.utils.parseEther('23'),
-    });
-    await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
-    console.log('fetching balance');
+    console.log('allowance granted')
+    //Get some eth
+    await trackTransaction(
+        contractWeth.deposit({
+            value: ethers.utils.parseEther(String(amountPaidAllowanceETH)),
+        }),
+        notifier,
+        canTransactionBeConfirmed(network)
+    );
+    console.log('weth receiwed')
 
     // get some mkr
     const deadline = await getNetworkDate(network);
     deadline.setHours(deadline.getDate() + 1);
+    console.log('deadline computed')
     const transactionParamsSwapMkr = [
-        new BigNumber(amountPaidETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
-        new BigNumber(minAmountMKRReceived).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        new BigNumber(amountReceivedMinMKR).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
         [WETH_ADDRESS, MKR_ADDRESS],
         address,
         new BigNumber(Math.floor(deadline.getTime() / 1000)).toFixed(0),
     ];
     const gasParametersSwapMKR = await getGasParametersForTransaction(network);
-    transactionPromise = CONTRACT_UNISWAP['swapExactTokensForTokens'](...transactionParamsSwapMkr, {
+    transactionPromise = contractUniswap['swapETHForExactTokens'](...transactionParamsSwapMkr, {
         ...gasParametersSwapMKR,
         type: gasParametersSwapMKR.gasPrice ? undefined : 2,
+        value: new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
     });
     await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
-}
+
+};
 
 describe('Surplus Auction', () => {
     beforeEach(async () => {
@@ -104,11 +112,11 @@ describe('Surplus Auction', () => {
     it('participates in active auction', async () => {
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'localhost');
         await setAllowanceAmountMKR('localhost', address);
-        await swapToMKR('localhost', 29);
-        await bidToSurplusAuction('localhost', 2328, '21');
+        await swapToMKR('localhost', 20, 20);
+        await bidToSurplusAuction('localhost', 2328, '20');
         const auctions = await fetchActiveSurplusAuctions('localhost');
         const currentAuction = auctions[0] as SurplusAuctionActive;
         expect(currentAuction.id).to.equal(2328);
-        expect(currentAuction.bidAmountMKR).to.equal(21);
+        expect(currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
 });
