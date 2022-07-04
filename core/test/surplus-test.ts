@@ -58,7 +58,6 @@ export const swapToMKR = async function (
 
     await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
 
-    console.log('allowance granted')
     //Get some eth
     await trackTransaction(
         contractWeth.deposit({
@@ -67,12 +66,10 @@ export const swapToMKR = async function (
         notifier,
         canTransactionBeConfirmed(network)
     );
-    console.log('weth receiwed')
 
     // get some mkr
     const deadline = await getNetworkDate(network);
     deadline.setHours(deadline.getDate() + 1);
-    console.log('deadline computed')
     const transactionParamsSwapMkr = [
         new BigNumber(amountReceivedMinMKR).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
         [WETH_ADDRESS, MKR_ADDRESS],
