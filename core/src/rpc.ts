@@ -25,7 +25,7 @@ const parseInfuraProjectIdFromRpcUrl = function (rpcUrl: string): string | undef
 export const setupRpcUrlAndGetNetworks = async function (
     rpcUrl?: string,
     isDev?: boolean
-): Promise<{ networks: NetworkConfig[]; defaultNetwork: string }> {
+): Promise<{ networks: NetworkConfig[]; defaultNetwork: string; defaultChainId: string }> {
     if (!rpcUrl) {
         throw new Error(`No RPC_URL env variable was provided`);
     }
@@ -35,10 +35,10 @@ export const setupRpcUrlAndGetNetworks = async function (
     if (projectId && defaultNetwork) {
         const networkConfigs = getDefaultNetworkConfigs(projectId, isDev);
         networkConfigs.map(setNetwork);
-        return { networks: getNetworks(), defaultNetwork };
+        return { networks: getNetworks(), defaultNetwork, defaultChainId: chainId };
     } else {
         const networkConfig = getCustomNetworkConfig(rpcUrl, chainId);
         setNetwork(networkConfig);
-        return { networks: getNetworks(), defaultNetwork: networkConfig.type };
+        return { networks: getNetworks(), defaultNetwork: networkConfig.type, defaultChainId: chainId };
     }
 };

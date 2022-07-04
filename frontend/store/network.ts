@@ -12,6 +12,7 @@ interface State {
     walletChainId: string | undefined;
     isChangingNetwork: boolean;
     networks: NetworkConfig[];
+    defaultChainId?: string;
     defaultNetwork?: string;
 }
 
@@ -19,6 +20,7 @@ export const state = (): State => ({
     walletChainId: undefined,
     isChangingNetwork: false,
     networks: [],
+    defaultChainId: undefined,
     defaultNetwork: undefined,
 });
 
@@ -48,9 +50,17 @@ export const getters = {
         }
         return pageNetwork;
     },
+    getPageChainId(state: State, getters: any, rootState: any) {
+        const pageNetwork = rootState.route.query.network;
+        const pageNetworkConfig = getters.getNetworkConfigByType(pageNetwork);
+        if (pageNetworkConfig && pageNetworkConfig.chainId) {
+            return pageNetworkConfig.chainId;
+        }
+        return state.defaultChainId;
+    },
     isPageNetworkValid(state: State, getters: any) {
         try {
-            return state.networks.some(n => n.type === getters.getPageNetwork);
+            return state.networks.some(n => n.chainId === getters.getPageChainId);
         } catch {
             return false;
         }
@@ -59,7 +69,7 @@ export const getters = {
         if (!getters.isWalletConnected) {
             return true;
         }
-        return getters.getPageNetwork === getters.getWalletNetwork;
+        return getters.getPageChainId === getters.getWalletChainId;
     },
     getMakerNetwork(_state: State, getters: any) {
         if (!getters.isPageNetworkValid) {
@@ -85,6 +95,9 @@ export const mutations = {
     setListOfNetworks(state: State, networks: NetworkConfig[]): void {
         state.networks = networks;
     },
+    setDefaultChainId(state: State, defaultChainId: string): void {
+        state.defaultChainId = defaultChainId;
+    },
     setDefaultNetwork(state: State, defaultNetwork: string): void {
         state.defaultNetwork = defaultNetwork;
     },
@@ -103,8 +116,12 @@ export const actions = {
         if (networkChangeTimeoutId) {
             clearTimeout(networkChangeTimeoutId);
         }
-        const { networks, defaultNetwork } = await setupRpcUrlAndGetNetworks(process.env.RPC_URL, isDev);
+        const { networks, defaultChainId, defaultNetwork } = await setupRpcUrlAndGetNetworks(
+            process.env.RPC_URL,
+            isDev
+        );
         commit('setListOfNetworks', networks);
+        commit('setDefaultChainId', defaultChainId);
         commit('setDefaultNetwork', defaultNetwork);
         commit('setIsChangingNetwork', false);
     },

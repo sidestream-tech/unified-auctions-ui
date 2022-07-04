@@ -84,6 +84,7 @@ const NETWORK_TITLES: Record<string, string | undefined> = {
     '0x1': 'mainnet',
     '0x2a': 'kovan',
     '0x5': 'goerli',
+    '0x539': 'custom',
 };
 
 export const getDecimalChainIdByNetworkType = function (networkType: string): number {
