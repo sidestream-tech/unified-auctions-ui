@@ -5,7 +5,7 @@
         </div>
         <div v-if="auction">
             <div v-if="auction.state != 'collected'">
-                <SurplusAuctionRestartPanel
+                <AuctionRestartPanel
                     :wallet-address="walletAddress"
                     :is-explanations-shown="isExplanationsShown"
                     :is-restarting="auction.state === 'requires-restart'"
@@ -24,24 +24,21 @@
                         <tr>
                             <td>Auction Amount</td>
                             <td>
-                                <format-currency :value="auction.receiveAmountDAI" :currency="DAI" />
+                                <format-currency :value="auction.receiveAmountDAI" currency="DAI" />
                             </td>
                         </tr>
                         <tr>
                             <td>Highest Bid</td>
                             <td>
-                                <format-currency :value="auction.approximateUnitPrice" :currency="MKR" />
+                                <format-currency :value="auction.bidAmountMKR" currency="MKR" />
                             </td>
                         </tr>
                         <tr>
                             <td>Auction Price</td>
                             <td>
                                 <template v-if="auction.state != 'collected'">
-                                    <format-currency
-                                        :value="auction.bidAmountMKR.dividedBy(auction.receiveAmountDAI)"
-                                        currency="MKR"
-                                    />
-                                    per <format-currency :currency="DAI" />
+                                    <format-currency :value="unitPrice" currency="MKR" />
+                                    per <format-currency currency="DAI" />
                                     <PriceDropAnimation :auction="auction" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
@@ -52,7 +49,7 @@
                             <td>
                                 <template v-if="auction.state != 'collected' && auction.marketUnitPrice">
                                     <format-currency :value="auction.marketUnitPrice" currency="MKR" /> per
-                                    <format-currency :currency="DAI" />
+                                    <format-currency currency="DAI" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
@@ -86,17 +83,14 @@
                 <TextBlock class="mt-4">
                     <template v-if="!error">
                         The auctioned surplus auction contains
-                        <format-currency :value="auction.receiveAmountDAI" :currency="DAI" />.
+                        <format-currency :value="auction.receiveAmountDAI" currency="DAI" />.
                         <span v-if="auction.state != 'requires-restart'">
                             The highest bid for it is
                             <format-currency :value="auction.bidAmountMKR" currency="MKR" />. This equals
-                            <format-currency
-                                :value="auction.bidAmountMKR.dividedBy(auction.receiveAmountDAI)"
-                                currency="MKR"
-                            />
-                            per <format-currency :currency="DAI" />, or approximately
+                            <format-currency :value="unitPrice" currency="MKR" />
+                            per <format-currency currency="DAI" />, or approximately
                             <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you
-                            exchange <format-currency :currency="MKR" /> to <format-currency :currency="DAI" /> on an
+                            exchange <format-currency currency="MKR" /> to <format-currency currency="DAI" /> on an
                             exchange platform such as Uniswap.
                         </span>
                         <span v-else>
@@ -131,6 +125,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import type { SurplusAuction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
 import PriceDropAnimation from './utils/PriceDropAnimation.vue';
@@ -139,13 +134,13 @@ import TimeTill from '~/components/common/TimeTill.vue';
 import Button from '~/components/common/BaseButton.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import SurplusAuctionRestartPanel from '~/components/panels/SurplusAuctionRestartPanel.vue';
+import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
 
 export default Vue.extend({
     name: 'SurplusAuction',
     components: {
-        SurplusAuctionRestartPanel,
+        AuctionRestartPanel,
         PriceDropAnimation,
         FormatCurrency,
         TextBlock,
@@ -202,11 +197,14 @@ export default Vue.extend({
                 };
             } else if (this.auction.state === 'requires-restart') {
                 return {
-                    error: 'This auction must be restarted',
+                    error: 'This auction is inactive and must be restarted',
                     showBanner: false,
                 };
             }
             return null;
+        },
+        unitPrice(): BigNumber {
+            return this.auction.bidAmountMKR.dividedBy(this.auction.receiveAmountDAI);
         },
     },
     watch: {

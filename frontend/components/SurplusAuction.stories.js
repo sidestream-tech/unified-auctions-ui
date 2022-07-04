@@ -1,9 +1,9 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import SurplusAuction from './SurplusAuction.vue';
-import { generateFakeAuction } from '~/helpers/generateFakeAuction';
+import { generateFakeSurplusAuction } from '~/helpers/generateFakeSurplusAuction';
 
-const fakeAuction = generateFakeAuction();
+const fakeSurplusAuction = generateFakeSurplusAuction();
 const basicStory = {
     components: {
         SurplusAuction,
@@ -11,13 +11,13 @@ const basicStory = {
     computed: {
         auctionParams() {
             return {
-                ...fakeAuction,
+                ...fakeSurplusAuction,
             };
         },
     },
     data() {
         return {
-            fakeAuction,
+            fakeSurplusAuction,
         };
     },
     methods: {
