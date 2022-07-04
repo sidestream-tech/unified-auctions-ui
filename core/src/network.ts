@@ -2,40 +2,45 @@ import type { NetworkConfig } from './types';
 
 const networks: Record<string, NetworkConfig> = {};
 
+const SUPPORTED_NETWORKS: NetworkConfig[] = [
+    {
+        chainId: '0x1',
+        type: 'mainnet',
+        title: 'Main',
+        url: '',
+        etherscanUrl: 'https://etherscan.io',
+        isFork: false,
+    },
+    {
+        chainId: '0x2a',
+        type: 'kovan',
+        title: 'Kovan',
+        gasPrice: 2000000000,
+        url: '',
+        etherscanUrl: 'https://kovan.etherscan.io',
+        isFork: false,
+    },
+    {
+        chainId: '0x5',
+        type: 'goerli',
+        title: 'Goerli',
+        gasPrice: 2000000000,
+        url: '',
+        etherscanUrl: 'https://goerli.etherscan.io',
+        isFork: false,
+    },
+];
+
 export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev?: boolean): NetworkConfig[] {
-    const infuraNetworks = [
-        {
-            chainId: '0x1',
-            type: 'mainnet',
-            title: 'Main',
-            url: `https://mainnet.infura.io/v3/${infuraProjectId}`,
-            etherscanUrl: 'https://etherscan.io',
-            isFork: false,
-        },
-        {
-            chainId: '0x2a',
-            type: 'kovan',
-            title: 'Kovan',
-            gasPrice: 2000000000,
-            url: `https://kovan.infura.io/v3/${infuraProjectId}`,
-            etherscanUrl: 'https://kovan.etherscan.io',
-            isFork: false,
-        },
-        {
-            chainId: '0x5',
-            type: 'goerli',
-            title: 'Goerli',
-            gasPrice: 2000000000,
-            url: `https://goerli.infura.io/v3/${infuraProjectId}`,
-            etherscanUrl: 'https://goerli.etherscan.io',
-            isFork: false,
-        },
-    ];
+    const infuraNetworksWithProjectId = SUPPORTED_NETWORKS.map(network => ({
+        ...network,
+        url: `https://${n.type}.infura.io/v3/${infuraProjectId}`,
+    }));
     if (!isDev) {
-        return infuraNetworks;
+        return infuraNetworksWithProjectId;
     }
     return [
-        ...infuraNetworks,
+        ...infuraNetworksWithProjectId,
         {
             chainId: '0x539',
             type: 'localhost',
@@ -45,6 +50,25 @@ export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev
             isFork: true,
         },
     ];
+};
+
+export const getCustomNetworkConfig = function (rpcUrl: string, chainId: string): NetworkConfig {
+    const matchingNetwork = SUPPORTED_NETWORKS.find(n => n.chainId === chainId);
+    if (matchingNetwork) {
+        return {
+            ...matchingNetwork,
+            title: `${matchingNetwork.title}-like`,
+            url: rpcUrl,
+        };
+    }
+    return {
+        chainId,
+        type: 'custom',
+        title: `Chain ${chainId}`,
+        url: rpcUrl,
+        etherscanUrl: '',
+        isFork: true,
+    };
 };
 
 export const getNetworks = function (): NetworkConfig[] {

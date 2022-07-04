@@ -1,6 +1,12 @@
 import { ethers } from 'ethers';
 import type { NetworkConfig } from './types';
-import { getDefaultNetworkConfigs, getNetworks, setNetwork, getNetworkTypeByChainId } from './network';
+import {
+    getDefaultNetworkConfigs,
+    getCustomNetworkConfig,
+    getNetworks,
+    setNetwork,
+    getNetworkTypeByChainId,
+} from './network';
 
 const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<string> {
     const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcUrl });
@@ -31,14 +37,8 @@ export const setupRpcUrlAndGetNetworks = async function (
         networkConfigs.map(setNetwork);
         return { networks: getNetworks(), defaultNetwork };
     } else {
-        setNetwork({
-            chainId,
-            type: 'custom',
-            title: `Chain ${chainId}`,
-            url: rpcUrl,
-            etherscanUrl: '',
-            isFork: true,
-        });
-        return { networks: getNetworks(), defaultNetwork: 'custom' };
+        const networkConfig = getCustomNetworkConfig(rpcUrl, chainId);
+        setNetwork(networkConfig);
+        return { networks: getNetworks(), defaultNetwork: networkConfig.type };
     }
 };
