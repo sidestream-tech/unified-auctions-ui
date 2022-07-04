@@ -83,7 +83,6 @@ export const swapToMKR = async function (
         value: new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
     });
     await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
-
 };
 
 describe('Surplus Auction', () => {
