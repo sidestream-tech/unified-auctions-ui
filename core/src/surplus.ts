@@ -6,7 +6,6 @@ import { Contract } from 'ethers';
 import getNetworkDate from './date';
 import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
-import { getNetworkConfigByType } from './constants/NETWORKS';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();

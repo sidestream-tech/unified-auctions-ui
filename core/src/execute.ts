@@ -43,7 +43,7 @@ const retriableExecuteTransaction: typeof _executeTransaction = async function (
     }
 };
 
-const executeTransaction = memoizee(retriableExecuteTransaction, {
+export const executeTransaction = memoizee(retriableExecuteTransaction, {
     promise: true,
     length: 4,
 });
