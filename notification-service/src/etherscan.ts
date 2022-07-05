@@ -1,4 +1,4 @@
-import { ETHEREUM_NETWORK, ETHERSCAN_API_KEY } from './variables';
+import { ETHERSCAN_API_KEY } from './variables';
 import axios from 'axios';
 import { NETWORKS } from './constants/NETWORKS';
 import { ETHERSCAN_PREFIX } from './constants/PREFIXES';
@@ -17,11 +17,9 @@ export function validateEtherscanAPIKey() {
     }
 }
 
-export async function getAbiFromContractAddress(contract: string) {
+export async function getAbiFromContractAddress(network: string, contract: string) {
     const result = await axios.get(
-        `${getEtherscanAPI(
-            ETHEREUM_NETWORK
-        )}/api?module=contract&action=getabi&address=${contract}&apikey=${ETHERSCAN_API_KEY}`
+        `${getEtherscanAPI(network)}/api?module=contract&action=getabi&address=${contract}&apikey=${ETHERSCAN_API_KEY}`
     );
 
     if (result.data.message !== 'OK') {
