@@ -63,7 +63,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { WalletBalances } from 'auctions-core/dist/src/types';
+import { WalletBalances } from 'auctions-core/src/types';
 import FormatAddress from '../utils/FormatAddress.vue';
 import FormatCurrency from '../utils/FormatCurrency.vue';
 import TimeTill from '../common/TimeTill.vue';
