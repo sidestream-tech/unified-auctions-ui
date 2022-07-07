@@ -8,7 +8,7 @@ import {
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import getSigner, { setSigner, createSigner } from '../src/signer';
-import { getDevelopmentNetworkConig } from '../src/network';
+import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from './helpers/swap';
 
 import { SurplusAuctionActive } from '../src/types';
@@ -26,7 +26,8 @@ async function createWalletFromPrivateKey(privateKey: string, network: string) {
 
 describe('Surplus Auction', () => {
     before(async () => {
-        getDevelopmentNetworkConig(true);
+        const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
+        await setupRpcUrlAndGetNetworks(local_rpc_url, true);
     });
     beforeEach(async () => {
         await hre.network.provider.request({
@@ -42,44 +43,44 @@ describe('Surplus Auction', () => {
         });
     });
     it('fetches active auctions', async () => {
-        const auctions = await fetchActiveSurplusAuctions('localhost');
+        const auctions = await fetchActiveSurplusAuctions('custom');
         expect(auctions.length).to.equal(5);
         expect(auctions[0].id).to.equal(2328);
         expect(auctions[0].state).to.equal('have-bids');
     });
     it('participates in active auction', async () => {
-        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'localhost');
-        await setAllowanceAmountMKR('localhost', address);
-        await swapToMKR('localhost', 20, 20);
-        await bidToSurplusAuction('localhost', 2328, '20');
-        const auctions = await fetchActiveSurplusAuctions('localhost');
+        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
+        await setAllowanceAmountMKR('custom', address);
+        await swapToMKR('custom', 20, 20);
+        await bidToSurplusAuction('custom', 2328, '20');
+        const auctions = await fetchActiveSurplusAuctions('custom');
         const currentAuction = auctions[0] as SurplusAuctionActive;
         expect(currentAuction.id).to.equal(2328);
         expect(currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
     it('collects the conluded auction', async () => {
-        const auctionsBeforeCollection = await fetchActiveSurplusAuctions('localhost');
+        const auctionsBeforeCollection = await fetchActiveSurplusAuctions('custom');
         expect(auctionsBeforeCollection.length).to.equal(5);
         expect(auctionsBeforeCollection[1].id).to.equal(2327);
         expect(auctionsBeforeCollection[1].state).to.equal('ready-for-collection');
 
-        await collectSurplusAuction('localhost', auctionsBeforeCollection[1].id);
+        await collectSurplusAuction('custom', auctionsBeforeCollection[1].id);
 
-        const auctionAfterCollection = await fetchSurplusAuctionByIndex('localhost', 2327);
+        const auctionAfterCollection = await fetchSurplusAuctionByIndex('custom', 2327);
         expect(auctionAfterCollection.id).to.equal(2327);
         expect(auctionAfterCollection.state).to.equal('collected');
     });
     it('forbids restarting active auctions', async () => {
-        expect(restartSurplusAuction('localhost', 2328)).to.be.revertedWith("Can't restart the active auction");
+        expect(restartSurplusAuction('custom', 2328)).to.be.revertedWith("Can't restart the active auction");
     });
     it('forbids collecting inexistant auctions', async () => {
-        expect(collectSurplusAuction('localhost', 3333)).to.be.revertedWith('Did not find the auction to collect.');
+        expect(collectSurplusAuction('custom', 3333)).to.be.revertedWith('Did not find the auction to collect.');
     });
     it('forbids collecting inexistant auctions', async () => {
-        expect(bidToSurplusAuction('localhost', 3333, '20')).to.be.revertedWith('Did not find the auction to bid on.');
+        expect(bidToSurplusAuction('custom', 3333, '20')).to.be.revertedWith('Did not find the auction to bid on.');
     });
     it('forbids collecting inexistant auctions', async () => {
-        expect(fetchSurplusAuctionByIndex('localhost', 3333)).to.be.revertedWith(
+        expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith(
             'No active auction exists with this id'
         );
     });

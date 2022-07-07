@@ -131,7 +131,7 @@ export const setAllowanceAmountMKR = async function (
 ): Promise<string> {
     walletAddress; // so the memoizee cache is invalidated if another address is used
     const flapAddress = await getContractAddressByName(network, 'MCD_FLAP');
-    return await executeTransaction(network, 'MCD_GOV', 'approve(address)', [flapAddress], notifier);
+    return await executeTransaction(network, 'MCD_GOV', 'approve(address,uint256)', [flapAddress, new BigNumber(10).toFixed(0)], notifier);
 };
 
 export const fetchAllowanceAmountMKR = async function (network: string, walletAddress: string): Promise<BigNumber> {

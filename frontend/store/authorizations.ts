@@ -19,7 +19,8 @@ interface State {
     authorizingCollaterals: string[];
     collateralAuthorizations: string[];
     isAllowanceAmountLoading: boolean;
-    allowanceAmount?: BigNumber;
+    allowanceAmountDAI?: BigNumber;
+    allowanceAmountMKR?: BigNumber;
 }
 
 const getInitialState = (): State => ({
@@ -28,7 +29,8 @@ const getInitialState = (): State => ({
     authorizingCollaterals: [],
     collateralAuthorizations: [],
     isAllowanceAmountLoading: false,
-    allowanceAmount: undefined,
+    allowanceAmountDAI: undefined,
+    allowanceAmountMKR: undefined,
 });
 
 export const state = () => getInitialState();
