@@ -89,7 +89,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import { TakeEvent } from 'auctions-core/dist/src/types';
+import { TakeEvent } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import MainText from '~/components/MainText.vue';

@@ -1,6 +1,6 @@
 import type { CalleeAddresses } from '../types';
 import { getCollateralConfigByType } from './COLLATERALS';
-import { getNetworkConfigByType } from './NETWORKS';
+import { getNetworkConfigByType } from '../network';
 
 const CALLEES: Record<string, CalleeAddresses | undefined> = {
     '0x1': {
@@ -24,7 +24,7 @@ const CALLEES: Record<string, CalleeAddresses | undefined> = {
 
 export const getCalleesByNetworkType = function (network: string): CalleeAddresses {
     const networkConfig = getNetworkConfigByType(network);
-    const chainId = network === 'localhost' ? '0x1' : networkConfig.chainId;
+    const chainId = networkConfig.isFork ? '0x1' : networkConfig.chainId;
     const networkCallees = CALLEES[chainId];
     if (!networkCallees) {
         throw new Error(`Can not find callee addresses for the "${network}" network`);

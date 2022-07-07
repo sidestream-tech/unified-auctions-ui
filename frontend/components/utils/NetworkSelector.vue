@@ -19,9 +19,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import { Icon } from 'ant-design-vue';
-import { getNetworks } from 'auctions-core/src/constants/NETWORKS';
+import { NetworkConfig } from 'auctions-core/src/types';
 import Select from '~/components/common/Select.vue';
 
 export default Vue.extend({
@@ -35,23 +35,19 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        isDev: {
-            type: Boolean,
-            default: false,
+        networks: {
+            type: Array as PropType<NetworkConfig[]>,
+            default: () => [] as NetworkConfig[],
         },
         isChangingNetwork: {
             type: Boolean,
             default: false,
         },
     },
-    data() {
-        return {
-            options: [
-                ...Object.entries(getNetworks(this.isDev)).map(([name, propeties]) => {
-                    return { label: propeties.title, value: name as string | null };
-                }),
-            ],
-        };
+    computed: {
+        options() {
+            return [...this.networks.map(eachNetwork => ({ label: eachNetwork.title, value: eachNetwork.type }))];
+        },
     },
 });
 </script>

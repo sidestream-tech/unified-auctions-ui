@@ -1,7 +1,7 @@
 import VuexPersistence from 'vuex-persist';
 import Cookies from 'js-cookie';
 
-export default ({ store }) => {
+export default ({ store, isDev }) => {
     window.onNuxtReady(() => {
         new VuexPersistence({
             storage: window.localStorage,
@@ -14,9 +14,6 @@ export default ({ store }) => {
             },
             modules: ['cookies'],
         }).plugin(store);
-        const network = store.getters['network/getMakerNetwork'];
-        if (network) {
-            store.dispatch('network/setup');
-        }
+        store.dispatch('network/setup', isDev);
     });
 };

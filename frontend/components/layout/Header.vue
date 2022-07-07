@@ -29,7 +29,7 @@
                         <NetworkSelector
                             v-if="!isUnifiedPage && !isMinimal"
                             :network="network"
-                            :is-dev="isDev"
+                            :networks="networks"
                             :is-changing-network="isChangingNetwork"
                             @update:network="$emit('update:network', $event)"
                         />
@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import StagingBanner from './StagingBanner.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
 import BaseSwitch from '~/components/common/BaseSwitch.vue';
@@ -113,9 +113,9 @@ export default Vue.extend({
             type: String,
             default: undefined,
         },
-        isDev: {
-            type: Boolean,
-            default: false,
+        networks: {
+            type: Array as PropType<NetworkConfig[]>,
+            default: () => [] as NetworkConfig[],
         },
         isChangingNetwork: {
             type: Boolean,
