@@ -320,8 +320,7 @@ data:
           image: ghcr.io/sidestream-tech/unified-auctions-ui/core:pr-${DRONE_PULL_REQUEST}
           commands:
             - cd core
-            - sleep 20
-            - npm i
+            - npm ci
             - npm run test hardhat-service
 
       services:
