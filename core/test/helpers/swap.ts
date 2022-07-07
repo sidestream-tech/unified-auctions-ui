@@ -11,7 +11,7 @@ import { getGasParametersForTransaction } from '../../src/gas';
 import trackTransaction from '../../src/tracker';
 import getNetworkDate from '../../src/date';
 
-import { getNetworkConfigByType } from '../../src/constants/NETWORKS';
+import { getNetworkConfigByType } from '../../src/network';
 
 const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
     const networkConfig = getNetworkConfigByType(network);
