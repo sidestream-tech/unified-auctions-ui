@@ -98,8 +98,11 @@ export default Vue.extend({
         lowestNextBid(): BigNumber {
             return this.auction.bidAmountMKR.multipliedBy(1.1);
         },
-        unitPriceAfterBid() {
-            return this.transactionBidAmount?.dividedBy(this.auction.receiveAmountDAI);
+        unitPriceAfterBid(): BigNumber | undefined {
+            if (!this.transactionBidAmount) {
+                return this.lowestNextBid.dividedBy(this.auction.receiveAmountDAI);
+            }
+            return this.transactionBidAmount.dividedBy(this.auction.receiveAmountDAI);
         },
     },
     watch: {
