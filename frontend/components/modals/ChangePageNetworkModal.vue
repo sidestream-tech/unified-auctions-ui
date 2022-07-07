@@ -30,8 +30,7 @@
 
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
-import Vue from 'vue';
-import { getNetworks } from 'auctions-core/src/constants/NETWORKS';
+import Vue, { PropType } from 'vue';
 
 export default Vue.extend({
     name: 'ChangePageNetworkModal',
@@ -41,19 +40,15 @@ export default Vue.extend({
             type: String,
             default: '',
         },
-        isDev: {
-            type: Boolean,
-            default: false,
+        networks: {
+            type: Array as PropType<NetworkConfig[]>,
+            default: () => [] as NetworkConfig[],
         },
     },
-    data() {
-        return {
-            options: [
-                ...Object.entries(getNetworks(this.isDev)).map(([name, propeties]) => {
-                    return { label: propeties.title, value: name };
-                }),
-            ],
-        };
+    computed: {
+        options() {
+            return [...this.networks.map(eachNetwork => ({ label: eachNetwork.title, value: eachNetwork.type }))];
+        },
     },
 });
 </script>

@@ -242,7 +242,6 @@ export const actions = {
             await commit('setTokenAddressDai', tokenAddressDai);
         } catch (error) {
             await commit('setTokenAddressDai', undefined);
-            message.error(`Error while fetching tokenAddressDai: ${error.message}`);
         }
     },
     async fetchCollateralVatBalance(

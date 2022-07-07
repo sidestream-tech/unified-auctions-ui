@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { getNetworkConfigByType } from './constants/NETWORKS';
+import { getNetworkConfigByType } from './network';
 
 const providers: Record<string, Promise<ethers.providers.BaseProvider>> = {};
 
