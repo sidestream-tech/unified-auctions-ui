@@ -14,7 +14,7 @@ import { swapToMKR } from './helpers/swap';
 import { SurplusAuctionActive } from '../src/types';
 import hre from 'hardhat';
 
-const ALCHEMY_URL = process.env.ALCHEMY_URL;
+const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
@@ -34,7 +34,7 @@ describe('Surplus Auction', () => {
             params: [
                 {
                     forking: {
-                        jsonRpcUrl: ALCHEMY_URL,
+                        jsonRpcUrl: REMOTE_RPC_URL,
                         blockNumber: HARDHAT_FORK_BLOCK_NUMBER,
                     },
                 },

@@ -79,7 +79,7 @@ data:
       path_to_dockerfile: core/Dockerfile
       path_to_context: ./
       build_args:
-        - key: ALCHEMY_URL
+        - key: REMOTE_RPC_URL
           value_from_secret: auction-ui/localhost/hardhat/alchemy_url
       tags_to_cache_from:
         - "main"
@@ -313,8 +313,7 @@ data:
         event:
           - pull_request
       environment:
-        NETWORK_HOST: "hardhat-service"
-        NETWORK_PORT: "8545"
+        LOCAL_RPC_URL: "http://hardhat-service:8545"
       steps:
         - name: core-integration-test
           image: ghcr.io/sidestream-tech/unified-auctions-ui/core:pr-${DRONE_PULL_REQUEST}

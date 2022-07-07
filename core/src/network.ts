@@ -32,9 +32,7 @@ const SUPPORTED_NETWORKS: NetworkConfig[] = [
 ];
 
 export const getDevelopmentNetworkConig = function (alsoSetState = false): NetworkConfig {
-    const host = process.env.NETWORK_HOST || '127.0.0.1';
-    const port = process.env.NETWORK_PORT || '8545';
-    const url = `http://${host}:${port}`;
+    const url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
     const config = {
         chainId: '0x539',
         type: 'localhost',

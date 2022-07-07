@@ -3,13 +3,11 @@ import '@nomiclabs/hardhat-waffle';
 
 dotenv.config();
 
-const NETWORK_HOST = process.env.NETWORK_HOST || 'localhost';
-const NETWORK_PORT = process.env.NETWORK_PORT || '8545';
-const LOCAL_NETWORK_URL = `http://${NETWORK_HOST}:${NETWORK_PORT}`;
+const LOCAL_RPC_URL = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
 
 const customNetworkConfig = {
-    [NETWORK_HOST]: {
-        url: LOCAL_NETWORK_URL,
+    'testnetwork': {
+        url: LOCAL_RPC_URL,
     },
 };
 
