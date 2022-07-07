@@ -4,6 +4,7 @@ import {
     bidToSurplusAuction,
     collectSurplusAuction,
     fetchSurplusAuctionByIndex,
+    restartSurplusAuction,
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import getSigner, { setSigner, createSigner } from '../src/signer';
@@ -66,5 +67,19 @@ describe('Surplus Auction', () => {
         const auctionAfterCollection = await fetchSurplusAuctionByIndex('localhost', 2327);
         expect(auctionAfterCollection.id).to.equal(2327);
         expect(auctionAfterCollection.state).to.equal('collected');
+    });
+    it('forbids restarting active auctions', async () => {
+        expect(restartSurplusAuction('localhost', 2328)).to.be.revertedWith("Can't restart the active auction");
+    });
+    it('forbids collecting inexistant auctions', async () => {
+        expect(collectSurplusAuction('localhost', 3333)).to.be.revertedWith('Did not find the auction to collect.');
+    });
+    it('forbids collecting inexistant auctions', async () => {
+        expect(bidToSurplusAuction('localhost', 3333, '20')).to.be.revertedWith('Did not find the auction to bid on.');
+    });
+    it('forbids collecting inexistant auctions', async () => {
+        expect(fetchSurplusAuctionByIndex('localhost', 3333)).to.be.revertedWith(
+            'No active auction exists with this id'
+        );
     });
 });
