@@ -23,7 +23,6 @@ const _executeTransaction = async function (
 ): Promise<string> {
     const contract = await getContract(network, contractName, true);
     const gasParameters = await getGasParametersForTransaction(network);
-    console.log(contract)
     const transactionPromise = contract[contractMethod](...contractParameters, {
         ...gasParameters,
         type: gasParameters.gasPrice ? undefined : 2,

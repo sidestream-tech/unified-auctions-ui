@@ -80,8 +80,6 @@ describe('Surplus Auction', () => {
         expect(bidToSurplusAuction('custom', 3333, '20')).to.be.revertedWith('Did not find the auction to bid on.');
     });
     it('forbids collecting inexistant auctions', async () => {
-        expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith(
-            'No active auction exists with this id'
-        );
+        expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
     });
 });

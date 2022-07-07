@@ -38,7 +38,6 @@ export const setupRpcUrlAndGetNetworks = async function (
         return { networks: getNetworks(), defaultNetwork, defaultChainId: chainId };
     } else {
         const networkConfig = getCustomNetworkConfig(rpcUrl, chainId);
-        console.log(networkConfig)
         setNetwork(networkConfig);
         return { networks: getNetworks(), defaultNetwork: networkConfig.type, defaultChainId: chainId };
     }
