@@ -6,6 +6,7 @@
             :min-value="minimumBidDai"
             :disabled="disabled"
             :validator="validator"
+            :auction-type="auctionType"
             @update:inputValue="$emit('update:transactionBidAmount', $event)"
         />
     </Tooltip>
@@ -43,6 +44,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        auctionType: {
+            type: String,
+            default: 'collateral',
+        },
     },
     computed: {
         tooltipText(): string {
@@ -67,6 +72,9 @@ export default Vue.extend({
             }
             if (maxValue?.isLessThan(minValue)) {
                 throw new Error('The value can not be changed since the leftover part will be too small');
+            }
+            if (currentValue?.isLessThan(minValue)) {
+                throw new Error('The value cannot be lower than the lowest next bid');
             }
         },
     },

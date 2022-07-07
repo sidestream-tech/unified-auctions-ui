@@ -10,7 +10,10 @@
                 @blur="showMaxValueIfEmpty"
             />
             <div class="Overlay right-2" :class="{ 'opacity-50': disabled }">
-                <format-currency v-if="!inputValue && maxValue" :value="maxValue" />&nbsp;DAI
+                <div v-if="auctionType === 'surplus'">
+                    <format-currency v-if="!inputValue" :value="minValue" />&nbsp;MKR
+                </div>
+                <div v-else><format-currency v-if="!inputValue && maxValue" :value="maxValue" />&nbsp;DAI</div>
             </div>
         </Tooltip>
     </div>
@@ -38,12 +41,16 @@ export default Vue.extend({
             default: undefined,
         },
         validator: {
-            type: Function as Vue.PropType<function>,
+            type: Function as Vue.PropType<Function>,
             default: () => {},
         },
         disabled: {
             type: Boolean,
             default: false,
+        },
+        auctionType: {
+            type: String,
+            default: 'collateral',
         },
     },
     data() {
