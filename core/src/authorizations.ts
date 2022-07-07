@@ -100,9 +100,9 @@ const _authorizeSurplus = async function (
     notifier?: Notifier
 ): Promise<string> {
     walletAddress; // so the memoizee cache is invalidated if another address is used
-    const joinDaiAddress = await getContractAddressByName(network, 'MCD_FLAP');
+    const flapperAddress = await getContractAddressByName(network, 'MCD_FLAP');
     const contractMethod = revoke ? 'nope' : 'hope';
-    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
+    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [flapperAddress], notifier);
     await getWalletAuthorizationStatus.clear();
     return transaction;
 };
