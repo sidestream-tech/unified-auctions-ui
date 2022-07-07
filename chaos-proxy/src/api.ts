@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-const CHAOSLABS_API_BASEURL = 'https://chaoslabs.co';
+const CHAOSLABS_API_BASEURL = 'https://cloud.chaoslabs.co';
 const RETRY_TIMEOUT = 2 * 1000;
 
 const executeAPIrequest = async function (
@@ -22,7 +22,7 @@ const executeAPIrequest = async function (
 };
 
 const startSimulationInstance = async function (accessToken: string, simulationID: string): Promise<string> {
-    const response = await executeAPIrequest(accessToken, '/async_simulation', { simulationID });
+    const response = await executeAPIrequest(accessToken, '/async_simulation_v2', { simulationID });
     if (!response.data) {
         throw new Error('Simulation start error: no instanceId has been returned');
     }
@@ -30,7 +30,7 @@ const startSimulationInstance = async function (accessToken: string, simulationI
 };
 
 const fetchSimulationUrl = async function (accessToken: string, instanceId: string): Promise<string | undefined> {
-    const response = await executeAPIrequest(accessToken, '/simulation_details', { id: instanceId });
+    const response = await executeAPIrequest(accessToken, '/simulation_details_v2', { id: instanceId });
     if (response.status === 404) {
         return undefined;
     }
