@@ -2,7 +2,7 @@
     <BasePanel :current-state="currentStateAndTitle.name" class="AuctionRestartPanel">
         <template #title>{{ currentStateAndTitle.title }}</template>
 
-        <TextBlock v-if="isExplanationsShown">
+        <TextBlock v-if="isExplanationsShown && auctionType === 'collateral'">
             Auction that either has experienced a too steep decrease in price or has reached its time limit becomes
             inactive and requires interaction to be restarted. When restarted, a new price is calculated and a fresh
             time limit is set. Restarting an auction includes an
@@ -38,6 +38,11 @@
             </Explain>
             that is sent to the participant’s wallet. However, this action incurs transaction fee of approximately
             <FormatCurrency :value="transactionFee" :decimals="5" currency="eth" />.
+        </TextBlock>
+
+        <TextBlock v-else-if="isExplanationsShown && auctionType === 'surplus'">
+            Auction that was started but hasn't received a single bid in the allotted time. When restarted bids can be
+            placed again.
         </TextBlock>
 
         <WalletConnectionCheckPanel
@@ -78,6 +83,10 @@ export default Vue.extend({
     name: 'AuctionRestartPanel',
     components: { WalletConnectionCheckPanel, BaseButton, FormatCurrency, Explain, TextBlock, BasePanel },
     props: {
+        auctionType: {
+            type: String,
+            default: 'collateral',
+        },
         walletAddress: {
             type: String,
             default: null,
