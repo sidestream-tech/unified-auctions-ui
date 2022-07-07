@@ -11,7 +11,11 @@
             message="This auction is finished"
             type="error"
         />
-        <div>BidTransactionTable goes here</div>
+        <SurplusAuctionBidTransactionTable
+            class="mt-4 mb-6"
+            :auction="auction"
+            @inputBidAmount="inputBidAmount = $event"
+        />
         <div class="mb-4">
             <WalletConnectionCheckPanel
                 :wallet-address="walletAddress"
@@ -39,6 +43,7 @@
 import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
+import SurplusAuctionBidTransactionTable from './SurplusAuctionBidTransactionTable.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 
@@ -46,6 +51,7 @@ export default Vue.extend({
     components: {
         TextBlock,
         Alert,
+        SurplusAuctionBidTransactionTable,
         WalletConnectionCheckPanel,
     },
     props: {
