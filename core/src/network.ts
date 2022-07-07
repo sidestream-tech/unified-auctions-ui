@@ -2,10 +2,6 @@ import type { NetworkConfig } from './types';
 
 const networks: Record<string, NetworkConfig> = {};
 
-const _NETWORK_HOST = process.env.NETWORK_HOST || '127.0.0.1';
-const _NETWORK_PORT = process.env.NETWORK_PORT || '8545';
-const LOCAL_NETWORK_URL = `http://${_NETWORK_HOST}:${_NETWORK_PORT}`;
-
 const SUPPORTED_NETWORKS: NetworkConfig[] = [
     {
         chainId: '0x1',
@@ -35,6 +31,24 @@ const SUPPORTED_NETWORKS: NetworkConfig[] = [
     },
 ];
 
+export const getDevelopmentNetworkConig = function (alsoSetState = false): NetworkConfig {
+    const host = process.env.NETWORK_HOST || '127.0.0.1';
+    const port = process.env.NETWORK_PORT || '8545';
+    const url = `http://${host}:${port}`;
+    const config = {
+        chainId: '0x539',
+        type: 'localhost',
+        title: 'Localhost:8545',
+        url: url,
+        etherscanUrl: '',
+        isFork: true,
+    };
+    if (alsoSetState) {
+        networks[config.type] = config;
+    }
+    return config;
+};
+
 export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev?: boolean): NetworkConfig[] {
     const infuraNetworksWithProjectId = SUPPORTED_NETWORKS.map(network => ({
         ...network,
@@ -43,17 +57,7 @@ export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev
     if (!isDev) {
         return infuraNetworksWithProjectId;
     }
-    return [
-        ...infuraNetworksWithProjectId,
-        {
-            chainId: '0x539',
-            type: 'localhost',
-            title: 'Localhost:8545',
-            url: LOCAL_NETWORK_URL,
-            etherscanUrl: '',
-            isFork: true,
-        },
-    ];
+    return [...infuraNetworksWithProjectId, getDevelopmentNetworkConig()];
 };
 
 export const getCustomNetworkConfig = function (rpcUrl: string, chainId: string): NetworkConfig {
