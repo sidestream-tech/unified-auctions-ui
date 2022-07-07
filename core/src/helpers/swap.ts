@@ -1,17 +1,17 @@
-import getSigner from '../../src/signer';
+import getSigner from '../signer';
 import WETH from '../abis/WETH.json';
 import UNISWAP from '../abis/UNISWAP.json';
 
-import { Notifier } from '../../src/types';
+import { Notifier } from '../types';
 import { ethers } from 'hardhat';
 import { Contract } from 'ethers';
-import { WAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
-import BigNumber from '../../src/bignumber';
-import { getGasParametersForTransaction } from '../../src/gas';
-import trackTransaction from '../../src/tracker';
-import getNetworkDate from '../../src/date';
+import { WAD_NUMBER_OF_DIGITS } from '../constants/UNITS';
+import BigNumber from '../bignumber';
+import { getGasParametersForTransaction } from '../gas';
+import trackTransaction from '../tracker';
+import getNetworkDate from '../date';
 
-import { getNetworkConfigByType } from '../../src/network';
+import { getNetworkConfigByType } from '../network';
 
 const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
     const networkConfig = getNetworkConfigByType(network);
