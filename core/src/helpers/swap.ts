@@ -1,6 +1,6 @@
 import getSigner from '../signer';
 import WETH from '../abis/WETH.json';
-import UNISWAP from '../abis/UNISWAP.json';
+import UNISWAP from '../abis/UNISWAP_V2_ROUTER_02.json';
 
 import { Notifier } from '../types';
 import { ethers } from 'hardhat';

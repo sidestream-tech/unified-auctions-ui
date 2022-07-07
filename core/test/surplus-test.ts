@@ -9,7 +9,7 @@ import {
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import getSigner, { setSigner, createSigner } from '../src/signer';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
-import { swapToMKR } from './helpers/swap';
+import { swapToMKR } from '../src/helpers/swap';
 
 import { SurplusAuctionActive } from '../src/types';
 import hre from 'hardhat';
