@@ -6,14 +6,11 @@
             auction, you receive your MKR back, only losing the transaction fees.
         </TextBlock>
 
-        <TextBlock class="my-3">
+        <div class="flex justify-between my-3">
             Current Highest Bid
-            <span v-if="latestBid === null" class="flex justify-end text-gray-400"> There were no bids yet </span>
-
-            <span v-else class="flex justify-end">
-                <FormatCurrency :value="latestBid" currency="MKR" />
-            </span>
-        </TextBlock>
+            <span v-if="latestBid === null" class="text-gray-400"> There were no bids yet </span>
+            <FormatCurrency v-else :value="latestBid" currency="MKR" />
+        </div>
 
         <div class="flex justify-end gap-5">
             <BaseButton
