@@ -24,7 +24,10 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     .add('No Wallet, No Bids', () => ({
         ...common,
         data: () => ({
-            auction: null,
+            auction: {
+                ...fakeSurplusAuction,
+                bidAmountMKR: null,
+            },
             bidAmount: new BigNumber(56).times(1.1),
         }),
         template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" />`,
@@ -36,7 +39,10 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     .add('No bids yet', () => ({
         ...common,
         data: () => ({
-            auction: null,
+            auction: {
+                ...fakeSurplusAuction,
+                bidAmountMKR: null,
+            },
             bidAmount: new BigNumber(56).times(1.1),
             userWalletAddress: faker.finance.ethereumAddress(),
         }),
@@ -48,7 +54,7 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     }))
     .add('With Bids, disabled', () => ({
         ...common,
-        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :userWalletAddress="userWalletAddress" :isDisabled="true" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :userWalletAddress="userWalletAddress" :disabled="true" />`,
     }))
     .add('With Bids, Highest Bidder', () => ({
         ...common,
@@ -61,15 +67,15 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     }))
     .add('Bidding', () => ({
         ...common,
-        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :userWalletAddress="userWalletAddress" :isDisabled="true" :isBidding="true" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :userWalletAddress="userWalletAddress" :disabled="true" :isBidding="true" />`,
     }))
     .add('No wallet, is Loading', () => ({
         ...common,
-        template: `<HighestBidCheckPanel :bidAmount="bidAmount" :isLoading="true" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :isLoading="true" />`,
     }))
     .add('With Wallet, is Loading', () => ({
         ...common,
-        template: `<HighestBidCheckPanel :bidAmount="bidAmount" :isLoading="true" :userWalletAddress="userWalletAddress" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :isLoading="true" :userWalletAddress="userWalletAddress" />`,
     }))
     .add('With Wallet, Error', () => ({
         ...common,

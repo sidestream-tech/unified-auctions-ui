@@ -16,17 +16,17 @@
             <BaseButton
                 class="w-full md:w-80"
                 :type="isUserLatestBidder ? 'secondary' : 'primary'"
-                :disabled="isBidding || isDisabled || !userWalletAddress || isLoading || !!error"
-                :is-loading="isBidding"
+                :disabled="isBidding || disabled || !userWalletAddress || isLoading || !!error"
+                :is-loading="isBidding || isLoading"
                 @click="$emit('restart')"
             >
                 <span v-if="isBidding"> Bidding... </span>
+                <span v-else-if="isLoading"> Loading... </span>
                 <span v-else-if="auction"
                     >Bid <FormatCurrency :value="bidAmount" currency="MKR" /> on
                     <FormatCurrency :value="auction.receiveAmountDAI" currency="DAI"
                 /></span>
-                <span v-else-if="error">Unknown</span>
-                <span v-else>Loading...</span>
+                <span v-else>Unknown</span>
             </BaseButton>
         </div>
     </BasePanel>
@@ -48,6 +48,7 @@ export default Vue.extend({
         auction: {
             type: Object as Vue.PropType<SurplusAuction>,
             default: null,
+            required: true,
         },
         userWalletAddress: {
             type: String,
@@ -65,7 +66,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isDisabled: {
+        disabled: {
             type: Boolean,
             default: false,
         },
@@ -79,17 +80,11 @@ export default Vue.extend({
         },
     },
     computed: {
-        latestBid() {
-            if (!this.auction || !this.auction.bidAmountMKR) {
-                return null;
-            }
-            return this.auction.bidAmountMKR;
+        latestBid(): BigNumber | null {
+            return this.auction?.bidAmountMKR || null;
         },
-        isUserLatestBidder() {
-            if (!this.latestBid) {
-                return false;
-            }
-            return this.auction.receiverAddress === this.userWalletAddress;
+        isUserLatestBidder(): boolean {
+            return !!this.latestBid && this.auction.receiverAddress === this.userWalletAddress;
         },
         currentStateAndTitle(): PanelProps {
             if (!this.userWalletAddress && !this.latestBid) {
