@@ -63,6 +63,7 @@ import BaseSwitch from '~/components/common/BaseSwitch.vue';
 import NetworkSelector from '~/components/utils/NetworkSelector.vue';
 import WalletSelector from '~/components/utils/WalletSelector.vue';
 import ThemeSwitcher from '~/components/utils/ThemeSwitcher.vue';
+import { NetworkConfig } from '~/../core/src/types';
 
 export default Vue.extend({
     name: 'Header',
@@ -119,6 +120,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        pageName: {
+            type: String,
+            default: '',
+        },
     },
     computed: {
         isUnifiedPage(): boolean {
@@ -132,9 +137,6 @@ export default Vue.extend({
         },
         isDefaultHeader(): boolean {
             return this.type === 'default';
-        },
-        pageName(): string {
-            return this.$route?.name || '';
         },
         logoTarget(): string {
             if (this.isAuctionsPortal) {

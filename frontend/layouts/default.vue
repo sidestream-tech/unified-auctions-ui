@@ -57,10 +57,6 @@ import ManageCollateralModalContainer from '~/containers/ManageCollateralModalCo
 import TermsModal from '~/components/modals/TermsModal.vue';
 import Analytics from '~/components/Analytics.vue';
 
-const AUCTION_PORTAL_PAGES = ['collateral', 'surplus'];
-const MINIMAL_PAGES = ['privacy'];
-const UNIFIED_PAGES = ['index'];
-
 export default Vue.extend({
     components: {
         WalletModalContainer,
@@ -124,16 +120,14 @@ export default Vue.extend({
             return this.$route?.name || '';
         },
         headerType(): string {
-            if (AUCTION_PORTAL_PAGES.includes(this.pageName)) {
-                return 'auctions';
-            }
-            if (MINIMAL_PAGES.includes(this.pageName)) {
-                return 'minimal';
-            }
-            if (UNIFIED_PAGES.includes(this.pageName)) {
-                return 'unified';
-            }
-            return 'default';
+            return (
+                {
+                    collateral: 'auctions',
+                    surplus: 'auctions',
+                    privacy: 'minimal',
+                    index: 'unified',
+                }[this.pageName] ?? 'default'
+            );
         },
     },
     watch: {

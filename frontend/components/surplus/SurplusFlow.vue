@@ -6,7 +6,7 @@
                     <LandingBlock title="Surplus auctions" @explanations="explanationsTrigger" />
                 </div>
                 <div class="mx-4 md:mx-0 SurplusTextContainer">
-                    <SurplusText :is-explanations-shown="isExplanationsShown" />
+                    <SurplusText ref="surplusText" :is-explanations-shown="isExplanationsShown" />
                 </div>
             </template>
         </SplitLayout>
@@ -33,8 +33,8 @@ export default Vue.extend({
     },
     methods: {
         explanationsTrigger(event: boolean): void {
-            if (event === true && this.$refs.mainText) {
-                (this.$refs.mainText as Vue).$el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+            if (event === true && this.$refs.surplusText) {
+                (this.$refs.surplusText as Vue).$el.scrollIntoView({ block: 'start', behavior: 'smooth' });
             }
             this.$emit('update:isExplanationsShown', event);
         },
