@@ -1,4 +1,5 @@
 import getSigner from '../signer';
+import WETH from '../abis/WETH.json';
 import UNISWAP from '../abis/UNISWAP_V2_ROUTER_02.json';
 
 import { Notifier } from '../types';
@@ -11,7 +12,6 @@ import trackTransaction from '../tracker';
 import getNetworkDate from '../date';
 
 import { getNetworkConfigByType } from '../network';
-import getContract from '../contracts';
 
 const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
     const networkConfig = getNetworkConfigByType(network);
@@ -29,10 +29,10 @@ export const swapToMKR = async function (
 ) {
     const signer = await getSigner(network);
     const address = await signer.getAddress();
-    const contractWeth = await getContract(network, 'ETH', true);
-    const WETH_ADDRESS = contractWeth.address;
+    const WETH_ADDRESS = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
     const UNISWAP_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-    const MKR_ADDRESS = (await getContract(network, 'MCD_GOV')).address;
+    const MKR_ADDRESS = '0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2';
+    const contractWeth = await new Contract(WETH_ADDRESS, WETH, signer);
     const contractUniswap = await new Contract(UNISWAP_ADDRESS, UNISWAP, signer);
 
     // Allow operations with the uniswap to swap from weth
