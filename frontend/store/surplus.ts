@@ -158,7 +158,7 @@ export const actions = {
             commit('setAuctionsFetching', false);
         }
     },
-    async betOnAuction(
+    async bidToSurplusAuction(
         { rootGetters, commit, dispatch }: ActionContext<State, State>,
         { auctionIndex, bet }: { auctionIndex: number; bet: string }
     ) {
