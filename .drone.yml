@@ -320,7 +320,7 @@ data:
           commands:
             - cd core
             - npm ci
-            - npm run test hardhat-service
+            - npm run test
 
       services:
         - name: hardhat-service  # named with 'service' to avoid duplication with the default value
