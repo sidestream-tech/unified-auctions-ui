@@ -27,7 +27,7 @@ async function createWalletFromPrivateKey(privateKey: string, network: string) {
 describe('Surplus Auction', () => {
     before(async () => {
         const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
-        await setupRpcUrlAndGetNetworks(local_rpc_url, true);
+        await setupRpcUrlAndGetNetworks(local_rpc_url);
     });
     beforeEach(async () => {
         await hre.network.provider.request({
@@ -58,7 +58,7 @@ describe('Surplus Auction', () => {
         expect(currentAuction.id).to.equal(2328);
         expect(currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
-    it('collects the conluded auction', async () => {
+    it('collects the concluded auction', async () => {
         const auctionsBeforeCollection = await fetchActiveSurplusAuctions('custom');
         expect(auctionsBeforeCollection.length).to.equal(5);
         expect(auctionsBeforeCollection[1].id).to.equal(2327);
