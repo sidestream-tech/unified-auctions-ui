@@ -163,10 +163,10 @@ export const actions = {
         { auctionIndex, bet }: { auctionIndex: number; bet: string }
     ) {
         const network = rootGetters['network/getMakerNetwork'];
-        commit('setIsBidding', true);
         if (!network) {
             return;
         }
+        commit('setIsBidding', true);
         try {
             await bidToSurplusAuction(network, auctionIndex, bet);
             await dispatch('fetchSurplusAuctions');
@@ -178,10 +178,10 @@ export const actions = {
     },
     async collectAuction({ rootGetters, dispatch, commit }: ActionContext<State, State>, auctionIndex: number) {
         const network = rootGetters['network/getMakerNetwork'];
-        commit('setIsBidding', true);
         if (!network) {
             return;
         }
+        commit('setIsBidding', true);
         try {
             await collectSurplusAuction(network, auctionIndex);
             await dispatch('fetchSurplusAuctions');
