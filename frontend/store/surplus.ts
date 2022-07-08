@@ -88,7 +88,7 @@ export const actions = {
             commit('refreshLastUpdated');
         }
     },
-    async giveAllowanceMKR({ rootGetters, commit }: ActionContext<State, State>, amount: number | string) {
+    async setAllowanceAmountMKR({ rootGetters, commit }: ActionContext<State, State>, amount: number | string) {
         const network = rootGetters['network/getMakerNetwork'];
         const wallet = rootGetters['wallet/getAddress'];
         try {
