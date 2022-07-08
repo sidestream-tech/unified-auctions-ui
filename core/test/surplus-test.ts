@@ -82,8 +82,8 @@ describe('Surplus Auction', () => {
                 },
             ],
         });
-        await hre.network.provider.send("hardhat_mine", ["0x5010", "0x10c"]);
-        await restartSurplusAuction('custom', 2328)
+        await hre.network.provider.send('hardhat_mine', ['0x5010', '0x10c']);
+        await restartSurplusAuction('custom', 2328);
     });
     it('forbids restarting active auctions', async () => {
         expect(restartSurplusAuction('custom', 2328)).to.be.reverted;
