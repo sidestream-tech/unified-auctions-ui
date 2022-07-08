@@ -50,7 +50,7 @@ describe('Surplus Auction', () => {
     });
     it('participates in active auction', async () => {
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
-        await setAllowanceAmountMKR('custom', address);
+        await setAllowanceAmountMKR('custom', address, '20');
         await swapToMKR('custom', 20, 20);
         await bidToSurplusAuction('custom', 2328, '20');
         const auctions = await fetchActiveSurplusAuctions('custom');
