@@ -143,8 +143,8 @@ export const setAllowanceAmountMKR = async function (
 };
 
 export const fetchAllowanceAmountMKR = async function (network: string, walletAddress: string): Promise<BigNumber> {
-    const joinDaiAddress = await getContractAddressByName(network, 'MCD_FLAP');
+    const flapAddress = await getContractAddressByName(network, 'MCD_FLAP');
     const MKRContract = await getContract(network, 'MCD_GOV');
-    const allowanceRaw = await MKRContract.allowance(walletAddress, joinDaiAddress);
+    const allowanceRaw = await MKRContract.allowance(walletAddress, flapAddress);
     return new BigNumber(allowanceRaw._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
