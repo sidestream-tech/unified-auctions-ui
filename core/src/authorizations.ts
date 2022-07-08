@@ -127,16 +127,17 @@ export const authorizeSurplus = memoizee(_authorizeSurplus, {
 export const setAllowanceAmountMKR = async function (
     network: string,
     walletAddress: string,
-    amount: string | number,
+    amount?: string | number,
     notifier?: Notifier
 ): Promise<string> {
     walletAddress; // so the memoizee cache is invalidated if another address is used
     const flapAddress = await getContractAddressByName(network, 'MCD_FLAP');
+    const amountRaw = amount ? new BigNumber(amount).shiftedBy(MKR_NUMBER_OF_DIGITS).toFixed(0) : MAX.toFixed(0);
     return await executeTransaction(
         network,
         'MCD_GOV',
         'approve(address,uint256)',
-        [flapAddress, new BigNumber(amount).shiftedBy(MKR_NUMBER_OF_DIGITS).toFixed(0)],
+        [flapAddress, amountRaw],
         notifier
     );
 };
