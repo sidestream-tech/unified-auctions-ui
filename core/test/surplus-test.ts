@@ -84,7 +84,10 @@ describe('Surplus Auction', () => {
         });
         const blocks = 20000;
         const secondsBetweenBlocks = 270;
-        await hre.network.provider.send('hardhat_mine', [`0x${blocks.toString(16)}`, `0x${secondsBetweenBlocks.toString(16)}`]);
+        await hre.network.provider.send('hardhat_mine', [
+            `0x${blocks.toString(16)}`,
+            `0x${secondsBetweenBlocks.toString(16)}`,
+        ]);
         await restartSurplusAuction('custom', 2328);
     });
     it('forbids restarting active auctions', async () => {
