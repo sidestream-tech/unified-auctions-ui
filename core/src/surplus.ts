@@ -103,10 +103,6 @@ export const restartSurplusAuction = async function (
     auctionIndex: number,
     notifier?: Notifier
 ): Promise<SurplusAuction> {
-    const auction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
-    if (auction === undefined || auction?.state !== 'requires-restart') {
-        throw new Error("Can't restart the active auction");
-    }
     await executeTransaction(network, 'MCD_FLAP', 'tick', [auctionIndex], notifier);
     return await surplusAuctionRestartedCallback(network, auctionIndex);
 };

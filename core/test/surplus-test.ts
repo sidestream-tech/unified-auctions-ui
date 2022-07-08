@@ -70,8 +70,23 @@ describe('Surplus Auction', () => {
         expect(auctionAfterCollection.id).to.equal(2327);
         expect(auctionAfterCollection.state).to.equal('collected');
     });
+    it('restarts the auction', async () => {
+        await hre.network.provider.request({
+            method: 'hardhat_reset',
+            params: [
+                {
+                    forking: {
+                        jsonRpcUrl: REMOTE_RPC_URL,
+                        blockNumber: 14078338,
+                    },
+                },
+            ],
+        });
+        await hre.network.provider.send("hardhat_mine", ["0x5010", "0x10c"]);
+        await restartSurplusAuction('custom', 2328)
+    });
     it('forbids restarting active auctions', async () => {
-        expect(restartSurplusAuction('custom', 2328)).to.be.revertedWith("Can't restart the active auction");
+        expect(restartSurplusAuction('custom', 2328)).to.be.reverted;
     });
     it('forbids collecting inexistant auctions', async () => {
         expect(collectSurplusAuction('custom', 3333)).to.be.revertedWith('Did not find the auction to collect.');
