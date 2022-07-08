@@ -18,8 +18,10 @@ import notifier from '~/lib/notifier';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
+type AuctionState = 'loaded' | 'restarting' | 'bidding' | 'collecting';
 interface State {
     auctionStorage: Record<string, SurplusAuction>;
+    auctionStates: Record<number, AuctionState>;
     areAuctionsFetching: boolean;
     isAuthorizationLoading: boolean;
     isBidding: boolean;
@@ -30,6 +32,7 @@ interface State {
 
 const getInitialState = (): State => ({
     auctionStorage: {},
+    auctionStates: {},
     allowanceAmount: undefined,
     areAuctionsFetching: false,
     isAuthorizationLoading: false,
@@ -65,8 +68,8 @@ export const mutations = {
     setAuthorizationLoading(state: State, isLoading: boolean) {
         state.isAuthorizationLoading = isLoading;
     },
-    setIsBidding(state: State, isBidding: boolean) {
-        state.isBidding = isBidding;
+    setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
+        Vue.set(state.auctionStates, auctionId, value);
     },
 };
 
@@ -103,9 +106,9 @@ export const actions = {
         }
     },
     async authorizeSurplusAuctions({ rootGetters, dispatch, commit }: ActionContext<State, State>) {
-        commit('setAuthorizationLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
+        commit('setAuthorizationLoading', true);
         try {
             await authorizeSurplus(network, walletAddress, false, notifier);
             await dispatch('fetchSurplusAuthorizationStatus');
@@ -116,9 +119,9 @@ export const actions = {
         }
     },
     async deauthorizeSurplusAuctions({ dispatch, rootGetters, commit }: ActionContext<State, State>) {
-        commit('setAuthorizationLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
+        commit('setAuthorizationLoading', true);
         try {
             await authorizeSurplus(network, walletAddress, true, notifier);
             await dispatch('fetchSurplusAuthorizationStatus');
@@ -129,9 +132,12 @@ export const actions = {
         }
     },
     async fetchSurplusAuthorizationStatus({ dispatch, rootGetters, commit }: ActionContext<State, State>) {
-        commit('setAuthorizationLoading', true);
         const walletAddress = rootGetters['wallet/getAddress'];
         const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        commit('setAuthorizationLoading', true);
         try {
             const isAuthorized = await getSurplusAuthorizationStatus(network, walletAddress);
             return isAuthorized;
@@ -148,14 +154,14 @@ export const actions = {
         if (!network) {
             return;
         }
-        commit('setAuctionsFetching', true);
+        commit('setAuctionState', { auctionId: auctionIndex, value: 'restarting' });
         try {
             await restartSurplusAuction(network, auctionIndex, notifier);
             await dispatch('fetchSurplusAuctions');
         } catch (error: any) {
             console.error(`Auction restart error: ${error.message}`);
         } finally {
-            commit('setAuctionsFetching', false);
+            commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
     },
     async bidToSurplusAuction(
@@ -166,14 +172,14 @@ export const actions = {
         if (!network) {
             return;
         }
-        commit('setIsBidding', true);
+        commit('setAuctionState', { auctionId: auctionIndex, value: 'bidding' });
         try {
             await bidToSurplusAuction(network, auctionIndex, bet);
             await dispatch('fetchSurplusAuctions');
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
         } finally {
-            commit('setIsBidding', true);
+            commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
     },
     async collectAuction({ rootGetters, dispatch, commit }: ActionContext<State, State>, auctionIndex: number) {
@@ -181,14 +187,14 @@ export const actions = {
         if (!network) {
             return;
         }
-        commit('setIsBidding', true);
+        commit('setAuctionState', { auctionId: auctionIndex, value: 'collecting' });
         try {
             await collectSurplusAuction(network, auctionIndex);
             await dispatch('fetchSurplusAuctions');
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
         } finally {
-            commit('setIsBidding', true);
+            commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
     },
 };
