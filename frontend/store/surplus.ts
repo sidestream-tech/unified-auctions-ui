@@ -88,12 +88,12 @@ export const actions = {
             commit('refreshLastUpdated');
         }
     },
-    async giveAllowanceMKR({ rootGetters, commit }: ActionContext<State, State>) {
+    async giveAllowanceMKR({ rootGetters, commit }: ActionContext<State, State>, amount: number | string) {
         const network = rootGetters['network/getMakerNetwork'];
         const wallet = rootGetters['wallet/getAddress'];
         try {
             commit('setAuthorizationLoading', true);
-            await setAllowanceAmountMKR(network, wallet, notifier);
+            await setAllowanceAmountMKR(network, wallet, amount, notifier);
             const allowance = await fetchAllowanceAmountMKR(network, wallet);
             commit('setAllowance', allowance);
         } catch (error: any) {
