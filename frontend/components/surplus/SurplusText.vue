@@ -17,12 +17,15 @@
         </TextBlock>
         <TextBlock v-if="isExplanationsShown" title="What are surplus auctions?" class="TextBlock">
             A
-            <a
-                href="https://docs.makerdao.com/smart-contract-modules/system-stabilizer-module/flap-detailed-documentation"
-                target="_blank"
+            <Explain text="surplus auction"
+                >In Maker terms, surplus auctions are called
+                <a
+                    href="https://docs.makerdao.com/smart-contract-modules/system-stabilizer-module/flap-detailed-documentation"
+                    >flap auctions</a
+                >
+                and are operated via the
+                <a href="https://github.com/makerdao/dss/blob/master/src/flap.sol">flap.sol contract</a></Explain
             >
-                surplus auction
-            </a>
             is the process of stabilizing DAI price, where excessive DAI tokens are auctioned off for the
             <Explain text="MKR tokens">
                 Maker governance tokens that can be used to vote within Maker DAO and whose price algorithmically
