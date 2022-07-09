@@ -58,4 +58,14 @@ storiesOf('Layout/Header', module)
         :isStagingEnvironment="true"
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
+    }))
+    .add('Surplus Auctions Page', () => ({
+        ...common,
+        template: `<Header
+        type="auctions"
+        pageName="surplus"
+        :isExplanationsShown.sync="isExplanationsShown"
+        :isStagingEnvironment="true"
+        @update:isExplanationsShown="updateIsExplanationsShown"
+        />`,
     }));

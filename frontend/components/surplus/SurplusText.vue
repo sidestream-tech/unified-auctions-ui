@@ -1,20 +1,6 @@
 <template>
     <div class="flex flex-col space-y-8 py-8">
-        <TextBlock v-if="isExplanationsShown" title="What is the Maker Protocol?" class="TextBlock">
-            The Maker Protocol is
-            <Explain text="a set of rules">
-                a <a href="https://changelog.makerdao.com/" target="_blank">set of smart contracts</a> running on the
-                Ethereum blockchain
-            </Explain>
-            that defines how a cryptocurrency called DAI is kept approximately equal to USD by incentivizing market
-            players. People who help to keep DAI stable, benefit from their actions by acquiring cryptocurrency at a
-            discount. The main promise of the protocol is to provide a decentralized
-            <Explain text="stable currency">
-                <a href="https://makerdao.com/en/whitepaper#the-dai-stablecoin" target="_blank">The DAI Stablecoin</a>
-                is a decentralized, unbiased, collateral-backed cryptocurrency soft-pegged to the US Dollar </Explain
-            >, which can be used to borrow money over a longer period without being affected by unpredictable exchange
-            rates.
-        </TextBlock>
+        <WhatIsMakerProtocol v-if="isExplanationsShown" class="TextBlock"></WhatIsMakerProtocol>
         <TextBlock v-if="isExplanationsShown" title="What are surplus auctions?" class="TextBlock">
             A
             <Explain text="surplus auction"
@@ -40,31 +26,23 @@
             the DAI auctioned off can be collected by the highest bidder. As long as the auction price is below the
             exchange rate on other marketplaces there is a chance to make a profit.
         </TextBlock>
-        <TextBlock v-if="isExplanationsShown" title="What is the catch?" class="TextBlock">
-            This situation exists in the first place, because the Maker protocol can not be executed by itself. There
-            need to be players who execute vital parts of the protocol and pay a
-            <Explain text="transaction fee">
-                Transaction fees are paid as <a href="https://ethereum.org/en/developers/docs/gas/">Gas</a> for the
-                Ethereum network. It is the fuel that allows it to operate, in the same way, that a car needs gasoline
-                to run.
-            </Explain>
-            for it. In a decentralised system like this, anyone can become such a player. But as execution can
-            sometimes end up in a loss of transaction fee, those operations are made to be profitable by the protocol
-            itself. Most of the auctions will be cleared by players with bots bidding very quickly, whenever there is a
-            slight market opportunity.
-        </TextBlock>
+        <WhatIsCatch v-if="isExplanationsShown" class="TextBlock"></WhatIsCatch>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import WhatIsMakerProtocol from '~/components/WhatIsMakerProtocol.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import Explain from '~/components/utils/Explain.vue';
+import WhatIsCatch from '~/components/WhatIsCatch.vue';
 
 export default Vue.extend({
     components: {
+        WhatIsMakerProtocol,
         TextBlock,
         Explain,
+        WhatIsCatch,
     },
     props: {
         isExplanationsShown: {

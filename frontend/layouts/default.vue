@@ -4,6 +4,7 @@
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
             :type="headerType"
+            :page-name="pageName"
             :network.sync="network"
             :dark-mode.sync="isDarkMode"
             :wallet-address="walletAddress"
