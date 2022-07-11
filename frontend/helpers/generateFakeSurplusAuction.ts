@@ -1,9 +1,9 @@
-import { SurplusAuction, SurplusAuctionData, SurplusAuctionState } from 'auctions-core/src/types';
+import { SurplusAuction, SurplusAuctionBase, SurplusAuctionStates } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
 import { random } from 'lodash';
 
-const SURPLUS_AUCTION_STATES: SurplusAuctionState[] = [
+const SURPLUS_AUCTION_STATES: SurplusAuctionStates[] = [
     'just-started',
     'have-bids',
     'ready-for-collection',
@@ -11,44 +11,45 @@ const SURPLUS_AUCTION_STATES: SurplusAuctionState[] = [
     'requires-restart',
 ];
 
-export const generateFakeSurplusAuctionData = function (): SurplusAuctionData {
-    const id = faker.datatype.number();
-    const state: SurplusAuctionState = faker.helpers.randomize(SURPLUS_AUCTION_STATES);
+const NETWORKS = ['mainnet', 'kovan', 'goerli'];
+
+const generateFakeSurplusAuctionBase = function (): SurplusAuctionBase {
+    return {
+        id: faker.datatype.number(),
+        network: faker.helpers.randomize(NETWORKS),
+    };
+};
+
+export const generateFakeSurplusAuction = function (
+    state?: SurplusAuctionStates
+): SurplusAuction | SurplusAuctionBase {
+    const auctionBaseData = generateFakeSurplusAuctionBase();
+    const generatedState: SurplusAuctionStates = state || faker.helpers.randomize(SURPLUS_AUCTION_STATES);
+
+    if (generatedState === 'just-started') {
+        return auctionBaseData;
+    }
     const receiveAmountDAI = new BigNumber(parseFloat(faker.finance.amount()));
+    const receiverAddress = faker.finance.ethereumAddress();
     const auctionEndDate = faker.date.soon();
-    const bidEndDate = state === 'ready-for-collection' ? faker.date.recent() : undefined;
+    const bidEndDate = generatedState === 'have-bids' ? faker.date.recent() : undefined;
     const earliestEndDate = bidEndDate
         ? auctionEndDate.getUTCMilliseconds() > bidEndDate.getUTCMilliseconds()
             ? bidEndDate
             : auctionEndDate
         : auctionEndDate;
-
-    const receiverAddress = state !== 'just-started' ? faker.finance.ethereumAddress() : undefined;
-    const bidAmountMKR = state !== 'just-started' ? new BigNumber(faker.finance.amount()) : undefined;
-    const unitPrice = bidAmountMKR ? bidAmountMKR.dividedBy(receiveAmountDAI) : undefined;
+    const bidAmountMKR = new BigNumber(parseFloat(faker.finance.amount()));
 
     return {
-        id,
+        ...auctionBaseData,
         network: 'mainnet',
         receiveAmountDAI,
         receiverAddress,
-        bidAmountMKR,
-        unitPrice,
         auctionEndDate,
         bidEndDate,
         earliestEndDate,
-        state,
-    };
-};
-
-export const generateFakeSurplusAuction = function (): SurplusAuction {
-    const surplusAuctionData = generateFakeSurplusAuctionData();
-    const marketUnitPrice =
-        surplusAuctionData.state === 'have-bids' ? new BigNumber(parseFloat(faker.finance.amount())) : undefined;
-
-    return {
-        ...surplusAuctionData,
-        marketUnitPrice,
+        state: generatedState,
+        bidAmountMKR,
     };
 };
 
