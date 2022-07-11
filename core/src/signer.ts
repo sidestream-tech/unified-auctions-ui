@@ -26,6 +26,6 @@ export const createWalletFromPrivateKey = async (privateKey: string, network: st
     setSigner(network, createSigner(network, privateKey));
     const signer = await getSigner(network);
     return await signer.getAddress();
-}
+};
 
 export default getSigner;

@@ -37,7 +37,10 @@ export const swapToMKR = async function (
     const contractUniswap = await new Contract(UNISWAP_ADDRESS, UNISWAP, signer);
 
     // Allow operations with the uniswap to swap from weth
-    await executeTransaction(network, 'ETH', 'approve', [UNISWAP_ADDRESS, new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)])
+    await executeTransaction(network, 'ETH', 'approve', [
+        UNISWAP_ADDRESS,
+        new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+    ]);
 
     //Get some eth
     await trackTransaction(
