@@ -31,22 +31,6 @@ const SUPPORTED_NETWORKS: NetworkConfig[] = [
     },
 ];
 
-export const getDevelopmentNetworkConig = function (alsoSetState = false): NetworkConfig {
-    const url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
-    const config = {
-        chainId: '0x539',
-        type: 'localhost',
-        title: 'Localhost:8545',
-        url: url,
-        etherscanUrl: '',
-        isFork: true,
-    };
-    if (alsoSetState) {
-        networks[config.type] = config;
-    }
-    return config;
-};
-
 export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev?: boolean): NetworkConfig[] {
     const infuraNetworksWithProjectId = SUPPORTED_NETWORKS.map(network => ({
         ...network,
