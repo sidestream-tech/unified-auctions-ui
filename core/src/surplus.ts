@@ -60,6 +60,8 @@ export const fetchSurplusAuctionByIndex = async function (
         auctionEndDate,
         bidEndDate,
         state,
+        fetchedAt: new Date(),
+        isRestarting: false,
     };
 };
 

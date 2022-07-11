@@ -19,7 +19,13 @@
                     <tbody>
                         <tr>
                             <td>Auction State</td>
-                            <td>Ends in <time-till :date="auction.auctionEndDate" /></td>
+                            <td>
+                                <span v-if="isActive">Ends in </span>
+                                <span v-else-if="requiresRestart">Requires restart</span>
+                                <span v-else-if="auction.state === 'ready-for-collection'">Ended </span>
+                                <span v-else>Collected </span>
+                                <time-till v-if="!requiresRestart" :date="auction.earliestEndDate" />
+                            </td>
                         </tr>
                         <tr>
                             <td>Auction Amount</td>
@@ -42,7 +48,6 @@
                                 <template v-if="withBids">
                                     <format-currency :value="unitPrice" currency="MKR" />
                                     per <format-currency currency="DAI" />
-                                    <PriceDropAnimation :auction="auction" />
                                 </template>
                                 <span v-else class="opacity-50">No bids yet</span>
                             </td>
@@ -134,7 +139,6 @@ import { Alert, Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
 import Button from '~/components/common/BaseButton.vue';
-import PriceDropAnimation from '~/components/utils/PriceDropAnimation.vue';
 import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
@@ -143,7 +147,6 @@ export default Vue.extend({
     name: 'SurplusAuction',
     components: {
         AuctionRestartPanel,
-        PriceDropAnimation,
         FormatCurrency,
         TextBlock,
         TimeTill,
@@ -157,6 +160,7 @@ export default Vue.extend({
         auction: {
             type: Object as Vue.PropType<SurplusAuction>,
             default: null,
+            required: true,
         },
         auctionId: {
             type: String,
@@ -164,7 +168,7 @@ export default Vue.extend({
         },
         error: {
             type: String,
-            default: '',
+            default: null,
         },
         isExplanationsShown: {
             type: Boolean,
@@ -215,26 +219,14 @@ export default Vue.extend({
         requiresRestart(): boolean {
             return this.auction.state === 'requires-restart';
         },
+        isFinished(): boolean {
+            return this.auction.state === 'ready-for-collection' || this.auction.state === 'collected';
+        },
         unitPrice(): BigNumber {
             return this.auction.bidAmountMKR.dividedBy(this.auction.receiveAmountDAI);
         },
         withBids(): boolean {
             return this.auction.bidAmountMKR && !this.auction.bidAmountMKR.isEqualTo(0);
-        },
-    },
-    watch: {
-        isExplanationsShown: {
-            immediate: true,
-            handler(newIsExplanationsShown) {
-                if (!newIsExplanationsShown) {
-                    this.isTableExpanded = true;
-                }
-            },
-        },
-        areAuctionsFetching(areAuctionsFetching) {
-            if (!areAuctionsFetching && !this.auction && !this.error) {
-                this.$emit('fetchTakeEventsFromAuction', this.auctionId);
-            }
         },
     },
 });

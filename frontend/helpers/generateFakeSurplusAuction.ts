@@ -34,7 +34,6 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
             : auctionEndDate
         : auctionEndDate;
     const bidAmountMKR = new BigNumber(generatedState === 'just-started' ? 0 : parseFloat(faker.finance.amount()));
-    const isRestarting = false;
     const approximateUnitPrice = bidAmountMKR.isEqualTo(0) ? undefined : bidAmountMKR.dividedBy(receiveAmountDAI);
     const marketUnitPriceToUnitPriceRatio = approximateUnitPrice
         ? new BigNumber(faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 }))
@@ -56,7 +55,7 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
         fetchedAt: new Date(),
         marketUnitPrice,
         marketUnitPriceToUnitPriceRatio,
-        isRestarting,
+        isRestarting: false,
     };
 };
 
