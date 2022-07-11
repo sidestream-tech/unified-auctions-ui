@@ -26,7 +26,7 @@
             <BaseButton
                 class="w-full md:w-80"
                 type="primary"
-                :disabled="currentStateAndTitle.title !== 'Auctioned DAI is ready to be collected' || isCollecting"
+                :disabled="auction.state !== 'ready-for-collection' || isCollecting"
                 :is-loading="isCollecting"
                 @click="$emit('collect')"
             >
@@ -64,19 +64,11 @@ export default Vue.extend({
         },
     },
     computed: {
-        bidEvents() {
-            if (!this.auction || !this.auction.events) {
-                return null;
-            }
-            return this.auction.events.filter(event => {
-                return event.type === 'bid';
-            });
-        },
         isCurrentWalletHighestBidder() {
             if (!this.userWalletAddress) {
                 return false;
             }
-            return this.userWalletAddress === this.bidEvents[this.bidEvents.length - 1].address;
+            return this.userWalletAddress === this.auction.receiverAddress;
         },
         currentStateAndTitle(): PanelProps {
             if (this.auction.state === 'just-started') {

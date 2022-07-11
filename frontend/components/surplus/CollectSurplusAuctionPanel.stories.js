@@ -32,7 +32,7 @@ storiesOf('Surplus/CollectSurplusAuctionPanel', module)
         ...common,
         data: () => ({
             auction: fakeSurplusAuction,
-            userWalletAddress: fakeSurplusAuction.events[fakeSurplusAuction.events.length - 1].address,
+            userWalletAddress: fakeSurplusAuction.receiverAddress,
         }),
     }))
     .add('Ready for collection', () => ({
@@ -45,7 +45,7 @@ storiesOf('Surplus/CollectSurplusAuctionPanel', module)
         ...common,
         data: () => ({
             auction: fakeFinishedSurplusAuction,
-            userWalletAddress: fakeFinishedSurplusAuction.events[fakeFinishedSurplusAuction.events.length - 1].address,
+            userWalletAddress: fakeFinishedSurplusAuction.receiverAddress,
         }),
     }))
     .add('Collected', () => ({
@@ -58,15 +58,14 @@ storiesOf('Surplus/CollectSurplusAuctionPanel', module)
         ...common,
         data: () => ({
             auction: fakeCollectedSurplusAuction,
-            userWalletAddress:
-                fakeCollectedSurplusAuction.events[fakeCollectedSurplusAuction.events.length - 2].address,
+            userWalletAddress: fakeCollectedSurplusAuction.receiverAddress,
         }),
     }))
     .add('Collecting', () => ({
         ...common,
         data: () => ({
             auction: fakeFinishedSurplusAuction,
-            userWalletAddress: fakeFinishedSurplusAuction.events[fakeFinishedSurplusAuction.events.length - 1].address,
+            userWalletAddress: fakeFinishedSurplusAuction.receiverAddress,
             isCollecting: true,
         }),
     }));
