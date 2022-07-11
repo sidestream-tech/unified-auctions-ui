@@ -81,7 +81,7 @@ export default Vue.extend({
     },
     computed: {
         latestBid(): BigNumber | null {
-            return this.auction?.bidAmountMKR || null;
+            return this.auction.bidAmountMKR.isEqualTo(0) ? null : this.auction.bidAmountMKR;
         },
         isUserLatestBidder(): boolean {
             return !!this.latestBid && this.auction.receiverAddress === this.userWalletAddress;
