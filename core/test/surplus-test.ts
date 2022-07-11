@@ -11,6 +11,7 @@ import {convertMkrToDai} from '../src/calleeFunctions/helpers/uniswapV3';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
+import { createWalletFromPrivateKey } from '../src/signer';
 import BigNumber from '../src/bignumber';
 
 import { SurplusAuctionActive } from '../src/types';
