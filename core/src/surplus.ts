@@ -102,7 +102,7 @@ export const bidToSurplusAuction = async function (
     bet: string,
     notifier?: Notifier
 ) {
-    const auction = await getActiveSurplusAuctionOrUndefined(network, Number(auctionIndex));
+    const auction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
     if (!auction) {
         throw new Error('Did not find the auction to bid on.');
     }
