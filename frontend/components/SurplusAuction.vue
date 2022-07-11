@@ -160,7 +160,6 @@ export default Vue.extend({
         auction: {
             type: Object as Vue.PropType<SurplusAuction>,
             default: null,
-            required: true,
         },
         auctionId: {
             type: String,
