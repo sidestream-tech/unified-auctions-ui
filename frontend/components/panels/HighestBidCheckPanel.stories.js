@@ -5,7 +5,7 @@ import faker from 'faker';
 import HighestBidCheckPanel from '~/components/panels/HighestBidCheckPanel';
 import { generateFakeSurplusAuction } from '~/helpers/generateFakeSurplusAuction';
 
-const fakeSurplusAuction = generateFakeSurplusAuction();
+const fakeSurplusAuction = generateFakeSurplusAuction('have-bids');
 
 const common = {
     components: { HighestBidCheckPanel },
@@ -21,36 +21,30 @@ const common = {
 };
 
 storiesOf('Panels/HighestBidCheckPanel', module)
-    .add('No Wallet, No Bids', () => ({
+    .add('No bids', () => ({
         ...common,
         data: () => ({
-            auction: {
-                ...fakeSurplusAuction,
-                bidAmountMKR: null,
-            },
-            bidAmount: new BigNumber(56).times(1.1),
-        }),
-        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" />`,
-    }))
-    .add('No Wallet, With Bids', () => ({
-        ...common,
-        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" />`,
-    }))
-    .add('No bids yet', () => ({
-        ...common,
-        data: () => ({
-            auction: {
-                ...fakeSurplusAuction,
-                bidAmountMKR: null,
-            },
+            auction: generateFakeSurplusAuction('just-started'),
             bidAmount: new BigNumber(56).times(1.1),
             userWalletAddress: faker.finance.ethereumAddress(),
         }),
         template: `<HighestBidCheckPanel :auction="auction" :userWalletAddress="userWalletAddress" :bidAmount="bidAmount" />`,
     }))
+    .add('No Bids, No Wallet', () => ({
+        ...common,
+        data: () => ({
+            auction: generateFakeSurplusAuction('just-started'),
+            bidAmount: new BigNumber(56).times(1.1),
+        }),
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" />`,
+    }))
     .add('With Bids', () => ({
         ...common,
         template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :userWalletAddress="userWalletAddress" />`,
+    }))
+    .add('With Bids, No Wallet', () => ({
+        ...common,
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" />`,
     }))
     .add('With Bids, disabled', () => ({
         ...common,
