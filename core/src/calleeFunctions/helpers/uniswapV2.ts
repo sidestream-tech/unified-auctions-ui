@@ -1,4 +1,4 @@
-/* 
+/*
     Most of the uniswap logic based on the `auction-demo-keeper` source code
     https://github.com/makerdao/auction-demo-keeper/blob/main/src/clipper.js#L134-L160
     More info on how UniSwap works and other available methods can be found here:
@@ -14,6 +14,7 @@ import { getDecimalChainIdByNetworkType } from '../../network';
 import getProvider from '../../provider';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
+import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 
 const EXCHANGE_RATE_CACHE = 20 * 1000;
 
@@ -82,7 +83,7 @@ export const getUniswapPairBySymbols = async function (
 };
 
 export const splitArrayIntoPairs = function (array: string[]): string[][] {
-    /* 
+    /*
         Function that takes an array of strings, e.g.: `[ 'one', 'two', 'three' ]`
         and turns it into array or pairs, e.g.: `[ ['one', 'two'], [ 'two', 'three' ] ]`
     */
@@ -101,6 +102,23 @@ export const getLpTokenTotalSupply = async function (network: string, symbol: st
     const collateral = getCollateralConfigBySymbol(symbol);
     return new BigNumber(totalSupply.toString()).shiftedBy(-collateral.decimals);
 };
+
+export const getExchangeRateDaiMkr = async function (
+    network: string,
+): Promise<BigNumber> {
+    const completeExchangePath = ['DAI', 'MCD_GOV'];
+    const uniswapPairs = await getUniswapPairBySymbols(network, completeExchangePath[0], completeExchangePath[1]);
+    const exchangeToken = await getUniswapTokenBySymbol(network, 'DAI');
+    const uniswapRoute = new Route([uniswapPairs], exchangeToken);
+    const uniswapTrade = new Trade(
+        uniswapRoute,
+        new TokenAmount(exchangeToken, (new BigNumber(1)).shiftedBy(MKR_NUMBER_OF_DIGITS).toFixed(0)),
+        TradeType.EXACT_INPUT
+    );
+    const rate = new BigNumber(uniswapTrade.outputAmount.toSignificant(DAI_NUMBER_OF_DIGITS));
+    return new BigNumber(1).div(rate)
+};
+
 
 export const getRegularTokenExchangeRateBySymbol = async function (
     network: string,

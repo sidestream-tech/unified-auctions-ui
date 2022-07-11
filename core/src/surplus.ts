@@ -6,6 +6,7 @@ import { Contract } from 'ethers';
 import getNetworkDate from './date';
 import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
+import { getExchangeRateDaiMkr } from './calleeFunctions/helpers/uniswapV2';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
@@ -121,3 +122,7 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     }
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
 };
+
+export const getMarketPriceMKR = async function (network: string) {
+    return await getExchangeRateDaiMkr(network)
+}

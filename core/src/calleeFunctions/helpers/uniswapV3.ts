@@ -3,7 +3,7 @@ import { abi as UNISWAP_V3_QUOTER_ABI } from '@uniswap/v3-periphery/artifacts/co
 import BigNumber from '../../bignumber';
 import getProvider from '../../provider';
 import { getContractAddressByName } from '../../contracts';
-import { DAI_NUMBER_OF_DIGITS } from '../../constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
@@ -58,6 +58,23 @@ export const convertCollateralToDai = async function (
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInputSingle(
         await getContractAddressByName(network, collateralSymbol),
+        await getContractAddressByName(network, 'MCD_DAI'),
+        UNISWAP_FEE,
+        collateralIntegerAmount,
+        0
+    );
+    const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+    return daiAmount;
+};
+
+export const convertMkrToDai = async function (
+    network: string,
+    amount: BigNumber
+): Promise<BigNumber> {
+    const collateralIntegerAmount = amount.shiftedBy(MKR_NUMBER_OF_DIGITS).toFixed(0);
+    const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
+    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInputSingle(
+        await getContractAddressByName(network ,'MCD_GOV'),
         await getContractAddressByName(network, 'MCD_DAI'),
         UNISWAP_FEE,
         collateralIntegerAmount,
