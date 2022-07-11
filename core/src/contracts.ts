@@ -13,6 +13,7 @@ import MCD_FLAP from './abis/MCD_FLAP.json';
 import MCD_GOV from './abis/MCD_GOV.json';
 import WSTETH from './abis/WSTETH.json';
 import WETH from './abis/WETH.json';
+import UNISWAP from './abis/UNISWAP_V2_ROUTER_02.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
@@ -63,6 +64,9 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     }
     if (contractName === 'ETH') {
         return WETH;
+    }
+    if (contractName === 'UNISWAP') {
+        return UNISWAP;
     }
     throw new Error(`No contract interface found for "${contractName}"`);
 };

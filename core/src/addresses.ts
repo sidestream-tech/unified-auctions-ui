@@ -6,6 +6,7 @@ import getProvider from './provider';
 import CHAINLOG from './abis/CHAINLOG.json';
 
 const CHAINLOG_ADDRESS = '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F';
+const UNISWAP_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
 const CHAINLOG_CACHE = 24 * 60 * 60 * 1000;
 
 const getChainLogContract = async function (network: string): Promise<Contract> {
@@ -20,6 +21,9 @@ export const fetchContractsNamesByNetwork = async function (network: string): Pr
 };
 
 export const _fetchContractAddressByNetwork = async function (network: string, contractName: string): Promise<string> {
+    if (contractName === 'UNISWAP') {
+        return UNISWAP_ADDRESS;
+    }
     const chainLogContract = await getChainLogContract(network);
     try {
         const encodedContractName = ethers.utils.formatBytes32String(contractName);
