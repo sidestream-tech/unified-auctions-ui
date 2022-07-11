@@ -12,7 +12,7 @@ const start = async function () {
     const notifiers = await setupNotifiers();
     const { wsProvider, networkTitle } = await setupWebSocket();
     isNetworkSupported(networkTitle);
-    listenForEvents(wsProvider, networkTitle, eventData => notify(notifiers, eventData));
+    listenForEvents(wsProvider, networkTitle, eventData => notify(networkTitle, notifiers, eventData));
 };
 
 start().catch(error => {

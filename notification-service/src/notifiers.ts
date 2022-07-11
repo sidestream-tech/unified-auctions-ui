@@ -13,7 +13,7 @@ export async function setupNotifiers(): Promise<Notifiers> {
     };
 }
 
-export function notify(notifiers: Notifiers, eventData: EventData) {
+export function notify(network: string, notifiers: Notifiers, eventData: EventData) {
     console.info(
         `${EVENT_PREFIX} "${eventData.eventSubscription.id}" triggered in block "${eventData.event.blockNumber}"`
     );
@@ -21,11 +21,11 @@ export function notify(notifiers: Notifiers, eventData: EventData) {
     const receivers = getReceiversForSubscriptionId(eventData.eventSubscription.id);
 
     // Notify per mail
-    notifyPerMail(notifiers.mailer, eventData, getReceiversByType(receivers, 'email')).catch(error =>
+    notifyPerMail(network, notifiers.mailer, eventData, getReceiversByType(receivers, 'email')).catch(error =>
         console.error(error)
     );
     // Notify per discord
-    notifyPerDiscord(eventData, getReceiversByType(receivers, 'discord')).catch(error => {
+    notifyPerDiscord(network, eventData, getReceiversByType(receivers, 'discord')).catch(error => {
         console.error(error);
     });
 }
