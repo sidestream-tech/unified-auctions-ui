@@ -5,9 +5,9 @@ import {
     collectSurplusAuction,
     fetchSurplusAuctionByIndex,
     restartSurplusAuction,
-    getMarketPriceMKR
+    getMarketPriceMKR,
 } from '../src/surplus';
-import {convertMkrToDai} from '../src/calleeFunctions/helpers/uniswapV3';
+import { convertMkrToDai } from '../src/calleeFunctions/helpers/uniswapV3';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
@@ -100,11 +100,11 @@ describe('Surplus Auction', () => {
         expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
     });
     it('gets exchange rate v2', async () => {
-        const rate = await getMarketPriceMKR('custom')
+        const rate = await getMarketPriceMKR('custom');
         expect(rate.toString()).to.equal('1830.403058138370068702471166175');
-    })
+    });
     it('gets exchange rate v3', async () => {
-        const rate = await convertMkrToDai('custom', new BigNumber(1))
+        const rate = await convertMkrToDai('custom', new BigNumber(1));
         expect(rate.toString()).to.equal('1731.669387321259063176');
-    })
+    });
 });

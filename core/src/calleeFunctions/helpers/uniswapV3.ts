@@ -67,14 +67,11 @@ export const convertCollateralToDai = async function (
     return daiAmount;
 };
 
-export const convertMkrToDai = async function (
-    network: string,
-    amount: BigNumber
-): Promise<BigNumber> {
+export const convertMkrToDai = async function (network: string, amount: BigNumber): Promise<BigNumber> {
     const collateralIntegerAmount = amount.shiftedBy(MKR_NUMBER_OF_DIGITS).toFixed(0);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInputSingle(
-        await getContractAddressByName(network ,'MCD_GOV'),
+        await getContractAddressByName(network, 'MCD_GOV'),
         await getContractAddressByName(network, 'MCD_DAI'),
         UNISWAP_FEE,
         collateralIntegerAmount,

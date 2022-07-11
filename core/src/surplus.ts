@@ -124,5 +124,5 @@ export const collectSurplusAuction = async function (network: string, auctionInd
 };
 
 export const getMarketPriceMKR = async function (network: string) {
-    return await getExchangeRateDaiMkr(network)
-}
+    return await getExchangeRateDaiMkr(network);
+};
