@@ -1,6 +1,6 @@
 export const NETWORKS: Record<string, { network: string; etherscanURL: string; etherscanAPI: string }> = {
-    mainnet: {
-        network: 'mainnet',
+    homestead: {
+        network: 'homestead',
         etherscanURL: 'https://etherscan.io',
         etherscanAPI: 'https://api.etherscan.io',
     },
