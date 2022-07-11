@@ -241,5 +241,5 @@ export const bidWithCallee = async function (
         calleeAddress,
         calleeData,
     ];
-    return executeTransaction(network, contractName, 'take', contractParameters, notifier);
+    return executeTransaction(network, contractName, 'take', contractParameters, {}, notifier);
 };

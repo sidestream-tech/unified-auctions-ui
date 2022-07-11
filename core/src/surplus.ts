@@ -111,7 +111,7 @@ export const bidToSurplusAuction = async function (
         auction.receiveAmountDAI.shiftedBy(RAD_NUMBER_OF_DIGITS).toFixed(0),
         new BigNumber(bet).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
     ];
-    await executeTransaction(network, 'MCD_FLAP', 'tend', transactionParameters, notifier);
+    await executeTransaction(network, 'MCD_FLAP', 'tend', transactionParameters, {}, notifier);
 };
 
 export const collectSurplusAuction = async function (network: string, auctionIndex: number, notifier?: Notifier) {
@@ -119,5 +119,5 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     if (!auction || auction.state !== 'ready-for-collection') {
         throw new Error('Did not find the auction to collect.');
     }
-    await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], notifier);
+    await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], {}, notifier);
 };
