@@ -93,12 +93,11 @@
 </template>
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import BigNumber from 'bignumber.js';
+import WhatIsMakerProtocol from '~/components/WhatIsMakerProtocol.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import AuctionsTable from '~/components/AuctionsTable.vue';
 import FormatPercentage from '~/components/utils/FormatPercentage.vue';
 import Explain from '~/components/utils/Explain.vue';
-import { Auction, MakerParams } from '~/../core/src/types';
 
 export default Vue.extend({
     components: {
@@ -106,6 +105,7 @@ export default Vue.extend({
         TextBlock,
         AuctionsTable,
         Explain,
+        WhatIsMakerProtocol,
     },
     props: {
         auctions: {
@@ -158,7 +158,7 @@ export default Vue.extend({
         params(): MakerParams {
             return {
                 secondsBetweenPriceDrops: 90,
-                priceDropRatio: new BigNumber(0.01),
+                priceDropRatio: 0.01,
             };
         },
     },
