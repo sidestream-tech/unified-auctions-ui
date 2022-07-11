@@ -47,6 +47,27 @@ export const getters = {
     auctionStorage(state: State) {
         return state.auctionStorage;
     },
+    auctionStates(state: State) {
+        return state.auctionStates;
+    },
+    allowanceAmount(state: State) {
+        return state.allowanceAmount;
+    },
+    areAuctionsFetching(state: State) {
+        return state.areAuctionsFetching;
+    },
+    isAuthorizationLoading(state: State) {
+        return state.isAuthorizationLoading;
+    },
+    isBidding(state: State) {
+        return state.isBidding;
+    },
+    error(state: State) {
+        return state.error;
+    },
+    lastUpdated(state: State) {
+        return state.lastUpdated;
+    },
 };
 
 export const mutations = {
