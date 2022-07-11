@@ -21,8 +21,8 @@ services:
         build:
             context: .
             dockerfile: ./frontend/Dockerfile
-            environment:
-                - INFURA_PROJECT_ID
+            args:
+                - RPC_URL
                 - DEMO_MODE
                 - PRODUCTION_DOMAIN
                 - CONTACT_EMAIL
