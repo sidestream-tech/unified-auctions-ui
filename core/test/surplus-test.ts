@@ -7,9 +7,9 @@ import {
     restartSurplusAuction,
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
-import getSigner, { setSigner, createSigner } from '../src/signer';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
+import {createWalletFromPrivateKey} from '../src/signer';
 
 import { SurplusAuctionActive } from '../src/types';
 import hre from 'hardhat';
@@ -17,12 +17,6 @@ import hre from 'hardhat';
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
-
-async function createWalletFromPrivateKey(privateKey: string, network: string) {
-    setSigner(network, createSigner(network, privateKey));
-    const signer = await getSigner(network);
-    return await signer.getAddress();
-}
 
 describe('Surplus Auction', () => {
     before(async () => {
@@ -77,7 +71,7 @@ describe('Surplus Auction', () => {
                 {
                     forking: {
                         jsonRpcUrl: REMOTE_RPC_URL,
-                        blockNumber: 14078338,
+                        blockNumber: HARDHAT_FORK_BLOCK_NUMBER - 1,
                     },
                 },
             ],

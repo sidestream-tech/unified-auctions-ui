@@ -87,24 +87,13 @@ export const fetchActiveSurplusAuctions = async function (network: string): Prom
     }
     return surplusAuctions;
 };
-const surplusAuctionRestartedCallback = async function (
-    network: string,
-    auctionIndex: number
-): Promise<SurplusAuction> {
-    const restartedAuction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
-    if (!restartedAuction) {
-        throw new Error('Failed to refetch the restarted auction.');
-    }
-    return restartedAuction;
-};
 
 export const restartSurplusAuction = async function (
     network: string,
     auctionIndex: number,
     notifier?: Notifier
-): Promise<SurplusAuction> {
+): Promise<void> {
     await executeTransaction(network, 'MCD_FLAP', 'tick', [auctionIndex], notifier);
-    return await surplusAuctionRestartedCallback(network, auctionIndex);
 };
 
 export const bidToSurplusAuction = async function (
@@ -126,7 +115,7 @@ export const bidToSurplusAuction = async function (
 };
 
 export const collectSurplusAuction = async function (network: string, auctionIndex: number, notifier?: Notifier) {
-    const auction = await getActiveSurplusAuctionOrUndefined(network, Number(auctionIndex));
+    const auction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
     if (!auction || auction.state !== 'ready-for-collection') {
         throw new Error('Did not find the auction to collect.');
     }
