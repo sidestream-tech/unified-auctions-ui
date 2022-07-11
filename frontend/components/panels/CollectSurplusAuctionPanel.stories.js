@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import CollectSurplusAuctionPanel from '~/components/surplus/CollectSurplusAuctionPanel';
+import CollectSurplusAuctionPanel from '~/components/panels/CollectSurplusAuctionPanel';
 import { generateFakeSurplusAuction } from '~/helpers/generateFakeSurplusAuction';
 
 const fakeSurplusAuction = generateFakeSurplusAuction('have-bids');
@@ -15,7 +15,7 @@ const common = {
     `,
 };
 
-storiesOf('Surplus/CollectSurplusAuctionPanel', module)
+storiesOf('Panels/CollectSurplusAuctionPanel', module)
     .add('No bids yet', () => ({
         ...common,
         data: () => ({
