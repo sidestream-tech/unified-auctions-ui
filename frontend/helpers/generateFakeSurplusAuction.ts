@@ -26,9 +26,6 @@ export const generateFakeSurplusAuction = function (
     const auctionBaseData = generateFakeSurplusAuctionBase();
     const generatedState: SurplusAuctionStates = state || faker.helpers.randomize(SURPLUS_AUCTION_STATES);
 
-    if (generatedState === 'just-started') {
-        return auctionBaseData;
-    }
     const receiveAmountDAI = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
     const auctionEndDate = faker.date.soon();
@@ -38,7 +35,7 @@ export const generateFakeSurplusAuction = function (
             ? bidEndDate
             : auctionEndDate
         : auctionEndDate;
-    const bidAmountMKR = new BigNumber(parseFloat(faker.finance.amount()));
+    const bidAmountMKR = new BigNumber(generatedState === 'just-started' ? 0 : parseFloat(faker.finance.amount()));
 
     return {
         ...auctionBaseData,
