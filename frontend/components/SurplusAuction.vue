@@ -4,11 +4,11 @@
             <Alert v-if="auctionError && auctionError.showBanner" :message="auctionError.error" type="error" />
         </div>
         <div v-if="auction">
-            <div v-if="auction.state === 'requires-restart'">
+            <div v-if="requiresRestart">
                 <AuctionRestartPanel
                     :wallet-address="walletAddress"
                     :is-explanations-shown="isExplanationsShown"
-                    :is-restarting="auction.state === 'requires-restart'"
+                    :is-restarting="auction.isRestarting"
                     @restart="$emit('restart', auctionId)"
                     @connectWallet="$emit('connect')"
                     @disconnectWallet="$emit('disconnect')"
@@ -29,7 +29,7 @@
                         </tr>
                         <tr>
                             <td>Highest Bid</td>
-                            <td v-if="auction.bidAmountMKR">
+                            <td v-if="withBids">
                                 <format-currency :value="auction.bidAmountMKR" currency="MKR" />
                             </td>
                             <td v-else>
@@ -39,7 +39,7 @@
                         <tr>
                             <td>Auction Price</td>
                             <td>
-                                <template v-if="auction.bidAmountMKR">
+                                <template v-if="withBids">
                                     <format-currency :value="unitPrice" currency="MKR" />
                                     per <format-currency currency="DAI" />
                                     <PriceDropAnimation :auction="auction" />
@@ -48,7 +48,6 @@
                             </td>
                         </tr>
                         <tr>
-                            <!--Awaiting another issue: Fetching price on Uniswap-->
                             <td>Price On Uniswap</td>
                             <td>
                                 <template v-if="isActive && auction.marketUnitPrice">
@@ -59,7 +58,6 @@
                             </td>
                         </tr>
                         <tr>
-                            <!--Awaiting another issue: Calculating market to unit price ratio-->
                             <td>Market Difference</td>
                             <td>
                                 <template v-if="isActive && auction.marketUnitPriceToUnitPriceRatio">
@@ -69,7 +67,6 @@
                             </td>
                         </tr>
                         <tr>
-                            <!--Awaiting another issue: Fetching surplus auctions-->
                             <td>Last updated</td>
                             <td>
                                 <div v-if="areAuctionsFetching" class="flex items-center space-x-2">
@@ -177,6 +174,10 @@ export default Vue.extend({
             type: String,
             default: null,
         },
+        areAuctionsFetching: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -190,7 +191,7 @@ export default Vue.extend({
                     error: this.error,
                     showBanner: true,
                 };
-            } else if (!this.auction) {
+            } else if (!this.auction && !this.areAuctionsFetching) {
                 return {
                     error: 'This auction was not found',
                     showBanner: true,
@@ -200,7 +201,7 @@ export default Vue.extend({
                     error: 'This auction is finished',
                     showBanner: true,
                 };
-            } else if (this.auction.state === 'requires-restart') {
+            } else if (this.auction.state === 'requires-restart' && !this.areAuctionsFetching) {
                 return {
                     error: 'This auction is inactive and must be restarted',
                     showBanner: false,
@@ -216,6 +217,9 @@ export default Vue.extend({
         },
         unitPrice(): BigNumber {
             return this.auction.bidAmountMKR.dividedBy(this.auction.receiveAmountDAI);
+        },
+        withBids(): boolean {
+            return this.auction.bidAmountMKR && !this.auction.bidAmountMKR.isEqualTo(0);
         },
     },
     watch: {

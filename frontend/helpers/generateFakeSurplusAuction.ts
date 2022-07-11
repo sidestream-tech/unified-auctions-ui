@@ -20,9 +20,7 @@ const generateFakeSurplusAuctionBase = function (): SurplusAuctionBase {
     };
 };
 
-export const generateFakeSurplusAuction = function (
-    state?: SurplusAuctionStates
-): SurplusAuction | SurplusAuctionBase {
+export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates): SurplusAuction {
     const auctionBaseData = generateFakeSurplusAuctionBase();
     const generatedState: SurplusAuctionStates = state || faker.helpers.randomize(SURPLUS_AUCTION_STATES);
 
@@ -36,7 +34,15 @@ export const generateFakeSurplusAuction = function (
             : auctionEndDate
         : auctionEndDate;
     const bidAmountMKR = new BigNumber(generatedState === 'just-started' ? 0 : parseFloat(faker.finance.amount()));
-
+    const isRestarting = false;
+    const approximateUnitPrice = bidAmountMKR.isEqualTo(0) ? undefined : bidAmountMKR.dividedBy(receiveAmountDAI);
+    const marketUnitPriceToUnitPriceRatio = approximateUnitPrice
+        ? new BigNumber(faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 }))
+        : undefined;
+    const marketUnitPrice =
+        approximateUnitPrice && marketUnitPriceToUnitPriceRatio
+            ? approximateUnitPrice.multipliedBy(new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio))
+            : undefined;
     return {
         ...auctionBaseData,
         network: 'mainnet',
@@ -47,6 +53,10 @@ export const generateFakeSurplusAuction = function (
         earliestEndDate,
         state: generatedState,
         bidAmountMKR,
+        fetchedAt: new Date(),
+        marketUnitPrice,
+        marketUnitPriceToUnitPriceRatio,
+        isRestarting,
     };
 };
 

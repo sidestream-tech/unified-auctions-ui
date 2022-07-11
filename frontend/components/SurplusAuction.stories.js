@@ -3,21 +3,14 @@ import { action } from '@storybook/addon-actions';
 import SurplusAuction from './SurplusAuction.vue';
 import { generateFakeSurplusAuction } from '~/helpers/generateFakeSurplusAuction';
 
-const fakeSurplusAuction = generateFakeSurplusAuction();
-const basicStory = {
+const fakeSurplusAuctionWithBids = generateFakeSurplusAuction('have-bids');
+const common = {
     components: {
         SurplusAuction,
     },
-    computed: {
-        auctionParams() {
-            return {
-                ...fakeSurplusAuction,
-            };
-        },
-    },
     data() {
         return {
-            fakeSurplusAuction,
+            auction: fakeSurplusAuctionWithBids,
         };
     },
     methods: {
@@ -27,20 +20,35 @@ const basicStory = {
 
 storiesOf('SurplusAuction', module)
     .add('Default', () => ({
-        ...basicStory,
-        template: `<SurplusAuction :auction="auctionParams" auctionId="test" @swap="swap"/>`,
+        ...common,
+        template: `<SurplusAuction :auction="auction" auctionId="test" @swap="swap"/>`,
     }))
     .add('Max Width', () => ({
-        ...basicStory,
+        ...common,
         template: `
         <div class="flex items-center w-3/5">
-            <SurplusAuction :auction="auctionParams" auctionId="test" @swap="swap"/>
+            <SurplusAuction :auction="auction" auctionId="test" @swap="swap"/>
         </div>`,
     }))
+    .add('Auction Updating', () => ({
+        ...common,
+        template: `<SurplusAuction :auction="auction" :areAuctionsFetching="true" auctionId="test"/>`,
+    }))
+    .add('Requires Restart', () => ({
+        ...common,
+        data() {
+            return {
+                auction: generateFakeSurplusAuction('requires-restart'),
+            };
+        },
+        template: `<SurplusAuction :auction="auction" auctionId="test"/>`,
+    }))
     .add('Finished', () => ({
-        ...basicStory,
-        template: `
-        <div class="flex items-center w-3/5">
-            <SurplusAuction :auction="auctionParams" auctionId="test" error="This auction is finished"/>
-        </div>`,
+        ...common,
+        data() {
+            return {
+                auction: generateFakeSurplusAuction('collected'),
+            };
+        },
+        template: `<SurplusAuction :auction="auction" auctionId="test" error="This auction is finished"/>`,
     }));

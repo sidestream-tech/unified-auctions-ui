@@ -167,6 +167,10 @@ export declare interface SurplusAuctionActive extends SurplusAuctionBase {
     bidEndDate?: Date;
     earliestEndDate: Date;
     state: 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart';
+    fetchedAt: Date;
+    isRestarting: boolean;
+    marketUnitPrice?: BigNumber;
+    marketUnitPriceToUnitPriceRatio?: BigNumber;
 }
 
 export declare interface SurplusAuctionCollected extends SurplusAuctionBase {
