@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { getNetworkConfigByType } from './constants/NETWORKS';
+import { getNetworkConfigByType } from './network';
 import { createProvider } from './provider';
 
 const signers: Record<string, Promise<ethers.Signer>> = {};

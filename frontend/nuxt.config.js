@@ -8,13 +8,12 @@ export default {
     target: 'static',
 
     env: {
-        INFURA_PROJECT_ID: process.env.INFURA_PROJECT_ID,
+        RPC_URL: process.env.RPC_URL,
         DEMO_MODE: process.env.DEMO_MODE || false,
         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,
         CONTACT_EMAIL: process.env.CONTACT_EMAIL || undefined,
         GITHUB_URL: pkg.repository.url,
         STAGING_BANNER_URL: process.env.STAGING_BANNER_URL || undefined,
-        DEFAULT_ETHEREUM_NETWORK: process.env.DEFAULT_ETHEREUM_NETWORK || 'mainnet',
         HEAPIO_ID: process.env.HEAPIO_ID || undefined,
     },
 

@@ -1,7 +1,7 @@
 import type { GasParameters } from './types';
 import memoizee from 'memoizee';
 import BigNumber from './bignumber';
-import { getNetworkConfigByType } from './constants/NETWORKS';
+import { getNetworkConfigByType } from './network';
 import { ETH_NUMBER_OF_DIGITS } from './constants/UNITS';
 import getProvider from './provider';
 
