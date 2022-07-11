@@ -159,7 +159,7 @@ export declare interface SurplusAuctionBase {
 }
 
 export declare interface SurplusAuctionActive extends SurplusAuctionBase {
-    bidAmountMKR: BigNumber;
+    bidAmountMKR?: BigNumber;
     receiveAmountDAI: BigNumber;
     receiverAddress: string;
     auctionEndDate: Date;
