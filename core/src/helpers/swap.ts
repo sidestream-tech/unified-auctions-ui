@@ -29,14 +29,10 @@ export const swapToMKR = async function (
     ]);
 
     //Get some eth
-    await executeTransaction(
-        network,
-        'ETH',
-        'deposit',
-        [],
-        { value: ethers.utils.parseEther(String(amountPaidAllowanceETH)) },
-        notifier
-    );
+    await executeTransaction(network, 'ETH', 'deposit', [], {
+        methodOverrides: { value: ethers.utils.parseEther(String(amountPaidAllowanceETH)) },
+        notifier,
+    });
 
     // get some mkr
     const deadline = await getNetworkDate(network);
@@ -48,12 +44,8 @@ export const swapToMKR = async function (
         address,
         new BigNumber(Math.floor(deadline.getTime() / 1000)).toFixed(0),
     ];
-    await executeTransaction(
-        network,
-        'UNISWAP',
-        'swapETHForExactTokens',
-        transactionParamsSwapMkr,
-        { value: new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0) },
-        notifier
-    );
+    await executeTransaction(network, 'UNISWAP', 'swapETHForExactTokens', transactionParamsSwapMkr, {
+        notifier,
+        methodOverrides: { value: new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0) },
+    });
 };

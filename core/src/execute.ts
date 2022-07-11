@@ -4,6 +4,13 @@ import getContract from './contracts';
 import trackTransaction from './tracker';
 import { getGasParametersForTransaction } from './gas';
 import { getNetworkConfigByType } from './network';
+import { PayableOverrides } from 'ethers';
+
+interface TransactionOptions {
+    methodOverrides?: PayableOverrides;
+    notifier?: Notifier;
+    confirmTransaction?: boolean;
+}
 
 const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
     const networkConfig = getNetworkConfigByType(network);
@@ -18,15 +25,14 @@ const _executeTransaction = async function (
     contractName: string,
     contractMethod: string,
     contractParameters: any[],
-    contractData?: Record<string, any>,
-    notifier?: Notifier,
-    confirmTransaction?: boolean
+    options?: TransactionOptions
 ): Promise<string> {
+    const { methodOverrides, notifier, confirmTransaction } = options || {};
     const contract = await getContract(network, contractName, true);
     const gasParameters = await getGasParametersForTransaction(network);
     const transactionPromise = contract[contractMethod](...contractParameters, {
         ...gasParameters,
-        ...contractData,
+        ...(methodOverrides || {}),
         type: gasParameters.gasPrice ? undefined : 2,
     });
     return trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network, confirmTransaction));

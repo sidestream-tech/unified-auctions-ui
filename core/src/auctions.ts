@@ -202,7 +202,10 @@ export const restartAuction = async function (
     notifier?: Notifier
 ): Promise<string> {
     const contractName = getClipperNameByCollateralType(auction.collateralType);
-    return executeTransaction(network, contractName, 'redo', [auction.index, profitAddress], {}, notifier, false);
+    return executeTransaction(network, contractName, 'redo', [auction.index, profitAddress], {
+        notifier,
+        confirmTransaction: false,
+    });
 };
 
 export const bidWithDai = async function (
@@ -222,7 +225,7 @@ export const bidWithDai = async function (
         profitAddress,
         NULL_BYTES,
     ];
-    return executeTransaction(network, contractName, 'take', contractParameters, {}, notifier);
+    return executeTransaction(network, contractName, 'take', contractParameters, { notifier });
 };
 
 export const bidWithCallee = async function (
@@ -241,5 +244,5 @@ export const bidWithCallee = async function (
         calleeAddress,
         calleeData,
     ];
-    return executeTransaction(network, contractName, 'take', contractParameters, {}, notifier);
+    return executeTransaction(network, contractName, 'take', contractParameters, { notifier });
 };
