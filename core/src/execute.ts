@@ -18,6 +18,7 @@ const _executeTransaction = async function (
     contractName: string,
     contractMethod: string,
     contractParameters: any[],
+    contractData?: Record<string, any>,
     notifier?: Notifier,
     confirmTransaction?: boolean
 ): Promise<string> {
@@ -25,6 +26,7 @@ const _executeTransaction = async function (
     const gasParameters = await getGasParametersForTransaction(network);
     const transactionPromise = contract[contractMethod](...contractParameters, {
         ...gasParameters,
+        ...contractData,
         type: gasParameters.gasPrice ? undefined : 2,
     });
     return trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network, confirmTransaction));

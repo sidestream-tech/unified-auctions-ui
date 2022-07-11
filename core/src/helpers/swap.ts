@@ -12,6 +12,7 @@ import getNetworkDate from '../date';
 
 import { getNetworkConfigByType } from '../network';
 import getContract from '../contracts';
+import executeTransaction from '../execute';
 
 const canTransactionBeConfirmed = function (network: string, confirmTransaction?: boolean) {
     const networkConfig = getNetworkConfigByType(network);
@@ -36,16 +37,7 @@ export const swapToMKR = async function (
     const contractUniswap = await new Contract(UNISWAP_ADDRESS, UNISWAP, signer);
 
     // Allow operations with the uniswap to swap from weth
-    const gasParameters = await getGasParametersForTransaction(network);
-    let transactionPromise = contractWeth['approve'](
-        ...[UNISWAP_ADDRESS, new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)],
-        {
-            ...gasParameters,
-            type: gasParameters.gasPrice ? undefined : 2,
-        }
-    );
-
-    await trackTransaction(transactionPromise, notifier, canTransactionBeConfirmed(network));
+    await executeTransaction(network, 'ETH', 'approve', [UNISWAP_ADDRESS, new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0)])
 
     //Get some eth
     await trackTransaction(
@@ -66,7 +58,7 @@ export const swapToMKR = async function (
         new BigNumber(Math.floor(deadline.getTime() / 1000)).toFixed(0),
     ];
     const gasParametersSwapMKR = await getGasParametersForTransaction(network);
-    transactionPromise = contractUniswap['swapETHForExactTokens'](...transactionParamsSwapMkr, {
+    const transactionPromise = contractUniswap['swapETHForExactTokens'](...transactionParamsSwapMkr, {
         ...gasParametersSwapMKR,
         type: gasParametersSwapMKR.gasPrice ? undefined : 2,
         value: new BigNumber(amountPaidAllowanceETH).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),

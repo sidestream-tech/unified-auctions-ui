@@ -93,7 +93,7 @@ export const restartSurplusAuction = async function (
     auctionIndex: number,
     notifier?: Notifier
 ): Promise<void> {
-    await executeTransaction(network, 'MCD_FLAP', 'tick', [auctionIndex], notifier);
+    await executeTransaction(network, 'MCD_FLAP', 'tick', [auctionIndex], {}, notifier);
 };
 
 export const bidToSurplusAuction = async function (

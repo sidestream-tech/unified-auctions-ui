@@ -39,7 +39,17 @@ export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev
     if (!isDev) {
         return infuraNetworksWithProjectId;
     }
-    return [...infuraNetworksWithProjectId, getDevelopmentNetworkConig()];
+    return [
+        ...infuraNetworksWithProjectId,
+        {
+            chainId: '0x539',
+            type: 'localhost',
+            title: 'Localhost:8545',
+            url: `http://127.0.0.1:8545`,
+            etherscanUrl: '',
+            isFork: true,
+        },
+    ];
 };
 
 export const getCustomNetworkConfig = function (rpcUrl: string, chainId: string): NetworkConfig {

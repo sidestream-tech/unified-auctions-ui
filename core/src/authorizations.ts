@@ -14,7 +14,7 @@ const _authorizeWallet = async function (
     walletAddress; // so the memoizee cache is invalidated if another address is used
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const contractMethod = revoke ? 'nope' : 'hope';
-    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], notifier);
+    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [joinDaiAddress], {}, notifier);
     await getWalletAuthorizationStatus.clear();
     return transaction;
 };
@@ -35,7 +35,7 @@ const _authorizeCollateral = async function (
     const contractName = getClipperNameByCollateralType(collateralType);
     const clipperAddress = await getContractAddressByName(network, contractName);
     const contractMethod = revoke ? 'nope' : 'hope';
-    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [clipperAddress], notifier);
+    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [clipperAddress], {}, notifier);
     await getCollateralAuthorizationStatus.clear();
     return transaction;
 };
@@ -83,7 +83,7 @@ export const setAllowanceAmountDAI = async function (
     walletAddress; // so the memoizee cache is invalidated if another address is used
     const joinDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const amountRaw = amount ? new BigNumber(amount).shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0) : MAX.toFixed(0);
-    return await executeTransaction(network, 'MCD_DAI', 'approve', [joinDaiAddress, amountRaw], notifier);
+    return await executeTransaction(network, 'MCD_DAI', 'approve', [joinDaiAddress, amountRaw], {}, notifier);
 };
 
 export const fetchAllowanceAmountDAI = async function (network: string, walletAddress: string): Promise<BigNumber> {
@@ -102,7 +102,7 @@ const _authorizeSurplus = async function (
     walletAddress; // so the memoizee cache is invalidated if another address is used
     const flapperAddress = await getContractAddressByName(network, 'MCD_FLAP');
     const contractMethod = revoke ? 'nope' : 'hope';
-    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [flapperAddress], notifier);
+    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [flapperAddress], {}, notifier);
     await getWalletAuthorizationStatus.clear();
     return transaction;
 };
@@ -138,6 +138,7 @@ export const setAllowanceAmountMKR = async function (
         'MCD_GOV',
         'approve(address,uint256)',
         [flapAddress, amountRaw],
+        {},
         notifier
     );
 };
