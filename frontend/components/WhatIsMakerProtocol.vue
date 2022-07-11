@@ -1,5 +1,5 @@
 <template>
-    <TextBlock title="What is the Maker Protocol?" class="TextBlock">
+    <TextBlock title="What is the Maker Protocol?">
         The Maker Protocol is
         <Explain text="a set of rules">
             a <a href="https://changelog.makerdao.com/" target="_blank">set of smart contracts</a> running on the
