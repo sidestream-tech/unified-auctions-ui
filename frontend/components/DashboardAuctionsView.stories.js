@@ -1,20 +1,14 @@
 import { storiesOf } from '@storybook/vue';
 import DashboardAuctionsView from './DashboardAuctionsView.vue';
 import { generateFakeCollaterals } from '~/helpers/generateFakeCollateral';
-import { getCalleesByNetworkType } from '~/../core/src/constants/CALLEES';
-
-const collaterals = generateFakeCollaterals();
+import { generateFakeCallees } from '~/helpers/generateFakeCallee';
 
 const common = {
     components: { DashboardAuctionsView },
     data: () => ({
-        collaterals,
+        collaterals: generateFakeCollaterals(),
+        callees: generateFakeCallees(),
     }),
-    computed: {
-        callees() {
-            return getCalleesByNetworkType('mainnet');
-        },
-    },
 };
 
 storiesOf('DashboardAuctionsView', module)

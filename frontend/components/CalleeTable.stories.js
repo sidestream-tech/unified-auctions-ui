@@ -1,35 +1,17 @@
 import { storiesOf } from '@storybook/vue';
 import CalleeTable from './CalleeTable';
-import { getCalleesByNetworkType } from '~/../core/src/constants/CALLEES';
+import { generateFakeCallees } from '~/helpers/generateFakeCallee';
 
 const common = {
     components: { CalleeTable },
 };
 
 storiesOf('CalleeTable', module)
-    .add('Mainnet', () => ({
+    .add('Default', () => ({
         ...common,
         computed: {
             callees() {
-                return getCalleesByNetworkType('mainnet');
-            },
-        },
-        template: '<CalleeTable :callees="callees" />',
-    }))
-    .add('Kovan', () => ({
-        ...common,
-        computed: {
-            callees() {
-                return getCalleesByNetworkType('kovan');
-            },
-        },
-        template: '<CalleeTable :callees="callees" />',
-    }))
-    .add('Goerli', () => ({
-        ...common,
-        computed: {
-            callees() {
-                return getCalleesByNetworkType('goerli');
+                return generateFakeCallees();
             },
         },
         template: '<CalleeTable :callees="callees" />',

@@ -9,7 +9,8 @@
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
             :staging-banner-url="stagingBannerURL"
-            :is-dev="isDev"
+            :networks="networks"
+            :is-changing-network="isChangingNetwork"
             @changeWalletType="changeWalletType"
             @openTermsModal="setTermsModal(true)"
             @openWalletModal="openWalletModal"
@@ -17,16 +18,16 @@
         />
         <Nuxt />
         <ChangePageNetworkModal
-            v-if="!isPageNetworkValid"
+            v-if="!isPageNetworkValid && !isChangingNetwork"
             :invalid-network="getPageNetwork"
-            :is-dev="isDev"
+            :networks="networks"
             @setPageNetwork="setPageNetwork"
         />
         <ChangeWalletNetworkModal
-            v-else-if="!isWalletNetworkValid"
+            v-else-if="!isWalletNetworkValid && !isChangingNetwork"
             :invalid-network="getWalletNetworkTitle"
             :page-network="network"
-            :is-dev="isDev"
+            :networks="networks"
             @setPageNetwork="setPageNetwork"
             @fixWalletNetwork="fixWalletNetwork"
         />
@@ -79,10 +80,13 @@ export default Vue.extend({
             hasAcceptedTerms: 'hasAcceptedTerms',
         }),
         ...mapGetters('network', [
+            'networks',
             'getWalletNetworkTitle',
             'getPageNetwork',
+            'getMakerNetwork',
             'isPageNetworkValid',
             'isWalletNetworkValid',
+            'isChangingNetwork',
         ]),
         isExplanationsShown: {
             get() {
@@ -111,8 +115,12 @@ export default Vue.extend({
         stagingBannerURL() {
             return process.env.STAGING_BANNER_URL;
         },
-        isDev() {
-            return this.$nuxt?.context?.isDev;
+    },
+    watch: {
+        getMakerNetwork(newValue) {
+            if (newValue) {
+                this.$store.dispatch('network/setup');
+            }
         },
     },
     methods: {

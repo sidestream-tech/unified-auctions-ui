@@ -93,6 +93,7 @@ export declare interface CollateralConfig {
 
 export declare interface NetworkConfig {
     chainId: string;
+    type: string;
     title: string;
     url: string;
     gasPrice?: number;
@@ -153,27 +154,24 @@ export declare interface CollateralStatus {
     balance?: BigNumber;
 }
 
-export type SurplusAuctionState =
-    | 'just-started'
-    | 'have-bids'
-    | 'ready-for-collection'
-    | 'collected'
-    | 'requires-restart';
-
-export declare interface SurplusAuctionData {
+export declare interface SurplusAuctionBase {
     id: number;
     network: string;
-    state: SurplusAuctionState;
-    bidAmountMKR?: BigNumber; // amount of MRK (bid)
-    receiveAmountDAI: BigNumber; // amount of DAI to be received (lot)
-    unitPrice?: BigNumber; // bidAmountMKR/receiveAmountDAI or the other way around
-    receiverAddress?: string; // the address of the wallet who receives DAI (guy)
-    auctionEndDate: Date; // final date when auction will end (now + `flap.tau()` – 2 days atm) (end)
-    bidEndDate?: Date; // (tic)
-    earliestEndDate: Date; // earliest of auctionEndDate and auctionEndDate
 }
 
-export declare interface SurplusAuction extends SurplusAuctionData {
-    marketUnitPrice?: BigNumber;
-    // ...transaction prices
+export declare interface SurplusAuctionActive extends SurplusAuctionBase {
+    bidAmountMKR: BigNumber;
+    receiveAmountDAI: BigNumber;
+    receiverAddress: string;
+    auctionEndDate: Date;
+    bidEndDate?: Date;
+    earliestEndDate: Date;
+    state: 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart';
 }
+
+export declare interface SurplusAuctionCollected extends SurplusAuctionBase {
+    state: 'collected';
+}
+
+export type SurplusAuction = SurplusAuctionActive | SurplusAuctionCollected;
+export type SurplusAuctionStates = SurplusAuction['state'];
