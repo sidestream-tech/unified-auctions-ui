@@ -103,7 +103,7 @@ export const getLpTokenTotalSupply = async function (network: string, symbol: st
     return new BigNumber(totalSupply.toString()).shiftedBy(-collateral.decimals);
 };
 
-export const getExchangeRateDaiMkr = async function (network: string): Promise<BigNumber> {
+export const getExchangeRateDaiMkr = async function (network: string, amount: BigNumber): Promise<BigNumber> {
     const completeExchangePath = ['DAI', 'MCD_GOV'];
     const uniswapPairs = await getUniswapPairBySymbols(network, completeExchangePath[0], completeExchangePath[1]);
     const exchangeToken = await getUniswapTokenBySymbol(network, 'DAI');
@@ -114,7 +114,7 @@ export const getExchangeRateDaiMkr = async function (network: string): Promise<B
         TradeType.EXACT_INPUT
     );
     const rate = new BigNumber(uniswapTrade.outputAmount.toSignificant(DAI_NUMBER_OF_DIGITS));
-    return new BigNumber(1).div(rate);
+    return new BigNumber(amount).div(rate);
 };
 
 export const getRegularTokenExchangeRateBySymbol = async function (

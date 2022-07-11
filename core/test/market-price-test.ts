@@ -28,7 +28,7 @@ describe('Market Price & Conversions', () => {
         });
     });
     it('gets MKR-DAI exchange rate with Uniswap v2', async () => {
-        const rate = await getExchangeRateDaiMkr('custom');
+        const rate = await getExchangeRateDaiMkr('custom', new BigNumber(1));
         expect(rate.toString()).to.equal('1830.403058138370068702471166175');
     });
     it('gets MKR-DAI exchange rate with Uniswap v3', async () => {
