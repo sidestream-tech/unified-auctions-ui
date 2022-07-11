@@ -70,8 +70,4 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     .add('With Wallet, is Loading', () => ({
         ...common,
         template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :isLoading="true" :userWalletAddress="userWalletAddress" />`,
-    }))
-    .add('With Wallet, Error', () => ({
-        ...common,
-        template: `<HighestBidCheckPanel :bidAmount="bidAmount" error="An Error occurred. Oops" :userWalletAddress="userWalletAddress" />`,
     }));
