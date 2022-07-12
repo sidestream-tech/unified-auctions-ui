@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import type { SurplusAuction, SurplusAuctionActive } from 'auctions-core/src/types';
+import type { SurplusAuction, SurplusAuctionActive, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
@@ -21,7 +21,7 @@ const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, dela
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
 type AuctionState = 'loaded' | 'restarting' | 'bidding' | 'collecting';
 interface State {
-    auctionStorage: Record<string, SurplusAuction>;
+    auctionStorage: Record<string, SurplusAuctionTransaction>;
     auctionStates: Record<number, AuctionState>;
     areAuctionsFetching: boolean;
     isAuthorizationLoading: boolean;
@@ -101,6 +101,10 @@ export const mutations = {
     setIsMarketPriceLoading(state: State, isLoading: boolean) {
         state.isMarketPriceLoading = isLoading;
     },
+    setMarketPrice(state: State, {marketPrice, auctionIndex}: {marketPrice: BigNumber, auctionIndex: number}) {
+        state.auctionStorage[auctionIndex].marketUnitPrice = marketPrice;
+        state.auctionStorage[auctionIndex].marketUnitPriceToUnitPriceRatio = marketPrice.div(state.auctionStorage[auctionIndex].bidAmountMKR);
+    }
 };
 
 export const actions = {
@@ -240,6 +244,7 @@ export const actions = {
         try {
             commit('setIsMarketPriceLoading', true);
             const marketPrice = await convertMkrToDai(network, auction.bidAmountMKR);
+            commit('setMarketPrice', {auctionIndex, marketPrice})
             return marketPrice;
         } catch (e) {
             console.error(`Failed to fetch market price: ${e}`);
