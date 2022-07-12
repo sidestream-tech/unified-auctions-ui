@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import type { SurplusAuction } from 'auctions-core/src/types';
+import type { SurplusAuction, SurplusAuctionActive } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
@@ -15,6 +15,7 @@ import {
     getSurplusAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
 import notifier from '~/lib/notifier';
+import { convertMkrToDai } from 'auctions-core/src/calleeFunctions/helpers/uniswapV3';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
@@ -25,6 +26,7 @@ interface State {
     areAuctionsFetching: boolean;
     isAuthorizationLoading: boolean;
     isBidding: boolean;
+    isMarketPriceLoading: boolean;
     error: string | null;
     lastUpdated: Date | undefined;
     allowanceAmount?: BigNumber;
@@ -37,6 +39,7 @@ const getInitialState = (): State => ({
     areAuctionsFetching: false,
     isAuthorizationLoading: false,
     isBidding: false,
+    isMarketPriceLoading: false,
     error: null,
     lastUpdated: undefined,
 });
@@ -68,6 +71,9 @@ export const getters = {
     lastUpdated(state: State) {
         return state.lastUpdated;
     },
+    isMarketPriceLoading(state: State) {
+        return state.isMarketPriceLoading;
+    },
 };
 
 export const mutations = {
@@ -91,6 +97,9 @@ export const mutations = {
     },
     setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
         Vue.set(state.auctionStates, auctionId, value);
+    },
+    setIsMarketPriceLoading(state: State, isLoading: boolean) {
+        state.isMarketPriceLoading = isLoading;
     },
 };
 
@@ -216,6 +225,26 @@ export const actions = {
             console.error(`Failed to bid on auction: ${error.message}`);
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
+        }
+    },
+    async updateMarketPrice(
+        { rootGetters, getters, commit }: ActionContext<State, State>,
+        auctionIndex: number
+    ) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        const auction: SurplusAuctionActive = getters['auctionStorage'][auctionIndex];
+
+        try {
+            commit('setIsMarketPriceLoading', true);
+            const marketPrice = await convertMkrToDai(network, auction.bidAmountMKR);
+            return marketPrice;
+        } catch (e) {
+            console.error(`Failed to fetch market price: ${e}`);
+        } finally {
+            commit('setIsMarketPriceLoading', false);
         }
     },
 };
