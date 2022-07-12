@@ -96,6 +96,8 @@ export default Vue.extend({
             return !!this.transactionBidAmount?.isNaN();
         },
         lowestNextBid(): BigNumber {
+            // Below is a dummy calculation
+            // TODO: Implement correct calculation logic for the next possible lowest bid
             return this.auction.bidAmountMKR.multipliedBy(1.1);
         },
         unitPriceAfterBid(): BigNumber | undefined {
@@ -122,17 +124,3 @@ export default Vue.extend({
     },
 });
 </script>
-
-<style scoped>
-.ClickableText:enabled {
-    @apply text-primary hover:text-primary-light;
-}
-
-.ClickableText:disabled {
-    @apply pointer-events-none;
-}
-
-.ClickableText:enabled:first-of-type {
-    @apply underline;
-}
-</style>

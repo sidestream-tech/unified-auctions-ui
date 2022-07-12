@@ -33,9 +33,9 @@
             <div>WalletVatMkrBalanceCheckPanel goes here</div>
             <div>WalletDaiAuthorizationCheckPanel goes here</div>
             <div>WalletMkrAuthorizationCheckPanel goes here</div>
+            <div>HighestBidCheckPanel goes here</div>
+            <div>WithdrawDaiFromVatPanel goes here</div>
         </div>
-        <div>HighestBidCheckPanel goes here</div>
-        <div>WithdrawDaiFromVatPanel goes here</div>
     </div>
 </template>
 
@@ -43,7 +43,7 @@
 import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
-import SurplusAuctionBidTransactionTable from './SurplusAuctionBidTransactionTable.vue';
+import SurplusAuctionBidTransactionTable from '~/components/transaction/SurplusAuctionBidTransactionTable.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 
@@ -77,6 +77,5 @@ export default Vue.extend({
             isWalletConnected: false,
         };
     },
-    computed: {},
 });
 </script>
