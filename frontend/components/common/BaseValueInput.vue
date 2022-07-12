@@ -11,7 +11,7 @@
             />
             <div class="Overlay right-2" :class="{ 'opacity-50': disabled }">
                 <div v-if="auctionType === 'surplus'">
-                    <format-currency v-if="!inputValue" :value="minValue" />&nbsp;MKR
+                    <format-currency v-if="!inputValue && minValue" :value="minValue" />&nbsp;MKR
                 </div>
                 <div v-else><format-currency v-if="!inputValue && maxValue" :value="maxValue" />&nbsp;DAI</div>
             </div>
