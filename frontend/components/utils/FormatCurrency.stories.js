@@ -59,20 +59,20 @@ storiesOf('Utils/FormatCurrency', module)
         data: () => ({ amount: new BigNumber(0.0000000000001) }),
         template: '<FormatCurrency :value="amount" currency="dai" />',
     }))
-    .add('Number -0.0000000000001', () => ({
+    .add('Number negative 0.0000000000001', () => ({
         ...common,
         template: '<FormatCurrency :value="-0.0000000000001" currency="dai" />',
     }))
-    .add('BigNumber -0.0000000000001', () => ({
+    .add('BigNumber negative 0.0000000000001', () => ({
         ...common,
         data: () => ({ amount: new BigNumber(-0.0000000000001) }),
         template: '<FormatCurrency :value="amount" currency="dai" />',
     }))
-    .add('Number -10', () => ({
+    .add('Number negative 10', () => ({
         ...common,
         template: '<FormatCurrency :value="-10" currency="dai" />',
     }))
-    .add('BigNumber -10', () => ({
+    .add('BigNumber negative 10', () => ({
         ...common,
         data: () => ({ amount: new BigNumber(-10) }),
         template: '<FormatCurrency :value="amount" currency="dai" />',

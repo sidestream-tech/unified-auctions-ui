@@ -48,6 +48,7 @@ describe('Surplus Auction', () => {
         await swapToMKR('custom', 20, 20);
         await bidToSurplusAuction('custom', 2328, '20');
         const auctions = await fetchActiveSurplusAuctions('custom');
+<<<<<<< HEAD
         const currentAuction = auctions[0] as SurplusAuction;
         expect(currentAuction.id).to.equal(2328);
         expect(currentAuction.bidAmountMKR && currentAuction.bidAmountMKR.eq(20)).to.be.true;
