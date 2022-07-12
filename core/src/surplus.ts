@@ -37,6 +37,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const baseAuctionInfo: SurplusAuctionBase = {
         network,
         id: auctionIndex,
+        fetchedAt: new Date(),
     };
 
     if (isAuctionCollected) {
