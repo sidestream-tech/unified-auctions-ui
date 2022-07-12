@@ -17,7 +17,7 @@ const generateFakeSurplusAuctionBase = function (): SurplusAuctionBase {
     return {
         id: faker.datatype.number(),
         network: faker.helpers.randomize(NETWORKS),
-        fetchedAt: faker.date.soon()
+        fetchedAt: faker.date.soon(),
     };
 };
 
