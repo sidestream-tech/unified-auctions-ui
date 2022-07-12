@@ -1,4 +1,9 @@
-import { SurplusAuction, SurplusAuctionBase, SurplusAuctionStates } from 'auctions-core/src/types';
+import {
+    SurplusAuction,
+    SurplusAuctionBase,
+    SurplusAuctionStates,
+    SurplusAuctionTransaction,
+} from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
 import { random } from 'lodash';
@@ -20,15 +25,22 @@ const generateFakeSurplusAuctionBase = function (): SurplusAuctionBase {
     };
 };
 
-export const generateFakeSurplusAuction = function (
-    state?: SurplusAuctionStates
-): SurplusAuction | SurplusAuctionBase {
+export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates): SurplusAuction {
     const auctionBaseData = generateFakeSurplusAuctionBase();
     const generatedState: SurplusAuctionStates = state || faker.helpers.randomize(SURPLUS_AUCTION_STATES);
+    const fetchedAt = new Date();
+
+    if (generatedState === 'collected') {
+        return {
+            ...auctionBaseData,
+            state: generatedState,
+            fetchedAt,
+        };
+    }
 
     const receiveAmountDAI = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
-    const auctionEndDate = faker.date.soon();
+    const auctionEndDate = generatedState === 'ready-for-collection' ? faker.date.recent() : faker.date.soon();
     const bidEndDate = generatedState === 'have-bids' ? faker.date.recent() : undefined;
     const earliestEndDate = bidEndDate
         ? auctionEndDate.getUTCMilliseconds() > bidEndDate.getUTCMilliseconds()
@@ -39,7 +51,6 @@ export const generateFakeSurplusAuction = function (
 
     return {
         ...auctionBaseData,
-        network: 'mainnet',
         receiveAmountDAI,
         receiverAddress,
         auctionEndDate,
@@ -47,9 +58,41 @@ export const generateFakeSurplusAuction = function (
         earliestEndDate,
         state: generatedState,
         bidAmountMKR,
+        fetchedAt,
+    };
+};
+
+export const generateFakeSurplusAuctionTransaction = function (
+    state?: SurplusAuctionStates
+): SurplusAuctionTransaction {
+    const surplusAuction = generateFakeSurplusAuction(state);
+
+    // if auction does not have any bids yet or is finished return without market data
+    if (!surplusAuction.bidAmountMKR || !surplusAuction.receiveAmountDAI) {
+        return surplusAuction;
+    }
+
+    // generate fake market data
+    const approximateUnitPrice = surplusAuction.bidAmountMKR.dividedBy(surplusAuction.receiveAmountDAI);
+    const marketUnitPriceToUnitPriceRatio = new BigNumber(
+        faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 })
+    );
+    const marketUnitPrice = approximateUnitPrice.multipliedBy(
+        new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio || 0)
+    );
+
+    return {
+        ...surplusAuction,
+        marketUnitPrice,
+        marketUnitPriceToUnitPriceRatio,
+        unitPrice: approximateUnitPrice,
     };
 };
 
 export const generateFakeSurplusAuctions = function (number = random(5, 15)) {
     return Array(number).fill(null).map(generateFakeSurplusAuction);
+};
+
+export const generateFakeSurplusAuctionTransactions = function (number = random(5, 15)) {
+    return Array(number).fill(null).map(generateFakeSurplusAuctionTransaction);
 };
