@@ -20,15 +20,22 @@ const generateFakeSurplusAuctionBase = function (): SurplusAuctionBase {
     };
 };
 
-export const generateFakeSurplusAuction = function (
-    state?: SurplusAuctionStates
-): SurplusAuction | SurplusAuctionBase {
+export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates): SurplusAuction {
     const auctionBaseData = generateFakeSurplusAuctionBase();
     const generatedState: SurplusAuctionStates = state || faker.helpers.randomize(SURPLUS_AUCTION_STATES);
+    const fetchedAt = new Date();
+
+    if (generatedState === 'collected') {
+        return {
+            ...auctionBaseData,
+            state: generatedState,
+            fetchedAt,
+        };
+    }
 
     const receiveAmountDAI = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
-    const auctionEndDate = faker.date.soon();
+    const auctionEndDate = generatedState === 'ready-for-collection' ? faker.date.recent() : faker.date.soon();
     const bidEndDate = generatedState === 'have-bids' ? faker.date.recent() : undefined;
     const earliestEndDate = bidEndDate
         ? auctionEndDate.getUTCMilliseconds() > bidEndDate.getUTCMilliseconds()
@@ -39,7 +46,6 @@ export const generateFakeSurplusAuction = function (
 
     return {
         ...auctionBaseData,
-        network: 'mainnet',
         receiveAmountDAI,
         receiverAddress,
         auctionEndDate,
@@ -47,6 +53,7 @@ export const generateFakeSurplusAuction = function (
         earliestEndDate,
         state: generatedState,
         bidAmountMKR,
+        fetchedAt,
     };
 };
 

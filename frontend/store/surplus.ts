@@ -14,8 +14,8 @@ import {
     authorizeSurplus,
     getSurplusAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-import notifier from '~/lib/notifier';
 import { convertMkrToDai } from 'auctions-core/src/calleeFunctions/helpers/uniswapV3';
+import notifier from '~/lib/notifier';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
@@ -101,11 +101,24 @@ export const mutations = {
     setIsMarketPriceLoading(state: State, isLoading: boolean) {
         state.isMarketPriceLoading = isLoading;
     },
-    setMarketPrice(state: State, {marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice, auctionIndex}: {marketUnitPrice: BigNumber; marketUnitPriceToUnitPriceRatio: BigNumber; unitPrice: BigNumber; auctionIndex: number}) {
+    setMarketPrice(
+        state: State,
+        {
+            marketUnitPrice,
+            marketUnitPriceToUnitPriceRatio,
+            unitPrice,
+            auctionIndex,
+        }: {
+            marketUnitPrice: BigNumber;
+            marketUnitPriceToUnitPriceRatio: BigNumber;
+            unitPrice: BigNumber;
+            auctionIndex: number;
+        }
+    ) {
         state.auctionStorage[auctionIndex].marketUnitPrice = marketUnitPrice;
         state.auctionStorage[auctionIndex].marketUnitPriceToUnitPriceRatio = marketUnitPriceToUnitPriceRatio;
         state.auctionStorage[auctionIndex].unitPrice = unitPrice;
-    }
+    },
 };
 
 export const actions = {
@@ -232,27 +245,22 @@ export const actions = {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
     },
-    async updateMarketPrice(
-        { rootGetters, getters, commit }: ActionContext<State, State>,
-        auctionIndex: number
-    ) {
+    async updateMarketPrice({ rootGetters, getters, commit }: ActionContext<State, State>, auctionIndex: number) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        const auction: SurplusAuction = getters['auctionStorage'][auctionIndex];
+        const auction: SurplusAuction = getters.auctionStorage[auctionIndex];
         if (!auction.bidAmountMKR || !auction.receiveAmountDAI) {
             return;
         }
 
         try {
             commit('setIsMarketPriceLoading', true);
-            const unitPrice = auction.receiveAmountDAI.div(auction.bidAmountMKR)
+            const unitPrice = auction.receiveAmountDAI.div(auction.bidAmountMKR);
             const marketUnitPrice = await convertMkrToDai(network, auction.bidAmountMKR);
-            const marketUnitPriceToUnitPriceRatio = unitPrice
-            .minus(marketUnitPrice)
-            .dividedBy(marketUnitPrice);
-            commit('setMarketPrice', {auctionIndex, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice})
+            const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
+            commit('setMarketPrice', { auctionIndex, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice });
             return marketUnitPrice;
         } catch (e) {
             console.error(`Failed to fetch market price: ${e}`);
