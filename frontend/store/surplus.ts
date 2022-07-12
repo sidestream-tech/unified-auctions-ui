@@ -230,7 +230,6 @@ export const actions = {
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
-<<<<<<< HEAD
     },
     async updateMarketPrice(
         { rootGetters, getters, commit }: ActionContext<State, State>,
