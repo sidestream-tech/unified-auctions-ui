@@ -1,9 +1,9 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import SurplusAuctionsTable from '~/components/surplus/SurplusAuctionsTable';
-import { generateFakeSurplusAuctions } from '~/helpers/generateFakeSurplusAuction';
+import { generateFakeSurplusAuctionTransactions } from '~/helpers/generateFakeSurplusAuction';
 
-const fakeAuctions = generateFakeSurplusAuctions();
+const fakeAuctions = generateFakeSurplusAuctionTransactions();
 const randomSelectedAuction = faker.random.arrayElement(fakeAuctions);
 
 const common = {

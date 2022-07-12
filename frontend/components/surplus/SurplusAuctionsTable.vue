@@ -17,19 +17,19 @@
                 <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="bidAmountMKR" slot-scope="bidAmountMKR">
-                <template v-if="bidAmountMKR">
+                <template v-if="bidAmountMKR && !bidAmountMKR.isEqualTo(0)">
                     <format-currency :value="bidAmountMKR" currency="MKR" />
                 </template>
                 <span v-else class="opacity-50">No bids yet</span>
             </div>
             <div slot="unitPrice" slot-scope="unitPrice">
-                <template v-if="unitPrice">
+                <template v-if="unitPrice && !unitPrice.isEqualTo(0)">
                     <format-currency :value="unitPrice" currency="MKR" /> per <format-currency currency="DAI" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="marketUnitPrice" slot-scope="marketUnitPrice, record">
-                <template v-if="getIsAuctionActive(record) && marketUnitPrice">
+                <template v-if="getIsAuctionActive(record) && marketUnitPrice && !marketUnitPrice.isEqualTo(0)">
                     <format-market-value :value="marketUnitPrice" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
@@ -70,7 +70,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
-import { SurplusAuction } from 'auctions-core/src/types';
+import { SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { compareAsc } from 'date-fns';
 import Loading from '~/components/common/Loading.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
@@ -148,7 +148,7 @@ export default Vue.extend({
     },
     props: {
         auctions: {
-            type: Array as PropType<SurplusAuction[]>,
+            type: Array as PropType<SurplusAuctionTransaction[]>,
             default: () => [],
         },
         selectedAuctionId: {
@@ -240,7 +240,7 @@ export default Vue.extend({
         },
     },
     methods: {
-        customRowEvents(record: SurplusAuction, rowIndex: number): Object {
+        customRowEvents(record: SurplusAuctionTransaction, rowIndex: number): Object {
             return {
                 on: {
                     click: () => {
@@ -252,7 +252,7 @@ export default Vue.extend({
                 },
             };
         },
-        getRowClassNames(auction: SurplusAuction) {
+        getRowClassNames(auction: SurplusAuctionTransaction) {
             const classes = [];
             if (this.selectedAuctionId === auction.id) {
                 classes.push('selected-row');
@@ -262,14 +262,14 @@ export default Vue.extend({
             }
             return classes.join(' ');
         },
-        getAuctionLink(auction: SurplusAuction) {
+        getAuctionLink(auction: SurplusAuctionTransaction) {
             const searchParams = new URLSearchParams({ network: auction.network, auction: auction.id.toString() });
             return `/surplus?${searchParams.toString()}`;
         },
-        getIsAuctionFinished(auction: SurplusAuction) {
+        getIsAuctionFinished(auction: SurplusAuctionTransaction) {
             return auction.state !== 'ready-for-collection' && auction.state !== 'collected';
         },
-        getIsAuctionActive(auction: SurplusAuction) {
+        getIsAuctionActive(auction: SurplusAuctionTransaction) {
             return auction.state !== 'requires-restart' && this.getIsAuctionFinished(auction);
         },
     },
