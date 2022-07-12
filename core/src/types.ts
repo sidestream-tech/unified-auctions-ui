@@ -160,24 +160,20 @@ export declare interface SurplusAuctionBase {
     fetchedAt: Date;
 }
 
-export declare interface SurplusAuctionActive extends SurplusAuctionBase {
-    bidAmountMKR: BigNumber;
-    receiveAmountDAI: BigNumber;
-    receiverAddress: string;
-    auctionEndDate: Date;
+export declare interface SurplusAuction extends SurplusAuctionBase {
+    earliestEndDate?: Date;
+    state: 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart' | 'collected';
+
+    bidAmountMKR?: BigNumber;
+    receiveAmountDAI?: BigNumber;
+    receiverAddress?: string;
+    auctionEndDate?: Date;
     bidEndDate?: Date;
-    earliestEndDate: Date;
-    state: 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart';
 }
 
-export declare interface SurplusAuctionCollected extends SurplusAuctionBase {
-    state: 'collected';
-}
-
-export type SurplusAuction = SurplusAuctionActive | SurplusAuctionCollected;
 export type SurplusAuctionStates = SurplusAuction['state'];
 
-export declare interface SurplusAuctionTransaction extends SurplusAuctionActive {
+export declare interface SurplusAuctionTransaction extends SurplusAuction {
     marketUnitPrice?: BigNumber | string;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
 }
