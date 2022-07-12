@@ -53,11 +53,7 @@
                     :value="unitPriceAfterBid"
                     currency="MKR"
                 />
-                <div v-else>
-                    <span class="opacity-50">Unknown</span>
-                    <span class="font-bold">MKR</span>
-                </div>
-                <span class="flex">per DAI</span>
+                <span v-else class="opacity-50">Unknown</span> per DAI
             </div>
         </div>
     </div>
@@ -98,13 +94,13 @@ export default Vue.extend({
         lowestNextBid(): BigNumber {
             // Below is a dummy calculation
             // TODO: Implement correct calculation logic for the next possible lowest bid
-            return this.auction.bidAmountMKR.multipliedBy(1.1);
+            return this.auction.bidAmountMKR ? this.auction.bidAmountMKR.multipliedBy(1.1) : new BigNumber(0);
         },
         unitPriceAfterBid(): BigNumber | undefined {
             if (!this.transactionBidAmount) {
-                return this.lowestNextBid.dividedBy(this.auction.receiveAmountDAI);
+                return this.lowestNextBid.dividedBy(this.auction.receiveAmountDAI || 1);
             }
-            return this.transactionBidAmount.dividedBy(this.auction.receiveAmountDAI);
+            return this.transactionBidAmount.dividedBy(this.auction.receiveAmountDAI || 1);
         },
     },
     watch: {
