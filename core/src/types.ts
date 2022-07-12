@@ -176,4 +176,5 @@ export type SurplusAuctionStates = SurplusAuction['state'];
 export declare interface SurplusAuctionTransaction extends SurplusAuction {
     marketUnitPrice?: BigNumber | string;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
+    unitPrice?: BigNumber;
 }

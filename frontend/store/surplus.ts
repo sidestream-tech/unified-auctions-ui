@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import type { SurplusAuction, SurplusAuctionActive, SurplusAuctionTransaction } from 'auctions-core/src/types';
+import type { SurplusAuction, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
@@ -239,7 +239,10 @@ export const actions = {
         if (!network) {
             return;
         }
-        const auction: SurplusAuctionActive = getters['auctionStorage'][auctionIndex];
+        const auction: SurplusAuction = getters['auctionStorage'][auctionIndex];
+        if (!auction.bidAmountMKR) {
+            return;
+        }
 
         try {
             commit('setIsMarketPriceLoading', true);
