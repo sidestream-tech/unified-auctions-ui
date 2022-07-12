@@ -1,10 +1,11 @@
-import type { SurplusAuction, SurplusAuctionBase } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
 import { Contract } from 'ethers';
 import getNetworkDate from './date';
-import { RAD, WAD } from './constants/UNITS';
+import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import executeTransaction from './execute';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
@@ -87,4 +88,38 @@ export const fetchActiveSurplusAuctions = async function (network: string): Prom
         surplusAuctions.push(currentSurplusAuction);
     }
     return surplusAuctions;
+};
+
+export const restartSurplusAuction = async function (
+    network: string,
+    auctionIndex: number,
+    notifier?: Notifier
+): Promise<void> {
+    await executeTransaction(network, 'MCD_FLAP', 'tick', [auctionIndex], { notifier });
+};
+
+export const bidToSurplusAuction = async function (
+    network: string,
+    auctionIndex: number,
+    bet: string,
+    notifier?: Notifier
+) {
+    const auction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
+    if (!auction) {
+        throw new Error('Did not find the auction to bid on.');
+    }
+    const transactionParameters = [
+        auctionIndex,
+        auction.receiveAmountDAI.shiftedBy(RAD_NUMBER_OF_DIGITS).toFixed(0),
+        new BigNumber(bet).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+    ];
+    await executeTransaction(network, 'MCD_FLAP', 'tend', transactionParameters, { notifier });
+};
+
+export const collectSurplusAuction = async function (network: string, auctionIndex: number, notifier?: Notifier) {
+    const auction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
+    if (!auction || auction.state !== 'ready-for-collection') {
+        throw new Error('Did not find the auction to collect.');
+    }
+    await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
 };
