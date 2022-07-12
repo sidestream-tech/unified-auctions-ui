@@ -1,7 +1,5 @@
 <template>
-    <span
-        v-if="value !== undefined"
-        :class="{ 'text-primary dark:text-primary-light': isBelowZero || (inverted && !isBelowZero) }"
+    <span v-if="value !== undefined" :class="{ 'text-primary dark:text-primary-light': isBelowZero || !isBelowZero }"
         ><animated-number :value="percentage" />% {{ belowOrAbove }}</span
     >
 </template>
@@ -20,10 +18,6 @@ export default Vue.extend({
         value: {
             type: [Number, Object] as Vue.PropType<Number | BigNumber>,
             default: undefined,
-        },
-        inverted: {
-            type: Boolean,
-            default: false,
         },
     },
     computed: {

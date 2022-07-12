@@ -15,10 +15,6 @@ storiesOf('Utils/FormatMarketValue', module)
         ...common,
         template: '<format-market-value :value="-0.24"/>',
     }))
-    .add('Inverted', () => ({
-        ...common,
-        template: '<format-market-value :value="0.3476" :inverted="true"/>',
-    }))
     .add('Zero', () => ({
         ...common,
         template: '<format-market-value :value="0"/>',
