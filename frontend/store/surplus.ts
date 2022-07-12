@@ -101,9 +101,10 @@ export const mutations = {
     setIsMarketPriceLoading(state: State, isLoading: boolean) {
         state.isMarketPriceLoading = isLoading;
     },
-    setMarketPrice(state: State, {marketPrice, auctionIndex}: {marketPrice: BigNumber, auctionIndex: number}) {
-        state.auctionStorage[auctionIndex].marketUnitPrice = marketPrice;
-        state.auctionStorage[auctionIndex].marketUnitPriceToUnitPriceRatio = marketPrice.div(state.auctionStorage[auctionIndex].bidAmountMKR);
+    setMarketPrice(state: State, {marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice, auctionIndex}: {marketUnitPrice: BigNumber; marketUnitPriceToUnitPriceRatio: BigNumber; unitPrice: BigNumber; auctionIndex: number}) {
+        state.auctionStorage[auctionIndex].marketUnitPrice = marketUnitPrice;
+        state.auctionStorage[auctionIndex].marketUnitPriceToUnitPriceRatio = marketUnitPriceToUnitPriceRatio;
+        state.auctionStorage[auctionIndex].unitPrice = unitPrice;
     }
 };
 
@@ -240,15 +241,19 @@ export const actions = {
             return;
         }
         const auction: SurplusAuction = getters['auctionStorage'][auctionIndex];
-        if (!auction.bidAmountMKR) {
+        if (!auction.bidAmountMKR || !auction.receiveAmountDAI) {
             return;
         }
 
         try {
             commit('setIsMarketPriceLoading', true);
-            const marketPrice = await convertMkrToDai(network, auction.bidAmountMKR);
-            commit('setMarketPrice', {auctionIndex, marketPrice})
-            return marketPrice;
+            const unitPrice = auction.receiveAmountDAI.div(auction.bidAmountMKR)
+            const marketUnitPrice = await convertMkrToDai(network, auction.bidAmountMKR);
+            const marketUnitPriceToUnitPriceRatio = unitPrice
+            .minus(marketUnitPrice)
+            .dividedBy(marketUnitPrice);
+            commit('setMarketPrice', {auctionIndex, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice})
+            return marketUnitPrice;
         } catch (e) {
             console.error(`Failed to fetch market price: ${e}`);
         } finally {
