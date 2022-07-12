@@ -1,5 +1,5 @@
 <template>
-    <span v-if="value !== undefined" :class="{ 'text-primary dark:text-primary-light': isBelowZero || !isBelowZero }"
+    <span v-if="value !== undefined" :class="{ 'text-primary dark:text-primary-light': isBelowZero }"
         ><animated-number :value="percentage" />% {{ belowOrAbove }}</span
     >
 </template>
