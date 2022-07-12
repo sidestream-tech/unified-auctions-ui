@@ -11,7 +11,7 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 
-import { SurplusAuctionActive } from '../src/types';
+import { SurplusAuction } from '../src/types';
 import hre from 'hardhat';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
@@ -48,9 +48,9 @@ describe('Surplus Auction', () => {
         await swapToMKR('custom', 20, 20);
         await bidToSurplusAuction('custom', 2328, '20');
         const auctions = await fetchActiveSurplusAuctions('custom');
-        const currentAuction = auctions[0] as SurplusAuctionActive;
+        const currentAuction = auctions[0] as SurplusAuction;
         expect(currentAuction.id).to.equal(2328);
-        expect(currentAuction.bidAmountMKR.eq(20)).to.be.true;
+        expect(currentAuction.bidAmountMKR && currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
     it('collects the concluded auction', async () => {
         const auctionsBeforeCollection = await fetchActiveSurplusAuctions('custom');
