@@ -18,7 +18,7 @@
                 :type="isUserLatestBidder ? 'secondary' : 'primary'"
                 :disabled="isBidding || disabled || !userWalletAddress || isLoading || !!error"
                 :is-loading="isBidding || isLoading"
-                @click="$emit('restart')"
+                @click="$emit('bid', bidAmount)"
             >
                 <span v-if="isBidding"> Bidding... </span>
                 <span v-else-if="isLoading"> Loading... </span>
