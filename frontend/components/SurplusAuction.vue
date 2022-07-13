@@ -9,6 +9,7 @@
                     :wallet-address="walletAddress"
                     :is-explanations-shown="isExplanationsShown"
                     :is-restarting="auction.isRestarting"
+                    auction-type="surplus"
                     @restart="$emit('restart', auctionId)"
                     @connectWallet="$emit('connect')"
                     @disconnectWallet="$emit('disconnect')"
@@ -24,7 +25,7 @@
                                 <span v-else-if="requiresRestart">Requires restart</span>
                                 <span v-else-if="auction.state === 'ready-for-collection'">Ended </span>
                                 <span v-else>Collected </span>
-                                <time-till v-if="!requiresRestart" :date="auction.earliestEndDate" />
+                                <time-till v-if="auction.earliestEndDate" :date="auction.earliestEndDate" />
                             </td>
                         </tr>
                         <tr>
@@ -106,8 +107,9 @@
                         </span>
                     </template>
                     <template v-else>
-                        This auction was finished at {{ auction.auctionEndDate.toUTCString() }} at a closing auction
-                        price of <format-currency :value="auction.bidAmountMKR" currency="MKR" />.
+                        <!-- Issue: We dont have bidAmountMKR and auctionEndTime when an Auction is finished, therefore we need to reword this text -->
+                        This auction was finished at a closing auction price of
+                        <format-currency :value="auction.bidAmountMKR" currency="MKR" />.
                     </template>
                 </TextBlock>
             </template>
@@ -119,7 +121,7 @@
                                 :disabled="!!auctionError"
                                 type="secondary"
                                 class="w-60 mb-4"
-                                @click="$emit('purchase')"
+                                @click="$emit('bid')"
                             >
                                 Bid using MKR
                             </Button>

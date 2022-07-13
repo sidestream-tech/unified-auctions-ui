@@ -68,7 +68,7 @@ export const generateFakeSurplusAuctionTransaction = function (
     const surplusAuction = generateFakeSurplusAuction(state);
 
     // if auction does not have any bids yet or is finished return without market data
-    if (!surplusAuction.bidAmountMKR || !surplusAuction.receiveAmountDAI) {
+    if (!surplusAuction.bidAmountMKR || !surplusAuction.receiveAmountDAI || surplusAuction.state === 'just-started') {
         return surplusAuction;
     }
 
