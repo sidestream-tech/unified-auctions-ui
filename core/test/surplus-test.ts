@@ -5,6 +5,8 @@ import {
     collectSurplusAuction,
     fetchSurplusAuctionByIndex,
     restartSurplusAuction,
+    getSurplusAuctionBidIncreaseCoefficient,
+    getNextMinimumBet,
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
@@ -95,5 +97,14 @@ describe('Surplus Auction', () => {
     });
     it('forbids fetching inexistant auctions', async () => {
         expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
+    });
+    it('calculates the minimum bet increase', async () => {
+        const auctions = await fetchActiveSurplusAuctions('custom');
+        expect(auctions[0].id).to.equal(2328);
+
+        const coefficient = await getSurplusAuctionBidIncreaseCoefficient('custom');
+        const bet = getNextMinimumBet(auctions[0], coefficient);
+        expect(bet!.toString()).to.equal('16.94241213279722952');
+        expect(auctions[0].bidAmountMKR!.toString()).to.equal('16.290780896920413');
     });
 });

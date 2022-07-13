@@ -4,12 +4,28 @@ import BigNumber from './bignumber';
 import getContract from './contracts';
 import { Contract } from 'ethers';
 import getNetworkDate from './date';
-import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
     return new BigNumber(auctionsQuantityBinary._hex).toNumber();
+};
+
+export const getSurplusAuctionBidIncreaseCoefficient = async (network: string): Promise<BigNumber> => {
+    const contract = await getContract(network, 'MCD_FLAP');
+    const auctionsQuantityBinary = await contract.beg();
+    return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
+};
+
+export const getNextMinimumBet = (
+    surplusAuction: SurplusAuction,
+    increaseCoefficient: BigNumber
+): BigNumber | undefined => {
+    if (!surplusAuction.bidAmountMKR) {
+        return undefined;
+    }
+    return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
 };
 
 const getAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
