@@ -26,39 +26,72 @@
         <div v-if="auction.state !== 'collected'" class="mb-4">
             <WalletConnectionCheckPanel
                 :wallet-address="walletAddress"
-                :disabled="
-                    auction.state === 'requires-restart' ||
-                    auction.state === 'ready-for-collection' ||
-                    auction.state === 'collected'
-                "
-                :is-loading="isConnecting"
+                :disabled="auction.state === 'requires-restart' || auction.state === 'collected'"
+                :is-loading="isConnectingWallet"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isWalletConnected"
                 @connectWallet="$emit('connect')"
                 @disconnectWallet="$emit('disconnect')"
             />
+            <WalletMKRBalanceCheckPanel
+                :wallet-m-k-r="walletMKR"
+                :required-m-k-r="inputBidAmount || lowestNextBid"
+                :network="network"
+                :token-address="tokenAddress"
+                :disabled="!isWalletConnected || !isActive"
+                :is-loading="isRefreshingWallet"
+                :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="isWalletMKRCheckPassed"
+                @refresh="$emit('refresh')"
+            />
+            <AllowanceAmountCheckPanel
+                :disabled="!isWalletMKRCheckPassed"
+                :allowance-amount="allowanceMKR"
+                :desired-amount="inputBidAmount || lowestNextBid"
+                currency="MKR"
+                :is-disabled="isWalletConnected || !isActive"
+                :is-loading="isSettingAllowance"
+                :is-correct.sync="isAllowanceAmountCheckPassed"
+                @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
+            />
             <WalletAuthorizationCheckPanel
-                :is-wallet-authorized="isWalletConnected"
+                :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isActive"
+                :is-wallet-authorized="isAuthorizedDAI"
                 :wallet-address="walletAddress"
                 :is-loading="isAuthorizing"
                 :is-explanations-shown="isExplanationsShown"
-                @authorizeWallet="$emit('authorizeCollateral', 'DAI')"
+                @authorizeWallet="$emit('authorizeDAI')"
             />
             <CollateralAuthorizationCheckPanel
+                :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isAuthorizedDAI || !isActive"
                 collateral-type="MKR"
                 :authorized-collaterals="isAuthorizedMKR ? ['MKR'] : []"
                 :auth-transaction-fee-e-t-h="auction.authTransactionFeeMKR"
                 :wallet-address="walletAddress"
-                :disabled="!isAuthorizedDAI"
                 :is-loading="isAuthorizing"
                 :is-explanations-shown="isExplanationsShown"
-                @authorizeCollateral="$emit('authorizeCollateral', 'MKR')"
+                @authorizeCollateral="$emit('authorizeMKR')"
             />
             <HighestBidCheckPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
+                :disabled="
+                    !isWalletMKRCheckPassed ||
+                    !isAllowanceAmountCheckPassed ||
+                    !isAuthorizedDAI ||
+                    !isAuthorizedMKR ||
+                    !isActive
+                "
+                :is-loading="isBidding"
                 :bid-amount="inputBidAmount || lowestNextBid"
                 :is-explanations-shown="isExplanationsShown"
+                @bid="$emit('bid', $event)"
+            />
+            <CollectSurplusAuctionPanel
+                :auction="auction"
+                :wallet-address="walletAddress"
+                :is-collecting="isCollecting"
+                @collect="$emit('collect')"
             />
         </div>
     </div>
@@ -70,6 +103,9 @@ import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import HighestBidCheckPanel from '../panels/HighestBidCheckPanel.vue';
+import WalletMKRBalanceCheckPanel from '../panels/WalletMKRBalanceCheckPanel.vue';
+import AllowanceAmountCheckPanel from '../panels/AllowanceAmountCheckPanel.vue';
+import CollectSurplusAuctionPanel from '../panels/CollectSurplusAuctionPanel.vue';
 import SurplusAuctionBidTransactionTable from '~/components/surplus/SurplusAuctionBidTransactionTable.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
@@ -78,6 +114,9 @@ import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizati
 
 export default Vue.extend({
     components: {
+        CollectSurplusAuctionPanel,
+        AllowanceAmountCheckPanel,
+        WalletMKRBalanceCheckPanel,
         HighestBidCheckPanel,
         TextBlock,
         Alert,
@@ -95,6 +134,14 @@ export default Vue.extend({
             type: String,
             default: null,
         },
+        walletMKR: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        allowanceMKR: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
         isAuthorizedDAI: {
             type: Boolean,
             default: false,
@@ -103,13 +150,37 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isConnectingWallet: {
+            type: Boolean,
+            default: false,
+        },
+        isRefreshingWallet: {
+            type: Boolean,
+            default: false,
+        },
+        isSettingAllowance: {
+            type: Boolean,
+            default: false,
+        },
         isAuthorizing: {
             type: Boolean,
             default: false,
         },
-        isConnecting: {
+        isBidding: {
             type: Boolean,
             default: false,
+        },
+        isCollecting: {
+            type: Boolean,
+            default: false,
+        },
+        tokenAddress: {
+            type: String,
+            required: true,
+        },
+        network: {
+            type: String,
+            default: 'mainnet',
         },
         isExplanationsShown: {
             type: Boolean,
@@ -119,6 +190,9 @@ export default Vue.extend({
     data() {
         return {
             isWalletConnected: false,
+            isWalletMKRCheckPassed: false,
+            isAllowanceAmountCheckPassed: false,
+
             inputBidAmount: undefined as BigNumber | undefined,
         };
     },
@@ -126,6 +200,9 @@ export default Vue.extend({
         lowestNextBid(): BigNumber {
             // TODO: Fetch correct logic for this. Currently hardcoded to +5% for new bid
             return this.auction.bidAmountMKR ? this.auction.bidAmountMKR.multipliedBy(1.05) : new BigNumber(0);
+        },
+        isActive(): boolean {
+            return this.auction.state !== 'ready-for-collection';
         },
     },
 });

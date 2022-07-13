@@ -29,7 +29,7 @@
             <FormatAddress :value="tokenAddress" :shorten="true" type="address" />)
         </TextBlock>
         <div class="flex justify-end mt-5">
-            <BaseButton :disabled="isDisabled" :is-loading="isLoading" @click="$emit('refresh')"
+            <BaseButton :disabled="disabled" :is-loading="isLoading" @click="$emit('refresh')"
                 >Refresh wallet balance</BaseButton
             >
         </div>
@@ -46,7 +46,7 @@ import BaseButton from '../common/BaseButton';
 import FormatAddress from '../utils/FormatAddress.vue';
 
 export default Vue.extend({
-    name: 'WalletMKRCheckPanel',
+    name: 'WalletMKRBalanceCheckPanel',
     components: { FormatAddress, TextBlock, BasePanel, FormatCurrency, BaseButton },
     props: {
         walletMKR: {
@@ -69,7 +69,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isDisabled: {
+        disabled: {
             type: Boolean,
             default: false,
         },
@@ -87,6 +87,12 @@ export default Vue.extend({
                 };
             }
             if (this.walletMKR.isLessThan(this.requiredMKR)) {
+                if (this.disabled) {
+                    return {
+                        name: 'inactive',
+                        title: `The amount of MKR is not present in the connected wallet`,
+                    };
+                }
                 return {
                     name: 'incorrect',
                     title: `The amount of MKR is not present in the connected wallet`,

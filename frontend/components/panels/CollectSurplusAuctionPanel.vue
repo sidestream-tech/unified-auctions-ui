@@ -58,7 +58,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<SurplusAuction>,
             default: undefined,
         },
-        userWalletAddress: {
+        walletAddress: {
             type: String,
             default: null,
         },
@@ -69,10 +69,10 @@ export default Vue.extend({
     },
     computed: {
         isCurrentWalletHighestBidder() {
-            if (!this.userWalletAddress) {
+            if (!this.walletAddress) {
                 return false;
             }
-            return this.userWalletAddress === this.auction.receiverAddress;
+            return this.walletAddress === this.auction.receiverAddress;
         },
         currentStateAndTitle(): PanelProps {
             if (this.auction.state === 'just-started') {

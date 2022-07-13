@@ -16,7 +16,7 @@
             <BaseButton
                 class="w-full md:w-80"
                 :type="isUserLatestBidder ? 'secondary' : 'primary'"
-                :disabled="isBidding || disabled || !userWalletAddress || isLoading || !!error"
+                :disabled="isBidding || disabled || !walletAddress || isLoading || !!error"
                 :is-loading="isBidding || isLoading"
                 @click="$emit('bid', bidAmount)"
             >
@@ -54,10 +54,6 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        isExplanationsShown: {
-            type: Boolean,
-            default: true,
-        },
         bidAmount: {
             type: Object as Vue.PropType<BigNumber>,
             required: true,
@@ -77,6 +73,10 @@ export default Vue.extend({
         error: {
             type: String,
             default: null,
+        },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
         },
     },
     computed: {
