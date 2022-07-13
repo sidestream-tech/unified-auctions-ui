@@ -94,15 +94,9 @@ export default Vue.extend({
                 };
             }
             if (this.auction.state === 'ready-for-collection') {
-                if (this.isUserLatestBidder) {
-                    return {
-                        name: 'inactive',
-                        title: `You are the highest bidder`,
-                    };
-                }
                 return {
                     name: 'inactive',
-                    title: `You are not the highest bidder`,
+                    title: this.isUserLatestBidder ? `You are the highest bidder` : `You are not the highest bidder`,
                 };
             }
             if (!this.latestBid) {

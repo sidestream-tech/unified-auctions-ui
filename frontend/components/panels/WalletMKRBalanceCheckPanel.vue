@@ -87,14 +87,8 @@ export default Vue.extend({
                 };
             }
             if (this.walletMKR.isLessThan(this.requiredMKR)) {
-                if (this.disabled) {
-                    return {
-                        name: 'inactive',
-                        title: `The amount of MKR is not present in the connected wallet`,
-                    };
-                }
                 return {
-                    name: 'incorrect',
+                    name: this.disabled ? 'inactive' : 'incorrect',
                     title: `The amount of MKR is not present in the connected wallet`,
                 };
             }

@@ -78,14 +78,8 @@ export default Vue.extend({
                 };
             }
             if (!this.isWalletAuthorized) {
-                if (this.disabled) {
-                    return {
-                        name: 'inactive',
-                        title: 'The wallet is not yet authorized to execute DAI transactions',
-                    };
-                }
                 return {
-                    name: 'incorrect',
+                    name: this.disabled ? 'inactive' : 'incorrect',
                     title: 'The wallet is not yet authorized to execute DAI transactions',
                 };
             }
