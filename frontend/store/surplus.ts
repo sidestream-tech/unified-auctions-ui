@@ -258,7 +258,7 @@ export const actions = {
         try {
             commit('setIsMarketPriceLoading', true);
             const unitPrice = auction.receiveAmountDAI.div(auction.bidAmountMKR);
-            const marketUnitPrice = await convertMkrToDai(network, auction.bidAmountMKR);
+            const marketUnitPrice = (await convertMkrToDai(network, auction.bidAmountMKR)).div(auction.bidAmountMKR);
             const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
             commit('setMarketPrice', { auctionIndex, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice });
             return marketUnitPrice;
