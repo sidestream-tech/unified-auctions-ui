@@ -16,8 +16,8 @@
                 prerequisite to participate in the auction.
             </TextBlock>
             <TextBlock v-if="currency === 'MKR'">
-                In order to move funds between wallet and Flap the Flap contract address needs to be authorized. Hence
-                the following transaction authorizes Flap to withdraw MKR from the wallet.
+                In order to move funds the Flap contract address needs to be authorized. Hence the following
+                transaction authorizes Flap to withdraw MKR from the wallet.
             </TextBlock>
         </div>
         <div class="my-2 flex justify-between">
