@@ -3,15 +3,15 @@
         <Tooltip :visible="!!errorMessage" placement="topLeft" :title="errorMessage">
             <Input
                 v-model="inputText"
-                class="Input"
-                :class="{ Error: !!errorMessage }"
+                class="Input pr-8"
+                :class="{ Error: !!errorMessage, 'pr-10': auctionType === 'surplus' }"
                 :disabled="disabled"
                 @focus="hideMaxValue"
                 @blur="showMaxValueIfEmpty"
             />
             <div class="Overlay right-2" :class="{ 'opacity-50': disabled }">
                 <div v-if="auctionType === 'surplus'">
-                    <format-currency v-if="!inputValue && minValue" :value="minValue" />&nbsp;MKR
+                    <format-currency v-if="!inputValue && minValue" :value="minValue" /> MKR
                 </div>
                 <div v-else><format-currency v-if="!inputValue && maxValue" :value="maxValue" />&nbsp;DAI</div>
             </div>
@@ -125,7 +125,7 @@ export default Vue.extend({
 }
 
 .Input {
-    @apply text-right pr-8;
+    @apply text-right;
 }
 
 .Error {
@@ -142,5 +142,35 @@ export default Vue.extend({
     @apply absolute pointer-events-none h-full flex items-center;
 
     top: 0.5px;
+}
+
+.input-icon {
+    position: relative;
+}
+
+.input-icon > i {
+    position: absolute;
+    display: block;
+    transform: translate(0, -50%);
+    top: 50%;
+    pointer-events: none;
+    width: 25px;
+    text-align: center;
+    font-style: normal;
+}
+
+.input-icon > input {
+    padding-left: 25px;
+    padding-right: 0;
+}
+
+.input-icon-right > i {
+    right: 0;
+}
+
+.input-icon-right > input {
+    padding-left: 0;
+    padding-right: 25px;
+    text-align: right;
 }
 </style>

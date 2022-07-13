@@ -92,9 +92,8 @@ export default Vue.extend({
             return !!this.transactionBidAmount?.isNaN();
         },
         lowestNextBid(): BigNumber {
-            // Below is a dummy calculation
-            // TODO: Implement correct calculation logic for the next possible lowest bid
-            return this.auction.bidAmountMKR ? this.auction.bidAmountMKR.multipliedBy(1.1) : new BigNumber(0);
+            // TODO: Fetch correct logic for this. Currently hardcoded to +5% for new bid
+            return this.auction.bidAmountMKR ? this.auction.bidAmountMKR.multipliedBy(1.05) : new BigNumber(0);
         },
         unitPriceAfterBid(): BigNumber | undefined {
             if (!this.transactionBidAmount) {

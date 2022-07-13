@@ -1,9 +1,9 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import SurplusAuctionBidTransactionTable from './SurplusAuctionBidTransactionTable';
-import { generateFakeSurplusAuction } from '~/helpers/generateFakeSurplusAuction';
+import { generateFakeSurplusAuctionTransaction } from '~/helpers/generateFakeSurplusAuction';
 
-const fakeSurplusAuction = generateFakeSurplusAuction();
+const fakeSurplusAuction = generateFakeSurplusAuctionTransaction('have-bids');
 
 const common = {
     template: `<SurplusAuctionBidTransactionTable
@@ -23,6 +23,6 @@ const common = {
     },
 };
 
-storiesOf('Transaction/SurplusAuctionBidTransactionTable', module).add('Default', () => ({
+storiesOf('Surplus/SurplusAuctionBidTransactionTable', module).add('Default', () => ({
     ...common,
 }));
