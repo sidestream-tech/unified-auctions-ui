@@ -34,6 +34,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
+    const fetchedAt = new Date();
     const baseAuctionInfo: SurplusAuctionBase = {
         network,
         id: auctionIndex,
@@ -44,7 +45,7 @@ export const fetchSurplusAuctionByIndex = async function (
         if (auctionLastIndex < auctionIndex) {
             throw new Error('No active auction exists with this id');
         }
-        return { ...baseAuctionInfo, state: 'collected' };
+        return { ...baseAuctionInfo, state: 'collected', fetchedAt };
     }
 
     const auctionEndDate = new Date(auctionData.end * 1000);
@@ -61,6 +62,7 @@ export const fetchSurplusAuctionByIndex = async function (
         auctionEndDate,
         bidEndDate,
         state,
+        fetchedAt,
     };
 };
 
@@ -103,7 +105,7 @@ export const bidToSurplusAuction = async function (
     notifier?: Notifier
 ) {
     const auction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
-    if (!auction) {
+    if (!auction || !auction.receiveAmountDAI) {
         throw new Error('Did not find the auction to bid on.');
     }
     const transactionParameters = [
