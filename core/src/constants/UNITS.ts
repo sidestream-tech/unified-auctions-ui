@@ -14,5 +14,6 @@ export const WAD_NUMBER_OF_DIGITS = 18;
 export const RAD_NUMBER_OF_DIGITS = 45;
 export const RAY_NUMBER_OF_DIGITS = 27;
 export const DAI_NUMBER_OF_DIGITS = 18;
+export const MKR_NUMBER_OF_DIGITS = 18;
 export const ETH_NUMBER_OF_DIGITS = 18;
 export const GWEI_NUMBER_OF_DIGITS = 9;

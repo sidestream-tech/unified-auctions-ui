@@ -5,8 +5,8 @@ import {
     authorizeWallet,
     getCollateralAuthorizationStatus,
     authorizeCollateral,
-    setAllowanceAmount,
-    fetchAllowanceAmount,
+    setAllowanceAmountDAI,
+    fetchAllowanceAmountDAI,
 } from 'auctions-core/src/authorizations';
 import notifier from '~/lib/notifier';
 
@@ -217,7 +217,7 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
         try {
-            await setAllowanceAmount(network, walletAddress, amount, notifier);
+            await setAllowanceAmountDAI(network, walletAddress, amount, notifier);
             await dispatch('fetchAllowanceAmount');
         } catch (error) {
             console.error(`Setting allowance amount error: ${error.message}`);
@@ -234,7 +234,7 @@ export const actions = {
             return;
         }
         try {
-            const allowanceAmount = await fetchAllowanceAmount(network, walletAddress);
+            const allowanceAmount = await fetchAllowanceAmountDAI(network, walletAddress);
             commit('setAllowanceAmount', allowanceAmount);
         } catch (error) {
             console.error(`Fetching allowance amount error: ${error.message}`);

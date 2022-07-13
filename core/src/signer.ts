@@ -22,4 +22,10 @@ const getSigner = function (network: string): Promise<ethers.Signer> {
     return signers[network];
 };
 
+export const createWalletFromPrivateKey = async (privateKey: string, network: string) => {
+    setSigner(network, createSigner(network, privateKey));
+    const signer = await getSigner(network);
+    return await signer.getAddress();
+};
+
 export default getSigner;

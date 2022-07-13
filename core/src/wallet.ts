@@ -59,7 +59,10 @@ export const depositToVAT = async function (
     notifier?: Notifier
 ): Promise<void> {
     const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
-    await executeTransaction(network, 'MCD_JOIN_DAI', 'join', [walletAddress, wadAmount], notifier, true);
+    await executeTransaction(network, 'MCD_JOIN_DAI', 'join', [walletAddress, wadAmount], {
+        notifier,
+        confirmTransaction: true,
+    });
 };
 
 export const withdrawFromVAT = async function (
@@ -69,7 +72,10 @@ export const withdrawFromVAT = async function (
     notifier?: Notifier
 ): Promise<void> {
     const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
-    await executeTransaction(network, 'MCD_JOIN_DAI', 'exit', [walletAddress, wadAmount], notifier, true);
+    await executeTransaction(network, 'MCD_JOIN_DAI', 'exit', [walletAddress, wadAmount], {
+        notifier,
+        confirmTransaction: true,
+    });
 };
 
 export const withdrawCollateralFromVat = async function (
@@ -82,5 +88,8 @@ export const withdrawCollateralFromVat = async function (
     const withdrawalAmount = amount || (await fetchCollateralVatBalance(network, walletAddress, collateralType));
     const withdrawalAmountWad = withdrawalAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
     const contractName = getJoinNameByCollateralType(collateralType);
-    await executeTransaction(network, contractName, 'exit', [walletAddress, withdrawalAmountWad], notifier, true);
+    await executeTransaction(network, contractName, 'exit', [walletAddress, withdrawalAmountWad], {
+        notifier,
+        confirmTransaction: true,
+    });
 };
