@@ -7,7 +7,7 @@ import {
     restartSurplusAuction,
     bidToSurplusAuction,
     collectSurplusAuction,
-    getSurplusAuctionBidIncreaseCoefficient,
+    getNextMinimumBet,
 } from 'auctions-core/src/surplus';
 import {
     setAllowanceAmountMKR,
@@ -29,7 +29,6 @@ interface State {
     error: string | null;
     lastUpdated: Date | undefined;
     allowanceAmount?: BigNumber;
-    minimalBidIncreaseCoefficient?: BigNumber;
 }
 
 const getInitialState = (): State => ({
@@ -41,7 +40,6 @@ const getInitialState = (): State => ({
     isBidding: false,
     error: null,
     lastUpdated: undefined,
-    minimalBidIncreaseCoefficient: undefined,
 });
 
 export const state = (): State => getInitialState();
@@ -70,9 +68,6 @@ export const getters = {
     },
     lastUpdated(state: State) {
         return state.lastUpdated;
-    },
-    minimalBidIncreaseCoefficient(state: State) {
-        return state.minimalBidIncreaseCoefficient;
     },
 };
 
@@ -227,14 +222,14 @@ export const actions = {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
     },
-    async fetchMinimalBidIncreaseCoefficient({ rootGetters, commit }: ActionContext<State, State>) {
+    async getNextMinimumBet({ rootGetters, getters }: ActionContext<State, State>, auctionIndex: number) {
         const network = rootGetters['network/getMakerNetwork'];
-        if (!network) {
+        const auction = getters.auctionStorage[auctionIndex];
+        if (!network || !auction) {
             return;
         }
         try {
-            const coefficient = await getSurplusAuctionBidIncreaseCoefficient(network);
-            commit('setMinimalBidIncreaseCoefficient', coefficient);
+            return await getNextMinimumBet(network, auction);
         } catch (error: any) {
             console.error(`Failed to fetch minimal bid increase coefficient: ${error.message}`);
         }

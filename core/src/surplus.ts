@@ -6,25 +6,32 @@ import { Contract } from 'ethers';
 import getNetworkDate from './date';
 import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
+import memoizee from 'memoizee';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
     return new BigNumber(auctionsQuantityBinary._hex).toNumber();
 };
 
-export const getSurplusAuctionBidIncreaseCoefficient = async (network: string): Promise<BigNumber> => {
+const _getSurplusAuctionBidIncreaseCoefficient = async (network: string): Promise<BigNumber> => {
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionsQuantityBinary = await contract.beg();
     return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
 
-export const getNextMinimumBet = (
-    surplusAuction: SurplusAuction,
-    increaseCoefficient: BigNumber
-): BigNumber | undefined => {
+const getSurplusAuctionBidIncreaseCoefficient = memoizee(_getSurplusAuctionBidIncreaseCoefficient, {
+    promise: true,
+    length: 3,
+});
+
+export const getNextMinimumBet = async (
+    network: string,
+    surplusAuction: SurplusAuction
+): Promise<BigNumber | undefined> => {
     if (!surplusAuction.bidAmountMKR) {
         return undefined;
     }
+    const increaseCoefficient = await getSurplusAuctionBidIncreaseCoefficient(network);
     return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
 };
 
