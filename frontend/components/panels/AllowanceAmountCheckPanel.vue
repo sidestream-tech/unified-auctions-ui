@@ -1,24 +1,30 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name" class="WalletDaiDepositCheckPanel">
         <template #title>{{ currentStateAndTitle.title }}</template>
-        <TextBlock v-if="isExplanationsShown">
-            To bid on an auction with DAI, first funds need to be deposited to the
-            <Explain text="VAT">
-                The
-                <a
-                    href="https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation#2-contract-details"
-                    >VAT contract</a
-                >
-                is the core vault engine of the Maker Protocol and manages the central accounting invariants of DAI.
-                Depositing and interacting with the VAT is necessary in order to participate in auctions. </Explain
-            >. The following transaction authorizes the wallet address to deposit into the VAT. It is a prerequisite to
-            participate in the auction.
-        </TextBlock>
+        <div v-if="isExplanationsShown">
+            <TextBlock v-if="currency === 'DAI'">
+                To bid on an auction with DAI, first funds need to be deposited to the
+                <Explain text="VAT">
+                    The
+                    <a
+                        href="https://docs.makerdao.com/smart-contract-modules/core-module/vat-detailed-documentation#2-contract-details"
+                        >VAT contract</a
+                    >
+                    is the core vault engine of the Maker Protocol and manages the central accounting invariants of
+                    DAI. Depositing and interacting with the VAT is necessary in order to participate in auctions. </Explain
+                >. The following transaction authorizes the wallet address to deposit into the VAT. It is a
+                prerequisite to participate in the auction.
+            </TextBlock>
+            <TextBlock v-if="currency === 'MKR'">
+                In order to move funds the Flap contract address needs to be authorized. Hence the following
+                transaction authorizes Flap to withdraw MKR from the wallet.
+            </TextBlock>
+        </div>
         <div class="my-2 flex justify-between">
             <div>Current allowance</div>
             <div>
-                <span v-if="isUnlimitedAllowance">Unlimited DAI</span>
-                <FormatCurrency v-else :value="allowanceAmount" currency="DAI" />
+                <span v-if="isUnlimitedAllowance">Unlimited {{ currency }}</span>
+                <FormatCurrency v-else :value="allowanceAmount" :currency="currency" />
             </div>
         </div>
         <div class="flex justify-end mt-2 gap-5">
@@ -29,7 +35,7 @@
                 @click="$emit('setAllowanceAmount', alwaysValidDesiredAmount)"
             >
                 <span>Allow access to&nbsp;</span>
-                <FormatCurrency :value="alwaysValidDesiredAmount" currency="DAI" />
+                <FormatCurrency :value="alwaysValidDesiredAmount" :currency="currency" />
             </BaseButton>
             <BaseButton
                 class="w-full md:w-80"
@@ -38,7 +44,7 @@
                 :is-loading="isLoading"
                 @click="$emit('setAllowanceAmount')"
             >
-                Allow unlimited access to DAI
+                Allow unlimited access to {{ currency }}
             </BaseButton>
         </div>
     </BasePanel>
@@ -82,6 +88,10 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
+        currency: {
+            type: String,
+            default: 'DAI',
+        },
     },
     computed: {
         isEnough(): boolean {
@@ -118,12 +128,12 @@ export default Vue.extend({
             if (!this.isEnough) {
                 return {
                     name: 'incorrect',
-                    title: 'The desired amount exceeds DAI allowance',
+                    title: `The desired amount exceeds ${this.currency} allowance`,
                 };
             }
             return {
                 name: 'correct',
-                title: 'The desired amount is within DAI allowance',
+                title: `The desired amount is within ${this.currency} allowance`,
             };
         },
         isDisabled(): boolean {
