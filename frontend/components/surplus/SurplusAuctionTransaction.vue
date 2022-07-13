@@ -45,11 +45,10 @@
                 @refresh="$emit('refresh')"
             />
             <AllowanceAmountCheckPanel
-                :disabled="!isWalletMKRCheckPassed"
+                :disabled="!isWalletConnected || !isActive"
                 :allowance-amount="allowanceMKR"
                 :desired-amount="inputBidAmount || lowestNextBid"
                 currency="MKR"
-                :is-disabled="isWalletConnected || !isActive"
                 :is-loading="isSettingAllowance"
                 :is-correct.sync="isAllowanceAmountCheckPassed"
                 @setAllowanceAmount="$emit('setAllowanceAmount', $event)"

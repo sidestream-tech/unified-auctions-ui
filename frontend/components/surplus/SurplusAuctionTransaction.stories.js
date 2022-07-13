@@ -114,6 +114,21 @@ storiesOf('Surplus/SurplusAuctionTransaction', module)
             auction: generateFakeSurplusAuctionTransaction('have-bids'),
         }),
     }))
+    .add('Not enough MKR in wallet', () => ({
+        ...common,
+        methods: {
+            ...common.methods,
+            connect() {
+                this.isConnectingWallet = true;
+                setTimeout(() => {
+                    this.walletMKR = new BigNumber(faker.finance.amount(1, 2));
+                    this.allowanceMKR = new BigNumber(faker.finance.amount(1, 2));
+                    this.walletAddress = faker.finance.ethereumAddress();
+                    this.isConnectingWallet = false;
+                }, 1000);
+            },
+        },
+    }))
     .add('Ready for collection', () => ({
         ...common,
         data: () => ({

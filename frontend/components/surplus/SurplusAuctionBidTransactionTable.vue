@@ -20,9 +20,9 @@
         </div>
         <div class="flex justify-between">
             <div>Lowest Next Bid</div>
-            <div>
+            <button class="ClickableText" :disabled="!isActive" @click="setTransactionBidAmount(undefined)">
                 <FormatCurrency :value="lowestNextBid" currency="MKR" />
-            </div>
+            </button>
         </div>
         <div class="flex justify-between items-center">
             <div>The Amount to Bid</div>
@@ -129,3 +129,17 @@ export default Vue.extend({
     },
 });
 </script>
+
+<style scoped>
+.ClickableText:enabled {
+    @apply text-primary hover:text-primary-light;
+}
+
+.ClickableText:disabled {
+    @apply pointer-events-none;
+}
+
+.ClickableText:enabled:first-of-type {
+    @apply underline;
+}
+</style>
