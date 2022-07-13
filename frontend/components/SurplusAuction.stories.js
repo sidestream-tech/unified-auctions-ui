@@ -14,12 +14,12 @@ const common = {
         };
     },
     methods: {
-        swap: action('bid'),
+        bid: action('bid'),
     },
 };
 
 storiesOf('SurplusAuction', module)
-    .add('No Bids yet', () => ({
+    .add('Just Started', () => ({
         ...common,
         data() {
             return {
@@ -41,7 +41,16 @@ storiesOf('SurplusAuction', module)
         },
         template: `<SurplusAuction :auction="auction" auctionId="test" />`,
     }))
-    .add('Finished', () => ({
+    .add('Ready for collection', () => ({
+        ...common,
+        data() {
+            return {
+                auction: generateFakeSurplusAuctionTransaction('ready-for-collection'),
+            };
+        },
+        template: `<SurplusAuction :auction="auction" auctionId="test" />`,
+    }))
+    .add('Collected', () => ({
         ...common,
         data() {
             return {

@@ -2,6 +2,11 @@
     <TextBlock :title="`Surplus auction #${auctionId}`">
         <div class="my-3">
             <Alert v-if="auctionError && auctionError.showBanner" :message="auctionError.error" type="error" />
+            <Alert
+                v-if="auction && auction.state === 'ready-for-collection'"
+                message="This auction has ended and is ready for collection"
+                type="info"
+            />
         </div>
         <div v-if="auction">
             <div v-if="requiresRestart">
@@ -47,7 +52,7 @@
                             <td>Auction Price</td>
                             <td>
                                 <template v-if="withBids">
-                                    <format-currency :value="unitPrice" currency="MKR" />
+                                    <format-currency :value="auction.unitPrice" currency="MKR" />
                                     per <format-currency currency="DAI" />
                                 </template>
                                 <span v-else class="opacity-50">No bids yet</span>
@@ -56,7 +61,7 @@
                         <tr>
                             <td>Price On Uniswap</td>
                             <td>
-                                <template v-if="isActive && auction.marketUnitPrice">
+                                <template v-if="auction.marketUnitPrice">
                                     <format-currency :value="auction.marketUnitPrice" currency="MKR" /> per
                                     <format-currency currency="DAI" />
                                 </template>
@@ -66,7 +71,7 @@
                         <tr>
                             <td>Market Difference</td>
                             <td>
-                                <template v-if="isActive && auction.marketUnitPriceToUnitPriceRatio">
+                                <template v-if="auction.marketUnitPriceToUnitPriceRatio">
                                     <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
@@ -106,11 +111,7 @@
                             exchange platform such as Uniswap.
                         </span>
                     </template>
-                    <template v-else>
-                        <!-- Issue: We dont have bidAmountMKR and auctionEndTime when an Auction is finished, therefore we need to reword this text -->
-                        This auction was finished at a closing auction price of
-                        <format-currency :value="auction.bidAmountMKR" currency="MKR" />.
-                    </template>
+                    <template v-else> This auction has finished and the earnings have been collected. </template>
                 </TextBlock>
             </template>
             <TextBlock>
@@ -123,7 +124,7 @@
                                 class="w-60 mb-4"
                                 @click="$emit('bid')"
                             >
-                                Bid using MKR
+                                {{ auction.state === 'ready-for-collection' ? 'Collect earnings' : 'Bid using MKR' }}
                             </Button>
                         </div>
                     </Tooltip>
@@ -135,7 +136,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
 import type { SurplusAuction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/TextBlock.vue';
@@ -201,9 +201,9 @@ export default Vue.extend({
                     error: 'This auction was not found',
                     showBanner: true,
                 };
-            } else if (this.auction.state === 'ready-for-collection' || this.auction.state === 'collected') {
+            } else if (this.auction.state === 'collected') {
                 return {
-                    error: 'This auction is finished',
+                    error: 'This auction was collected',
                     showBanner: true,
                 };
             } else if (this.auction.state === 'requires-restart' && !this.areAuctionsFetching) {
@@ -219,12 +219,6 @@ export default Vue.extend({
         },
         requiresRestart(): boolean {
             return this.auction.state === 'requires-restart';
-        },
-        isFinished(): boolean {
-            return this.auction.state === 'ready-for-collection' || this.auction.state === 'collected';
-        },
-        unitPrice(): BigNumber {
-            return this.auction.bidAmountMKR.dividedBy(this.auction.receiveAmountDAI);
         },
         withBids(): boolean {
             return this.auction.bidAmountMKR && !this.auction.bidAmountMKR.isEqualTo(0);
