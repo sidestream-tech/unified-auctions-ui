@@ -20,6 +20,7 @@
         </TextBlock>
         <div class="flex justify-end mt-2">
             <BaseButton
+                class="w-full md:w-80"
                 type="primary"
                 :is-loading="isLoading"
                 :disabled="disabled || isWalletAuthorized || !walletAddress"

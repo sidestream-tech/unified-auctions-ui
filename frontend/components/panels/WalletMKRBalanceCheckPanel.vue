@@ -29,7 +29,7 @@
             <FormatAddress :value="tokenAddress" :shorten="true" type="address" />)
         </TextBlock>
         <div class="flex justify-end mt-5">
-            <BaseButton :disabled="disabled" :is-loading="isLoading" @click="$emit('refresh')"
+            <BaseButton class="w-full md:w-80" :disabled="disabled" :is-loading="isLoading" @click="$emit('refresh')"
                 >Refresh wallet balance</BaseButton
             >
         </div>
