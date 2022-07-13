@@ -3,6 +3,7 @@ import {
     SurplusAuctionBase,
     SurplusAuctionStates,
     SurplusAuctionTransaction,
+    SurplusTransactionFees,
 } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
@@ -62,6 +63,22 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
     };
 };
 
+export const generateFakeSurplusTransactionFees = function (): SurplusTransactionFees {
+    const bidTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
+    const authTransactionFeeDAI = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
+    const authTransactionFeeMKR = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
+    const restartTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
+    const collectTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
+
+    return {
+        bidTransactionFee,
+        authTransactionFeeDAI,
+        authTransactionFeeMKR,
+        restartTransactionFee,
+        collectTransactionFee,
+    };
+};
+
 export const generateFakeSurplusAuctionTransaction = function (
     state?: SurplusAuctionStates
 ): SurplusAuctionTransaction {
@@ -71,6 +88,11 @@ export const generateFakeSurplusAuctionTransaction = function (
     if (!surplusAuction.bidAmountMKR || !surplusAuction.receiveAmountDAI) {
         return surplusAuction;
     }
+
+    const transactionFees = generateFakeSurplusTransactionFees();
+    const combinedBidFees = transactionFees.bidTransactionFee
+        ?.plus(transactionFees.authTransactionFeeMKR || 0)
+        .plus(transactionFees.authTransactionFeeDAI || 0);
 
     // generate fake market data
     const approximateUnitPrice = surplusAuction.bidAmountMKR.dividedBy(surplusAuction.receiveAmountDAI);
@@ -83,9 +105,11 @@ export const generateFakeSurplusAuctionTransaction = function (
 
     return {
         ...surplusAuction,
+        ...transactionFees,
         marketUnitPrice,
         marketUnitPriceToUnitPriceRatio,
         unitPrice: approximateUnitPrice,
+        combinedBidFees,
     };
 };
 
