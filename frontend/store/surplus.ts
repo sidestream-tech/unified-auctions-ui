@@ -14,7 +14,7 @@ import {
     authorizeSurplus,
     getSurplusAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-import { convertMkrToDai } from 'auctions-core/src/calleeFunctions/helpers/uniswapV3';
+import { convertDaiToMkr } from 'auctions-core/src/calleeFunctions/helpers/uniswapV3';
 import notifier from '~/lib/notifier';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
@@ -257,8 +257,8 @@ export const actions = {
 
         try {
             commit('setIsMarketPriceLoading', true);
-            const unitPrice = auction.receiveAmountDAI.div(auction.bidAmountMKR);
-            const marketUnitPrice = (await convertMkrToDai(network, auction.bidAmountMKR)).div(auction.bidAmountMKR);
+            const unitPrice = auction.bidAmountMKR.div(auction.receiveAmountDAI);
+            const marketUnitPrice = (await convertDaiToMkr(network, auction.receiveAmountDAI)).div(auction.receiveAmountDAI);
             const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
             commit('setMarketPrice', { auctionIndex, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice });
             return marketUnitPrice;
