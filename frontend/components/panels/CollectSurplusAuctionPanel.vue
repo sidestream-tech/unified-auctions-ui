@@ -26,7 +26,7 @@
             ended after {{ auction.earliestEndDate.toUTCString() }}.
         </TextBlock>
 
-        <div class="flex justify-end gap-5">
+        <div class="flex justify-end mt-3">
             <BaseButton
                 class="w-full md:w-80"
                 type="primary"
