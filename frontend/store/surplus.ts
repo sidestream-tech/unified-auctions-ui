@@ -93,9 +93,6 @@ export const mutations = {
     setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
         Vue.set(state.auctionStates, auctionId, value);
     },
-    setMinimalBidIncreaseCoefficient(state: State, coefficient: BigNumber) {
-        state.minimalBidIncreaseCoefficient = coefficient;
-    },
 };
 
 export const actions = {
