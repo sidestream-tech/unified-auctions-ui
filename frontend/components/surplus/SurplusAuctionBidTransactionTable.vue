@@ -88,6 +88,10 @@ export default Vue.extend({
             type: Object as Vue.PropType<SurplusAuction>,
             required: true,
         },
+        lowestNextBid: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: null,
+        },
     },
     data() {
         return {
@@ -100,10 +104,6 @@ export default Vue.extend({
         },
         isBidAmountNaN(): boolean {
             return !!this.transactionBidAmount?.isNaN();
-        },
-        lowestNextBid(): BigNumber {
-            // TODO: Fetch correct logic for this. Currently hardcoded to +5% for new bid
-            return this.auction.bidAmountMKR ? this.auction.bidAmountMKR.multipliedBy(1.05) : new BigNumber(0);
         },
         unitPriceAfterBid(): BigNumber | undefined {
             if (!this.transactionBidAmount) {

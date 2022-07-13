@@ -1,51 +1,53 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import BigNumber from 'bignumber.js';
 import SurplusAuctionTransaction from './SurplusAuctionTransaction';
 import { generateFakeSurplusAuctionTransaction } from '~/helpers/generateFakeSurplusAuction';
 
-const fakeSurplusAuction = generateFakeSurplusAuctionTransaction('have-bids');
-
 const common = {
     components: { SurplusAuctionTransaction },
-    data: () => ({
-        auction: {
-            ...fakeSurplusAuction,
-        },
-        isConnecting: false,
-        walletAddress: null,
-    }),
-    methods: {
-        connect() {
-            this.isConnecting = true;
-            setTimeout(() => {
-                this.walletAddress = faker.finance.ethereumAddress();
-                this.walletDai = new BigNumber(faker.finance.amount());
-                this.walletVatDai = new BigNumber(faker.finance.amount());
-                this.isConnecting = false;
-            }, 1000);
-        },
-        disconnect() {
-            this.isConnecting = true;
-            setTimeout(() => {
-                this.walletAddress = null;
-                this.isWalletAuthorized = false;
-                this.authorisedCollaterals = [];
-                this.transactionAddress = null;
-                this.walletDai = null;
-                this.walletVatDai = null;
-                this.isConnecting = false;
-            }, 1000);
-        },
-    },
-    template: `
-    <SurplusAuctionTransaction
-        v-bind="$data"
-        @connect="connect()"
-        @disconnect="disconnect()"
-    />`,
 };
 
-storiesOf('Surplus/SurplusAuctionTransaction', module).add('Default', () => ({
-    ...common,
-}));
+storiesOf('Surplus/SurplusAuctionTransaction', module)
+    .add('Just started', () => ({
+        ...common,
+        data: () => ({
+            auction: generateFakeSurplusAuctionTransaction('just-started'),
+        }),
+        template: '<SurplusAuctionTransaction :auction="auction" />',
+    }))
+    .add('Has Bids', () => ({
+        ...common,
+        data: () => ({
+            auction: generateFakeSurplusAuctionTransaction('have-bids'),
+        }),
+        template: '<SurplusAuctionTransaction :auction="auction" />',
+    }))
+    .add('Has Bids, wallet connected', () => ({
+        ...common,
+        data: () => ({
+            auction: generateFakeSurplusAuctionTransaction('have-bids'),
+            walletAddress: faker.finance.ethereumAddress(),
+        }),
+        template: '<SurplusAuctionTransaction :auction="auction" :wallet-address="walletAddress" />',
+    }))
+    .add('Ready for collection', () => ({
+        ...common,
+        data: () => ({
+            auction: generateFakeSurplusAuctionTransaction('ready-for-collection'),
+        }),
+        template: '<SurplusAuctionTransaction :auction="auction" />',
+    }))
+    .add('Requires Restart', () => ({
+        ...common,
+        data: () => ({
+            auction: generateFakeSurplusAuctionTransaction('requires-restart'),
+        }),
+        template: '<SurplusAuctionTransaction :auction="auction" />',
+    }))
+    .add('Collected', () => ({
+        ...common,
+        data: () => ({
+            auction: generateFakeSurplusAuctionTransaction('collected'),
+        }),
+        template: '<SurplusAuctionTransaction :auction="auction" />',
+    }));
