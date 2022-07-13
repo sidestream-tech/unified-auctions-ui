@@ -23,7 +23,9 @@
 
         <TextBlock v-if="isExplanationsShown" class="mt-5">
             If you do not have enough MKR funds in your wallet, you can obtain it for example by purchasing it on a
-            decentralized exchange like uniswap.org (correct MKR token address used on the “{{ network }}” network is
+            decentralized exchange like
+            <a href="https://uniswap.org/" target="_blank">uniswap.org</a>
+            (correct MKR token address used on the “{{ network }}” network is
             <FormatAddress :value="tokenAddress" :shorten="true" type="address" />)
         </TextBlock>
         <div class="flex justify-end mt-5">
