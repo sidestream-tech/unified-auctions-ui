@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { convertMkrToDai } from '../src/calleeFunctions/helpers/uniswapV3';
+import { convertDaiToMkr } from '../src/calleeFunctions/helpers/uniswapV3';
 import { getExchangeRateDaiMkr } from '../src/calleeFunctions/helpers/uniswapV2';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import BigNumber from '../src/bignumber';
@@ -32,7 +32,7 @@ describe('Market Price & Conversions', () => {
         expect(rate.toString()).to.equal('1830.403058138370068702471166175');
     });
     it('gets MKR-DAI exchange rate with Uniswap v3', async () => {
-        const rate = await convertMkrToDai('custom', new BigNumber(1));
+        const rate = await convertDaiToMkr('custom', new BigNumber(1));
         expect(rate.toString()).to.equal('1731.669387321259063176');
     });
 });
