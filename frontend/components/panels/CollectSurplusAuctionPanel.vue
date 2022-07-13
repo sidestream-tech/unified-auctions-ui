@@ -49,6 +49,7 @@ import TextBlock from '../common/TextBlock.vue';
 import FormatCurrency from '../utils/FormatCurrency.vue';
 import BaseButton from '../common/BaseButton.vue';
 import TimeTill from '../common/TimeTill.vue';
+
 export default Vue.extend({
     name: 'CollectSurplusAuctionPanel',
     components: { TimeTill, FormatCurrency, TextBlock, BasePanel, BaseButton },
