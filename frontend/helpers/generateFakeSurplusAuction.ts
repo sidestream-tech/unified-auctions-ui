@@ -47,7 +47,9 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
             ? bidEndDate
             : auctionEndDate
         : auctionEndDate;
-    const bidAmountMKR = new BigNumber(generatedState === 'just-started' ? 0 : parseFloat(faker.finance.amount()));
+    const bidAmountMKR = new BigNumber(
+        generatedState === 'just-started' ? 0 : faker.datatype.number({ min: 0.0001, max: 1, precision: 0.0000001 })
+    );
 
     return {
         ...auctionBaseData,

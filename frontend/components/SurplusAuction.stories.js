@@ -26,7 +26,7 @@ storiesOf('SurplusAuction', module)
                 auction: generateFakeSurplusAuctionTransaction('just-started'),
             };
         },
-        template: `<SurplusAuction :auction="auction" auctionId="test" />`,
+        template: `<SurplusAuction :auction="auction" auctionId="test" @bid="bid" />`,
     }))
     .add('Has Bids', () => ({
         ...common,
@@ -39,7 +39,7 @@ storiesOf('SurplusAuction', module)
                 auction: generateFakeSurplusAuctionTransaction('requires-restart'),
             };
         },
-        template: `<SurplusAuction :auction="auction" auctionId="test" />`,
+        template: `<SurplusAuction :auction="auction" auctionId="test" @bid="bid" />`,
     }))
     .add('Ready for collection', () => ({
         ...common,
@@ -48,7 +48,7 @@ storiesOf('SurplusAuction', module)
                 auction: generateFakeSurplusAuctionTransaction('ready-for-collection'),
             };
         },
-        template: `<SurplusAuction :auction="auction" auctionId="test" />`,
+        template: `<SurplusAuction :auction="auction" auctionId="test" @bid="bid" />`,
     }))
     .add('Collected', () => ({
         ...common,

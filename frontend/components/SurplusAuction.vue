@@ -104,7 +104,7 @@
                         <span v-else>
                             The highest bid for it is
                             <format-currency :value="auction.bidAmountMKR" currency="MKR" />. This equals
-                            <format-currency :value="unitPrice" currency="MKR" />
+                            <format-currency :value="auction.unitPrice" currency="MKR" />
                             per <format-currency currency="DAI" />, or approximately
                             <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you
                             exchange <format-currency currency="MKR" /> to <format-currency currency="DAI" /> on an
@@ -118,12 +118,7 @@
                 <div class="flex w-full justify-end flex-wrap mt-4">
                     <Tooltip :title="auctionError && auctionError.error" placement="top">
                         <div>
-                            <Button
-                                :disabled="!!auctionError"
-                                type="secondary"
-                                class="w-60 mb-4"
-                                @click="$emit('bid')"
-                            >
+                            <Button :disabled="!!auctionError" type="primary" class="w-60 mb-4" @click="$emit('bid')">
                                 {{ auction.state === 'ready-for-collection' ? 'Collect earnings' : 'Bid using MKR' }}
                             </Button>
                         </div>
