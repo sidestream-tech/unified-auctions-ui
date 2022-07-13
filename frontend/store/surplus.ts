@@ -7,6 +7,7 @@ import {
     restartSurplusAuction,
     bidToSurplusAuction,
     collectSurplusAuction,
+    getSurplusAuctionBidIncreaseCoefficient,
 } from 'auctions-core/src/surplus';
 import {
     setAllowanceAmountMKR,
@@ -28,6 +29,7 @@ interface State {
     error: string | null;
     lastUpdated: Date | undefined;
     allowanceAmount?: BigNumber;
+    minimalBidIncreaseCoefficient?: BigNumber;
 }
 
 const getInitialState = (): State => ({
@@ -39,6 +41,7 @@ const getInitialState = (): State => ({
     isBidding: false,
     error: null,
     lastUpdated: undefined,
+    minimalBidIncreaseCoefficient: undefined,
 });
 
 export const state = (): State => getInitialState();
@@ -68,6 +71,9 @@ export const getters = {
     lastUpdated(state: State) {
         return state.lastUpdated;
     },
+    minimalBidIncreaseCoefficient(state: State) {
+        return state.minimalBidIncreaseCoefficient;
+    },
 };
 
 export const mutations = {
@@ -91,6 +97,9 @@ export const mutations = {
     },
     setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
         Vue.set(state.auctionStates, auctionId, value);
+    },
+    setMinimalBidIncreaseCoefficient(state: State, coefficient: BigNumber) {
+        state.minimalBidIncreaseCoefficient = coefficient;
     },
 };
 
@@ -216,6 +225,18 @@ export const actions = {
             console.error(`Failed to bid on auction: ${error.message}`);
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
+        }
+    },
+    async fetchMinimalBidIncreaseCoefficient({ rootGetters, commit }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        try {
+            const coefficient = await getSurplusAuctionBidIncreaseCoefficient(network);
+            commit('setMinimalBidIncreaseCoefficient', coefficient);
+        } catch (error: any) {
+            console.error(`Failed to fetch minimal bid increase coefficient: ${error.message}`);
         }
     },
 };
