@@ -90,7 +90,7 @@ export default Vue.extend({
         },
         lowestNextBid: {
             type: Object as Vue.PropType<BigNumber>,
-            default: null,
+            required: true,
         },
     },
     data() {
