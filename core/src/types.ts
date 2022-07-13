@@ -157,18 +157,17 @@ export declare interface CollateralStatus {
 export declare interface SurplusAuctionBase {
     id: number;
     network: string;
-    fetchedAt: Date;
 }
 
 export declare interface SurplusAuction extends SurplusAuctionBase {
+    earliestEndDate?: Date;
     state: 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart' | 'collected';
-    fetchedAt: Date;
+
     bidAmountMKR?: BigNumber;
     receiveAmountDAI?: BigNumber;
     receiverAddress?: string;
     auctionEndDate?: Date;
     bidEndDate?: Date;
-    earliestEndDate?: Date;
 }
 
 export type SurplusAuctionStates = SurplusAuction['state'];
