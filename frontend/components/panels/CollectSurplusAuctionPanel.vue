@@ -5,7 +5,7 @@
             <time-till v-if="auction.state === 'have-bids'" :date="auction.earliestEndDate" />
         </template>
 
-        <TextBlock v-if="auction.state === 'ready-for-collection' || auction.state === 'collected'">
+        <TextBlock v-if="auction.state === 'ready-for-collection'">
             <div v-if="isCurrentWalletHighestBidder">
                 Since the auction ended at {{ auction.earliestEndDate.toUTCString() }}, you can now collect the auction
                 amount.
@@ -15,6 +15,10 @@
                 Since the auction ended at {{ auction.earliestEndDate.toUTCString() }}, you can now collect the auction
                 amount. Note however that the auction amount will be transferred to the highest bidder's wallet.
             </div>
+        </TextBlock>
+
+        <TextBlock v-else-if="auction.state === 'collected'">
+            This auction has ended and the amount has been collected.
         </TextBlock>
 
         <TextBlock v-else>
