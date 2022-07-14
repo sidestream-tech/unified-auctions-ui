@@ -39,6 +39,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const baseAuctionInfo: SurplusAuctionBase = {
         network,
         id: auctionIndex,
+        fetchedAt,
     };
 
     if (isAuctionCollected) {
@@ -46,7 +47,7 @@ export const fetchSurplusAuctionByIndex = async function (
         if (auctionLastIndex < auctionIndex) {
             throw new Error('No active auction exists with this id');
         }
-        return { ...baseAuctionInfo, state: 'collected', fetchedAt };
+        return { ...baseAuctionInfo, state: 'collected' };
     }
 
     const auctionEndDate = new Date(auctionData.end * 1000);

@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import hre from 'hardhat';
 import {
     fetchActiveSurplusAuctions,
     bidToSurplusAuction,
@@ -11,9 +12,6 @@ import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
-
-import { SurplusAuction } from '../src/types';
-import hre from 'hardhat';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
@@ -58,8 +56,11 @@ describe('Surplus Auction', () => {
         await swapToMKR('custom', 20, 20);
         await bidToSurplusAuction('custom', 2328, '20');
         const auctions = await fetchActiveSurplusAuctions('custom');
-        const currentAuction = auctions[0] as SurplusAuction;
+        const currentAuction = auctions[0];
         expect(currentAuction.id).to.equal(2328);
+        if (currentAuction.state === 'collected') {
+            throw new Error('auction state can not be "collected"');
+        }
         expect(currentAuction.bidAmountMKR && currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
     it('collects the concluded auction', async () => {
