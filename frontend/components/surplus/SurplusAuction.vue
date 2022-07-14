@@ -13,7 +13,7 @@
                 <AuctionRestartPanel
                     :wallet-address="walletAddress"
                     :is-explanations-shown="isExplanationsShown"
-                    :is-restarting="auction.isRestarting"
+                    :is-restarting="auctionActionState === 'restarting'"
                     :is-connecting="isConnecting"
                     auction-type="surplus"
                     @restart="$emit('restart', auctionId)"
@@ -133,7 +133,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import type { SurplusAuctionTransaction } from 'auctions-core/src/types';
+import type { SurplusAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
@@ -165,6 +165,10 @@ export default Vue.extend({
         },
         auctionId: {
             type: Number,
+            default: null,
+        },
+        auctionActionState: {
+            type: String as Vue.PropType<SurplusAuctionActionStates>,
             default: null,
         },
         error: {

@@ -179,6 +179,8 @@ export type SurplusAuction = SurplusAuctionActive | SurplusAuctionCollected;
 
 export type SurplusAuctionStates = SurplusAuction['state'];
 
+export type SurplusAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'collecting';
+
 export declare interface SurplusTransactionFees {
     bidTransactionFee: BigNumber;
     authTransactionFeeDAI: BigNumber;

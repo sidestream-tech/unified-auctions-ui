@@ -23,6 +23,7 @@
                     class="mt-6 mb-8 mx-8"
                     :auction="selectedAuction"
                     :auction-id="selectedAuctionId"
+                    :auction-action-state="selectedAuctionActionState"
                     :are-auctions-fetching="areAuctionsFetching"
                     :is-explanations-shown="isExplanationsShown"
                     :error="selectedAuctionError"
@@ -39,16 +40,15 @@
                     v-if="selectedAuction"
                     class="mt-6 mb-8 mx-8"
                     :auction="selectedAuction"
+                    :auction-action-state="selectedAuctionActionState"
                     :wallet-address="walletAddress"
                     :wallet-m-k-r="walletMKR"
                     :allowance-m-k-r="allowanceMKR"
                     :network="network"
                     :token-address="tokenAddress"
-                    :is-collecting="isCollecting"
                     :is-connecting-wallet="isConnectingWallet"
                     :is-refreshing-wallet="isRefreshingWallet"
                     :is-setting-allowance="isSettingAllowance"
-                    :is-bidding="isBidding"
                     :is-explanations-shown="isExplanationsShown"
                     @connectWallet="$emit('connectWallet')"
                     @disconnectWallet="$emit('disconnectWallet')"
@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { SurplusAuctionTransaction } from 'auctions-core/dist/src/types';
+import { SurplusAuctionActionStates, SurplusAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import SurplusAuction from '~/components/surplus/SurplusAuction';
 import SurplusAuctionTransactionFlow from '~/components/surplus/SurplusAuctionTransactionFlow.vue';
@@ -93,9 +93,9 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        walletMKR: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
+        walletBalances: {
+            type: Object as Vue.PropType<WalletBalances>,
+            default: null,
         },
         allowanceMKR: {
             type: Object as Vue.PropType<BigNumber>,
@@ -113,14 +113,6 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isBidding: {
-            type: Boolean,
-            default: false,
-        },
-        isCollecting: {
-            type: Boolean,
-            default: false,
-        },
         areAuctionsFetching: {
             type: Boolean,
             default: false,
@@ -131,6 +123,10 @@ export default Vue.extend({
         },
         auctionErrors: {
             type: Object as Vue.PropType<string, string>,
+            default: () => ({}),
+        },
+        auctionActionState: {
+            type: Object as Vue.PropType<string, SurplusAuctionActionStates>,
             default: () => ({}),
         },
         lastUpdated: {
@@ -155,14 +151,22 @@ export default Vue.extend({
         secondStep: '',
     }),
     computed: {
-        selectedAuction(): SurplusAuctionTransaction | null {
-            return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
+        selectedAuction(): SurplusAuctionTransaction | undefined {
+            return (
+                this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || undefined
+            );
         },
-        selectedAuctionError(): string | null {
-            return this.auctionErrors[this.selectedAuctionId] || null;
+        selectedAuctionError(): string | undefined {
+            return this.auctionErrors[this.selectedAuctionId] || undefined;
+        },
+        selectedAuctionActionState(): string | undefined {
+            return this.auctionActionState[this.selectedAuctionId] || undefined;
         },
         isStagingEnvironment(): boolean {
             return !!process.env.STAGING_BANNER_URL;
+        },
+        walletMKR(): BigNumber | undefined {
+            return this.walletBalances?.walletMKR || undefined;
         },
     },
     watch: {

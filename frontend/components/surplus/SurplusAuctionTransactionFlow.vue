@@ -56,7 +56,7 @@
                 :auction="auction"
                 :wallet-address="walletAddress"
                 :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isActive"
-                :is-loading="isBidding"
+                :is-loading="auctionActionState === 'bidding'"
                 :bid-amount="inputBidAmount || auction.nextMinimumBid"
                 :is-explanations-shown="isExplanationsShown"
                 @bid="$emit('bid', $event)"
@@ -64,7 +64,7 @@
             <CollectSurplusAuctionPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
-                :is-collecting="isCollecting"
+                :is-collecting="auctionActionState === 'collecting'"
                 @collect="$emit('collect')"
             />
         </div>
@@ -76,6 +76,7 @@ import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
+import { SurplusAuctionActionStates } from 'auctions-core/src/types';
 import HighestBidCheckPanel from '../panels/HighestBidCheckPanel.vue';
 import WalletMKRBalanceCheckPanel from '../panels/WalletMKRBalanceCheckPanel.vue';
 import AllowanceAmountCheckPanel from '../panels/AllowanceAmountCheckPanel.vue';
@@ -100,6 +101,10 @@ export default Vue.extend({
             type: Object as Vue.PropType<SurplusAuction>,
             required: true,
         },
+        auctionActionState: {
+            type: String as Vue.PropType<SurplusAuctionActionStates>,
+            default: null,
+        },
         walletAddress: {
             type: String,
             default: null,
@@ -121,14 +126,6 @@ export default Vue.extend({
             default: false,
         },
         isSettingAllowance: {
-            type: Boolean,
-            default: false,
-        },
-        isBidding: {
-            type: Boolean,
-            default: false,
-        },
-        isCollecting: {
             type: Boolean,
             default: false,
         },
