@@ -2,8 +2,8 @@ import type {
     Notifier,
     SurplusAuction,
     SurplusAuctionBase,
+    SurplusAuctionEnriched,
     SurplusAuctionCollected,
-    SurplusAuctionWithMinimumBid,
     SurplusAuctionActive,
 } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
@@ -13,6 +13,7 @@ import { Contract } from 'ethers';
 import getNetworkDate from './date';
 import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
+import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
 import memoizee from 'memoizee';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
@@ -152,11 +153,18 @@ export const collectSurplusAuction = async function (network: string, auctionInd
 export const enrichSurplusAuction = async (
     network: string,
     auction: SurplusAuctionActive
-): Promise<SurplusAuctionWithMinimumBid> => {
+): Promise<SurplusAuctionEnriched> => {
     const nextMinimumBid = await getNextMinimumBid(network, auction);
+    const unitPrice = auction.bidAmountMKR.div(auction.receiveAmountDAI);
+    const mkrMarketPrice = (await convertMkrToDai(network, auction.bidAmountMKR)).div(auction.bidAmountMKR);
+    const marketUnitPrice = new BigNumber(1).div(mkrMarketPrice);
+    const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
     return {
-        nextMinimumBid,
         ...auction,
+        nextMinimumBid,
+        unitPrice,
+        marketUnitPrice,
+        marketUnitPriceToUnitPriceRatio,
     };
 };
 
@@ -164,16 +172,16 @@ export const enrichSurplusAuctions = async (
     network: string,
     auctions: SurplusAuction[]
 ): Promise<SurplusAuction[]> => {
-    const nonCollectedAuctions: SurplusAuctionActive[] = [];
     const collectedAuctions: SurplusAuctionCollected[] = [];
-    auctions.forEach(auction => {
-        if (auction.state !== 'collected') {
-            nonCollectedAuctions.push(auction);
+    const activeAuctions: SurplusAuctionActive[] = [];
+    auctions.forEach(auc => {
+        if (auc.state === 'collected') {
+            collectedAuctions.push(auc);
         } else {
-            collectedAuctions.push(auction);
+            activeAuctions.push(auc);
         }
     });
-    const auctionsWithNextMinimumBidsPromises = nonCollectedAuctions.map(auc => {
+    const auctionsWithNextMinimumBidsPromises = activeAuctions.map(auc => {
         return enrichSurplusAuction(network, auc);
     });
     const auctionsEnriched: SurplusAuction[] = await Promise.all(auctionsWithNextMinimumBidsPromises);

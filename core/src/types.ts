@@ -186,14 +186,13 @@ export declare interface SurplusTransactionFees {
     collectTransactionFee: BigNumber;
 }
 
-export declare interface SurplusAuctionWithMinimumBid extends SurplusAuctionActive {
+export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
     nextMinimumBid: BigNumber;
+    marketUnitPrice: BigNumber | string;
+    marketUnitPriceToUnitPriceRatio: BigNumber;
+    unitPrice: BigNumber;
 }
 
-export declare interface SurplusAuctionTransaction extends SurplusAuctionWithMinimumBid, SurplusTransactionFees {
-    marketUnitPrice?: BigNumber | string;
-    marketUnitPriceToUnitPriceRatio?: BigNumber;
-    unitPrice?: BigNumber;
-
+export declare interface SurplusAuctionTransaction extends SurplusAuctionEnriched, SurplusTransactionFees {
     combinedBidFees: BigNumber;
 }
