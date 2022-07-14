@@ -9,6 +9,7 @@ import {
     ETH_NUMBER_OF_DIGITS,
     RAD_NUMBER_OF_DIGITS,
     WAD_NUMBER_OF_DIGITS,
+    MKR_NUMBER_OF_DIGITS,
 } from './constants/UNITS';
 
 export const fetchBalanceETH = async function (network: string, walletAddress: string): Promise<BigNumber> {
@@ -21,6 +22,12 @@ export const fetchBalanceDAI = async function (network: string, walletAddress: s
     const contract = await getContract(network, 'MCD_DAI');
     const rawAmount = await contract.balanceOf(walletAddress);
     return new BigNumber(rawAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+};
+
+export const fetchBalanceMKR = async function (network: string, walletAddress: string): Promise<BigNumber> {
+    const contract = await getContract(network, 'MCD_GOV');
+    const rawAmount = await contract.balanceOf(walletAddress);
+    return new BigNumber(rawAmount._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
 
 export const fetchVATbalanceDAI = async function (network: string, walletAddress: string): Promise<BigNumber> {
@@ -47,6 +54,7 @@ export const fetchWalletBalances = async function (network: string, walletAddres
     return {
         walletETH: await fetchBalanceETH(network, walletAddress),
         walletDAI: await fetchBalanceDAI(network, walletAddress),
+        walletMKR: await fetchBalanceMKR(network, walletAddress),
         walletVatDAI: await fetchVATbalanceDAI(network, walletAddress),
         walletLastUpdatedDate: new Date(),
     };

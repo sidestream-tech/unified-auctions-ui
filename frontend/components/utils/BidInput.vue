@@ -1,12 +1,14 @@
 <template>
     <Tooltip :title="tooltipText" placement="topLeft">
         <BaseValueInput
-            :input-value="transactionBidAmount"
-            :max-value="debtDai"
-            :min-value="minimumBidDai"
+            :input-value="inputBidAmount"
+            :max-value="maxValue"
+            :min-value="minValue"
             :disabled="disabled"
             :validator="validator"
-            @update:inputValue="$emit('update:transactionBidAmount', $event)"
+            :currency="currency"
+            :fallback-value="fallbackValue"
+            @update:inputValue="$emit('update:inputBidAmount', $event)"
         />
     </Tooltip>
 </template>
@@ -23,15 +25,15 @@ export default Vue.extend({
         BaseValueInput,
     },
     props: {
-        minimumBidDai: {
+        minValue: {
             type: Object as Vue.PropType<BigNumber | undefined>,
             default: undefined,
         },
-        debtDai: {
+        maxValue: {
             type: Object as Vue.PropType<BigNumber | undefined>,
             default: undefined,
         },
-        transactionBidAmount: {
+        inputBidAmount: {
             type: Object as Vue.PropType<BigNumber | undefined>,
             default: undefined,
         },
@@ -43,6 +45,18 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        currency: {
+            type: String,
+            default: 'DAI',
+        },
+        fallbackValue: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        validator: {
+            type: Function as Vue.PropType<Function>,
+            default: () => {},
+        },
     },
     computed: {
         tooltipText(): string {
@@ -50,24 +64,6 @@ export default Vue.extend({
                 return `Not possible to change the amount since the leftover will be smaller than minimum`;
             }
             return '';
-        },
-    },
-    methods: {
-        validator(
-            currentValue: BigNumber | undefined,
-            minValue: BigNumber | undefined,
-            maxValue: BigNumber | undefined
-        ) {
-            if (!currentValue || !minValue || !maxValue) {
-                return;
-            }
-            const bidTopLimit = maxValue?.minus(minValue);
-            if (currentValue?.isGreaterThan(bidTopLimit)) {
-                throw new Error(`The value can only be less than ${bidTopLimit.toFixed(2)} or the maximum`);
-            }
-            if (maxValue?.isLessThan(minValue)) {
-                throw new Error('The value can not be changed since the leftover part will be too small');
-            }
         },
     },
 });
