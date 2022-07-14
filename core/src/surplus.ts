@@ -1,4 +1,4 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionWithMinimumBid, SurplusAuctionActive } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionCollected, SurplusAuctionWithMinimumBid, SurplusAuctionActive } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -155,3 +155,25 @@ export const enrichSurplusAuction = async (
         ...auction,
     };
 };
+
+export const enrichSurplusAuctions = async (
+    network: string,
+    auctions: SurplusAuction[]
+): Promise<SurplusAuction[]> => {
+    const nonCollectedAuctions: SurplusAuctionActive[] = [];
+    const collectedAuctions: SurplusAuctionCollected[] = [];
+    auctions.forEach(auction => {
+        if (auction.state !== 'collected') {
+            nonCollectedAuctions.push(auction);
+        } else {
+            collectedAuctions.push(auction);
+        }
+    });
+    const auctionsWithNextMinimumBidsPromises = nonCollectedAuctions.map(auc => {
+        return enrichSurplusAuction(network, auc);
+    });
+    const auctionsEnriched: SurplusAuction[] = await Promise.all(auctionsWithNextMinimumBidsPromises);
+    return auctionsEnriched.concat(collectedAuctions);
+};
+
+
