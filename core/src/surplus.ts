@@ -1,4 +1,4 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionTransaction } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -6,6 +6,7 @@ import { Contract } from 'ethers';
 import getNetworkDate from './date';
 import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
+import { convertDaiToMkr } from './calleeFunctions/helpers/uniswapV3';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
@@ -122,4 +123,18 @@ export const collectSurplusAuction = async function (network: string, auctionInd
         throw new Error('Did not find the auction to collect.');
     }
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
+};
+
+export const enrichSurplusAuctionWithMarketPrice = async (
+    network: string,
+    auction: SurplusAuction
+): Promise<SurplusAuctionTransaction> => {
+    if (!auction.bidAmountMKR || !auction.receiveAmountDAI) {
+        return auction;
+    }
+    const unitPrice = auction.bidAmountMKR.div(auction.receiveAmountDAI);
+    const marketUnitPrice = (await convertDaiToMkr(network, auction.receiveAmountDAI)).div(auction.receiveAmountDAI);
+    const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
+
+    return { ...auction, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice };
 };
