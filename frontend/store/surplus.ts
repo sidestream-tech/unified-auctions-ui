@@ -232,6 +232,6 @@ export const actions = {
         if (!network) {
             return;
         }
-        return await getTokenAddressByNetworkAndSymbol(network, 'MCD_DAI');
+        return await getTokenAddressByNetworkAndSymbol(network, 'MKR');
     },
 };
