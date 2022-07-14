@@ -193,6 +193,7 @@ export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
     unitPrice?: BigNumber;
 }
 
-export declare interface SurplusAuctionTransaction extends SurplusAuctionEnriched, SurplusTransactionFees {
+export declare interface SurplusAuctionTransaction extends SurplusAuctionActive, SurplusTransactionFees {
     combinedBidFees: BigNumber;
 }
+
