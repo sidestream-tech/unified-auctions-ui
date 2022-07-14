@@ -6,6 +6,7 @@ import {
     fetchSurplusAuctionByIndex,
     restartSurplusAuction,
     getNextMinimumBid,
+    enrichSurplusAuctionWithMinimumBid,
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
@@ -43,6 +44,19 @@ describe('Surplus Auction', () => {
         expect(auctions[0].id).to.equal(2328);
         expect(auctions[0].state).to.equal('have-bids');
     });
+    it('enrichesAuctionWithMiniumumBids', async () => {
+        const network = 'custom';
+        const auctions = await fetchActiveSurplusAuctions(network);
+        const auction = auctions[0];
+        const enrichedAuction = await enrichSurplusAuctionWithMinimumBid(network, auction);
+
+        if (!enrichedAuction.nextMinimumBid || !enrichedAuction.bidAmountMKR) {
+            throw new Error('Expected values were not defined.');
+        }
+        expect(enrichedAuction.nextMinimumBid.toString()).to.be.equal('16.94241213279722952');
+        expect(enrichedAuction.nextMinimumBid.div(enrichedAuction.bidAmountMKR).toString()).to.be.equal('1.04');
+    });
+    enrichSurplusAuctionWithMinimumBid;
     it('participates in active auction', async () => {
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
         await setAllowanceAmountMKR('custom', address, '20');

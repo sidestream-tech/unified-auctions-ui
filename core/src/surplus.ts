@@ -1,4 +1,4 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionTransaction } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -145,4 +145,15 @@ export const collectSurplusAuction = async function (network: string, auctionInd
         throw new Error('Did not find the auction to collect.');
     }
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
+};
+
+export const enrichSurplusAuctionWithMinimumBid = async (
+    network: string,
+    auction: SurplusAuction
+): Promise<SurplusAuctionTransaction> => {
+    const nextMinimumBid = await getNextMinimumBid(network, auction);
+    return {
+        ...auction,
+        nextMinimumBid,
+    };
 };

@@ -7,7 +7,7 @@ import {
     restartSurplusAuction,
     bidToSurplusAuction,
     collectSurplusAuction,
-    getNextMinimumBet,
+    enrichSurplusAuctionWithMinimumBid,
 } from 'auctions-core/src/surplus';
 import {
     setAllowanceAmountMKR,
@@ -104,7 +104,11 @@ export const actions = {
         try {
             commit('setAuctionsFetching', true);
             const auctions = await fetchActiveSurplusAuctions(network);
-            auctions.forEach(auction => commit('addAuctionToStorage', auction));
+            const auctionsWithNextMinimumBidsPromises = auctions.map(auc =>
+                enrichSurplusAuctionWithMinimumBid(network, auc)
+            );
+            const auctionsWithNextMinimumBids = await Promise.all(auctionsWithNextMinimumBidsPromises);
+            auctionsWithNextMinimumBids.forEach(auction => commit('addAuctionToStorage', auction));
         } catch (error: any) {
             console.error('fetch surplus auction error', error);
             commit('setError', error.message);
@@ -217,18 +221,6 @@ export const actions = {
             console.error(`Failed to bid on auction: ${error.message}`);
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
-        }
-    },
-    async getNextMinimumBet({ rootGetters, getters }: ActionContext<State, State>, auctionIndex: number) {
-        const network = rootGetters['network/getMakerNetwork'];
-        const auction = getters.auctionStorage[auctionIndex];
-        if (!network || !auction) {
-            return;
-        }
-        try {
-            return await getNextMinimumBet(network, auction);
-        } catch (error: any) {
-            console.error(`Failed to fetch minimal bid increase coefficient: ${error.message}`);
         }
     },
 };
