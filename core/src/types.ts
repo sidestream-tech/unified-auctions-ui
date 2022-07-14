@@ -184,5 +184,6 @@ export declare interface SurplusAuctionTransaction extends SurplusAuction, Surpl
     marketUnitPrice?: BigNumber | string;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
     unitPrice?: BigNumber;
-    combinedBidFees?: BigNumber; // bidTransaction + authTransactionFeeDAI + authTransactionFeeMKR
+    combinedBidFees?: BigNumber;
+    nextMinimumBid?: BigNumber;
 }

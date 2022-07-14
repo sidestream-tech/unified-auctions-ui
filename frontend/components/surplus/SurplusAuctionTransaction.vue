@@ -20,7 +20,7 @@
             v-if="auction.state !== 'collected'"
             class="mt-4 mb-6"
             :auction="auction"
-            :lowest-next-bid="lowestNextBid"
+            :lowest-next-bid="auction.nextMinimumBid"
             @inputBidAmount="inputBidAmount = $event"
         />
         <div v-if="auction.state !== 'collected'" class="mb-4">
@@ -35,7 +35,7 @@
             />
             <WalletMKRBalanceCheckPanel
                 :wallet-m-k-r="walletMKR"
-                :required-m-k-r="inputBidAmount || lowestNextBid"
+                :required-m-k-r="inputBidAmount || auction.nextMinimumBid"
                 :network="network"
                 :token-address="tokenAddress"
                 :disabled="!isWalletConnected || !isActive"
@@ -47,7 +47,7 @@
             <AllowanceAmountCheckPanel
                 :disabled="!isWalletConnected || !isActive"
                 :allowance-amount="allowanceMKR"
-                :desired-amount="inputBidAmount || lowestNextBid"
+                :desired-amount="inputBidAmount || auction.nextMinimumBid"
                 currency="MKR"
                 :is-loading="isSettingAllowance"
                 :is-correct.sync="isAllowanceAmountCheckPassed"
@@ -82,7 +82,7 @@
                     !isActive
                 "
                 :is-loading="isBidding"
-                :bid-amount="inputBidAmount || lowestNextBid"
+                :bid-amount="inputBidAmount || auction.nextMinimumBid"
                 :is-explanations-shown="isExplanationsShown"
                 @bid="$emit('bid', $event)"
             />
@@ -196,10 +196,6 @@ export default Vue.extend({
         };
     },
     computed: {
-        lowestNextBid(): BigNumber {
-            // TODO: Fetch correct logic for this. Currently hardcoded to +5% for new bid
-            return this.auction.bidAmountMKR ? this.auction.bidAmountMKR.multipliedBy(1.05) : new BigNumber(0);
-        },
         isActive(): boolean {
             return this.auction.state !== 'ready-for-collection';
         },

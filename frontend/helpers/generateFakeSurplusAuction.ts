@@ -103,6 +103,10 @@ export const generateFakeSurplusAuctionTransaction = function (
         new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio || 0)
     );
 
+    const nextMinimumBid = surplusAuction.bidAmountMKR
+        ? surplusAuction.bidAmountMKR.multipliedBy(1.05)
+        : new BigNumber(0);
+
     return {
         ...surplusAuction,
         ...transactionFees,
@@ -110,6 +114,7 @@ export const generateFakeSurplusAuctionTransaction = function (
         marketUnitPriceToUnitPriceRatio,
         unitPrice: approximateUnitPrice,
         combinedBidFees,
+        nextMinimumBid,
     };
 };
 
