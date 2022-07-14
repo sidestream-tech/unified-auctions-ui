@@ -87,6 +87,13 @@ storiesOf('Panels/AllowanceAmountCheckPanel', module)
             disabled: true,
         }),
     }))
+    .add('With MKR', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            currency: 'MKR',
+        }),
+    }))
     .add('Expert Mode', () => ({
         ...common,
         data: () => ({

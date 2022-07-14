@@ -1,4 +1,4 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionTransaction } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionTransaction, SurplusAuctionActive } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -26,7 +26,7 @@ const getSurplusAuctionBidIncreaseCoefficient = memoizee(_getSurplusAuctionBidIn
 
 export const getNextMinimumBid = async (
     network: string,
-    surplusAuction: SurplusAuction
+    surplusAuction: SurplusAuctionActive
 ): Promise<BigNumber | undefined> => {
     if (!surplusAuction.bidAmountMKR) {
         return undefined;
@@ -61,6 +61,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const baseAuctionInfo: SurplusAuctionBase = {
         network,
         id: auctionIndex,
+        fetchedAt,
     };
 
     if (isAuctionCollected) {
@@ -68,7 +69,7 @@ export const fetchSurplusAuctionByIndex = async function (
         if (auctionLastIndex < auctionIndex) {
             throw new Error('No active auction exists with this id');
         }
-        return { ...baseAuctionInfo, state: 'collected', fetchedAt };
+        return { ...baseAuctionInfo, state: 'collected' };
     }
 
     const auctionEndDate = new Date(auctionData.end * 1000);
@@ -149,7 +150,7 @@ export const collectSurplusAuction = async function (network: string, auctionInd
 
 export const enrichSurplusAuctionWithMinimumBid = async (
     network: string,
-    auction: SurplusAuction
+    auction: SurplusAuctionActive
 ): Promise<SurplusAuctionTransaction> => {
     const nextMinimumBid = await getNextMinimumBid(network, auction);
     return {
