@@ -2,7 +2,7 @@ import type {
     Notifier,
     SurplusAuction,
     SurplusAuctionBase,
-    SurplusAuctionTransaction,
+    SurplusAuctionEnriched,
     SurplusAuctionActive,
     SurplusAuctionCollected,
 } from './types';
@@ -136,12 +136,12 @@ export const collectSurplusAuction = async function (network: string, auctionInd
 export const enrichSurplusAuctionActive = async (
     network: string,
     auction: SurplusAuctionActive
-): Promise<SurplusAuctionTransaction> => {
+): Promise<SurplusAuctionEnriched> => {
     const unitPrice = auction.receiveAmountDAI.div(auction.bidAmountMKR);
     const marketUnitPrice = (await convertMkrToDai(network, auction.bidAmountMKR)).div(auction.bidAmountMKR);
     const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
 
-    return { ...auction, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice };
+    return { marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice, ...auction };
 };
 
 export const enrichSurplusAuctions = async (
