@@ -49,7 +49,7 @@ export const state = (): State => getInitialState();
 
 export const getters = {
     auctionStorage(state: State) {
-        return state.auctionStorage;
+        return Object.values(state.auctionStorage);
     },
     auctionStates(state: State) {
         return state.auctionStates;

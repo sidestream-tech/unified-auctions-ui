@@ -16,7 +16,7 @@
             :last-updated="lastUpdated"
             :is-explanations-shown.sync="isExplanationsShown"
             :network="network"
-            :token-address="tokenAddress"
+            token-address="0x5Bce63765E760Da380EEbfE7157c08c25eC87600"
             @connectWallet="openSelectWalletModal"
             @disconnectWallet="disconnectWallet"
             @refreshWallet="refreshWallet"

@@ -86,7 +86,7 @@ export default Vue.extend({
             default: () => [],
         },
         selectedAuctionId: {
-            type: Number,
+            type: String,
             default: null,
         },
         walletAddress: {
@@ -153,7 +153,8 @@ export default Vue.extend({
     computed: {
         selectedAuction(): SurplusAuctionTransaction | undefined {
             return (
-                this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || undefined
+                this.auctions.find(auctionTransaction => auctionTransaction.id === parseInt(this.selectedAuctionId)) ||
+                undefined
             );
         },
         selectedAuctionError(): string | undefined {
