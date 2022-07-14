@@ -14,6 +14,7 @@ import {
     authorizeSurplus,
     getSurplusAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
+import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import notifier from '~/lib/notifier';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
@@ -217,5 +218,12 @@ export const actions = {
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
+    },
+    async getMKRTokenAddress({ rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        return await getTokenAddressByNetworkAndSymbol(network, 'MCD_DAI');
     },
 };
