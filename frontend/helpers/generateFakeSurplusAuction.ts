@@ -65,7 +65,7 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
 };
 
 export const generateFakeSurplusTransactionFees = function (): SurplusTransactionFees {
-    return {
+    const fees = {
         restartTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
         allowanceTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
         bidTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
@@ -76,6 +76,11 @@ export const generateFakeSurplusTransactionFees = function (): SurplusTransactio
         bidTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
         collectTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
         authTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
+    };
+    return {
+        ...fees,
+        combinedBidFeesDai: fees.bidTransactionFeeDai.plus(fees.collectTransactionFeeDai),
+        combinedBidFeesEth: fees.bidTransactionFeeEth.plus(fees.collectTransactionFeeEth),
     };
 };
 
@@ -89,7 +94,6 @@ export const generateFakeSurplusAuctionTransaction = function (
     }
 
     const transactionFees = generateFakeSurplusTransactionFees();
-    const combinedBidFeesDai = transactionFees.bidTransactionFeeDai.plus(transactionFees.collectTransactionFeeDai);
 
     // generate fake market data
     const approximateUnitPrice = surplusAuction.bidAmountMKR.dividedBy(surplusAuction.receiveAmountDAI);
@@ -108,7 +112,6 @@ export const generateFakeSurplusAuctionTransaction = function (
         marketUnitPrice,
         marketUnitPriceToUnitPriceRatio,
         unitPrice: approximateUnitPrice,
-        combinedBidFeesDai,
         nextMinimumBid,
     };
 };

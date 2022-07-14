@@ -6,7 +6,6 @@ import type {
     SurplusAuctionEnriched,
     SurplusAuctionCollected,
     SurplusTransactionFees,
-    SurplusAuctionWithMinimumBid,
     SurplusAuctionActive,
 } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
@@ -201,6 +200,7 @@ export const getSurplusTransactionFees = async function (network: string): Promi
     const bidTransactionFeeEth = gasPrice.multipliedBy(85181);
     const collectTransactionFeeEth = gasPrice.multipliedBy(94114);
     const authTransactionFeeEth = gasPrice.multipliedBy(48356);
+    const combinedBidFeesEth = bidTransactionFeeEth.plus(collectTransactionFeeEth);
 
     return {
         restartTransactionFeeEth,
@@ -213,5 +213,7 @@ export const getSurplusTransactionFees = async function (network: string): Promi
         collectTransactionFeeDai: collectTransactionFeeEth.multipliedBy(exchangeRate),
         authTransactionFeeEth,
         authTransactionFeeDai: authTransactionFeeEth.multipliedBy(exchangeRate),
+        combinedBidFeesEth,
+        combinedBidFeesDai: combinedBidFeesEth.multipliedBy(exchangeRate),
     };
 };
