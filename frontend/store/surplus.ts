@@ -99,24 +99,6 @@ export const mutations = {
     setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
         Vue.set(state.auctionStates, auctionId, value);
     },
-    setMarketPrice(
-        state: State,
-        {
-            marketUnitPrice,
-            marketUnitPriceToUnitPriceRatio,
-            unitPrice,
-            auctionIndex,
-        }: {
-            marketUnitPrice: BigNumber;
-            marketUnitPriceToUnitPriceRatio: BigNumber;
-            unitPrice: BigNumber;
-            auctionIndex: number;
-        }
-    ) {
-        state.auctionStorage[auctionIndex].marketUnitPrice = marketUnitPrice;
-        state.auctionStorage[auctionIndex].marketUnitPriceToUnitPriceRatio = marketUnitPriceToUnitPriceRatio;
-        state.auctionStorage[auctionIndex].unitPrice = unitPrice;
-    },
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
         Vue.set(state.auctionErrors, auctionId, error);
     },

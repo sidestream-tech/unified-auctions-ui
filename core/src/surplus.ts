@@ -154,12 +154,18 @@ export const enrichSurplusAuction = async (
     network: string,
     auction: SurplusAuctionActive
 ): Promise<SurplusAuctionEnriched> => {
-    const unitPrice = auction.receiveAmountDAI.div(auction.bidAmountMKR);
-    const marketUnitPrice = (await convertMkrToDai(network, auction.bidAmountMKR)).div(auction.bidAmountMKR);
-    const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
     const nextMinimumBid = await getNextMinimumBid(network, auction);
-
-    return { nextMinimumBid, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice, ...auction };
+    const unitPrice = auction.bidAmountMKR.div(auction.receiveAmountDAI);
+    const mkrMarketPrice = (await convertMkrToDai(network, auction.bidAmountMKR)).div(auction.bidAmountMKR);
+    const marketUnitPrice = new BigNumber(1).div(mkrMarketPrice);
+    const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
+    return {
+        ...auction,
+        nextMinimumBid,
+        unitPrice,
+        marketUnitPrice,
+        marketUnitPriceToUnitPriceRatio,
+    };
 };
 
 export const enrichSurplusAuctions = async (
