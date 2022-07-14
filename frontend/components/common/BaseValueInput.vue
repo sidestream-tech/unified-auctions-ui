@@ -125,11 +125,11 @@ export default Vue.extend({
 }
 
 .Input {
-    @apply flex-grow text-right border-none outline-none pr-1 disabled:bg-transparent disabled:cursor-not-allowed;
+    @apply flex-grow text-right border-none outline-none pr-1 bg-transparent disabled:cursor-not-allowed;
 }
 
 .Disabled {
-    @apply bg-gray-200 cursor-not-allowed;
+    @apply bg-gray-200 dark:bg-gray-500 cursor-not-allowed;
 }
 
 .Error {
