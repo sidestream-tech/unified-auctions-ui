@@ -127,7 +127,7 @@ export const authorizeSurplus = memoizee(_authorizeSurplus, {
 export const setAllowanceAmountMKR = async function (
     network: string,
     walletAddress: string,
-    amount?: string | number,
+    amount?: BigNumber,
     notifier?: Notifier
 ): Promise<string> {
     walletAddress; // so the memoizee cache is invalidated if another address is used

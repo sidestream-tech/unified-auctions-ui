@@ -13,6 +13,8 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 
+import BigNumber from '../src/bignumber';
+
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
@@ -52,9 +54,9 @@ describe('Surplus Auction', () => {
     });
     it('participates in active auction', async () => {
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
-        await setAllowanceAmountMKR('custom', address, '20');
+        await setAllowanceAmountMKR('custom', address, new BigNumber('20'));
         await swapToMKR('custom', 20, 20);
-        await bidToSurplusAuction('custom', 2328, '20');
+        await bidToSurplusAuction('custom', 2328, new BigNumber('20'));
         const auctions = await fetchActiveSurplusAuctions('custom');
         const currentAuction = auctions[0];
         expect(currentAuction.id).to.equal(2328);
@@ -102,7 +104,9 @@ describe('Surplus Auction', () => {
         expect(collectSurplusAuction('custom', 3333)).to.be.revertedWith('Did not find the auction to collect.');
     });
     it('forbids bidding on inexistant auctions', async () => {
-        expect(bidToSurplusAuction('custom', 3333, '20')).to.be.revertedWith('Did not find the auction to bid on.');
+        expect(bidToSurplusAuction('custom', 3333, new BigNumber('20'))).to.be.revertedWith(
+            'Did not find the auction to bid on.'
+        );
     });
     it('forbids fetching inexistant auctions', async () => {
         expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
