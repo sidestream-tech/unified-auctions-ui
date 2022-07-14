@@ -117,7 +117,7 @@ export const actions = {
             commit('refreshLastUpdated');
         }
     },
-    async setAllowanceAmountMKR({ rootGetters, commit }: ActionContext<State, State>, amount: number | string) {
+    async setAllowanceAmountMKR({ rootGetters, commit }: ActionContext<State, State>, amount: BigNumber) {
         const network = rootGetters['network/getMakerNetwork'];
         const wallet = rootGetters['wallet/getAddress'];
         try {
@@ -192,7 +192,7 @@ export const actions = {
     },
     async bidToSurplusAuction(
         { rootGetters, commit, dispatch }: ActionContext<State, State>,
-        { auctionIndex, bid }: { auctionIndex: number; bid: string }
+        { auctionIndex, bid }: { auctionIndex: number; bid: BigNumber }
     ) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {

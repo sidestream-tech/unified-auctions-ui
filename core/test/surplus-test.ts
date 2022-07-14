@@ -12,6 +12,7 @@ import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
+import BigNumber from '../src/bignumber';
 
 import { SurplusAuction } from '../src/types';
 import hre from 'hardhat';
@@ -59,9 +60,9 @@ describe('Surplus Auction', () => {
     enrichSurplusAuctionWithMinimumBid;
     it('participates in active auction', async () => {
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
-        await setAllowanceAmountMKR('custom', address, '20');
+        await setAllowanceAmountMKR('custom', address, new BigNumber('20'));
         await swapToMKR('custom', 20, 20);
-        await bidToSurplusAuction('custom', 2328, '20');
+        await bidToSurplusAuction('custom', 2328, new BigNumber('20'));
         const auctions = await fetchActiveSurplusAuctions('custom');
         const currentAuction = auctions[0] as SurplusAuction;
         expect(currentAuction.id).to.equal(2328);
@@ -106,7 +107,9 @@ describe('Surplus Auction', () => {
         expect(collectSurplusAuction('custom', 3333)).to.be.revertedWith('Did not find the auction to collect.');
     });
     it('forbids bidding on inexistant auctions', async () => {
-        expect(bidToSurplusAuction('custom', 3333, '20')).to.be.revertedWith('Did not find the auction to bid on.');
+        expect(bidToSurplusAuction('custom', 3333, new BigNumber('20'))).to.be.revertedWith(
+            'Did not find the auction to bid on.'
+        );
     });
     it('forbids fetching inexistant auctions', async () => {
         expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
@@ -122,8 +125,8 @@ describe('Surplus Auction', () => {
         expect(bid.toString()).to.equal('16.94241213279722952');
         expect(auctions[0].bidAmountMKR.toString()).to.equal('16.290780896920413');
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
-        await setAllowanceAmountMKR('custom', address, '20');
+        await setAllowanceAmountMKR('custom', address, new BigNumber('20'));
         await swapToMKR('custom', 20, 20);
-        await bidToSurplusAuction('custom', 2328, bid.toString());
+        await bidToSurplusAuction('custom', 2328, bid);
     });
 });
