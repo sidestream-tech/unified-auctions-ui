@@ -29,7 +29,7 @@
             <div class="flex w-1/2 items-center space-x-2 justify-end -mr-1">
                 <div class="w-full flex-shrink-0">
                     <bid-input
-                        :transaction-bid-amount.sync="transactionBidAmount"
+                        :transaction-bid-amount.sync="inputBidAmount"
                         :minimum-bid-dai="lowestNextBid"
                         :disabled="!isActive"
                         auction-type="surplus"
@@ -95,7 +95,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            transactionBidAmount: undefined as BigNumber | undefined,
+            inputBidAmount: undefined as BigNumber | undefined,
         };
     },
     computed: {
@@ -113,10 +113,10 @@ export default Vue.extend({
         },
     },
     watch: {
-        transactionBidAmount: {
+        inputBidAmount: {
             immediate: true,
-            handler(transactionBidAmount) {
-                this.$emit('inputBidAmount', transactionBidAmount);
+            handler(inputBidAmount) {
+                this.$emit('inputBidAmount', inputBidAmount);
             },
         },
     },
