@@ -16,6 +16,8 @@ import { createWalletFromPrivateKey } from '../src/signer';
 import BigNumber from '../src/bignumber';
 import { SurplusAuctionActive } from '../src/types';
 
+import BigNumber from '../src/bignumber';
+
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;

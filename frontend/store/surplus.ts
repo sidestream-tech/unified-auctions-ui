@@ -15,6 +15,7 @@ import {
     authorizeSurplus,
     getSurplusAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
+import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import notifier from '~/lib/notifier';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
@@ -29,6 +30,7 @@ interface State {
     error: string | null;
     lastUpdated: Date | undefined;
     allowanceAmount?: BigNumber;
+    auctionErrors: Record<string, string | undefined>;
 }
 
 const getInitialState = (): State => ({
@@ -40,6 +42,7 @@ const getInitialState = (): State => ({
     isBidding: false,
     error: null,
     lastUpdated: undefined,
+    auctionErrors: {},
 });
 
 export const state = (): State => getInitialState();
@@ -69,6 +72,9 @@ export const getters = {
     lastUpdated(state: State) {
         return state.lastUpdated;
     },
+    getAuctionErrors(state: State) {
+        return state.auctionErrors;
+    },
 };
 
 export const mutations = {
@@ -92,6 +98,9 @@ export const mutations = {
     },
     setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
         Vue.set(state.auctionStates, auctionId, value);
+    },
+    setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
+        Vue.set(state.auctionErrors, auctionId, error);
     },
 };
 
@@ -132,7 +141,7 @@ export const actions = {
         const wallet = rootGetters['wallet/getAddress'];
         try {
             commit('setAuthorizationLoading', true);
-            await setAllowanceAmountMKR(network, wallet, amount, notifier);
+            await setAllowanceAmountMKR(network, wallet, new BigNumber(amount), notifier);
             const allowance = await fetchAllowanceAmountMKR(network, wallet);
             commit('setAllowance', allowance);
         } catch (error: any) {
@@ -232,5 +241,12 @@ export const actions = {
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
+    },
+    async getMKRTokenAddress({ rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        return await getTokenAddressByNetworkAndSymbol(network, 'MKR');
     },
 };

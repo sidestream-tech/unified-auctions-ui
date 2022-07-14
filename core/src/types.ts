@@ -140,6 +140,7 @@ export declare interface TakeEvent {
 export declare interface WalletBalances {
     walletETH: BigNumber;
     walletDAI: BigNumber;
+    walletMKR: BigNumber;
     walletVatDAI: BigNumber;
     walletLastUpdatedDate: Date;
 }
