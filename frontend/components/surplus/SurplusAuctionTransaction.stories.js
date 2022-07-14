@@ -17,13 +17,10 @@ const common = {
         walletMKR: undefined,
         allowanceMKR: undefined,
         walletAddress: undefined,
-        isAuthorizedDAI: false,
-        isAuthorizedMKR: false,
 
         isConnectingWallet: false,
         isRefreshingWallet: false,
         isSettingAllowance: false,
-        isAuthorizing: false,
         isBidding: false,
         isCollecting: false,
     }),
@@ -59,20 +56,6 @@ const common = {
                 this.isRefreshingWallet = false;
             }, 1000);
         },
-        authorizeDAI() {
-            this.isAuthorizing = true;
-            setTimeout(() => {
-                this.isAuthorizedDAI = true;
-                this.isAuthorizing = false;
-            }, 1000);
-        },
-        authorizeMKR() {
-            this.isAuthorizing = true;
-            setTimeout(() => {
-                this.isAuthorizedMKR = true;
-                this.isAuthorizing = false;
-            }, 1000);
-        },
         bid(amount) {
             this.isBidding = true;
             setTimeout(() => {
@@ -99,8 +82,6 @@ const common = {
           @disconnect="disconnect" 
           @setAllowanceAmount="setAllowanceAmount" 
           @refresh="refresh" 
-          @authorizeDAI="authorizeDAI" 
-          @authorizeMKR="authorizeMKR"
           @bid="bid"
           @collect="collect"
         />`,
@@ -137,8 +118,6 @@ storiesOf('Surplus/SurplusAuctionTransaction', module)
             walletAddress: collectAuction.receiverAddress,
             walletMKR: new BigNumber(faker.finance.amount(10, 20)),
             allowanceMKR: new BigNumber(faker.finance.amount(1, 2)),
-            isAuthorizedDAI: true,
-            isAuthorizedMKR: true,
         }),
     }))
     .add('Requires Restart', () => ({

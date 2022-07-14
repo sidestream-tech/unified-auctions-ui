@@ -53,34 +53,10 @@
                 :is-correct.sync="isAllowanceAmountCheckPassed"
                 @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
             />
-            <WalletAuthorizationCheckPanel
-                :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isActive"
-                :is-wallet-authorized="isAuthorizedDAI"
-                :wallet-address="walletAddress"
-                :is-loading="isAuthorizing"
-                :is-explanations-shown="isExplanationsShown"
-                @authorizeWallet="$emit('authorizeDAI')"
-            />
-            <CollateralAuthorizationCheckPanel
-                :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isAuthorizedDAI || !isActive"
-                collateral-type="MKR"
-                :authorized-collaterals="isAuthorizedMKR ? ['MKR'] : []"
-                :auth-transaction-fee-e-t-h="auction.authTransactionFeeMKR"
-                :wallet-address="walletAddress"
-                :is-loading="isAuthorizing"
-                :is-explanations-shown="isExplanationsShown"
-                @authorizeCollateral="$emit('authorizeMKR')"
-            />
             <HighestBidCheckPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
-                :disabled="
-                    !isWalletMKRCheckPassed ||
-                    !isAllowanceAmountCheckPassed ||
-                    !isAuthorizedDAI ||
-                    !isAuthorizedMKR ||
-                    !isActive
-                "
+                :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isActive"
                 :is-loading="isBidding"
                 :bid-amount="inputBidAmount || auction.nextMinimumBid"
                 :is-explanations-shown="isExplanationsShown"
@@ -108,8 +84,6 @@ import CollectSurplusAuctionPanel from '../panels/CollectSurplusAuctionPanel.vue
 import SurplusAuctionBidTransactionTable from '~/components/surplus/SurplusAuctionBidTransactionTable.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
-import CollateralAuthorizationCheckPanel from '~/components/panels/CollateralAuthorizationCheckPanel.vue';
-import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
 
 export default Vue.extend({
     components: {
@@ -121,8 +95,6 @@ export default Vue.extend({
         Alert,
         SurplusAuctionBidTransactionTable,
         WalletConnectionCheckPanel,
-        CollateralAuthorizationCheckPanel,
-        WalletAuthorizationCheckPanel,
     },
     props: {
         auction: {
@@ -141,14 +113,6 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        isAuthorizedDAI: {
-            type: Boolean,
-            default: false,
-        },
-        isAuthorizedMKR: {
-            type: Boolean,
-            default: false,
-        },
         isConnectingWallet: {
             type: Boolean,
             default: false,
@@ -158,10 +122,6 @@ export default Vue.extend({
             default: false,
         },
         isSettingAllowance: {
-            type: Boolean,
-            default: false,
-        },
-        isAuthorizing: {
             type: Boolean,
             default: false,
         },
