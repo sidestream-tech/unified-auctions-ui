@@ -3,7 +3,7 @@ import { abi as UNISWAP_V3_QUOTER_ABI } from '@uniswap/v3-periphery/artifacts/co
 import BigNumber from '../../bignumber';
 import getProvider from '../../provider';
 import { getContractAddressByName } from '../../contracts';
-import { DAI_NUMBER_OF_DIGITS } from '../../constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
@@ -48,35 +48,34 @@ export const convertCollateralToDaiUsingRoute = async function (
     return daiAmount;
 };
 
-export const convertCollateralToDai = async function (
+export const convertSymbolToDai = async function (
     network: string,
-    collateralSymbol: string,
-    collateralAmount: BigNumber
+    symbol: string,
+    amount: BigNumber,
+    decimals: number
 ): Promise<BigNumber> {
-    const collateral = await getCollateralConfigBySymbol(collateralSymbol);
-    const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
+    const integerAmount = amount.shiftedBy(decimals).toFixed(0);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInputSingle(
-        await getContractAddressByName(network, collateralSymbol),
+        await getContractAddressByName(network, symbol),
         await getContractAddressByName(network, 'MCD_DAI'),
         UNISWAP_FEE,
-        collateralIntegerAmount,
+        integerAmount,
         0
     );
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     return daiAmount;
 };
 
+export const convertCollateralToDai = async function (
+    network: string,
+    collateralSymbol: string,
+    collateralAmount: BigNumber
+): Promise<BigNumber> {
+    const collateral = getCollateralConfigBySymbol(collateralSymbol);
+    return await convertSymbolToDai(network, collateralSymbol, collateralAmount, collateral.decimals);
+};
+
 export const convertDaiToMkr = async function (network: string, amountDai: BigNumber): Promise<BigNumber> {
-    const auctionIntegerAmount = amountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0);
-    const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
-    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInputSingle(
-        await getContractAddressByName(network, 'MCD_DAI'),
-        await getContractAddressByName(network, 'MCD_GOV'),
-        UNISWAP_FEE,
-        auctionIntegerAmount,
-        0
-    );
-    const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
-    return daiAmount;
+    return await convertSymbolToDai(network, 'MCD_GOV', amountDai, MKR_NUMBER_OF_DIGITS);
 };
