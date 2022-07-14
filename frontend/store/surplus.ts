@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import type { SurplusAuction, SurplusAuctionTransaction } from 'auctions-core/src/types';
+import type { SurplusAuction, SurplusAuctionActive, SurplusAuctionCollected, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
@@ -131,9 +131,19 @@ export const actions = {
         try {
             commit('setAuctionsFetching', true);
             const auctions = await fetchActiveSurplusAuctions(network);
-            const enrichedAuctionPromises = auctions.map(auc => enrichSurplusAuctionWithMarketPrice(network, auc));
+            const collectedAuctions: SurplusAuctionCollected[] = [];
+            const activeAuctions: SurplusAuctionActive[] = [];
+            auctions.forEach(auc => {
+                if (auc.state === "collected") {
+                    collectedAuctions.push(auc)
+                } else {
+                    activeAuctions.push(auc)
+                }
+            })
+            const enrichedAuctionPromises = activeAuctions.map(auc => enrichSurplusAuctionWithMarketPrice(network, auc));
             const auctionTransactions = await Promise.all(enrichedAuctionPromises);
             auctionTransactions.forEach(auctionTransaction => commit('addAuctionToStorage', auctionTransaction));
+            collectedAuctions.forEach(auction => commit('addAuctionToStorage', auction));
         } catch (error: any) {
             console.error('fetch surplus auction error', error);
             commit('setError', error.message);

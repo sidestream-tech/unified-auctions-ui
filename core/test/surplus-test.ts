@@ -14,6 +14,7 @@ import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 
 import BigNumber from '../src/bignumber';
+import { SurplusAuctionActive } from '../src/types';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
@@ -46,7 +47,7 @@ describe('Surplus Auction', () => {
     it('enriches auctions with market prices', async () => {
         const network = 'custom';
         const auctions = await fetchActiveSurplusAuctions(network);
-        const auction = auctions[0];
+        const auction = auctions[0] as SurplusAuctionActive;
         const enrichedAucton = await enrichSurplusAuctionWithMarketPrice(network, auction);
         expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('0.000391564602460200339266667');
         expect(enrichedAucton.unitPrice?.toString()).to.equal('0.0005430260298973471');

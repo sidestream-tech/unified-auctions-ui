@@ -1,4 +1,4 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionTransaction } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionTransaction, SurplusAuctionActive } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -128,11 +128,8 @@ export const collectSurplusAuction = async function (network: string, auctionInd
 
 export const enrichSurplusAuctionWithMarketPrice = async (
     network: string,
-    auction: SurplusAuction
+    auction: SurplusAuctionActive
 ): Promise<SurplusAuctionTransaction> => {
-    if (!auction.bidAmountMKR || !auction.receiveAmountDAI) {
-        return auction;
-    }
     const unitPrice = auction.bidAmountMKR.div(auction.receiveAmountDAI);
     const marketUnitPrice = (await convertDaiToMkr(network, auction.receiveAmountDAI)).div(auction.receiveAmountDAI);
     const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
