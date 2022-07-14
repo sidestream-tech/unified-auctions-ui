@@ -9,6 +9,7 @@ import {
     ETH_NUMBER_OF_DIGITS,
     RAD_NUMBER_OF_DIGITS,
     WAD_NUMBER_OF_DIGITS,
+    MKR_NUMBER_OF_DIGITS,
 } from './constants/UNITS';
 
 export const fetchBalanceETH = async function (network: string, walletAddress: string): Promise<BigNumber> {
