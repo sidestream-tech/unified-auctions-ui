@@ -40,7 +40,7 @@ export default Vue.extend({
     props: {
         auctionTransaction: {
             type: Object as Vue.PropType<AuctionTransaction>,
-            required: true,
+            default: null,
         },
         isWalletAuthorized: {
             type: Boolean,
