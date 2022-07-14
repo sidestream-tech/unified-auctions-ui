@@ -6,8 +6,57 @@
                     <LandingBlock title="Surplus auctions" @explanations="explanationsTrigger" />
                 </div>
                 <div class="mx-4 md:mx-0 SurplusTextContainer">
-                    <SurplusText ref="surplusText" :is-explanations-shown="isExplanationsShown" />
+                    <SurplusText
+                        ref="surplusText"
+                        :auctions="auctions"
+                        :selected-auction-id="selectedAuctionId"
+                        :are-auctions-fetching="areAuctionsFetching"
+                        :last-updated="lastUpdated"
+                        :auctions-error="auctionsError"
+                        :is-explanations-shown="isExplanationsShown"
+                        @selectedAuctionId:update="$emit('selectedAuctionId:update', $event)"
+                    />
                 </div>
+            </template>
+            <template #step1>
+                <SurplusAuction
+                    class="mt-6 mb-8 mx-8"
+                    :auction="selectedAuction"
+                    :auction-id="selectedAuctionId"
+                    :are-auctions-fetching="areAuctionsFetching"
+                    :is-explanations-shown="isExplanationsShown"
+                    :error="selectedAuctionError"
+                    :wallet-address="walletAddress"
+                    :is-connecting="isConnectingWallet"
+                    @restart="$emit('restart', $event)"
+                    @connect="$emit('connect')"
+                    @disconnect="$emit('disconnect')"
+                    @bid="bid()"
+                />
+            </template>
+            <template #step2>
+                <SurplusAuctionTransactionFlow
+                    v-if="selectedAuction"
+                    class="mt-6 mb-8 mx-8"
+                    :auction="selectedAuction"
+                    :wallet-address="walletAddress"
+                    :wallet-m-k-r="walletMKR"
+                    :allowance-m-k-r="allowanceMKR"
+                    :network="network"
+                    :token-address="tokenAddress"
+                    :is-collecting="isCollecting"
+                    :is-connecting-wallet="isConnectingWallet"
+                    :is-refreshing-wallet="isRefreshingWallet"
+                    :is-setting-allowance="isSettingAllowance"
+                    :is-bidding="isBidding"
+                    :is-explanations-shown="isExplanationsShown"
+                    @connectWallet="$emit('connectWallet')"
+                    @disconnectWallet="$emit('disconnectWallet')"
+                    @refreshWallet="$emit('refreshWallet')"
+                    @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
+                    @authorizeCollateral="$emit('bid', $event)"
+                    @execute="$emit('collect')"
+                />
             </template>
         </SplitLayout>
     </div>
@@ -15,17 +64,87 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { SurplusAuctionTransaction } from 'auctions-core/dist/src/types';
+import BigNumber from 'bignumber.js';
+import SurplusAuction from '../SurplusAuction.vue';
+import SurplusAuctionTransactionFlow from './SurplusAuctionTransactionFlow.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import SurplusText from '~/components/surplus/SurplusText.vue';
 
 export default Vue.extend({
     components: {
+        SurplusAuctionTransactionFlow,
+        SurplusAuction,
         LandingBlock,
         SplitLayout,
         SurplusText,
     },
     props: {
+        auctions: {
+            type: Array as Vue.PropType<SurplusAuctionTransaction[]>,
+            default: () => [],
+        },
+        selectedAuctionId: {
+            type: Number,
+            default: null,
+        },
+        walletAddress: {
+            type: String,
+            default: null,
+        },
+        walletMKR: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        allowanceMKR: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        isConnectingWallet: {
+            type: Boolean,
+            default: false,
+        },
+        isRefreshingWallet: {
+            type: Boolean,
+            default: false,
+        },
+        isSettingAllowance: {
+            type: Boolean,
+            default: false,
+        },
+        isBidding: {
+            type: Boolean,
+            default: false,
+        },
+        isCollecting: {
+            type: Boolean,
+            default: false,
+        },
+        areAuctionsFetching: {
+            type: Boolean,
+            default: false,
+        },
+        auctionsError: {
+            type: String,
+            default: null,
+        },
+        auctionErrors: {
+            type: Object as Vue.PropType<string, string>,
+            default: () => ({}),
+        },
+        lastUpdated: {
+            type: Date,
+            default: null,
+        },
+        tokenAddress: {
+            type: String,
+            default: null,
+        },
+        network: {
+            type: String,
+            default: 'mainnet',
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
@@ -36,8 +155,34 @@ export default Vue.extend({
         secondStep: '',
     }),
     computed: {
+        selectedAuction(): SurplusAuctionTransaction | null {
+            return this.auctions.find(auctionTransaction => auctionTransaction.id === this.selectedAuctionId) || null;
+        },
+        selectedAuctionError(): string | null {
+            return this.auctionErrors[this.selectedAuctionId] || null;
+        },
         isStagingEnvironment(): boolean {
             return !!process.env.STAGING_BANNER_URL;
+        },
+    },
+    watch: {
+        selectedAuctionId: {
+            immediate: true,
+            handler(newSelectedAuctionId) {
+                if (!newSelectedAuctionId) {
+                    this.step = 0;
+                } else {
+                    this.step = 1;
+                }
+            },
+        },
+        step: {
+            immediate: true,
+            handler(newStep) {
+                if (newStep === 0) {
+                    this.$emit('update:selectedAuctionId', null);
+                }
+            },
         },
     },
     methods: {
@@ -46,6 +191,10 @@ export default Vue.extend({
                 (this.$refs.surplusText as Vue).$el.scrollIntoView({ block: 'start', behavior: 'smooth' });
             }
             this.$emit('update:isExplanationsShown', event);
+        },
+        bid() {
+            this.step = 2;
+            this.secondStep = 'bid';
         },
     },
 });

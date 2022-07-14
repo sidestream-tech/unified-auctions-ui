@@ -35,7 +35,7 @@
                 :auctions="auctions"
                 :selected-auction-id.sync="selectedAuctionId"
                 :show-more-rows="!isExplanationsShown"
-                :is-loading="isAuctionsLoading"
+                :is-loading="areAuctionsFetching"
                 :last-updated="lastUpdated"
                 :error="auctionsError"
             />
@@ -58,7 +58,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { SurplusAuctionTransaction } from 'auctions-core/dist/src/types';
+import { SurplusAuctionTransaction } from 'auctions-core/src/types';
 import SurplusAuctionsTable from './SurplusAuctionsTable.vue';
 import WhatIsMakerProtocol from '~/components/WhatIsMakerProtocol.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
@@ -76,7 +76,7 @@ export default Vue.extend({
             type: Array as PropType<SurplusAuctionTransaction[]>,
             default: () => [],
         },
-        isAuctionsLoading: {
+        areAuctionsFetching: {
             type: Boolean,
             default: false,
         },

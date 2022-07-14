@@ -21,11 +21,11 @@ storiesOf('Surplus/SurplusText', module)
     }))
     .add('Fetching with auction', () => ({
         ...common,
-        template: '<SurplusText :auctions="auctions" :isAuctionsLoading="true" />',
+        template: '<SurplusText :auctions="auctions" :areAuctionsFetching="true" />',
     }))
     .add('Fetching without auction', () => ({
         ...common,
-        template: '<SurplusText :isAuctionsLoading="true" />',
+        template: '<SurplusText :areAuctionsFetching="true" />',
     }))
     .add('Error', () => ({
         ...common,

@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
 import { action } from '@storybook/addon-actions';
-import SurplusAuctionTransaction from './SurplusAuctionTransaction';
+import SurplusAuctionTransaction from './SurplusAuctionTransactionFlow';
 import { generateFakeSurplusAuctionTransaction } from '~/helpers/generateFakeSurplusAuction';
 
 const collectAuction = generateFakeSurplusAuctionTransaction('ready-for-collection');
@@ -87,7 +87,7 @@ const common = {
         />`,
 };
 
-storiesOf('Surplus/SurplusAuctionTransaction', module)
+storiesOf('Surplus/SurplusAuctionTransactionFlow', module)
     .add('Default', () => ({
         ...common,
         data: () => ({

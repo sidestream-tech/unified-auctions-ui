@@ -29,8 +29,8 @@
                 :is-loading="isConnectingWallet"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isWalletConnected"
-                @connectWallet="$emit('connect')"
-                @disconnectWallet="$emit('disconnect')"
+                @connectWallet="$emit('connectWallet')"
+                @disconnectWallet="$emit('disconnectWallet')"
             />
             <WalletMKRBalanceCheckPanel
                 :wallet-m-k-r="walletMKR"
@@ -41,7 +41,7 @@
                 :is-loading="isRefreshingWallet"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isWalletMKRCheckPassed"
-                @refresh="$emit('refresh')"
+                @refresh="$emit('refreshWallet')"
             />
             <AllowanceAmountCheckPanel
                 :disabled="!isWalletConnected || !isActive"
