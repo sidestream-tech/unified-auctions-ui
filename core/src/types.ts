@@ -192,7 +192,11 @@ export declare interface SurplusTransactionFees {
     authTransactionFeeDai: BigNumber;
 }
 
-export declare interface SurplusAuctionTransaction extends SurplusAuctionActive, SurplusTransactionFees {
+export declare interface SurplusAuctionWithMinimumBid extends SurplusAuctionActive {
+    nextMinimumBid: BigNumber;
+}
+
+export declare interface SurplusAuctionTransaction extends SurplusAuctionWithMinimumBid, SurplusTransactionFees {
     marketUnitPrice?: BigNumber | string;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
     unitPrice?: BigNumber;

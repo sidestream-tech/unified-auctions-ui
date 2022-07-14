@@ -1,10 +1,19 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusTransactionFees } from './types';
+import memoizee from 'memoizee';
+import type {
+    Notifier,
+    SurplusAuction,
+    SurplusAuctionBase,
+    SurplusAuctionCollected,
+    SurplusTransactionFees,
+    SurplusAuctionWithMinimumBid,
+    SurplusAuctionActive,
+} from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
 import { Contract } from 'ethers';
 import getNetworkDate from './date';
-import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
 import { getGasPriceForUI } from './gas';
 import { getMarketPrice } from './calleeFunctions';
@@ -12,6 +21,22 @@ import { getMarketPrice } from './calleeFunctions';
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
     return new BigNumber(auctionsQuantityBinary._hex).toNumber();
+};
+
+const _getSurplusAuctionBidIncreaseCoefficient = async (network: string): Promise<BigNumber> => {
+    const contract = await getContract(network, 'MCD_FLAP');
+    const auctionsQuantityBinary = await contract.beg();
+    return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
+};
+
+const getSurplusAuctionBidIncreaseCoefficient = memoizee(_getSurplusAuctionBidIncreaseCoefficient, {
+    promise: true,
+    length: 3,
+});
+
+export const getNextMinimumBid = async (network: string, surplusAuction: SurplusAuctionActive): Promise<BigNumber> => {
+    const increaseCoefficient = await getSurplusAuctionBidIncreaseCoefficient(network);
+    return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
 };
 
 const getAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
@@ -114,7 +139,7 @@ export const bidToSurplusAuction = async function (
     const transactionParameters = [
         auctionIndex,
         auction.receiveAmountDAI.shiftedBy(RAD_NUMBER_OF_DIGITS).toFixed(0),
-        new BigNumber(bid).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        bid.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
     ];
     await executeTransaction(network, 'MCD_FLAP', 'tend', transactionParameters, { notifier });
 };
@@ -125,6 +150,37 @@ export const collectSurplusAuction = async function (network: string, auctionInd
         throw new Error('Did not find the auction to collect.');
     }
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
+};
+
+export const enrichSurplusAuction = async (
+    network: string,
+    auction: SurplusAuctionActive
+): Promise<SurplusAuctionWithMinimumBid> => {
+    const nextMinimumBid = await getNextMinimumBid(network, auction);
+    return {
+        nextMinimumBid,
+        ...auction,
+    };
+};
+
+export const enrichSurplusAuctions = async (
+    network: string,
+    auctions: SurplusAuction[]
+): Promise<SurplusAuction[]> => {
+    const nonCollectedAuctions: SurplusAuctionActive[] = [];
+    const collectedAuctions: SurplusAuctionCollected[] = [];
+    auctions.forEach(auction => {
+        if (auction.state !== 'collected') {
+            nonCollectedAuctions.push(auction);
+        } else {
+            collectedAuctions.push(auction);
+        }
+    });
+    const auctionsWithNextMinimumBidsPromises = nonCollectedAuctions.map(auc => {
+        return enrichSurplusAuction(network, auc);
+    });
+    const auctionsEnriched: SurplusAuction[] = await Promise.all(auctionsWithNextMinimumBidsPromises);
+    return auctionsEnriched.concat(collectedAuctions);
 };
 
 export const getSurplusTransactionFees = async function (network: string): Promise<SurplusTransactionFees> {
