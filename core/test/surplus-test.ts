@@ -49,9 +49,9 @@ describe('Surplus Auction', () => {
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0] as SurplusAuctionActive;
         const enrichedAucton = await enrichSurplusAuction(network, auction);
-        expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('0.000391564602460200339266667');
-        expect(enrichedAucton.unitPrice?.toString()).to.equal('0.0005430260298973471');
-        expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('0.386810826324735776873594383');
+        expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('716.387371653262662626292899404');
+        expect(enrichedAucton.unitPrice?.toString()).to.equal('1841.532348254168655583785457918');
+        expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('1.57058181246875098286975143');
     });
     it('participates in active auction', async () => {
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');

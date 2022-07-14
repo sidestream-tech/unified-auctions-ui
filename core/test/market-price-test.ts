@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { convertDaiToMkr } from '../src/calleeFunctions/helpers/uniswapV3';
+import { convertMkrToDai } from '../src/calleeFunctions/helpers/uniswapV3';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import BigNumber from '../src/bignumber';
 
@@ -27,7 +27,7 @@ describe('Market Price & Conversions', () => {
         });
     });
     it('gets MKR-DAI exchange rate with Uniswap v3', async () => {
-        const rate = await convertDaiToMkr('custom', new BigNumber(1));
-        expect(rate.toString()).to.equal('0.000557272188174367');
+        const rate = await convertMkrToDai('custom', new BigNumber(1));
+        expect(rate.toString()).to.equal('1731.669387321259063176');
     });
 });

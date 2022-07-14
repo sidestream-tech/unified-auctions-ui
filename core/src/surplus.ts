@@ -6,7 +6,7 @@ import { Contract } from 'ethers';
 import getNetworkDate from './date';
 import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
-import { convertDaiToMkr } from './calleeFunctions/helpers/uniswapV3';
+import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
@@ -130,8 +130,8 @@ export const enrichSurplusAuction = async (
     network: string,
     auction: SurplusAuctionActive
 ): Promise<SurplusAuctionTransaction> => {
-    const unitPrice = auction.bidAmountMKR.div(auction.receiveAmountDAI);
-    const marketUnitPrice = (await convertDaiToMkr(network, auction.receiveAmountDAI)).div(auction.receiveAmountDAI);
+    const unitPrice = auction.receiveAmountDAI.div(auction.bidAmountMKR);
+    const marketUnitPrice = (await convertMkrToDai(network, auction.bidAmountMKR)).div(auction.bidAmountMKR);
     const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
 
     return { ...auction, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice };

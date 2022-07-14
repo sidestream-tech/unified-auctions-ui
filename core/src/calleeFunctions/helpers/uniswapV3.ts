@@ -77,6 +77,6 @@ export const convertCollateralToDai = async function (
     return await convertSymbolToDai(network, collateralSymbol, collateralAmount, collateral.decimals);
 };
 
-export const convertDaiToMkr = async function (network: string, amountDai: BigNumber): Promise<BigNumber> {
+export const convertMkrToDai = async function (network: string, amountDai: BigNumber): Promise<BigNumber> {
     return await convertSymbolToDai(network, 'MCD_GOV', amountDai, MKR_NUMBER_OF_DIGITS);
 };
