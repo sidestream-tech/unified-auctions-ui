@@ -102,7 +102,9 @@ describe('Surplus Auction', () => {
         expect(auctions[0].id).to.equal(2328);
 
         const bet = await getNextMinimumBet('custom', auctions[0]);
+        // @ts-ignore: TS2532
         expect(bet.toString()).to.equal('16.94241213279722952');
+        // @ts-ignore: TS2532
         expect(auctions[0].bidAmountMKR.toString()).to.equal('16.290780896920413');
     });
 });
