@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import type { SurplusAuction, SurplusAuctionActionStates SurplusAuctionEnriched } from 'auctions-core/src/types';
+import type { SurplusAuction, SurplusAuctionActionStates, SurplusAuctionEnriched } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
