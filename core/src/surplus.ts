@@ -1,4 +1,11 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionCollected, SurplusAuctionWithMinimumBid, SurplusAuctionActive } from './types';
+import type {
+    Notifier,
+    SurplusAuction,
+    SurplusAuctionBase,
+    SurplusAuctionCollected,
+    SurplusAuctionWithMinimumBid,
+    SurplusAuctionActive,
+} from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -24,10 +31,7 @@ const getSurplusAuctionBidIncreaseCoefficient = memoizee(_getSurplusAuctionBidIn
     length: 3,
 });
 
-export const getNextMinimumBid = async (
-    network: string,
-    surplusAuction: SurplusAuctionActive
-): Promise<BigNumber> => {
+export const getNextMinimumBid = async (network: string, surplusAuction: SurplusAuctionActive): Promise<BigNumber> => {
     const increaseCoefficient = await getSurplusAuctionBidIncreaseCoefficient(network);
     return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
 };
@@ -175,5 +179,3 @@ export const enrichSurplusAuctions = async (
     const auctionsEnriched: SurplusAuction[] = await Promise.all(auctionsWithNextMinimumBidsPromises);
     return auctionsEnriched.concat(collectedAuctions);
 };
-
-

@@ -121,7 +121,7 @@ describe('Surplus Auction', () => {
         expect(auctions[0].id).to.equal(2328);
         const auction = auctions[0] as SurplusAuctionActive;
 
-        const bid = await getNextMinimumBid('custom', auction );
+        const bid = await getNextMinimumBid('custom', auction);
         expect(bid.toString()).to.equal('16.94241213279722952');
         expect(auction.bidAmountMKR.toString()).to.equal('16.290780896920413');
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
