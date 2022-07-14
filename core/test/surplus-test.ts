@@ -12,7 +12,6 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 
-import { SurplusAuction } from '../src/types';
 import BigNumber from '../src/bignumber';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
