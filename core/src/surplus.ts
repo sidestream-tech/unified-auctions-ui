@@ -1,4 +1,4 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionTransaction, SurplusAuctionActive } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionTransaction, SurplusAuctionActive, SurplusAuctionCollected } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -126,7 +126,7 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
 };
 
-export const enrichSurplusAuction = async (
+export const enrichSurplusAuctionActive = async (
     network: string,
     auction: SurplusAuctionActive
 ): Promise<SurplusAuctionTransaction> => {
@@ -135,4 +135,22 @@ export const enrichSurplusAuction = async (
     const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
 
     return { ...auction, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice };
+};
+
+export const enrichSurplusAuctions = async (
+    network: string,
+    auctions: SurplusAuction[]
+): Promise<SurplusAuction[]> => {
+    const collectedAuctions: SurplusAuctionCollected[] = [];
+    const activeAuctions: SurplusAuctionActive[] = [];
+    auctions.forEach(auc => {
+        if (auc.state === "collected") {
+            collectedAuctions.push(auc)
+        } else {
+            activeAuctions.push(auc)
+        }
+    })
+    const enrichedAuctionPromises = activeAuctions.map(auc => enrichSurplusAuctionActive(network, auc));
+    const auctionTransactions: SurplusAuction[] = await Promise.all(enrichedAuctionPromises);
+    return auctionTransactions.concat(collectedAuctions);
 };

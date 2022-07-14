@@ -7,7 +7,7 @@ import {
     restartSurplusAuction,
     bidToSurplusAuction,
     collectSurplusAuction,
-    enrichSurplusAuction,
+    enrichSurplusAuctions,
 } from 'auctions-core/src/surplus';
 import {
     setAllowanceAmountMKR,
@@ -131,19 +131,8 @@ export const actions = {
         try {
             commit('setAuctionsFetching', true);
             const auctions = await fetchActiveSurplusAuctions(network);
-            const collectedAuctions: SurplusAuctionCollected[] = [];
-            const activeAuctions: SurplusAuctionActive[] = [];
-            auctions.forEach(auc => {
-                if (auc.state === "collected") {
-                    collectedAuctions.push(auc)
-                } else {
-                    activeAuctions.push(auc)
-                }
-            })
-            const enrichedAuctionPromises = activeAuctions.map(auc => enrichSurplusAuction(network, auc));
-            const auctionTransactions = await Promise.all(enrichedAuctionPromises);
-            auctionTransactions.forEach(auctionTransaction => commit('addAuctionToStorage', auctionTransaction));
-            collectedAuctions.forEach(auction => commit('addAuctionToStorage', auction));
+            const enrichedAcutions = await enrichSurplusAuctions(network, auctions);
+            enrichedAcutions.forEach(auctionTransaction => commit('addAuctionToStorage', auctionTransaction));
         } catch (error: any) {
             console.error('fetch surplus auction error', error);
             commit('setError', error.message);
