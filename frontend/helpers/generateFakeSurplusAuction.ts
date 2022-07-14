@@ -67,14 +67,12 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
 export const generateFakeSurplusTransactionFees = function (): SurplusTransactionFees {
     const bidTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
     const authTransactionFeeDAI = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
-    const authTransactionFeeMKR = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
     const restartTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
     const collectTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
 
     return {
         bidTransactionFee,
         authTransactionFeeDAI,
-        authTransactionFeeMKR,
         restartTransactionFee,
         collectTransactionFee,
     };
@@ -90,9 +88,7 @@ export const generateFakeSurplusAuctionTransaction = function (
     }
 
     const transactionFees = generateFakeSurplusTransactionFees();
-    const combinedBidFees = transactionFees.bidTransactionFee
-        ?.plus(transactionFees.authTransactionFeeMKR || 0)
-        .plus(transactionFees.authTransactionFeeDAI || 0);
+    const combinedBidFees = transactionFees.bidTransactionFee?.plus(transactionFees.authTransactionFeeDAI || 0);
 
     // generate fake market data
     const approximateUnitPrice = surplusAuction.bidAmountMKR.dividedBy(surplusAuction.receiveAmountDAI);

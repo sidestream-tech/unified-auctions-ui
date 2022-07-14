@@ -83,7 +83,7 @@ export default Vue.extend({
             if (this.walletMKR === undefined) {
                 return {
                     name: 'inactive',
-                    title: `Please connect a wallet`,
+                    title: `Please connect a wallet to check the amount MKR present`,
                 };
             }
             if (this.walletMKR.isLessThan(this.requiredMKR)) {

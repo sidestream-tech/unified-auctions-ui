@@ -116,7 +116,7 @@ export default Vue.extend({
             if (!this.allowanceAmount) {
                 return {
                     name: 'inactive',
-                    title: 'Please connect a wallet',
+                    title: 'Please connect a wallet to check the allowance',
                 };
             }
             if (!this.desiredAmount || this.desiredAmount?.isNaN()) {
