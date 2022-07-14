@@ -187,10 +187,10 @@ export declare interface SurplusTransactionFees {
 }
 
 export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
-    nextMinimumBid?: BigNumber;
-    marketUnitPrice?: BigNumber | string;
-    marketUnitPriceToUnitPriceRatio?: BigNumber;
-    unitPrice?: BigNumber;
+    nextMinimumBid: BigNumber;
+    marketUnitPrice: BigNumber | string;
+    marketUnitPriceToUnitPriceRatio: BigNumber;
+    unitPrice: BigNumber;
 }
 
 export declare interface SurplusAuctionTransaction extends SurplusAuctionActive, SurplusTransactionFees {

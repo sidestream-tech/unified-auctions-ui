@@ -6,15 +6,16 @@ import {
     collectSurplusAuction,
     fetchSurplusAuctionByIndex,
     restartSurplusAuction,
-    enrichSurplusAuctionActive,
+    getNextMinimumBid,
+    enrichSurplusAuction,
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
+import { SurplusAuctionActive } from '../src/types';
 
 import BigNumber from '../src/bignumber';
-import { SurplusAuctionActive } from '../src/types';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
@@ -52,6 +53,17 @@ describe('Surplus Auction', () => {
         expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('716.387371653262662626292899404');
         expect(enrichedAucton.unitPrice?.toString()).to.equal('1841.532348254168655583785457918');
         expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('1.57058181246875098286975143');
+    it('enrichesAuctionWithMiniumumBids', async () => {
+        const network = 'custom';
+        const auctions = await fetchActiveSurplusAuctions(network);
+        const auction = auctions[0] as SurplusAuctionActive;
+        const enrichedAuction = await enrichSurplusAuction(network, auction);
+
+        if (!enrichedAuction.nextMinimumBid || !enrichedAuction.bidAmountMKR) {
+            throw new Error('Expected values were not defined.');
+        }
+        expect(enrichedAuction.nextMinimumBid.toString()).to.be.equal('16.94241213279722952');
+        expect(enrichedAuction.nextMinimumBid.div(enrichedAuction.bidAmountMKR).toString()).to.be.equal('1.04');
     });
     it('participates in active auction', async () => {
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
@@ -111,5 +123,18 @@ describe('Surplus Auction', () => {
     });
     it('forbids fetching inexistant auctions', async () => {
         expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
+    });
+    it('calculates the minimum bid increase', async () => {
+        const auctions = await fetchActiveSurplusAuctions('custom');
+        expect(auctions[0].id).to.equal(2328);
+        const auction = auctions[0] as SurplusAuctionActive;
+
+        const bid = await getNextMinimumBid('custom', auction);
+        expect(bid.toString()).to.equal('16.94241213279722952');
+        expect(auction.bidAmountMKR.toString()).to.equal('16.290780896920413');
+        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
+        await setAllowanceAmountMKR('custom', address, new BigNumber('20'));
+        await swapToMKR('custom', 20, 20);
+        await bidToSurplusAuction('custom', 2328, bid);
     });
 });
