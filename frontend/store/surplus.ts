@@ -18,6 +18,9 @@ import {
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import notifier from '~/lib/notifier';
 
+const REFETCH_INTERVAL = 30 * 1000;
+let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
+
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
 interface State {
@@ -90,15 +93,27 @@ export const mutations = {
     setAuthorizationLoading(state: State, isLoading: boolean) {
         state.isAuthorizationLoading = isLoading;
     },
-    setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
+    setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: SurplusAuctionActionStates }) {
         Vue.set(state.auctionStates, auctionId, value);
     },
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
         Vue.set(state.auctionErrors, auctionId, error);
     },
+    reset(state: State) {
+        Object.assign(state, getInitialState());
+    },
 };
 
 export const actions = {
+    async setup({ dispatch, commit }: ActionContext<State, State>) {
+        commit('reset');
+
+        await dispatch('fetchSurplusAuctions');
+        if (refetchIntervalId) {
+            clearInterval(refetchIntervalId);
+        }
+        refetchIntervalId = setInterval(() => dispatch('fetchSurplusAuctions'), REFETCH_INTERVAL);
+    },
     async fetchSurplusAuctions({ rootGetters, commit }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
