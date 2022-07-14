@@ -30,8 +30,8 @@
                     :wallet-address="walletAddress"
                     :is-connecting="isConnectingWallet"
                     @restart="$emit('restart', $event)"
-                    @connect="$emit('connect')"
-                    @disconnect="$emit('disconnect')"
+                    @connect="$emit('connectWallet')"
+                    @disconnect="$emit('disconnectWallet')"
                     @bid="bid()"
                 />
             </template>
@@ -54,8 +54,8 @@
                     @disconnectWallet="$emit('disconnectWallet')"
                     @refreshWallet="$emit('refreshWallet')"
                     @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
-                    @authorizeCollateral="$emit('bid', $event)"
-                    @execute="$emit('collect')"
+                    @bid="$emit('bid', $event)"
+                    @collect="$emit('collect')"
                 />
             </template>
         </SplitLayout>

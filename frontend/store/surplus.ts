@@ -25,7 +25,6 @@ interface State {
     auctionStates: Record<number, SurplusAuctionActionStates>;
     areAuctionsFetching: boolean;
     isAuthorizationLoading: boolean;
-    isBidding: boolean;
     error: string | null;
     lastUpdated: Date | undefined;
     allowanceAmount?: BigNumber;
@@ -38,7 +37,6 @@ const getInitialState = (): State => ({
     allowanceAmount: undefined,
     areAuctionsFetching: false,
     isAuthorizationLoading: false,
-    isBidding: false,
     error: null,
     lastUpdated: undefined,
     auctionErrors: {},
@@ -61,9 +59,6 @@ export const getters = {
     },
     isAuthorizationLoading(state: State) {
         return state.isAuthorizationLoading;
-    },
-    isBidding(state: State) {
-        return state.isBidding;
     },
     error(state: State) {
         return state.error;
