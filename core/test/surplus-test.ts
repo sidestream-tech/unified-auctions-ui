@@ -121,5 +121,9 @@ describe('Surplus Auction', () => {
         }
         expect(bid.toString()).to.equal('16.94241213279722952');
         expect(auctions[0].bidAmountMKR.toString()).to.equal('16.290780896920413');
+        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
+        await setAllowanceAmountMKR('custom', address, '20');
+        await swapToMKR('custom', 20, 20);
+        await bidToSurplusAuction('custom', 2328, bid.toString());
     });
 });
