@@ -3,7 +3,9 @@
         <TransactionMessage
             :is-explanations-shown="isExplanationsShown"
             :transaction-address="transactionAddress"
-            :transaction-fee="transactionFee"
+            :is-wallet-authorized="isWalletAuthorized"
+            :is-collateral-authorized="isCollateralAuthorized"
+            :auction-transaction="auctionTransaction"
             show-different-wallet-info
         />
         <div class="flex flex-col md:flex-row md:space-x-4 justify-end flex-wrap mt-4">
@@ -34,10 +36,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
 import BaseButton from '~/components/common/BaseButton.vue';
 import ExecuteWithOtherWalletBlock from '~/components/transaction/ExecuteWithOtherWalletBlock.vue';
 import TransactionMessage from '~/components/transaction/TransactionMessage.vue';
+import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
     name: 'WalletBlock',
@@ -47,6 +49,10 @@ export default Vue.extend({
         TransactionMessage,
     },
     props: {
+        auctionTransaction: {
+            type: Object as Vue.PropType<AuctionTransaction>,
+            required: true,
+        },
         disabled: {
             type: Boolean,
             default: false,
@@ -63,9 +69,13 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        transactionFee: {
-            type: [Number, Object] as Vue.PropType<Number | BigNumber>,
-            default: null,
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isCollateralAuthorized: {
+            type: Boolean,
+            default: false,
         },
         collateralType: {
             type: String,

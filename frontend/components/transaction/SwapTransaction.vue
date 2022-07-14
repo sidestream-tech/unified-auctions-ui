@@ -79,7 +79,9 @@
             :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
             :collateral-type="auctionTransaction.collateralType"
-            :transaction-fee="auctionTransaction.swapTransactionFeeETH"
+            :is-wallet-authorized="isWalletAuthorized"
+            :is-collateral-authorized="isCollateralAuthorized"
+            :auction-transaction="auctionTransaction"
             :transaction-gross-profit="auctionTransaction.transactionGrossProfit"
             @execute="$emit('execute', { id: auctionTransaction.id, alternativeDestinationAddress: $event })"
         />
@@ -97,6 +99,7 @@ import ExecutionBlock from '~/components/transaction/ExecutionBlock.vue';
 import SwapTransactionTable from '~/components/transaction/SwapTransactionTable.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import Explain from '~/components/utils/Explain.vue';
+import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
     name: 'SwapTransaction',
@@ -157,7 +160,7 @@ export default Vue.extend({
         isConnected(): boolean {
             return this.walletAddress !== null;
         },
-        isCollateralAuthorised(): boolean {
+        isCollateralAuthorized(): boolean {
             return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
         },
         isAuctionActiveAndNotFinished(): boolean {

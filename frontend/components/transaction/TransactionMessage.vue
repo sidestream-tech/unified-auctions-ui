@@ -5,9 +5,18 @@
             <format-address explicit :value="transactionAddress" />
         </div>
         <div v-else-if="isExplanationsShown">
-            Auction bidding incurs transaction fee of approximately
-            <FormatCurrency :value="transactionFee" :decimals="5" currency="ETH" />, hence, the connected wallet needs
-            to hold enough funds to cover these fees. The transaction fee is a recommended value and based on the
+            Auction bidding incurs a
+            <Explain text="transaction fee" set-width="400px">
+                <SwapTransactionFeesTable
+                    :is-wallet-authorized="isWalletAuthorized"
+                    :is-collateral-authorized="isCollateralAuthorized"
+                    :auction-transaction="auctionTransaction"
+                />
+            </Explain>
+            of approximately
+            <FormatCurrency :value="auctionTransaction.combinedSwapFeesETH" :decimals="5" currency="ETH" />, hence, the
+            connected wallet needs to hold enough funds to cover these fees. The transaction fee is a recommended value
+            and based on the
             <Explain text="average fast fee">
                 <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
                     Gas Prices can change
@@ -30,6 +39,8 @@ import TextBlock from '~/components/common/TextBlock.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import Explain from '~/components/utils/Explain.vue';
+import SwapTransactionFeesTable from '~/components/transaction/SwapTransactionFeesTable.vue';
+import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
     components: {
@@ -37,8 +48,13 @@ export default Vue.extend({
         FormatCurrency,
         FormatAddress,
         Explain,
+        SwapTransactionFeesTable,
     },
     props: {
+        auctionTransaction: {
+            type: Object as Vue.PropType<AuctionTransaction>,
+            required: true,
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
@@ -47,9 +63,13 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        transactionFee: {
-            type: [Number, Object] as Vue.PropType<Number | BigNumber>,
-            default: null,
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isCollateralAuthorized: {
+            type: Boolean,
+            default: false,
         },
         showDifferentWalletInfo: {
             type: Boolean,
