@@ -14,9 +14,13 @@
                 />
             </Explain>
             of approximately
-            <FormatCurrency :value="auctionTransaction.combinedSwapFeesETH" :decimals="5" currency="ETH" />, hence, the
-            connected wallet needs to hold enough funds to cover these fees. The transaction fee is a recommended value
-            and based on the
+            <FormatCurrency
+                v-if="auctionTransaction"
+                :value="auctionTransaction.combinedSwapFeesETH"
+                :decimals="5"
+                currency="ETH"
+            />, hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is a
+            recommended value and based on the
             <Explain text="average fast fee">
                 <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
                     Gas Prices can change
