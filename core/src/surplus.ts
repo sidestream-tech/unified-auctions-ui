@@ -1,4 +1,4 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionTransaction, SurplusAuctionActive } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusAuctionWithMinimumBid, SurplusAuctionActive } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -145,13 +145,13 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
 };
 
-export const enrichSurplusAuctionWithMinimumBid = async (
+export const enrichSurplusAuction = async (
     network: string,
     auction: SurplusAuctionActive
-): Promise<SurplusAuctionTransaction> => {
+): Promise<SurplusAuctionWithMinimumBid> => {
     const nextMinimumBid = await getNextMinimumBid(network, auction);
     return {
-        ...auction,
         nextMinimumBid,
+        ...auction,
     };
 };
