@@ -7,6 +7,7 @@ import {
     restartSurplusAuction,
     bidToSurplusAuction,
     collectSurplusAuction,
+    enrichSurplusAuctionWithMarketPrice,
 } from 'auctions-core/src/surplus';
 import {
     setAllowanceAmountMKR,
@@ -14,7 +15,6 @@ import {
     authorizeSurplus,
     getSurplusAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
-import { convertDaiToMkr } from 'auctions-core/src/calleeFunctions/helpers/uniswapV3';
 import notifier from '~/lib/notifier';
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
@@ -26,7 +26,6 @@ interface State {
     areAuctionsFetching: boolean;
     isAuthorizationLoading: boolean;
     isBidding: boolean;
-    isMarketPriceLoading: boolean;
     error: string | null;
     lastUpdated: Date | undefined;
     allowanceAmount?: BigNumber;
@@ -39,7 +38,6 @@ const getInitialState = (): State => ({
     areAuctionsFetching: false,
     isAuthorizationLoading: false,
     isBidding: false,
-    isMarketPriceLoading: false,
     error: null,
     lastUpdated: undefined,
 });
@@ -71,9 +69,6 @@ export const getters = {
     lastUpdated(state: State) {
         return state.lastUpdated;
     },
-    isMarketPriceLoading(state: State) {
-        return state.isMarketPriceLoading;
-    },
 };
 
 export const mutations = {
@@ -97,9 +92,6 @@ export const mutations = {
     },
     setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
         Vue.set(state.auctionStates, auctionId, value);
-    },
-    setIsMarketPriceLoading(state: State, isLoading: boolean) {
-        state.isMarketPriceLoading = isLoading;
     },
     setMarketPrice(
         state: State,
@@ -130,7 +122,9 @@ export const actions = {
         try {
             commit('setAuctionsFetching', true);
             const auctions = await fetchActiveSurplusAuctions(network);
-            auctions.forEach(auction => commit('addAuctionToStorage', auction));
+            const enrichedAuctionPromises = auctions.map(auc => enrichSurplusAuctionWithMarketPrice(network, auc));
+            const auctionTransactions = await Promise.all(enrichedAuctionPromises);
+            auctionTransactions.forEach(auctionTransaction => commit('addAuctionToStorage', auctionTransaction));
         } catch (error: any) {
             console.error('fetch surplus auction error', error);
             commit('setError', error.message);
@@ -243,31 +237,6 @@ export const actions = {
             console.error(`Failed to bid on auction: ${error.message}`);
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
-        }
-    },
-    async updateMarketPrice({ rootGetters, getters, commit }: ActionContext<State, State>, auctionIndex: number) {
-        const network = rootGetters['network/getMakerNetwork'];
-        if (!network) {
-            return;
-        }
-        const auction: SurplusAuction = getters.auctionStorage[auctionIndex];
-        if (!auction.bidAmountMKR || !auction.receiveAmountDAI) {
-            return;
-        }
-
-        try {
-            commit('setIsMarketPriceLoading', true);
-            const unitPrice = auction.bidAmountMKR.div(auction.receiveAmountDAI);
-            const marketUnitPrice = (await convertDaiToMkr(network, auction.receiveAmountDAI)).div(
-                auction.receiveAmountDAI
-            );
-            const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
-            commit('setMarketPrice', { auctionIndex, marketUnitPrice, marketUnitPriceToUnitPriceRatio, unitPrice });
-            return marketUnitPrice;
-        } catch (e) {
-            console.error(`Failed to fetch market price: ${e}`);
-        } finally {
-            commit('setIsMarketPriceLoading', false);
         }
     },
 };
