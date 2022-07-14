@@ -39,7 +39,7 @@ storiesOf('Surplus/SurplusFlow', module)
         ...common,
         data: () => ({
             ...common.data(),
-            selectedAuctionId: randomSelectedAuctionId,
+            selectedAuctionId: randomSelectedAuctionId.toString(),
         }),
         template: `
         <SurplusFlow
@@ -51,7 +51,7 @@ storiesOf('Surplus/SurplusFlow', module)
         ...common,
         data: () => ({
             ...common.data(),
-            selectedAuctionId: randomSelectedAuctionId,
+            selectedAuctionId: randomSelectedAuctionId.toString(),
         }),
         template: `
         <SurplusFlow
@@ -64,7 +64,7 @@ storiesOf('Surplus/SurplusFlow', module)
         ...common,
         data: () => ({
             ...common.data(),
-            selectedAuctionId: randomSelectedAuctionId,
+            selectedAuctionId: randomSelectedAuctionId.toString(),
             isExplanationsShown: false,
         }),
         template: `
@@ -77,7 +77,7 @@ storiesOf('Surplus/SurplusFlow', module)
         ...common,
         data: () => ({
             ...common.data(),
-            selectedAuctionId: -1,
+            selectedAuctionId: '-1',
         }),
         template: `
         <SurplusFlow
@@ -89,7 +89,7 @@ storiesOf('Surplus/SurplusFlow', module)
         ...common,
         data: () => ({
             ...common.data(),
-            selectedAuctionId: -1,
+            selectedAuctionId: '-1',
             isExplanationsShown: false,
         }),
         template: `

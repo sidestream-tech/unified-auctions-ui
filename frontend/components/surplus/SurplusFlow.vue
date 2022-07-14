@@ -9,7 +9,7 @@
                     <SurplusText
                         ref="surplusText"
                         :auctions="auctions"
-                        :selected-auction-id="selectedAuctionId"
+                        :selected-auction-id="parsedSelectedAuctionId"
                         :are-auctions-fetching="areAuctionsFetching"
                         :last-updated="lastUpdated"
                         :auctions-error="auctionsError"
@@ -22,7 +22,7 @@
                 <SurplusAuction
                     class="mt-6 mb-8 mx-8"
                     :auction="selectedAuction"
-                    :auction-id="selectedAuctionId"
+                    :auction-id="parsedSelectedAuctionId"
                     :auction-action-state="selectedAuctionActionState"
                     :are-auctions-fetching="areAuctionsFetching"
                     :is-explanations-shown="isExplanationsShown"
@@ -151,10 +151,14 @@ export default Vue.extend({
         secondStep: '',
     }),
     computed: {
+        parsedSelectedAuctionId(): number | undefined {
+            return parseInt(this.selectedAuctionId) || undefined;
+        },
         selectedAuction(): SurplusAuctionTransaction | undefined {
             return (
-                this.auctions.find(auctionTransaction => auctionTransaction.id === parseInt(this.selectedAuctionId)) ||
-                undefined
+                this.auctions.find(
+                    auctionTransaction => auctionTransaction.id === parseInt(this.parsedSelectedAuctionId)
+                ) || undefined
             );
         },
         selectedAuctionError(): string | undefined {
