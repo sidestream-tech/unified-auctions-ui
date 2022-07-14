@@ -179,17 +179,16 @@ export type SurplusAuction = SurplusAuctionActive | SurplusAuctionCollected;
 export type SurplusAuctionStates = SurplusAuction['state'];
 
 export declare interface SurplusTransactionFees {
-    bidTransactionFee?: BigNumber;
-    authTransactionFeeDAI?: BigNumber;
-    authTransactionFeeMKR?: BigNumber;
-    restartTransactionFee?: BigNumber;
-    collectTransactionFee?: BigNumber;
+    bidTransactionFee: BigNumber;
+    authTransactionFeeDAI: BigNumber;
+    restartTransactionFee: BigNumber;
+    collectTransactionFee: BigNumber;
 }
 
 export declare interface SurplusAuctionTransaction extends SurplusAuctionActive, SurplusTransactionFees {
     marketUnitPrice?: BigNumber | string;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
     unitPrice?: BigNumber;
-    combinedBidFees?: BigNumber;
-    nextMinimumBid?: BigNumber;
+    combinedBidFees: BigNumber;
+    nextMinimumBid: BigNumber;
 }
