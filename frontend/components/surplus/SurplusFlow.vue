@@ -66,8 +66,8 @@
 import Vue from 'vue';
 import { SurplusAuctionTransaction } from 'auctions-core/dist/src/types';
 import BigNumber from 'bignumber.js';
-import SurplusAuction from '../SurplusAuction.vue';
-import SurplusAuctionTransactionFlow from './SurplusAuctionTransactionFlow.vue';
+import SurplusAuction from '~/components/surplus/SurplusAuction';
+import SurplusAuctionTransactionFlow from '~/components/surplus/SurplusAuctionTransactionFlow.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import SurplusText from '~/components/surplus/SurplusText.vue';

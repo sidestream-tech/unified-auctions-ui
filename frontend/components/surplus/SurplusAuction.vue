@@ -165,7 +165,7 @@ export default Vue.extend({
         },
         auctionId: {
             type: Number,
-            required: true,
+            default: null,
         },
         error: {
             type: String,
