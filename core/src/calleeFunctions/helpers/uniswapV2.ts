@@ -1,4 +1,4 @@
-/* 
+/*
     Most of the uniswap logic based on the `auction-demo-keeper` source code
     https://github.com/makerdao/auction-demo-keeper/blob/main/src/clipper.js#L134-L160
     More info on how UniSwap works and other available methods can be found here:
@@ -82,7 +82,7 @@ export const getUniswapPairBySymbols = async function (
 };
 
 export const splitArrayIntoPairs = function (array: string[]): string[][] {
-    /* 
+    /*
         Function that takes an array of strings, e.g.: `[ 'one', 'two', 'three' ]`
         and turns it into array or pairs, e.g.: `[ ['one', 'two'], [ 'two', 'three' ] ]`
     */
