@@ -188,10 +188,10 @@ export const actions = {
         try {
             await restartSurplusAuction(network, auctionIndex, notifier);
             await dispatch('fetchSurplusAuctions');
-            commit('setErrorByAuctionId', {auctionId: auctionIndex, error: undefined})
+            commit('setErrorByAuctionId', { auctionId: auctionIndex, error: undefined });
         } catch (error: any) {
             console.error(`Auction restart error: ${error.message}`);
-            commit('setErrorByAuctionId', {auctionId: auctionIndex, error})
+            commit('setErrorByAuctionId', { auctionId: auctionIndex, error });
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
@@ -208,10 +208,10 @@ export const actions = {
         try {
             await bidToSurplusAuction(network, auctionIndex, bet);
             await dispatch('fetchSurplusAuctions');
-            commit('setErrorByAuctionId', {auctionId: auctionIndex, error: undefined})
+            commit('setErrorByAuctionId', { auctionId: auctionIndex, error: undefined });
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
-            commit('setErrorByAuctionId', {auctionId: auctionIndex, error})
+            commit('setErrorByAuctionId', { auctionId: auctionIndex, error });
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
@@ -225,10 +225,10 @@ export const actions = {
         try {
             await collectSurplusAuction(network, auctionIndex);
             await dispatch('fetchSurplusAuctions');
-            commit('setErrorByAuctionId', {auctionId: auctionIndex, error: undefined})
+            commit('setErrorByAuctionId', { auctionId: auctionIndex, error: undefined });
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
-            commit('setErrorByAuctionId', {auctionId: auctionIndex})
+            commit('setErrorByAuctionId', { auctionId: auctionIndex });
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
