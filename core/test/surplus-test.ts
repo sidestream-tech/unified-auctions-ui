@@ -5,7 +5,7 @@ import {
     collectSurplusAuction,
     fetchSurplusAuctionByIndex,
     restartSurplusAuction,
-    enrichSurplusAuctionWithMarketPrice
+    enrichSurplusAuctionWithMarketPrice,
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
@@ -44,13 +44,13 @@ describe('Surplus Auction', () => {
         expect(auctions[0].state).to.equal('have-bids');
     });
     it('enriches auctions with market prices', async () => {
-        const network = 'custom'
+        const network = 'custom';
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0];
-        const enrichedAucton = await enrichSurplusAuctionWithMarketPrice(network, auction)
-        expect (enrichedAucton.marketUnitPrice?.toString()).to.equal('0.000391564602460200339266667');
-        expect (enrichedAucton.unitPrice?.toString()).to.equal('0.0005430260298973471');
-        expect (enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('0.386810826324735776873594383');
+        const enrichedAucton = await enrichSurplusAuctionWithMarketPrice(network, auction);
+        expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('0.000391564602460200339266667');
+        expect(enrichedAucton.unitPrice?.toString()).to.equal('0.0005430260298973471');
+        expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('0.386810826324735776873594383');
     });
     it('participates in active auction', async () => {
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
