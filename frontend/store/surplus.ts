@@ -126,7 +126,7 @@ export const actions = {
         const wallet = rootGetters['wallet/getAddress'];
         try {
             commit('setAuthorizationLoading', true);
-            await setAllowanceAmountMKR(network, wallet, amount, notifier);
+            await setAllowanceAmountMKR(network, wallet, new BigNumber(amount), notifier);
             const allowance = await fetchAllowanceAmountMKR(network, wallet);
             commit('setAllowance', allowance);
         } catch (error: any) {
@@ -196,7 +196,7 @@ export const actions = {
     },
     async bidToSurplusAuction(
         { rootGetters, commit, dispatch }: ActionContext<State, State>,
-        { auctionIndex, bet }: { auctionIndex: number; bet: string }
+        { auctionIndex, bid }: { auctionIndex: number; bid: string }
     ) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
@@ -204,7 +204,7 @@ export const actions = {
         }
         commit('setAuctionState', { auctionId: auctionIndex, value: 'bidding' });
         try {
-            await bidToSurplusAuction(network, auctionIndex, bet);
+            await bidToSurplusAuction(network, auctionIndex, new BigNumber(bid));
             await dispatch('fetchSurplusAuctions');
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
