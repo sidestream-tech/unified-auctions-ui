@@ -7,7 +7,7 @@ import {
     restartSurplusAuction,
     bidToSurplusAuction,
     collectSurplusAuction,
-    enrichSurplusAuctionWithMarketPrice,
+    enrichSurplusAuction,
 } from 'auctions-core/src/surplus';
 import {
     setAllowanceAmountMKR,
@@ -140,7 +140,7 @@ export const actions = {
                     activeAuctions.push(auc)
                 }
             })
-            const enrichedAuctionPromises = activeAuctions.map(auc => enrichSurplusAuctionWithMarketPrice(network, auc));
+            const enrichedAuctionPromises = activeAuctions.map(auc => enrichSurplusAuction(network, auc));
             const auctionTransactions = await Promise.all(enrichedAuctionPromises);
             auctionTransactions.forEach(auctionTransaction => commit('addAuctionToStorage', auctionTransaction));
             collectedAuctions.forEach(auction => commit('addAuctionToStorage', auction));

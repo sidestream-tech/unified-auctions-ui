@@ -126,7 +126,7 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
 };
 
-export const enrichSurplusAuctionWithMarketPrice = async (
+export const enrichSurplusAuction = async (
     network: string,
     auction: SurplusAuctionActive
 ): Promise<SurplusAuctionTransaction> => {
