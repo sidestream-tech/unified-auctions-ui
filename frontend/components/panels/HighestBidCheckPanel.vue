@@ -16,7 +16,7 @@
             <BaseButton
                 class="w-full md:w-80"
                 :type="isUserLatestBidder ? 'secondary' : 'primary'"
-                :disabled="isBidding || disabled || !userWalletAddress || isLoading || !!error"
+                :disabled="isBidding || disabled || !walletAddress || isLoading || !!error"
                 :is-loading="isBidding || isLoading"
                 @click="$emit('bid', bidAmount)"
             >
@@ -50,13 +50,9 @@ export default Vue.extend({
             default: null,
             required: true,
         },
-        userWalletAddress: {
+        walletAddress: {
             type: String,
             default: null,
-        },
-        isExplanationsShown: {
-            type: Boolean,
-            default: true,
         },
         bidAmount: {
             type: Object as Vue.PropType<BigNumber>,
@@ -78,19 +74,29 @@ export default Vue.extend({
             type: String,
             default: null,
         },
+        isExplanationsShown: {
+            type: Boolean,
+            default: true,
+        },
     },
     computed: {
         latestBid(): BigNumber | null {
             return this.auction.bidAmountMKR.isEqualTo(0) ? null : this.auction.bidAmountMKR;
         },
         isUserLatestBidder(): boolean {
-            return !!this.latestBid && this.auction.receiverAddress === this.userWalletAddress;
+            return !!this.latestBid && this.auction.receiverAddress === this.walletAddress;
         },
         currentStateAndTitle(): PanelProps {
-            if (!this.userWalletAddress && !this.latestBid) {
+            if (!this.walletAddress && !this.latestBid) {
+                return {
+                    name: 'notice',
+                    title: `No bids yet`,
+                };
+            }
+            if (this.auction.state === 'ready-for-collection') {
                 return {
                     name: 'inactive',
-                    title: `No bids yet`,
+                    title: this.isUserLatestBidder ? `You are the highest bidder` : `You are not the highest bidder`,
                 };
             }
             if (!this.latestBid) {
@@ -99,9 +105,9 @@ export default Vue.extend({
                     title: `No bids yet`,
                 };
             }
-            if (!this.userWalletAddress) {
+            if (!this.walletAddress) {
                 return {
-                    name: 'inactive',
+                    name: 'notice',
                     title: `Highest bid by ${this.auction.receiverAddress}`,
                 };
             }

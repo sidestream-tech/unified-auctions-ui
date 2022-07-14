@@ -13,7 +13,7 @@ const common = {
         isExplanationsShown: true,
         auction: fakeSurplusAuction,
         bidAmount: new BigNumber(fakeSurplusAuction.bidAmountMKR).times(1.1),
-        userWalletAddress: faker.finance.ethereumAddress(),
+        walletAddress: faker.finance.ethereumAddress(),
     }),
     methods: {
         bid: action('bid'),
@@ -26,9 +26,9 @@ storiesOf('Panels/HighestBidCheckPanel', module)
         data: () => ({
             auction: generateFakeSurplusAuction('just-started'),
             bidAmount: new BigNumber(56).times(1.1),
-            userWalletAddress: faker.finance.ethereumAddress(),
+            walletAddress: faker.finance.ethereumAddress(),
         }),
-        template: `<HighestBidCheckPanel :auction="auction" :userWalletAddress="userWalletAddress" :bidAmount="bidAmount" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :walletAddress="walletAddress" :bidAmount="bidAmount" />`,
     }))
     .add('No Bids, No Wallet', () => ({
         ...common,
@@ -40,7 +40,7 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     }))
     .add('With Bids', () => ({
         ...common,
-        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :userWalletAddress="userWalletAddress" @bid="bid" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :walletAddress="walletAddress" @bid="bid" />`,
     }))
     .add('With Bids, No Wallet', () => ({
         ...common,
@@ -48,20 +48,20 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     }))
     .add('With Bids, disabled', () => ({
         ...common,
-        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :userWalletAddress="userWalletAddress" :disabled="true" @bid="bid" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :walletAddress="walletAddress" :disabled="true" @bid="bid" />`,
     }))
     .add('With Bids, Highest Bidder', () => ({
         ...common,
         data: () => ({
             auction: fakeSurplusAuction,
             bidAmount: new BigNumber(fakeSurplusAuction.bidAmountMKR).times(1.1),
-            userWalletAddress: fakeSurplusAuction.receiverAddress,
+            walletAddress: fakeSurplusAuction.receiverAddress,
         }),
-        template: `<HighestBidCheckPanel :auction="auction" :userWalletAddress="userWalletAddress" :bidAmount="bidAmount" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :walletAddress="walletAddress" :bidAmount="bidAmount" />`,
     }))
     .add('Bidding', () => ({
         ...common,
-        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :userWalletAddress="userWalletAddress" :disabled="true" :isBidding="true" @bid="bid" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :walletAddress="walletAddress" :disabled="true" :isBidding="true" @bid="bid" />`,
     }))
     .add('No wallet, is Loading', () => ({
         ...common,
@@ -69,5 +69,5 @@ storiesOf('Panels/HighestBidCheckPanel', module)
     }))
     .add('With Wallet, is Loading', () => ({
         ...common,
-        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :isLoading="true" :userWalletAddress="userWalletAddress" @bid="bid" />`,
+        template: `<HighestBidCheckPanel :auction="auction" :bidAmount="bidAmount" :isLoading="true" :walletAddress="walletAddress" @bid="bid" />`,
     }));
