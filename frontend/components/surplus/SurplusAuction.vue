@@ -31,7 +31,10 @@
                                 <span v-else-if="requiresRestart">Requires restart</span>
                                 <span v-else-if="auction.state === 'ready-for-collection'">Ended </span>
                                 <span v-else>Collected </span>
-                                <time-till v-if="auction.earliestEndDate" :date="auction.earliestEndDate" />
+                                <time-till
+                                    v-if="auction.earliestEndDate && !requiresRestart"
+                                    :date="auction.earliestEndDate"
+                                />
                             </td>
                         </tr>
                         <tr>
