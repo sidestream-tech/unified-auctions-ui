@@ -23,6 +23,12 @@ export const fetchBalanceDAI = async function (network: string, walletAddress: s
     return new BigNumber(rawAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
 };
 
+export const fetchBalanceMKR = async function (network: string, walletAddress: string): Promise<BigNumber> {
+    const contract = await getContract(network, 'MCD_GOV');
+    const rawAmount = await contract.balanceOf(walletAddress);
+    return new BigNumber(rawAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+};
+
 export const fetchVATbalanceDAI = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const contract = await getContract(network, 'MCD_VAT');
     const radAmount = await contract.dai(walletAddress);
@@ -47,6 +53,7 @@ export const fetchWalletBalances = async function (network: string, walletAddres
     return {
         walletETH: await fetchBalanceETH(network, walletAddress),
         walletDAI: await fetchBalanceDAI(network, walletAddress),
+        walletMKR: await fetchBalanceMKR(network, walletAddress),
         walletVatDAI: await fetchVATbalanceDAI(network, walletAddress),
         walletLastUpdatedDate: new Date(),
     };
