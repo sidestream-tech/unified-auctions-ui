@@ -1,4 +1,4 @@
-import type { Notifier, SurplusAuction, SurplusAuctionBase } from './types';
+import type { Notifier, SurplusAuction, SurplusAuctionBase, SurplusTransactionFees } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
@@ -6,6 +6,8 @@ import { Contract } from 'ethers';
 import getNetworkDate from './date';
 import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
+import { getGasPriceForUI } from './gas';
+import { getMarketPrice } from './calleeFunctions';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
@@ -123,4 +125,28 @@ export const collectSurplusAuction = async function (network: string, auctionInd
         throw new Error('Did not find the auction to collect.');
     }
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
+};
+
+export const getSurplusTransactionFees = async function (network: string): Promise<SurplusTransactionFees> {
+    const gasPrice = await getGasPriceForUI(network);
+    const exchangeRate = await getMarketPrice(network, 'ETH');
+
+    const restartTransactionFeeEth = gasPrice.multipliedBy(80563);
+    const allowanceTransactionFeeEth = gasPrice.multipliedBy(48373);
+    const bidTransactionFeeEth = gasPrice.multipliedBy(85181);
+    const collectTransactionFeeEth = gasPrice.multipliedBy(94114);
+    const authTransactionFeeEth = gasPrice.multipliedBy(48356);
+
+    return {
+        restartTransactionFeeEth,
+        restartTransactionFeeDai: restartTransactionFeeEth.multipliedBy(exchangeRate),
+        allowanceTransactionFeeEth,
+        allowanceTransactionFeeDai: allowanceTransactionFeeEth.multipliedBy(exchangeRate),
+        bidTransactionFeeEth,
+        bidTransactionFeeDai: bidTransactionFeeEth.multipliedBy(exchangeRate),
+        collectTransactionFeeEth,
+        collectTransactionFeeDai: collectTransactionFeeEth.multipliedBy(exchangeRate),
+        authTransactionFeeEth,
+        authTransactionFeeDai: authTransactionFeeEth.multipliedBy(exchangeRate),
+    };
 };
