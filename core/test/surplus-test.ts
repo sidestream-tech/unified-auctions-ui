@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import hre from 'hardhat';
 import {
     fetchActiveSurplusAuctions,
     bidToSurplusAuction,
@@ -12,7 +13,6 @@ import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 
 import { SurplusAuction } from '../src/types';
-import hre from 'hardhat';
 import BigNumber from '../src/bignumber';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
@@ -49,8 +49,11 @@ describe('Surplus Auction', () => {
         await swapToMKR('custom', 20, 20);
         await bidToSurplusAuction('custom', 2328, new BigNumber('20'));
         const auctions = await fetchActiveSurplusAuctions('custom');
-        const currentAuction = auctions[0] as SurplusAuction;
+        const currentAuction = auctions[0];
         expect(currentAuction.id).to.equal(2328);
+        if (currentAuction.state === 'collected') {
+            throw new Error('auction state can not be "collected"');
+        }
         expect(currentAuction.bidAmountMKR && currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
     it('collects the concluded auction', async () => {
