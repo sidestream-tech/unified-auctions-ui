@@ -49,10 +49,11 @@ describe('Surplus Auction', () => {
         const network = 'custom';
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0] as SurplusAuctionActive;
-        const enrichedAucton = await enrichSurplusAuctionActive(network, auction);
+        const enrichedAucton = await enrichSurplusAuction(network, auction);
         expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('716.387371653262662626292899404');
         expect(enrichedAucton.unitPrice?.toString()).to.equal('1841.532348254168655583785457918');
         expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('1.57058181246875098286975143');
+    });
     it('enrichesAuctionWithMiniumumBids', async () => {
         const network = 'custom';
         const auctions = await fetchActiveSurplusAuctions(network);
