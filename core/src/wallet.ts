@@ -26,7 +26,7 @@ export const fetchBalanceDAI = async function (network: string, walletAddress: s
 export const fetchBalanceMKR = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const contract = await getContract(network, 'MCD_GOV');
     const rawAmount = await contract.balanceOf(walletAddress);
-    return new BigNumber(rawAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+    return new BigNumber(rawAmount._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
 
 export const fetchVATbalanceDAI = async function (network: string, walletAddress: string): Promise<BigNumber> {
