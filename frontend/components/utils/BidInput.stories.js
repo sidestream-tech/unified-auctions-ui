@@ -22,6 +22,13 @@ storiesOf('Utils/BidInput', module)
         <BidInput :transactionBidAmount.sync="transactionBidAmount" :totalPrice="totalPrice" :minimumBidDai="minimumBidDai" />
     </div>`,
     }))
+    .add('Surplus Transaction', () => ({
+        ...common,
+        template: `
+    <div class="w-80">
+        <BidInput :transactionBidAmount.sync="transactionBidAmount" auction-type="surplus" :totalPrice="totalPrice" :minimumBidDai="minimumBidDai" />
+    </div>`,
+    }))
     .add('Disabled', () => ({
         ...common,
         template: `

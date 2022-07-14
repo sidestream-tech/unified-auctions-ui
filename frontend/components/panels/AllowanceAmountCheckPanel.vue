@@ -116,7 +116,7 @@ export default Vue.extend({
             if (!this.allowanceAmount) {
                 return {
                     name: 'inactive',
-                    title: 'Please connect a wallet',
+                    title: 'Please connect a wallet to check the allowance',
                 };
             }
             if (!this.desiredAmount || this.desiredAmount?.isNaN()) {
@@ -126,6 +126,12 @@ export default Vue.extend({
                 };
             }
             if (!this.isEnough) {
+                if (this.disabled) {
+                    return {
+                        name: 'inactive',
+                        title: `The desired amount exceeds ${this.currency} allowance`,
+                    };
+                }
                 return {
                     name: 'incorrect',
                     title: `The desired amount exceeds ${this.currency} allowance`,
