@@ -3,8 +3,6 @@ import type {
     Notifier,
     SurplusAuction,
     SurplusAuctionBase,
-    SurplusAuctionEnriched,
-    SurplusAuctionCollected,
     SurplusTransactionFees,
     SurplusAuctionActive,
     SurplusAuctionTransaction,
