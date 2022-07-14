@@ -21,7 +21,7 @@
         <div class="flex justify-between">
             <div>Lowest Next Bid</div>
             <button class="ClickableText" :disabled="!isActive" @click="setInputBidAmount(undefined)">
-                <FormatCurrency :value="lowestNextBid" currency="MKR" />
+                <FormatCurrency :value="auction.nextMinimumBid" currency="MKR" />
             </button>
         </div>
         <div class="flex justify-between items-center">
@@ -29,9 +29,9 @@
             <div class="flex w-1/2 items-center space-x-2 justify-end -mr-1">
                 <div class="w-full flex-shrink-0">
                     <bid-input
-                        :transaction-bid-amount.sync="inputBidAmount"
-                        :min-value="lowestNextBid"
-                        :fallback-value="lowestNextBid"
+                        :input-bid-amount.sync="inputBidAmount"
+                        :min-value="auction.nextMinimumBid"
+                        :fallback-value="auction.nextMinimumBid"
                         currency="MKR"
                         :disabled="!isActive"
                         :validator="validator"
@@ -90,10 +90,6 @@ export default Vue.extend({
             type: Object as Vue.PropType<SurplusAuction>,
             required: true,
         },
-        lowestNextBid: {
-            type: Object as Vue.PropType<BigNumber>,
-            required: true,
-        },
     },
     data() {
         return {
@@ -105,13 +101,13 @@ export default Vue.extend({
             return this.auction.state === 'just-started' || this.auction.state === 'have-bids';
         },
         isBidAmountNaN(): boolean {
-            return !!this.transactionBidAmount?.isNaN();
+            return !!this.inputBidAmount?.isNaN();
         },
         unitPriceAfterBid(): BigNumber | undefined {
-            if (!this.transactionBidAmount) {
-                return this.lowestNextBid.dividedBy(this.auction.receiveAmountDAI || 1);
+            if (!this.inputBidAmount) {
+                return this.auction.nextMinimumBid.dividedBy(this.auction.receiveAmountDAI || 1);
             }
-            return this.transactionBidAmount.dividedBy(this.auction.receiveAmountDAI || 1);
+            return this.inputBidAmount.dividedBy(this.auction.receiveAmountDAI || 1);
         },
     },
     watch: {

@@ -1,14 +1,14 @@
 <template>
     <Tooltip :title="tooltipText" placement="topLeft">
         <BaseValueInput
-            :input-value="transactionBidAmount"
+            :input-value="inputBidAmount"
             :max-value="maxValue"
             :min-value="minValue"
             :disabled="disabled"
             :validator="validator"
             :currency="currency"
             :fallback-value="fallbackValue"
-            @update:inputValue="$emit('update:transactionBidAmount', $event)"
+            @update:inputValue="$emit('update:inputBidAmount', $event)"
         />
     </Tooltip>
 </template>
@@ -33,7 +33,7 @@ export default Vue.extend({
             type: Object as Vue.PropType<BigNumber | undefined>,
             default: undefined,
         },
-        transactionBidAmount: {
+        inputBidAmount: {
             type: Object as Vue.PropType<BigNumber | undefined>,
             default: undefined,
         },

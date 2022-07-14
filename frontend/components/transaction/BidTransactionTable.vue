@@ -58,11 +58,11 @@
         </div>
         <div class="flex justify-between">
             <span v-if="!isActive || !auctionTransaction.debtDAI || isTooSmallToPartiallyTake">Auction debt</span>
-            <button v-else class="ClickableText" @click="setTransactionBidAmount(undefined)">Set maximum bid</button>
+            <button v-else class="ClickableText" @click="setInputBidAmount(undefined)">Set maximum bid</button>
             <button
                 class="ClickableText"
                 :disabled="!isActive || !auctionTransaction.debtDAI || isTooSmallToPartiallyTake"
-                @click="setTransactionBidAmount(undefined)"
+                @click="setInputBidAmount(undefined)"
             >
                 <format-currency
                     v-if="auctionTransaction.debtDAI && isActive"
@@ -77,7 +77,7 @@
             <div class="flex w-1/2 items-center space-x-2 justify-end -mr-1">
                 <div class="w-full flex-shrink-0">
                     <bid-input
-                        :transaction-bid-amount.sync="transactionBidAmount"
+                        :input-bid-amount.sync="inputBidAmount"
                         :min-value="auctionTransaction.minimumBidDai"
                         :max-value="auctionTransaction.debtDAI"
                         :fallback-value="auctionTransaction.debtDAI"
@@ -133,7 +133,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            transactionBidAmount: undefined as BigNumber | undefined,
+            inputBidAmount: undefined as BigNumber | undefined,
         };
     },
     computed: {
@@ -141,24 +141,24 @@ export default Vue.extend({
             return this.auctionTransaction.isActive && !this.auctionTransaction.isFinished;
         },
         isBidAmountNaN(): boolean {
-            return !!this.transactionBidAmount?.isNaN();
+            return !!this.inputBidAmount?.isNaN();
         },
         isTooSmallToPartiallyTake(): boolean {
             return this.auctionTransaction.debtDAI.isLessThanOrEqualTo(this.auctionTransaction.minimumBidDai);
         },
     },
     watch: {
-        transactionBidAmount: {
+        inputBidAmount: {
             immediate: true,
-            handler(transactionBidAmount) {
-                this.$emit('inputBidAmount', transactionBidAmount);
+            handler(inputBidAmount) {
+                this.$emit('inputBidAmount', inputBidAmount);
             },
         },
     },
     methods: {
-        setTransactionBidAmount(value: BigNumber | undefined) {
+        setInputBidAmount(value: BigNumber | undefined) {
             if (this.isActive) {
-                this.transactionBidAmount = value;
+                this.inputBidAmount = value;
             }
         },
         validator(

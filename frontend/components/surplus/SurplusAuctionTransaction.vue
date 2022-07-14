@@ -20,7 +20,6 @@
             v-if="auction.state !== 'collected'"
             class="mt-4 mb-6"
             :auction="auction"
-            :lowest-next-bid="auction.nextMinimumBid"
             @inputBidAmount="inputBidAmount = $event"
         />
         <div v-if="auction.state !== 'collected'" class="mb-4">
