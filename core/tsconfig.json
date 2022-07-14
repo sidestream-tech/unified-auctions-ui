@@ -31,10 +31,15 @@
     },
     "include": [
         "src/**/*.ts",
-        "src/**/*.json"
+        "src/**/*.json",
+        "./test/**/*.ts",
+        "./test/**/*.json"
     ],
     "exclude": [
         "node_modules"
+    ],
+    "files": [
+        "./hardhat.config.ts"
     ],
     "references": []
 }

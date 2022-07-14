@@ -9,6 +9,7 @@ const common = {
     components: { AuctionRestartPanel },
     data() {
         return {
+            auctionType: 'collateral',
             transactionFee: new BigNumber(faker.finance.amount(0, 10)),
             walletAddress: fakeAddress,
             isRestarting: false,
@@ -86,5 +87,12 @@ storiesOf('Panels/AuctionRestartPanel', module)
         data: () => ({
             ...common.data(),
             isRestarting: true,
+        }),
+    }))
+    .add('Surplus Auction', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            auctionType: 'surplus',
         }),
     }));
