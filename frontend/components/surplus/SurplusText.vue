@@ -26,6 +26,20 @@
             the DAI auctioned off can be collected by the highest bidder. As long as the auction price is below the
             exchange rate on other marketplaces there is a chance to make a profit.
         </TextBlock>
+        <div
+            class="w-full self-center"
+            :class="{ 'max-w-4xl': isExplanationsShown, 'md:px-10': !isExplanationsShown }"
+        >
+            <SurplusAuctionsTable
+                class="block overflow-x-auto"
+                :auctions="auctions"
+                :selected-auction-id.sync="selectedAuctionId"
+                :show-more-rows="!isExplanationsShown"
+                :is-loading="isAuctionsLoading"
+                :last-updated="lastUpdated"
+                :error="auctionsError"
+            />
+        </div>
         <TextBlock v-if="isExplanationsShown" title="What is the catch?" class="TextBlock">
             This situation exists in the first place, because the Maker protocol can not be executed by itself. There
             need to be players who execute vital parts of the protocol and pay a
@@ -43,21 +57,44 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
+import { SurplusAuctionTransaction } from 'auctions-core/dist/src/types';
+import SurplusAuctionsTable from './SurplusAuctionsTable.vue';
 import WhatIsMakerProtocol from '~/components/WhatIsMakerProtocol.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import Explain from '~/components/utils/Explain.vue';
 
 export default Vue.extend({
     components: {
+        SurplusAuctionsTable,
         WhatIsMakerProtocol,
         TextBlock,
         Explain,
     },
     props: {
+        auctions: {
+            type: Array as PropType<SurplusAuctionTransaction[]>,
+            default: () => [],
+        },
+        isAuctionsLoading: {
+            type: Boolean,
+            default: false,
+        },
+        auctionsError: {
+            type: String,
+            default: null,
+        },
+        selectedAuctionId: {
+            type: Number,
+            default: null,
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        lastUpdated: {
+            type: Date,
+            default: null,
         },
     },
 });

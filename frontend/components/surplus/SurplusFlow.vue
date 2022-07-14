@@ -31,6 +31,15 @@ export default Vue.extend({
             default: true,
         },
     },
+    data: () => ({
+        step: 0,
+        secondStep: '',
+    }),
+    computed: {
+        isStagingEnvironment(): boolean {
+            return !!process.env.STAGING_BANNER_URL;
+        },
+    },
     methods: {
         explanationsTrigger(event: boolean): void {
             if (event === true && this.$refs.surplusText) {
