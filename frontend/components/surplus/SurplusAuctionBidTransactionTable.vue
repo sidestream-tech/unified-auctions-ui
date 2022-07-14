@@ -20,7 +20,7 @@
         </div>
         <div class="flex justify-between">
             <div>Lowest Next Bid</div>
-            <button class="ClickableText" :disabled="!isActive" @click="setTransactionBidAmount(undefined)">
+            <button class="ClickableText" :disabled="!isActive" @click="setInputBidAmount(undefined)">
                 <FormatCurrency :value="lowestNextBid" currency="MKR" />
             </button>
         </div>
@@ -30,9 +30,11 @@
                 <div class="w-full flex-shrink-0">
                     <bid-input
                         :transaction-bid-amount.sync="inputBidAmount"
-                        :minimum-bid-dai="lowestNextBid"
+                        :min-value="lowestNextBid"
+                        :fallback-value="lowestNextBid"
+                        currency="MKR"
                         :disabled="!isActive"
-                        auction-type="surplus"
+                        :validator="validator"
                     />
                 </div>
             </div>
@@ -121,9 +123,14 @@ export default Vue.extend({
         },
     },
     methods: {
-        setTransactionBidAmount(value: BigNumber | undefined) {
+        setInputBidAmount(value: BigNumber | undefined) {
             if (this.isActive) {
-                this.transactionBidAmount = value;
+                this.inputBidAmount = value;
+            }
+        },
+        validator(currentValue: BigNumber | undefined, minValue: BigNumber | undefined) {
+            if (currentValue?.isLessThan(minValue)) {
+                throw new Error('The value cannot be lower than the lowest next bid');
             }
         },
     },

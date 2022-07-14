@@ -53,6 +53,7 @@
             <div>Minimum leftover</div>
             <div>
                 <format-currency :value="auctionTransaction.minimumBidDai" currency="DAI" />
+                And <format-currency :value="auctionTransaction.debtDAI" currency="DAI" />
             </div>
         </div>
         <div class="flex justify-between">
@@ -77,10 +78,12 @@
                 <div class="w-full flex-shrink-0">
                     <bid-input
                         :transaction-bid-amount.sync="transactionBidAmount"
-                        :minimum-bid-dai="auctionTransaction.minimumBidDai"
-                        :debt-dai="auctionTransaction.debtDAI"
+                        :min-value="auctionTransaction.minimumBidDai"
+                        :max-value="auctionTransaction.debtDAI"
+                        :fallback-value="auctionTransaction.debtDAI"
                         :disabled="!isActive || isTooSmallToPartiallyTake"
                         :is-too-small-to-partially-take="isTooSmallToPartiallyTake"
+                        :validator="validator"
                     />
                 </div>
             </div>
@@ -156,6 +159,22 @@ export default Vue.extend({
         setTransactionBidAmount(value: BigNumber | undefined) {
             if (this.isActive) {
                 this.transactionBidAmount = value;
+            }
+        },
+        validator(
+            currentValue: BigNumber | undefined,
+            minValue: BigNumber | undefined,
+            maxValue: BigNumber | undefined
+        ) {
+            if (!currentValue || !minValue || !maxValue) {
+                return;
+            }
+            const bidTopLimit = maxValue?.minus(minValue);
+            if (currentValue?.isGreaterThan(bidTopLimit)) {
+                throw new Error(`The value can only be less than ${bidTopLimit.toFixed(2)} or the maximum`);
+            }
+            if (maxValue?.isLessThan(minValue)) {
+                throw new Error('The value can not be changed since the leftover part will be too small');
             }
         },
     },

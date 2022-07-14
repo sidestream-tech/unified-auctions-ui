@@ -1,32 +1,28 @@
 <template>
-    <div class="BaseValueInput">
-        <Tooltip :visible="!!errorMessage" placement="topLeft" :title="errorMessage">
-            <Input
+    <Tooltip :visible="!!errorMessage" placement="topLeft" :title="errorMessage">
+        <div class="ant-input BaseValueInput" :class="{ Error: !!errorMessage }">
+            <input
                 v-model="inputText"
-                class="Input pr-8"
-                :class="{ Error: !!errorMessage, 'pr-10': auctionType === 'surplus' }"
+                class="Input"
                 :disabled="disabled"
                 @focus="hideMaxValue"
                 @blur="showMaxValueIfEmpty"
             />
-            <div class="Overlay right-2" :class="{ 'opacity-50': disabled }">
-                <div v-if="auctionType === 'surplus'">
-                    <format-currency v-if="!inputValue && minValue" :value="minValue" /> MKR
-                </div>
-                <div v-else><format-currency v-if="!inputValue && maxValue" :value="maxValue" />&nbsp;DAI</div>
-            </div>
-        </Tooltip>
-    </div>
+            <span>
+                <format-currency v-if="!inputValue && fallbackValue" :value="fallbackValue" /> {{ currency }}
+            </span>
+        </div>
+    </Tooltip>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { Input, Tooltip } from 'ant-design-vue';
+import { Tooltip } from 'ant-design-vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 export default Vue.extend({
-    components: { FormatCurrency, Tooltip, Input },
+    components: { FormatCurrency, Tooltip },
     props: {
         inputValue: {
             type: Object as Vue.PropType<BigNumber> | undefined,
@@ -48,9 +44,13 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        auctionType: {
+        currency: {
             type: String,
-            default: 'collateral',
+            default: 'DAI',
+        },
+        fallbackValue: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
     },
     data() {
@@ -121,11 +121,11 @@ export default Vue.extend({
 
 <style scoped>
 .BaseValueInput {
-    @apply w-full relative dark:text-gray-300;
+    @apply flex justify-between w-full;
 }
 
 .Input {
-    @apply text-right;
+    @apply flex-grow text-right border-none outline-none pr-1 disabled:bg-transparent disabled:cursor-not-allowed;
 }
 
 .Error {
@@ -136,41 +136,5 @@ export default Vue.extend({
     @apply border-red-400;
 
     box-shadow: 0 0 3px rgb(239, 68, 68);
-}
-
-.Overlay {
-    @apply absolute pointer-events-none h-full flex items-center;
-
-    top: 0.5px;
-}
-
-.input-icon {
-    position: relative;
-}
-
-.input-icon > i {
-    position: absolute;
-    display: block;
-    transform: translate(0, -50%);
-    top: 50%;
-    pointer-events: none;
-    width: 25px;
-    text-align: center;
-    font-style: normal;
-}
-
-.input-icon > input {
-    padding-left: 25px;
-    padding-right: 0;
-}
-
-.input-icon-right > i {
-    right: 0;
-}
-
-.input-icon-right > input {
-    padding-left: 0;
-    padding-right: 25px;
-    text-align: right;
 }
 </style>
