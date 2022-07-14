@@ -65,16 +65,22 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
 };
 
 export const generateFakeSurplusTransactionFees = function (): SurplusTransactionFees {
-    const bidTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
-    const authTransactionFeeDAI = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
-    const restartTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
-    const collectTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
-
+    const fees = {
+        restartTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
+        allowanceTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
+        bidTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
+        collectTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
+        authTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
+        allowanceTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
+        restartTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
+        bidTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
+        collectTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
+        authTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
+    };
     return {
-        bidTransactionFee,
-        authTransactionFeeDAI,
-        restartTransactionFee,
-        collectTransactionFee,
+        ...fees,
+        combinedBidFeesDai: fees.bidTransactionFeeDai.plus(fees.collectTransactionFeeDai),
+        combinedBidFeesEth: fees.bidTransactionFeeEth.plus(fees.collectTransactionFeeEth),
     };
 };
 
@@ -88,7 +94,6 @@ export const generateFakeSurplusAuctionTransaction = function (
     }
 
     const transactionFees = generateFakeSurplusTransactionFees();
-    const combinedBidFees = transactionFees.bidTransactionFee?.plus(transactionFees.authTransactionFeeDAI || 0);
 
     // generate fake market data
     const approximateUnitPrice = surplusAuction.bidAmountMKR.dividedBy(surplusAuction.receiveAmountDAI);
@@ -107,7 +112,6 @@ export const generateFakeSurplusAuctionTransaction = function (
         marketUnitPrice,
         marketUnitPriceToUnitPriceRatio,
         unitPrice: approximateUnitPrice,
-        combinedBidFees,
         nextMinimumBid,
     };
 };
