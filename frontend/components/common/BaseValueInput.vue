@@ -1,6 +1,6 @@
 <template>
     <Tooltip :visible="!!errorMessage" placement="topLeft" :title="errorMessage">
-        <div class="ant-input BaseValueInput" :class="{ Error: !!errorMessage }">
+        <div class="ant-input BaseValueInput" :class="{ Error: !!errorMessage, Disabled: disabled }">
             <input
                 v-model="inputText"
                 class="Input"
@@ -126,6 +126,10 @@ export default Vue.extend({
 
 .Input {
     @apply flex-grow text-right border-none outline-none pr-1 disabled:bg-transparent disabled:cursor-not-allowed;
+}
+
+.Disabled {
+    @apply bg-gray-200 cursor-not-allowed;
 }
 
 .Error {
