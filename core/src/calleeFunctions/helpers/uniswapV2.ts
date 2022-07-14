@@ -14,7 +14,6 @@ import { getDecimalChainIdByNetworkType } from '../../network';
 import getProvider from '../../provider';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
-import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 
 const EXCHANGE_RATE_CACHE = 20 * 1000;
 

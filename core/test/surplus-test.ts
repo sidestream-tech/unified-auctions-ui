@@ -6,7 +6,7 @@ import {
     collectSurplusAuction,
     fetchSurplusAuctionByIndex,
     restartSurplusAuction,
-    enrichSurplusAuctionWithMarketPrice,
+    enrichSurplusAuction,
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
@@ -48,7 +48,7 @@ describe('Surplus Auction', () => {
         const network = 'custom';
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0] as SurplusAuctionActive;
-        const enrichedAucton = await enrichSurplusAuctionWithMarketPrice(network, auction);
+        const enrichedAucton = await enrichSurplusAuction(network, auction);
         expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('0.000391564602460200339266667');
         expect(enrichedAucton.unitPrice?.toString()).to.equal('0.0005430260298973471');
         expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('0.386810826324735776873594383');
