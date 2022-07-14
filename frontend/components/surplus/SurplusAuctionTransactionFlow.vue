@@ -131,7 +131,7 @@ export default Vue.extend({
         },
         tokenAddress: {
             type: String,
-            required: true,
+            default: undefined,
         },
         network: {
             type: String,

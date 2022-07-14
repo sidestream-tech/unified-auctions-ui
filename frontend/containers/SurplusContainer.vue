@@ -16,7 +16,7 @@
             :last-updated="lastUpdated"
             :is-explanations-shown.sync="isExplanationsShown"
             :network="network"
-            token-address="0x5Bce63765E760Da380EEbfE7157c08c25eC87600"
+            :token-address="tokenAddress"
             @connectWallet="openSelectWalletModal"
             @disconnectWallet="disconnectWallet"
             @refreshWallet="refreshWallet"
@@ -52,6 +52,7 @@ export default Vue.extend({
             allowanceMKR: 'allowanceAmount',
             auctionsError: 'error',
             lastUpdated: 'lastUpdated',
+            tokenAddress: 'getTokenAddress',
         }),
         ...mapGetters('wallet', {
             walletAddress: 'getAddress',
@@ -86,9 +87,6 @@ export default Vue.extend({
             set(newIsExplanationsShown): void {
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
-        },
-        tokenAddress(): string {
-            return this.$store.dispatch('surplus/getMKRTokenAddress');
         },
     },
     methods: {

@@ -32,6 +32,7 @@ interface State {
     lastUpdated: Date | undefined;
     allowanceAmount?: BigNumber;
     auctionErrors: Record<string, string | undefined>;
+    tokenAddress: string | undefined;
 }
 
 const getInitialState = (): State => ({
@@ -43,6 +44,7 @@ const getInitialState = (): State => ({
     error: null,
     lastUpdated: undefined,
     auctionErrors: {},
+    tokenAddress: undefined,
 });
 
 export const state = (): State => getInitialState();
@@ -72,6 +74,9 @@ export const getters = {
     getAuctionErrors(state: State) {
         return state.auctionErrors;
     },
+    getTokenAddress(state: State) {
+        return state.tokenAddress;
+    },
 };
 
 export const mutations = {
@@ -99,6 +104,9 @@ export const mutations = {
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
         Vue.set(state.auctionErrors, auctionId, error);
     },
+    setTokenAddress(state: State, tokenAddress: string) {
+        state.tokenAddress = tokenAddress;
+    },
     reset(state: State) {
         Object.assign(state, getInitialState());
     },
@@ -108,6 +116,7 @@ export const actions = {
     async setup({ dispatch, commit }: ActionContext<State, State>) {
         commit('reset');
 
+        await dispatch('getMKRTokenAddress');
         await dispatch('fetchSurplusAuctions');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
@@ -238,11 +247,12 @@ export const actions = {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
     },
-    async getMKRTokenAddress({ rootGetters }: ActionContext<State, State>) {
+    async getMKRTokenAddress({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        return await getTokenAddressByNetworkAndSymbol(network, 'MKR');
+        const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'MKR');
+        commit('setTokenAddress', tokenAddress);
     },
 };

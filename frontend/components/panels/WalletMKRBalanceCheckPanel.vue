@@ -26,7 +26,7 @@
             decentralized exchange like
             <a href="https://uniswap.org/" target="_blank">uniswap.org</a>
             (correct MKR token address used on the “{{ network }}” network is
-            <FormatAddress :value="tokenAddress" :shorten="true" type="address" />)
+            <FormatAddress v-if="tokenAddress" :value="tokenAddress" :shorten="true" type="address" />)
         </TextBlock>
         <div class="flex justify-end mt-5">
             <BaseButton class="w-full md:w-80" :disabled="disabled" :is-loading="isLoading" @click="$emit('refresh')"
@@ -59,7 +59,7 @@ export default Vue.extend({
         },
         tokenAddress: {
             type: String,
-            required: true,
+            default: undefined,
         },
         network: {
             type: String,
