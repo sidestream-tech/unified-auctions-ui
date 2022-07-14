@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import type { SurplusAuction, SurplusAuctionEnriched } from 'auctions-core/src/types';
+import type { SurplusAuction, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
@@ -22,7 +22,7 @@ const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, dela
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
 type AuctionState = 'loaded' | 'restarting' | 'bidding' | 'collecting';
 interface State {
-    auctionStorage: Record<string, SurplusAuctionEnriched>;
+    auctionStorage: Record<string, SurplusAuctionTransaction>;
     auctionStates: Record<number, AuctionState>;
     areAuctionsFetching: boolean;
     isAuthorizationLoading: boolean;
