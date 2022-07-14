@@ -5,7 +5,7 @@ import {
     collectSurplusAuction,
     fetchSurplusAuctionByIndex,
     restartSurplusAuction,
-    getNextMinimumBet,
+    getNextMinimumBid,
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
@@ -97,14 +97,15 @@ describe('Surplus Auction', () => {
     it('forbids fetching inexistant auctions', async () => {
         expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
     });
-    it('calculates the minimum bet increase', async () => {
+    it('calculates the minimum bid increase', async () => {
         const auctions = await fetchActiveSurplusAuctions('custom');
         expect(auctions[0].id).to.equal(2328);
 
-        const bet = await getNextMinimumBet('custom', auctions[0]);
-        // @ts-ignore: TS2532
-        expect(bet.toString()).to.equal('16.94241213279722952');
-        // @ts-ignore: TS2532
+        const bid = await getNextMinimumBid('custom', auctions[0]);
+        if (!bid || !auctions[0].bidAmountMKR) {
+            throw new Error('Expected values were not defined.');
+        }
+        expect(bid.toString()).to.equal('16.94241213279722952');
         expect(auctions[0].bidAmountMKR.toString()).to.equal('16.290780896920413');
     });
 });

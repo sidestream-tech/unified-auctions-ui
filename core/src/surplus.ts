@@ -24,7 +24,7 @@ const getSurplusAuctionBidIncreaseCoefficient = memoizee(_getSurplusAuctionBidIn
     length: 3,
 });
 
-export const getNextMinimumBet = async (
+export const getNextMinimumBid = async (
     network: string,
     surplusAuction: SurplusAuction
 ): Promise<BigNumber | undefined> => {
