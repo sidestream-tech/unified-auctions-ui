@@ -14,6 +14,7 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 import BigNumber from '../src/bignumber';
+import { SurplusAuctionActive } from '../src/types';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
@@ -46,7 +47,7 @@ describe('Surplus Auction', () => {
     it('enrichesAuctionWithMiniumumBids', async () => {
         const network = 'custom';
         const auctions = await fetchActiveSurplusAuctions(network);
-        const auction = auctions[0];
+        const auction = auctions[0] as SurplusAuctionActive;
         const enrichedAuction = await enrichSurplusAuctionWithMinimumBid(network, auction);
 
         if (!enrichedAuction.nextMinimumBid || !enrichedAuction.bidAmountMKR) {
@@ -118,13 +119,11 @@ describe('Surplus Auction', () => {
     it('calculates the minimum bid increase', async () => {
         const auctions = await fetchActiveSurplusAuctions('custom');
         expect(auctions[0].id).to.equal(2328);
+        const auction = auctions[0] as SurplusAuctionActive;
 
-        const bid = await getNextMinimumBid('custom', auctions[0]);
-        if (!bid || !auctions[0].bidAmountMKR) {
-            throw new Error('Expected values were not defined.');
-        }
+        const bid = await getNextMinimumBid('custom', auction );
         expect(bid.toString()).to.equal('16.94241213279722952');
-        expect(auctions[0].bidAmountMKR.toString()).to.equal('16.290780896920413');
+        expect(auction.bidAmountMKR.toString()).to.equal('16.290780896920413');
         const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
         await setAllowanceAmountMKR('custom', address, new BigNumber('20'));
         await swapToMKR('custom', 20, 20);

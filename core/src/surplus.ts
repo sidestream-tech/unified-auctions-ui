@@ -27,10 +27,7 @@ const getSurplusAuctionBidIncreaseCoefficient = memoizee(_getSurplusAuctionBidIn
 export const getNextMinimumBid = async (
     network: string,
     surplusAuction: SurplusAuctionActive
-): Promise<BigNumber | undefined> => {
-    if (!surplusAuction.bidAmountMKR) {
-        return undefined;
-    }
+): Promise<BigNumber> => {
     const increaseCoefficient = await getSurplusAuctionBidIncreaseCoefficient(network);
     return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
 };
