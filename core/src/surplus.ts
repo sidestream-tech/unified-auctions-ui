@@ -124,7 +124,7 @@ export const restartSurplusAuction = async function (
 export const bidToSurplusAuction = async function (
     network: string,
     auctionIndex: number,
-    bet: string,
+    bid: string,
     notifier?: Notifier
 ) {
     const auction = await getActiveSurplusAuctionOrUndefined(network, auctionIndex);
@@ -134,7 +134,7 @@ export const bidToSurplusAuction = async function (
     const transactionParameters = [
         auctionIndex,
         auction.receiveAmountDAI.shiftedBy(RAD_NUMBER_OF_DIGITS).toFixed(0),
-        new BigNumber(bet).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        new BigNumber(bid).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
     ];
     await executeTransaction(network, 'MCD_FLAP', 'tend', transactionParameters, { notifier });
 };
