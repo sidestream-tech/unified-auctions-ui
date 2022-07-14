@@ -45,6 +45,15 @@ describe('Surplus Auction', () => {
         expect(auctions[0].id).to.equal(2328);
         expect(auctions[0].state).to.equal('have-bids');
     });
+    it('enriches auctions with market prices', async () => {
+        const network = 'custom';
+        const auctions = await fetchActiveSurplusAuctions(network);
+        const auction = auctions[0] as SurplusAuctionActive;
+        const enrichedAucton = await enrichSurplusAuction(network, auction);
+        expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('0.001395892836151232667549186');
+        expect(enrichedAucton.unitPrice?.toString()).to.equal('0.0005430260298973471');
+        expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('-0.61098300970253348099040009');
+    });
     it('enrichesAuctionWithMiniumumBids', async () => {
         const network = 'custom';
         const auctions = await fetchActiveSurplusAuctions(network);

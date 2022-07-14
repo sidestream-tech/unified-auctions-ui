@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import type { SurplusAuction, SurplusAuctionActionStates } from 'auctions-core/src/types';
+import type { SurplusAuction, SurplusAuctionActionStates SurplusAuctionEnriched } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
@@ -24,7 +24,7 @@ let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
 interface State {
-    auctionStorage: Record<string, SurplusAuction>;
+    auctionStorage: Record<string, SurplusAuctionEnriched>;
     auctionStates: Record<number, SurplusAuctionActionStates>;
     areAuctionsFetching: boolean;
     isAuthorizationLoading: boolean;
