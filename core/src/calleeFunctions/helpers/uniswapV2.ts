@@ -106,7 +106,7 @@ export const getLpTokenTotalSupply = async function (network: string, symbol: st
 export const getExchangeRateDaiMkr = async function (network: string, amount: BigNumber): Promise<BigNumber> {
     const completeExchangePath = ['MCD_GOV', 'DAI'];
     const uniswapPairs = await getUniswapPairBySymbols(network, completeExchangePath[0], completeExchangePath[1]);
-    const exchangeToken = await getUniswapTokenBySymbol(network, 'MCD_GOV');
+    const exchangeToken = await getUniswapTokenBySymbol(network, 'MKR');
     const uniswapRoute = new Route([uniswapPairs], exchangeToken);
     const uniswapTrade = new Trade(
         uniswapRoute,

@@ -5,6 +5,7 @@ import getProvider from '../../provider';
 import { getContractAddressByName } from '../../contracts';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
+import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
@@ -57,8 +58,8 @@ export const convertSymbolToDai = async function (
     const integerAmount = amount.shiftedBy(decimals).toFixed(0);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInputSingle(
-        await getContractAddressByName(network, symbol),
-        await getContractAddressByName(network, 'MCD_DAI'),
+        await getTokenAddressByNetworkAndSymbol(network, symbol),
+        await getTokenAddressByNetworkAndSymbol(network, 'MCD_DAI'),
         UNISWAP_FEE,
         integerAmount,
         0
