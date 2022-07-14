@@ -29,6 +29,7 @@ interface State {
     error: string | null;
     lastUpdated: Date | undefined;
     allowanceAmount?: BigNumber;
+    auctionErrors: Record<string, string | undefined>;
 }
 
 const getInitialState = (): State => ({
@@ -40,6 +41,7 @@ const getInitialState = (): State => ({
     isBidding: false,
     error: null,
     lastUpdated: undefined,
+    auctionErrors: {},
 });
 
 export const state = (): State => getInitialState();
@@ -69,6 +71,9 @@ export const getters = {
     lastUpdated(state: State) {
         return state.lastUpdated;
     },
+    getAuctionErrors(state: State) {
+        return state.auctionErrors;
+    },
 };
 
 export const mutations = {
@@ -92,6 +97,9 @@ export const mutations = {
     },
     setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
         Vue.set(state.auctionStates, auctionId, value);
+    },
+    setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
+        Vue.set(state.auctionErrors, auctionId, error);
     },
 };
 
@@ -180,8 +188,10 @@ export const actions = {
         try {
             await restartSurplusAuction(network, auctionIndex, notifier);
             await dispatch('fetchSurplusAuctions');
+            commit('setErrorByAuctionId', {auctionId: auctionIndex, error: undefined})
         } catch (error: any) {
             console.error(`Auction restart error: ${error.message}`);
+            commit('setErrorByAuctionId', {auctionId: auctionIndex, error})
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
@@ -198,8 +208,10 @@ export const actions = {
         try {
             await bidToSurplusAuction(network, auctionIndex, bet);
             await dispatch('fetchSurplusAuctions');
+            commit('setErrorByAuctionId', {auctionId: auctionIndex, error: undefined})
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
+            commit('setErrorByAuctionId', {auctionId: auctionIndex, error})
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
@@ -213,8 +225,10 @@ export const actions = {
         try {
             await collectSurplusAuction(network, auctionIndex);
             await dispatch('fetchSurplusAuctions');
+            commit('setErrorByAuctionId', {auctionId: auctionIndex, error: undefined})
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
+            commit('setErrorByAuctionId', {auctionId: auctionIndex})
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
