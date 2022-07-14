@@ -4,6 +4,7 @@ import {
     SurplusAuctionStates,
     SurplusAuctionCollected,
     SurplusAuctionTransaction,
+    SurplusTransactionFees,
 } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
@@ -63,6 +64,20 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
     };
 };
 
+export const generateFakeSurplusTransactionFees = function (): SurplusTransactionFees {
+    const bidTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
+    const authTransactionFeeDAI = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
+    const restartTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
+    const collectTransactionFee = new BigNumber(parseFloat(faker.finance.amount(0.01, 1)));
+
+    return {
+        bidTransactionFee,
+        authTransactionFeeDAI,
+        restartTransactionFee,
+        collectTransactionFee,
+    };
+};
+
 export const generateFakeSurplusAuctionTransaction = function (
     state?: SurplusAuctionStates
 ): SurplusAuctionCollected | SurplusAuctionTransaction {
@@ -72,6 +87,9 @@ export const generateFakeSurplusAuctionTransaction = function (
         return surplusAuction;
     }
 
+    const transactionFees = generateFakeSurplusTransactionFees();
+    const combinedBidFees = transactionFees.bidTransactionFee?.plus(transactionFees.authTransactionFeeDAI || 0);
+
     // generate fake market data
     const approximateUnitPrice = surplusAuction.bidAmountMKR.dividedBy(surplusAuction.receiveAmountDAI);
     const marketUnitPriceToUnitPriceRatio = new BigNumber(
@@ -79,11 +97,18 @@ export const generateFakeSurplusAuctionTransaction = function (
     );
     const marketUnitPrice = approximateUnitPrice.multipliedBy(new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio));
 
+    const nextMinimumBid = surplusAuction.bidAmountMKR
+        ? surplusAuction.bidAmountMKR.multipliedBy(1.05)
+        : new BigNumber(0);
+
     return {
         ...surplusAuction,
+        ...transactionFees,
         marketUnitPrice,
         marketUnitPriceToUnitPriceRatio,
         unitPrice: approximateUnitPrice,
+        combinedBidFees,
+        nextMinimumBid,
     };
 };
 

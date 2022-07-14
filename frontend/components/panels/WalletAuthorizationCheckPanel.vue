@@ -2,8 +2,8 @@
     <BasePanel :current-state="currentStateAndTitle.name" class="WalletAuthorizationCheckPanel">
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
-            In order for some
-            <Explain text="smart contracts">
+            You need to authorize a certain
+            <Explain text="smart contract">
                 The particular smart contract is called DaiJoin and its technical specification can be found
                 <a href="https://github.com/makerdao/dss/blob/master/src/join.sol#L106-L142" target="_blank">here</a>
             </Explain>
@@ -20,6 +20,7 @@
         </TextBlock>
         <div class="flex justify-end mt-2">
             <BaseButton
+                class="w-full md:w-80"
                 type="primary"
                 :is-loading="isLoading"
                 :disabled="disabled || isWalletAuthorized || !walletAddress"
@@ -79,7 +80,7 @@ export default Vue.extend({
             }
             if (!this.isWalletAuthorized) {
                 return {
-                    name: 'incorrect',
+                    name: this.disabled ? 'inactive' : 'incorrect',
                     title: 'The wallet is not yet authorized to execute DAI transactions',
                 };
             }

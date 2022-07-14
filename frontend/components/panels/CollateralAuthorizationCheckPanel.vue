@@ -13,6 +13,7 @@
         </TextBlock>
         <div class="flex justify-end mt-2">
             <BaseButton
+                class="w-full md:w-80"
                 type="primary"
                 :is-loading="isLoading"
                 :disabled="disabled || isCollateralAuthorized || !walletAddress"
@@ -82,6 +83,12 @@ export default Vue.extend({
                 };
             }
             if (!this.isCollateralAuthorized) {
+                if (this.disabled) {
+                    return {
+                        name: 'inactive',
+                        title: `The wallet is not yet authorized to execute ${this.collateralType} transactions`,
+                    };
+                }
                 return {
                     name: 'incorrect',
                     title: `The wallet is not yet authorized to execute ${this.collateralType} transactions`,

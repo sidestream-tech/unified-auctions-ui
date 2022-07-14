@@ -140,6 +140,7 @@ export declare interface TakeEvent {
 export declare interface WalletBalances {
     walletETH: BigNumber;
     walletDAI: BigNumber;
+    walletMKR: BigNumber;
     walletVatDAI: BigNumber;
     walletLastUpdatedDate: Date;
 }
@@ -178,8 +179,17 @@ export type SurplusAuction = SurplusAuctionActive | SurplusAuctionCollected;
 
 export type SurplusAuctionStates = SurplusAuction['state'];
 
-export declare interface SurplusAuctionTransaction extends SurplusAuctionActive {
+export declare interface SurplusTransactionFees {
+    bidTransactionFee: BigNumber;
+    authTransactionFeeDAI: BigNumber;
+    restartTransactionFee: BigNumber;
+    collectTransactionFee: BigNumber;
+}
+
+export declare interface SurplusAuctionTransaction extends SurplusAuctionActive, SurplusTransactionFees {
     marketUnitPrice?: BigNumber | string;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
     unitPrice?: BigNumber;
+    combinedBidFees: BigNumber;
+    nextMinimumBid: BigNumber;
 }

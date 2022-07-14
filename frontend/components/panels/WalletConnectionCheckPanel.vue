@@ -14,6 +14,7 @@
         <div class="flex justify-end mt-2">
             <BaseButton
                 v-if="!walletAddress"
+                class="w-full md:w-80"
                 type="primary"
                 :is-loading="isLoading"
                 :disabled="disabled"
@@ -22,7 +23,13 @@
                 <span v-if="isLoading">Connecting...</span>
                 <span v-else>Connect a wallet</span>
             </BaseButton>
-            <BaseButton v-else :is-loading="isLoading" :disabled="disabled" @click="$emit('disconnectWallet')">
+            <BaseButton
+                v-else
+                class="w-full md:w-80"
+                :is-loading="isLoading"
+                :disabled="disabled"
+                @click="$emit('disconnectWallet')"
+            >
                 <span v-if="isLoading">Disconnecting...</span>
                 <span v-else>Disconnect wallet <format-address disable shorten :value="walletAddress" /></span>
             </BaseButton>
