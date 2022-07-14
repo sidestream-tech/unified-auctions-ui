@@ -2,6 +2,7 @@ import {
     SurplusAuction,
     SurplusAuctionBase,
     SurplusAuctionStates,
+    SurplusAuctionCollected,
     SurplusAuctionTransaction,
 } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
@@ -22,19 +23,18 @@ const generateFakeSurplusAuctionBase = function (): SurplusAuctionBase {
     return {
         id: faker.datatype.number(),
         network: faker.helpers.randomize(NETWORKS),
+        fetchedAt: new Date(),
     };
 };
 
 export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates): SurplusAuction {
     const auctionBaseData = generateFakeSurplusAuctionBase();
     const generatedState: SurplusAuctionStates = state || faker.helpers.randomize(SURPLUS_AUCTION_STATES);
-    const fetchedAt = new Date();
 
     if (generatedState === 'collected') {
         return {
             ...auctionBaseData,
             state: generatedState,
-            fetchedAt,
         };
     }
 
@@ -60,17 +60,15 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
         earliestEndDate,
         state: generatedState,
         bidAmountMKR,
-        fetchedAt,
     };
 };
 
 export const generateFakeSurplusAuctionTransaction = function (
     state?: SurplusAuctionStates
-): SurplusAuctionTransaction {
+): SurplusAuctionCollected | SurplusAuctionTransaction {
     const surplusAuction = generateFakeSurplusAuction(state);
 
-    // if auction does not have any bids yet or is finished return without market data
-    if (!surplusAuction.bidAmountMKR || !surplusAuction.receiveAmountDAI || surplusAuction.state === 'just-started') {
+    if (surplusAuction.state === 'collected') {
         return surplusAuction;
     }
 
@@ -79,9 +77,7 @@ export const generateFakeSurplusAuctionTransaction = function (
     const marketUnitPriceToUnitPriceRatio = new BigNumber(
         faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 })
     );
-    const marketUnitPrice = approximateUnitPrice.multipliedBy(
-        new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio || 0)
-    );
+    const marketUnitPrice = approximateUnitPrice.multipliedBy(new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio));
 
     return {
         ...surplusAuction,
