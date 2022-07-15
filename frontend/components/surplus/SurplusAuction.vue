@@ -56,7 +56,7 @@
                             <td>Auction Price</td>
                             <td>
                                 <template v-if="withBids">
-                                    <format-currency :value="auction.unitPrice" currency="MKR" />
+                                    <format-currency :value="auction.unitPrice" :decimal-places="6" currency="MKR" />
                                     per <format-currency currency="DAI" />
                                 </template>
                                 <span v-else class="opacity-50">No bids yet</span>
@@ -66,7 +66,12 @@
                             <td>Price On Uniswap</td>
                             <td>
                                 <template v-if="auction.marketUnitPrice">
-                                    <format-currency :value="auction.marketUnitPrice" currency="MKR" /> per
+                                    <format-currency
+                                        :value="auction.marketUnitPrice"
+                                        :decimal-places="6"
+                                        currency="MKR"
+                                    />
+                                    per
                                     <format-currency currency="DAI" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>

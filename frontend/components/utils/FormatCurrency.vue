@@ -1,7 +1,7 @@
 <template>
     <span>
         <span v-if="isNotANumber">Unknown</span>
-        <span v-else> {{ sign }}<animated-number :value="value" :decimal-places="2" /> </span>
+        <span v-else> {{ sign }}<animated-number :value="value" :decimal-places="decimalPlaces" /> </span>
         <span class="uppercase">{{ currency }}</span>
     </span>
 </template>
@@ -26,6 +26,10 @@ export default Vue.extend({
         showSign: {
             type: Boolean,
             default: false,
+        },
+        decimalPlaces: {
+            type: Number as Vue.PropType<Number>,
+            default: 2,
         },
     },
     computed: {

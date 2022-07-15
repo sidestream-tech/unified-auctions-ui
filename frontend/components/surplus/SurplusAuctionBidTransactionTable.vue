@@ -52,6 +52,7 @@
                 <format-currency
                     v-if="auction.marketUnitPrice && isActive"
                     :value="auction.marketUnitPrice"
+                    :decimal-places="6"
                     currency="MKR"
                 />
                 <span v-else class="opacity-50">Unknown</span> per DAI
@@ -63,6 +64,7 @@
                 <format-currency
                     v-if="unitPriceAfterBid && isActive && !isBidAmountNaN"
                     :value="unitPriceAfterBid"
+                    :decimal-places="6"
                     currency="MKR"
                 />
                 <span v-else class="opacity-50">Unknown</span> per DAI
