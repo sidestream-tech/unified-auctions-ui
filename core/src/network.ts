@@ -43,7 +43,7 @@ export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev
         ...infuraNetworksWithProjectId,
         {
             chainId: '0x539',
-            type: 'localhost',
+            type: 'custom',
             title: 'Localhost:8545',
             url: `http://127.0.0.1:8545`,
             etherscanUrl: '',

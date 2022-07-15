@@ -37,16 +37,17 @@
                 :required-m-k-r="inputBidAmount || auction.nextMinimumBid"
                 :network="network"
                 :token-address="tokenAddress"
-                :disabled="!isWalletConnected || !isActive"
+                :disabled="!isWalletConnected || !isActive || isHighestBidder"
                 :is-loading="isRefreshingWallet"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isWalletMKRCheckPassed"
                 @refresh="$emit('refreshWallet')"
             />
             <AllowanceAmountCheckPanel
-                :disabled="!isWalletConnected || !isActive"
+                :disabled="!isWalletConnected || !isActive || isHighestBidder"
                 :allowance-amount="allowanceMKR"
                 :desired-amount="inputBidAmount || auction.nextMinimumBid"
+                :wallet-address="walletAddress"
                 currency="MKR"
                 :is-loading="isSettingAllowance"
                 :is-correct.sync="isAllowanceAmountCheckPassed"
@@ -59,6 +60,7 @@
                 :is-loading="auctionActionState === 'bidding'"
                 :bid-amount="inputBidAmount || auction.nextMinimumBid"
                 :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="isHighestBidder"
                 @bid="$emit('bid', $event)"
             />
             <CollectSurplusAuctionPanel
@@ -147,7 +149,7 @@ export default Vue.extend({
             isWalletConnected: false,
             isWalletMKRCheckPassed: false,
             isAllowanceAmountCheckPassed: false,
-
+            isHighestBidder: false,
             inputBidAmount: undefined as BigNumber | undefined,
         };
     },

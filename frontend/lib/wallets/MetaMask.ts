@@ -76,6 +76,7 @@ export default class MetaMask extends AbstractWallet {
     public async networkChangedHandler() {
         const networkType = getNetworkTypeByChainId(window.ethereum.chainId);
         const signer = await this.getSigner();
+        console.log('networkType', networkType);
         if (networkType) {
             await setSigner(networkType, signer as any);
         }

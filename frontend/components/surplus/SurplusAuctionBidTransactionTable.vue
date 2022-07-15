@@ -42,7 +42,7 @@
         <div class="flex justify-between">
             <div>Combined Transaction Fees</div>
             <div>
-                <FormatCurrency v-if="auction.combinedBidFees" :value="auction.combinedBidFees" currency="DAI" />
+                <FormatCurrency v-if="auction.combinedBidFeesDai" :value="auction.combinedBidFeesDai" currency="DAI" />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>

@@ -55,7 +55,7 @@
                     @refreshWallet="$emit('refreshWallet')"
                     @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
                     @bid="$emit('bid', $event)"
-                    @collect="$emit('collect')"
+                    @collect="$emit('collect', selectedAuction.id)"
                 />
             </template>
         </SplitLayout>

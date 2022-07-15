@@ -1,5 +1,10 @@
 import Vue from 'vue';
-import type { SurplusAuction, SurplusAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
+import type {
+    SurplusAuction,
+    SurplusAuctionActionStates,
+    SurplusAuctionCollected,
+    SurplusAuctionTransaction,
+} from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
@@ -80,6 +85,22 @@ export const getters = {
 };
 
 export const mutations = {
+    addAuctionsToStorage(state: State, auctions: SurplusAuction[]) {
+        let auctionIdsToBeModified = Object.values(state.auctionStorage).map(a => a.id);
+        // update or create existing auctions
+        for (const auction of auctions) {
+            Vue.set(state.auctionStorage, auction.id, auction);
+            auctionIdsToBeModified = auctionIdsToBeModified.filter(id => id !== auction.id);
+        }
+        // set others as collected
+        for (const collectedAuctionId of auctionIdsToBeModified) {
+            Vue.set(state.auctionStorage, collectedAuctionId, {
+                id: collectedAuctionId,
+                state: 'collected',
+                fetchedAt: new Date(),
+            } as SurplusAuctionCollected);
+        }
+    },
     addAuctionToStorage(state: State, auction: SurplusAuction) {
         Vue.set(state.auctionStorage, auction.id, auction);
     },
@@ -115,9 +136,9 @@ export const mutations = {
 export const actions = {
     async setup({ dispatch, commit }: ActionContext<State, State>) {
         commit('reset');
-
         await dispatch('getMKRTokenAddress');
         await dispatch('fetchSurplusAuctions');
+        await dispatch('fetchAllowanceAmount');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }
@@ -132,7 +153,7 @@ export const actions = {
             commit('setAuctionsFetching', true);
             const auctions = await fetchActiveSurplusAuctions(network);
             const auctionsEnriched = await enrichSurplusAuctions(network, auctions);
-            auctionsEnriched.forEach(auction => commit('addAuctionToStorage', auction));
+            commit('addAuctionsToStorage', auctionsEnriched);
         } catch (error: any) {
             console.error('fetch surplus auction error', error);
             commit('setError', error.message);
@@ -141,14 +162,22 @@ export const actions = {
             commit('refreshLastUpdated');
         }
     },
-    async setAllowanceAmountMKR({ rootGetters, commit }: ActionContext<State, State>, amount: BigNumber) {
+    async fetchAllowanceAmount({ rootGetters, commit }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
-        const wallet = rootGetters['wallet/getAddress'];
+        const walletAddress = rootGetters['wallet/getAddress'];
+        if (!network || !walletAddress) {
+            return;
+        }
+        const allowanceAmount = await fetchAllowanceAmountMKR(network, walletAddress);
+        commit('setAllowance', allowanceAmount);
+    },
+    async setAllowanceAmountMKR({ rootGetters, commit, dispatch }: ActionContext<State, State>, amount: BigNumber) {
+        const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = rootGetters['wallet/getAddress'];
         try {
             commit('setAuthorizationLoading', true);
-            await setAllowanceAmountMKR(network, wallet, new BigNumber(amount), notifier);
-            const allowance = await fetchAllowanceAmountMKR(network, wallet);
-            commit('setAllowance', allowance);
+            await setAllowanceAmountMKR(network, walletAddress, amount ? new BigNumber(amount) : undefined, notifier);
+            dispatch('fetchAllowanceAmount');
         } catch (error: any) {
             console.error(`Allowance error: ${error.message}`);
         } finally {
@@ -224,7 +253,7 @@ export const actions = {
         }
         commit('setAuctionState', { auctionId: auctionIndex, value: 'bidding' });
         try {
-            await bidToSurplusAuction(network, auctionIndex, bid);
+            await bidToSurplusAuction(network, auctionIndex, bid, notifier);
             await dispatch('fetchSurplusAuctions');
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
@@ -239,7 +268,7 @@ export const actions = {
         }
         commit('setAuctionState', { auctionId: auctionIndex, value: 'collecting' });
         try {
-            await collectSurplusAuction(network, auctionIndex);
+            await collectSurplusAuction(network, auctionIndex, notifier);
             await dispatch('fetchSurplusAuctions');
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
