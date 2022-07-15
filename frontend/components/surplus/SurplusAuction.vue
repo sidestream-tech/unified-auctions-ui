@@ -80,7 +80,12 @@
                         <tr>
                             <td>Market Difference</td>
                             <td>
-                                <template v-if="auction.marketUnitPriceToUnitPriceRatio">
+                                <template
+                                    v-if="
+                                        auction.marketUnitPriceToUnitPriceRatio &&
+                                        !auction.marketUnitPriceToUnitPriceRatio.isNaN()
+                                    "
+                                >
                                     <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>

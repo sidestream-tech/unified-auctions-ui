@@ -33,7 +33,7 @@
                     v-if="
                         getIsAuctionActive(record) &&
                         marketUnitPriceToUnitPriceRatio &&
-                        !marketUnitPriceToUnitPriceRatio.isZero()
+                        !marketUnitPriceToUnitPriceRatio.isNaN()
                     "
                 >
                     <format-market-value :value="marketUnitPriceToUnitPriceRatio" />
@@ -43,7 +43,7 @@
             <div slot="state" slot-scope="state, record">
                 <span v-if="state === 'collected'"> Collected </span>
                 <span v-else-if="state === 'requires-restart'"> Requires Restart </span>
-                <span v-else-if="state === 'ready-for-collection'"> Expired </span>
+                <span v-else-if="state === 'ready-for-collection'"> Collectable since </span>
                 <span v-else> Expires in </span>
                 <time-till v-if="state !== 'requires-restart'" :date="record.earliestEndDate" />
             </div>

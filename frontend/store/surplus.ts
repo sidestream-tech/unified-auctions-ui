@@ -21,6 +21,7 @@ import {
     getSurplusAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
+import { swapToMKR } from 'auctions-core/src/helpers/swap';
 import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
@@ -283,5 +284,12 @@ export const actions = {
         }
         const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'MKR');
         commit('setTokenAddress', tokenAddress);
+    },
+    async swapToMKR({ rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        await swapToMKR(network, 20, 20, notifier);
     },
 };
