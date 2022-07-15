@@ -88,10 +88,6 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        walletAddress: {
-            type: String,
-            default: undefined,
-        },
         currency: {
             type: String,
             default: 'DAI',
@@ -117,7 +113,7 @@ export default Vue.extend({
             return this.desiredAmount;
         },
         currentStateAndTitle(): PanelProps {
-            if (!this.walletAddress) {
+            if (!this.allowanceAmount) {
                 return {
                     name: 'inactive',
                     title: 'Please connect a wallet to check the allowance',

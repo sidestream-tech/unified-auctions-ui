@@ -47,7 +47,6 @@
                 :disabled="!isWalletConnected || !isActive || isHighestBidder"
                 :allowance-amount="allowanceMKR"
                 :desired-amount="inputBidAmount || auction.nextMinimumBid"
-                :wallet-address="walletAddress"
                 currency="MKR"
                 :is-loading="isSettingAllowance"
                 :is-correct.sync="isAllowanceAmountCheckPassed"

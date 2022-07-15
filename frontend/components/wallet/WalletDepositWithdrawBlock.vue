@@ -38,6 +38,7 @@
                     :is-correct.sync="isAllowanceAmountCheckPassed"
                     :allowance-amount="allowanceAmount"
                     :desired-amount="depositAmount || maxDeposit"
+                    :wallet-address="walletAddress"
                     :is-loading="isAllowanceAmountLoading"
                     :is-explanations-shown="isExplanationsShown"
                     :disabled="isLoading || isSubmitting"
