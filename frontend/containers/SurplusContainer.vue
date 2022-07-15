@@ -12,7 +12,7 @@
             :allowance-m-k-r="allowanceMKR"
             :is-connecting-wallet="isConnectingWallet"
             :is-refreshing-wallet="isRefreshingWallet"
-            :is-setting-allowance="false"
+            :is-setting-allowance="isAuthorizationLoading"
             :last-updated="lastUpdated"
             :is-explanations-shown.sync="isExplanationsShown"
             :network="network"
@@ -53,6 +53,7 @@ export default Vue.extend({
             auctionsError: 'error',
             lastUpdated: 'lastUpdated',
             tokenAddress: 'getTokenAddress',
+            isAuthorizationLoading: 'isAuthorizationLoading',
         }),
         ...mapGetters('wallet', {
             walletAddress: 'getAddress',
