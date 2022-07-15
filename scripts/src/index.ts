@@ -92,8 +92,9 @@ const getTakeEvents = async function (network: string, collateralType: string): 
 
         const collateralSymbol = getCollateralConfigByType(collateralType).symbol;
         let marketPrice;
+        const takenAmount = new BigNumber(takeParameters.amt._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
         try {
-            marketPrice = await getMarketPrice(NETWORK, collateralSymbol, new BigNumber(1));
+            marketPrice = await getMarketPrice(NETWORK, collateralSymbol, takenAmount);
         } catch (error) {
             console.info(`cannot fetch market price for the collateral ${collateralSymbol} due to ${error}`);
         }
@@ -101,7 +102,7 @@ const getTakeEvents = async function (network: string, collateralType: string): 
         rows.push({
             ...row,
             auctionId: new BigNumber(takeParameters.id._hex).toFixed(),
-            takenAmount: new BigNumber(takeParameters.amt._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS).toFixed(),
+            takenAmount: takenAmount.toFixed(),
             maxAcceptablePrice: new BigNumber(takeParameters.max._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS).toFixed(),
             userOrCallee: takeParameters.who,
             calleeData: takeParameters.data,
@@ -109,7 +110,7 @@ const getTakeEvents = async function (network: string, collateralType: string): 
             price: new BigNumber(eventWithTransaction.event.args?.price._hex)
                 .shiftedBy(-RAY_NUMBER_OF_DIGITS)
                 .toFixed(),
-            marketPrice: marketPrice ? marketPrice.toString() : '',
+            marketPrice: marketPrice ? marketPrice.toFixed() : '',
         });
     }
     return rows;
