@@ -84,6 +84,16 @@ export default Vue.extend({
                     filters: ['collateral'],
                 },
                 {
+                    title: 'Surplus auctions portal',
+                    description:
+                        'Web tool that supports participation in surplus auctions by bidding on Dai with own MKR',
+                    links: {
+                        source: 'https://github.com/sidestream-tech/unified-auctions-ui',
+                        participate: '/surplus',
+                    },
+                    filters: ['surplus'],
+                },
+                {
                     title: 'Liquidations platform',
                     description: 'Web tool that support participation in collateral auctions by bidding with own Dai',
                     links: {
@@ -92,7 +102,7 @@ export default Vue.extend({
                     filters: ['collateral'],
                 },
                 {
-                    title: 'Surplus auction portal',
+                    title: 'Maker Auction (surplus)',
                     description:
                         'Web tool that supports participation in surplus auctions by bidding on Dai with own MKR',
                     links: {
@@ -102,7 +112,7 @@ export default Vue.extend({
                     filters: ['surplus'],
                 },
                 {
-                    title: 'Debt auction portal',
+                    title: 'Maker Auction (debt)',
                     description:
                         'Web tool that supports participation in debt auctions by bidding on MKR with own Dai',
                     links: {
