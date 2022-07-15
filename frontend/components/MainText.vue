@@ -1,27 +1,9 @@
 <template>
     <div class="flex flex-col space-y-8 py-8">
-        <TextBlock v-if="isExplanationsShown" title="What is the Maker Protocol?" class="TextBlock">
-            The Maker Protocol is
-            <Explain text="a set of rules">
-                a <a href="https://changelog.makerdao.com/" target="_blank"> set of smart contracts </a> running on the
-                Ethereum blockchain</Explain
-            >
-            that defines how a cryptocurrency called DAI is kept approximately equal to USD by incentivizing market
-            players. People who help to keep DAI stable, benefit from their actions by acquiring cryptocurrency at a
-            discount. The main promise of the protocol is to provide a decentralized
-            <Explain text="stable currency">
-                <a href="https://makerdao.com/en/whitepaper#the-dai-stablecoin" target="_blank">
-                    The DAI Stablecoin
-                </a>
-                is a decentralized, unbiased, collateral-backed cryptocurrency soft-pegged to the US Dollar </Explain
-            >, which can be used to borrow money over a longer period without being affected by unpredictable exchange
-            rates.
-        </TextBlock>
-
+        <WhatIsMakerProtocol v-if="isExplanationsShown" class="TextBlock"></WhatIsMakerProtocol>
         <TextBlock v-if="isExplanationsShown" class="TextBlock">
             <template #title>
                 What are the
-
                 <Explain text="collateral auctions">
                     A
                     <a
@@ -85,7 +67,7 @@
                 :last-updated="lastUpdated"
             />
         </div>
-        <TextBlock v-if="isExplanationsShown" title="What's the catch?" class="TextBlock">
+        <TextBlock v-if="isExplanationsShown" title="What is the catch?" class="TextBlock">
             This situation exists in the first place, because the Maker protocol can not be executed by itself. There
             need to be players who execute vital parts of the protocol and pay a
             <Explain text="transaction fee">
@@ -111,6 +93,7 @@
 </template>
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import WhatIsMakerProtocol from '~/components/WhatIsMakerProtocol.vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import AuctionsTable from '~/components/AuctionsTable.vue';
 import FormatPercentage from '~/components/utils/FormatPercentage.vue';
@@ -122,6 +105,7 @@ export default Vue.extend({
         TextBlock,
         AuctionsTable,
         Explain,
+        WhatIsMakerProtocol,
     },
     props: {
         auctions: {

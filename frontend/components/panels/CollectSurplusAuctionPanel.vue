@@ -69,10 +69,11 @@ export default Vue.extend({
     },
     computed: {
         isCurrentWalletHighestBidder() {
-            if (!this.walletAddress) {
-                return false;
-            }
-            return this.walletAddress === this.auction.receiverAddress;
+            return (
+                this.auction.receiverAddress &&
+                this.walletAddress &&
+                this.auction.receiverAddress.toLowerCase() === this.walletAddress.toLowerCase()
+            );
         },
         currentStateAndTitle(): PanelProps {
             if (this.auction.state === 'just-started') {

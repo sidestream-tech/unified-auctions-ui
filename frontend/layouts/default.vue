@@ -3,6 +3,8 @@
         <Header
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
+            :type="headerType"
+            :page-name="pageName"
             :network.sync="network"
             :dark-mode.sync="isDarkMode"
             :wallet-address="walletAddress"
@@ -114,6 +116,19 @@ export default Vue.extend({
         },
         stagingBannerURL() {
             return process.env.STAGING_BANNER_URL;
+        },
+        pageName(): string {
+            return this.$route?.name || '';
+        },
+        headerType(): string {
+            return (
+                {
+                    collateral: 'auctions',
+                    surplus: 'auctions',
+                    privacy: 'minimal',
+                    index: 'unified',
+                }[this.pageName] ?? 'default'
+            );
         },
     },
     watch: {

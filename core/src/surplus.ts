@@ -179,14 +179,21 @@ const getSurplusTransactionFees = async function (network: string): Promise<Surp
     };
 };
 
+const getMarketPriceMkr = async function (network: string, bidAmountMKR: BigNumber): Promise<BigNumber> {
+    try {
+        return new BigNumber(1).div((await convertMkrToDai(network, bidAmountMKR)).div(bidAmountMKR));
+    } catch (error) {
+        return new BigNumber(NaN);
+    }
+};
+
 export const enrichSurplusAuction = async (
     network: string,
     auction: SurplusAuctionActive
 ): Promise<SurplusAuctionTransaction> => {
     const nextMinimumBid = await getNextMinimumBid(network, auction);
     const unitPrice = auction.bidAmountMKR.div(auction.receiveAmountDAI);
-    const mkrMarketPrice = (await convertMkrToDai(network, auction.bidAmountMKR)).div(auction.bidAmountMKR);
-    const marketUnitPrice = new BigNumber(1).div(mkrMarketPrice);
+    const marketUnitPrice = await getMarketPriceMkr(network, auction.bidAmountMKR);
     const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
     const fees = await getSurplusTransactionFees(network);
     return {

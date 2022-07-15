@@ -1,5 +1,10 @@
 import Vue from 'vue';
-import type { SurplusAuction, SurplusAuctionTransaction } from 'auctions-core/src/types';
+import type {
+    SurplusAuction,
+    SurplusAuctionActionStates,
+    SurplusAuctionCollected,
+    SurplusAuctionTransaction,
+} from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
@@ -16,21 +21,24 @@ import {
     getSurplusAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
+import { swapToMKR } from 'auctions-core/src/helpers/swap';
 import notifier from '~/lib/notifier';
+
+const REFETCH_INTERVAL = 30 * 1000;
+let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
-type AuctionState = 'loaded' | 'restarting' | 'bidding' | 'collecting';
 interface State {
     auctionStorage: Record<string, SurplusAuctionTransaction>;
-    auctionStates: Record<number, AuctionState>;
+    auctionStates: Record<number, SurplusAuctionActionStates>;
     areAuctionsFetching: boolean;
     isAuthorizationLoading: boolean;
-    isBidding: boolean;
     error: string | null;
     lastUpdated: Date | undefined;
     allowanceAmount?: BigNumber;
     auctionErrors: Record<string, string | undefined>;
+    tokenAddress: string | undefined;
 }
 
 const getInitialState = (): State => ({
@@ -39,17 +47,17 @@ const getInitialState = (): State => ({
     allowanceAmount: undefined,
     areAuctionsFetching: false,
     isAuthorizationLoading: false,
-    isBidding: false,
     error: null,
     lastUpdated: undefined,
     auctionErrors: {},
+    tokenAddress: undefined,
 });
 
 export const state = (): State => getInitialState();
 
 export const getters = {
     auctionStorage(state: State) {
-        return state.auctionStorage;
+        return Object.values(state.auctionStorage);
     },
     auctionStates(state: State) {
         return state.auctionStates;
@@ -63,9 +71,6 @@ export const getters = {
     isAuthorizationLoading(state: State) {
         return state.isAuthorizationLoading;
     },
-    isBidding(state: State) {
-        return state.isBidding;
-    },
     error(state: State) {
         return state.error;
     },
@@ -75,9 +80,28 @@ export const getters = {
     getAuctionErrors(state: State) {
         return state.auctionErrors;
     },
+    getTokenAddress(state: State) {
+        return state.tokenAddress;
+    },
 };
 
 export const mutations = {
+    addAuctionsToStorage(state: State, auctions: SurplusAuction[]) {
+        let auctionIdsToBeModified = Object.values(state.auctionStorage).map(a => a.id);
+        // update or create existing auctions
+        for (const auction of auctions) {
+            Vue.set(state.auctionStorage, auction.id, auction);
+            auctionIdsToBeModified = auctionIdsToBeModified.filter(id => id !== auction.id);
+        }
+        // set others as collected
+        for (const collectedAuctionId of auctionIdsToBeModified) {
+            Vue.set(state.auctionStorage, collectedAuctionId, {
+                id: collectedAuctionId,
+                state: 'collected',
+                fetchedAt: new Date(),
+            } as SurplusAuctionCollected);
+        }
+    },
     addAuctionToStorage(state: State, auction: SurplusAuction) {
         Vue.set(state.auctionStorage, auction.id, auction);
     },
@@ -96,15 +120,31 @@ export const mutations = {
     setAuthorizationLoading(state: State, isLoading: boolean) {
         state.isAuthorizationLoading = isLoading;
     },
-    setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: AuctionState }) {
+    setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: SurplusAuctionActionStates }) {
         Vue.set(state.auctionStates, auctionId, value);
     },
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
         Vue.set(state.auctionErrors, auctionId, error);
     },
+    setTokenAddress(state: State, tokenAddress: string) {
+        state.tokenAddress = tokenAddress;
+    },
+    reset(state: State) {
+        Object.assign(state, getInitialState());
+    },
 };
 
 export const actions = {
+    async setup({ dispatch, commit }: ActionContext<State, State>) {
+        commit('reset');
+        await dispatch('getMKRTokenAddress');
+        await dispatch('fetchSurplusAuctions');
+        await dispatch('fetchAllowanceAmount');
+        if (refetchIntervalId) {
+            clearInterval(refetchIntervalId);
+        }
+        refetchIntervalId = setInterval(() => dispatch('fetchSurplusAuctions'), REFETCH_INTERVAL);
+    },
     async fetchSurplusAuctions({ rootGetters, commit }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
@@ -114,7 +154,7 @@ export const actions = {
             commit('setAuctionsFetching', true);
             const auctions = await fetchActiveSurplusAuctions(network);
             const auctionsEnriched = await enrichSurplusAuctions(network, auctions);
-            auctionsEnriched.forEach(auction => commit('addAuctionToStorage', auction));
+            commit('addAuctionsToStorage', auctionsEnriched);
         } catch (error: any) {
             console.error('fetch surplus auction error', error);
             commit('setError', error.message);
@@ -123,14 +163,22 @@ export const actions = {
             commit('refreshLastUpdated');
         }
     },
-    async setAllowanceAmountMKR({ rootGetters, commit }: ActionContext<State, State>, amount: BigNumber) {
+    async fetchAllowanceAmount({ rootGetters, commit }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
-        const wallet = rootGetters['wallet/getAddress'];
+        const walletAddress = rootGetters['wallet/getAddress'];
+        if (!network || !walletAddress) {
+            return;
+        }
+        const allowanceAmount = await fetchAllowanceAmountMKR(network, walletAddress);
+        commit('setAllowance', allowanceAmount);
+    },
+    async setAllowanceAmountMKR({ rootGetters, commit, dispatch }: ActionContext<State, State>, amount: BigNumber) {
+        const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = rootGetters['wallet/getAddress'];
         try {
             commit('setAuthorizationLoading', true);
-            await setAllowanceAmountMKR(network, wallet, new BigNumber(amount), notifier);
-            const allowance = await fetchAllowanceAmountMKR(network, wallet);
-            commit('setAllowance', allowance);
+            await setAllowanceAmountMKR(network, walletAddress, amount ? new BigNumber(amount) : undefined, notifier);
+            dispatch('fetchAllowanceAmount');
         } catch (error: any) {
             console.error(`Allowance error: ${error.message}`);
         } finally {
@@ -206,7 +254,7 @@ export const actions = {
         }
         commit('setAuctionState', { auctionId: auctionIndex, value: 'bidding' });
         try {
-            await bidToSurplusAuction(network, auctionIndex, bid);
+            await bidToSurplusAuction(network, auctionIndex, bid, notifier);
             await dispatch('fetchSurplusAuctions');
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
@@ -221,7 +269,7 @@ export const actions = {
         }
         commit('setAuctionState', { auctionId: auctionIndex, value: 'collecting' });
         try {
-            await collectSurplusAuction(network, auctionIndex);
+            await collectSurplusAuction(network, auctionIndex, notifier);
             await dispatch('fetchSurplusAuctions');
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
@@ -229,11 +277,19 @@ export const actions = {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
     },
-    async getMKRTokenAddress({ rootGetters }: ActionContext<State, State>) {
+    async getMKRTokenAddress({ commit, rootGetters }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
-        return await getTokenAddressByNetworkAndSymbol(network, 'MKR');
+        const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'MKR');
+        commit('setTokenAddress', tokenAddress);
+    },
+    async swapToMKR({ rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        await swapToMKR(network, 20, 20, notifier);
     },
 };

@@ -171,6 +171,9 @@ export const mutations = {
 export const actions = {
     async update({ rootState, dispatch }: ActionContext<State, any>) {
         const selectedAuctionId = rootState.route.query.auction;
+        if (rootState.route.name !== 'collateral') {
+            return;
+        }
         if (!selectedAuctionId) {
             await dispatch('updateAllAuctions');
         } else {

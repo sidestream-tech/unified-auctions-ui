@@ -77,8 +77,10 @@ export default Vue.extend({
     watch: {
         isWalletModalShown: {
             immediate: true,
-            handler() {
-                this.fetchRelatedData();
+            handler(isWalletModalShown) {
+                if (isWalletModalShown) {
+                    this.fetchRelatedData();
+                }
             },
         },
         walletAddress: {

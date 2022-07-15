@@ -13,7 +13,8 @@
                 <AuctionRestartPanel
                     :wallet-address="walletAddress"
                     :is-explanations-shown="isExplanationsShown"
-                    :is-restarting="auction.isRestarting"
+                    :is-restarting="auctionActionState === 'restarting'"
+                    :is-connecting="isConnecting"
                     auction-type="surplus"
                     @restart="$emit('restart', auctionId)"
                     @connectWallet="$emit('connect')"
@@ -30,7 +31,10 @@
                                 <span v-else-if="requiresRestart">Requires restart</span>
                                 <span v-else-if="auction.state === 'ready-for-collection'">Ended </span>
                                 <span v-else>Collected </span>
-                                <time-till v-if="auction.earliestEndDate" :date="auction.earliestEndDate" />
+                                <time-till
+                                    v-if="auction.earliestEndDate && !requiresRestart"
+                                    :date="auction.earliestEndDate"
+                                />
                             </td>
                         </tr>
                         <tr>
@@ -52,7 +56,7 @@
                             <td>Auction Price</td>
                             <td>
                                 <template v-if="withBids">
-                                    <format-currency :value="auction.unitPrice" currency="MKR" />
+                                    <format-currency :value="auction.unitPrice" :decimal-places="6" currency="MKR" />
                                     per <format-currency currency="DAI" />
                                 </template>
                                 <span v-else class="opacity-50">No bids yet</span>
@@ -62,7 +66,12 @@
                             <td>Price On Uniswap</td>
                             <td>
                                 <template v-if="auction.marketUnitPrice">
-                                    <format-currency :value="auction.marketUnitPrice" currency="MKR" /> per
+                                    <format-currency
+                                        :value="auction.marketUnitPrice"
+                                        :decimal-places="6"
+                                        currency="MKR"
+                                    />
+                                    per
                                     <format-currency currency="DAI" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
@@ -71,7 +80,12 @@
                         <tr>
                             <td>Market Difference</td>
                             <td>
-                                <template v-if="auction.marketUnitPriceToUnitPriceRatio">
+                                <template
+                                    v-if="
+                                        auction.marketUnitPriceToUnitPriceRatio &&
+                                        !auction.marketUnitPriceToUnitPriceRatio.isNaN()
+                                    "
+                                >
                                     <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
@@ -126,12 +140,13 @@
                 </div>
             </TextBlock>
         </div>
+        <Loading v-else-if="areAuctionsFetching" is-loading class="w-full self-center Loading h-48" />
     </TextBlock>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import type { SurplusAuction } from 'auctions-core/src/types';
+import type { SurplusAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/TextBlock.vue';
 import TimeTill from '~/components/common/TimeTill.vue';
@@ -140,6 +155,8 @@ import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
+import Loading from '~/components/common/Loading';
+
 export default Vue.extend({
     name: 'SurplusAuction',
     components: {
@@ -152,19 +169,28 @@ export default Vue.extend({
         Alert,
         Tooltip,
         LoadingIcon,
+        Loading,
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<SurplusAuction>,
+            type: Object as Vue.PropType<SurplusAuctionTransaction>,
             default: null,
         },
         auctionId: {
-            type: String,
-            required: true,
+            type: Number,
+            default: null,
+        },
+        auctionActionState: {
+            type: String as Vue.PropType<SurplusAuctionActionStates>,
+            default: null,
         },
         error: {
             type: String,
             default: null,
+        },
+        isConnecting: {
+            type: Boolean,
+            default: false,
         },
         isExplanationsShown: {
             type: Boolean,
@@ -196,12 +222,12 @@ export default Vue.extend({
                     error: 'This auction was not found',
                     showBanner: true,
                 };
-            } else if (this.auction.state === 'collected') {
+            } else if (this.auction?.state === 'collected') {
                 return {
                     error: 'This auction was collected',
                     showBanner: true,
                 };
-            } else if (this.auction.state === 'requires-restart' && !this.areAuctionsFetching) {
+            } else if (this.auction?.state === 'requires-restart' && !this.areAuctionsFetching) {
                 return {
                     error: 'This auction is inactive and must be restarted',
                     showBanner: false,

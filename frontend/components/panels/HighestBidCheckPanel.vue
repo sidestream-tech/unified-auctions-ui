@@ -7,9 +7,14 @@
         </TextBlock>
 
         <div class="flex justify-between my-3">
-            Current Highest Bid
-            <span v-if="latestBid === null" class="text-gray-400"> There were no bids yet </span>
-            <FormatCurrency v-else :value="latestBid" currency="MKR" />
+            <span>
+                Current Highest Bid
+                <span v-if="auction.receiverAddress"
+                    >by <FormatAddress :value="auction.receiverAddress" type="address" shorten
+                /></span>
+            </span>
+            <span v-if="!wasThereAnyBids" class="text-gray-400"> There were no bids yet </span>
+            <FormatCurrency v-else :value="auction.bidAmountMKR" currency="MKR" />
         </div>
 
         <div class="flex justify-end gap-5">
@@ -18,7 +23,7 @@
                 :type="isUserLatestBidder ? 'secondary' : 'primary'"
                 :disabled="isBidding || disabled || !walletAddress || isLoading || !!error"
                 :is-loading="isBidding || isLoading"
-                @click="$emit('bid', bidAmount)"
+                @click="bid"
             >
                 <span v-if="isBidding"> Bidding... </span>
                 <span v-else-if="isLoading"> Loading... </span>
@@ -40,10 +45,17 @@ import BasePanel from '../common/BasePanel.vue';
 import TextBlock from '../common/TextBlock.vue';
 import BaseButton from '../common/BaseButton.vue';
 import FormatCurrency from '../utils/FormatCurrency.vue';
+import FormatAddress from '../utils/FormatAddress.vue';
 
 export default Vue.extend({
     name: 'HighestBidCheckPanel',
-    components: { FormatCurrency, BaseButton, TextBlock, BasePanel },
+    components: {
+        FormatCurrency,
+        FormatAddress,
+        BaseButton,
+        TextBlock,
+        BasePanel,
+    },
     props: {
         auction: {
             type: Object as Vue.PropType<SurplusAuction>,
@@ -80,32 +92,31 @@ export default Vue.extend({
         },
     },
     computed: {
-        latestBid(): BigNumber | null {
-            return this.auction.bidAmountMKR.isEqualTo(0) ? null : this.auction.bidAmountMKR;
+        wasThereAnyBids(): BigNumber | null {
+            return !this.auction.bidAmountMKR.isZero();
         },
         isUserLatestBidder(): boolean {
-            return !!this.latestBid && this.auction.receiverAddress === this.walletAddress;
+            return (
+                this.wasThereAnyBids &&
+                this.auction.receiverAddress &&
+                this.walletAddress &&
+                this.auction.receiverAddress.toLowerCase() === this.walletAddress.toLowerCase()
+            );
         },
         currentStateAndTitle(): PanelProps {
-            if (!this.walletAddress && !this.latestBid) {
+            if (!this.wasThereAnyBids) {
                 return {
                     name: 'notice',
-                    title: `No bids yet`,
+                    title: 'No bids yet',
                 };
             }
-            if (this.auction.state === 'ready-for-collection') {
-                return {
-                    name: 'inactive',
-                    title: this.isUserLatestBidder ? `You are the highest bidder` : `You are not the highest bidder`,
-                };
-            }
-            if (!this.latestBid) {
-                return {
-                    name: 'notice',
-                    title: `No bids yet`,
-                };
-            }
-            if (!this.walletAddress) {
+            if (this.auction.state !== 'ready-for-collection') {
+                if (this.isUserLatestBidder) {
+                    return {
+                        name: 'correct',
+                        title: 'You are the highest bidder',
+                    };
+                }
                 return {
                     name: 'notice',
                     title: `Highest bid by ${this.auction.receiverAddress}`,
@@ -114,13 +125,26 @@ export default Vue.extend({
             if (this.isUserLatestBidder) {
                 return {
                     name: 'correct',
-                    title: `You are the highest bidder`,
+                    title: 'You are the highest bidder',
                 };
             }
             return {
-                name: 'notice',
+                name: 'inactive',
                 title: `You are not the highest bidder`,
             };
+        },
+    },
+    watch: {
+        currentStateAndTitle: {
+            immediate: true,
+            handler(newCurrentStateAndTitle) {
+                this.$emit('update:isCorrect', newCurrentStateAndTitle.name === 'correct');
+            },
+        },
+    },
+    methods: {
+        bid() {
+            this.$emit('bid', { auctionIndex: this.auction.id, bid: this.bidAmount });
         },
     },
 });

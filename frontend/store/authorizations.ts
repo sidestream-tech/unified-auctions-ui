@@ -96,6 +96,13 @@ export const actions = {
     reset({ commit }: ActionContext<State, State>) {
         commit('reset');
     },
+    async setup({ dispatch, rootState }: ActionContext<State, any>) {
+        dispatch('reset');
+        if (rootState.route.name !== 'collateral') {
+            return;
+        }
+        await dispatch('refetch');
+    },
     async refetch({ dispatch }: ActionContext<State, State>) {
         await dispatch('fetchWalletAuthorizationStatus');
         await dispatch('fetchAllowanceAmount');
@@ -243,10 +250,5 @@ export const actions = {
         } finally {
             commit('setIsAllowanceAmountLoading', false);
         }
-    },
-    async setup({ commit, dispatch }: ActionContext<State, State>) {
-        commit('reset');
-
-        await dispatch('refetch');
     },
 };

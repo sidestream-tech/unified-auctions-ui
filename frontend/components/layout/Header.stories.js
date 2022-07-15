@@ -42,10 +42,28 @@ storiesOf('Layout/Header', module)
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
     }))
+    .add('Minimal', () => ({
+        ...common,
+        template: `<Header
+        type="minimal" 
+        :isExplanationsShown.sync="isExplanationsShown"
+        @update:isExplanationsShown="updateIsExplanationsShown"
+        />`,
+    }))
     .add('With Staging header', () => ({
         ...common,
         template: `<Header
         type="unified" 
+        :isExplanationsShown.sync="isExplanationsShown"
+        :isStagingEnvironment="true"
+        @update:isExplanationsShown="updateIsExplanationsShown"
+        />`,
+    }))
+    .add('Surplus Auctions Page', () => ({
+        ...common,
+        template: `<Header
+        type="auctions"
+        pageName="surplus"
         :isExplanationsShown.sync="isExplanationsShown"
         :isStagingEnvironment="true"
         @update:isExplanationsShown="updateIsExplanationsShown"

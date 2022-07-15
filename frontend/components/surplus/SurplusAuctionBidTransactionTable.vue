@@ -42,7 +42,7 @@
         <div class="flex justify-between">
             <div>Combined Transaction Fees</div>
             <div>
-                <FormatCurrency v-if="auction.combinedBidFees" :value="auction.combinedBidFees" currency="DAI" />
+                <FormatCurrency v-if="auction.combinedBidFeesDai" :value="auction.combinedBidFeesDai" currency="DAI" />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
@@ -52,6 +52,7 @@
                 <format-currency
                     v-if="auction.marketUnitPrice && isActive"
                     :value="auction.marketUnitPrice"
+                    :decimal-places="6"
                     currency="MKR"
                 />
                 <span v-else class="opacity-50">Unknown</span> per DAI
@@ -63,6 +64,7 @@
                 <format-currency
                     v-if="unitPriceAfterBid && isActive && !isBidAmountNaN"
                     :value="unitPriceAfterBid"
+                    :decimal-places="6"
                     currency="MKR"
                 />
                 <span v-else class="opacity-50">Unknown</span> per DAI

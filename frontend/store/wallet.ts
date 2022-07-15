@@ -297,6 +297,7 @@ export const actions = {
         if (!getters.isConnected) {
             await dispatch('autoConnect');
         }
-        await dispatch('refetch');
+        dispatch('refetch');
+        dispatch('surplus/setup', undefined, { root: true });
     },
 };

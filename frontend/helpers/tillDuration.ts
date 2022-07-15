@@ -12,6 +12,14 @@ const formatDuration = function (duration: Duration): string {
     return output.join(' ');
 };
 
+export const formatSeconds = function (seconds: number): string {
+    const duration = intervalToDuration({
+        start: new Date(0),
+        end: new Date(seconds * 1000),
+    });
+    return formatDuration(duration);
+};
+
 export const formatInterval = function (startDate: Date, endDate: Date): string {
     if (startDate < endDate) {
         const duration = intervalToDuration({
