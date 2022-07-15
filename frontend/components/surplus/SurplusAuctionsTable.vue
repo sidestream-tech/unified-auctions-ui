@@ -28,9 +28,15 @@
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="marketUnitPrice" slot-scope="marketUnitPrice, record">
-                <template v-if="getIsAuctionActive(record) && marketUnitPrice && !marketUnitPrice.isEqualTo(0)">
-                    <format-market-value :value="marketUnitPrice" />
+            <div slot="marketUnitPriceToUnitPriceRatio" slot-scope="marketUnitPriceToUnitPriceRatio, record">
+                <template
+                    v-if="
+                        getIsAuctionActive(record) &&
+                        marketUnitPriceToUnitPriceRatio &&
+                        !marketUnitPriceToUnitPriceRatio.isZero()
+                    "
+                >
+                    <format-market-value :value="marketUnitPriceToUnitPriceRatio" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -210,9 +216,9 @@ export default Vue.extend({
                 },
                 {
                     title: 'Market Difference',
-                    dataIndex: 'marketUnitPrice',
-                    scopedSlots: { customRender: 'marketUnitPrice' },
-                    sorter: compareBy('marketUnitPrice'),
+                    dataIndex: 'marketUnitPriceToUnitPriceRatio',
+                    scopedSlots: { customRender: 'marketUnitPriceToUnitPriceRatio' },
+                    sorter: compareBy('marketUnitPriceToUnitPriceRatio'),
                 },
                 {
                     title: 'State',
