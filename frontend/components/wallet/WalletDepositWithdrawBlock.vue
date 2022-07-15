@@ -20,6 +20,7 @@
                 :input-value.sync="depositAmount"
                 :max-value="maxDeposit"
                 :min-value="minimumDaiAmount"
+                :fallback-value="maxDeposit"
                 :disabled="!canDeposit || isAllowanceAmountLoading"
             />
             <div v-if="selectedMethod === 'deposit'">
@@ -38,7 +39,6 @@
                     :is-correct.sync="isAllowanceAmountCheckPassed"
                     :allowance-amount="allowanceAmount"
                     :desired-amount="depositAmount || maxDeposit"
-                    :wallet-address="walletAddress"
                     :is-loading="isAllowanceAmountLoading"
                     :is-explanations-shown="isExplanationsShown"
                     :disabled="isLoading || isSubmitting"
@@ -51,6 +51,7 @@
                 :input-value.sync="withdrawAmount"
                 :max-value="maxWithdraw"
                 :min-value="minimumDaiAmount"
+                :fallback-value="maxWithdraw"
                 :disabled="!canWithdraw || isAllowanceAmountLoading || isAuthorizationLoading"
             />
             <div v-if="selectedMethod === 'withdraw'">
