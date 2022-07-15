@@ -3,9 +3,12 @@
         <TransactionMessage
             :is-explanations-shown="isExplanationsShown"
             :transaction-address="transactionAddress"
-            :is-wallet-authorized="isWalletAuthorized"
-            :is-collateral-authorized="isCollateralAuthorized"
-            :auction-transaction="auctionTransaction"
+            :is-wallet-connected="isWalletConnected"
+            :is-wallet-authed="isWalletAuthed"
+            :is-collateral-authed="isCollateralAuthed"
+            :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
+            :auth-transaction-fee-e-t-h="authTransactionFeeETH"
+            :combined-swap-fees-e-t-h="combinedSwapFeesETH"
             show-different-wallet-info
         />
         <div class="flex flex-col md:flex-row md:space-x-4 justify-end flex-wrap mt-4">
@@ -36,10 +39,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import BaseButton from '~/components/common/BaseButton.vue';
 import ExecuteWithOtherWalletBlock from '~/components/transaction/ExecuteWithOtherWalletBlock.vue';
 import TransactionMessage from '~/components/transaction/TransactionMessage.vue';
-import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
     name: 'WalletBlock',
@@ -49,9 +52,17 @@ export default Vue.extend({
         TransactionMessage,
     },
     props: {
-        auctionTransaction: {
-            type: Object as Vue.PropType<AuctionTransaction>,
-            default: null,
+        swapTransactionFeeETH: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        authTransactionFeeETH: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        combinedSwapFeesETH: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
         disabled: {
             type: Boolean,
@@ -69,11 +80,15 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isWalletAuthorized: {
+        isWalletConnected: {
             type: Boolean,
             default: false,
         },
-        isCollateralAuthorized: {
+        isWalletAuthed: {
+            type: Boolean,
+            default: false,
+        },
+        isCollateralAuthed: {
             type: Boolean,
             default: false,
         },

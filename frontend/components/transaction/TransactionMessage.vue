@@ -6,21 +6,21 @@
         </div>
         <div v-else-if="isExplanationsShown">
             Auction bidding incurs a
-            <Explain text="transaction fee" set-width="400px">
-                <SwapTransactionFeesTable
-                    :is-wallet-authorized="isWalletAuthorized"
-                    :is-collateral-authorized="isCollateralAuthorized"
-                    :auction-transaction="auctionTransaction"
+            <Explain text="transaction fee" set-width="300px">
+                <TransactionFeesTable
+                    :is-wallet-connected="isWalletConnected"
+                    :is-wallet-authed="isWalletAuthed"
+                    :is-collateral-authed="isCollateralAuthed"
+                    :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
+                    :bid-transaction-fee-e-t-h="bidTransactionFeeETH"
+                    :auth-transaction-fee-e-t-h="authTransactionFeeETH"
+                    :combined-swap-fees-e-t-h="combinedSwapFeesETH"
+                    :combined-bid-fees-e-t-h="combinedBidFeesETH"
                 />
             </Explain>
             of approximately
-            <FormatCurrency
-                v-if="auctionTransaction"
-                :value="auctionTransaction.combinedSwapFeesETH"
-                :decimals="5"
-                currency="ETH"
-            />, hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is a
-            recommended value and based on the
+            <FormatCurrency :value="combinedSwapFeesETH" :decimals="5" currency="ETH" />, hence, the connected wallet
+            needs to hold enough funds to cover these fees. The transaction fee is a recommended value and based on the
             <Explain text="average fast fee">
                 <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
                     Gas Prices can change
@@ -39,12 +39,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import TextBlock from '~/components/common/TextBlock.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import FormatAddress from '~/components/utils/FormatAddress.vue';
 import Explain from '~/components/utils/Explain.vue';
-import SwapTransactionFeesTable from '~/components/transaction/SwapTransactionFeesTable.vue';
-import { AuctionTransaction } from '~/../core/src/types';
+import TransactionFeesTable from '~/components/transaction/TransactionFeesTable.vue';
 
 export default Vue.extend({
     components: {
@@ -52,12 +52,28 @@ export default Vue.extend({
         FormatCurrency,
         FormatAddress,
         Explain,
-        SwapTransactionFeesTable,
+        TransactionFeesTable,
     },
     props: {
-        auctionTransaction: {
-            type: Object as Vue.PropType<AuctionTransaction>,
-            default: null,
+        swapTransactionFeeETH: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        bidTransactionFeeETH: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        authTransactionFeeETH: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        combinedSwapFeesETH: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        combinedBidFeesETH: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
         isExplanationsShown: {
             type: Boolean,
@@ -67,11 +83,15 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        isWalletAuthorized: {
+        isWalletConnected: {
             type: Boolean,
             default: false,
         },
-        isCollateralAuthorized: {
+        isWalletAuthed: {
+            type: Boolean,
+            default: false,
+        },
+        isCollateralAuthed: {
             type: Boolean,
             default: false,
         },

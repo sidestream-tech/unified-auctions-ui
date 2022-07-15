@@ -3,7 +3,9 @@
         <TransactionMessage
             :is-explanations-shown="isExplanationsShown"
             :transaction-address="auctionTransaction.transactionAddress"
-            :transaction-fee="auctionTransaction.swapTransactionFeeETH"
+            :bid-transaction-fee-e-t-h="auctionTransaction.bidTransactionFeeETH"
+            :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
+            :combined-bid-fees-e-t-h="auctionTransaction.combinedBidFeesETH"
         />
         <div class="flex flex-row-reverse mt-3">
             <BaseButton
@@ -28,6 +30,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import BaseButton from '~/components/common/BaseButton.vue';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 import TransactionMessage from '~/components/transaction/TransactionMessage.vue';
