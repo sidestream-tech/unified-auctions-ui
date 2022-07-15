@@ -26,6 +26,7 @@ storiesOf('Transaction/TransactionMessage', module)
         ...common,
         template: `
             <TransactionMessage 
+                :is-wallet-connected="true"
                 :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
                 :bid-transaction-fee-e-t-h="bidTransactionFeeETH"
                 :auth-transaction-fee-e-t-h="authTransactionFeeETH"
@@ -46,6 +47,7 @@ storiesOf('Transaction/TransactionMessage', module)
         },
         template: `
             <TransactionMessage
+                :is-wallet-connected="true"
                 :is-wallet-authed="true"
                 :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
                 :bid-transaction-fee-e-t-h="bidTransactionFeeETH"
@@ -67,6 +69,7 @@ storiesOf('Transaction/TransactionMessage', module)
         },
         template: `
             <TransactionMessage
+                :is-wallet-connected="true"
                 :is-collateral-authed="true"
                 :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
                 :bid-transaction-fee-e-t-h="bidTransactionFeeETH"
@@ -88,6 +91,7 @@ storiesOf('Transaction/TransactionMessage', module)
         },
         template: `
             <TransactionMessage
+                :is-wallet-connected="true"
                 :is-wallet-authed="true"
                 :is-collateral-authed="true"
                 :swap-transaction-fee-e-t-h="swapTransactionFeeETH"

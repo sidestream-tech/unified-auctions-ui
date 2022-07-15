@@ -6,27 +6,35 @@
         </div>
         <div v-else-if="isExplanationsShown">
             Auction bidding incurs a
-            <Explain text="transaction fee" set-width="300px">
-                <TransactionFeesTable
-                    :is-wallet-connected="isWalletConnected"
-                    :is-wallet-authed="isWalletAuthed"
-                    :is-collateral-authed="isCollateralAuthed"
-                    :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
-                    :bid-transaction-fee-e-t-h="bidTransactionFeeETH"
-                    :auth-transaction-fee-e-t-h="authTransactionFeeETH"
-                    :combined-swap-fees-e-t-h="combinedSwapFeesETH"
-                    :combined-bid-fees-e-t-h="combinedBidFeesETH"
+            <span v-if="isWalletConnected">
+                <Explain text="transaction fee" set-width="300px">
+                    <TransactionFeesTable
+                        :is-wallet-connected="isWalletConnected"
+                        :is-wallet-authed="isWalletAuthed"
+                        :is-collateral-authed="isCollateralAuthed"
+                        :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
+                        :bid-transaction-fee-e-t-h="bidTransactionFeeETH"
+                        :auth-transaction-fee-e-t-h="authTransactionFeeETH"
+                        :combined-swap-fees-e-t-h="combinedSwapFeesETH"
+                        :combined-bid-fees-e-t-h="combinedBidFeesETH"
+                    />
+                </Explain>
+                of approximately
+                <FormatCurrency
+                    v-if="combinedSwapFeesETH"
+                    :value="combinedSwapFeesETH"
+                    :decimals="5"
+                    :currency="ETH"
                 />
-            </Explain>
-            of approximately
-            <FormatCurrency v-if="combinedSwapFeesETH" :value="combinedSwapFeesETH" :decimals="5" :currency="ETH" />
-            <FormatCurrency
-                v-else-if="combinedBidFeesETH"
-                :value="combinedBidFeesETH"
-                :decimals="5"
-                :currency="ETH"
-            />, hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is a
-            recommended value and based on the
+                <FormatCurrency
+                    v-else-if="combinedBidFeesETH"
+                    :value="combinedBidFeesETH"
+                    :decimals="5"
+                    :currency="ETH"
+                />
+            </span>
+            <span v-else>transaction fee</span>, hence, the connected wallet needs to hold enough funds to cover these
+            fees. The transaction fee is a recommended value and based on the
             <Explain text="average fast fee">
                 <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
                     Gas Prices can change
