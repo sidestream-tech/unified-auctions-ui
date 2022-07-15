@@ -33,13 +33,14 @@ const getCalleeData = async function (
 const getMarketPrice = async function (
     network: string,
     _collateral: CollateralConfig,
-    collateralAmount: BigNumber
+    collateralAmount: BigNumber,
+    blockTag?: number | string
 ): Promise<BigNumber> {
     // convert stETH into ETH
-    const wethAmount = await convertCrvethToEth(network, collateralAmount);
+    const wethAmount = await convertCrvethToEth(network, collateralAmount, blockTag);
 
     // convert ETH into DAI
-    const daiAmount = await convertCollateralToDai(network, 'ETH', wethAmount);
+    const daiAmount = await convertCollateralToDai(network, 'ETH', wethAmount, blockTag);
 
     // return price per unit
     return daiAmount.dividedBy(collateralAmount);

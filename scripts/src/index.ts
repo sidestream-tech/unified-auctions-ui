@@ -94,7 +94,10 @@ const getTakeEvents = async function (network: string, collateralType: string): 
         let marketPrice;
         const takenAmount = new BigNumber(takeParameters.amt._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
         try {
-            marketPrice = await getMarketPrice(NETWORK, collateralSymbol, takenAmount);
+            if (!transaction.blockNumber) {
+                throw new Error('failed to extract the price for the block number.');
+            }
+            marketPrice = await getMarketPrice(NETWORK, collateralSymbol, takenAmount, transaction.blockNumber);
         } catch (error) {
             console.info(`cannot fetch market price for the collateral ${collateralSymbol} due to ${error}`);
         }

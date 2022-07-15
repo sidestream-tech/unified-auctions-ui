@@ -7,7 +7,6 @@ import WstETHCurveUniv3Callee from './WstETHCurveUniv3Callee';
 import CurveLpTokenUniv3Callee from './CurveLpTokenUniv3Callee';
 import UniswapV3Callee from './UniswapV3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
-import { Overrides } from 'ethers';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
@@ -36,7 +35,7 @@ const _getMarketPrice = async function (
     network: string,
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1'),
-    blockNumber?: number | string,
+    blockNumber?: number | string
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     const calleeFuctions = allCalleeFunctions[collateral.exchange.callee];

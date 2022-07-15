@@ -1,5 +1,5 @@
 import type { CalleeFunctions, CollateralConfig } from '../types';
-import { ethers, Overrides } from 'ethers';
+import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { convertCollateralToDaiUsingRoute, encodeRoute } from './helpers/uniswapV3';

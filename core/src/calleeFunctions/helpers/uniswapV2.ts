@@ -5,7 +5,7 @@
     https://www.quicknode.com/guides/defi/how-to-interact-with-uniswap-using-javascript#interacting-with-uniswap
 */
 import type { CollateralConfig, RegularCalleeConfig } from '../../types';
-import { ethers, Overrides } from 'ethers';
+import { ethers } from 'ethers';
 import memoizee from 'memoizee';
 import { Fetcher, Token, Pair, Route, TokenAmount, Trade, TradeType } from '@uniswap/sdk';
 import { abi as uniswapV2PairABI } from '@uniswap/v2-core/build/UniswapV2Pair.json';
@@ -93,13 +93,15 @@ export const splitArrayIntoPairs = function (array: string[]): string[][] {
     return pairs;
 };
 
-export const getLpTokenTotalSupply = async function (network: string, symbol: string,
+export const getLpTokenTotalSupply = async function (
+    network: string,
+    symbol: string,
     blockTag?: string | number
 ): Promise<BigNumber> {
     const provider = await getProvider(network);
     const address = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const contract = new ethers.Contract(address, uniswapV2PairABI, provider);
-    const totalSupply = await contract.totalSupply({blockTag});
+    const totalSupply = await contract.totalSupply({ blockTag });
     const collateral = getCollateralConfigBySymbol(symbol);
     return new BigNumber(totalSupply.toString()).shiftedBy(-collateral.decimals);
 };
@@ -107,8 +109,7 @@ export const getLpTokenTotalSupply = async function (network: string, symbol: st
 export const getRegularTokenExchangeRateBySymbol = async function (
     network: string,
     symbol: string,
-    amount: BigNumber,
-    blockTag?: number | string
+    amount: BigNumber
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(symbol);
     getColleeConfig(collateral); // to check that the callee is supported

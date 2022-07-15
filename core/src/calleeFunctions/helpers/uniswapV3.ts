@@ -1,4 +1,4 @@
-import { ethers, Overrides } from 'ethers';
+import { ethers } from 'ethers';
 import { abi as UNISWAP_V3_QUOTER_ABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 import BigNumber from '../../bignumber';
 import getProvider from '../../provider';
@@ -45,7 +45,9 @@ export const convertCollateralToDaiUsingRoute = async function (
     const route = encodeRoute(network, [collateral.symbol, ...collateral.exchange.route]);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
 
-    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(route, collateralIntegerAmount, {blockTag});
+    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(route, collateralIntegerAmount, {
+        blockTag,
+    });
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     return daiAmount;
 };
@@ -65,7 +67,7 @@ export const convertCollateralToDai = async function (
         UNISWAP_FEE,
         collateralIntegerAmount,
         0,
-        {blockTag}
+        { blockTag }
     );
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     return daiAmount;
