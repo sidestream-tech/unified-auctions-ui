@@ -2,15 +2,16 @@
     <Tooltip :visible="!!errorMessage" placement="topLeft" :title="errorMessage">
         <div class="ant-input BaseValueInput" :class="{ Error: !!errorMessage, Disabled: disabled }">
             <input
+                ref="input"
                 v-model="inputText"
                 class="Input"
                 :disabled="disabled"
                 @focus="hideMaxValue"
                 @blur="showMaxValueIfEmpty"
             />
-            <span>
+            <div class="whitespace-nowrap" @click="$refs.input.focus()">
                 <format-currency v-if="!inputValue && fallbackValue" :value="fallbackValue" /> {{ currency }}
-            </span>
+            </div>
         </div>
     </Tooltip>
 </template>

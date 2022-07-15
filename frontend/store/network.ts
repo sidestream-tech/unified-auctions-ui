@@ -1,9 +1,10 @@
 import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
-import { getNetworkTypeByChainId } from 'auctions-core/src/network';
+import { getNetworkTypeByChainId, warpTime } from 'auctions-core/src/network';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
+import { NetworkConfig } from 'auctions-core/src/types';
 import getWallet from '~/lib/wallet';
-import { NetworkConfig } from '~/../core/src/types';
+import { formatSeconds } from '~/helpers/tillDuration';
 
 const NETWORK_SWITCH_TIMEOUT = 8000;
 let networkChangeTimeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -107,6 +108,7 @@ export const actions = {
     async setup({ dispatch }: ActionContext<State, State>, isDev?: boolean): Promise<void> {
         await dispatch('setupNetworks', isDev);
         await dispatch('wallet/setup', undefined, { root: true });
+        await dispatch('surplus/setup', undefined, { root: true });
         await dispatch('auctions/setup', undefined, { root: true });
         await dispatch('authorizations/setup', undefined, { root: true });
         await dispatch('gas/setup', undefined, { root: true });
@@ -165,7 +167,6 @@ export const actions = {
     },
     async setWalletNetwork(_: ActionContext<State, State>, newNetwork: string): Promise<void> {
         let wallet;
-
         try {
             wallet = getWallet();
         } catch {}
@@ -179,5 +180,18 @@ export const actions = {
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
         }
+    },
+    async warpTime({ dispatch, getters }: ActionContext<State, State>, blocks?: number) {
+        const network = getters.getMakerNetwork;
+        if (!network) {
+            return;
+        }
+        try {
+            const seconds = await warpTime(network, blocks);
+            message.success(`Network was moved ahead by ${formatSeconds(seconds)} seconds`);
+        } catch (error) {
+            message.error(`Network warp error: ${error.message}`);
+        }
+        dispatch('setup');
     },
 };

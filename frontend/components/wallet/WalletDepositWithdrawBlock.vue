@@ -20,6 +20,7 @@
                 :input-value.sync="depositAmount"
                 :max-value="maxDeposit"
                 :min-value="minimumDaiAmount"
+                :fallback-value="maxDeposit"
                 :disabled="!canDeposit || isAllowanceAmountLoading"
             />
             <div v-if="selectedMethod === 'deposit'">
@@ -50,6 +51,7 @@
                 :input-value.sync="withdrawAmount"
                 :max-value="maxWithdraw"
                 :min-value="minimumDaiAmount"
+                :fallback-value="maxWithdraw"
                 :disabled="!canWithdraw || isAllowanceAmountLoading || isAuthorizationLoading"
             />
             <div v-if="selectedMethod === 'withdraw'">

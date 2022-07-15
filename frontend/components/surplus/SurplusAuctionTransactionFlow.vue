@@ -29,22 +29,22 @@
                 :is-loading="isConnectingWallet"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isWalletConnected"
-                @connectWallet="$emit('connect')"
-                @disconnectWallet="$emit('disconnect')"
+                @connectWallet="$emit('connectWallet')"
+                @disconnectWallet="$emit('disconnectWallet')"
             />
             <WalletMKRBalanceCheckPanel
                 :wallet-m-k-r="walletMKR"
                 :required-m-k-r="inputBidAmount || auction.nextMinimumBid"
                 :network="network"
                 :token-address="tokenAddress"
-                :disabled="!isWalletConnected || !isActive"
+                :disabled="!isWalletConnected || !isActive || isHighestBidder"
                 :is-loading="isRefreshingWallet"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isWalletMKRCheckPassed"
-                @refresh="$emit('refresh')"
+                @refresh="$emit('refreshWallet')"
             />
             <AllowanceAmountCheckPanel
-                :disabled="!isWalletConnected || !isActive"
+                :disabled="!isWalletConnected || !isActive || isHighestBidder"
                 :allowance-amount="allowanceMKR"
                 :desired-amount="inputBidAmount || auction.nextMinimumBid"
                 currency="MKR"
@@ -56,15 +56,16 @@
                 :auction="auction"
                 :wallet-address="walletAddress"
                 :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isActive"
-                :is-loading="isBidding"
+                :is-loading="auctionActionState === 'bidding'"
                 :bid-amount="inputBidAmount || auction.nextMinimumBid"
                 :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="isHighestBidder"
                 @bid="$emit('bid', $event)"
             />
             <CollectSurplusAuctionPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
-                :is-collecting="isCollecting"
+                :is-collecting="auctionActionState === 'collecting'"
                 @collect="$emit('collect')"
             />
         </div>
@@ -76,6 +77,7 @@ import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
+import { SurplusAuctionActionStates } from 'auctions-core/src/types';
 import HighestBidCheckPanel from '../panels/HighestBidCheckPanel.vue';
 import WalletMKRBalanceCheckPanel from '../panels/WalletMKRBalanceCheckPanel.vue';
 import AllowanceAmountCheckPanel from '../panels/AllowanceAmountCheckPanel.vue';
@@ -99,6 +101,10 @@ export default Vue.extend({
         auction: {
             type: Object as Vue.PropType<SurplusAuction>,
             required: true,
+        },
+        auctionActionState: {
+            type: String as Vue.PropType<SurplusAuctionActionStates>,
+            default: null,
         },
         walletAddress: {
             type: String,
@@ -124,17 +130,9 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isBidding: {
-            type: Boolean,
-            default: false,
-        },
-        isCollecting: {
-            type: Boolean,
-            default: false,
-        },
         tokenAddress: {
             type: String,
-            required: true,
+            default: undefined,
         },
         network: {
             type: String,
@@ -150,7 +148,7 @@ export default Vue.extend({
             isWalletConnected: false,
             isWalletMKRCheckPassed: false,
             isAllowanceAmountCheckPassed: false,
-
+            isHighestBidder: false,
             inputBidAmount: undefined as BigNumber | undefined,
         };
     },

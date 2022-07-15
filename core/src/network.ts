@@ -1,4 +1,5 @@
 import type { NetworkConfig } from './types';
+import getProvider from './provider';
 
 const networks: Record<string, NetworkConfig> = {};
 
@@ -43,7 +44,7 @@ export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev
         ...infuraNetworksWithProjectId,
         {
             chainId: '0x539',
-            type: 'localhost',
+            type: 'custom',
             title: 'Localhost:8545',
             url: `http://127.0.0.1:8545`,
             etherscanUrl: '',
@@ -115,4 +116,10 @@ export const getNetworkConfigByType = function (networkType: string | undefined)
         throw new Error(`No network found with name "${networkType}"`);
     }
     return networks[networkType];
+};
+
+export const warpTime = async function (network: string, blocks = 20000, secondsBetweenBlocks = 270) {
+    const provider = await getProvider(network);
+    await provider.send('hardhat_mine', [`0x${blocks.toString(16)}`, `0x${secondsBetweenBlocks.toString(16)}`]);
+    return blocks * secondsBetweenBlocks;
 };

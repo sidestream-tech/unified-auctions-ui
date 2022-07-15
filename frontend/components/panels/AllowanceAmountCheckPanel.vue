@@ -126,19 +126,13 @@ export default Vue.extend({
                 };
             }
             if (!this.isEnough) {
-                if (this.disabled) {
-                    return {
-                        name: 'inactive',
-                        title: `The desired amount exceeds ${this.currency} allowance`,
-                    };
-                }
                 return {
-                    name: 'incorrect',
+                    name: this.disabled ? 'inactive' : 'incorrect',
                     title: `The desired amount exceeds ${this.currency} allowance`,
                 };
             }
             return {
-                name: 'correct',
+                name: this.disabled ? 'inactive' : 'correct',
                 title: `The desired amount is within ${this.currency} allowance`,
             };
         },

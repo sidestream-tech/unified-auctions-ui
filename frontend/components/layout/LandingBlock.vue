@@ -1,7 +1,7 @@
 <template>
     <div class="LandingBlock">
         <div v-if="!$slots.default" class="flex flex-col items-center w-full z-10">
-            <div class="LandingTitle pt-6">Collateral auctions</div>
+            <div class="LandingTitle pt-6">{{ title }}</div>
             <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 my-8">
                 <Button class="SecondaryButton mx-3" @click="$emit('explanations', false)"
                     >I already know how it works</Button
@@ -31,6 +31,12 @@ import backgroundImage from '~/assets/images/background-image.jpg';
 export default Vue.extend({
     components: {
         Button,
+    },
+    props: {
+        title: {
+            type: String,
+            default: 'Collateral auctions',
+        },
     },
     data() {
         return {
