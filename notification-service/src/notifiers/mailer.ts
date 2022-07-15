@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import validator from 'validator';
 import * as showdown from 'showdown';
-import { ETHEREUM_NETWORK, SMTP_EMAIL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNAME } from '../variables';
+import { SMTP_EMAIL, SMTP_HOST, SMTP_PASSWORD, SMTP_PORT, SMTP_USERNAME } from '../variables';
 import { EventData, MailData } from '../types';
 import { formatEtherscanLink } from '../etherscan';
 import generateEmailHTMLBody, { generateEmailSubject, generateEmailTextBody } from '../generators/generateEmail';
@@ -71,6 +71,7 @@ export function validateEmailReceivers(receivers: string[]) {
 }
 
 export async function notifyPerMail(
+    network: string,
     transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo> | undefined,
     eventData: EventData,
     receivers: string[]
@@ -85,18 +86,13 @@ export async function notifyPerMail(
 
     const formattedData = converter.makeHtml(
         eventData.eventSubscription.formatData(eventData.event, (type, content) =>
-            formatEtherscanLink(ETHEREUM_NETWORK, type, content)
+            formatEtherscanLink(network, type, content)
         )
     );
 
-    const emailSubject = generateEmailSubject(ETHEREUM_NETWORK, eventData.eventSubscription.id);
-    const emailTextBody = generateEmailTextBody(ETHEREUM_NETWORK, eventData.eventSubscription);
-    const emailHTMLBody = generateEmailHTMLBody(
-        ETHEREUM_NETWORK,
-        eventData.eventSubscription,
-        eventData.event,
-        formattedData
-    );
+    const emailSubject = generateEmailSubject(network, eventData.eventSubscription.id);
+    const emailTextBody = generateEmailTextBody(network, eventData.eventSubscription);
+    const emailHTMLBody = generateEmailHTMLBody(network, eventData.eventSubscription, eventData.event, formattedData);
 
     const mailData: MailData = {
         receivers: receivers.toString(),

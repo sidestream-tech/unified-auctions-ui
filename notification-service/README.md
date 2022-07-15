@@ -27,9 +27,8 @@ $ npm run start
 
 Note: env variables are accessible via the `secret` command under `auction-ui/${environment}/notification-service`.
 
-- `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum ->
+- `WS_URL`: (required) Ethereum Websocket url used for fetching data from the blockchain
 - `ETHERSCAN_API_KEY`: (required) [Etherscan API Key](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics), which is used to automatically download ABIs 
-- `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
 - `SMTP_*`: (optional, required for email usage) - SMTP data for the service to send emails
     - `SMTP_HOST`: (required) - SMTP host address
     - `SMTP_PORT`: (optional) - SMTP port. Defaults to `465`
