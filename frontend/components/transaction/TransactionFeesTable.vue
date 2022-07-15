@@ -1,9 +1,15 @@
 <template>
     <div class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100">
-        <div class="flex justify-between">
+        <div v-if="swapTransactionFeeETH" class="flex justify-between">
             <div>Swap Transaction Fee</div>
             <div>
                 <FormatCurrency :value="swapTransactionFeeETH" :decimals="5" :currency="ETH" />
+            </div>
+        </div>
+        <div v-else-if="bidTransactionFeeETH" class="flex justify-between">
+            <div>Bid Transaction Fee</div>
+            <div>
+                <FormatCurrency :value="bidTransactionFeeETH" :decimals="5" :currency="ETH" />
             </div>
         </div>
         <div v-if="!isWalletAuthed" class="flex justify-between">
@@ -22,7 +28,18 @@
         <div class="flex justify-between font-bold">
             <div>Total</div>
             <div>
-                <FormatCurrency :value="combinedSwapFeesETH" :decimals="5" :currency="ETH" />
+                <FormatCurrency
+                    v-if="combinedSwapFeesETH"
+                    :value="combinedSwapFeesETH"
+                    :decimals="5"
+                    :currency="ETH"
+                />
+                <FormatCurrency
+                    v-else-if="combinedBidFeesETH"
+                    :value="combinedBidFeesETH"
+                    :decimals="5"
+                    :currency="ETH"
+                />
             </div>
         </div>
     </div>
