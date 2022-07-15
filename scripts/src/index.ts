@@ -4,14 +4,21 @@ import BigNumber from 'auctions-core/src//bignumber';
 import { getNetworkConfigByType } from 'auctions-core/src/constants/NETWORKS';
 import { getCalleeNameByAddress } from 'auctions-core/src/constants/CALLEES';
 import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from 'auctions-core/src/constants/UNITS';
-import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
+import COLLATERALS, { getCollateralConfigByType } from 'auctions-core/src/constants/COLLATERALS';
 import getProvider from 'auctions-core/src/provider';
 import getContract, { getClipperNameByCollateralType } from 'auctions-core/src/contracts';
 import { fetchDateByBlockNumber } from 'auctions-core/src/date';
-import { EventFilter } from 'ethers';
+import { EventFilter, Event } from 'ethers';
+import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { getMarketPrice } from 'auctions-core/src/calleeFunctions/index';
 
-const NETWORK = 'mainnet';
+const NETWORK = 'localhost';
 const SETUP_DELAY = 3 * 1000;
+
+interface EventWithTransaction {
+    transaction: TransactionResponse;
+    event: Event;
+}
 
 const trimError = function (errorMessage: string | undefined): string {
     if (typeof errorMessage !== 'string') {
@@ -27,13 +34,22 @@ const getTakeEvents = async function (network: string, collateralType: string): 
     const contract = await getContract(network, contractName);
 
     const eventFilters: EventFilter = contract.filters.Take();
-    const allTakeEvents = await contract.queryFilter(eventFilters);
 
-    const transactions = await Promise.all(allTakeEvents.map(e => provider.getTransaction(e.transactionHash)));
+    const allTakeEvents = await contract.queryFilter(eventFilters);
+    const eventsWithTransactions: EventWithTransaction[] = await Promise.all(
+        allTakeEvents.map(async event => {
+            const transaction = await provider.getTransaction(event.transactionHash);
+            return {
+                event,
+                transaction,
+            };
+        })
+    );
 
     const rows: any = [];
 
-    for (const transaction of transactions) {
+    for (const eventWithTransaction of eventsWithTransactions) {
+        const transaction = eventWithTransaction.transaction;
         const row = {
             transactionDate: '' as any,
             blockNumber: transaction.blockNumber,
@@ -47,6 +63,8 @@ const getTakeEvents = async function (network: string, collateralType: string): 
             userOrCallee: '',
             calleeData: '',
             calleeName: '',
+            marketPrice: '',
+            price: '',
         };
 
         if (transaction.blockNumber) {
@@ -71,6 +89,15 @@ const getTakeEvents = async function (network: string, collateralType: string): 
         } catch (error: any) {
             row.error = trimError(error.message);
         }
+
+        const collateralSymbol = getCollateralConfigByType(collateralType).symbol;
+        let marketPrice;
+        try {
+            marketPrice = await getMarketPrice(NETWORK, collateralSymbol, new BigNumber(1));
+        } catch (error) {
+            console.info(`cannot fetch market price for the collateral ${collateralSymbol} due to ${error}`);
+        }
+
         rows.push({
             ...row,
             auctionId: new BigNumber(takeParameters.id._hex).toFixed(),
@@ -79,6 +106,10 @@ const getTakeEvents = async function (network: string, collateralType: string): 
             userOrCallee: takeParameters.who,
             calleeData: takeParameters.data,
             calleeName,
+            price: new BigNumber(eventWithTransaction.event.args?.price._hex)
+                .shiftedBy(-RAY_NUMBER_OF_DIGITS)
+                .toFixed(),
+            marketPrice: marketPrice ? marketPrice.toString() : '',
         });
     }
     return rows;

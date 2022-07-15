@@ -12,18 +12,19 @@ const getCurvePollContract = async function (network: string): Promise<ethers.Co
     return new ethers.Contract(CURVE_POOL_ADDRESS, CURVE_POOL_ABI as ethers.ContractInterface, provider);
 };
 
-export const convertStethToEth = async function (network: string, stethAmount: BigNumber): Promise<BigNumber> {
+export const convertStethToEth = async function (network: string, stethAmount: BigNumber, blockTag?: string | number): Promise<BigNumber> {
     const curvePoolContract = await getCurvePollContract(network);
     const stethIntegerAmount = stethAmount.shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(0);
-    const wethIntegerAmount = await curvePoolContract.get_dy(1, CURVE_COIN_INDEX, stethIntegerAmount);
+    const wethIntegerAmount = await curvePoolContract.get_dy(1, CURVE_COIN_INDEX, stethIntegerAmount, {blockTag});
     return new BigNumber(wethIntegerAmount._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
 };
 
-export const convertCrvethToEth = async function (network: string, stethAmount: BigNumber) {
+export const convertCrvethToEth = async function (network: string, stethAmount: BigNumber, blockTag?: string | number) {
     const curvePoolContract = await getCurvePollContract(network);
     const stethIntegerAmount = stethAmount.shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(0);
     const wethIntegerAmount = await curvePoolContract.calc_withdraw_one_coin(stethIntegerAmount, CURVE_COIN_INDEX, {
         gasLimit: 1000000,
+        blockTag
     });
     return new BigNumber(wethIntegerAmount._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
 };

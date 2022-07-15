@@ -7,6 +7,7 @@ import WstETHCurveUniv3Callee from './WstETHCurveUniv3Callee';
 import CurveLpTokenUniv3Callee from './CurveLpTokenUniv3Callee';
 import UniswapV3Callee from './UniswapV3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
+import { Overrides } from 'ethers';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
@@ -34,14 +35,15 @@ export const getCalleeData = async function (
 const _getMarketPrice = async function (
     network: string,
     collateralSymbol: string,
-    amount: BigNumber = new BigNumber('1')
+    amount: BigNumber = new BigNumber('1'),
+    blockNumber?: number | string,
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     const calleeFuctions = allCalleeFunctions[collateral.exchange.callee];
     if (!calleeFuctions) {
         throw new Error(`Unsupported collateral symbol "${collateralSymbol}"`);
     }
-    return await calleeFuctions.getMarketPrice(network, collateral, amount);
+    return await calleeFuctions.getMarketPrice(network, collateral, amount, blockNumber);
 };
 
 export const getMarketPrice = memoizee(_getMarketPrice, {

@@ -1,11 +1,11 @@
-/* 
+/*
     Most of the uniswap logic based on the `auction-demo-keeper` source code
     https://github.com/makerdao/auction-demo-keeper/blob/main/src/clipper.js#L134-L160
     More info on how UniSwap works and other available methods can be found here:
     https://www.quicknode.com/guides/defi/how-to-interact-with-uniswap-using-javascript#interacting-with-uniswap
 */
 import type { CollateralConfig, RegularCalleeConfig } from '../../types';
-import { ethers } from 'ethers';
+import { ethers, Overrides } from 'ethers';
 import memoizee from 'memoizee';
 import { Fetcher, Token, Pair, Route, TokenAmount, Trade, TradeType } from '@uniswap/sdk';
 import { abi as uniswapV2PairABI } from '@uniswap/v2-core/build/UniswapV2Pair.json';
@@ -82,7 +82,7 @@ export const getUniswapPairBySymbols = async function (
 };
 
 export const splitArrayIntoPairs = function (array: string[]): string[][] {
-    /* 
+    /*
         Function that takes an array of strings, e.g.: `[ 'one', 'two', 'three' ]`
         and turns it into array or pairs, e.g.: `[ ['one', 'two'], [ 'two', 'three' ] ]`
     */
@@ -93,11 +93,13 @@ export const splitArrayIntoPairs = function (array: string[]): string[][] {
     return pairs;
 };
 
-export const getLpTokenTotalSupply = async function (network: string, symbol: string): Promise<BigNumber> {
+export const getLpTokenTotalSupply = async function (network: string, symbol: string,
+    blockTag?: string | number
+): Promise<BigNumber> {
     const provider = await getProvider(network);
     const address = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const contract = new ethers.Contract(address, uniswapV2PairABI, provider);
-    const totalSupply = await contract.totalSupply();
+    const totalSupply = await contract.totalSupply({blockTag});
     const collateral = getCollateralConfigBySymbol(symbol);
     return new BigNumber(totalSupply.toString()).shiftedBy(-collateral.decimals);
 };
@@ -105,7 +107,8 @@ export const getLpTokenTotalSupply = async function (network: string, symbol: st
 export const getRegularTokenExchangeRateBySymbol = async function (
     network: string,
     symbol: string,
-    amount: BigNumber
+    amount: BigNumber,
+    blockTag?: number | string
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(symbol);
     getColleeConfig(collateral); // to check that the callee is supported

@@ -1,5 +1,5 @@
 import type { CalleeFunctions, CollateralConfig } from '../types';
-import { ethers } from 'ethers';
+import { ethers, Overrides } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { convertCollateralToDaiUsingRoute, encodeRoute } from './helpers/uniswapV3';
@@ -25,13 +25,14 @@ const getCalleeData = async function (
     ]);
 };
 
-const getMarketPrice = async function (
+export const getMarketPrice = async function (
     network: string,
     collateral: CollateralConfig,
-    collateralAmount: BigNumber
+    collateralAmount: BigNumber,
+    blockTag?: string | number
 ): Promise<BigNumber> {
     // convert collateral into DAI
-    const daiAmount = await convertCollateralToDaiUsingRoute(network, collateral.symbol, collateralAmount);
+    const daiAmount = await convertCollateralToDaiUsingRoute(network, collateral.symbol, collateralAmount, blockTag);
 
     // return price per unit
     return daiAmount.dividedBy(collateralAmount);

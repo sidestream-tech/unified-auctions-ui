@@ -33,13 +33,14 @@ const getCalleeData = async function (
 const getMarketPrice = async function (
     network: string,
     collateral: CollateralConfig,
-    amount: BigNumber
+    amount: BigNumber,
+    blockTag?: string | number
 ): Promise<BigNumber> {
     if (collateral.exchange.callee !== 'UniswapV2LpTokenCalleeDai') {
         throw new Error(`"${collateral.symbol}" is not a UniSwap LP token`);
     }
     const uniswapPair = await getUniswapPairBySymbols(network, collateral.exchange.token0, collateral.exchange.token1);
-    const totalSupply = await getLpTokenTotalSupply(network, collateral.symbol);
+    const totalSupply = await getLpTokenTotalSupply(network, collateral.symbol, blockTag);
     const portionOfTheTotalSupply = amount.div(totalSupply);
     const totalPriceOfToken0 = await getTotalPriceInDai(
         network,

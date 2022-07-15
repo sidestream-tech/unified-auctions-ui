@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers, Overrides } from 'ethers';
 import { abi as UNISWAP_V3_QUOTER_ABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 import BigNumber from '../../bignumber';
 import getProvider from '../../provider';
@@ -34,7 +34,8 @@ export const encodeRoute = async function (network: string, collateralSymbols: s
 export const convertCollateralToDaiUsingRoute = async function (
     network: string,
     collateralSymbol: string,
-    collateralAmount: BigNumber
+    collateralAmount: BigNumber,
+    blockTag?: string | number
 ): Promise<BigNumber> {
     const collateral = await getCollateralConfigBySymbol(collateralSymbol);
     if (collateral.exchange.callee !== 'UniswapV3Callee') {
@@ -43,7 +44,8 @@ export const convertCollateralToDaiUsingRoute = async function (
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
     const route = encodeRoute(network, [collateral.symbol, ...collateral.exchange.route]);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
-    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(route, collateralIntegerAmount);
+
+    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(route, collateralIntegerAmount, {blockTag});
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     return daiAmount;
 };
@@ -51,7 +53,8 @@ export const convertCollateralToDaiUsingRoute = async function (
 export const convertCollateralToDai = async function (
     network: string,
     collateralSymbol: string,
-    collateralAmount: BigNumber
+    collateralAmount: BigNumber,
+    blockTag?: number | string
 ): Promise<BigNumber> {
     const collateral = await getCollateralConfigBySymbol(collateralSymbol);
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
@@ -61,7 +64,8 @@ export const convertCollateralToDai = async function (
         await getContractAddressByName(network, 'MCD_DAI'),
         UNISWAP_FEE,
         collateralIntegerAmount,
-        0
+        0,
+        {blockTag}
     );
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     return daiAmount;

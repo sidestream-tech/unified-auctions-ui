@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { Overrides } from 'ethers';
 
 export declare interface GasParameters {
     maxFeePerGas?: string;
@@ -108,7 +109,7 @@ export type CalleeNames = keyof CalleeAddresses;
 
 export declare interface CalleeFunctions {
     getCalleeData: (network: string, collateral: CollateralConfig, profitAddress: string) => Promise<string>;
-    getMarketPrice: (network: string, collateral: CollateralConfig, amount: BigNumber) => Promise<BigNumber>;
+    getMarketPrice: (network: string, collateral: CollateralConfig, amount: BigNumber, blockTag?: string | number) => Promise<BigNumber>;
 }
 
 export declare interface MakerParams {
