@@ -57,6 +57,10 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
         const marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
             .minus(marketUnitPrice)
             .dividedBy(marketUnitPrice);
+        console.log({
+            marketUnitPrice: marketUnitPrice.toFixed(),
+            marketUnitPriceToUnitPriceRatio: marketUnitPriceToUnitPriceRatio.toFixed(),
+        });
         const auctionWithMarketValues = {
             ...auction,
             marketUnitPrice,
