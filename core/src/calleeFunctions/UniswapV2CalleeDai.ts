@@ -26,7 +26,8 @@ const getCalleeData = async function (
 const getMarketPrice = async function (
     network: string,
     collateral: CollateralConfig,
-    amount: BigNumber
+    amount: BigNumber,
+    _blockTag?: string | number // choice of block is disabled for uniswapV2
 ): Promise<BigNumber> {
     return await getRegularTokenExchangeRateBySymbol(network, collateral.symbol, amount);
 };
