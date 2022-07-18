@@ -37,7 +37,6 @@ describe('Surplus auction profit calculation', () => {
         expect(allAuctions.length).to.equal(7);
         const auction: Auction = allAuctions[2];
         const wallet = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
-        console.log('___________________');
         const enrichedAuction = await enrichAuction(NETWORK, auction);
         const expectedProfit = enrichedAuction.transactionGrossProfit as BigNumber;
         await authorizeWallet(NETWORK, wallet, false);
@@ -45,19 +44,6 @@ describe('Surplus auction profit calculation', () => {
         await bidWithCallee(NETWORK, auction, wallet);
         expect(fetchSingleAuctionById(NETWORK, auction.id)).to.be.revertedWith('No active auction found with this id');
         const actualProfit = await fetchBalanceDAI(NETWORK, wallet);
-        console.log('actual profit', actualProfit.toFixed());
-        console.log('expected profit', expectedProfit.toFixed());
-
-        const expectedTotalMarketPriceLimitedByDebt = actualProfit.plus(auction.debtDAI);
-        const expectedCollateralAmountLimitedByDebt = expectedTotalMarketPriceLimitedByDebt.dividedBy(
-            auction.marketUnitPrice as BigNumber
-        );
-        const accurateUnitPrice = auction.debtDAI.dividedBy(expectedCollateralAmountLimitedByDebt);
-        console.log({
-            expectedTotalMarketPriceLimitedByDebt: expectedTotalMarketPriceLimitedByDebt.toFixed(),
-            expectedCollateralAmountLimitedByDebt: expectedCollateralAmountLimitedByDebt.toFixed(),
-            accurateUnitPrice: accurateUnitPrice.toFixed(),
-        });
 
         const errorRate = actualProfit.div(expectedProfit).minus(1).abs().toNumber();
         expect(errorRate).to.be.lessThan(0.01);
