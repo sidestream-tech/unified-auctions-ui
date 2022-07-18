@@ -51,6 +51,13 @@ export const calculateTransactionGrossProfit = function (auction: Auction): BigN
     }
     const collateralAmountLimitedByDebt = auction.debtDAI.dividedBy(auction.approximateUnitPrice);
     const totalMarketPriceLimitedByDebt = collateralAmountLimitedByDebt.multipliedBy(auction.marketUnitPrice);
+    console.log({
+        approximateUnitPrice: auction.approximateUnitPrice.toFixed(),
+        unitPrice: auction.unitPrice.toFixed(),
+        collateralAmountLimitedByDebt: collateralAmountLimitedByDebt.toFixed(),
+        totalMarketPrice: totalMarketPrice.toFixed(),
+        totalMarketPriceLimitedByDebt: totalMarketPriceLimitedByDebt.toFixed(),
+    });
     return totalMarketPriceLimitedByDebt.minus(auction.debtDAI);
 };
 
