@@ -12,7 +12,7 @@ import { EventFilter, Event } from 'ethers';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { getMarketPrice } from 'auctions-core/src/calleeFunctions/index';
 
-const NETWORK = 'localhost';
+const NETWORK = 'mainnet';
 const SETUP_DELAY = 3 * 1000;
 
 interface EventWithTransaction {
