@@ -37,10 +37,10 @@ describe('Surplus auction profit calculation', () => {
         expect(allAuctions.length).to.equal(7);
         const auction: Auction = allAuctions[2];
         const wallet = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
-        const enrichedAuction = await enrichAuction(NETWORK, auction);
-        const expectedProfit = enrichedAuction.transactionGrossProfit as BigNumber;
         await authorizeWallet(NETWORK, wallet, false);
         await authorizeCollateral(NETWORK, wallet, auction.collateralType, false);
+        const enrichedAuction = await enrichAuction(NETWORK, auction);
+        const expectedProfit = enrichedAuction.transactionGrossProfit as BigNumber;
         await bidWithCallee(NETWORK, auction, wallet);
         expect(fetchSingleAuctionById(NETWORK, auction.id)).to.be.revertedWith('No active auction found with this id');
         const actualProfit = await fetchBalanceDAI(NETWORK, wallet);
