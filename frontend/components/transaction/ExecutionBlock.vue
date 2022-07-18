@@ -6,9 +6,7 @@
             :is-wallet-connected="isWalletConnected"
             :is-wallet-authed="isWalletAuthed"
             :is-collateral-authed="isCollateralAuthed"
-            :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
-            :auth-transaction-fee-e-t-h="authTransactionFeeETH"
-            :combined-swap-fees-e-t-h="combinedSwapFeesETH"
+            :fees="fees"
             show-different-wallet-info
         />
         <div class="flex flex-col md:flex-row md:space-x-4 justify-end flex-wrap mt-4">
@@ -39,30 +37,21 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
 import BaseButton from '~/components/common/BaseButton.vue';
 import ExecuteWithOtherWalletBlock from '~/components/transaction/ExecuteWithOtherWalletBlock.vue';
 import TransactionMessage from '~/components/transaction/TransactionMessage.vue';
 
 export default Vue.extend({
-    name: 'WalletBlock',
+    name: 'ExecutionBlock',
     components: {
         ExecuteWithOtherWalletBlock,
         BaseButton,
         TransactionMessage,
     },
     props: {
-        swapTransactionFeeETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        authTransactionFeeETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        combinedSwapFeesETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
+        fees: {
+            type: Object,
+            default: null,
         },
         disabled: {
             type: Boolean,

@@ -6,9 +6,7 @@
             :is-wallet-connected="isWalletConnected"
             :is-wallet-authed="isWalletAuthed"
             :is-collateral-authed="isCollateralAuthed"
-            :bid-transaction-fee-e-t-h="auctionTransaction.bidTransactionFeeETH"
-            :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
-            :combined-bid-fees-e-t-h="auctionTransaction.combinedBidFeesETH"
+            :fees="fees"
         />
         <div class="flex flex-row-reverse mt-3">
             <BaseButton
@@ -40,6 +38,7 @@ import TransactionMessage from '~/components/transaction/TransactionMessage.vue'
 import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
+    name: 'BidBlock',
     components: {
         BaseButton,
         FormatCurrency,
@@ -82,6 +81,16 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+    },
+    data() {
+        return {
+            fees: {
+                type: 'bid',
+                transETH: this.auctionTransaction.bidTransactionFeeETH,
+                authETH: this.auctionTransaction.authTransactionFeeETH,
+                totalETH: this.auctionTransaction.combinedBidFeesETH,
+            },
+        };
     },
     computed: {
         state(): string {

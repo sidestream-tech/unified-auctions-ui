@@ -6,34 +6,17 @@
         </div>
         <div v-else-if="isExplanationsShown">
             Auction bidding incurs a
-            <Explain text="transaction fee" set-width="300px">
+            <Explain text="transaction fee" width="300px">
                 <TransactionFeesTable
                     :is-wallet-connected="isWalletConnected"
                     :is-wallet-authed="isWalletAuthed"
                     :is-collateral-authed="isCollateralAuthed"
-                    :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
-                    :bid-transaction-fee-e-t-h="bidTransactionFeeETH"
-                    :auth-transaction-fee-e-t-h="authTransactionFeeETH"
-                    :combined-swap-fees-e-t-h="combinedSwapFeesETH"
-                    :combined-bid-fees-e-t-h="combinedBidFeesETH"
+                    :fees="fees"
                 />
             </Explain>
-            <span v-if="isWalletConnected">
-                of approximately
-                <FormatCurrency
-                    v-if="combinedSwapFeesETH"
-                    :value="combinedSwapFeesETH"
-                    :decimals="5"
-                    :currency="ETH"
-                />
-                <FormatCurrency
-                    v-else-if="combinedBidFeesETH"
-                    :value="combinedBidFeesETH"
-                    :decimals="5"
-                    :currency="ETH"
-                /> </span
-            >, hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is a
-            recommended value and based on the
+            of approximately
+            <FormatCurrency :value="totalFeesETH" :decimals="5" currency="ETH" />, hence, the connected wallet needs to
+            hold enough funds to cover these fees. The transaction fee is a recommended value and based on the
             <Explain text="average fast fee">
                 <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
                     Gas Prices can change
@@ -60,6 +43,7 @@ import Explain from '~/components/utils/Explain.vue';
 import TransactionFeesTable from '~/components/transaction/TransactionFeesTable.vue';
 
 export default Vue.extend({
+    name: 'TransactionMessage',
     components: {
         TextBlock,
         FormatCurrency,
@@ -68,25 +52,9 @@ export default Vue.extend({
         TransactionFeesTable,
     },
     props: {
-        swapTransactionFeeETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        bidTransactionFeeETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        authTransactionFeeETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        combinedSwapFeesETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        combinedBidFeesETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
+        fees: {
+            type: Object,
+            default: null,
         },
         isExplanationsShown: {
             type: Boolean,
@@ -111,6 +79,21 @@ export default Vue.extend({
         showDifferentWalletInfo: {
             type: Boolean,
             default: false,
+        },
+    },
+    computed: {
+        totalFeesETH(): BigNumber {
+            let total = this.fees.transETH;
+
+            if (!this.isWalletAuthed) {
+                total = total.plus(this.fees.authETH);
+            }
+
+            if (!this.isCollateralAuthed) {
+                total = total.plus(this.fees.authETH);
+            }
+
+            return total;
         },
     },
 });

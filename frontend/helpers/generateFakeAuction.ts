@@ -4,8 +4,6 @@ import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { AuctionTransaction } from '~/../core/src/types';
 
-type authStatus = 'wallet' | 'wallet-and-collateral';
-
 export const generateFakeAuction = function () {
     const index = faker.datatype.number();
     const collateralAmount = new BigNumber(parseFloat(faker.finance.amount()));
@@ -57,7 +55,7 @@ export const generateFakeAuction = function () {
     };
 };
 
-export const generateFakeAuctionTransaction = function (authStatus?: authStatus): AuctionTransaction {
+export const generateFakeAuctionTransaction = function (): AuctionTransaction {
     const auction = generateFakeAuction();
     const swapTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const swapTransactionFeeDAI = swapTransactionFeeETH.multipliedBy(1000);
@@ -68,17 +66,9 @@ export const generateFakeAuctionTransaction = function (authStatus?: authStatus)
     const restartTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const restartTransactionFeeDAI = restartTransactionFeeETH.multipliedBy(1000);
     const transactionNetProfit = auction.transactionGrossProfit.minus(swapTransactionFeeDAI);
-    let combinedSwapFeesETH = swapTransactionFeeETH;
-    let combinedBidFeesETH = bidTransactionFeeETH;
-    if (!authStatus || (authStatus !== 'wallet' && authStatus !== 'wallet-and-collateral')) {
-        combinedSwapFeesETH = combinedSwapFeesETH.plus(authTransactionFeeETH);
-        combinedBidFeesETH = combinedBidFeesETH.plus(authTransactionFeeETH);
-    }
-    if (!authStatus || authStatus !== 'wallet-and-collateral') {
-        combinedSwapFeesETH = combinedSwapFeesETH.plus(authTransactionFeeETH);
-        combinedBidFeesETH = combinedBidFeesETH.plus(authTransactionFeeETH);
-    }
+    const combinedSwapFeesETH = swapTransactionFeeETH.plus(authTransactionFeeETH).plus(authTransactionFeeETH);
     const combinedSwapFeesDAI = combinedSwapFeesETH.multipliedBy(1000);
+    const combinedBidFeesETH = bidTransactionFeeETH.plus(authTransactionFeeETH).plus(authTransactionFeeETH);
     const combinedBidFeesDAI = combinedBidFeesETH.multipliedBy(1000);
     return {
         ...auction,

@@ -13,6 +13,12 @@ const common = {
             isLoading: false,
             transactionAddress: null,
             demoTransactionAddress: faker.finance.ethereumAddress(),
+            fees: {
+                type: 'swap',
+                transETH: fakeAuctionTransaction.swapTransactionFeeETH,
+                authETH: fakeAuctionTransaction.authTransactionFeeETH,
+                totalETH: fakeAuctionTransaction.combinedSwapFeesETH,
+            },
         };
     },
     methods: {
@@ -29,32 +35,31 @@ const common = {
 storiesOf('Transaction/ExecutionBlock', module)
     .add('Default', () => ({
         ...common,
-        template: `<ExecutionBlock :isLoading="isLoading" 
-                                   @execute="execute" 
-                                   :transactionAddress="transactionAddress" 
-                                   :transaction-fee="auctionTransaction.transactionFeeETH"
-                                   :collateral-type="auctionTransaction.collateralType" />`,
+        template: `
+        <ExecutionBlock 
+            :isLoading="isLoading" 
+            @execute="execute" 
+            :transactionAddress="transactionAddress" 
+            :fees="fees"
+            :collateral-type="auctionTransaction.collateralType"
+        />`,
     }))
     .add('Disabled', () => ({
         ...common,
-        template: `<ExecutionBlock :disabled="true"
-                                   :transaction-fee="auctionTransaction.transactionFeeETH"
-                                   :collateral-type="auctionTransaction.collateralType" />`,
+        template:
+            '<ExecutionBlock :disabled="true" :fees="fees" :collateral-type="auctionTransaction.collateralType" />',
     }))
     .add('Not Executed', () => ({
         ...common,
-        template: `<ExecutionBlock :transaction-fee="auctionTransaction.transactionFeeETH"
-                                   :collateral-type="auctionTransaction.collateralType" />`,
+        template: '<ExecutionBlock :fees="fees" :collateral-type="auctionTransaction.collateralType" />',
     }))
     .add('Executing', () => ({
         ...common,
-        template: `<ExecutionBlock :isLoading="true"
-                                   :transaction-fee="auctionTransaction.transactionFeeETH"
-                                   :collateral-type="auctionTransaction.collateralType" />`,
+        template:
+            '<ExecutionBlock :isLoading="true" :fees="fees" :collateral-type="auctionTransaction.collateralType" />',
     }))
     .add('Executed', () => ({
         ...common,
-        template: `<ExecutionBlock :transactionAddress="demoTransactionAddress"
-                                   :transaction-fee="auctionTransaction.transactionFeeETH"
-                                   :collateral-type="auctionTransaction.collateralType" />`,
+        template:
+            '<ExecutionBlock :transactionAddress="demoTransactionAddress" :fees="fees" :collateral-type="auctionTransaction.collateralType" />',
     }));

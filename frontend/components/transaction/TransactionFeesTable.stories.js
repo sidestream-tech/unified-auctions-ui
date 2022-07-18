@@ -3,81 +3,57 @@ import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction.ts
 import TransactionFeesTable from '~/components/transaction/TransactionFeesTable.vue';
 
 const fakeAuctionTransaction = generateFakeAuctionTransaction();
-const fakeAuctionTransactionWalletAuthed = generateFakeAuctionTransaction('wallet');
-const fakeAuctionTransactionWalletAndCollateralAuthed = generateFakeAuctionTransaction('wallet-and-collateral');
 
 const common = {
     components: {
         TransactionFeesTable,
     },
-    data: () => ({
-        swapTransactionFeeETH: fakeAuctionTransaction.swapTransactionFeeETH,
-        bidTransactionFeeETH: fakeAuctionTransaction.bidTransactionFeeETH,
-        authTransactionFeeETH: fakeAuctionTransaction.authTransactionFeeETH,
-        combinedSwapFeesETH: fakeAuctionTransaction.combinedSwapFeesETH,
-        combinedBidFeesETH: fakeAuctionTransaction.combinedBidFeesETH,
-    }),
+    data() {
+        return {
+            fees: {
+                type: 'swap',
+                transETH: fakeAuctionTransaction.swapTransactionFeeETH,
+                authETH: fakeAuctionTransaction.authTransactionFeeETH,
+                totalETH: fakeAuctionTransaction.combinedSwapFeesETH,
+            },
+        };
+    },
 };
 
 storiesOf('Transaction/TransactionFeesTable', module)
     .add('Default Swap Transaction', () => ({
         ...common,
-        template: `
-        <TransactionFeesTable
-            :is-wallet-connected="true"
-            :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
-            :auth-transaction-fee-e-t-h="authTransactionFeeETH"
-            :combined-swap-fees-e-t-h="combinedSwapFeesETH"
-        />`,
+        template: '<TransactionFeesTable :is-wallet-connected="true" :fees="fees" />',
     }))
     .add('Default Bid Transaction', () => ({
         ...common,
-        template: `
-        <TransactionFeesTable
-            :is-wallet-connected="true"
-            :bid-transaction-fee-e-t-h="bidTransactionFeeETH"
-            :auth-transaction-fee-e-t-h="authTransactionFeeETH"
-            :combined-bid-fees-e-t-h="combinedBidFeesETH"
-        />`,
+        data() {
+            return {
+                fees: {
+                    type: 'bid',
+                    transETH: fakeAuctionTransaction.bidTransactionFeeETH,
+                    authETH: fakeAuctionTransaction.authTransactionFeeETH,
+                    totalETH: fakeAuctionTransaction.combinedBidFeesETH,
+                },
+            };
+        },
+        template: '<TransactionFeesTable :is-wallet-connected="true" :fees="fees" />',
     }))
     .add('Wallet Not Connected', () => ({
         ...common,
-        template: `<TransactionFeesTable :is-wallet-connected="false"/>`,
+        template: '<TransactionFeesTable :is-wallet-connected="false" :fees="fees"/>',
     }))
     .add('Wallet Authorized', () => ({
         ...common,
-        data() {
-            return {
-                swapTransactionFeeETH: fakeAuctionTransactionWalletAuthed.swapTransactionFeeETH,
-                authTransactionFeeETH: fakeAuctionTransactionWalletAuthed.authTransactionFeeETH,
-                combinedSwapFeesETH: fakeAuctionTransactionWalletAuthed.combinedSwapFeesETH,
-            };
-        },
-        template: `
-        <TransactionFeesTable
-            :is-wallet-connected="true"
-            :is-wallet-authed="true"
-            :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
-            :auth-transaction-fee-e-t-h="authTransactionFeeETH"
-            :combined-swap-fees-e-t-h="combinedSwapFeesETH"
-        />`,
+        template: '<TransactionFeesTable :is-wallet-connected="true" :is-wallet-authed="true" :fees="fees"/>',
     }))
     .add('Wallet And Collateral Authorized', () => ({
         ...common,
-        data() {
-            return {
-                swapTransactionFeeETH: fakeAuctionTransactionWalletAndCollateralAuthed.swapTransactionFeeETH,
-                authTransactionFeeETH: fakeAuctionTransactionWalletAndCollateralAuthed.authTransactionFeeETH,
-                combinedSwapFeesETH: fakeAuctionTransactionWalletAndCollateralAuthed.combinedSwapFeesETH,
-            };
-        },
         template: `
         <TransactionFeesTable
             :is-wallet-connected="true"
             :is-wallet-authed="true"
             :is-collateral-authed="true"
-            :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
-            :auth-transaction-fee-e-t-h="authTransactionFeeETH"
-            :combined-swap-fees-e-t-h="combinedSwapFeesETH"
+            :fees="fees"
         />`,
     }));

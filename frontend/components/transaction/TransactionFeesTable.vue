@@ -1,21 +1,17 @@
 <template>
-    <div v-if="isWalletConnected" class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100">
-        <div v-if="swapTransactionFeeETH" class="flex justify-between">
-            <div>Swap Transaction Fee</div>
+    <div class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100">
+        <div class="flex justify-between">
             <div>
-                <FormatCurrency :value="swapTransactionFeeETH" :decimals="5" :currency="ETH" />
+                <span class="capitalize">{{ fees.type }}</span> Transaction Fee
             </div>
-        </div>
-        <div v-else-if="bidTransactionFeeETH" class="flex justify-between">
-            <div>Bid Transaction Fee</div>
             <div>
-                <FormatCurrency :value="bidTransactionFeeETH" :decimals="5" :currency="ETH" />
+                <FormatCurrency :value="fees.transETH" :decimals="5" currency="ETH" />
             </div>
         </div>
         <div class="flex justify-between">
             <div>Wallet Authorization Fee <Icon v-if="isWalletAuthed" type="check" class="text-green-500" /></div>
             <div>
-                <FormatCurrency :value="authTransactionFeeETH" :decimals="5" :currency="ETH" />
+                <FormatCurrency :value="fees.authETH" :decimals="5" currency="ETH" />
             </div>
         </div>
         <div class="flex justify-between">
@@ -23,29 +19,17 @@
                 Collateral Authorization Fee <Icon v-if="isCollateralAuthed" type="check" class="text-green-500" />
             </div>
             <div>
-                <FormatCurrency :value="authTransactionFeeETH" :decimals="5" :currency="ETH" />
+                <FormatCurrency :value="fees.authETH" :decimals="5" currency="ETH" />
             </div>
         </div>
-        <hr />
-        <div class="flex justify-between font-bold">
-            <div>Total</div>
+        <hr v-if="isWalletConnected" />
+        <div v-if="isWalletConnected" class="flex justify-between font-bold">
+            <div>Remaining</div>
             <div>
-                <FormatCurrency
-                    v-if="combinedSwapFeesETH"
-                    :value="combinedSwapFeesETH"
-                    :decimals="5"
-                    :currency="ETH"
-                />
-                <FormatCurrency
-                    v-else-if="combinedBidFeesETH"
-                    :value="combinedBidFeesETH"
-                    :decimals="5"
-                    :currency="ETH"
-                />
+                <FormatCurrency :value="totalFeesETH" :decimals="5" currency="ETH" />
             </div>
         </div>
     </div>
-    <div v-else>Connect a wallet for an approximate fee breakdown</div>
 </template>
 
 <script lang="ts">
@@ -55,30 +39,15 @@ import BigNumber from 'bignumber.js';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 export default Vue.extend({
+    name: 'TransactionFeesTable',
     components: {
         FormatCurrency,
         Icon,
     },
     props: {
-        swapTransactionFeeETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        bidTransactionFeeETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        authTransactionFeeETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        combinedSwapFeesETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        combinedBidFeesETH: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
+        fees: {
+            type: Object,
+            default: null,
         },
         isWalletConnected: {
             type: Boolean,
@@ -91,6 +60,21 @@ export default Vue.extend({
         isCollateralAuthed: {
             type: Boolean,
             default: false,
+        },
+    },
+    computed: {
+        totalFeesETH(): BigNumber {
+            let total = this.fees.transETH;
+
+            if (!this.isWalletAuthed) {
+                total = total.plus(this.fees.authETH);
+            }
+
+            if (!this.isCollateralAuthed) {
+                total = total.plus(this.fees.authETH);
+            }
+
+            return total;
         },
     },
 });

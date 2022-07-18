@@ -9,11 +9,12 @@ const common = {
     components: { TransactionMessage },
     data() {
         return {
-            swapTransactionFeeETH: fakeAuctionTransaction.swapTransactionFeeETH,
-            bidTransactionFeeETH: fakeAuctionTransaction.bidTransactionFeeETH,
-            authTransactionFeeETH: fakeAuctionTransaction.authTransactionFeeETH,
-            combinedSwapFeesETH: fakeAuctionTransaction.combinedSwapFeesETH,
-            combinedBidFeesETH: fakeAuctionTransaction.combinedBidFeesETH,
+            fees: {
+                type: 'swap',
+                transETH: fakeAuctionTransaction.swapTransactionFeeETH,
+                authETH: fakeAuctionTransaction.authTransactionFeeETH,
+                totalETH: fakeAuctionTransaction.combinedSwapFeesETH,
+            },
         };
     },
 };
@@ -21,19 +22,11 @@ const common = {
 storiesOf('Transaction/TransactionMessage', module)
     .add('Default', () => ({
         ...common,
-        template: `
-            <TransactionMessage 
-                :is-wallet-connected="true"
-                :swap-transaction-fee-e-t-h="swapTransactionFeeETH"
-                :bid-transaction-fee-e-t-h="bidTransactionFeeETH"
-                :auth-transaction-fee-e-t-h="authTransactionFeeETH"
-                :combined-swap-fees-e-t-h="combinedSwapFeesETH"
-                :combined-bid-fees-e-t-h="combinedBidFeesETH"
-            />`,
+        template: '<TransactionMessage :is-wallet-connected="true" :fees="fees" />',
     }))
     .add('Show "Different Wallet" Info Message', () => ({
         ...common,
-        template: '<TransactionMessage show-different-wallet-info />',
+        template: '<TransactionMessage show-different-wallet-info :fees="fees" />',
     }))
     .add('Finished', () => ({
         ...common,

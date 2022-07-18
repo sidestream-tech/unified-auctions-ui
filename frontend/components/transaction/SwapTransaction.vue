@@ -82,9 +82,7 @@
             :is-wallet-connected="isWalletConnectedCheck"
             :is-wallet-authed="isWalletAuthorized"
             :is-collateral-authed="isWalletCollateralAuthorizationCheckPassed"
-            :swap-transaction-fee-e-t-h="auctionTransaction.swapTransactionFeeETH"
-            :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
-            :combined-swap-fees-e-t-h="auctionTransaction.combinedSwapFeesETH"
+            :fees="fees"
             :transaction-gross-profit="auctionTransaction.transactionGrossProfit"
             @execute="$emit('execute', { id: auctionTransaction.id, alternativeDestinationAddress: $event })"
         />
@@ -157,6 +155,12 @@ export default Vue.extend({
             isWalletDAIAuthorizationCheckPassed: false,
             isWalletCollateralAuthorizationCheckPassed: false,
             isProfitCheckPassed: false,
+            fees: {
+                type: 'swap',
+                transETH: this.auctionTransaction.swapTransactionFeeETH,
+                authETH: this.auctionTransaction.authTransactionFeeETH,
+                totalETH: this.auctionTransaction.combinedSwapFeesETH,
+            },
         };
     },
     computed: {
