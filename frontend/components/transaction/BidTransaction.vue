@@ -55,6 +55,9 @@
         </div>
         <BidBlock
             class="mb-6"
+            :is-wallet-connected="isWalletConnected"
+            :is-wallet-authed="isWalletAuthorizedCorrect"
+            :is-collateral-authed="isCollateralAuthorized"
             :auction-transaction="auctionTransaction"
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"

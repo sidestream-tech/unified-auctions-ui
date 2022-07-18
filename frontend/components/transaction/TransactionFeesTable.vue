@@ -12,14 +12,16 @@
                 <FormatCurrency :value="bidTransactionFeeETH" :decimals="5" :currency="ETH" />
             </div>
         </div>
-        <div v-if="!isWalletAuthed" class="flex justify-between">
-            <div>Wallet Authorization Fee</div>
+        <div class="flex justify-between">
+            <div>Wallet Authorization Fee <Icon v-if="isWalletAuthed" type="check" class="text-green-500" /></div>
             <div>
                 <FormatCurrency :value="authTransactionFeeETH" :decimals="5" :currency="ETH" />
             </div>
         </div>
-        <div v-if="!isCollateralAuthed" class="flex justify-between">
-            <div>Collateral Authorization Fee</div>
+        <div class="flex justify-between">
+            <div>
+                Collateral Authorization Fee <Icon v-if="isCollateralAuthed" type="check" class="text-green-500" />
+            </div>
             <div>
                 <FormatCurrency :value="authTransactionFeeETH" :decimals="5" :currency="ETH" />
             </div>
@@ -47,12 +49,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { Icon } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 export default Vue.extend({
     components: {
         FormatCurrency,
+        Icon,
     },
     props: {
         swapTransactionFeeETH: {

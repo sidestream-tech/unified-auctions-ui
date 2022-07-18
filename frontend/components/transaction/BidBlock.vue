@@ -3,6 +3,9 @@
         <TransactionMessage
             :is-explanations-shown="isExplanationsShown"
             :transaction-address="auctionTransaction.transactionAddress"
+            :is-wallet-connected="isWalletConnected"
+            :is-wallet-authed="isWalletAuthed"
+            :is-collateral-authed="isCollateralAuthed"
             :bid-transaction-fee-e-t-h="auctionTransaction.bidTransactionFeeETH"
             :auth-transaction-fee-e-t-h="auctionTransaction.authTransactionFeeETH"
             :combined-bid-fees-e-t-h="auctionTransaction.combinedBidFeesETH"
@@ -66,6 +69,18 @@ export default Vue.extend({
         amountToReceive: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
+        },
+        isWalletConnected: {
+            type: Boolean,
+            default: false,
+        },
+        isWalletAuthed: {
+            type: Boolean,
+            default: false,
+        },
+        isCollateralAuthed: {
+            type: Boolean,
+            default: false,
         },
     },
     computed: {
