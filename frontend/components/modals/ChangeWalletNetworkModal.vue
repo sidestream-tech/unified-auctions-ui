@@ -12,7 +12,7 @@
             <template #message>
                 Connected wallet is set to "<span class="font-medium">{{ invalidNetwork }}</span
                 >" network,
-                <template v-if="!isWalletNetworkSuppotedByTheWebsite"> which is not supported. </template>
+                <template v-if="!isWalletNetworkSupportedByTheWebsite"> which is not supported. </template>
                 <template v-else>
                     which doesn't match "<span class="font-medium">{{ pageNetwork }}</span
                     >" network of the website.
@@ -20,7 +20,7 @@
             </template>
         </Alert>
         <div class="flex justify-end p-5 gap-5">
-            <BaseButton v-if="isWalletNetworkSuppotedByTheWebsite" @click="$emit('setPageNetwork', invalidNetwork)">
+            <BaseButton v-if="isWalletNetworkSupportedByTheWebsite" @click="$emit('setPageNetwork', invalidNetwork)">
                 Navigate to "{{ invalidNetwork }}"
             </BaseButton>
             <BaseButton type="primary" @click="$emit('fixWalletNetwork')">
@@ -34,7 +34,7 @@
 import { Modal, Alert } from 'ant-design-vue';
 import Vue, { PropType } from 'vue';
 import { getNetworks } from 'auctions-core/src/network';
-import BaseButton from '~/components/common/BaseButton';
+import BaseButton from '~/components/common/inputs/BaseButton';
 
 export default Vue.extend({
     name: 'ChangeWalletNetworkModal',
@@ -54,7 +54,7 @@ export default Vue.extend({
         },
     },
     computed: {
-        isWalletNetworkSuppotedByTheWebsite(): boolean {
+        isWalletNetworkSupportedByTheWebsite(): boolean {
             return !!getNetworks(this.isDev)[this.invalidNetwork];
         },
         options() {

@@ -59,10 +59,10 @@
 import Vue, { PropType } from 'vue';
 import StagingBanner from './StagingBanner.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
-import BaseSwitch from '~/components/common/BaseSwitch.vue';
-import NetworkSelector from '~/components/utils/NetworkSelector.vue';
-import WalletSelector from '~/components/utils/WalletSelector.vue';
-import ThemeSwitcher from '~/components/utils/ThemeSwitcher.vue';
+import BaseSwitch from '~/components/common/inputs/BaseSwitch.vue';
+import NetworkSelector from '~/components/layout/NetworkSelector.vue';
+import WalletSelector from '~/components/layout/WalletSelector.vue';
+import ThemeSwitcher from '~/components/layout/ThemeSwitcher.vue';
 import { NetworkConfig } from '~/../core/src/types';
 
 export default Vue.extend({
