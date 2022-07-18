@@ -8,7 +8,6 @@
             Auction bidding incurs a
             <Explain text="transaction fee" set-width="300px">
                 <TransactionFeesTable
-                    v-if="isWalletConnected"
                     :is-wallet-connected="isWalletConnected"
                     :is-wallet-authed="isWalletAuthed"
                     :is-collateral-authed="isCollateralAuthed"
@@ -18,7 +17,6 @@
                     :combined-swap-fees-e-t-h="combinedSwapFeesETH"
                     :combined-bid-fees-e-t-h="combinedBidFeesETH"
                 />
-                <span v-else>Connect a wallet for an approximate fee breakdown</span>
             </Explain>
             <span v-if="isWalletConnected">
                 of approximately

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100">
+    <div v-if="isWalletConnected" class="flex flex-col space-y-1 text-gray-700 dark:text-gray-100">
         <div v-if="swapTransactionFeeETH" class="flex justify-between">
             <div>Swap Transaction Fee</div>
             <div>
@@ -45,6 +45,7 @@
             </div>
         </div>
     </div>
+    <div v-else>Connect a wallet for an approximate fee breakdown</div>
 </template>
 
 <script lang="ts">

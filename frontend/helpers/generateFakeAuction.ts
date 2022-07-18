@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { AuctionTransaction } from '~/../core/src/types';
 
-type authStatus = 'wallet' | 'collateral' | 'wallet-and-collateral';
+type authStatus = 'wallet' | 'wallet-and-collateral';
 
 export const generateFakeAuction = function () {
     const index = faker.datatype.number();
@@ -74,7 +74,7 @@ export const generateFakeAuctionTransaction = function (authStatus?: authStatus)
         combinedSwapFeesETH = combinedSwapFeesETH.plus(authTransactionFeeETH);
         combinedBidFeesETH = combinedBidFeesETH.plus(authTransactionFeeETH);
     }
-    if (!authStatus || (authStatus !== 'collateral' && authStatus !== 'wallet-and-collateral')) {
+    if (!authStatus || authStatus !== 'wallet-and-collateral') {
         combinedSwapFeesETH = combinedSwapFeesETH.plus(authTransactionFeeETH);
         combinedBidFeesETH = combinedBidFeesETH.plus(authTransactionFeeETH);
     }
