@@ -27,6 +27,23 @@ const trimError = function (errorMessage: string | undefined): string {
     return errorMessage.split('(', 2)[0];
 };
 
+const getBlankRow = (transaction: TransactionResponse, collateralType: string) => ({
+    transactionDate: '' as any,
+    blockNumber: transaction.blockNumber,
+    collateralType,
+    hash: transaction.hash,
+    from: transaction.from,
+    error: '',
+    auctionId: '',
+    takenAmount: '',
+    maxAcceptablePrice: '',
+    userOrCallee: '',
+    calleeData: '',
+    calleeName: '',
+    marketPrice: '',
+    price: '',
+});
+
 const getTakeEvents = async function (network: string, collateralType: string): Promise<any> {
     const provider = await getProvider(network);
 
@@ -46,32 +63,41 @@ const getTakeEvents = async function (network: string, collateralType: string): 
         })
     );
 
+    const populateRowWithTransactionDate = async (row: any, transaction: TransactionResponse) => {
+        let transactionDate;
+        if (transaction.blockNumber) {
+            transactionDate = await fetchDateByBlockNumber(network, transaction.blockNumber);
+        } else {
+            transactionDate = 'no block number';
+        }
+        return {
+            ...row,
+            transactionDate,
+        };
+    };
+
+    const getMarketPriceIfExists = async (
+        transaction: TransactionResponse,
+        collateralSymbol: string,
+        takenAmount: BigNumber
+    ) => {
+        try {
+            if (!transaction.blockNumber) {
+                throw new Error('failed to extract the price for the block number.');
+            }
+            return await getMarketPrice(NETWORK, collateralSymbol, takenAmount, transaction.blockNumber);
+        } catch (error) {
+            console.info(`cannot fetch market price for the collateral ${collateralSymbol} due to ${error}`);
+            return undefined;
+        }
+    };
     const rows: any = [];
 
     for (const eventWithTransaction of eventsWithTransactions) {
         const transaction = eventWithTransaction.transaction;
-        const row = {
-            transactionDate: '' as any,
-            blockNumber: transaction.blockNumber,
-            collateralType,
-            hash: transaction.hash,
-            from: transaction.from,
-            error: '',
-            auctionId: '',
-            takenAmount: '',
-            maxAcceptablePrice: '',
-            userOrCallee: '',
-            calleeData: '',
-            calleeName: '',
-            marketPrice: '',
-            price: '',
-        };
+        let row = getBlankRow(transaction, collateralType);
 
-        if (transaction.blockNumber) {
-            row.transactionDate = await fetchDateByBlockNumber(network, transaction.blockNumber);
-        } else {
-            row.transactionDate = 'no block number';
-        }
+        row = await populateRowWithTransactionDate(row, transaction);
 
         let takeParameters;
         try {
@@ -91,16 +117,8 @@ const getTakeEvents = async function (network: string, collateralType: string): 
         }
 
         const collateralSymbol = getCollateralConfigByType(collateralType).symbol;
-        let marketPrice;
         const takenAmount = new BigNumber(takeParameters.amt._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
-        try {
-            if (!transaction.blockNumber) {
-                throw new Error('failed to extract the price for the block number.');
-            }
-            marketPrice = await getMarketPrice(NETWORK, collateralSymbol, takenAmount, transaction.blockNumber);
-        } catch (error) {
-            console.info(`cannot fetch market price for the collateral ${collateralSymbol} due to ${error}`);
-        }
+        const marketPrice = await getMarketPriceIfExists(transaction, collateralSymbol, takenAmount);
 
         rows.push({
             ...row,
