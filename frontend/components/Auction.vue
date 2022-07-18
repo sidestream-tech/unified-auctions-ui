@@ -100,23 +100,27 @@
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
-                                <td>Auction Price Total</td>
+                                <td>Auction Debt</td>
+                                <td>
+                                    <format-currency :value="auction.debtDAI" currency="DAI" />
+                                </td>
+                            </tr>
+                            <tr class="bg-gray-100 dark:bg-gray-800">
+                                <td>Collateral amount to cover Debt</td>
                                 <td>
                                     <Popover
                                         v-if="!auction.isActive && !auction.isFinished"
                                         placement="top"
-                                        content="Since the auction is not active, there is no total Auction Price for this auction."
+                                        content="Can not be computed since the auction is not active"
                                         trigger="hover"
                                     >
                                         <span class="opacity-50">Unknown</span>
                                     </Popover>
-                                    <format-currency v-else :value="auction.totalPrice" currency="DAI" />
-                                </td>
-                            </tr>
-                            <tr class="bg-gray-100 dark:bg-gray-800">
-                                <td>Debt</td>
-                                <td>
-                                    <format-currency :value="auction.debtDAI" currency="DAI" />
+                                    <format-currency
+                                        v-else
+                                        :value="auction.collateralToCoverDebt"
+                                        :currency="auction.collateralSymbol"
+                                    />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
