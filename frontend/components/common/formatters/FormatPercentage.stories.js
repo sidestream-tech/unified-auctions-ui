@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
-import FormatPercentage from '~/components/common/formatters/FormatPercentage';
+import FormatPercentage from './FormatPercentage';
 
 const common = {
     components: { FormatPercentage },

@@ -15,7 +15,7 @@
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import { getCalleesByNetworkType } from 'auctions-core/src/constants/CALLEES';
-import DashboardAuctionsView from '~/components/DashboardAuctionsView.vue';
+import DashboardAuctionsView from '~/components/dashboard/DashboardAuctionsView.vue';
 
 export default Vue.extend({
     components: {

@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import TimeTill from '~/components/common/formatters/TimeTill';
+import TimeTill from './TimeTill';
 
 storiesOf('Common/Formatters/TimeTill', module)
     .add('Default', () => ({

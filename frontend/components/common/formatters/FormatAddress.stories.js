@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import FormatAddress from '~/components/common/formatters/FormatAddress';
+import FormatAddress from './FormatAddress';
 
 const common = {
     components: { FormatAddress },

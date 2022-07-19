@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import TextBlock from '~/common/other/TextBlock';
+import TextBlock from './TextBlock';
 
 storiesOf('Common/Other/TextBlock', module)
     .add('Default', () => ({

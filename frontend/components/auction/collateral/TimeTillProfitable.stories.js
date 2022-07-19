@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import TimeTillProfitable from '~/components/common/formatters/TimeTillProfitable';
+import TimeTillProfitable from './TimeTillProfitable';
 import { generateFakeAuction } from '~/helpers/generateFakeAuction';
 
 const auction = generateFakeAuction();
@@ -10,7 +10,7 @@ const common = {
     components: { TimeTillProfitable },
 };
 
-storiesOf('Auction/TimeTillProfitable', module)
+storiesOf('Auction/Collateral/TimeTillProfitable', module)
     .add('Turns Profitable', () => ({
         ...common,
         data() {

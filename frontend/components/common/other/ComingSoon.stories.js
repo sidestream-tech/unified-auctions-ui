@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import ComingSoon from '~/components/common/others/ComingSoon';
+import ComingSoon from './ComingSoon';
 
 const common = {
     components: { ComingSoon },

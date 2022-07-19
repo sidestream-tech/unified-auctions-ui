@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import WalletBlock from '~/components/transaction/WalletBlock';
+import WalletBlock from './WalletBlock';
 
 const common = {
     components: { WalletBlock },
@@ -29,7 +29,7 @@ const common = {
     },
 };
 
-storiesOf('Transaction/WalletBlock', module)
+storiesOf('Wallet/WalletBlock', module)
     .add('Default', () => ({
         ...common,
         template:

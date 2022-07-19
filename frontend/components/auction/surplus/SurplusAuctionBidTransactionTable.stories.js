@@ -14,6 +14,6 @@ const common = {
     template: `<SurplusAuctionBidTransactionTable :auction="auction" @inputBidAmount="inputBidAmount" />`,
 };
 
-storiesOf('Surplus/SurplusAuctionBidTransactionTable', module).add('Default', () => ({
+storiesOf('Auction/Surplus/SurplusAuctionBidTransactionTable', module).add('Default', () => ({
     ...common,
 }));

@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
-import Select from '~/components/common/inputs/Select';
+import Select from './Select';
 
 const common = {
     components: { Select },

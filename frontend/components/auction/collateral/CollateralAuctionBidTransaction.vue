@@ -7,7 +7,7 @@
             type="error"
         />
         <Alert v-if="auctionTransaction.isFinished" message="This auction is finished" type="error" />
-        <BidTransactionTable
+        <CollateralAuctionBidTransactionTable
             class="mt-4 mb-6"
             :auction-transaction="auctionTransaction"
             :amount-to-receive="amountToReceive"
@@ -53,7 +53,7 @@
                 @authorizeCollateral="$emit('authorizeCollateral', auctionTransaction.collateralType)"
             />
         </div>
-        <BidBlock
+        <CollateralAuctionBidBlock
             class="mb-6"
             :auction-transaction="auctionTransaction"
             :transaction-bid-amount="transactionBidAmount"
@@ -65,7 +65,7 @@
                 !isEnoughDeposited ||
                 !isWalletAuthorizedCorrect ||
                 !isCollateralAuthorized ||
-                isAmountToReceiveUknown
+                isAmountToReceiveUnknown
             "
             :is-loading="isExecuting"
             :is-explanations-shown="isExplanationsShown"
@@ -89,20 +89,20 @@ import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import { calculateTransactionCollateralOutcome } from 'auctions-core/src/price';
-import BidTransactionTable from './BidTransactionTable.vue';
-import BidBlock from './BidBlock.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
+import CollateralAuctionBidTransactionTable from './CollateralAuctionBidTransactionTable';
+import CollateralAuctionBidBlock from './CollateralAuctionBidBlock';
 import CollateralAuthorizationCheckPanel from '~/components/panels/CollateralAuthorizationCheckPanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import WalletVatDaiBalanceCheckPanel from '~/components/panels/WalletVatDaiBalanceCheckPanel.vue';
 import WithdrawCollateralPanel from '~/components/panels/WithdrawCollateralPanel.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
 
 export default Vue.extend({
     components: {
         TextBlock,
-        BidTransactionTable,
-        BidBlock,
+        CollateralAuctionBidTransactionTable,
+        CollateralAuctionBidBlock,
         Alert,
         CollateralAuthorizationCheckPanel,
         WalletAuthorizationCheckPanel,
@@ -184,7 +184,7 @@ export default Vue.extend({
                 this.auctionTransaction
             );
         },
-        isAmountToReceiveUknown(): boolean {
+        isAmountToReceiveUnknown(): boolean {
             return this.amountToReceive?.isNaN();
         },
     },

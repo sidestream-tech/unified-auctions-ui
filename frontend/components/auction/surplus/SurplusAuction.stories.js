@@ -18,7 +18,7 @@ const common = {
     },
 };
 
-storiesOf('Surplus/SurplusAuction', module)
+storiesOf('Auction/Surplus/SurplusAuction', module)
     .add('Just Started', () => ({
         ...common,
         data() {

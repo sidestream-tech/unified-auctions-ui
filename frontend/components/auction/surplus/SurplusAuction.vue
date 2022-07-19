@@ -148,14 +148,14 @@
 import Vue from 'vue';
 import type { SurplusAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import TimeTill from '~/components/common/TimeTill.vue';
-import Button from '~/components/common/BaseButton.vue';
-import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import Button from '~/components/common/inputs/BaseButton.vue';
+import FormatMarketValue from '~/components/common/formatters/FormatMarketValue.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
-import Loading from '~/components/common/Loading';
+import Loading from '~/components/common/other/Loading';
 
 export default Vue.extend({
     name: 'SurplusAuction',

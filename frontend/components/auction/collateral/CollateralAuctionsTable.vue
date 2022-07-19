@@ -72,11 +72,11 @@ import type { Auction } from 'auctions-core/src/types';
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
 import { compareAsc } from 'date-fns';
-import Loading from './common/Loading.vue';
-import TimeTill from '~/components/common/TimeTill.vue';
-import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import CurrencyIcon from '~/components/common/CurrencyIcon.vue';
+import Loading from '~/components/common/other/Loading.vue';
+import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import FormatMarketValue from '~/components/common/formatters/FormatMarketValue.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import CurrencyIcon from '~/components/common/other/CurrencyIcon.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
 
 const compareBy = function (field: string, cmp: Function = (a: number, b: number): number => a - b): Function {

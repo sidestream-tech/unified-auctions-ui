@@ -66,11 +66,11 @@
 import Vue from 'vue';
 import { SurplusAuctionActionStates, SurplusAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
-import SurplusAuction from '~/components/surplus/SurplusAuction';
-import SurplusAuctionTransactionFlow from '~/components/surplus/SurplusAuctionTransactionFlow.vue';
+import SurplusAuction from '~/components/auction/surplus/SurplusAuction';
+import SurplusAuctionTransactionFlow from '~/components/auction/surplus/SurplusAuctionTransactionFlow.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
-import SurplusText from '~/components/surplus/SurplusText.vue';
+import SurplusText from '~/components/auction/surplus/SurplusText.vue';
 
 export default Vue.extend({
     components: {

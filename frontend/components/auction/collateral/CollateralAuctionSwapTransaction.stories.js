@@ -1,13 +1,13 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import { action } from '@storybook/addon-actions';
-import SwapTransaction from '~/components/transaction/SwapTransaction';
+import CollateralAuctionSwapTransaction from './CollateralAuctionSwapTransaction';
 import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 
 const fakeAuctionTransaction = generateFakeAuctionTransaction();
 
 const common = {
-    components: { SwapTransaction },
+    components: { CollateralAuctionSwapTransaction },
     data() {
         return {
             auctionTransaction: {
@@ -66,14 +66,14 @@ const common = {
     },
 };
 
-storiesOf('Transaction/SwapTransaction', module)
+storiesOf('Auction/Collateral/CollateralAuctionSwapTransaction', module)
     .add('Default', () => ({
         ...common,
         template:
-            '<SwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isWalletAuthorized="isWalletAuthorized" :authorisedCollaterals="authorisedCollaterals" :isExecuting="isExecuting" :walletAddress="walletAddress" @connect="connect" @disconnect="disconnect" @authorizeCollateral="authorizeCollateral" @authorizeWallet="authorizeWallet" @execute="execute" />',
+            '<CollateralAuctionSwapTransaction :auction-transaction="auctionTransaction" :isConnecting="isConnecting" :isAuthorizing="isAuthorizing" :isWalletAuthorized="isWalletAuthorized" :authorisedCollaterals="authorisedCollaterals" :isExecuting="isExecuting" :walletAddress="walletAddress" @connect="connect" @disconnect="disconnect" @authorizeCollateral="authorizeCollateral" @authorizeWallet="authorizeWallet" @execute="execute" />',
     }))
     .add('Inactive Auction', () => ({
-        components: { SwapTransaction },
+        components: { CollateralAuctionSwapTransaction },
         data() {
             return {
                 auctionTransaction: {
@@ -82,5 +82,5 @@ storiesOf('Transaction/SwapTransaction', module)
                 },
             };
         },
-        template: '<SwapTransaction :auction-transaction="auctionTransaction"/>',
+        template: '<CollateralAuctionSwapTransaction :auction-transaction="auctionTransaction"/>',
     }));

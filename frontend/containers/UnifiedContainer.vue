@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import UnifiedAuctionsView from '~/components/UnifiedAuctionsView.vue';
+import UnifiedAuctionsView from '~/components/common/other/UnifiedAuctionsView.vue';
 
 export default Vue.extend({
     components: {

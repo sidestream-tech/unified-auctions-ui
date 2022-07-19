@@ -48,7 +48,7 @@ import CollateralTable from './CollateralTable.vue';
 import CalleeTable from './CalleeTable.vue';
 import GasTable from './GasTable.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
 
 export default Vue.extend({
     components: {

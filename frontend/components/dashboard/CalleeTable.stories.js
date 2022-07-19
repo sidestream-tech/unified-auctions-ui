@@ -6,7 +6,7 @@ const common = {
     components: { CalleeTable },
 };
 
-storiesOf('CalleeTable', module)
+storiesOf('Dashboard/CalleeTable', module)
     .add('Default', () => ({
         ...common,
         computed: {

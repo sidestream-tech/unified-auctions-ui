@@ -77,9 +77,9 @@
 import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import BidInput from '../utils/BidInput.vue';
-import TimeTill from '~/components/common/TimeTill.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+import BidInput from '../../common/inputs/BidInput.vue';
+import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
     components: {

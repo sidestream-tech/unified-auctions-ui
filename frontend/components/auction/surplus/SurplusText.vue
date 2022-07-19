@@ -59,10 +59,10 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { SurplusAuctionTransaction } from 'auctions-core/src/types';
-import SurplusAuctionsTable from './SurplusAuctionsTable.vue';
-import WhatIsMakerProtocol from '~/components/WhatIsMakerProtocol.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import Explain from '~/components/utils/Explain.vue';
+import SurplusAuctionsTable from '~/components/auction/surplus/SurplusAuctionsTable.vue';
+import WhatIsMakerProtocol from '~/components/common/other/WhatIsMakerProtocol.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
     components: {

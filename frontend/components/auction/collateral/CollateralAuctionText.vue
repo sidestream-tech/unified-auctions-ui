@@ -57,7 +57,7 @@
             class="w-full self-center"
             :class="{ 'max-w-4xl': isExplanationsShown, 'md:px-10': !isExplanationsShown }"
         >
-            <AuctionsTable
+            <CollateralAuctionsTable
                 class="block overflow-x-auto"
                 :is-loading="isAuctionsLoading"
                 :error="auctionsError"
@@ -93,17 +93,18 @@
 </template>
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import WhatIsMakerProtocol from '~/components/WhatIsMakerProtocol.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import AuctionsTable from '~/components/AuctionsTable.vue';
-import FormatPercentage from '~/components/utils/FormatPercentage.vue';
-import Explain from '~/components/utils/Explain.vue';
+import type { Auction } from 'auctions-core/src/types';
+import WhatIsMakerProtocol from '~/components/common/other/WhatIsMakerProtocol.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import CollateralAuctionsTable from '~/components/auction/collateral/CollateralAuctionsTable.vue';
+import FormatPercentage from '~/components/common/formatters/FormatPercentage.vue';
+import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
     components: {
         FormatPercentage,
         TextBlock,
-        AuctionsTable,
+        CollateralAuctionsTable,
         Explain,
         WhatIsMakerProtocol,
     },

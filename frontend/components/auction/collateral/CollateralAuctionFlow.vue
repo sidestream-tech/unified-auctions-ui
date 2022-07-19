@@ -6,7 +6,7 @@
                     <LandingBlock @explanations="explanationsTrigger" />
                 </div>
                 <div class="mx-4 md:mx-0 MainTextContainer">
-                    <MainText
+                    <CollateralAuctionText
                         ref="mainText"
                         :auctions="auctions"
                         :auctions-error="auctionsError"
@@ -20,7 +20,7 @@
             </template>
             <template #step1>
                 <div>
-                    <Auction
+                    <CollateralAuction
                         v-if="selectedAuctionId"
                         :is-explanations-shown="isExplanationsShown"
                         class="mt-6 mb-8 mx-8"
@@ -41,7 +41,7 @@
                 </div>
             </template>
             <template #step2>
-                <SwapTransaction
+                <CollateralAuctionSwapTransaction
                     v-if="selectedAuction && secondStep === 'swap'"
                     class="mt-6 mb-8 mx-8"
                     :auction-transaction="selectedAuction"
@@ -58,7 +58,7 @@
                     @authorizeCollateral="$emit('authorizeCollateral', $event)"
                     @execute="$emit('execute', $event)"
                 />
-                <BidTransaction
+                <CollateralAuctionBidTransaction
                     v-if="selectedAuction && secondStep === 'purchase'"
                     class="mt-6 mb-8 mx-8"
                     :auction-transaction="selectedAuction"
@@ -92,14 +92,21 @@ import Vue from 'vue';
 import { TakeEvent } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
-import MainText from '~/components/MainText.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
-import Auction from '~/components/Auction.vue';
-import SwapTransaction from '~/components/transaction/SwapTransaction.vue';
-import BidTransaction from '~/components/transaction/BidTransaction.vue';
+import CollateralAuctionText from '~/components/auction/collateral/CollateralAuctionText.vue';
+import CollateralAuction from '~/components/auction/collateral/CollateralAuction.vue';
+import CollateralAuctionSwapTransaction from '~/components/auction/collateral/CollateralAuctionSwapTransaction.vue';
+import CollateralAuctionBidTransaction from '~/components/auction/collateral/CollateralAuctionBidTransaction.vue';
 
 export default Vue.extend({
-    components: { SplitLayout, MainText, Auction, SwapTransaction, LandingBlock, BidTransaction },
+    components: {
+        SplitLayout,
+        CollateralAuctionText,
+        CollateralAuction,
+        CollateralAuctionSwapTransaction,
+        LandingBlock,
+        CollateralAuctionBidTransaction,
+    },
     props: {
         auctions: {
             type: Array as Vue.PropType<AuctionTransaction[]>,

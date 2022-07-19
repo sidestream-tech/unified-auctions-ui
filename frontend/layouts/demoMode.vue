@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import '~/assets/styles/index';
-import ComingSoon from '~/components/ComingSoon.vue';
+import ComingSoon from '~/components/common/other/ComingSoon.vue';
 
 export default Vue.extend({
     components: { ComingSoon },

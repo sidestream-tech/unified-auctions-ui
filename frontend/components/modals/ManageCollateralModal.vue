@@ -23,7 +23,7 @@
 import Vue from 'vue';
 import { Modal } from 'ant-design-vue';
 import { CollateralStatus } from 'auctions-core/src/types';
-import ManageCollateralTable from '../ManageCollateralTable.vue';
+import ManageCollateralTable from '~/components/modals/ManageCollateralTable';
 
 export default Vue.extend({
     components: {

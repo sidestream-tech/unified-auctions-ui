@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import AuctionTypeFilter from '~/components/common/other/AuctionTypeFilter.vue';
+import AuctionTypeFilter from './AuctionTypeFilter.vue';
 
 const common = {
     components: { AuctionTypeFilter },

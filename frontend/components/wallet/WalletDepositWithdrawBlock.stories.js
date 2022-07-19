@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import { action } from '@storybook/addon-actions';
 import BigNumber from 'bignumber.js';
-import WalletDepositWithdrawBlock from '~/components/wallet/WalletDepositWithdrawBlock';
+import WalletDepositWithdrawBlock from './WalletDepositWithdrawBlock';
 
 const common = {
     components: { WalletDepositWithdrawBlock },

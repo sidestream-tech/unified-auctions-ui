@@ -109,10 +109,10 @@
 import type { AuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import BidInput from '../utils/BidInput.vue';
-import TimeTill from '~/components/common/TimeTill.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import PriceDropAnimation from '~/components/utils/PriceDropAnimation.vue';
+import BidInput from '~/components/common/inputs/BidInput';
+import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import PriceDropAnimation from '~/components/auction/collateral/PriceDropAnimation.vue';
 
 export default Vue.extend({
     components: {

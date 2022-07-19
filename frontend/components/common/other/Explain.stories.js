@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import Explain from '~/components/common/other/Explain';
+import Explain from './Explain';
 
 const common = {
     components: { Explain },

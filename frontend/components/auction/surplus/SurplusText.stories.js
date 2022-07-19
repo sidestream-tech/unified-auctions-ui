@@ -14,7 +14,7 @@ const common = {
     }),
 };
 
-storiesOf('Surplus/SurplusText', module)
+storiesOf('Auction/Surplus/SurplusText', module)
     .add('Default', () => ({
         ...common,
         template: '<SurplusText :auctions="auctions" />',

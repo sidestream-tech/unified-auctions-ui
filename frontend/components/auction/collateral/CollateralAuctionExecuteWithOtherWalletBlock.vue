@@ -57,13 +57,13 @@
 import { Modal, Input, Alert } from 'ant-design-vue';
 import Vue from 'vue';
 import { ethers } from 'ethers';
-import BaseButton from '~/components/common/BaseButton.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
-import Explain from '~/components/utils/Explain.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
+import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
-    name: 'ExecuteWithOtherWalletBlock',
+    name: 'CollateralAuctionExecuteWithOtherWalletBlock',
     components: { TextBlock, BaseButton, Modal, Input, Alert, FormatAddress, Explain },
     props: {
         defaultWallet: {

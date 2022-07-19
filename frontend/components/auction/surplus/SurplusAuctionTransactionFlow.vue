@@ -78,12 +78,12 @@ import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import { SurplusAuctionActionStates } from 'auctions-core/src/types';
-import HighestBidCheckPanel from '../panels/HighestBidCheckPanel.vue';
-import WalletMKRBalanceCheckPanel from '../panels/WalletMKRBalanceCheckPanel.vue';
-import AllowanceAmountCheckPanel from '../panels/AllowanceAmountCheckPanel.vue';
-import CollectSurplusAuctionPanel from '../panels/CollectSurplusAuctionPanel.vue';
-import SurplusAuctionBidTransactionTable from '~/components/surplus/SurplusAuctionBidTransactionTable.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
+import WalletMKRBalanceCheckPanel from '~/components/panels/WalletMKRBalanceCheckPanel.vue';
+import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
+import CollectSurplusAuctionPanel from '~/components/panels/CollectSurplusAuctionPanel.vue';
+import HighestBidCheckPanel from '~/components/panels/HighestBidCheckPanel.vue';
+import SurplusAuctionBidTransactionTable from '~/components/auction/surplus/SurplusAuctionBidTransactionTable.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 
 export default Vue.extend({

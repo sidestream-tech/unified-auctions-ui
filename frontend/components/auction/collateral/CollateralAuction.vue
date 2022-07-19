@@ -254,7 +254,7 @@
                 </div>
             </TextBlock>
         </div>
-        <AuctionEventsBlock v-else-if="takeEvents && takeEvents.length > 0" :take-events="takeEvents" />
+        <CollateralAuctionEventsBlock v-else-if="takeEvents && takeEvents.length > 0" :take-events="takeEvents" />
         <Loading
             v-else-if="areAuctionsFetching || areTakeEventsFetching"
             is-loading
@@ -276,16 +276,16 @@ import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import Loading from '~/components/common/other/Loading.vue';
 import Explain from '~/components/common/other/Explain.vue';
-import TimeTillProfitable from '~/components/utils/TimeTillProfitable.vue';
-import AuctionEventsBlock from '~/components/AuctionEventsBlock.vue';
+import TimeTillProfitable from '~/components/auction/collateral/TimeTillProfitable.vue';
+import CollateralAuctionEventsBlock from '~/components/auction/collateral/CollateralAuctionEventsBlock';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
 
 export default Vue.extend({
-    name: 'Auction',
+    name: 'CollateralAuction',
     components: {
         AuctionRestartPanel,
-        AuctionEventsBlock,
+        CollateralAuctionEventsBlock,
         PriceDropAnimation,
         Explain,
         Loading,

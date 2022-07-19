@@ -11,7 +11,7 @@ const common = {
     }),
 };
 
-storiesOf('DashboardAuctionsView', module)
+storiesOf('Dashboard/DashboardAuctionsView', module)
     .add('Default', () => ({
         ...common,
         template: '<DashboardAuctionsView :collaterals="collaterals" :callees="callees" />',

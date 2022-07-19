@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import AnimatedNumber from '~/components/common/formatters/AnimatedNumber';
+import AnimatedNumber from './AnimatedNumber';
 
 const common = {
     components: {

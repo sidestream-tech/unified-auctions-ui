@@ -24,7 +24,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 
 export default Vue.extend({
     components: {

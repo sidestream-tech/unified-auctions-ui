@@ -7,7 +7,7 @@
             show-different-wallet-info
         />
         <div class="flex flex-col md:flex-row md:space-x-4 justify-end flex-wrap mt-4">
-            <ExecuteWithOtherWalletBlock
+            <CollateralAuctionExecuteWithOtherWalletBlock
                 :disabled="disabled || isLoading || state === 'executed'"
                 :default-wallet="walletAddress"
                 :is-loading="state === 'loading'"
@@ -35,14 +35,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import BaseButton from '~/components/common/BaseButton.vue';
-import ExecuteWithOtherWalletBlock from '~/components/transaction/ExecuteWithOtherWalletBlock.vue';
-import TransactionMessage from '~/components/transaction/TransactionMessage.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import CollateralAuctionExecuteWithOtherWalletBlock from '~/components/auction/collateral/CollateralAuctionExecuteWithOtherWalletBlock.vue';
+import TransactionMessage from '~/components/auction/TransactionMessage.vue';
 
 export default Vue.extend({
     name: 'WalletBlock',
     components: {
-        ExecuteWithOtherWalletBlock,
+        CollateralAuctionExecuteWithOtherWalletBlock,
         BaseButton,
         TransactionMessage,
     },

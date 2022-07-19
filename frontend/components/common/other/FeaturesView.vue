@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
-import FeatureList from '~/components/FeatureList.vue';
+import FeatureList from '~/components/common/other/FeatureList.vue';
 
 export default Vue.extend({
     components: {

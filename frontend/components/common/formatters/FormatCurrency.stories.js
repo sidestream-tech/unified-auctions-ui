@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import FormatCurrency from '~/components/common/formatters/FormatCurrency';
+import FormatCurrency from './FormatCurrency';
 
 const common = {
     components: { FormatCurrency },

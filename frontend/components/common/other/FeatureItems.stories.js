@@ -11,7 +11,7 @@ const common = {
     },
 };
 
-storiesOf('Utils/FeatureItems', module)
+storiesOf('Common/Other/FeatureItems', module)
     .add('Collateral Auctions UI', () => ({
         ...common,
         template: '<FeatureItems :items="features[0].items"/>',

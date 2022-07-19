@@ -36,9 +36,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import BaseButton from '~/components/common/BaseButton.vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 
 export default Vue.extend({
     name: 'WalletBlock',

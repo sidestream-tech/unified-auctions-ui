@@ -1,13 +1,13 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import AuctionsTable from './AuctionsTable';
+import CollateralAuctionsTable from './CollateralAuctionsTable';
 import { generateFakeAuctions } from '~/helpers/generateFakeAuction';
 
 const fakeAuctions = generateFakeAuctions();
 const randomSelectedAuction = faker.random.arrayElement(fakeAuctions);
 
 const common = {
-    components: { AuctionsTable },
+    components: { CollateralAuctionsTable },
     data: () => ({
         auctions: fakeAuctions,
         selectedAuctionId: randomSelectedAuction.id,
@@ -15,30 +15,30 @@ const common = {
     }),
 };
 
-storiesOf('AuctionsTable', module)
+storiesOf('Auction/Collateral/CollateralAuctionsTable', module)
     .add('Plain', () => ({
         ...common,
         template:
-            '<AuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" :last-updated="lastUpdated" />',
+            '<CollateralAuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" :last-updated="lastUpdated" />',
     }))
     .add('Fetching With Auctions', () => ({
         ...common,
-        template: '<AuctionsTable :auctions="auctions" :last-updated="lastUpdated" :is-loading="true" />',
+        template: '<CollateralAuctionsTable :auctions="auctions" :last-updated="lastUpdated" :is-loading="true" />',
     }))
     .add('Fetching without Auctions', () => ({
         ...common,
-        template: '<AuctionsTable :last-updated="lastUpdated" :is-loading="true" />',
+        template: '<CollateralAuctionsTable :last-updated="lastUpdated" :is-loading="true" />',
     }))
     .add('Empty auctions', () => ({
         ...common,
-        template: '<AuctionsTable :last-updated="lastUpdated" />',
+        template: '<CollateralAuctionsTable :last-updated="lastUpdated" />',
     }))
     .add('Error', () => ({
         ...common,
-        template: '<AuctionsTable error="There was an error fetching the Auctions." />',
+        template: '<CollateralAuctionsTable error="There was an error fetching the Auctions." />',
     }))
     .add('Expert Mode', () => ({
         ...common,
         template:
-            '<AuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" show-more-rows :last-updated="lastUpdated" />',
+            '<CollateralAuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" show-more-rows :last-updated="lastUpdated" />',
     }));

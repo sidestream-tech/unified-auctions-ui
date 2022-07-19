@@ -1,12 +1,12 @@
 import { storiesOf } from '@storybook/vue';
+import CollateralAuctionSwapTransactionTable from './CollateralAuctionSwapTransactionTable';
 import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction.ts';
-import SwapTransactionTable from '~/components/transaction/SwapTransactionTable.vue';
 
 const fakeAuctionTransaction = generateFakeAuctionTransaction();
 
-storiesOf('Transaction/SwapTransaction Table', module).add('Default', () => ({
+storiesOf('Auction/Collateral/CollateralAuctionSwapTransactionTable', module).add('Default', () => ({
     components: {
-        SwapTransactionTable,
+        CollateralAuctionSwapTransactionTable,
     },
     data: () => ({
         auctionTransaction: fakeAuctionTransaction,

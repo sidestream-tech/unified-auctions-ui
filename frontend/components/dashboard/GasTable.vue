@@ -140,7 +140,7 @@ import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import type { GasParameters, TransactionFees } from 'auctions-core/src/types';
 import { GWEI_NUMBER_OF_DIGITS } from 'auctions-core/src/constants/UNITS';
-import FormatCurrency from './utils/FormatCurrency.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
     name: 'GasTable',

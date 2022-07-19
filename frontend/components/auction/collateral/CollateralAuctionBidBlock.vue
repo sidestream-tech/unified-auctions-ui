@@ -28,9 +28,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BaseButton from '~/components/common/BaseButton.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import TransactionMessage from '~/components/transaction/TransactionMessage.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import TransactionMessage from '~/components/auction/TransactionMessage.vue';
 import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({

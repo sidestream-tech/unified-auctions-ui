@@ -1,13 +1,13 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import { BigNumber } from 'bignumber.js';
-import BidBlock from './BidBlock';
+import CollateralAuctionBidBlock from './CollateralAuctionBidBlock';
 import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 
 const fakeAuction = generateFakeAuctionTransaction();
 
 const common = {
-    components: { BidBlock },
+    components: { CollateralAuctionBidBlock },
     data() {
         return {
             auction: fakeAuction,
@@ -16,23 +16,26 @@ const common = {
     },
 };
 
-storiesOf('Transaction/BidBlock', module)
+storiesOf('Auction/Collateral/CollateralAuctionBidBlock', module)
     .add('Default', () => ({
         ...common,
-        template: '<BidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" />',
+        template:
+            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" />',
     }))
     .add('Disabled', () => ({
         ...common,
-        template: '<BidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" disabled />',
+        template:
+            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" disabled />',
     }))
     .add('Loading', () => ({
         ...common,
-        template: '<BidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" is-loading />',
+        template:
+            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" is-loading />',
     }))
     .add('Expert Mode', () => ({
         ...common,
         template:
-            '<BidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" :is-explanations-shown="false" />',
+            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" :is-explanations-shown="false" />',
     }))
     .add('Finished', () => ({
         ...common,
@@ -44,5 +47,6 @@ storiesOf('Transaction/BidBlock', module)
                 };
             },
         },
-        template: '<BidBlock :auctionTransaction="finishedAuction" :transactionBidAmount="transactionBidAmount" />',
+        template:
+            '<CollateralAuctionBidBlock :auctionTransaction="finishedAuction" :transactionBidAmount="transactionBidAmount" />',
     }));

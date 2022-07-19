@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import BasePanel from '~/components/common/other/BasePanel.vue';
+import BasePanel from './BasePanel.vue';
 
 const common = {
     components: { BasePanel },

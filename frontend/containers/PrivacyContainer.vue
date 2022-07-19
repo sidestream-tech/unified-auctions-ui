@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import PrivacyView from '~/components/PrivacyView.vue';
+import PrivacyView from '~/components/common/other/PrivacyView.vue';
 
 export default Vue.extend({
     components: {

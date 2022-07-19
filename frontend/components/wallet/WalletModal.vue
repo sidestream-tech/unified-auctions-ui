@@ -57,7 +57,7 @@ import Vue from 'vue';
 import { Modal } from 'ant-design-vue';
 import { WalletBalances } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
-import TextBlock from '../common/TextBlock.vue';
+import TextBlock from '../common/other/TextBlock.vue';
 import WalletTable from './WalletTable.vue';
 import WalletDepositWithdrawBlock from './WalletDepositWithdrawBlock.vue';
 

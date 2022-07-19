@@ -24,7 +24,7 @@ const common = {
         />`,
 };
 
-storiesOf('Surplus/SurplusFlow', module)
+storiesOf('Auction/Surplus/SurplusFlow', module)
     .add('Default', () => ({
         ...common,
     }))

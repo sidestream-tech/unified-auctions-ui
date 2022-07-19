@@ -7,7 +7,7 @@
             type="error"
         />
         <Alert v-if="auctionTransaction.isFinished" message="This auction is finished" type="error" />
-        <SwapTransactionTable :auction-transaction="auctionTransaction" class="mt-4" />
+        <CollateralAuctionSwapTransactionTable :auction-transaction="auctionTransaction" class="mt-4" />
         <TextBlock class="TextBlock mt-4 mb-8">
             Please note, the transaction fee is a suggested value based on the current gas prices on the market; the
             Transaction Net Profit is also approximate, since it is extrapolated from the exchange rates and may change
@@ -66,7 +66,7 @@
                 :is-explanations-shown="isExplanationsShown"
             />
         </div>
-        <ExecutionBlock
+        <CollateralAuctionExecutionBlock
             class="mt-3"
             :disabled="
                 !isAuctionActiveAndNotFinished ||
@@ -89,14 +89,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
-import WalletConnectionCheckPanel from '../panels/WalletConnectionCheckPanel.vue';
-import WalletAuthorizationCheckPanel from '../panels/WalletAuthorizationCheckPanel.vue';
-import CollateralAuthorizationCheckPanel from '../panels/CollateralAuthorizationCheckPanel.vue';
-import ProfitCheckPanel from '../panels/ProfitCheckPanel.vue';
-import ExecutionBlock from '~/components/transaction/ExecutionBlock.vue';
-import SwapTransactionTable from '~/components/transaction/SwapTransactionTable.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import Explain from '~/components/utils/Explain.vue';
+import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
+import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
+import CollateralAuthorizationCheckPanel from '~/components/panels/CollateralAuthorizationCheckPanel.vue';
+import ProfitCheckPanel from '~/components/panels/ProfitCheckPanel.vue';
+import CollateralAuctionExecutionBlock from '~/components/auction/collateral/CollateralAuctionExecutionBlock.vue';
+import CollateralAuctionSwapTransactionTable from '~/components/auction/collateral/CollateralAuctionSwapTransactionTable.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
     name: 'SwapTransaction',
@@ -107,8 +107,8 @@ export default Vue.extend({
         WalletConnectionCheckPanel,
         Explain,
         TextBlock,
-        SwapTransactionTable,
-        ExecutionBlock,
+        CollateralAuctionSwapTransactionTable,
+        CollateralAuctionExecutionBlock,
         Alert,
     },
     props: {

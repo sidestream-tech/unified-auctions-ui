@@ -1,10 +1,10 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import { action } from '@storybook/addon-actions';
-import ExecuteWithOtherWalletBlock from '~/components/transaction/ExecuteWithOtherWalletBlock';
+import CollateralAuctionExecuteWithOtherWalletBlock from './CollateralAuctionExecuteWithOtherWalletBlock';
 
 const common = {
-    components: { ExecuteWithOtherWalletBlock },
+    components: { CollateralAuctionExecuteWithOtherWalletBlock },
     data() {
         return {
             outcomeWallet: faker.finance.ethereumAddress(),
@@ -16,8 +16,8 @@ const common = {
     },
 };
 
-storiesOf('Transaction/ExecuteWithOtherWalletBlock', module).add('Default', () => ({
+storiesOf('Auction/Collateral/CollateralAuctionExecuteWithOtherWalletBlock', module).add('Default', () => ({
     ...common,
     template:
-        '<ExecuteWithOtherWalletBlock :outcomeWallet="outcomeWallet" :defaultWallet="defaultWallet" @execute="execute" />',
+        '<CollateralAuctionExecuteWithOtherWalletBlock :outcomeWallet="outcomeWallet" :defaultWallet="defaultWallet" @execute="execute" />',
 }));

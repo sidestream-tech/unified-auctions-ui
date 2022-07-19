@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import LinkButton from '~/components/common/inputs/LinkButton.vue';
+import LinkButton from './LinkButton.vue';
 
 storiesOf('Common/Inputs/LinkButton', module)
     .add('Primary', () => ({

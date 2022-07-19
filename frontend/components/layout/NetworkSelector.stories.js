@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import NetworkSelector from '~/components/layout/NetworkSelector';
+import NetworkSelector from './NetworkSelector';
 import { generateFakeNetworks } from '~/helpers/generateFakeNetwork';
 
 const common = {

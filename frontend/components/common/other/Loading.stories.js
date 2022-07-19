@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import Loading from '~/common/other/Loading';
+import Loading from './Loading';
 
 storiesOf('Common/Other/Loading', module)
     .add('Without Loading', () => ({

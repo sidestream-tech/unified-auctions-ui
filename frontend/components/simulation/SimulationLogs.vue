@@ -27,7 +27,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Collapse } from 'ant-design-vue';
-import TextBlock from '~/components/common/TextBlock.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
 
 export default Vue.extend({
     components: {

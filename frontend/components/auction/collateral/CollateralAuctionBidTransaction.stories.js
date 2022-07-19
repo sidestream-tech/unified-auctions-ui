@@ -2,13 +2,13 @@ import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import { action } from '@storybook/addon-actions';
 import BigNumber from 'bignumber.js';
-import BidTransaction from './BidTransaction';
+import CollateralAuctionBidTransaction from './CollateralAuctionBidTransaction';
 import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction';
 
 const fakeAuctionTransaction = generateFakeAuctionTransaction();
 
 const common = {
-    components: { BidTransaction },
+    components: { CollateralAuctionBidTransaction },
     data: () => ({
         auctionTransaction: {
             ...fakeAuctionTransaction,
@@ -84,7 +84,7 @@ const common = {
         },
     },
     template: `
-    <BidTransaction
+    <CollateralAuctionBidTransaction
         v-bind="$data"
         @connect="connect()"
         @disconnect="disconnect()"
@@ -95,7 +95,7 @@ const common = {
     />`,
 };
 
-storiesOf('Transaction/BidTransaction', module)
+storiesOf('Auction/Collateral/CollateralAuctionBidTransaction', module)
     .add('Default', () => ({
         ...common,
     }))

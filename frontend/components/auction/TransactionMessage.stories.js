@@ -6,7 +6,7 @@ const common = {
     components: { TransactionMessage },
 };
 
-storiesOf('Transaction/TransactionMessage', module)
+storiesOf('Auction/TransactionMessage', module)
     .add('Default', () => ({
         ...common,
         template: '<TransactionMessage />',

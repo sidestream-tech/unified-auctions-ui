@@ -28,7 +28,7 @@ const common = {
     },
 };
 
-storiesOf('ManageCollateralTable', module).add('Default', () => ({
+storiesOf('Modals/ManageCollateralTable', module).add('Default', () => ({
     ...common,
     template: `<ManageCollateralTable 
         :collateralStatuses="collateralStatuses"

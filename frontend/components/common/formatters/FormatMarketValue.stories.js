@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import BigNumber from 'bignumber.js';
-import FormatMarketValue from '~/components/common/formatters/FormatMarketValue';
+import FormatMarketValue from './FormatMarketValue';
 
 const common = {
     components: { FormatMarketValue },

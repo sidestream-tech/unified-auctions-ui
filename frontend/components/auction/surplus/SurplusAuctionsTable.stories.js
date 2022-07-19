@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import SurplusAuctionsTable from '~/components/surplus/SurplusAuctionsTable';
+import SurplusAuctionsTable from './SurplusAuctionsTable';
 import { generateFakeSurplusAuctionTransactions } from '~/helpers/generateFakeSurplusAuction';
 
 const fakeAuctions = generateFakeSurplusAuctionTransactions();
@@ -15,7 +15,7 @@ const common = {
     }),
 };
 
-storiesOf('Surplus/SurplusAuctionsTable', module)
+storiesOf('Auction/Surplus/SurplusAuctionsTable', module)
     .add('Plain', () => ({
         ...common,
         template:

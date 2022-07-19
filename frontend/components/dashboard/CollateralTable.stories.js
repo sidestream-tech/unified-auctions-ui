@@ -11,7 +11,7 @@ const common = {
     }),
 };
 
-storiesOf('CollateralTable', module).add('Default', () => ({
+storiesOf('Dashboard/CollateralTable', module).add('Default', () => ({
     ...common,
     template: '<CollateralTable :collaterals="collaterals" />',
 }));

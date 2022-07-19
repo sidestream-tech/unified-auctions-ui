@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import WalletSelectModal from '~/components/modals/WalletSelectModal';
+import WalletSelectModal from './WalletSelectModal';
 
 const common = {
     components: { WalletSelectModal },

@@ -26,10 +26,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
-import Explain from '~/components/utils/Explain.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
+import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
     components: {

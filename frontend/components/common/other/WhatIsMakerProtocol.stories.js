@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import WhatIsMakerProtocol from '~/components/common/other/WhatIsMakerProtocol';
+import WhatIsMakerProtocol from './WhatIsMakerProtocol';
 
 const common = {
     components: { WhatIsMakerProtocol },

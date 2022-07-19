@@ -16,11 +16,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TakeEvent } from 'auctions-core/src/types';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
-import TimeTill from '~/components/common/TimeTill.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
+import TimeTill from '~/components/common/formatters/TimeTill.vue';
 
 export default Vue.extend({
-    name: 'AuctionEventsBlock',
+    name: 'CollateralAuctionEventsBlock',
     components: { FormatAddress, TimeTill },
     props: {
         takeEvents: {

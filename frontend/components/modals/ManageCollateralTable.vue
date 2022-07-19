@@ -64,11 +64,11 @@
 import type { CollateralStatus } from 'auction-core/src/types';
 import Vue from 'vue';
 import { Tooltip } from 'ant-design-vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import CurrencyIcon from '~/components/common/CurrencyIcon.vue';
-import BaseButton from '~/components/common/BaseButton.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import CurrencyIcon from '~/components/common/other/CurrencyIcon.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
 
 export default Vue.extend({
     components: {

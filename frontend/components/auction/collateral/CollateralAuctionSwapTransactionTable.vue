@@ -97,12 +97,12 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import PriceDropAnimation from '../utils/PriceDropAnimation.vue';
-import TimeTillProfitable from '../utils/TimeTillProfitable.vue';
-import TimeTill from '~/components/common/TimeTill.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
-import FormatMarketValue from '~/components/utils/FormatMarketValue.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
+import PriceDropAnimation from '~/components/auction/collateral/PriceDropAnimation';
+import TimeTillProfitable from '~/components/auction/collateral/TimeTillProfitable';
+import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import FormatMarketValue from '~/components/common/formatters/FormatMarketValue.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
 
 export default Vue.extend({
     components: {

@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import PrivacyView from '~/components/common/other/PrivacyView';
+import PrivacyView from './PrivacyView';
 
 const common = {
     components: { PrivacyView },

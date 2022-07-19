@@ -16,8 +16,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import FeatureItems from '~/components/utils/FeatureItems.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
+import FeatureItems from '~/components/common/other/FeatureItems.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
 import features from '~/data/FeatureTexts';
 
 export default Vue.extend({

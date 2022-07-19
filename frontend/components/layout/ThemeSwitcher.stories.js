@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import ThemeSwitcher from '~/components/layout/ThemeSwitcher';
+import ThemeSwitcher from './ThemeSwitcher';
 
 const common = {
     components: { ThemeSwitcher },

@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import BaseButton from './BaseButton.vue';
 
 storiesOf('Common/Inputs/BaseButton', module)
     .add('Default', () => ({

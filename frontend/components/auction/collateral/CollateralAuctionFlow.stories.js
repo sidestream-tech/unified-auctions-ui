@@ -1,72 +1,72 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
-import MainFlow from './MainFlow.vue';
+import CollateralAuctionFlow from './CollateralAuctionFlow';
 import { generateFakeAuctionTransactions } from '~/helpers/generateFakeAuction';
 
 const fakeAuctions = generateFakeAuctionTransactions();
 const randomSelectedAuctionId = faker.random.arrayElement(fakeAuctions).id;
 
-storiesOf('Main Flow', module)
+storiesOf('Auction/Collateral/CollateralAuctionFlow', module)
     .add('Default', () => ({
         components: {
-            MainFlow,
+            CollateralAuctionFlow,
         },
         data: () => ({ fakeAuctions, randomSelectedAuctionId }),
-        template: `<MainFlow :auctions="fakeAuctions" />`,
+        template: `<CollateralAuctionFlow :auctions="fakeAuctions" />`,
     }))
     .add('Default Expert', () => ({
         components: {
-            MainFlow,
+            CollateralAuctionFlow,
         },
         data: () => ({ fakeAuctions, randomSelectedAuctionId }),
-        template: `<MainFlow :isExplanationsShown="false" :auctions="fakeAuctions" />`,
+        template: `<CollateralAuctionFlow :isExplanationsShown="false" :auctions="fakeAuctions" />`,
     }))
     .add('Selected Auction', () => ({
         components: {
-            MainFlow,
+            CollateralAuctionFlow,
         },
         data: () => ({ fakeAuctions, randomSelectedAuctionId }),
-        template: `<MainFlow :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
+        template: `<CollateralAuctionFlow :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
     }))
     .add('Selected Auction Loading', () => ({
         components: {
-            MainFlow,
+            CollateralAuctionFlow,
         },
         data: () => ({ fakeAuctions, randomSelectedAuctionId }),
-        template: `<MainFlow :auctions="[]" :are-auctions-fetching="true" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
+        template: `<CollateralAuctionFlow :auctions="[]" :are-auctions-fetching="true" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
     }))
     .add('Selected Auction Expert', () => ({
         components: {
-            MainFlow,
+            CollateralAuctionFlow,
         },
         data: () => ({ fakeAuctions, randomSelectedAuctionId }),
-        template: `<MainFlow :isExplanationsShown="false" :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
+        template: `<CollateralAuctionFlow :isExplanationsShown="false" :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
     }))
     .add('AuctionId Not Found', () => ({
         components: {
-            MainFlow,
+            CollateralAuctionFlow,
         },
         data: () => ({ fakeAuctions, randomSelectedAuctionId: 'none' }),
-        template: `<MainFlow :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
+        template: `<CollateralAuctionFlow :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
     }))
     .add('AuctionId Not Found Expert', () => ({
         components: {
-            MainFlow,
+            CollateralAuctionFlow,
         },
         data: () => ({ fakeAuctions, randomSelectedAuctionId: 'none' }),
-        template: `<MainFlow :isExplanationsShown="false" :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
+        template: `<CollateralAuctionFlow :isExplanationsShown="false" :auctions="fakeAuctions" :selectedAuctionId.sync="randomSelectedAuctionId" />`,
     }))
     .add('Empty Auctions', () => ({
         components: {
-            MainFlow,
+            CollateralAuctionFlow,
         },
         data: () => ({ fakeAuctions: [], randomSelectedAuctionId }),
-        template: `<MainFlow />`,
+        template: `<CollateralAuctionFlow />`,
     }))
     .add('Empty Auctions Expert', () => ({
         components: {
-            MainFlow,
+            CollateralAuctionFlow,
         },
         data: () => ({ fakeAuctions: [], randomSelectedAuctionId }),
-        template: `<MainFlow :isExplanationsShown="false"  />`,
+        template: `<CollateralAuctionFlow :isExplanationsShown="false"  />`,
     }));

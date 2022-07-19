@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
-import BidInput from '~/components/common/inputs/BidInput';
+import BidInput from './BidInput';
 
 const common = {
     components: { BidInput },
@@ -14,7 +14,7 @@ const common = {
     },
 };
 
-storiesOf('Utils/BidInput', module)
+storiesOf('Common/Inputs/BidInput', module)
     .add('Default', () => ({
         ...common,
         template: `
