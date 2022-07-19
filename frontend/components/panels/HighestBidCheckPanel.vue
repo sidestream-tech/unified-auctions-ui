@@ -39,13 +39,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { SurplusAuction } from 'auctions-core/dist/src/types';
+import { SurplusAuction } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
-import BasePanel from '../common/BasePanel.vue';
-import TextBlock from '../common/TextBlock.vue';
-import BaseButton from '../common/BaseButton.vue';
-import FormatCurrency from '../utils/FormatCurrency.vue';
-import FormatAddress from '../utils/FormatAddress.vue';
+import BasePanel from '~/components/common/other/BasePanel.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 
 export default Vue.extend({
     name: 'HighestBidCheckPanel',

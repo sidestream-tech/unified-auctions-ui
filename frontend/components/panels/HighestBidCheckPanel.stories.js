@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
-import HighestBidCheckPanel from '~/components/panels/HighestBidCheckPanel';
+import HighestBidCheckPanel from './HighestBidCheckPanel';
 import { generateFakeSurplusAuction } from '~/helpers/generateFakeSurplusAuction';
 
 const fakeSurplusAuction = generateFakeSurplusAuction('have-bids');

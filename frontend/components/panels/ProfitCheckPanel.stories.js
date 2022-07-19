@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import ProfitCheckPanel from '~/components/panels/ProfitCheckPanel';
+import ProfitCheckPanel from './ProfitCheckPanel';
 
 const common = {
     components: { ProfitCheckPanel },
