@@ -61,9 +61,9 @@
 </template>
 
 <script lang="ts">
-import type { CollateralStatus } from 'auction-core/src/types';
 import Vue from 'vue';
 import { Tooltip } from 'ant-design-vue';
+import { CollateralStatus } from 'auctions-core/src/types';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';

@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { SurplusAuction } from 'auctions-core/dist/src/types';
+import { SurplusAuction } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import BasePanel from '~/components/common/other/BasePanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
