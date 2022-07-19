@@ -50,9 +50,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
-import AuctionTypeFilter from '~/components/common/other/AuctionTypeFilter.vue';
+import AuctionTypeFilter from '~/components/unified/AuctionTypeFilter.vue';
 import Explain from '~/components/common/other/Explain.vue';
-import AuctionTool from '~/components/common/other/AuctionTool.vue';
+import AuctionTool from '~/components/unified/AuctionTool.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 
 export default Vue.extend({
