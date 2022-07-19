@@ -11,5 +11,5 @@ storiesOf('Auction/Collateral/CollateralAuctionSwapTransactionTable', module).ad
     data: () => ({
         auctionTransaction: fakeAuctionTransaction,
     }),
-    template: '<SwapTransactionTable :auctionTransaction="auctionTransaction"/>',
+    template: '<CollateralAuctionSwapTransactionTable :auctionTransaction="auctionTransaction"/>',
 }));

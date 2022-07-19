@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import SurplusAuction from './SurplusAuction.vue';
+import SurplusAuction from './SurplusAuction';
 import { generateFakeSurplusAuctionTransaction } from '~/helpers/generateFakeSurplusAuction';
 
 const fakeSurplusAuctionWithBids = generateFakeSurplusAuctionTransaction('have-bids');

@@ -22,9 +22,9 @@ const common = {
 storiesOf('Auction/Collateral/CollateralAuction', module)
     .add('Default', () => ({
         ...common,
-        template: `<CollateralAuction :auction="auction" :auctionId="1" @bid="bid" />`,
+        template: `<CollateralAuction :auction="auction" auctionId="1" @bid="bid" />`,
     }))
     .add('Finished', () => ({
         ...common,
-        template: `<SurplusAuction :auction="auction" :auctionId="1" @bid="bid" error="This auction is finished" />`,
+        template: `<SurplusAuction :auction="auction" auctionId="1" @bid="bid" error="This auction is finished" />`,
     }));
