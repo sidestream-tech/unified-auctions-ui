@@ -37,6 +37,7 @@ export declare interface AuctionStatus {
 }
 
 export declare interface Auction extends AuctionInitialInfo {
+    collateralToCoverDebt: BigNumber;
     unitPrice: BigNumber;
     totalPrice: BigNumber;
     approximateUnitPrice: BigNumber;
