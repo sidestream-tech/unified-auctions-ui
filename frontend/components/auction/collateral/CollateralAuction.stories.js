@@ -26,5 +26,5 @@ storiesOf('Auction/Collateral/CollateralAuction', module)
     }))
     .add('Finished', () => ({
         ...common,
-        template: `<SurplusAuction :auction="auction" auctionId="1" @bid="bid" error="This auction is finished" />`,
+        template: `<CollateralAuction :auction="auction" auctionId="1" @bid="bid" error="This auction is finished" />`,
     }));
