@@ -23,14 +23,44 @@ export default {
 
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
-        title: 'Auctions UI',
+        title: 'Unified Auctions UI',
         htmlAttrs: {
             lang: 'en',
         },
         meta: [
             { charset: 'utf-8' },
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-            { hid: 'description', name: 'description', content: '' },
+            {
+                hid: 'description',
+                name: 'description',
+                content:
+                    'The "Unified Auctions UI" is the portal to all Maker Auctions related services. Easily interact with the blockchain though our streamlined interfaces, inform yourself about how the Maker protocol works and receive live updates on current auctions.',
+            },
+            { property: 'og:site_name', content: 'Unified Auctions UI' },
+            { hid: 'og:type', property: 'og:type', content: 'website' },
+            {
+                hid: 'og:url',
+                property: 'og:url',
+                content: process.env.PRODUCTION_DOMAIN,
+            },
+            {
+                hid: 'og:description',
+                property: 'og:description',
+                content:
+                    'The "Unified Auctions UI" is the portal to all Maker Auctions related services. Easily interact with the blockchain though our streamlined interfaces, inform yourself about how the Maker protocol works and receive live updates on current auctions.',
+            },
+            {
+                hid: 'og:image',
+                property: 'og:image',
+                content: '/preview.jpeg',
+            },
+            {
+                hid: 'twitter:card',
+                name: 'twitter:card',
+                content: 'summary_large_image',
+            },
+            { property: 'og:image:width', content: '1200' },
+            { property: 'og:image:height', content: '630' },
         ],
         link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
         script: [{ src: '/js/HeapIO.js' }],
