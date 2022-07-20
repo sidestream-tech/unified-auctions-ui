@@ -28,7 +28,7 @@ const TEST_PARAMETERS: TestParameters[] = [
 ];
 
 TEST_PARAMETERS.forEach(testParams => {
-    describe('Surplus auction profit calculation', () => {
+    describe(`Surplus auction ${testParams.auctionIndex} profit calculation for block ${testParams.blockNumber}`, () => {
         before(async () => {
             const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
             await setupRpcUrlAndGetNetworks(local_rpc_url);
@@ -44,7 +44,7 @@ TEST_PARAMETERS.forEach(testParams => {
                 ],
             });
         });
-        it('participates in collateral auction', async () => {
+        it('generates accurate prediction', async () => {
             const allAuctions = await fetchAllAuctions(NETWORK);
             expect(allAuctions.length).to.equal(testParams.auctionsExpected);
             const auction: Auction = allAuctions[testParams.auctionIndex];
