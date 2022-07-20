@@ -21,6 +21,7 @@ const calculateElapsedSteps = function (auction: Auction, currentDate: Date): nu
     const elapsedTime = (currentDate.getTime() - auctionStartTimestamp) / 1000;
     const distance = elapsedTime / auction.secondsBetweenPriceDrops;
     const steps = Math.floor(distance);
+    // already predict for the next step when the next step is about to reached
     const compensation = distance - steps > 0.95 ? 1 : 0;
     return steps + compensation;
 };
@@ -68,7 +69,7 @@ export const calculateTransactionCollateralOutcome = function (
     const potentialOutcomeTotalPrice = potentialOutcomeCollateralAmount.multipliedBy(unitPrice); // owe
     if (
         // if owe > tab
-        // potentialOutcomeTotalPrice.isGreaterThan(auction.debtDAI)
+        // soft compensation because of precision problems.
         auction.debtDAI.minus(potentialOutcomeTotalPrice).isLessThan(new BigNumber('0.0000000001'))
     ) {
         return auction.debtDAI.dividedBy(unitPrice); // return tab / price
