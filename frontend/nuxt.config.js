@@ -1,7 +1,7 @@
 import pkg from './package.json';
 
-const SITE_DESCRIPTION =
-    'The "Unified Auctions UI" is the portal to all Maker Auctions related services. Easily interact with the Maker Protocol through streamlined interfaces, inform yourself about how the protocol works and receive updates on current auctions.';
+const SITE_TITLE = 'Unified Auctions';
+const SITE_DESCRIPTION = `The "${SITE_TITLE}" is the portal to all Maker Auctions related services. Easily interact with the Maker Protocol through streamlined interfaces, inform yourself about how the protocol works and receive updates on current auctions.`;
 
 export default {
     // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -26,40 +26,19 @@ export default {
 
     // Global page headers: https://go.nuxtjs.dev/config-head
     head: {
-        title: 'Unified Auctions UI',
+        title: SITE_TITLE,
         htmlAttrs: {
             lang: 'en',
         },
         meta: [
             { charset: 'utf-8' },
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-            {
-                hid: 'description',
-                name: 'description',
-                content: SITE_DESCRIPTION,
-            },
-            { property: 'og:site_name', content: 'Unified Auctions UI' },
-            { hid: 'og:type', property: 'og:type', content: 'website' },
-            {
-                hid: 'og:url',
-                property: 'og:url',
-                content: process.env.PRODUCTION_DOMAIN,
-            },
-            {
-                hid: 'og:description',
-                property: 'og:description',
-                content: SITE_DESCRIPTION,
-            },
-            {
-                hid: 'og:image',
-                property: 'og:image',
-                content: '/preview.jpeg',
-            },
-            {
-                hid: 'twitter:card',
-                name: 'twitter:card',
-                content: 'summary_large_image',
-            },
+            { name: 'description', content: SITE_DESCRIPTION },
+            { property: 'og:site_name', content: SITE_TITLE },
+            { property: 'og:type', content: 'website' },
+            { property: 'og:description', content: SITE_DESCRIPTION },
+            { property: 'og:image', content: '/preview.jpeg' },
+            { name: 'twitter:card', content: 'summary_large_image' },
             { property: 'og:image:width', content: '1200' },
             { property: 'og:image:height', content: '630' },
         ],
