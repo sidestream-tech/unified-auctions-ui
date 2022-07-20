@@ -1,7 +1,7 @@
 import pkg from './package.json';
 
 const SITE_DESCRIPTION =
-    'The "Unified Auctions UI" is the portal to all Maker Auctions related services. Easily interact with the blockchain though our streamlined interfaces, inform yourself about how the Maker protocol works and receive live updates on current auctions.';
+    'The "Unified Auctions UI" is the portal to all Maker Auctions related services. Easily interact with the Maker Protocol through streamlined interfaces, inform yourself about how the protocol works and receive updates on current auctions.';
 
 export default {
     // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
