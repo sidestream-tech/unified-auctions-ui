@@ -77,19 +77,16 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
         const marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
             .minus(marketUnitPrice)
             .dividedBy(marketUnitPrice);
-        console.log({
-            marketUnitPrice: marketUnitPrice.toFixed(),
-            marketUnitPriceToUnitPriceRatio: marketUnitPriceToUnitPriceRatio.toFixed(),
-        });
         const auctionWithMarketValues = {
             ...auction,
             collateralToCoverDebt,
             marketUnitPrice,
             marketUnitPriceToUnitPriceRatio,
         };
+        const transactionGrossProfit = calculateTransactionGrossProfit(auctionWithMarketValues, collateralToCoverDebt);
         return {
             ...auctionWithMarketValues,
-            transactionGrossProfit: calculateTransactionGrossProfit(auctionWithMarketValues, collateralToCoverDebt),
+            transactionGrossProfit,
         };
     } catch (error) {
         // since it's expected that some collaterals are not tradable on some networks

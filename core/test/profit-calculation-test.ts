@@ -35,29 +35,16 @@ describe('Surplus auction profit calculation', () => {
     it('participates in collateral auction', async () => {
         const allAuctions = await fetchAllAuctions(NETWORK);
         expect(allAuctions.length).to.equal(7);
-        const auction: Auction = allAuctions[2];
+        const auction: Auction = allAuctions[3];
         const wallet = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
-        console.log('___________________');
+        const balaneBefore = await fetchBalanceDAI(NETWORK, wallet);
         await authorizeWallet(NETWORK, wallet, false);
         await authorizeCollateral(NETWORK, wallet, auction.collateralType, false);
         const enrichedAuction = await enrichAuction(NETWORK, auction);
         const expectedProfit = enrichedAuction.transactionGrossProfit as BigNumber;
         await bidWithCallee(NETWORK, auction, wallet);
         expect(fetchSingleAuctionById(NETWORK, auction.id)).to.be.revertedWith('No active auction found with this id');
-        const actualProfit = await fetchBalanceDAI(NETWORK, wallet);
-        console.log('actual profit', actualProfit.toFixed());
-        console.log('expected profit', expectedProfit.toFixed());
-
-        const expectedTotalMarketPriceLimitedByDebt = actualProfit.plus(auction.debtDAI);
-        const expectedCollateralAmountLimitedByDebt = expectedTotalMarketPriceLimitedByDebt.dividedBy(
-            auction.marketUnitPrice as BigNumber
-        );
-        const accurateUnitPrice = auction.debtDAI.dividedBy(expectedCollateralAmountLimitedByDebt);
-        console.log({
-            expectedTotalMarketPriceLimitedByDebt: expectedTotalMarketPriceLimitedByDebt.toFixed(),
-            expectedCollateralAmountLimitedByDebt: expectedCollateralAmountLimitedByDebt.toFixed(),
-            accurateUnitPrice: accurateUnitPrice.toFixed(),
-        });
+        const actualProfit = (await fetchBalanceDAI(NETWORK, wallet)).minus(balaneBefore);
 
         const errorRate = actualProfit.div(expectedProfit).minus(1).abs().toNumber();
         expect(errorRate).to.be.lessThan(0.01);
