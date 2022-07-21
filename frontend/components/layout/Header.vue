@@ -3,7 +3,7 @@
         <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
         <header class="bg-primary dark:bg-primary-dark">
             <nav class="flex items-center py-2 px-4 md:px-10">
-                <HeaderLogo />
+                <HeaderLogo :network="network" :page-name="pageName" />
 
                 <div class="flex-1 flex justify-end space-x-4 items-center">
                     <label

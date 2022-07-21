@@ -17,13 +17,15 @@
                         @click="$emit('input', option.value)"
                     >
                         <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
-                        {{ option.label }}
+                        <span :class="showSelectedDesktop && option.value === value && 'font-bold'">
+                            {{ option.label }}
+                        </span>
                     </li>
                 </ul>
             </div>
             <button class="flex items-center">
                 <slot name="text-prefix" />
-                <span class="hidden md:block"
+                <span class="hidden md:block" @click="isTitleClickAble && $emit('input', value)"
                     ><slot name="title">{{ selectTitle }}</slot></span
                 >
                 <slot name="text-suffix" />
@@ -86,6 +88,14 @@ export default Vue.extend({
             default: false,
         },
         visible: {
+            type: Boolean,
+            default: false,
+        },
+        isTitleClickAble: {
+            type: Boolean,
+            default: false,
+        },
+        showSelectedDesktop: {
             type: Boolean,
             default: false,
         },
