@@ -14,6 +14,9 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 import { SurplusAuctionActive } from '../src/types';
+import executeTransaction from '../src/execute';
+import { fetchLatestBlockDateAndCacheDate } from '../src/date';
+import clearChache from './helpers/cache';
 
 import BigNumber from '../src/bignumber';
 
@@ -25,6 +28,7 @@ describe('Surplus Auction', () => {
     before(async () => {
         const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
         await setupRpcUrlAndGetNetworks(local_rpc_url);
+        clearChache([fetchLatestBlockDateAndCacheDate, executeTransaction]);
     });
     beforeEach(async () => {
         await hre.network.provider.request({
@@ -80,6 +84,8 @@ describe('Surplus Auction', () => {
         expect(currentAuction.bidAmountMKR && currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
     it('collects the concluded auction', async () => {
+        // fetchLatestBlockDateAndCacheDate.clear();
+        // executeTransaction.clear()
         const auctionsBeforeCollection = await fetchActiveSurplusAuctions('custom');
         expect(auctionsBeforeCollection.length).to.equal(5);
         expect(auctionsBeforeCollection[1].id).to.equal(2327);
