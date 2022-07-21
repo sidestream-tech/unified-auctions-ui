@@ -20,7 +20,9 @@ interface TestParameters {
     auctionIndex: number;
 }
 
-const resetNetwork = async (blockNumber: number) => {
+type TestConfig = Record<string, TestParameters[]>;
+
+const resetNetwork = async (blockNumber: string) => {
     const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
     await setupRpcUrlAndGetNetworks(local_rpc_url);
     await hre.network.provider.request({
@@ -29,34 +31,41 @@ const resetNetwork = async (blockNumber: number) => {
             {
                 forking: {
                     jsonRpcUrl: REMOTE_RPC_URL,
-                    blockNumber: blockNumber,
+                    blockNumber: Number(blockNumber),
                 },
             },
         ],
     });
 };
 
-TEST_PARAMETERS.forEach((testParams: TestParameters) => {
+Object.entries(TEST_PARAMETERS as TestConfig).forEach(([block, testConfig]) => {
     describe(`Collateral auction prediction precision.`, () => {
-        before(async () => await resetNetwork(testParams.blockNumber));
-        it(`generates accurate prediction; Index: ${testParams.auctionIndex}, Block: ${testParams.blockNumber}`, async () => {
-            const allAuctions = await fetchAllAuctions(NETWORK);
-            expect(allAuctions.length).to.equal(testParams.auctionsExpected);
-            const auction: Auction = allAuctions[testParams.auctionIndex];
-            const wallet = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
-            const balaneBefore = await fetchBalanceDAI(NETWORK, wallet);
-            await authorizeWallet(NETWORK, wallet, false);
-            await authorizeCollateral(NETWORK, wallet, auction.collateralType, false);
-            const enrichedAuction = await enrichAuction(NETWORK, auction);
-            const expectedProfit = enrichedAuction.transactionGrossProfit as BigNumber;
-            await bidWithCallee(NETWORK, auction, wallet);
-            expect(fetchSingleAuctionById(NETWORK, auction.id)).to.be.revertedWith(
-                'No active auction found with this id'
-            );
-            const actualProfit = (await fetchBalanceDAI(NETWORK, wallet)).minus(balaneBefore);
+        beforeEach(async () => await resetNetwork(block));
+        testConfig.forEach(testParams => {
+            it(`generates accurate prediction; Index: ${testParams.auctionIndex}, Block: ${testParams.blockNumber}`, async () => {
+                const allAuctions = await fetchAllAuctions(NETWORK);
+                expect(allAuctions.length).to.equal(testParams.auctionsExpected);
+                const auction: Auction = allAuctions[testParams.auctionIndex];
+                const wallet = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
+                const balaneBefore = await fetchBalanceDAI(NETWORK, wallet);
 
-            const errorRate = actualProfit.div(expectedProfit).minus(1).abs().toNumber();
-            expect(errorRate).to.be.lessThan(0.01);
+                authorizeWallet.clear()
+                await authorizeWallet(NETWORK, wallet, false);
+
+                authorizeCollateral.clear()
+                await authorizeCollateral(NETWORK, wallet, auction.collateralType, false);
+
+                const enrichedAuction = await enrichAuction(NETWORK, auction);
+                const expectedProfit = enrichedAuction.transactionGrossProfit as BigNumber;
+                await bidWithCallee(NETWORK, auction, wallet);
+                expect(fetchSingleAuctionById(NETWORK, auction.id)).to.be.revertedWith(
+                    'No active auction found with this id'
+                );
+                const actualProfit = (await fetchBalanceDAI(NETWORK, wallet)).minus(balaneBefore);
+
+                const errorRate = actualProfit.div(expectedProfit).minus(1).abs().toNumber();
+                expect(errorRate).to.be.lessThan(0.01);
+            });
         });
     });
 });

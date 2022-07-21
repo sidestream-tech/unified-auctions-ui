@@ -1,87 +1,93 @@
-[
-    {
-        "blockNumber": 14760072,
-        "auctionsExpected": 13,
-        "auctionIndex": 1
-    },
-    {
-        "blockNumber": 14052140,
-        "auctionsExpected": 7,
-        "auctionIndex": 3
-    },
-    {
-        "blockNumber": 14052140,
-        "auctionsExpected": 7,
-        "auctionIndex": 2
-    },
-    {
-        "blockNumber": 14052140,
-        "auctionsExpected": 7,
-        "auctionIndex": 0
-    },
-    {
-        "blockNumber": 14068414,
-        "auctionsExpected": 8,
-        "auctionIndex": 7
-    },
-    {
-        "blockNumber": 14068414,
-        "auctionsExpected": 8,
-        "auctionIndex": 6
-    },
-    {
-        "blockNumber": 14068414,
-        "auctionsExpected": 8,
-        "auctionIndex": 4
-    },
-    {
-        "blockNumber": 14068414,
-        "auctionsExpected": 8,
-        "auctionIndex": 3
-    },
-    {
-        "blockNumber": 14068414,
-        "auctionsExpected": 8,
-        "auctionIndex": 2
-    },
-    {
-        "blockNumber": 14068414,
-        "auctionsExpected": 8,
-        "auctionIndex": 1
-    },
-    {
-        "blockNumber": 14068414,
-        "auctionsExpected": 8,
-        "auctionIndex": 0
-    },
-    {
-        "blockNumber": 14760072,
-        "auctionsExpected": 13,
-        "auctionIndex": 2
-    },
-    {
-        "blockNumber": 14760072,
-        "auctionsExpected": 13,
-        "auctionIndex": 3
-    },
-    {
-        "blockNumber": 14760072,
-        "auctionsExpected": 13,
-        "auctionIndex": 4
-    },
-    {
-        "blockNumber": 14760072,
-        "auctionsExpected": 13,
-        "auctionIndex": 9
-    },
-    {
-        "blockNumber": 14760072,
-        "auctionsExpected": 13,
-        "auctionIndex": 10
-    },
-    {
-        "blockNumber": 14760072,
-        "auctionsExpected": 13,
-        "auctionIndex": 11
-    }
-]
+{
+    "14052140": [
+        {
+            "blockNumber": 14052140,
+            "auctionsExpected": 7,
+            "auctionIndex": 3
+        },
+        {
+            "blockNumber": 14052140,
+            "auctionsExpected": 7,
+            "auctionIndex": 2
+        },
+        {
+            "blockNumber": 14052140,
+            "auctionsExpected": 7,
+            "auctionIndex": 0
+        }
+    ],
+    "14068414": [
+        {
+            "blockNumber": 14068414,
+            "auctionsExpected": 8,
+            "auctionIndex": 7
+        },
+        {
+            "blockNumber": 14068414,
+            "auctionsExpected": 8,
+            "auctionIndex": 6
+        },
+        {
+            "blockNumber": 14068414,
+            "auctionsExpected": 8,
+            "auctionIndex": 4
+        },
+        {
+            "blockNumber": 14068414,
+            "auctionsExpected": 8,
+            "auctionIndex": 3
+        },
+        {
+            "blockNumber": 14068414,
+            "auctionsExpected": 8,
+            "auctionIndex": 2
+        },
+        {
+            "blockNumber": 14068414,
+            "auctionsExpected": 8,
+            "auctionIndex": 1
+        },
+        {
+            "blockNumber": 14068414,
+            "auctionsExpected": 8,
+            "auctionIndex": 0
+        }
+    ],
+    "14760072": [
+        {
+            "blockNumber": 14760072,
+            "auctionsExpected": 13,
+            "auctionIndex": 9
+        },
+        {
+            "blockNumber": 14760072,
+            "auctionsExpected": 13,
+            "auctionIndex": 1
+        },
+        {
+            "blockNumber": 14760072,
+            "auctionsExpected": 13,
+            "auctionIndex": 2
+        },
+        {
+            "blockNumber": 14760072,
+            "auctionsExpected": 13,
+            "auctionIndex": 3
+        },
+        {
+            "blockNumber": 14760072,
+            "auctionsExpected": 13,
+            "auctionIndex": 4
+        },
+        {
+            "blockNumber": 14760072,
+            "auctionsExpected": 13,
+            "auctionIndex": 10
+        },
+        {
+            "blockNumber": 14760072,
+            "auctionsExpected": 13,
+            "auctionIndex": 11
+        }
+    ]
+}
