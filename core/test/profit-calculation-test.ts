@@ -49,10 +49,10 @@ Object.entries(TEST_PARAMETERS as TestConfig).forEach(([block, testConfig]) => {
                 const wallet = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
                 const balaneBefore = await fetchBalanceDAI(NETWORK, wallet);
 
-                authorizeWallet.clear()
+                authorizeWallet.clear();
                 await authorizeWallet(NETWORK, wallet, false);
 
-                authorizeCollateral.clear()
+                authorizeCollateral.clear();
                 await authorizeCollateral(NETWORK, wallet, auction.collateralType, false);
 
                 const enrichedAuction = await enrichAuction(NETWORK, auction);
