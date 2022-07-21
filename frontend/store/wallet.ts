@@ -40,6 +40,8 @@ const getInitialState = (): State => ({
     collateralVatBalanceStore: {},
 });
 
+let wasWalletDisconnected = false;
+
 export const state = (): State => getInitialState();
 
 export const getters = {
@@ -175,6 +177,7 @@ export const actions = {
             await wallet.disconnect();
         } finally {
             commit('setIsConnecting', false);
+            wasWalletDisconnected = true;
         }
         commit('setWalletType', undefined);
         commit('setAddress', undefined);
@@ -294,10 +297,11 @@ export const actions = {
     },
     async setup({ commit, dispatch, getters }: ActionContext<State, State>): Promise<void> {
         commit('reset');
-        if (!getters.isConnected) {
+        if (!getters.isConnected && !wasWalletDisconnected) {
             await dispatch('autoConnect');
         }
         dispatch('refetch');
         dispatch('surplus/setup', undefined, { root: true });
+        wasWalletDisconnected = false;
     },
 };
