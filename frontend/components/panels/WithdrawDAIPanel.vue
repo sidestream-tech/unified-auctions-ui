@@ -37,11 +37,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import BaseButton from '~/components/common/BaseButton.vue';
-import BasePanel from '~/components/common/BasePanel.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import BasePanel from '~/components/common/other/BasePanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
 
 export default Vue.extend({
     name: 'WithdrawDAIPanel',
