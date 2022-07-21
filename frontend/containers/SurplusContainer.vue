@@ -31,7 +31,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
-import SurplusFlow from '~/components/surplus/SurplusFlow.vue';
+import SurplusFlow from '~/components/auction/surplus/SurplusFlow.vue';
 
 export default Vue.extend({
     components: {

@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel';
+import AuctionRestartPanel from './AuctionRestartPanel';
 
 const fakeAddress = faker.finance.ethereumAddress();
 

@@ -56,7 +56,7 @@ import WalletSelectModal from '~/components/modals/WalletSelectModal.vue';
 import WalletModalContainer from '~/containers/WalletModalContainer.vue';
 import ManageCollateralModalContainer from '~/containers/ManageCollateralModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
-import Analytics from '~/components/Analytics.vue';
+import Analytics from '~/components/common/other/Analytics.vue';
 
 export default Vue.extend({
     components: {

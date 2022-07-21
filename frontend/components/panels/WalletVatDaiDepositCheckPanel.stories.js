@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import WalletVatDaiWithdrawCheckPanel from '~/components/panels/WalletVatDaiWithdrawCheckPanel';
+import WalletVatDaiWithdrawCheckPanel from './WalletVatDaiWithdrawCheckPanel';
 
 const common = {
     components: { WalletVatDaiWithdrawCheckPanel },

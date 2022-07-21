@@ -30,11 +30,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import BaseButton from '~/components/common/BaseButton.vue';
-import BasePanel from '~/components/common/BasePanel.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import Explain from '~/components/utils/Explain.vue';
-import FormatCurrency from '~/components/utils/FormatCurrency.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import BasePanel from '~/components/common/other/BasePanel.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import Explain from '~/components/common/other/Explain.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
     components: {

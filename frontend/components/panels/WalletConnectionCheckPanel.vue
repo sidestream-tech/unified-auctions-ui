@@ -39,10 +39,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BaseButton from '~/components/common/BaseButton.vue';
-import BasePanel from '~/components/common/BasePanel.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
-import FormatAddress from '~/components/utils/FormatAddress.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import BasePanel from '~/components/common/other/BasePanel.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 
 export default Vue.extend({
     components: {

@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import CollectSurplusAuctionPanel from '~/components/panels/CollectSurplusAuctionPanel';
+import CollectSurplusAuctionPanel from './CollectSurplusAuctionPanel';
 import { generateFakeSurplusAuction } from '~/helpers/generateFakeSurplusAuction';
 
 const fakeSurplusAuction = generateFakeSurplusAuction('have-bids');

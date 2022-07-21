@@ -39,8 +39,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Icon, Input, Dropdown, Menu } from 'ant-design-vue';
-import BaseButton from '~/components/common/BaseButton.vue';
-import TextBlock from '~/components/common/TextBlock.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
 
 export default Vue.extend({
     components: {
