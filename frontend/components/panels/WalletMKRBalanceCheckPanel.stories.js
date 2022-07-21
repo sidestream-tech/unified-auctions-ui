@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import WalletMKRBalanceCheckPanel from '~/components/panels/WalletMKRBalanceCheckPanel';
+import WalletMKRBalanceCheckPanel from './WalletMKRBalanceCheckPanel';
 
 const common = {
     components: { WalletMKRBalanceCheckPanel },

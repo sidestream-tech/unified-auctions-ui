@@ -72,11 +72,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import BasePanel from '../common/BasePanel.vue';
-import TextBlock from '../common/TextBlock.vue';
-import Explain from '../utils/Explain.vue';
-import FormatCurrency from '../utils/FormatCurrency.vue';
-import BaseButton from '../common/BaseButton.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import Explain from '~/components/common/other/Explain.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import BasePanel from '~/components/common/other/BasePanel.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 
 export default Vue.extend({

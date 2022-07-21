@@ -86,9 +86,9 @@
 import Vue from 'vue';
 import { Radio } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
-import TextBlock from '~/components/common/TextBlock.vue';
-import BaseButton from '~/components/common/BaseButton.vue';
-import BaseValueInput from '~/components/common/BaseValueInput.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import BaseValueInput from '~/components/common/inputs/BaseValueInput.vue';
 import WalletDaiDepositCheckPanel from '~/components/panels/WalletDaiDepositCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
 import WalletVatDaiWithdrawCheckPanel from '~/components/panels/WalletVatDaiWithdrawCheckPanel.vue';

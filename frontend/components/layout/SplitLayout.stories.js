@@ -1,7 +1,7 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import SplitLayout from './SplitLayout.vue';
-import Button from '~/components/common/BaseButton.vue';
+import Button from '~/components/common/inputs/BaseButton.vue';
 
 const fakeContent = faker.lorem.paragraphs(150);
 

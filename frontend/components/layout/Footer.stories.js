@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import Footer from '~/components/layout/Footer';
+import Footer from './Footer';
 
 const common = {
     components: { Footer },

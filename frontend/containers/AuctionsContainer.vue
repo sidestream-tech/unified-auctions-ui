@@ -1,6 +1,6 @@
 <template>
     <div>
-        <MainFlow
+        <CollateralAuctionFlow
             :auctions="auctions"
             :are-auctions-fetching="areAuctionsFetching"
             :is-selected-auction-fetching="isSelectedAuctionFetching"
@@ -40,11 +40,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
-import MainFlow from '~/components/MainFlow.vue';
+import CollateralAuctionFlow from '~/components/auction/collateral/CollateralAuctionFlow';
 
 export default Vue.extend({
     components: {
-        MainFlow,
+        CollateralAuctionFlow,
     },
     computed: {
         ...mapGetters('auctions', {

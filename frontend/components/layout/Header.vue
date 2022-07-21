@@ -57,13 +57,13 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import { NetworkConfig } from 'auctions-core/src/types';
 import StagingBanner from './StagingBanner.vue';
 import BrandingIcon from '~/assets/icons/logo.svg';
-import BaseSwitch from '~/components/common/BaseSwitch.vue';
-import NetworkSelector from '~/components/utils/NetworkSelector.vue';
-import WalletSelector from '~/components/utils/WalletSelector.vue';
-import ThemeSwitcher from '~/components/utils/ThemeSwitcher.vue';
-import { NetworkConfig } from '~/../core/src/types';
+import BaseSwitch from '~/components/common/inputs/BaseSwitch.vue';
+import NetworkSelector from '~/components/layout/NetworkSelector.vue';
+import WalletSelector from '~/components/layout/WalletSelector.vue';
+import ThemeSwitcher from '~/components/layout/ThemeSwitcher.vue';
 
 export default Vue.extend({
     name: 'Header',

@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import LandingBlock from '~/components/layout/LandingBlock.vue';
+import LandingBlock from './LandingBlock.vue';
 
 storiesOf('Layout/LandingBlock', module)
     .add('Default', () => ({

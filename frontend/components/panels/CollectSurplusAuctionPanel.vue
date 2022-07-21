@@ -44,11 +44,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { SurplusAuction } from 'auctions-core/src/types';
-import BasePanel from '../common/BasePanel.vue';
-import TextBlock from '../common/TextBlock.vue';
-import FormatCurrency from '../utils/FormatCurrency.vue';
-import BaseButton from '../common/BaseButton.vue';
-import TimeTill from '../common/TimeTill.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import BasePanel from '~/components/common/other/BasePanel.vue';
 
 export default Vue.extend({
     name: 'CollectSurplusAuctionPanel',

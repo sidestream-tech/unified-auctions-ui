@@ -2,7 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import { action } from '@storybook/addon-actions';
 import BigNumber from 'bignumber.js';
-import WalletModal from '~/components/wallet/WalletModal';
+import WalletModal from './WalletModal';
 
 const common = {
     components: { WalletModal },

@@ -39,11 +39,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import BasePanel from '../common/BasePanel.vue';
-import TextBlock from '../common/TextBlock.vue';
-import FormatCurrency from '../utils/FormatCurrency';
-import BaseButton from '../common/BaseButton';
-import FormatAddress from '../utils/FormatAddress.vue';
+import BasePanel from '~/components/common/other/BasePanel.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency';
+import BaseButton from '~/components/common/inputs/BaseButton';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 
 export default Vue.extend({
     name: 'WalletMKRBalanceCheckPanel',

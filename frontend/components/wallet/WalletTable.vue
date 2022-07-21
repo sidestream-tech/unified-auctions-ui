@@ -64,13 +64,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import { WalletBalances } from 'auctions-core/src/types';
-import FormatAddress from '../utils/FormatAddress.vue';
-import FormatCurrency from '../utils/FormatCurrency.vue';
-import TimeTill from '../common/TimeTill.vue';
-import Loading from '../common/Loading.vue';
-import BaseButton from '../common/BaseButton.vue';
-import TextBlock from '../common/TextBlock.vue';
-import WalletBlock from '../transaction/WalletBlock.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import Loading from '~/components/common/other/Loading.vue';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
+import TextBlock from '~/components/common/other/TextBlock.vue';
+import WalletBlock from '~/components/wallet/WalletBlock.vue';
 
 export default Vue.extend({
     name: 'WalletTable',
