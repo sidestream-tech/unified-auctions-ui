@@ -7,6 +7,10 @@ const CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS = 60 * 1000;
 export const fetchDateByBlockNumber = async function (network: string, blockNumber: number): Promise<Date> {
     const provider = await getProvider(network);
     const block = await provider.getBlock(blockNumber);
+    if (!block) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return await fetchDateByBlockNumber(network, blockNumber);
+    }
     return new Date(block.timestamp * 1000);
 };
 
