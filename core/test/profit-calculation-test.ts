@@ -5,6 +5,7 @@ import { fetchBalanceDAI } from '../src/wallet';
 import { authorizeWallet, authorizeCollateral } from '../src/authorizations';
 import { createWalletFromPrivateKey } from '../src/signer';
 import BigNumber from '../src/bignumber';
+import TEST_PARAMETERS from './parametrization/profit-calculation-test.json';
 
 import hre from 'hardhat';
 import { Auction } from '../src/types';
@@ -19,32 +20,26 @@ interface TestParameters {
     auctionIndex: number;
 }
 
-const TEST_PARAMETERS: TestParameters[] = [
-    {
-        blockNumber: 14052140,
-        auctionsExpected: 7,
-        auctionIndex: 3,
-    },
-];
+const resetNetwork = async (blockNumber: number) => {
+    const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
+    await setupRpcUrlAndGetNetworks(local_rpc_url);
+    await hre.network.provider.request({
+        method: 'hardhat_reset',
+        params: [
+            {
+                forking: {
+                    jsonRpcUrl: REMOTE_RPC_URL,
+                    blockNumber: blockNumber,
+                },
+            },
+        ],
+    });
+};
 
-TEST_PARAMETERS.forEach(testParams => {
-    describe(`Surplus auction ${testParams.auctionIndex} profit calculation for block ${testParams.blockNumber}`, () => {
-        before(async () => {
-            const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
-            await setupRpcUrlAndGetNetworks(local_rpc_url);
-            await hre.network.provider.request({
-                method: 'hardhat_reset',
-                params: [
-                    {
-                        forking: {
-                            jsonRpcUrl: REMOTE_RPC_URL,
-                            blockNumber: testParams.blockNumber,
-                        },
-                    },
-                ],
-            });
-        });
-        it('generates accurate prediction', async () => {
+TEST_PARAMETERS.forEach((testParams: TestParameters) => {
+    describe(`Collateral auction prediction precision.`, () => {
+        before(async () => await resetNetwork(testParams.blockNumber));
+        it(`generates accurate prediction; Index: ${testParams.auctionIndex}, Block: ${testParams.blockNumber}`, async () => {
             const allAuctions = await fetchAllAuctions(NETWORK);
             expect(allAuctions.length).to.equal(testParams.auctionsExpected);
             const auction: Auction = allAuctions[testParams.auctionIndex];
