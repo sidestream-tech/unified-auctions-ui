@@ -16,12 +16,12 @@
             />
         </div>
         <div class="flex justify-end mt-2 gap-5">
-            <BaseButton :disabled="isWithdrawing" :is-loading="isFetching" @click="$emit('fetchDaiVatBalance')">
+            <BaseButton :disabled="isWithdrawing" :is-loading="isRefreshing" @click="$emit('refreshWallet')">
                 Refresh DAI balance in VAT
             </BaseButton>
             <BaseButton
                 type="primary"
-                :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw || isFetching"
+                :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw || isRefreshing"
                 :is-loading="isWithdrawing"
                 @click="$emit('withdrawAllDaiFromVat')"
             >
@@ -73,7 +73,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isFetching: {
+        isRefreshing: {
             type: Boolean,
             default: false,
         },
