@@ -55,7 +55,7 @@ export default Vue.extend({
     props: {
         walletAddress: {
             type: String,
-            default: '',
+            default: undefined,
         },
         daiVatBalance: {
             type: Object as Vue.PropType<BigNumber>,
