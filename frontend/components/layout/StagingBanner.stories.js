@@ -1,5 +1,5 @@
 import { storiesOf } from '@storybook/vue';
-import StagingBanner from '~/components/layout/StagingBanner';
+import StagingBanner from './StagingBanner';
 
 const common = {
     components: { StagingBanner },

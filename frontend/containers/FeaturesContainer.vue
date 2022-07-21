@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import FeaturesView from '~/components/FeaturesView.vue';
+import FeaturesView from '~/components/common/other/FeaturesView.vue';
 
 export default Vue.extend({
     components: {

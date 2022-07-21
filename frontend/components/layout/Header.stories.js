@@ -1,6 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
-import Header from '~/components/layout/Header';
+import Header from './Header';
 
 const common = {
     components: { Header },
