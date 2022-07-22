@@ -5,7 +5,7 @@
             After the auction is collected, DAI will end up in the highest bidder's VAT account. One more transaction
             is required to move DAI from VAT to the wallet.
         </TextBlock>
-        <div class="mb-4">
+        <div class="my-4">
             <WalletAuthorizationCheckPanel
                 :disabled="!isWalletConnected"
                 :wallet-address="walletAddress"
