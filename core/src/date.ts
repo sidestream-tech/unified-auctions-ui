@@ -8,10 +8,10 @@ const CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS = 60 * 1000;
 export const fetchDateByBlockNumber = async function (
     network: string,
     blockNumber: number,
-    isHardhatFork = false
+    isFork = false
 ): Promise<Date> {
     let block;
-    if (isHardhatFork) {
+    if (isFork) {
         block = await hre.ethers.provider.getBlock('latest');
     } else {
         const provider = await getProvider(network);
