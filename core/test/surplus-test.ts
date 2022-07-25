@@ -86,7 +86,7 @@ describe('Surplus Auction', () => {
     it('collects the concluded auction', async () => {
         // fetchLatestBlockDateAndCacheDate.clear();
         // executeTransaction.clear()
-        clearChache([fetchLatestBlockDateAndCacheDate])
+        clearChache([fetchLatestBlockDateAndCacheDate]);
         const auctionsBeforeCollection = await fetchActiveSurplusAuctions('custom');
         expect(auctionsBeforeCollection.length).to.equal(5);
         expect(auctionsBeforeCollection[1].id).to.equal(2327);
