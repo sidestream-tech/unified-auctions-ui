@@ -24,6 +24,7 @@ import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from 
 import parseAuctionId from './helpers/parseAuctionId';
 import { EventFilter } from 'ethers';
 import getNetworkDate, { fetchDateByBlockNumber } from './date';
+import { getNetworkConfigByType } from './network';
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -95,7 +96,7 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
     }
 };
 
-export const enrichAuctionWithPriceDrop = async function (auction: Auction): Promise<Auction> {
+export const enrichAuctionWithPriceDrop = async function (auction: Auction, network: string): Promise<Auction> {
     if (!auction.isActive || auction.isFinished) {
         return auction;
     }
@@ -108,7 +109,14 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
         };
         const currentDate = await getNetworkDate(auction.network);
         const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
-        const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
+
+        let approximateUnitPrice;
+        const networkConfig = getNetworkConfigByType(network);
+        if (networkConfig.isFork) {
+            approximateUnitPrice = auction.unitPrice;
+        } else {
+            approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
+        }
         const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
         const transactionGrossProfitDate = calculateTransactionGrossProfitDate(auctionWithParams, currentDate);
         return {
@@ -130,7 +138,7 @@ export const enrichAuctionWithPriceDropAndMarketValue = async function (
     auction: Auction,
     network: string
 ): Promise<Auction> {
-    const enrichedAuctionWithNewPriceDrop = await enrichAuctionWithPriceDrop(auction);
+    const enrichedAuctionWithNewPriceDrop = await enrichAuctionWithPriceDrop(auction, network);
     return await enrichAuctionWithMarketValues(enrichedAuctionWithNewPriceDrop, network);
 };
 
@@ -170,7 +178,7 @@ export const enrichAuction = async function (
     const auctionWithStatus = await enrichAuctionWithActualNumbers(network, auction);
 
     // enrich them with price drop
-    const auctionWithPriceDrop = await enrichAuctionWithPriceDrop(auctionWithStatus);
+    const auctionWithPriceDrop = await enrichAuctionWithPriceDrop(auctionWithStatus, network);
 
     // enrich them with market values
     const auctionWithMarketValue = await enrichAuctionWithMarketValues(auctionWithPriceDrop, network);
