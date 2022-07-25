@@ -132,7 +132,7 @@ export default Vue.extend({
                 };
             }
             return {
-                name: this.disabled ? 'inactive' : 'correct',
+                name: 'correct',
                 title: `The desired amount is within ${this.currency} allowance`,
             };
         },
