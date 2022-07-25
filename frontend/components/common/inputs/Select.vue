@@ -18,7 +18,7 @@
                             :class="option.classes"
                         >
                             <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
-                            <span :class="showSelectedDesktop && option.value === value && 'font-bold'">
+                            <span :class="option.value === value && 'font-bold'">
                                 {{ option.label }}
                             </span>
                         </nuxt-link>
@@ -30,7 +30,7 @@
                             @click="$emit('input', option.value)"
                         >
                             <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
-                            <span :class="showSelectedDesktop && option.value === value && 'font-bold'">
+                            <span :class="option.value === value && 'font-bold'">
                                 {{ option.label }}
                             </span>
                         </li>
@@ -40,8 +40,8 @@
             <button class="flex items-center">
                 <slot name="text-prefix" />
                 <span class="hidden md:block">
-                    <slot v-if="titleHref" name="title">
-                        <nuxt-link :to="titleHref" class="text-gray-700 hover:text-gray-600">
+                    <slot v-if="selectLink" name="title">
+                        <nuxt-link :to="selectLink" class="text-gray-700 hover:text-gray-600">
                             {{ selectTitle }}
                         </nuxt-link>
                     </slot>
@@ -110,14 +110,6 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        titleHref: {
-            type: String,
-            default: undefined,
-        },
-        showSelectedDesktop: {
-            type: Boolean,
-            default: false,
-        },
     },
 
     data() {
@@ -132,6 +124,13 @@ export default Vue.extend({
                 return this.title;
             }
             return selectedOption.label;
+        },
+        selectLink(): string | undefined {
+            const selectedOption = this.options.find(option => option.value === this.value);
+            if (!selectedOption) {
+                return undefined;
+            }
+            return selectedOption.href || undefined;
         },
     },
     watch: {
