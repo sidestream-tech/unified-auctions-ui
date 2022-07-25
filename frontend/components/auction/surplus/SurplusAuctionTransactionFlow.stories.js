@@ -5,13 +5,12 @@ import { action } from '@storybook/addon-actions';
 import SurplusAuctionTransactionFlow from './SurplusAuctionTransactionFlow';
 import { generateFakeSurplusAuctionTransaction } from '~/helpers/generateFakeSurplusAuction';
 
-const haveBidsAuction = generateFakeSurplusAuctionTransaction('have-bids');
 const collectAuction = generateFakeSurplusAuctionTransaction('ready-for-collection');
 
 const common = {
     components: { SurplusAuctionTransactionFlow },
     data: () => ({
-        auction: haveBidsAuction,
+        auction: generateFakeSurplusAuctionTransaction('have-bids'),
         network: 'mainnet',
         tokenAddress: faker.finance.ethereumAddress(),
 
