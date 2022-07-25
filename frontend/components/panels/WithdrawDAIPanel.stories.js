@@ -9,7 +9,7 @@ const common = {
         daiVatBalance: new BigNumber(faker.finance.amount()),
         walletAddress: faker.finance.ethereumAddress(),
         isWithdrawing: false,
-        isFetching: false,
+        isRefreshing: false,
         isAuthorizing: false,
         isWalletAuthorized: false,
         isExplanationsShown: true,
@@ -23,10 +23,10 @@ const common = {
             }, 1000);
         },
         refresh() {
-            this.isFetching = true;
+            this.isRefreshing = true;
             setTimeout(() => {
                 this.daiVatBalance = new BigNumber(faker.finance.amount());
-                this.isFetching = false;
+                this.isRefreshing = false;
             }, 1000);
         },
         authorize() {
@@ -41,7 +41,7 @@ const common = {
     <WithdrawDAIPanel
         v-bind="$data"
         @withdrawAllDaiFromVat="withdraw"
-        @fetchDaiVatBalance="refresh"
+        @refreshWallet="refresh"
         @authorizeWallet="authorize"
     />`,
 };
@@ -82,7 +82,7 @@ storiesOf('Panels/WithdrawDAIPanel', module)
         ...common,
         data: () => ({
             ...common.data(),
-            isFetching: true,
+            isRefreshing: true,
         }),
     }))
     .add('Withdrawing', () => ({
