@@ -11,32 +11,17 @@ const common = {
     data() {
         return {
             fees: {
-                type: 'swap',
-                transETH: fakeAuctionTransaction.swapTransactionFeeETH,
-                authETH: fakeAuctionTransaction.authTransactionFeeETH,
-                totalETH: fakeAuctionTransaction.combinedSwapFeesETH,
+                'Swap Transaction Fee': fakeAuctionTransaction.swapTransactionFeeETH,
+                'Wallet Authorization Fee': fakeAuctionTransaction.authTransactionFeeETH,
+                'Collateral Authorization Fee': fakeAuctionTransaction.authTransactionFeeETH,
             },
         };
     },
 };
 
-storiesOf('Transaction/TransactionFeesTable', module)
+storiesOf('Auction/TransactionFeesTable', module)
     .add('Default Swap Transaction', () => ({
         ...common,
-        template: '<TransactionFeesTable :is-wallet-connected="true" :fees="fees" />',
-    }))
-    .add('Default Bid Transaction', () => ({
-        ...common,
-        data() {
-            return {
-                fees: {
-                    type: 'bid',
-                    transETH: fakeAuctionTransaction.bidTransactionFeeETH,
-                    authETH: fakeAuctionTransaction.authTransactionFeeETH,
-                    totalETH: fakeAuctionTransaction.combinedBidFeesETH,
-                },
-            };
-        },
         template: '<TransactionFeesTable :is-wallet-connected="true" :fees="fees" />',
     }))
     .add('Wallet Not Connected', () => ({

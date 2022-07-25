@@ -12,6 +12,7 @@
                     :is-wallet-authed="isWalletAuthed"
                     :is-collateral-authed="isCollateralAuthed"
                     :fees="fees"
+                    :combined-fees-e-t-h="combinedFeesETH"
                 />
             </Explain>
             of approximately
@@ -82,18 +83,18 @@ export default Vue.extend({
         },
     },
     computed: {
-        totalFeesETH(): BigNumber {
-            let total = this.fees.transETH;
+        combinedFeesETH(): BigNumber {
+            let combinedFeesETH = new BigNumber(0);
 
             if (!this.isWalletAuthed) {
-                total = total.plus(this.fees.authETH);
+                combinedFeesETH = combinedFeesETH.plus(this.fees['Wallet Authorization Fee']);
             }
 
             if (!this.isCollateralAuthed) {
-                total = total.plus(this.fees.authETH);
+                combinedFeesETH = combinedFeesETH.plus(this.fees['Collateral Authorization Fee']);
             }
 
-            return total;
+            return combinedFeesETH;
         },
     },
 });

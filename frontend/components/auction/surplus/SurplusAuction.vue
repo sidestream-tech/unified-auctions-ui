@@ -155,7 +155,7 @@ import FormatMarketValue from '~/components/common/formatters/FormatMarketValue.
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
-import Loading from '~/components/common/other/Loading';
+import Loading from '~/components/common/other/Loading.vue';
 
 export default Vue.extend({
     name: 'SurplusAuction',

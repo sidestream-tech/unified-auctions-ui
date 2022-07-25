@@ -85,10 +85,9 @@ export default Vue.extend({
     data() {
         return {
             fees: {
-                type: 'bid',
-                transETH: this.auctionTransaction.bidTransactionFeeETH,
-                authETH: this.auctionTransaction.authTransactionFeeETH,
-                totalETH: this.auctionTransaction.combinedBidFeesETH,
+                'Bid Transaction Fee': this.auctionTransaction.bidTransactionFeeETH,
+                'Wallet Authorization Fee': this.auctionTransaction.authTransactionFeeETH,
+                'Collateral Authorization Fee': this.auctionTransaction.authTransactionFeeETH,
             },
         };
     },

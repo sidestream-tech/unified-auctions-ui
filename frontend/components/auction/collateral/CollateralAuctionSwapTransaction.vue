@@ -156,10 +156,9 @@ export default Vue.extend({
             isWalletCollateralAuthorizationCheckPassed: false,
             isProfitCheckPassed: false,
             fees: {
-                type: 'swap',
-                transETH: this.auctionTransaction.swapTransactionFeeETH,
-                authETH: this.auctionTransaction.authTransactionFeeETH,
-                totalETH: this.auctionTransaction.combinedSwapFeesETH,
+                'Swap Transaction Fee': this.auctionTransaction.swapTransactionFeeETH,
+                'Wallet Authorization Fee': this.auctionTransaction.authTransactionFeeETH,
+                'Collateral Authorization Fee': this.auctionTransaction.authTransactionFeeETH,
             },
         };
     },
