@@ -33,7 +33,6 @@
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
 import Vue, { PropType } from 'vue';
-import { getNetworks } from 'auctions-core/src/network';
 import BaseButton from '~/components/common/inputs/BaseButton';
 
 export default Vue.extend({
@@ -55,7 +54,7 @@ export default Vue.extend({
     },
     computed: {
         isWalletNetworkSupportedByTheWebsite(): boolean {
-            return !!getNetworks(this.isDev)[this.invalidNetwork];
+            return !!this.networks.find(n => n.type === this.invalidNetwork);
         },
         options() {
             return [...this.networks.map(eachNetwork => ({ label: eachNetwork.title, value: eachNetwork.type }))];
