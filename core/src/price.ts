@@ -70,7 +70,7 @@ export const calculateTransactionCollateralOutcome = function (
     if (
         // if owe > tab
         // soft compensation because of precision problems.
-        auction.debtDAI.minus(potentialOutcomeTotalPrice).isLessThan(new BigNumber('0.0000000001'))
+        auction.debtDAI.minus(potentialOutcomeTotalPrice).isLessThan(new BigNumber('0.00000000000001'))
     ) {
         return auction.debtDAI.dividedBy(unitPrice); // return tab / price
     } else if (
