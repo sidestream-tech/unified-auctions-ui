@@ -1,7 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import { action } from '@storybook/addon-actions';
 import SurplusAuctionTransactionFlow from './SurplusAuctionTransactionFlow';
 import { generateFakeSurplusAuctionTransaction } from '~/helpers/generateFakeSurplusAuction';
 
@@ -17,13 +16,11 @@ const common = {
         isWalletConnected: false,
         isConnectingWallet: false,
         isRefreshingWallet: false,
-
-        walletMKR: undefined,
-        allowanceMKR: undefined,
-        walletAddress: undefined,
         isSettingAllowance: false,
 
-        amount: new BigNumber(faker.finance.amount(1, 2)),
+        walletAddress: undefined,
+        walletMKR: undefined,
+        allowanceMKR: undefined,
 
         auctionActionState: undefined,
     }),
@@ -48,10 +45,10 @@ const common = {
                 this.isConnectingWallet = false;
             }, 1000);
         },
-        setAllowanceAmount() {
+        setAllowanceAmount(event) {
             this.isSettingAllowance = true;
             setTimeout(() => {
-                this.allowanceMKR = new BigNumber(faker.finance.amount(800, 1000));
+                this.allowanceMKR = new BigNumber(event);
                 this.isSettingAllowance = false;
             }, 1000);
         },
@@ -61,15 +58,14 @@ const common = {
                 this.isRefreshingWallet = false;
             }, 1000);
         },
-        bid(amount) {
+        bid(event) {
             this.auctionActionState = 'bidding';
             setTimeout(() => {
                 this.auction = {
                     ...this.auction,
                     receiverAddress: this.walletAddress,
-                    bidAmountMKR: amount,
+                    bidAmountMKR: new BigNumber(event),
                 };
-                action('bid', amount);
                 this.auctionActionState = undefined;
             }, 1000);
         },
@@ -88,7 +84,7 @@ const common = {
           @disconnectWallet="disconnect" 
           @setAllowanceAmount="setAllowanceAmount" 
           @refreshWallet="refresh" 
-          @bid="bid(amount)"
+          @bid="bid"
           @collect="collect"
         />`,
 };
