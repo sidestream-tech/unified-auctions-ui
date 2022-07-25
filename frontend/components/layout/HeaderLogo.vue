@@ -6,11 +6,10 @@
         <Select
             :options="options"
             :value="pageName"
-            title="Unified Auction"
-            :is-title-click-able="true"
             :show-selected-desktop="true"
+            :title-href="titleHref"
+            title="Unified Auction"
             class="md:ml-2 mb-0"
-            @input="switchPage"
         >
             <template #text-prefix>
                 <branding-icon class="md:hidden h-12 w-12" />
@@ -39,20 +38,19 @@ export default Vue.extend({
         },
     },
     computed: {
-        options() {
+        options(): SelectOption[] {
             return [
-                { label: 'Maker Auction Services', value: '' },
-                { label: 'Collateral auctions', value: 'collateral' },
-                { label: 'Surplus auctions', value: 'surplus' },
+                { label: 'Maker Auction Services', value: '', href: generateLink(this.network, '') },
+                { label: 'Collateral auctions', value: 'collateral', href: generateLink(this.network, 'collateral') },
+                { label: 'Surplus auctions', value: 'surplus', href: generateLink(this.network, 'surplus') },
             ];
         },
-    },
-    methods: {
-        switchPage(page: string) {
-            if (this.$router) {
-                const link = generateLink(this.network, page);
-                this.$router.push(link);
-            }
+        titleHref(): string {
+            const option = this.options.find(option => {
+                return option.value === this.pageName;
+            });
+
+            return option ? option.href : '/';
         },
     },
 });

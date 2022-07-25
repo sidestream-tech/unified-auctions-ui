@@ -9,25 +9,44 @@
         >
             <div slot="content" class="p-0">
                 <ul>
-                    <li
-                        v-for="option in options"
-                        :key="option.value"
-                        class="w-full flex hover:bg-primary px-4 py-2 cursor-pointer items-center"
-                        :class="option.classes"
-                        @click="$emit('input', option.value)"
-                    >
-                        <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
-                        <span :class="showSelectedDesktop && option.value === value && 'font-bold'">
-                            {{ option.label }}
-                        </span>
-                    </li>
+                    <template v-for="option in options">
+                        <nuxt-link
+                            v-if="option.href"
+                            :key="option.value"
+                            :to="option.href"
+                            class="w-full flex hover:bg-primary px-4 py-2 cursor-pointer items-center hover:text-white"
+                            :class="option.classes"
+                        >
+                            <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
+                            <span :class="showSelectedDesktop && option.value === value && 'font-bold'">
+                                {{ option.label }}
+                            </span>
+                        </nuxt-link>
+                        <li
+                            v-if="!option.href"
+                            :key="option.value"
+                            class="w-full flex hover:bg-primary px-4 py-2 cursor-pointer items-center"
+                            :class="option.classes"
+                            @click="$emit('input', option.value)"
+                        >
+                            <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
+                            <span :class="showSelectedDesktop && option.value === value && 'font-bold'">
+                                {{ option.label }}
+                            </span>
+                        </li>
+                    </template>
                 </ul>
             </div>
             <button class="flex items-center">
                 <slot name="text-prefix" />
-                <span class="hidden md:block" @click="isTitleClickAble && $emit('input', value)"
-                    ><slot name="title">{{ selectTitle }}</slot></span
-                >
+                <span class="hidden md:block">
+                    <slot v-if="titleHref" name="title">
+                        <nuxt-link :to="titleHref" class="text-gray-700 hover:text-gray-600">
+                            {{ selectTitle }}
+                        </nuxt-link>
+                    </slot>
+                    <slot v-else name="title">{{ selectTitle }}</slot>
+                </span>
                 <slot name="text-suffix" />
             </button>
         </popover>
@@ -91,9 +110,9 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isTitleClickAble: {
-            type: Boolean,
-            default: false,
+        titleHref: {
+            type: String,
+            default: undefined,
         },
         showSelectedDesktop: {
             type: Boolean,
