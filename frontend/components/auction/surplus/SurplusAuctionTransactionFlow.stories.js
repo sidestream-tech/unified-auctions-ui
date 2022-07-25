@@ -22,7 +22,7 @@ const common = {
         walletMKR: undefined,
         allowanceMKR: undefined,
 
-        auctionActionState: undefined,
+        surplusAuctionActionState: 'loaded',
     }),
     methods: {
         connect() {
@@ -45,10 +45,10 @@ const common = {
                 this.isConnectingWallet = false;
             }, 1000);
         },
-        setAllowanceAmount(event) {
+        setAllowanceAmount(amount) {
             this.isSettingAllowance = true;
             setTimeout(() => {
-                this.allowanceMKR = new BigNumber(event);
+                this.allowanceMKR = new BigNumber(amount);
                 this.isSettingAllowance = false;
             }, 1000);
         },
@@ -58,22 +58,22 @@ const common = {
                 this.isRefreshingWallet = false;
             }, 1000);
         },
-        bid(event) {
-            this.auctionActionState = 'bidding';
+        bid(amount) {
+            this.surplusAuctionActionState = 'bidding';
             setTimeout(() => {
                 this.auction = {
                     ...this.auction,
                     receiverAddress: this.walletAddress,
-                    bidAmountMKR: new BigNumber(event),
+                    bidAmountMKR: new BigNumber(amount),
                 };
-                this.auctionActionState = undefined;
+                this.surplusAuctionActionState = 'loaded';
             }, 1000);
         },
         collect() {
-            this.auctionActionState = 'collecting';
+            this.surplusAuctionActionState = 'collecting';
             setTimeout(() => {
                 this.auction.state = 'collected';
-                this.auctionActionState = undefined;
+                this.surplusAuctionActionState = 'loaded';
             }, 1000);
         },
     },
@@ -100,8 +100,8 @@ storiesOf('Auction/Surplus/SurplusAuctionTransactionFlow', module)
             connect() {
                 this.isConnectingWallet = true;
                 setTimeout(() => {
-                    this.walletMKR = new BigNumber(0);
-                    this.allowanceMKR = new BigNumber(faker.finance.amount(1, 2));
+                    this.walletMKR = new BigNumber(faker.finance.amount(0, this.auction.bidAmountMKR.toNumber()));
+                    this.allowanceMKR = new BigNumber(faker.finance.amount(0, this.walletMKR.toNumber()));
                     this.walletAddress = faker.finance.ethereumAddress();
                     this.isWalletConnected = true;
                     this.isConnectingWallet = false;
