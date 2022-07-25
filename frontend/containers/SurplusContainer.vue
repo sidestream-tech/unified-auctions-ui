@@ -12,14 +12,20 @@
             :allowance-m-k-r="allowanceMKR"
             :is-connecting-wallet="isConnectingWallet"
             :is-refreshing-wallet="isRefreshingWallet"
+            :is-authorizing="isAuthorizing"
+            :is-wallet-authorized="isWalletAuthorized"
             :is-setting-allowance="isAuthorizationLoading"
             :last-updated="lastUpdated"
             :is-explanations-shown.sync="isExplanationsShown"
             :network="network"
             :token-address="tokenAddress"
+            :is-withdrawing="isWithdrawing"
+            :dai-vat-balance="daiVatBalance"
             @connectWallet="openSelectWalletModal"
             @disconnectWallet="disconnectWallet"
             @refreshWallet="refreshWallet"
+            @authorizeWallet="authorizeWallet"
+            @withdrawAllDaiFromVat="withdrawAllDaiFromVat"
             @restart="restartAuction"
             @setAllowanceAmount="setAllowanceAmountMKR"
             @collect="collect"
@@ -31,7 +37,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
+import BigNumber from 'bignumber.js';
 import SurplusFlow from '~/components/auction/surplus/SurplusFlow.vue';
+import { SurplusAuction } from '~/../core/src/types';
 
 export default Vue.extend({
     components: {
@@ -60,7 +68,16 @@ export default Vue.extend({
             walletBalances: 'walletBalances',
             isConnectingWallet: 'isLoading',
             isRefreshingWallet: 'isFetchingBalances',
+            isWithdrawing: 'isDepositingOrWithdrawing',
         }),
+        ...mapGetters('authorizations', {
+            isAuthorizing: 'isWalletAuthorizationLoading',
+            isWalletAuthorized: 'isWalletAuthorizationDone',
+        }),
+        daiVatBalance(): BigNumber | undefined {
+            const vatBalances = this.$store.getters['wallet/collateralVatBalanceStore'];
+            return vatBalances.DAI || undefined;
+        },
         selectedAuctionId: {
             get(): string | null {
                 const auctionGetParameter = this.$route.query.auction;
@@ -78,6 +95,12 @@ export default Vue.extend({
                 }
             },
         },
+        selectedAuction(): SurplusAuction | undefined {
+            return this.auctions.find((auction: SurplusAuction) => auction.id === this.selectedAuctionId);
+        },
+        fetchedSelectedAuctionId(): string | undefined {
+            return this.selectedAuction && this.selectedAuction.id;
+        },
         hasAcceptedTerms(): boolean {
             return this.$store.getters['cookies/hasAcceptedTerms'];
         },
@@ -88,6 +111,17 @@ export default Vue.extend({
             set(newIsExplanationsShown): void {
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
+        },
+    },
+    watch: {
+        fetchedSelectedAuctionId: {
+            immediate: true,
+            handler(): void {
+                this.fetchRelatedData();
+            },
+        },
+        walletAddress(): void {
+            this.fetchRelatedData();
         },
     },
     methods: {
@@ -102,12 +136,25 @@ export default Vue.extend({
             refreshWallet: 'fetchWalletBalances',
             disconnectWallet: 'disconnect',
         }),
+        authorizeWallet() {
+            this.$store.dispatch('authorizations/authorizeWallet');
+        },
+        withdrawAllDaiFromVat() {
+            this.$store.dispatch('wallet/withdrawAllCollateralFromVat', 'DAI');
+        },
         openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);
                 return;
             }
             this.$store.commit('modals/setSelectWalletModal', true);
+        },
+        fetchRelatedData(): void {
+            if (!this.fetchedSelectedAuctionId || !this.walletAddress) {
+                return;
+            }
+            this.$store.dispatch('wallet/setup');
+            this.$store.dispatch('authorizations/setup');
         },
     },
 });

@@ -40,7 +40,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
-import CollateralAuctionFlow from '~/components/auction/collateral/CollateralAuctionFlow';
+import BigNumber from 'bignumber.js';
+import { Auction } from '~/../core/src/types';
+import CollateralAuctionFlow from '~/components/auction/collateral/CollateralAuctionFlow.vue';
 
 export default Vue.extend({
     components: {
