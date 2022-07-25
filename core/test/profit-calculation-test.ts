@@ -10,12 +10,10 @@ import TEST_PARAMETERS from './parametrization/profit-calculation-test.json';
 import hre from 'hardhat';
 import { Auction } from '../src/types';
 
-import clearCache from './helpers/cache';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
 const NETWORK = 'custom';
-const CACHED_FUNCTIONS = [authorizeWallet, authorizeCollateral];
 
 interface TestParameters {
     blockNumber: number;
@@ -44,7 +42,6 @@ const resetNetwork = async (blockNumber: string) => {
 Object.entries(TEST_PARAMETERS as TestConfig).forEach(([block, testConfig]) => {
     describe(`Collateral auction prediction precision.`, () => {
         beforeEach(async () => {
-            clearCache(CACHED_FUNCTIONS);
             await resetNetwork(block);
         });
         testConfig.forEach(testParams => {

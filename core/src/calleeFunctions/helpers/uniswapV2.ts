@@ -6,7 +6,6 @@
 */
 import type { CollateralConfig, RegularCalleeConfig } from '../../types';
 import { ethers } from 'ethers';
-import memoizee from 'memoizee';
 import { Fetcher, Token, Pair, Route, TokenAmount, Trade, TradeType } from '@uniswap/sdk';
 import { abi as uniswapV2PairABI } from '@uniswap/v2-core/build/UniswapV2Pair.json';
 import BigNumber from '../../bignumber';
@@ -14,6 +13,7 @@ import { getDecimalChainIdByNetworkType } from '../../network';
 import getProvider from '../../provider';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
+import cache from '../../helpers/cache';
 
 const EXCHANGE_RATE_CACHE = 20 * 1000;
 
@@ -62,7 +62,7 @@ const _getCachedUniswapPairBySymbols = async function (
     }
 };
 
-const getCachedUniswapPairBySymbols = memoizee(_getCachedUniswapPairBySymbols, {
+const getCachedUniswapPairBySymbols = cache(_getCachedUniswapPairBySymbols, {
     maxAge: EXCHANGE_RATE_CACHE,
     promise: true,
     length: 3,

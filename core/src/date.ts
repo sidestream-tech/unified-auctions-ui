@@ -1,7 +1,7 @@
-import memoizee from 'memoizee';
 import getProvider from './provider';
 import { getNetworkConfigByType } from './network';
 import hre from 'hardhat';
+import cache from './helpers/cache';
 
 const CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS = 60 * 1000;
 
@@ -37,7 +37,7 @@ const _fetchLatestBlockDateAndCacheDate = async function (
     };
 };
 
-export const fetchLatestBlockDateAndCacheDate = memoizee(_fetchLatestBlockDateAndCacheDate, {
+export const fetchLatestBlockDateAndCacheDate = cache(_fetchLatestBlockDateAndCacheDate, {
     maxAge: CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS,
     promise: true,
     length: 1,

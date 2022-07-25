@@ -1,5 +1,4 @@
 import type { CalleeNames, CalleeFunctions } from '../types';
-import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
 import UniswapV2LpTokenCalleeDai from './UniswapV2LpTokenCalleeDai';
@@ -7,6 +6,7 @@ import WstETHCurveUniv3Callee from './WstETHCurveUniv3Callee';
 import CurveLpTokenUniv3Callee from './CurveLpTokenUniv3Callee';
 import UniswapV3Callee from './UniswapV3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
+import cache from '../helpers/cache';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
@@ -44,7 +44,7 @@ const _getMarketPrice = async function (
     return await calleeFuctions.getMarketPrice(network, collateral, amount);
 };
 
-export const getMarketPrice = memoizee(_getMarketPrice, {
+export const getMarketPrice = cache(_getMarketPrice, {
     maxAge: MARKET_PRICE_CACHE_MS,
     promise: true,
     length: 3,

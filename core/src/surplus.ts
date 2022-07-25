@@ -1,4 +1,3 @@
-import memoizee from 'memoizee';
 import type {
     Notifier,
     SurplusAuction,
@@ -17,6 +16,7 @@ import executeTransaction from './execute';
 import { getGasPriceForUI } from './gas';
 import { getMarketPrice } from './calleeFunctions';
 import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
+import cache from './helpers/cache';
 
 const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
     const auctionsQuantityBinary = await contract.kicks();
@@ -29,7 +29,7 @@ const _getSurplusAuctionBidIncreaseCoefficient = async (network: string): Promis
     return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
 
-const getSurplusAuctionBidIncreaseCoefficient = memoizee(_getSurplusAuctionBidIncreaseCoefficient, {
+const getSurplusAuctionBidIncreaseCoefficient = cache(_getSurplusAuctionBidIncreaseCoefficient, {
     promise: true,
     length: 3,
 });
