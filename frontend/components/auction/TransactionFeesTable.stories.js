@@ -17,28 +17,15 @@ const common = {
             },
         };
     },
+    computed: {
+        combinedFeesETH() {
+            const reducer = (accumulator, curr) => accumulator.plus(curr);
+            return Object.values(this.fees).reduce(reducer);
+        },
+    },
 };
 
-storiesOf('Auction/TransactionFeesTable', module)
-    .add('Default Swap Transaction', () => ({
-        ...common,
-        template: '<TransactionFeesTable :is-wallet-connected="true" :fees="fees" />',
-    }))
-    .add('Wallet Not Connected', () => ({
-        ...common,
-        template: '<TransactionFeesTable :is-wallet-connected="false" :fees="fees"/>',
-    }))
-    .add('Wallet Authorized', () => ({
-        ...common,
-        template: '<TransactionFeesTable :is-wallet-connected="true" :is-wallet-authed="true" :fees="fees"/>',
-    }))
-    .add('Wallet And Collateral Authorized', () => ({
-        ...common,
-        template: `
-        <TransactionFeesTable
-            :is-wallet-connected="true"
-            :is-wallet-authed="true"
-            :is-collateral-authed="true"
-            :fees="fees"
-        />`,
-    }));
+storiesOf('Auction/TransactionFeesTable', module).add('Default', () => ({
+    ...common,
+    template: '<TransactionFeesTable :fees="fees" :combined-fees-eth="combinedFeesETH" />',
+}));

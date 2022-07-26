@@ -6,18 +6,12 @@
         </div>
         <div v-else-if="isExplanationsShown">
             Auction bidding incurs a
-            <Explain text="transaction fee" width="300px">
-                <TransactionFeesTable
-                    :is-wallet-connected="isWalletConnected"
-                    :is-wallet-authed="isWalletAuthed"
-                    :is-collateral-authed="isCollateralAuthed"
-                    :fees="fees"
-                    :combined-fees-e-t-h="combinedFeesETH"
-                />
+            <Explain text="transaction fee" width="350px">
+                <TransactionFeesTable :fees="fees" :combined-fees-eth="combinedFeesETH" />
             </Explain>
             of approximately
-            <FormatCurrency :value="totalFeesETH" :decimals="5" currency="ETH" />, hence, the connected wallet needs to
-            hold enough funds to cover these fees. The transaction fee is a recommended value and based on the
+            <FormatCurrency :value="combinedFeesETH" :decimals="5" currency="ETH" />, hence, the connected wallet needs
+            to hold enough funds to cover these fees. The transaction fee is a recommended value and based on the
             <Explain text="average fast fee">
                 <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
                     Gas Prices can change
@@ -55,27 +49,15 @@ export default Vue.extend({
     props: {
         fees: {
             type: Object,
-            default: null,
-        },
-        isExplanationsShown: {
-            type: Boolean,
-            default: true,
+            default: () => {},
         },
         transactionAddress: {
             type: String,
             default: null,
         },
-        isWalletConnected: {
+        isExplanationsShown: {
             type: Boolean,
-            default: false,
-        },
-        isWalletAuthed: {
-            type: Boolean,
-            default: false,
-        },
-        isCollateralAuthed: {
-            type: Boolean,
-            default: false,
+            default: true,
         },
         showDifferentWalletInfo: {
             type: Boolean,
@@ -84,17 +66,8 @@ export default Vue.extend({
     },
     computed: {
         combinedFeesETH(): BigNumber {
-            let combinedFeesETH = new BigNumber(0);
-
-            if (!this.isWalletAuthed) {
-                combinedFeesETH = combinedFeesETH.plus(this.fees['Wallet Authorization Fee']);
-            }
-
-            if (!this.isCollateralAuthed) {
-                combinedFeesETH = combinedFeesETH.plus(this.fees['Collateral Authorization Fee']);
-            }
-
-            return combinedFeesETH;
+            const reducer = (accumulator: BigNumber, curr: BigNumber) => accumulator.plus(curr);
+            return Object.values(this.fees).reduce(reducer);
         },
     },
 });

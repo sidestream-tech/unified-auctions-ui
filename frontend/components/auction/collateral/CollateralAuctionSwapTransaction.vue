@@ -155,11 +155,6 @@ export default Vue.extend({
             isWalletDAIAuthorizationCheckPassed: false,
             isWalletCollateralAuthorizationCheckPassed: false,
             isProfitCheckPassed: false,
-            fees: {
-                'Swap Transaction Fee': this.auctionTransaction.swapTransactionFeeETH,
-                'Wallet Authorization Fee': this.auctionTransaction.authTransactionFeeETH,
-                'Collateral Authorization Fee': this.auctionTransaction.authTransactionFeeETH,
-            },
         };
     },
     computed: {
@@ -171,6 +166,16 @@ export default Vue.extend({
         },
         isAuctionActiveAndNotFinished(): boolean {
             return this.auctionTransaction.isActive && !this.auctionTransaction.isFinished;
+        },
+        fees() {
+            const fees = { 'Swap Transaction Fee': this.auctionTransaction.swapTransactionFeeETH };
+            if (!this.isWalletDAIAuthorizationCheckPassed) {
+                fees['Wallet Authorization Fee'] = this.auctionTransaction.authTransactionFeeETH;
+            }
+            if (!this.isWalletCollateralAuthorizationCheckPassed) {
+                fees['Collateral Authorization Fee'] = this.auctionTransaction.authTransactionFeeETH;
+            }
+            return fees;
         },
     },
 });

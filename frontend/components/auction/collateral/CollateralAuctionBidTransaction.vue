@@ -55,6 +55,7 @@
         </div>
         <CollateralAuctionBidBlock
             class="mb-6"
+            :fees="fees"
             :is-wallet-connected="isWalletConnected"
             :is-wallet-authed="isWalletAuthorizedCorrect"
             :is-collateral-authed="isCollateralAuthorized"
@@ -189,6 +190,16 @@ export default Vue.extend({
         },
         isAmountToReceiveUnknown(): boolean {
             return this.amountToReceive?.isNaN();
+        },
+        fees() {
+            const fees = { 'Bid Transaction Fee': this.auctionTransaction.bidTransactionFeeETH };
+            if (!this.isWalletAuthorizedCorrect) {
+                fees['Wallet Authorization Fee'] = this.auctionTransaction.authTransactionFeeETH;
+            }
+            if (!this.isCollateralAuthorized) {
+                fees['Collateral Authorization Fee'] = this.auctionTransaction.authTransactionFeeETH;
+            }
+            return fees;
         },
     },
 });

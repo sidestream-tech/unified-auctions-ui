@@ -45,6 +45,10 @@ export default Vue.extend({
         TransactionMessage,
     },
     props: {
+        fees: {
+            type: Object,
+            default: () => {},
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
@@ -81,15 +85,6 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-    },
-    data() {
-        return {
-            fees: {
-                'Bid Transaction Fee': this.auctionTransaction.bidTransactionFeeETH,
-                'Wallet Authorization Fee': this.auctionTransaction.authTransactionFeeETH,
-                'Collateral Authorization Fee': this.auctionTransaction.authTransactionFeeETH,
-            },
-        };
     },
     computed: {
         state(): string {

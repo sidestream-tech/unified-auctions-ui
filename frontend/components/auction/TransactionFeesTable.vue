@@ -6,11 +6,11 @@
                 <FormatCurrency :value="value" :decimals="5" currency="ETH" />
             </div>
         </div>
-        <hr v-if="isWalletConnected" />
-        <div v-if="isWalletConnected" class="flex justify-between font-bold">
-            <div>Remaining</div>
+        <hr />
+        <div class="flex justify-between font-bold">
+            <div>Total</div>
             <div>
-                <FormatCurrency :value="combinedFeesETH" :decimals="5" currency="ETH" />
+                <FormatCurrency :value="combinedFeesEth" :decimals="5" currency="ETH" />
             </div>
         </div>
     </div>
@@ -28,24 +28,12 @@ export default Vue.extend({
     },
     props: {
         fees: {
-            type: Object,
+            type: Object as Vue.PropType<{ key: string; value: string }>,
             default: null,
         },
-        combinedFeesETH: {
+        combinedFeesEth: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
-        },
-        isWalletConnected: {
-            type: Boolean,
-            default: false,
-        },
-        isWalletAuthed: {
-            type: Boolean,
-            default: false,
-        },
-        isCollateralAuthed: {
-            type: Boolean,
-            default: false,
         },
     },
 });

@@ -10,11 +10,11 @@ const common = {
     data() {
         return {
             fees: {
-                type: 'swap',
-                transETH: fakeAuctionTransaction.swapTransactionFeeETH,
-                authETH: fakeAuctionTransaction.authTransactionFeeETH,
-                totalETH: fakeAuctionTransaction.combinedSwapFeesETH,
+                'Swap Transaction Fee': fakeAuctionTransaction.swapTransactionFeeETH,
+                'Wallet Authorization Fee': fakeAuctionTransaction.authTransactionFeeETH,
+                'Collateral Authorization Fee': fakeAuctionTransaction.authTransactionFeeETH,
             },
+            transactionAddress: faker.finance.ethereumAddress(),
         };
     },
 };
@@ -22,18 +22,13 @@ const common = {
 storiesOf('Auction/TransactionMessage', module)
     .add('Default', () => ({
         ...common,
-        template: '<TransactionMessage :is-wallet-connected="true" :fees="fees" />',
+        template: '<TransactionMessage :fees="fees" />',
     }))
     .add('Show "Different Wallet" Info Message', () => ({
         ...common,
-        template: '<TransactionMessage show-different-wallet-info :fees="fees" />',
+        template: '<TransactionMessage :fees="fees"  show-different-wallet-info />',
     }))
     .add('Finished', () => ({
         ...common,
-        data() {
-            return {
-                transactionAddress: faker.finance.ethereumAddress(),
-            };
-        },
         template: '<TransactionMessage :transaction-address="transactionAddress" />',
     }));
