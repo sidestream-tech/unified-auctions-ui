@@ -47,7 +47,7 @@ export default Vue.extend({
     props: {
         fees: {
             type: Object,
-            default: () => {},
+            default: undefined,
         },
         isExplanationsShown: {
             type: Boolean,

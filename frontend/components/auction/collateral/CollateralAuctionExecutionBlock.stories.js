@@ -14,10 +14,9 @@ const common = {
             transactionAddress: null,
             demoTransactionAddress: faker.finance.ethereumAddress(),
             fees: {
-                type: 'swap',
-                transETH: fakeAuctionTransaction.swapTransactionFeeETH,
-                authETH: fakeAuctionTransaction.authTransactionFeeETH,
-                totalETH: fakeAuctionTransaction.combinedSwapFeesETH,
+                'Swap Transaction Fee': fakeAuctionTransaction.swapTransactionFeeETH,
+                'Wallet Authorization Fee': fakeAuctionTransaction.authTransactionFeeETH,
+                'Collateral Authorization Fee': fakeAuctionTransaction.authTransactionFeeETH,
             },
         };
     },

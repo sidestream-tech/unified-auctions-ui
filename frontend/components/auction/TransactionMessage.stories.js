@@ -28,6 +28,10 @@ storiesOf('Auction/TransactionMessage', module)
         ...common,
         template: '<TransactionMessage :fees="fees"  show-different-wallet-info />',
     }))
+    .add('Unknown Fees', () => ({
+        ...common,
+        template: '<TransactionMessage />',
+    }))
     .add('Finished', () => ({
         ...common,
         template: '<TransactionMessage :transaction-address="transactionAddress" />',

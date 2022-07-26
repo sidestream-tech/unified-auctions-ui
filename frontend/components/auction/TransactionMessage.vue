@@ -10,8 +10,12 @@
                 <TransactionFeesTable :fees="fees" :combined-fees-eth="combinedFeesETH" />
             </Explain>
             of approximately
-            <FormatCurrency :value="combinedFeesETH" :decimals="5" currency="ETH" />, hence, the connected wallet needs
-            to hold enough funds to cover these fees. The transaction fee is a recommended value and based on the
+            <FormatCurrency v-if="combinedFeesETH" :value="combinedFeesETH" :decimals="5" currency="ETH" /><span
+                v-else
+                class="opacity-50"
+                >Unknown ETH</span
+            >, hence, the connected wallet needs to hold enough funds to cover these fees. The transaction fee is a
+            recommended value and based on the
             <Explain text="average fast fee">
                 <a href="https://ethereum.org/en/developers/docs/gas/#why-can-gas-fees-get-so-high" target="_blank">
                     Gas Prices can change
@@ -49,7 +53,7 @@ export default Vue.extend({
     props: {
         fees: {
             type: Object,
-            default: () => {},
+            default: undefined,
         },
         transactionAddress: {
             type: String,
@@ -65,8 +69,13 @@ export default Vue.extend({
         },
     },
     computed: {
-        combinedFeesETH(): BigNumber {
-            const reducer = (accumulator: BigNumber, curr: BigNumber) => accumulator.plus(curr);
+        combinedFeesETH(): BigNumber | undefined {
+            if (!this.fees) {
+                return undefined;
+            }
+            const reducer = (accumulator: BigNumber, curr: BigNumber) => {
+                return accumulator.plus(curr);
+            };
             return Object.values(this.fees).reduce(reducer);
         },
     },

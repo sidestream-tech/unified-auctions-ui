@@ -6,11 +6,12 @@
                 <FormatCurrency :value="value" :decimals="5" currency="ETH" />
             </div>
         </div>
-        <hr />
+        <hr v-if="combinedFeesEth" />
         <div class="flex justify-between font-bold">
             <div>Total</div>
             <div>
-                <FormatCurrency :value="combinedFeesEth" :decimals="5" currency="ETH" />
+                <FormatCurrency v-if="combinedFeesEth" :value="combinedFeesEth" :decimals="5" currency="ETH" />
+                <span v-else>Unknown ETH</span>
             </div>
         </div>
     </div>
@@ -29,7 +30,7 @@ export default Vue.extend({
     props: {
         fees: {
             type: Object as Vue.PropType<{ key: string; value: string }>,
-            default: null,
+            default: undefined,
         },
         combinedFeesEth: {
             type: Object as Vue.PropType<BigNumber>,
