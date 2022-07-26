@@ -29,7 +29,7 @@ export default Vue.extend({
     },
     props: {
         fees: {
-            type: Object as Vue.PropType<{ key: string; value: string }>,
+            type: Object,
             default: undefined,
         },
         combinedFeesEth: {
