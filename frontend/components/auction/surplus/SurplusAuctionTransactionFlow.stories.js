@@ -17,13 +17,16 @@ const common = {
         isWalletConnected: false,
         isConnectingWallet: false,
         isRefreshingWallet: false,
+        isWalletAuthorized: false,
 
         walletMKR: undefined,
         allowanceMKR: undefined,
         walletAddress: undefined,
         isSettingAllowance: false,
+        isAuthorizing: false,
 
         amount: new BigNumber(faker.finance.amount(1, 2)),
+        daiVatBalance: undefined,
 
         auctionActionState: undefined,
     }),
@@ -33,6 +36,7 @@ const common = {
             setTimeout(() => {
                 this.walletMKR = new BigNumber(faker.finance.amount(1001, 1200));
                 this.allowanceMKR = new BigNumber(faker.finance.amount(1, 2));
+                this.daiVatBalance = new BigNumber(faker.finance.amount(100, 200));
                 this.walletAddress = faker.finance.ethereumAddress();
                 this.isWalletConnected = true;
                 this.isConnectingWallet = false;
@@ -46,6 +50,13 @@ const common = {
                 this.walletAddress = undefined;
                 this.isWalletConnected = false;
                 this.isConnectingWallet = false;
+            }, 1000);
+        },
+        authorizeWallet() {
+            this.isAuthorizing = true;
+            setTimeout(() => {
+                this.isWalletAuthorized = true;
+                this.isAuthorizing = false;
             }, 1000);
         },
         setAllowanceAmount() {
@@ -90,6 +101,7 @@ const common = {
           @refreshWallet="refresh" 
           @bid="bid(amount)"
           @collect="collect"
+          @authorizeWallet="authorizeWallet"
         />`,
 };
 

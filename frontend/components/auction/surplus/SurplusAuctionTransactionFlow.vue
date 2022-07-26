@@ -17,15 +17,13 @@
             type="error"
         />
         <SurplusAuctionBidTransactionTable
-            v-if="auction.state !== 'collected'"
             class="mt-4 mb-6"
             :auction="auction"
             @inputBidAmount="inputBidAmount = $event"
         />
-        <div v-if="auction.state !== 'collected'" class="mb-4">
+        <div class="mb-4">
             <WalletConnectionCheckPanel
                 :wallet-address="walletAddress"
-                :disabled="auction.state === 'requires-restart' || auction.state === 'collected'"
                 :is-loading="isConnectingWallet"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isWalletConnected"
