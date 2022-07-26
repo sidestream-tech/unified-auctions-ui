@@ -14,6 +14,8 @@ import getWallet, { WALLETS } from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 import { getContractAddressByName } from '~/../core/src/contracts';
 
+let WAS_WALLET_DISCONNECTED = false;
+
 interface State {
     walletType?: string;
     address?: string;
@@ -169,6 +171,7 @@ export const actions = {
         }
     },
     async disconnect({ getters, commit, dispatch }: ActionContext<State, State>): Promise<void> {
+        WAS_WALLET_DISCONNECTED = true;
         commit('setIsConnecting', true);
         try {
             const wallet = getWallet(getters.getWallet);
@@ -295,9 +298,12 @@ export const actions = {
     async setup({ commit, dispatch, getters }: ActionContext<State, State>): Promise<void> {
         commit('reset');
         if (!getters.isConnected) {
-            await dispatch('autoConnect');
+            if (!WAS_WALLET_DISCONNECTED) {
+                await dispatch('autoConnect');
+            }
         }
         dispatch('refetch');
         dispatch('surplus/setup', undefined, { root: true });
+        WAS_WALLET_DISCONNECTED = false;
     },
 };
