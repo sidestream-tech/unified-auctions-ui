@@ -8,7 +8,7 @@ export const fetchDateByBlockNumber = async function (network: string, blockNumb
     const provider = await getProvider(network);
     const block = await provider.getBlock(blockNumber);
     if (!block?.timestamp) {
-        throw new Error("Received incorrect timestamp value");
+        throw new Error('Received incorrect timestamp value');
     }
     return new Date(block.timestamp * 1000);
 };
