@@ -22,7 +22,7 @@ const calculateElapsedSteps = function (auction: Auction, currentDate: Date): nu
     const distance = elapsedTime / auction.secondsBetweenPriceDrops;
     const steps = Math.floor(distance);
     // already predict for the next step when the next step is about to reached
-    const compensation = distance - steps > 0.95 ? 1 : 0;
+    const compensation = distance - steps > 0.99 ? 1 : 0;
     return steps + compensation;
 };
 
