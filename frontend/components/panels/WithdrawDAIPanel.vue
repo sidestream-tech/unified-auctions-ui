@@ -42,6 +42,7 @@ import TextBlock from '~/components/common/other/TextBlock.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import BasePanel from '~/components/common/other/BasePanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
+import { SurplusAuctionStates } from '~/../core/src/types';
 
 export default Vue.extend({
     name: 'WithdrawDAIPanel',
@@ -81,10 +82,14 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
+        auctionState: {
+            type: String as Vue.PropType<SurplusAuctionStates>,
+            default: 'just-started',
+        },
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (!this.hasDaiToWithdraw) {
+            if (!this.hasDaiToWithdraw && this.auctionState !== 'collected') {
                 return {
                     name: 'inactive',
                     title: `No DAI to withdraw yet`,

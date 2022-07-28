@@ -142,6 +142,23 @@ storiesOf('Auction/Surplus/SurplusAuctionTransactionFlow', module)
             auction: generateFakeSurplusAuctionTransaction('requires-restart'),
         }),
     }))
+    .add('No DAI In VAT', () => ({
+        ...common,
+        methods: {
+            ...common.methods,
+            connect() {
+                this.isConnectingWallet = true;
+                setTimeout(() => {
+                    this.walletMKR = new BigNumber(faker.finance.amount(1001, 1200));
+                    this.allowanceMKR = new BigNumber(faker.finance.amount(1, 2));
+                    this.daiVatBalance = new BigNumber(0);
+                    this.walletAddress = faker.finance.ethereumAddress();
+                    this.isWalletConnected = true;
+                    this.isConnectingWallet = false;
+                }, 1000);
+            },
+        },
+    }))
     .add('Collected', () => ({
         ...common,
         data: () => ({

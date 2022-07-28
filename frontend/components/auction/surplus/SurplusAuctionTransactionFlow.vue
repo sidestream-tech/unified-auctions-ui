@@ -74,6 +74,7 @@
                 :is-refreshing="isRefreshingWallet"
                 :is-withdrawing="isWithdrawing"
                 :dai-vat-balance="daiVatBalance"
+                :auction-state="auctionState"
                 @refreshWallet="$emit('refreshWallet')"
                 @authorizeWallet="$emit('authorizeWallet')"
                 @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
@@ -87,7 +88,7 @@ import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
-import { SurplusAuctionActionStates } from 'auctions-core/src/types';
+import { SurplusAuctionStates, SurplusAuctionActionStates } from 'auctions-core/src/types';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import WalletMKRBalanceCheckPanel from '~/components/panels/WalletMKRBalanceCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
@@ -187,6 +188,9 @@ export default Vue.extend({
     computed: {
         isActive(): boolean {
             return this.auction.state !== 'ready-for-collection';
+        },
+        auctionState(): SurplusAuctionStates {
+            return this.auction.state;
         },
     },
 });
