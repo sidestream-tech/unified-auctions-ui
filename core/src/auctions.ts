@@ -107,6 +107,9 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
             priceDropRatio: params.priceDropRatio,
         };
         const currentDate = await getNetworkDate(auction.network);
+        if (!currentDate) {
+            return auctionWithParams;
+        }
         const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
         const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
         const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
