@@ -79,7 +79,10 @@
             :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
             :collateral-type="auctionTransaction.collateralType"
-            :transaction-fee="auctionTransaction.swapTransactionFeeETH"
+            :is-wallet-connected="isWalletConnectedCheck"
+            :is-wallet-authed="isWalletAuthorized"
+            :is-collateral-authed="isWalletCollateralAuthorizationCheckPassed"
+            :fees="fees"
             :transaction-gross-profit="auctionTransaction.transactionGrossProfit"
             @execute="$emit('execute', { id: auctionTransaction.id, alternativeDestinationAddress: $event })"
         />
@@ -97,6 +100,7 @@ import CollateralAuctionExecutionBlock from '~/components/auction/collateral/Col
 import CollateralAuctionSwapTransactionTable from '~/components/auction/collateral/CollateralAuctionSwapTransactionTable.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Explain from '~/components/common/other/Explain.vue';
+import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
     name: 'SwapTransaction',
@@ -157,11 +161,21 @@ export default Vue.extend({
         isConnected(): boolean {
             return this.walletAddress !== null;
         },
-        isCollateralAuthorised(): boolean {
+        isCollateralAuthorized(): boolean {
             return this.authorisedCollaterals.includes(this.auctionTransaction.collateralType);
         },
         isAuctionActiveAndNotFinished(): boolean {
             return this.auctionTransaction.isActive && !this.auctionTransaction.isFinished;
+        },
+        fees() {
+            const fees = { 'Swap Transaction Fee': this.auctionTransaction.swapTransactionFeeETH };
+            if (!this.isWalletDAIAuthorizationCheckPassed) {
+                fees['Wallet Authorization Fee'] = this.auctionTransaction.authTransactionFeeETH;
+            }
+            if (!this.isWalletCollateralAuthorizationCheckPassed) {
+                fees['Collateral Authorization Fee'] = this.auctionTransaction.authTransactionFeeETH;
+            }
+            return fees;
         },
     },
 });

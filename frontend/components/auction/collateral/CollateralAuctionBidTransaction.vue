@@ -55,6 +55,10 @@
         </div>
         <CollateralAuctionBidBlock
             class="mb-6"
+            :fees="fees"
+            :is-wallet-connected="isWalletConnected"
+            :is-wallet-authed="isWalletAuthorizedCorrect"
+            :is-collateral-authed="isCollateralAuthorized"
             :auction-transaction="auctionTransaction"
             :transaction-bid-amount="transactionBidAmount"
             :amount-to-receive="amountToReceive"
@@ -89,8 +93,8 @@ import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import { calculateTransactionCollateralOutcome } from 'auctions-core/src/price';
-import CollateralAuctionBidTransactionTable from './CollateralAuctionBidTransactionTable';
-import CollateralAuctionBidBlock from './CollateralAuctionBidBlock';
+import CollateralAuctionBidTransactionTable from './CollateralAuctionBidTransactionTable.vue';
+import CollateralAuctionBidBlock from './CollateralAuctionBidBlock.vue';
 import CollateralAuthorizationCheckPanel from '~/components/panels/CollateralAuthorizationCheckPanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
@@ -186,6 +190,16 @@ export default Vue.extend({
         },
         isAmountToReceiveUnknown(): boolean {
             return this.amountToReceive?.isNaN();
+        },
+        fees() {
+            const fees = { 'Bid Transaction Fee': this.auctionTransaction.bidTransactionFeeETH };
+            if (!this.isWalletAuthorizedCorrect) {
+                fees['Wallet Authorization Fee'] = this.auctionTransaction.authTransactionFeeETH;
+            }
+            if (!this.isCollateralAuthorized) {
+                fees['Collateral Authorization Fee'] = this.auctionTransaction.authTransactionFeeETH;
+            }
+            return fees;
         },
     },
 });
