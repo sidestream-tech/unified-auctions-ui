@@ -3,7 +3,7 @@
         v-model="isVisible"
         trigger="click"
         :title="displayTitle"
-        :overlay-style="{ width: '200px', zIndex: '35' }"
+        :overlay-style="{ width: width, zIndex: '35' }"
         :get-popup-container="() => $el.parentElement"
         overlay-class-name="ExplainOverlay"
         :placement="placement"
@@ -45,6 +45,10 @@ export default Vue.extend({
         placement: {
             type: String,
             default: 'topRight',
+        },
+        width: {
+            type: String,
+            default: '200px',
         },
     },
     data() {
