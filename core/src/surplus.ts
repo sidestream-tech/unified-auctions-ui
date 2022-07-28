@@ -40,11 +40,7 @@ export const getNextMinimumBid = async (network: string, surplusAuction: Surplus
 };
 
 const getAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
-    const networkDate = await getNetworkDate(network);
-    if (!networkDate) {
-        throw new Error('Failed to determine network date');
-    }
-    const isBidExpired = networkDate > earliestEndDate;
+    const isBidExpired = (await getNetworkDate(network)) > earliestEndDate;
     const haveBids = greatestBid !== 0;
     if (haveBids) {
         if (isBidExpired) {

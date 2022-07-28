@@ -39,9 +39,6 @@ export const swapToMKR = async function (
 
     // Get some mkr
     const deadline = await getNetworkDate(network);
-    if (!deadline) {
-        throw new Error('Failed to determine network date.');
-    }
     deadline.setMonth(deadline.getMonth() + 1);
 
     const transactionParamsSwapMkr = [

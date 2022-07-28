@@ -4,25 +4,13 @@ import { getNetworkConfigByType } from './network';
 
 const CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS = 60 * 1000;
 
-export const fetchDateByBlockNumber = async function (
-    network: string,
-    blockNumber: number
-): Promise<Date | undefined> {
+export const fetchDateByBlockNumber = async function (network: string, blockNumber: number): Promise<Date> {
     const provider = await getProvider(network);
-    let block;
-    try {
-        block = await provider.getBlock(blockNumber);
-    } catch (e) {
-        console.error(e);
-        return;
-    }
-    if (!block?.timestamp) {
-        return;
-    }
+    const block = await provider.getBlock(blockNumber);
     return new Date(block.timestamp * 1000);
 };
 
-const fetchLatestBlockDate = async function (network: string): Promise<Date | undefined> {
+const fetchLatestBlockDate = async function (network: string): Promise<Date> {
     const provider = await getProvider(network);
     const blockNumber = await provider.getBlockNumber();
     return fetchDateByBlockNumber(network, blockNumber);
@@ -30,11 +18,8 @@ const fetchLatestBlockDate = async function (network: string): Promise<Date | un
 
 const _fetchLatestBlockDateAndCacheDate = async function (
     network: string
-): Promise<{ blockDate: Date; cacheDate: Date } | undefined> {
+): Promise<{ blockDate: Date; cacheDate: Date }> {
     const blockDate = await fetchLatestBlockDate(network);
-    if (!blockDate) {
-        return undefined;
-    }
     return {
         blockDate,
         cacheDate: new Date(),
@@ -47,16 +32,13 @@ const fetchLatestBlockDateAndCacheDate = memoizee(_fetchLatestBlockDateAndCacheD
     length: 1,
 });
 
-const getNetworkDate = async function (network: string): Promise<Date | undefined> {
+const getNetworkDate = async function (network: string): Promise<Date> {
     const networkConfig = getNetworkConfigByType(network);
     if (!networkConfig.isFork) {
         return new Date();
     }
-    const dateAndCache = await fetchLatestBlockDateAndCacheDate(network);
-    if (!dateAndCache) {
-        return;
-    }
-    return new Date(Date.now() - dateAndCache.cacheDate.getTime() + dateAndCache.blockDate.getTime());
+    const { blockDate, cacheDate } = await fetchLatestBlockDateAndCacheDate(network);
+    return new Date(Date.now() - cacheDate.getTime() + blockDate.getTime());
 };
 
 export default getNetworkDate;
