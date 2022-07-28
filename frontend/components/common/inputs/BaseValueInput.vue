@@ -10,7 +10,8 @@
                 @blur="showMaxValueIfEmpty"
             />
             <div class="whitespace-nowrap" @click="$refs.input.focus()">
-                <format-currency v-if="!inputValue && fallbackValue" :value="fallbackValue" /> {{ currency }}
+                <format-currency v-if="!inputValue && fallbackValue" :value="fallbackValue" />
+                {{ currency }}
             </div>
         </div>
     </Tooltip>
@@ -122,7 +123,7 @@ export default Vue.extend({
 
 <style scoped>
 .BaseValueInput {
-    @apply flex justify-between w-full;
+    @apply flex justify-end w-full;
 }
 
 .Input {
