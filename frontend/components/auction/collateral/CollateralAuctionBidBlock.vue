@@ -3,7 +3,10 @@
         <TransactionMessage
             :is-explanations-shown="isExplanationsShown"
             :transaction-address="auctionTransaction.transactionAddress"
-            :transaction-fee="auctionTransaction.swapTransactionFeeETH"
+            :is-wallet-connected="isWalletConnected"
+            :is-wallet-authed="isWalletAuthed"
+            :is-collateral-authed="isCollateralAuthed"
+            :fees="fees"
         />
         <div class="flex flex-row-reverse mt-3">
             <BaseButton
@@ -28,18 +31,24 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import TransactionMessage from '~/components/auction/TransactionMessage.vue';
 import { AuctionTransaction } from '~/../core/src/types';
 
 export default Vue.extend({
+    name: 'BidBlock',
     components: {
         BaseButton,
         FormatCurrency,
         TransactionMessage,
     },
     props: {
+        fees: {
+            type: Object,
+            default: undefined,
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
@@ -63,6 +72,18 @@ export default Vue.extend({
         amountToReceive: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
+        },
+        isWalletConnected: {
+            type: Boolean,
+            default: false,
+        },
+        isWalletAuthed: {
+            type: Boolean,
+            default: false,
+        },
+        isCollateralAuthed: {
+            type: Boolean,
+            default: false,
         },
     },
     computed: {
