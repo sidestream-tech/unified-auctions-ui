@@ -3,13 +3,7 @@
         <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
         <header class="bg-primary dark:bg-primary-dark">
             <nav class="flex items-center py-2 px-4 md:px-10">
-                <nuxt-link :to="logoTarget" class="flex items-center text-gray-700 hover:text-gray-600 no-underline">
-                    <branding-icon class="h-12 w-12" />
-                    <div v-if="isAuctionsPortal" class="ml-2 mb-0 hidden md:block">
-                        <span class="capitalize">{{ pageName }}</span> auctions
-                    </div>
-                    <span v-else class="ml-2 mb-0 hidden md:block"> Unified Auctions </span>
-                </nuxt-link>
+                <HeaderLogo :network="network" :page-name="pageName" />
 
                 <div class="flex-1 flex justify-end space-x-4 items-center">
                     <label
@@ -59,7 +53,7 @@
 import Vue, { PropType } from 'vue';
 import { NetworkConfig } from 'auctions-core/src/types';
 import StagingBanner from './StagingBanner.vue';
-import BrandingIcon from '~/assets/icons/logo.svg';
+import HeaderLogo from './HeaderLogo.vue';
 import BaseSwitch from '~/components/common/inputs/BaseSwitch.vue';
 import NetworkSelector from '~/components/layout/NetworkSelector.vue';
 import WalletSelector from '~/components/layout/WalletSelector.vue';
@@ -68,9 +62,9 @@ import ThemeSwitcher from '~/components/layout/ThemeSwitcher.vue';
 export default Vue.extend({
     name: 'Header',
     components: {
+        HeaderLogo,
         StagingBanner,
         ThemeSwitcher,
-        BrandingIcon,
         BaseSwitch,
         NetworkSelector,
         WalletSelector,

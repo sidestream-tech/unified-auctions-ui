@@ -9,23 +9,25 @@
         >
             <div slot="content" class="p-0">
                 <ul>
-                    <li
+                    <SelectOption
                         v-for="option in options"
                         :key="option.value"
-                        class="w-full flex hover:bg-primary px-4 py-2 cursor-pointer items-center"
-                        :class="option.classes"
-                        @click="$emit('input', option.value)"
-                    >
-                        <component :is="option.icon" v-if="option.icon" class="w-8 pr-3" />
-                        {{ option.label }}
-                    </li>
+                        :option="option"
+                        :value="value"
+                        @input="$emit('input', $event)"
+                    />
                 </ul>
             </div>
             <button class="flex items-center">
                 <slot name="text-prefix" />
-                <span class="hidden md:block"
-                    ><slot name="title">{{ selectTitle }}</slot></span
-                >
+                <span class="hidden md:block">
+                    <slot v-if="selectLink" name="title">
+                        <nuxt-link :to="selectLink" class="text-gray-700 hover:text-gray-600">
+                            {{ selectTitle }}
+                        </nuxt-link>
+                    </slot>
+                    <slot v-else name="title">{{ selectTitle }}</slot>
+                </span>
                 <slot name="text-suffix" />
             </button>
         </popover>
@@ -43,15 +45,13 @@
                 destroy-on-close
             >
                 <ul>
-                    <li
+                    <SelectOption
                         v-for="option in options"
                         :key="option.value"
-                        class="w-full hover:bg-primary px-4 py-2 cursor-pointer flex items-center"
-                        @click="updateInput(option.value)"
-                    >
-                        <component :is="option.icon" v-if="option.icon" class="w-8 h-8 pr-3" />
-                        {{ option.label }} <span v-if="option.value === value" class="italic ml-1">(selected)</span>
-                    </li>
+                        :option="option"
+                        :value="value"
+                        @input="$emit('input', $event)"
+                    />
                 </ul>
             </modal>
         </div>
@@ -61,10 +61,12 @@
 <script lang="ts">
 import { Popover, Modal } from 'ant-design-vue';
 import Vue from 'vue';
+import SelectOption from '~/components/common/inputs/SelectOption';
 
 export default Vue.extend({
     name: 'Select',
     components: {
+        SelectOption,
         Popover,
         Modal,
     },
@@ -103,6 +105,13 @@ export default Vue.extend({
                 return this.title;
             }
             return selectedOption.label;
+        },
+        selectLink(): string | undefined {
+            const selectedOption = this.options.find(option => option.value === this.value);
+            if (!selectedOption) {
+                return undefined;
+            }
+            return selectedOption.href || undefined;
         },
     },
     watch: {
