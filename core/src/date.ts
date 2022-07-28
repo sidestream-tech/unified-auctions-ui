@@ -10,7 +10,7 @@ export const fetchDateByBlockNumber = async function (network: string, blockNumb
     return new Date(block.timestamp * 1000);
 };
 
-export const fetchLatestBlockDate = async function (network: string): Promise<Date> {
+const fetchLatestBlockDate = async function (network: string): Promise<Date> {
     const provider = await getProvider(network);
     const blockNumber = await provider.getBlockNumber();
     return fetchDateByBlockNumber(network, blockNumber);
@@ -26,7 +26,7 @@ const _fetchLatestBlockDateAndCacheDate = async function (
     };
 };
 
-export const fetchLatestBlockDateAndCacheDate = memoizee(_fetchLatestBlockDateAndCacheDate, {
+const fetchLatestBlockDateAndCacheDate = memoizee(_fetchLatestBlockDateAndCacheDate, {
     maxAge: CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS,
     promise: true,
     length: 1,
