@@ -98,7 +98,7 @@ export const actions = {
     },
     async setup({ dispatch, rootState }: ActionContext<State, any>) {
         dispatch('reset');
-        if (rootState.route.name !== 'collateral') {
+        if (rootState.route.name !== 'collateral' && rootState.route.name !== 'surplus') {
             return;
         }
         await dispatch('refetch');
