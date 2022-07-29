@@ -36,11 +36,11 @@ describe('Surplus Auction', () => {
         const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
         await setupRpcUrlAndGetNetworks(local_rpc_url);
         clearChache([executeTransaction]);
-        stubbed = sinon.stub(forkDate, "fetchDateByBlockNumber").returns(fetchForkDate())
+        stubbed = sinon.stub(forkDate, 'fetchDateByBlockNumber').returns(fetchForkDate());
     });
     after(() => {
-        stubbed.restore()
-    })
+        stubbed.restore();
+    });
     beforeEach(async () => {
         await hre.network.provider.request({
             method: 'hardhat_reset',
