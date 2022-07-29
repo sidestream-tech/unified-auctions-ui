@@ -28,6 +28,7 @@
     "date-fns": "^2.28.0",
     "ethers": "^5.4.6",
     "memoizee": "^0.4.15",
+    "sinon": "^14.0.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
