@@ -55,7 +55,9 @@ Object.entries(TEST_PARAMETERS as TestConfig).forEach(([block, testConfig]) => {
                 const wallet = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
                 const balaneBefore = await fetchBalanceDAI(NETWORK, wallet);
 
+                await hre.network.provider.send('evm_increaseTime', [1]);
                 await authorizeWallet(NETWORK, wallet, false);
+                await hre.network.provider.send('evm_increaseTime', [1]);
                 await authorizeCollateral(NETWORK, wallet, auction.collateralType, false);
 
                 const enrichedAuction = await enrichAuction(NETWORK, auction);
