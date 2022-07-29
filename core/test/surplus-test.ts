@@ -14,6 +14,10 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 import { SurplusAuctionActive } from '../src/types';
+import executeTransaction from '../src/execute';
+import * as forkDate from '../src/date';
+import clearChache from './helpers/cache';
+import * as sinon from 'sinon';
 
 import BigNumber from '../src/bignumber';
 
@@ -21,10 +25,21 @@ const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
+export const fetchForkDate = async function (): Promise<Date> {
+    const block = await hre.ethers.provider.getBlock('latest');
+    return new Date(block.timestamp * 1000);
+};
+
 describe('Surplus Auction', () => {
+    let stubbed: sinon.SinonStub<any>;
     before(async () => {
         const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
         await setupRpcUrlAndGetNetworks(local_rpc_url);
+        clearChache([executeTransaction]);
+        stubbed = sinon.stub(forkDate, 'fetchDateByBlockNumber').returns(fetchForkDate());
+    });
+    after(() => {
+        stubbed.restore();
     });
     beforeEach(async () => {
         await hre.network.provider.request({
@@ -40,6 +55,7 @@ describe('Surplus Auction', () => {
         });
     });
     it('fetches active auctions', async () => {
+        clearChache([forkDate.fetchLatestBlockDateAndCacheDate]);
         const auctions = await fetchActiveSurplusAuctions('custom');
         expect(auctions.length).to.equal(5);
         expect(auctions[0].id).to.equal(2328);
