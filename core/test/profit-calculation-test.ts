@@ -60,6 +60,7 @@ Object.entries(TEST_PARAMETERS as TestConfig).forEach(([block, testConfig]) => {
                 await hre.network.provider.send('evm_increaseTime', [1]);
                 await authorizeCollateral(NETWORK, wallet, auction.collateralType, false);
 
+                await hre.network.provider.send('evm_increaseTime', [1]);
                 const enrichedAuction = await enrichAuction(NETWORK, auction);
                 const expectedProfit = enrichedAuction.transactionGrossProfit as BigNumber;
                 await bidWithCallee(NETWORK, auction, wallet);
