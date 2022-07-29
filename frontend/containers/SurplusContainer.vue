@@ -74,7 +74,7 @@ export default Vue.extend({
             isWalletAuthorized: 'isWalletAuthorizationDone',
         }),
         daiVatBalance(): BigNumber | undefined {
-            return this.walletBalances?.walletVatDAI || undefined;
+            return this.walletBalances?.walletVatDAI;
         },
         selectedAuctionId: {
             get(): string | null {
