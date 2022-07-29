@@ -42,15 +42,12 @@ export const calculateAuctionDropTime = function (auction: Auction, currentDate:
     return auction.secondsBetweenPriceDrops - (elapsedTime % auction.secondsBetweenPriceDrops);
 };
 
-export const calculateTransactionGrossProfit = function (
-    auction: Auction,
-    collateralToCoverDebt: BigNumber
-): BigNumber {
+export const calculateTransactionGrossProfit = function (auction: Auction): BigNumber {
     if (!auction.marketUnitPrice) {
         return new BigNumber(0);
     }
-    const totalDebtMarketPrice = collateralToCoverDebt.multipliedBy(auction.marketUnitPrice);
-    const totalDebtPrice = collateralToCoverDebt.multipliedBy(auction.approximateUnitPrice);
+    const totalDebtMarketPrice = auction.collateralToCoverDebt.multipliedBy(auction.marketUnitPrice);
+    const totalDebtPrice = auction.collateralToCoverDebt.multipliedBy(auction.approximateUnitPrice);
     return totalDebtMarketPrice.minus(totalDebtPrice);
 };
 
@@ -64,10 +61,14 @@ export const calculateTransactionCollateralOutcome = function (
     const collateralToBuyForTheBid = bidAmountDai.dividedBy(unitPrice);
     const potentialOutcomeCollateralAmount = BigNumber.minimum(collateralToBuyForTheBid, auction.collateralAmount); // slice
     const potentialOutcomeTotalPrice = potentialOutcomeCollateralAmount.multipliedBy(unitPrice); // owe
+    const approximateDebt = new BigNumber(auction.debtDAI.toPrecision(16, BigNumber.ROUND_DOWN));
+    const approximatePotentialOutcomeTotalPrice = new BigNumber(
+        potentialOutcomeTotalPrice.toPrecision(16, BigNumber.ROUND_DOWN)
+    );
     if (
         // if owe > tab
         // soft compensation because of precision problems.
-        auction.debtDAI.minus(potentialOutcomeTotalPrice).isLessThan(new BigNumber('0.00000000000001'))
+        approximateDebt.isLessThan(approximatePotentialOutcomeTotalPrice)
     ) {
         return auction.debtDAI.dividedBy(unitPrice); // return tab / price
     } else if (

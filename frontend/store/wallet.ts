@@ -292,11 +292,8 @@ export const actions = {
             await dispatch('fetchCollateralVatBalance', collateralType);
         }
     },
-    async setup({ commit, dispatch, getters }: ActionContext<State, State>): Promise<void> {
+    setup({ commit, dispatch }: ActionContext<State, State>): void {
         commit('reset');
-        if (!getters.isConnected) {
-            await dispatch('autoConnect');
-        }
         dispatch('refetch');
         dispatch('surplus/setup', undefined, { root: true });
     },

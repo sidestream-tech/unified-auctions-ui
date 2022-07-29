@@ -84,7 +84,7 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
             marketUnitPrice,
             marketUnitPriceToUnitPriceRatio,
         };
-        const transactionGrossProfit = calculateTransactionGrossProfit(auctionWithMarketValues, collateralToCoverDebt);
+        const transactionGrossProfit = calculateTransactionGrossProfit(auctionWithMarketValues);
         return {
             ...auctionWithMarketValues,
             transactionGrossProfit,

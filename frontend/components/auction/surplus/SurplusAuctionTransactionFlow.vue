@@ -17,15 +17,13 @@
             type="error"
         />
         <SurplusAuctionBidTransactionTable
-            v-if="auction.state !== 'collected'"
             class="mt-4 mb-6"
             :auction="auction"
             @inputBidAmount="inputBidAmount = $event"
         />
-        <div v-if="auction.state !== 'collected'" class="mb-4">
+        <div class="mb-4">
             <WalletConnectionCheckPanel
                 :wallet-address="walletAddress"
-                :disabled="auction.state === 'requires-restart' || auction.state === 'collected'"
                 :is-loading="isConnectingWallet"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isWalletConnected"
@@ -68,6 +66,19 @@
                 :is-collecting="auctionActionState === 'collecting'"
                 @collect="$emit('collect')"
             />
+            <WithdrawDAIPanel
+                :is-explanations-shown="isExplanationsShown"
+                :wallet-address="walletAddress"
+                :is-authorizing="isAuthorizing"
+                :is-wallet-authorized="isWalletAuthorized"
+                :is-refreshing="isRefreshingWallet"
+                :is-withdrawing="isWithdrawing"
+                :dai-vat-balance="daiVatBalance"
+                :auction-state="auctionState"
+                @refreshWallet="$emit('refreshWallet')"
+                @authorizeWallet="$emit('authorizeWallet')"
+                @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
+            />
         </div>
     </div>
 </template>
@@ -77,14 +88,15 @@ import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
-import { SurplusAuctionActionStates } from 'auctions-core/src/types';
+import { SurplusAuctionStates, SurplusAuctionActionStates } from 'auctions-core/src/types';
+import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import WalletMKRBalanceCheckPanel from '~/components/panels/WalletMKRBalanceCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
-import CollectSurplusAuctionPanel from '~/components/panels/CollectSurplusAuctionPanel.vue';
 import HighestBidCheckPanel from '~/components/panels/HighestBidCheckPanel.vue';
+import CollectSurplusAuctionPanel from '~/components/panels/CollectSurplusAuctionPanel.vue';
+import WithdrawDAIPanel from '~/components/panels/WithdrawDAIPanel.vue';
 import SurplusAuctionBidTransactionTable from '~/components/auction/surplus/SurplusAuctionBidTransactionTable.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
-import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 
 export default Vue.extend({
     components: {
@@ -96,6 +108,7 @@ export default Vue.extend({
         Alert,
         SurplusAuctionBidTransactionTable,
         WalletConnectionCheckPanel,
+        WithdrawDAIPanel,
     },
     props: {
         auction: {
@@ -130,6 +143,26 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        daiVatBalance: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        isAuthorizing: {
+            type: Boolean,
+            default: false,
+        },
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isWithdrawing: {
+            type: Boolean,
+            default: false,
+        },
+        isFetching: {
+            type: Boolean,
+            default: false,
+        },
         tokenAddress: {
             type: String,
             default: undefined,
@@ -155,6 +188,9 @@ export default Vue.extend({
     computed: {
         isActive(): boolean {
             return this.auction.state !== 'ready-for-collection';
+        },
+        auctionState(): SurplusAuctionStates {
+            return this.auction.state;
         },
     },
 });

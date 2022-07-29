@@ -2,6 +2,7 @@ import faker from 'faker';
 import { random } from 'lodash';
 import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
+import { AuctionTransaction } from '~/../core/src/types';
 
 export const generateFakeAuction = function () {
     const index = faker.datatype.number();
@@ -55,26 +56,36 @@ export const generateFakeAuction = function () {
     };
 };
 
-export const generateFakeAuctionTransaction = function () {
+export const generateFakeAuctionTransaction = function (): AuctionTransaction {
     const auction = generateFakeAuction();
     const swapTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const swapTransactionFeeDAI = swapTransactionFeeETH.multipliedBy(1000);
+    const bidTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
+    const bidTransactionFeeDAI = bidTransactionFeeETH.multipliedBy(1000);
     const authTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const authTransactionFeeDAI = authTransactionFeeETH.multipliedBy(1000);
     const restartTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
+    const restartTransactionFeeDAI = restartTransactionFeeETH.multipliedBy(1000);
     const transactionNetProfit = auction.transactionGrossProfit.minus(swapTransactionFeeDAI);
-    const combinedSwapFeesETH = swapTransactionFeeETH.plus(authTransactionFeeETH);
+    const combinedSwapFeesETH = swapTransactionFeeETH.plus(authTransactionFeeETH).plus(authTransactionFeeETH);
     const combinedSwapFeesDAI = combinedSwapFeesETH.multipliedBy(1000);
+    const combinedBidFeesETH = bidTransactionFeeETH.plus(authTransactionFeeETH).plus(authTransactionFeeETH);
+    const combinedBidFeesDAI = combinedBidFeesETH.multipliedBy(1000);
     return {
         ...auction,
         swapTransactionFeeETH,
         swapTransactionFeeDAI,
+        bidTransactionFeeETH,
+        bidTransactionFeeDAI,
         authTransactionFeeETH,
         authTransactionFeeDAI,
         restartTransactionFeeETH,
+        restartTransactionFeeDAI,
         transactionNetProfit,
         combinedSwapFeesETH,
         combinedSwapFeesDAI,
+        combinedBidFeesETH,
+        combinedBidFeesDAI,
     };
 };
 
