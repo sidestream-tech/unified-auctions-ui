@@ -1,9 +1,9 @@
 import type { Contract } from 'ethers';
 import { ethers } from 'ethers';
+import memoizee from 'memoizee';
 import COLLATERALS, { getAllCollateralTypes } from './constants/COLLATERALS';
 import getProvider from './provider';
 import CHAINLOG from './abis/CHAINLOG.json';
-import cache from './helpers/cache';
 
 const CHAINLOG_ADDRESS = '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F';
 const UNISWAP_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
@@ -33,7 +33,7 @@ export const _fetchContractAddressByNetwork = async function (network: string, c
     }
 };
 
-export const fetchContractAddressByNetwork = cache(_fetchContractAddressByNetwork, {
+export const fetchContractAddressByNetwork = memoizee(_fetchContractAddressByNetwork, {
     maxAge: CHAINLOG_CACHE,
     promise: true,
     length: 2,

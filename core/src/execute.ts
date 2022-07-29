@@ -1,10 +1,10 @@
 import type { Notifier } from './types';
+import memoizee from 'memoizee';
 import getContract from './contracts';
 import trackTransaction from './tracker';
 import { getGasParametersForTransaction } from './gas';
 import { getNetworkConfigByType } from './network';
 import { PayableOverrides } from 'ethers';
-import cache from './helpers/cache'
 
 interface TransactionOptions {
     methodOverrides?: PayableOverrides;
@@ -51,7 +51,7 @@ const retriableExecuteTransaction: typeof _executeTransaction = async function (
     }
 };
 
-const executeTransaction = cache(retriableExecuteTransaction, {
+const executeTransaction = memoizee(retriableExecuteTransaction, {
     promise: true,
     length: 4,
 });

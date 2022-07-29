@@ -1,11 +1,11 @@
 import type { MakerParams } from './types';
 import { ethers } from 'ethers';
+import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import getProvider from './provider';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import { RAY_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { fetchContractAddressByNetwork, getSupportedCollateralTypes } from './addresses';
-import cache from './helpers/cache';
 
 const PARAMS_CACHE = 24 * 60 * 60 * 1000;
 
@@ -38,7 +38,7 @@ const _fetchCalcParametersByCollateralType = async function (
     }
 };
 
-export const fetchCalcParametersByCollateralType = cache(_fetchCalcParametersByCollateralType, {
+export const fetchCalcParametersByCollateralType = memoizee(_fetchCalcParametersByCollateralType, {
     maxAge: PARAMS_CACHE,
     promise: true,
     length: 2,

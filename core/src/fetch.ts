@@ -1,10 +1,10 @@
 import type { AuctionInitialInfo, AuctionStatus } from './types';
+import memoizee from 'memoizee';
 import BigNumber from './bignumber';
 import getContract, { getClipperNameByCollateralType } from './contracts';
 import { RAD, RAD_NUMBER_OF_DIGITS, RAY, WAD } from './constants/UNITS';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
-import cache from './helpers/cache';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
@@ -17,7 +17,7 @@ const _fetchMaximumAuctionDurationInSeconds = async function (
     return tail.toNumber();
 };
 
-const fetchMaximumAuctionDurationInSeconds = cache(_fetchMaximumAuctionDurationInSeconds, {
+const fetchMaximumAuctionDurationInSeconds = memoizee(_fetchMaximumAuctionDurationInSeconds, {
     maxAge: CACHE_EXPIRY_MS,
     promise: true,
     length: 2,
@@ -30,7 +30,7 @@ const _fetchMinimumBidDai = async function (network: string, collateralType: str
     return new BigNumber(minimumBidRaw._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
 };
 
-export const fetchMinimumBidDai = cache(_fetchMinimumBidDai, {
+export const fetchMinimumBidDai = memoizee(_fetchMinimumBidDai, {
     maxAge: CACHE_EXPIRY_MS,
     promise: true,
     length: 2,

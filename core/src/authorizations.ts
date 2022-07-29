@@ -1,9 +1,9 @@
 import type { Notifier } from './types';
+import memoizee from 'memoizee';
 import getContract, { getContractAddressByName, getClipperNameByCollateralType } from './contracts';
 import executeTransaction from './execute';
 import BigNumber from './bignumber';
 import { DAI_NUMBER_OF_DIGITS, MAX, MKR_NUMBER_OF_DIGITS } from './constants/UNITS';
-import cache from './helpers/cache';
 
 const _authorizeWallet = async function (
     network: string,
@@ -19,7 +19,7 @@ const _authorizeWallet = async function (
     return transaction;
 };
 
-export const authorizeWallet = cache(_authorizeWallet, {
+export const authorizeWallet = memoizee(_authorizeWallet, {
     promise: true,
     length: 3,
 });
@@ -40,7 +40,7 @@ const _authorizeCollateral = async function (
     return transaction;
 };
 
-export const authorizeCollateral = cache(_authorizeCollateral, {
+export const authorizeCollateral = memoizee(_authorizeCollateral, {
     promise: true,
     length: 4,
 });
@@ -52,7 +52,7 @@ const _getWalletAuthorizationStatus = async function (network: string, walletAdd
     return authorizationStatus.toNumber() === 1;
 };
 
-export const getWalletAuthorizationStatus = cache(_getWalletAuthorizationStatus, {
+export const getWalletAuthorizationStatus = memoizee(_getWalletAuthorizationStatus, {
     promise: true,
     length: 2,
 });
@@ -69,7 +69,7 @@ const _getCollateralAuthorizationStatus = async function (
     return authorizationStatus.toNumber() === 1;
 };
 
-export const getCollateralAuthorizationStatus = cache(_getCollateralAuthorizationStatus, {
+export const getCollateralAuthorizationStatus = memoizee(_getCollateralAuthorizationStatus, {
     promise: true,
     length: 3,
 });
@@ -114,12 +114,12 @@ const _getSurplusAuthorizationStatus = async function (network: string, walletAd
     return authorizationStatus.toNumber() === 1;
 };
 
-export const getSurplusAuthorizationStatus = cache(_getSurplusAuthorizationStatus, {
+export const getSurplusAuthorizationStatus = memoizee(_getSurplusAuthorizationStatus, {
     promise: true,
     length: 2,
 });
 
-export const authorizeSurplus = cache(_authorizeSurplus, {
+export const authorizeSurplus = memoizee(_authorizeSurplus, {
     promise: true,
     length: 3,
 });

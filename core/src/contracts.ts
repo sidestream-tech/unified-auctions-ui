@@ -15,7 +15,7 @@ import WSTETH from './abis/WSTETH.json';
 import WETH from './abis/WETH.json';
 import UNISWAP from './abis/UNISWAP_V2_ROUTER_02.json';
 import getSigner from './signer';
-import cache from './helpers/cache';
+import memoizee from 'memoizee';
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
     const suffix = collateralType.toUpperCase().replace('-', '_');
@@ -79,7 +79,7 @@ const _getContract = async function (network: string, contractName: string, useS
     return contract;
 };
 
-const getContract = cache(_getContract, {
+const getContract = memoizee(_getContract, {
     promise: true,
     length: 3,
 });
