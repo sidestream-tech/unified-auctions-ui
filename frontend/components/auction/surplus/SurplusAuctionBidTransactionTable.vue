@@ -9,20 +9,28 @@
         <div class="flex justify-between">
             <div>Auction Amount</div>
             <div>
-                <FormatCurrency :value="auction.receiveAmountDAI" currency="DAI" />
+                <FormatCurrency v-if="auction.receiveAmountDAI" :value="auction.receiveAmountDAI" currency="DAI" />
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
         <div class="flex justify-between">
             <div>Current Highest Bid</div>
             <div>
-                <FormatCurrency :value="auction.bidAmountMKR" currency="MKR" />
+                <FormatCurrency v-if="auction.bidAmountMKR" :value="auction.bidAmountMKR" currency="MKR" />
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
         <div class="flex justify-between">
             <div>Lowest Next Bid</div>
-            <button class="ClickableText" :disabled="!isActive" @click="setInputBidAmount(undefined)">
+            <button
+                v-if="auction.nextMinimumBid"
+                class="ClickableText"
+                :disabled="!isActive"
+                @click="setInputBidAmount(undefined)"
+            >
                 <FormatCurrency :value="auction.nextMinimumBid" currency="MKR" />
             </button>
+            <span v-else class="opacity-50">Unknown</span>
         </div>
         <div class="flex justify-between items-center">
             <div>The Amount to Bid</div>
@@ -106,6 +114,9 @@ export default Vue.extend({
             return !!this.inputBidAmount?.isNaN();
         },
         unitPriceAfterBid(): BigNumber | undefined {
+            if (!this.isActive) {
+                return undefined;
+            }
             if (!this.inputBidAmount) {
                 return this.auction.nextMinimumBid.dividedBy(this.auction.receiveAmountDAI || 1);
             }

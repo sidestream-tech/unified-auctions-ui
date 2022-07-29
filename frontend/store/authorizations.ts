@@ -40,6 +40,9 @@ export const getters = {
     authorizingCollaterals(state: State) {
         return state.authorizingCollaterals;
     },
+    isWalletAuthorizationLoading(state: State) {
+        return state.isWalletAuthorizationLoading;
+    },
     isWalletAuthorizationDone(state: State) {
         return state.isWalletAuthorizationDone;
     },

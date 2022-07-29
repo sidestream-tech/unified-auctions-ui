@@ -68,7 +68,7 @@ export default Vue.extend({
         },
         bidAmount: {
             type: Object as Vue.PropType<BigNumber>,
-            required: true,
+            default: undefined,
         },
         isBidding: {
             type: Boolean,
@@ -92,7 +92,10 @@ export default Vue.extend({
         },
     },
     computed: {
-        wasThereAnyBids(): BigNumber | null {
+        wasThereAnyBids(): boolean {
+            if (!this.auction.bidAmountMKR) {
+                return false;
+            }
             return !this.auction.bidAmountMKR.isZero();
         },
         isUserLatestBidder(): boolean {
@@ -104,6 +107,12 @@ export default Vue.extend({
             );
         },
         currentStateAndTitle(): PanelProps {
+            if (this.auction.state === 'collected') {
+                return {
+                    name: 'inactive',
+                    title: `The auction has finished and been collected`,
+                };
+            }
             if (!this.wasThereAnyBids) {
                 return {
                     name: 'notice',
