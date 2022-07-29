@@ -1,4 +1,4 @@
-import type { Auction, AuctionTransaction } from './types';
+import type { Auction } from './types';
 import BigNumber from './bignumber';
 import { addSeconds } from 'date-fns';
 
@@ -19,7 +19,8 @@ const calculateElapsedSteps = function (auction: Auction, currentDate: Date): nu
     checkAuctionStartDate(auction.startDate, currentDate);
     const auctionStartTimestamp = auction.startDate.getTime();
     const elapsedTime = (currentDate.getTime() - auctionStartTimestamp) / 1000;
-    return Math.floor(elapsedTime / auction.secondsBetweenPriceDrops);
+    const distance = elapsedTime / auction.secondsBetweenPriceDrops;
+    return Math.floor(distance);
 };
 
 export const calculateAuctionPrice = function (auction: Auction, currentDate: Date): BigNumber {
@@ -45,28 +46,29 @@ export const calculateTransactionGrossProfit = function (auction: Auction): BigN
     if (!auction.marketUnitPrice) {
         return new BigNumber(0);
     }
-    const totalMarketPrice = auction.collateralAmount.multipliedBy(auction.marketUnitPrice);
-    if (totalMarketPrice <= auction.debtDAI) {
-        return totalMarketPrice.minus(auction.totalPrice);
-    }
-    const collateralAmountLimitedByDebt = auction.debtDAI.dividedBy(auction.approximateUnitPrice);
-    const totalMarketPriceLimitedByDebt = collateralAmountLimitedByDebt.multipliedBy(auction.marketUnitPrice);
-    return totalMarketPriceLimitedByDebt.minus(auction.debtDAI);
+    const totalDebtMarketPrice = auction.collateralToCoverDebt.multipliedBy(auction.marketUnitPrice);
+    const totalDebtPrice = auction.collateralToCoverDebt.multipliedBy(auction.approximateUnitPrice);
+    return totalDebtMarketPrice.minus(totalDebtPrice);
 };
 
 export const calculateTransactionCollateralOutcome = function (
     bidAmountDai: BigNumber,
     unitPrice: BigNumber,
-    auction: AuctionTransaction
+    auction: Auction
 ): BigNumber {
     // Based on the clipper contract logic
     // https://github.com/makerdao/dss/blob/60690042965500992490f695cf259256cc94c140/src/clip.sol#L357-L380
     const collateralToBuyForTheBid = bidAmountDai.dividedBy(unitPrice);
     const potentialOutcomeCollateralAmount = BigNumber.minimum(collateralToBuyForTheBid, auction.collateralAmount); // slice
     const potentialOutcomeTotalPrice = potentialOutcomeCollateralAmount.multipliedBy(unitPrice); // owe
+    const approximateDebt = new BigNumber(auction.debtDAI.toPrecision(16, BigNumber.ROUND_DOWN));
+    const approximatePotentialOutcomeTotalPrice = new BigNumber(
+        potentialOutcomeTotalPrice.toPrecision(16, BigNumber.ROUND_DOWN)
+    );
     if (
         // if owe > tab
-        potentialOutcomeTotalPrice.isGreaterThan(auction.debtDAI)
+        // soft compensation because of precision problems.
+        approximateDebt.isLessThan(approximatePotentialOutcomeTotalPrice)
     ) {
         return auction.debtDAI.dividedBy(unitPrice); // return tab / price
     } else if (

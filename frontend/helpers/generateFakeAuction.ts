@@ -48,6 +48,7 @@ export const generateFakeAuction = function () {
         transactionAddress: undefined,
         secondsBetweenPriceDrops,
         secondsTillNextPriceDrop,
+        collateralToCoverDebt: collateralAmount.multipliedBy(debtDAI.dividedBy(totalPrice)),
         minimumBidDai: new BigNumber(faker.finance.amount()),
         priceDropRatio: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
         transactionGrossProfitDate: faker.date.future(),
