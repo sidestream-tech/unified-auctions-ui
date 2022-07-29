@@ -92,7 +92,7 @@ export default Vue.extend({
         },
     },
     computed: {
-        wasThereAnyBids(): BigNumber | null {
+        wasThereAnyBids(): boolean {
             return !this.auction.bidAmountMKR.isZero();
         },
         isUserLatestBidder(): boolean {
