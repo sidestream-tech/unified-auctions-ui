@@ -89,7 +89,7 @@ export default Vue.extend({
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (!this.hasDaiToWithdraw && this.auctionState !== 'collected') {
+            if (!this.hasDaiToWithdraw || this.auctionState !== 'collected') {
                 return {
                     name: 'inactive',
                     title: `No DAI to withdraw yet`,
