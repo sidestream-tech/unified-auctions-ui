@@ -44,6 +44,7 @@ describe('Surplus Auction', () => {
         });
     });
     it('fetches active auctions', async () => {
+        clearChache([fetchLatestBlockDateAndCacheDate]);
         const auctions = await fetchActiveSurplusAuctions('custom');
         expect(auctions.length).to.equal(5);
         expect(auctions[0].id).to.equal(2328);
