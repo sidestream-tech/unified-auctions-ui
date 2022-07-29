@@ -55,12 +55,11 @@ Object.entries(TEST_PARAMETERS as TestConfig).forEach(([block, testConfig]) => {
                 const wallet = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
                 const balaneBefore = await fetchBalanceDAI(NETWORK, wallet);
 
-                await hre.network.provider.send('evm_increaseTime', [1]);
+                await hre.network.provider.send('evm_increaseTime', [0]);
                 await authorizeWallet(NETWORK, wallet, false);
-                await hre.network.provider.send('evm_increaseTime', [1]);
+                await hre.network.provider.send('evm_increaseTime', [0]);
                 await authorizeCollateral(NETWORK, wallet, auction.collateralType, false);
 
-                await hre.network.provider.send('evm_increaseTime', [1]);
                 const enrichedAuction = await enrichAuction(NETWORK, auction);
                 const expectedProfit = enrichedAuction.transactionGrossProfit as BigNumber;
                 await bidWithCallee(NETWORK, auction, wallet);
