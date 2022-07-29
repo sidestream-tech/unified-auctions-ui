@@ -61,14 +61,11 @@ export const calculateTransactionCollateralOutcome = function (
     const collateralToBuyForTheBid = bidAmountDai.dividedBy(unitPrice);
     const potentialOutcomeCollateralAmount = BigNumber.minimum(collateralToBuyForTheBid, auction.collateralAmount); // slice
     const potentialOutcomeTotalPrice = potentialOutcomeCollateralAmount.multipliedBy(unitPrice); // owe
-    const approximateDebt = new BigNumber(auction.debtDAI.toPrecision(15, BigNumber.ROUND_DOWN));
-    const approximatePotentialOutcomeTotalPrice = new BigNumber(
-        potentialOutcomeTotalPrice.toPrecision(16, BigNumber.ROUND_DOWN)
-    );
+    const difference = new BigNumber(potentialOutcomeTotalPrice.minus(auction.debtDAI).toPrecision(16));
     if (
         // if owe > tab
         // soft compensation because of precision problems.
-        approximateDebt.isLessThan(approximatePotentialOutcomeTotalPrice)
+        difference.isLessThan(0)
     ) {
         return auction.debtDAI.dividedBy(unitPrice); // return tab / price
     } else if (
