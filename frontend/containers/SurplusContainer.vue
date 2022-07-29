@@ -39,7 +39,6 @@ import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
 import BigNumber from 'bignumber.js';
 import SurplusFlow from '~/components/auction/surplus/SurplusFlow.vue';
-import { SurplusAuction } from '~/../core/src/types';
 
 export default Vue.extend({
     components: {
@@ -75,8 +74,7 @@ export default Vue.extend({
             isWalletAuthorized: 'isWalletAuthorizationDone',
         }),
         daiVatBalance(): BigNumber | undefined {
-            const vatBalances = this.$store.getters['wallet/collateralVatBalanceStore'];
-            return vatBalances.DAI || undefined;
+            return this.walletBalances?.walletVatDAI || undefined;
         },
         selectedAuctionId: {
             get(): string | null {
@@ -95,12 +93,6 @@ export default Vue.extend({
                 }
             },
         },
-        selectedAuction(): SurplusAuction | undefined {
-            return this.auctions.find((auction: SurplusAuction) => auction.id === this.selectedAuctionId);
-        },
-        fetchedSelectedAuctionId(): string | undefined {
-            return this.selectedAuction && this.selectedAuction.id;
-        },
         hasAcceptedTerms(): boolean {
             return this.$store.getters['cookies/hasAcceptedTerms'];
         },
@@ -111,17 +103,6 @@ export default Vue.extend({
             set(newIsExplanationsShown): void {
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
-        },
-    },
-    watch: {
-        fetchedSelectedAuctionId: {
-            immediate: true,
-            handler(): void {
-                this.fetchRelatedData();
-            },
-        },
-        walletAddress(): void {
-            this.fetchRelatedData();
         },
     },
     methods: {
@@ -140,7 +121,7 @@ export default Vue.extend({
             this.$store.dispatch('authorizations/authorizeWallet');
         },
         withdrawAllDaiFromVat() {
-            this.$store.dispatch('wallet/withdrawAllCollateralFromVat', 'DAI');
+            this.$store.dispatch('wallet/withdrawFromVAT', this.daiVatBalance);
         },
         openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {
@@ -148,14 +129,6 @@ export default Vue.extend({
                 return;
             }
             this.$store.commit('modals/setSelectWalletModal', true);
-        },
-        fetchRelatedData(): void {
-            if (!this.fetchedSelectedAuctionId || !this.walletAddress) {
-                return;
-            }
-            this.$store.dispatch('wallet/setup');
-            this.$store.dispatch('authorizations/setup');
-            this.$store.dispatch('surplus/setup');
         },
     },
 });
