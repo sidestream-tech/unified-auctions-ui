@@ -17,4 +17,7 @@ const customNetworkConfig = {
 export default {
     solidity: '0.8.4',
     networks: customNetworkConfig,
+    mocha: {
+        timeout: 120 * 1000,
+    },
 };
