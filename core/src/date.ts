@@ -1,36 +1,28 @@
 import memoizee from 'memoizee';
 import getProvider from './provider';
 import { getNetworkConfigByType } from './network';
-import hre from 'hardhat';
 
 const CURRENT_BLOCK_DATE_CACHE_EXPIRY_MS = 60 * 1000;
 
 export const fetchDateByBlockNumber = async function (
     network: string,
     blockNumber: number,
-    isFork = false
 ): Promise<Date> {
-    let block;
-    if (isFork) {
-        block = await hre.ethers.provider.getBlock('latest');
-    } else {
-        const provider = await getProvider(network);
-        block = await provider.getBlock(blockNumber);
-    }
+    const provider = await getProvider(network);
+    const block = await provider.getBlock(blockNumber);
     return new Date(block.timestamp * 1000);
 };
 
-export const fetchLatestBlockDate = async function (network: string, isFork: boolean): Promise<Date> {
+export const fetchLatestBlockDate = async function (network: string): Promise<Date> {
     const provider = await getProvider(network);
     const blockNumber = await provider.getBlockNumber();
-    return fetchDateByBlockNumber(network, blockNumber, isFork);
+    return fetchDateByBlockNumber(network, blockNumber);
 };
 
 const _fetchLatestBlockDateAndCacheDate = async function (
-    network: string,
-    isFork: boolean
+    network: string
 ): Promise<{ blockDate: Date; cacheDate: Date }> {
-    const blockDate = await fetchLatestBlockDate(network, isFork);
+    const blockDate = await fetchLatestBlockDate(network);
     return {
         blockDate,
         cacheDate: new Date(),
@@ -48,7 +40,7 @@ const getNetworkDate = async function (network: string): Promise<Date> {
     if (!networkConfig.isFork) {
         return new Date();
     }
-    const { blockDate, cacheDate } = await fetchLatestBlockDateAndCacheDate(network, networkConfig.isFork);
+    const { blockDate, cacheDate } = await fetchLatestBlockDateAndCacheDate(network);
     return new Date(Date.now() - cacheDate.getTime() + blockDate.getTime());
 };
 
