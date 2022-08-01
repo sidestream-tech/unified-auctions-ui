@@ -1,4 +1,6 @@
 import BigNumber from 'bignumber.js';
+import { getGasPriceForUI } from './gas';
+import { getMarketPrice } from './calleeFunctions';
 
 export declare interface GasParameters {
     maxFeePerGas?: string;
@@ -156,24 +158,31 @@ export declare interface CollateralStatus {
     balance?: BigNumber;
 }
 
-export declare interface SurplusAuctionBase {
+export declare type CompensationAuctionActiveState =
+    | 'just-started'
+    | 'have-bids'
+    | 'ready-for-collection'
+    | 'requires-restart';
+export declare type CompensationAuctionInactiveState = 'collected';
+
+export declare interface CompensationAuctionBase {
     id: number;
     network: string;
     fetchedAt: Date;
 }
 
-export declare interface SurplusAuctionActive extends SurplusAuctionBase {
+export declare interface SurplusAuctionActive extends CompensationAuctionBase {
     bidAmountMKR: BigNumber;
     receiveAmountDAI: BigNumber;
     receiverAddress: string;
     auctionEndDate: Date;
     bidEndDate?: Date;
     earliestEndDate: Date;
-    state: 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart';
+    state: CompensationAuctionActiveState;
 }
 
-export declare interface SurplusAuctionCollected extends SurplusAuctionBase {
-    state: 'collected';
+export declare interface SurplusAuctionCollected extends CompensationAuctionBase {
+    state: CompensationAuctionInactiveState;
 }
 
 export type SurplusAuction = SurplusAuctionActive | SurplusAuctionCollected;
@@ -189,7 +198,7 @@ export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
     unitPrice: BigNumber;
 }
 
-export declare interface SurplusTransactionFees {
+export declare interface CompensationAuctionTransactionFees {
     restartTransactionFeeEth: BigNumber;
     allowanceTransactionFeeEth: BigNumber;
     bidTransactionFeeEth: BigNumber;
@@ -204,4 +213,70 @@ export declare interface SurplusTransactionFees {
     combinedBidFeesDai: BigNumber;
 }
 
-export declare interface SurplusAuctionTransaction extends SurplusAuctionEnriched, SurplusTransactionFees {}
+export declare interface SurplusAuctionTransaction
+    extends SurplusAuctionEnriched,
+        CompensationAuctionTransactionFees {}
+
+export declare interface DebtAuctionBase {
+    id: number;
+    network: string;
+    fetchedAt: Date;
+}
+
+export declare interface DebtAuctionActive extends DebtAuctionBase {
+    bidAmountDai: BigNumber;
+    receiveAmountMKR: BigNumber;
+    receiverAddress: string;
+    auctionEndDate: Date;
+    bidEndDate?: Date;
+    earliestEndDate: Date;
+    state: CompensationAuctionActiveState;
+}
+
+export declare interface DebtAuctionCollected extends DebtAuctionBase {
+    state: CompensationAuctionInactiveState;
+}
+
+export type DebtAuction = DebtAuctionActive | DebtAuctionCollected;
+
+export type DebtAuctionStates = DebtAuction['state'];
+
+export type DebtAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'collecting';
+
+export declare interface DebtAuctionEnriched extends DebtAuctionActive {
+    nextMaximumLotReceived: BigNumber;
+    marketUnitPrice: BigNumber | string;
+    marketUnitPriceToUnitPriceRatio: BigNumber;
+    unitPrice: BigNumber;
+}
+
+export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
+
+export const getCompensationAuctionTransactionFees = async function (
+    network: string
+): Promise<CompensationAuctionTransactionFees> {
+    const gasPrice = await getGasPriceForUI(network);
+    const exchangeRate = await getMarketPrice(network, 'ETH');
+
+    const restartTransactionFeeEth = gasPrice.multipliedBy(80563);
+    const allowanceTransactionFeeEth = gasPrice.multipliedBy(48373);
+    const bidTransactionFeeEth = gasPrice.multipliedBy(85181);
+    const collectTransactionFeeEth = gasPrice.multipliedBy(94114);
+    const authTransactionFeeEth = gasPrice.multipliedBy(48356);
+    const combinedBidFeesEth = bidTransactionFeeEth.plus(collectTransactionFeeEth);
+
+    return {
+        restartTransactionFeeEth,
+        restartTransactionFeeDai: restartTransactionFeeEth.multipliedBy(exchangeRate),
+        allowanceTransactionFeeEth,
+        allowanceTransactionFeeDai: allowanceTransactionFeeEth.multipliedBy(exchangeRate),
+        bidTransactionFeeEth,
+        bidTransactionFeeDai: bidTransactionFeeEth.multipliedBy(exchangeRate),
+        collectTransactionFeeEth,
+        collectTransactionFeeDai: collectTransactionFeeEth.multipliedBy(exchangeRate),
+        authTransactionFeeEth,
+        authTransactionFeeDai: authTransactionFeeEth.multipliedBy(exchangeRate),
+        combinedBidFeesEth,
+        combinedBidFeesDai: combinedBidFeesEth.multipliedBy(exchangeRate),
+    };
+};

@@ -1,6 +1,6 @@
 import {
     SurplusAuction,
-    SurplusAuctionBase,
+    CompensationAuctionBase,
     SurplusAuctionStates,
     SurplusAuctionCollected,
     SurplusAuctionTransaction,
@@ -20,7 +20,7 @@ const SURPLUS_AUCTION_STATES: SurplusAuctionStates[] = [
 
 const NETWORKS = ['mainnet', 'kovan', 'goerli'];
 
-const generateFakeSurplusAuctionBase = function (): SurplusAuctionBase {
+const generateFakeSurplusAuctionBase = function (): CompensationAuctionBase {
     return {
         id: faker.datatype.number(),
         network: faker.helpers.randomize(NETWORKS),
