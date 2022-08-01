@@ -76,7 +76,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
-import { SurplusAuctionTransaction } from 'auctions-core/src/types';
+import { SurplusAuction, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { compareAsc } from 'date-fns';
 import Loading from '~/components/common/other/Loading.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
@@ -234,7 +234,6 @@ export default Vue.extend({
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
                     scopedSlots: { customRender: 'action' },
-                    width: '20%',
                 },
             ];
         },
