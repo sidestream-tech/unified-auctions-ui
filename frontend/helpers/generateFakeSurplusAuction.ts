@@ -4,7 +4,7 @@ import {
     SurplusAuctionStates,
     SurplusAuctionCollected,
     SurplusAuctionTransaction,
-    SurplusTransactionFees,
+    CompensationAuctionTransactionFees,
 } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
@@ -64,7 +64,7 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
     };
 };
 
-export const generateFakeSurplusTransactionFees = function (): SurplusTransactionFees {
+export const generateFakeSurplusTransactionFees = function (): CompensationAuctionTransactionFees {
     const fees = {
         restartTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
         allowanceTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
