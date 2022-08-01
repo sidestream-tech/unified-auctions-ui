@@ -1,13 +1,12 @@
 import { expect } from 'chai';
 import hre from 'hardhat';
 import {
-    fetchActiveSurplusAuctions,
     bidToSurplusAuction,
     collectSurplusAuction,
-    fetchSurplusAuctionByIndex,
-    restartSurplusAuction,
-    getNextMinimumBid,
     enrichSurplusAuction,
+    fetchActiveSurplusAuctions,
+    getNextMinimumBid,
+    restartSurplusAuction,
 } from '../src/surplus';
 import { setAllowanceAmountMKR } from '../src/authorizations';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
@@ -16,6 +15,7 @@ import { createWalletFromPrivateKey } from '../src/signer';
 import { SurplusAuctionActive } from '../src/types';
 
 import BigNumber from '../src/bignumber';
+import { fetchCompensationAuctionByIndex } from '../src/compensationAuction';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
@@ -54,7 +54,7 @@ describe('Surplus Auction', () => {
         expect(enrichedAucton.unitPrice?.toString()).to.equal('0.0005430260298973471');
         expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('-0.61098300970253348099040009');
     });
-    it('enrichesAuctionWithMiniumumBids', async () => {
+    it('enrichesAuctionWithMinimumBids', async () => {
         const network = 'custom';
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0] as SurplusAuctionActive;
@@ -87,7 +87,7 @@ describe('Surplus Auction', () => {
 
         await collectSurplusAuction('custom', auctionsBeforeCollection[1].id);
 
-        const auctionAfterCollection = await fetchSurplusAuctionByIndex('custom', 2327);
+        const auctionAfterCollection = await fetchCompensationAuctionByIndex('custom', 2327);
         expect(auctionAfterCollection.id).to.equal(2327);
         expect(auctionAfterCollection.state).to.equal('collected');
     });
@@ -114,16 +114,18 @@ describe('Surplus Auction', () => {
     it('forbids restarting active auctions', async () => {
         expect(restartSurplusAuction('custom', 2328)).to.be.reverted;
     });
-    it('forbids collecting inexistant auctions', async () => {
+    it('forbids collecting inexistent auctions', async () => {
         expect(collectSurplusAuction('custom', 3333)).to.be.revertedWith('Did not find the auction to collect.');
     });
-    it('forbids bidding on inexistant auctions', async () => {
+    it('forbids bidding on inexistent auctions', async () => {
         expect(bidToSurplusAuction('custom', 3333, new BigNumber('20'))).to.be.revertedWith(
             'Did not find the auction to bid on.'
         );
     });
-    it('forbids fetching inexistant auctions', async () => {
-        expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
+    it('forbids fetching inexistent auctions', async () => {
+        expect(fetchCompensationAuctionByIndex('custom', 3333)).to.be.revertedWith(
+            'No active auction exists with this id'
+        );
     });
     it('calculates the minimum bid increase', async () => {
         const auctions = await fetchActiveSurplusAuctions('custom');

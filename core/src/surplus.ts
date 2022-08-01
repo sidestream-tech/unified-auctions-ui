@@ -6,10 +6,10 @@ import { RAD_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
 import {
     getActiveCompensationAuctionOrUndefined,
+    getCompensationAuctionBidIncreaseCoefficient,
     getCompensationAuctionLastIndex,
     getMarketPriceMkr,
 } from './compensationAuction';
-import { getNextMinimumBid } from '../dist/src/surplus';
 
 const CONTRACT = 'MCD_FLAP';
 export const fetchActiveSurplusAuctions = async function (network: string): Promise<SurplusAuction[]> {
@@ -62,6 +62,11 @@ export const collectSurplusAuction = async function (network: string, auctionInd
         throw new Error('Did not find the auction to collect.');
     }
     await executeTransaction(network, CONTRACT, 'deal', [auctionIndex], { notifier });
+};
+
+export const getNextMinimumBid = async (network: string, surplusAuction: SurplusAuctionActive): Promise<BigNumber> => {
+    const increaseCoefficient = await getCompensationAuctionBidIncreaseCoefficient(network);
+    return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
 };
 
 export const enrichSurplusAuction = async (
