@@ -5,7 +5,7 @@ import { sendNotification } from './twitter';
 const DECIMAL_PLACES_DEFAULT = 2;
 const DECIMAL_PLACES_MAX = 5;
 
-function isValidNumber(value: BigNumber): boolean {
+function isValidNumber(value: number | BigNumber): boolean {
     if (BigNumber.isBigNumber(value) && value.isNaN()) {
         return false;
     }
@@ -15,7 +15,7 @@ function isValidNumber(value: BigNumber): boolean {
     return true;
 }
 
-function dynamicDecimalPlaces(value: BigNumber): number {
+function dynamicDecimalPlaces(value: number | BigNumber): number {
     if (!isValidNumber(value) || isZero(value)) {
         return DECIMAL_PLACES_DEFAULT;
     }
@@ -36,28 +36,33 @@ function smallestVisibleNumber(): BigNumber {
     return new BigNumber(1).shiftedBy(-DECIMAL_PLACES_MAX);
 }
 
-function isZero(value: BigNumber) {
-    if (value.isEqualTo(0)) {
+function isZero(value: number | BigNumber) {
+    if (BigNumber.isBigNumber(value) && value.isEqualTo(0)) {
+        return true;
+    }
+    if (value === 0) {
         return true;
     }
     return false;
 }
 
-function isValueSmallButNotZero(value: BigNumber): boolean {
+function isValueSmallButNotZero(value: number | BigNumber): boolean {
     if (isZero(value)) {
         return false;
     }
     return new BigNumber(value).abs().isLessThan(smallestVisibleNumber());
 }
 
-function limitedValue(value: BigNumber): BigNumber {
+function limitedValue(value: number | BigNumber): number | BigNumber {
     if (isValueSmallButNotZero(value)) {
-        return value.isLessThan(0) ? smallestVisibleNumber().multipliedBy(-1) : smallestVisibleNumber();
+        return (BigNumber.isBigNumber(value) && value.isLessThan(0)) || value < 0
+            ? smallestVisibleNumber().multipliedBy(-1)
+            : smallestVisibleNumber();
     }
     return value;
 }
 
-function format(value: BigNumber): string {
+function format(value: number | BigNumber): string {
     return value.toFixed(dynamicDecimalPlaces(value));
 }
 
