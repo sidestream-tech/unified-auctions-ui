@@ -14,8 +14,11 @@ export const getCompensationAuctionLastIndex = async (contract: Contract): Promi
     return new BigNumber(auctionsQuantityBinary._hex).toNumber();
 };
 
-const _getCompensationAuctionBidIncreaseCoefficient = async (network: string): Promise<BigNumber> => {
-    const contract = await getContract(network, 'MCD_FLAP');
+const _getCompensationAuctionBidIncreaseCoefficient = async (
+    network: string,
+    contractName: 'MCD_FLAP' | 'MCD_FLOP'
+): Promise<BigNumber> => {
+    const contract = await getContract(network, contractName);
     const auctionsQuantityBinary = await contract.beg();
     return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
@@ -41,9 +44,10 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
 };
 export const fetchCompensationAuctionByIndex = async (
     network: string,
-    auctionIndex: number
+    auctionIndex: number,
+    contractName: 'MCD_FLAP' | 'MCD_FLOP'
 ): Promise<SurplusAuction | DebtAuction> => {
-    const contract = await getContract(network, 'MCD_FLAP');
+    const contract = await getContract(network, contractName);
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
     const fetchedAt = new Date();
@@ -79,8 +83,12 @@ export const fetchCompensationAuctionByIndex = async (
     };
 };
 
-export const getActiveCompensationAuctionOrUndefined = async (network: string, auctionIndex: number) => {
-    const auction = await fetchCompensationAuctionByIndex(network, auctionIndex);
+export const getActiveCompensationAuctionOrUndefined = async (
+    network: string,
+    auctionIndex: number,
+    contractName: 'MCD_FLAP' | 'MCD_FLOP'
+) => {
+    const auction = await fetchCompensationAuctionByIndex(network, auctionIndex, contractName);
     if (auction.state === 'collected') {
         return;
     }
@@ -110,7 +118,7 @@ export const collectCompensationAuction = async function (
     contractName: 'MCD_FLAP' | 'MCD_FLOP',
     notifier?: Notifier
 ) {
-    const auction = await getActiveCompensationAuctionOrUndefined(network, auctionIndex);
+    const auction = await getActiveCompensationAuctionOrUndefined(network, auctionIndex, contractName);
     if (!auction || auction.state !== 'ready-for-collection') {
         throw new Error('Did not find the auction to collect.');
     }

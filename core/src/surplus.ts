@@ -19,7 +19,7 @@ export const fetchActiveSurplusAuctions = async function (network: string): Prom
     const surplusAuctions: SurplusAuction[] = [];
     let currentSurplusAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
-        currentSurplusAuction = await getActiveCompensationAuctionOrUndefined(network, i);
+        currentSurplusAuction = await getActiveCompensationAuctionOrUndefined(network, i, CONTRACT);
         if (!currentSurplusAuction) {
             break;
         }
@@ -42,7 +42,7 @@ export const bidToSurplusAuction = async function (
     bid: BigNumber,
     notifier?: Notifier
 ) {
-    const auction = (await getActiveCompensationAuctionOrUndefined(network, auctionIndex)) as
+    const auction = (await getActiveCompensationAuctionOrUndefined(network, auctionIndex, CONTRACT)) as
         | SurplusAuctionActive
         | undefined;
     if (!auction || !auction.receiveAmountDAI) {
@@ -57,7 +57,7 @@ export const bidToSurplusAuction = async function (
 };
 
 export const collectSurplusAuction = async function (network: string, auctionIndex: number, notifier?: Notifier) {
-    const auction = await getActiveCompensationAuctionOrUndefined(network, auctionIndex);
+    const auction = await getActiveCompensationAuctionOrUndefined(network, auctionIndex, CONTRACT);
     if (!auction || auction.state !== 'ready-for-collection') {
         throw new Error('Did not find the auction to collect.');
     }
@@ -65,7 +65,7 @@ export const collectSurplusAuction = async function (network: string, auctionInd
 };
 
 export const getNextMinimumBid = async (network: string, surplusAuction: SurplusAuctionActive): Promise<BigNumber> => {
-    const increaseCoefficient = await getCompensationAuctionBidIncreaseCoefficient(network);
+    const increaseCoefficient = await getCompensationAuctionBidIncreaseCoefficient(network, CONTRACT);
     return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
 };
 
@@ -98,5 +98,5 @@ export const enrichSurplusAuctions = async (
         }
         return enrichSurplusAuction(network, auction);
     });
-    return await Promise.all(auctionsWithNextMinimumBidsPromises);
+    return await Promise.all(auctionsWithNextMinimumBidsPromises as Promise<SurplusAuctionTransaction>[]);
 };

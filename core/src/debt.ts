@@ -13,15 +13,15 @@ import {
     restartCompensationAuction,
 } from './compensationAuction';
 
+const CONTRACT = 'MCD_FLOP';
 export const getNextMaximumLotReceived = async (
     network: string,
     debtAuction: DebtAuctionActive
 ): Promise<BigNumber> => {
-    const increaseCoefficient = await getCompensationAuctionBidIncreaseCoefficient(network);
+    const increaseCoefficient = await getCompensationAuctionBidIncreaseCoefficient(network, CONTRACT);
     return debtAuction.receiveAmountMKR.dividedBy(increaseCoefficient);
 };
 
-const CONTRACT = 'MCD_FLOP';
 export const fetchActiveDebtAuctions = async function (network: string): Promise<DebtAuctionActive[]> {
     const contract = await getContract(network, CONTRACT);
     const auctionLastIndex = await getCompensationAuctionLastIndex(contract);
@@ -29,7 +29,7 @@ export const fetchActiveDebtAuctions = async function (network: string): Promise
     const surplusAuctions: DebtAuctionActive[] = [];
     let currentSurplusAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
-        const currentAuction = await getActiveCompensationAuctionOrUndefined(network, i);
+        const currentAuction = await getActiveCompensationAuctionOrUndefined(network, i, CONTRACT);
         if (!currentSurplusAuction) {
             break;
         }
@@ -52,7 +52,7 @@ export const bidToDebtAuction = async function (
     lot: BigNumber,
     notifier?: Notifier
 ) {
-    const auction = (await getActiveCompensationAuctionOrUndefined(network, auctionIndex)) as
+    const auction = (await getActiveCompensationAuctionOrUndefined(network, auctionIndex, CONTRACT)) as
         | DebtAuctionActive
         | undefined;
     if (!auction || !auction.receiveAmountMKR) {
@@ -94,5 +94,5 @@ export const enrichDebtAuctions = async (network: string, auctions: DebtAuction[
         }
         return enrichDebtAuction(network, auction);
     });
-    return await Promise.all(auctionsWithNextMinimumBidsPromises);
+    return await Promise.all(auctionsWithNextMinimumBidsPromises as Promise<DebtAuctionTransaction>[]);
 };
