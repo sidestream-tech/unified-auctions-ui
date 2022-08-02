@@ -87,7 +87,7 @@ describe('Surplus Auction', () => {
 
         await collectSurplusAuction('custom', auctionsBeforeCollection[1].id);
 
-        const auctionAfterCollection = await fetchCompensationAuctionByIndex('custom', 2327);
+        const auctionAfterCollection = await fetchCompensationAuctionByIndex('custom', 2327, 'MCD_FLAP');
         expect(auctionAfterCollection.id).to.equal(2327);
         expect(auctionAfterCollection.state).to.equal('collected');
     });
@@ -123,7 +123,7 @@ describe('Surplus Auction', () => {
         );
     });
     it('forbids fetching inexistent auctions', async () => {
-        expect(fetchCompensationAuctionByIndex('custom', 3333)).to.be.revertedWith(
+        expect(fetchCompensationAuctionByIndex('custom', 3333, 'MCD_FLAP')).to.be.revertedWith(
             'No active auction exists with this id'
         );
     });
