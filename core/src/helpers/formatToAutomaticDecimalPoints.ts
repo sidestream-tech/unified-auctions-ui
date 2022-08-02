@@ -13,16 +13,16 @@ export function isValidNumber(value: number | BigNumber): boolean {
     return true;
 }
 
-function dynamicDecimalPlaces(value: number | BigNumber): number {
+function dynamicDecimalPlaces(value: number | BigNumber, decimalPlaces: number): number {
     if (!isValidNumber(value) || isZero(value)) {
-        return DECIMAL_PLACES_DEFAULT;
+        return decimalPlaces;
     }
     if (Math.abs(Number(value)) > 1) {
-        return DECIMAL_PLACES_DEFAULT;
+        return decimalPlaces;
     }
     const amountOfZerosInValue = Math.abs(Math.floor(Math.log10(Math.abs(Number(value)))));
-    if (amountOfZerosInValue < DECIMAL_PLACES_DEFAULT) {
-        return DECIMAL_PLACES_DEFAULT;
+    if (amountOfZerosInValue < decimalPlaces) {
+        return decimalPlaces;
     }
     if (amountOfZerosInValue > DECIMAL_PLACES_MAX) {
         return DECIMAL_PLACES_MAX;
@@ -58,6 +58,9 @@ function limitedValue(value: number | BigNumber): number | BigNumber {
     return value;
 }
 
-export function formatToAutomaticDecimalPoints(value: number | BigNumber): string {
-    return limitedValue(value).toFixed(dynamicDecimalPlaces(value));
+export function formatToAutomaticDecimalPoints(
+    value: number | BigNumber,
+    decimalPlaces: number = DECIMAL_PLACES_DEFAULT
+): string {
+    return limitedValue(value).toFixed(dynamicDecimalPlaces(value, decimalPlaces));
 }

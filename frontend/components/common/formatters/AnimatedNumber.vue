@@ -15,6 +15,8 @@ import {
     formatToAutomaticDecimalPoints,
 } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 
+const DECIMAL_PLACES_DEFAULT = 2;
+
 export default Vue.extend({
     components: {
         AnimatedNumber,
@@ -28,6 +30,10 @@ export default Vue.extend({
             type: Number,
             default: 500,
         },
+        decimalPlaces: {
+            type: Number,
+            default: DECIMAL_PLACES_DEFAULT,
+        },
     },
     computed: {
         isValidNumber(): boolean {
@@ -39,7 +45,7 @@ export default Vue.extend({
     },
     methods: {
         format(value: number | BigNumber): string {
-            return formatToAutomaticDecimalPoints(value);
+            return formatToAutomaticDecimalPoints(value, this.decimalPlaces);
         },
     },
 });
