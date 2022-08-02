@@ -54,15 +54,24 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
     return 'just-started';
 };
 
+const _getContractAuctionDuration = async (contract: Contract) => {
+    return await contract.tau();
+};
+
+const getContractAuctionDuration = memoizee(_getContractAuctionDuration, {
+    maxAge: 24 * 60 * 60 * 1000,
+    promise: true,
+    length: 2,
+});
+
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
     auctionIndex: number
 ): Promise<SurplusAuction> {
     const contract = await getContract(network, 'MCD_FLAP');
-    const auctionDuration = await contract.tau();
+    const auctionDuration = await getContractAuctionDuration(contract);
     const auctionData = await contract.bids(auctionIndex);
-    const createdAt = await auctionData.end;
-    const isAuctionCollected = new BigNumber(createdAt).eq(0);
+    const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
     const fetchedAt = new Date();
     const baseAuctionInfo: SurplusAuctionBase = {
         network,
@@ -79,7 +88,7 @@ export const fetchSurplusAuctionByIndex = async function (
     }
 
     const auctionEndDate = new Date(auctionData.end * 1000);
-    const auctionStartDate = new Date((createdAt - auctionDuration) * 1000);
+    const auctionStartDate = new Date(auctionEndDate.getTime() - auctionDuration * 1000);
     const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
     const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
     const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
