@@ -14,7 +14,7 @@ import {
 } from './compensationAuction';
 
 const CONTRACT = 'MCD_FLOP';
-export const getNextMaximumLotReceived = async (
+export const getNextMaximumMkrReceived = async (
     network: string,
     debtAuction: DebtAuctionActive
 ): Promise<BigNumber> => {
@@ -49,7 +49,7 @@ export const restartDebtAuction = async function (
 export const bidToDebtAuction = async function (
     network: string,
     auctionIndex: number,
-    lot: BigNumber,
+    acceptableReceivedAmount: BigNumber,
     notifier?: Notifier
 ) {
     const auction = (await getActiveCompensationAuctionOrUndefined(network, auctionIndex, CONTRACT)) as
@@ -60,7 +60,7 @@ export const bidToDebtAuction = async function (
     }
     const transactionParameters = [
         auctionIndex,
-        lot.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        acceptableReceivedAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
         auction.bidAmountDai.shiftedBy(RAD_NUMBER_OF_DIGITS).toFixed(0),
     ];
     await executeTransaction(network, CONTRACT, 'dent', transactionParameters, { notifier });
@@ -72,7 +72,7 @@ export const enrichDebtAuction = async (
     network: string,
     auction: DebtAuctionActive
 ): Promise<DebtAuctionTransaction> => {
-    const nextMaximumLotReceived = await getNextMaximumLotReceived(network, auction);
+    const nextMaximumLotReceived = await getNextMaximumMkrReceived(network, auction);
     const unitPrice = auction.bidAmountDai.div(auction.receiveAmountMKR);
     const marketUnitPrice = await getMarketPriceDaiToMkr(network, auction.receiveAmountMKR);
     const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
