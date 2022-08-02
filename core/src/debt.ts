@@ -9,7 +9,7 @@ import {
     getActiveCompensationAuctionOrUndefined,
     getCompensationAuctionBidIncreaseCoefficient,
     getCompensationAuctionLastIndex,
-    getMarketPriceMkr,
+    getMarketPriceDaiToMkr,
     restartCompensationAuction,
 } from './compensationAuction';
 
@@ -74,7 +74,7 @@ export const enrichDebtAuction = async (
 ): Promise<DebtAuctionTransaction> => {
     const nextMaximumLotReceived = await getNextMaximumLotReceived(network, auction);
     const unitPrice = auction.bidAmountDai.div(auction.receiveAmountMKR);
-    const marketUnitPrice = await getMarketPriceMkr(network, auction.bidAmountDai);
+    const marketUnitPrice = await getMarketPriceDaiToMkr(network, auction.receiveAmountMKR);
     const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
     const fees = await getCompensationAuctionTransactionFees(network);
     return {

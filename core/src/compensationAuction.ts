@@ -112,6 +112,14 @@ export const getMarketPriceMkr = async function (network: string, mkrAmount: Big
     }
 };
 
+export const getMarketPriceDaiToMkr = async function (network: string, mkrAmount: BigNumber): Promise<BigNumber> {
+    try {
+        return (await convertMkrToDai(network, mkrAmount)).div(mkrAmount);
+    } catch (error) {
+        return new BigNumber(NaN);
+    }
+};
+
 export const collectCompensationAuction = async function (
     network: string,
     auctionIndex: number,
