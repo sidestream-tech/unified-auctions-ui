@@ -14,9 +14,6 @@ import {
     fetchActiveDebtAuctions,
     restartDebtAuction,
 } from 'auctions-core/src/debt';
-import { fetchAllowanceAmountMKR } from 'auctions-core/src/authorizations';
-import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
-import { swapToMKR } from 'auctions-core/src/helpers/swap';
 import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
@@ -37,7 +34,6 @@ interface State {
 const getInitialState = (): State => ({
     auctionStorage: {},
     auctionStates: {},
-    allowanceAmount: undefined,
     areAuctionsFetching: false,
     isAuthorizationLoading: false,
     error: null,
@@ -54,9 +50,6 @@ export const getters = {
     },
     auctionStates(state: State) {
         return state.auctionStates;
-    },
-    allowanceAmount(state: State) {
-        return state.allowanceAmount;
     },
     areAuctionsFetching(state: State) {
         return state.areAuctionsFetching;
@@ -98,9 +91,6 @@ export const mutations = {
     addAuctionToStorage(state: State, auction: DebtAuction) {
         Vue.set(state.auctionStorage, auction.id, auction);
     },
-    setAllowance(state: State, allowance: BigNumber) {
-        state.allowanceAmount = allowance;
-    },
     setError(state: State, error: string) {
         state.error = error;
     },
@@ -132,7 +122,6 @@ export const actions = {
         commit('reset');
         await dispatch('getMKRTokenAddress');
         await dispatch('fetchDebtAuctions');
-        await dispatch('fetchAllowanceAmount');
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }
@@ -155,15 +144,6 @@ export const actions = {
             commit('setAuctionsFetching', false);
             commit('refreshLastUpdated');
         }
-    },
-    async fetchAllowanceAmount({ rootGetters, commit }: ActionContext<State, State>) {
-        const network = rootGetters['network/getMakerNetwork'];
-        const walletAddress = rootGetters['wallet/getAddress'];
-        if (!network || !walletAddress) {
-            return;
-        }
-        const allowanceAmount = await fetchAllowanceAmountMKR(network, walletAddress);
-        commit('setAllowance', allowanceAmount);
     },
     async restartAuction({ rootGetters, commit, dispatch }: ActionContext<State, State>, auctionIndex: number) {
         const network = rootGetters['network/getMakerNetwork'];
@@ -212,20 +192,5 @@ export const actions = {
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
-    },
-    async getMKRTokenAddress({ commit, rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['network/getMakerNetwork'];
-        if (!network) {
-            return;
-        }
-        const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'MKR');
-        commit('setTokenAddress', tokenAddress);
-    },
-    async swapToMKR({ rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['network/getMakerNetwork'];
-        if (!network) {
-            return;
-        }
-        await swapToMKR(network, 20, 20, notifier);
     },
 };
