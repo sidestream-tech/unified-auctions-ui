@@ -10,7 +10,9 @@ const generateNotificationTextCollateral = function (auction: AuctionInitialInfo
 
 const generateNotificationTextSurplus = function (auction: SurplusAuctionActive): string {
     const url = `${process.env.FRONTEND_ORIGIN}/surplus/?network=${auction.network}&auction=${auction.id}`;
-    return `Surplus auction with ${auction.receiveAmountDAI} DAI just started. Follow the link to participate: ${url}`;
+    return `Surplus auction with ${auction.receiveAmountDAI.toFixed(
+        0
+    )} DAI just started. Follow the link to participate: ${url}`;
 };
 
 export const notifyCollateral = async function (auction: AuctionInitialInfo) {
