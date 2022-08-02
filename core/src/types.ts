@@ -168,6 +168,7 @@ export declare interface SurplusAuctionActive extends SurplusAuctionBase {
     receiverAddress: string;
     auctionEndDate: Date;
     bidEndDate?: Date;
+    auctionStartDate: Date;
     earliestEndDate: Date;
     state: 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart';
 }

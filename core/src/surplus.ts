@@ -2,17 +2,17 @@ import memoizee from 'memoizee';
 import type {
     Notifier,
     SurplusAuction,
-    SurplusAuctionBase,
-    SurplusTransactionFees,
     SurplusAuctionActive,
+    SurplusAuctionBase,
     SurplusAuctionTransaction,
+    SurplusTransactionFees,
 } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
 import { Contract } from 'ethers';
 import getNetworkDate from './date';
-import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { MKR_NUMBER_OF_DIGITS, RAD, RAD_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
 import { getGasPriceForUI } from './gas';
 import { getMarketPrice } from './calleeFunctions';
@@ -59,8 +59,10 @@ export const fetchSurplusAuctionByIndex = async function (
     auctionIndex: number
 ): Promise<SurplusAuction> {
     const contract = await getContract(network, 'MCD_FLAP');
+    const auctionDuration = await contract.tau();
     const auctionData = await contract.bids(auctionIndex);
-    const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
+    const createdAt = await auctionData.end;
+    const isAuctionCollected = new BigNumber(createdAt).eq(0);
     const fetchedAt = new Date();
     const baseAuctionInfo: SurplusAuctionBase = {
         network,
@@ -77,6 +79,7 @@ export const fetchSurplusAuctionByIndex = async function (
     }
 
     const auctionEndDate = new Date(auctionData.end * 1000);
+    const auctionStartDate = new Date((createdAt - auctionDuration) * 1000);
     const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
     const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
     const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
@@ -91,6 +94,7 @@ export const fetchSurplusAuctionByIndex = async function (
         bidEndDate,
         state,
         fetchedAt,
+        auctionStartDate,
     };
 };
 
