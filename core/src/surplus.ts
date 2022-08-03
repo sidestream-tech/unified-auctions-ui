@@ -62,7 +62,7 @@ const _getContractAuctionDuration = async (network: string) => {
 const getContractAuctionDuration = memoizee(_getContractAuctionDuration, {
     maxAge: 24 * 60 * 60 * 1000,
     promise: true,
-    length: 2,
+    length: 1,
 });
 
 export const fetchSurplusAuctionByIndex = async function (
