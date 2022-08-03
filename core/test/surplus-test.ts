@@ -46,7 +46,7 @@ describe('Surplus Auction', () => {
         expect(auction.id).to.equal(2328);
         expect(auction.state).to.equal('have-bids');
         expect(auction.auctionStartDate.toISOString()).to.equal('2022-01-26T01:31:58.000Z');
-        expect(auction.auctionStartDate.getTime()).to.be.lessThan(auction.auctionEndDate.getTime())
+        expect(auction.auctionStartDate.getTime()).to.be.lessThan(auction.auctionEndDate.getTime());
     });
     it('enriches auctions with market prices', async () => {
         const network = 'custom';
