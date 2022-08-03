@@ -1,7 +1,7 @@
 import { setTimeout as delay } from 'timers/promises';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
 import { getAllAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
-import { getAllSurplusAuctions, getNewSurplusAuctionsFromActiveSurplusAuctions } from './surplus';
+import { getAllActiveSurplusAuctions, getNewSurplusAuctionsFromActiveSurplusAuctions } from './surplus';
 import { notifyCollateral, notifySurplus } from './notify';
 import participate, { setupKeeper } from './keeper';
 import { RPC_URL } from './variables';
@@ -29,7 +29,7 @@ const loopCollateral = async function (network: string): Promise<void> {
 
 const loopSurplus = async function (network: string): Promise<void> {
     try {
-        const activeAuctions = await getAllSurplusAuctions(network);
+        const activeAuctions = await getAllActiveSurplusAuctions(network);
         if (activeAuctions.length === 0) {
             return;
         }
