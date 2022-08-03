@@ -54,7 +54,8 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
     return 'just-started';
 };
 
-const _getContractAuctionDuration = async (contract: Contract) => {
+const _getContractAuctionDuration = async (network: string) => {
+    const contract = await getContract(network, 'MCD_FLAP');
     return await contract.tau();
 };
 
@@ -69,7 +70,7 @@ export const fetchSurplusAuctionByIndex = async function (
     auctionIndex: number
 ): Promise<SurplusAuction> {
     const contract = await getContract(network, 'MCD_FLAP');
-    const auctionDuration = await getContractAuctionDuration(contract);
+    const auctionDuration = await getContractAuctionDuration(network);
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
     const fetchedAt = new Date();
