@@ -1,6 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { getGasPriceForUI } from './gas';
-import { getMarketPrice } from './calleeFunctions';
 
 export declare interface GasParameters {
     maxFeePerGas?: string;
