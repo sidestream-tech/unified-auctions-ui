@@ -5,9 +5,7 @@ import type {
     Notifier,
     SurplusAuction,
     SurplusAuctionActive,
-    SurplusAuctionBase,
     SurplusAuctionTransaction,
-    SurplusTransactionFees,
 } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
