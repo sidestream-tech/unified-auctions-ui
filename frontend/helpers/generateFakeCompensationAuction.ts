@@ -1,4 +1,4 @@
-import { CompensationAuctionBase, CompensationAuctionTransactionFees } from 'auctions-core/dist/src/types';
+import { CompensationAuctionBase, CompensationAuctionTransactionFees } from 'auctions-core/src/types';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
 
