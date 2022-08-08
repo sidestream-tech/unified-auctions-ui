@@ -1,10 +1,10 @@
 import {
     SurplusAuction,
-    SurplusAuctionBase,
+    CompensationAuctionBase,
     SurplusAuctionStates,
     SurplusAuctionCollected,
     SurplusAuctionTransaction,
-    SurplusTransactionFees,
+    CompensationAuctionTransactionFees,
 } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
@@ -20,7 +20,7 @@ const SURPLUS_AUCTION_STATES: SurplusAuctionStates[] = [
 
 const NETWORKS = ['mainnet', 'kovan', 'goerli'];
 
-const generateFakeSurplusAuctionBase = function (): SurplusAuctionBase {
+const generateFakeSurplusAuctionBase = function (): CompensationAuctionBase {
     return {
         id: faker.datatype.number(),
         network: faker.helpers.randomize(NETWORKS),
@@ -64,7 +64,7 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
     };
 };
 
-export const generateFakeSurplusTransactionFees = function (): SurplusTransactionFees {
+export const generateFakeSurplusTransactionFees = function (): CompensationAuctionTransactionFees {
     const fees = {
         restartTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
         allowanceTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
