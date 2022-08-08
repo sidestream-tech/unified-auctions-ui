@@ -60,7 +60,7 @@
                 :is-correct.sync="isHighestBidder"
                 @bid="$emit('bid', $event)"
             />
-            <CollectSurplusAuctionPanel
+            <CollectAuctionPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
                 :is-collecting="auctionActionState === 'collecting'"
@@ -93,14 +93,14 @@ import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionChec
 import WalletMKRBalanceCheckPanel from '~/components/panels/WalletMKRBalanceCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
 import HighestBidCheckPanel from '~/components/panels/HighestBidCheckPanel.vue';
-import CollectSurplusAuctionPanel from '~/components/panels/CollectSurplusAuctionPanel.vue';
+import CollectAuctionPanel from '~/components/panels/CollectAuctionPanel.vue';
 import WithdrawDAIPanel from '~/components/panels/WithdrawDAIPanel.vue';
 import SurplusAuctionBidTransactionTable from '~/components/auction/surplus/SurplusAuctionBidTransactionTable.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 
 export default Vue.extend({
     components: {
-        CollectSurplusAuctionPanel,
+        CollectAuctionPanel,
         AllowanceAmountCheckPanel,
         WalletMKRBalanceCheckPanel,
         HighestBidCheckPanel,
