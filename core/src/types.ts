@@ -252,32 +252,3 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 }
 
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
-
-export const getCompensationAuctionTransactionFees = async function (
-    network: string
-): Promise<CompensationAuctionTransactionFees> {
-    const gasPrice = await getGasPriceForUI(network);
-    const exchangeRate = await getMarketPrice(network, 'ETH');
-
-    const restartTransactionFeeEth = gasPrice.multipliedBy(80563);
-    const allowanceTransactionFeeEth = gasPrice.multipliedBy(48373);
-    const bidTransactionFeeEth = gasPrice.multipliedBy(85181);
-    const collectTransactionFeeEth = gasPrice.multipliedBy(94114);
-    const authTransactionFeeEth = gasPrice.multipliedBy(48356);
-    const combinedBidFeesEth = bidTransactionFeeEth.plus(collectTransactionFeeEth);
-
-    return {
-        restartTransactionFeeEth,
-        restartTransactionFeeDai: restartTransactionFeeEth.multipliedBy(exchangeRate),
-        allowanceTransactionFeeEth,
-        allowanceTransactionFeeDai: allowanceTransactionFeeEth.multipliedBy(exchangeRate),
-        bidTransactionFeeEth,
-        bidTransactionFeeDai: bidTransactionFeeEth.multipliedBy(exchangeRate),
-        collectTransactionFeeEth,
-        collectTransactionFeeDai: collectTransactionFeeEth.multipliedBy(exchangeRate),
-        authTransactionFeeEth,
-        authTransactionFeeDai: authTransactionFeeEth.multipliedBy(exchangeRate),
-        combinedBidFeesEth,
-        combinedBidFeesDai: combinedBidFeesEth.multipliedBy(exchangeRate),
-    };
-};
