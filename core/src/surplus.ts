@@ -5,14 +5,16 @@ import type {
     Notifier,
     SurplusAuction,
     SurplusAuctionActive,
+    SurplusAuctionBase,
     SurplusAuctionTransaction,
+    SurplusTransactionFees,
 } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import BigNumber from './bignumber';
 import getContract from './contracts';
 import { Contract } from 'ethers';
 import getNetworkDate from './date';
-import { RAD, WAD, WAD_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { MKR_NUMBER_OF_DIGITS, RAD, RAD_NUMBER_OF_DIGITS, WAD, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
 import { getGasPriceForUI } from './gas';
 import { getMarketPrice } from './calleeFunctions';
@@ -54,11 +56,23 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
     return 'just-started';
 };
 
+const _getContractAuctionDuration = async (network: string) => {
+    const contract = await getContract(network, 'MCD_FLAP');
+    return await contract.tau();
+};
+
+const getContractAuctionDuration = memoizee(_getContractAuctionDuration, {
+    maxAge: 24 * 60 * 60 * 1000,
+    promise: true,
+    length: 1,
+});
+
 export const fetchSurplusAuctionByIndex = async function (
     network: string,
     auctionIndex: number
 ): Promise<SurplusAuction> {
     const contract = await getContract(network, 'MCD_FLAP');
+    const auctionDuration = await getContractAuctionDuration(network);
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
     const fetchedAt = new Date();
@@ -77,6 +91,7 @@ export const fetchSurplusAuctionByIndex = async function (
     }
 
     const auctionEndDate = new Date(auctionData.end * 1000);
+    const auctionStartDate = new Date(auctionEndDate.getTime() - auctionDuration * 1000);
     const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
     const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
     const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
@@ -91,6 +106,7 @@ export const fetchSurplusAuctionByIndex = async function (
         bidEndDate,
         state,
         fetchedAt,
+        auctionStartDate,
     };
 };
 

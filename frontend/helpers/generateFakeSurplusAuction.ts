@@ -1,8 +1,8 @@
 import {
     SurplusAuction,
     CompensationAuctionBase,
-    SurplusAuctionStates,
     SurplusAuctionCollected,
+    SurplusAuctionStates,
     SurplusAuctionTransaction,
     CompensationAuctionTransactionFees,
 } from 'auctions-core/src/types';
@@ -42,6 +42,7 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
     const receiveAmountDAI = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
     const auctionEndDate = generatedState === 'ready-for-collection' ? faker.date.recent() : faker.date.soon();
+    const auctionStartDate = generatedState === 'ready-for-collection' ? faker.date.recent() : faker.date.soon();
     const bidEndDate = generatedState === 'have-bids' ? faker.date.recent() : undefined;
     const earliestEndDate = bidEndDate
         ? auctionEndDate.getUTCMilliseconds() > bidEndDate.getUTCMilliseconds()
@@ -57,6 +58,7 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
         receiveAmountDAI,
         receiverAddress,
         auctionEndDate,
+        auctionStartDate,
         bidEndDate,
         earliestEndDate,
         state: generatedState,

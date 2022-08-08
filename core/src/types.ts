@@ -177,6 +177,7 @@ export declare interface SurplusAuctionActive extends CompensationAuctionBase {
     receiverAddress: string;
     auctionEndDate: Date;
     bidEndDate?: Date;
+    auctionStartDate: Date;
     earliestEndDate: Date;
     state: CompensationAuctionActiveState;
 }
