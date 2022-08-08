@@ -69,7 +69,8 @@ export const generateFakeDebtAuctionTransaction = function (
     );
     const marketUnitPrice = approximateUnitPrice.multipliedBy(new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio));
 
-    const nextMaximumLotReceived = surplusAuction.receiveAmountMKR.dividedBy(0.2);
+    const increaseCoefficient = faker.datatype.number({ min: 1, max: 1.5, precision: 0.01 });
+    const nextMaximumLotReceived = surplusAuction.receiveAmountMKR.dividedBy(increaseCoefficient);
 
     return {
         ...surplusAuction,
