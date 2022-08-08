@@ -165,10 +165,27 @@ export declare type CompensationAuctionActiveState =
     | 'requires-restart';
 export declare type CompensationAuctionInactiveState = 'collected';
 
+export declare type CompensationAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'collecting';
+
 export declare interface CompensationAuctionBase {
     id: number;
     network: string;
     fetchedAt: Date;
+}
+
+export declare interface CompensationAuctionTransactionFees {
+    restartTransactionFeeEth: BigNumber;
+    allowanceTransactionFeeEth: BigNumber;
+    bidTransactionFeeEth: BigNumber;
+    collectTransactionFeeEth: BigNumber;
+    authTransactionFeeEth: BigNumber;
+    combinedBidFeesEth: BigNumber;
+    allowanceTransactionFeeDai: BigNumber;
+    restartTransactionFeeDai: BigNumber;
+    bidTransactionFeeDai: BigNumber;
+    collectTransactionFeeDai: BigNumber;
+    authTransactionFeeDai: BigNumber;
+    combinedBidFeesDai: BigNumber;
 }
 
 export declare interface SurplusAuctionActive extends CompensationAuctionBase {
@@ -190,8 +207,6 @@ export type SurplusAuction = SurplusAuctionActive | SurplusAuctionCollected;
 
 export type SurplusAuctionStates = SurplusAuction['state'];
 
-export type SurplusAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'collecting';
-
 export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
     nextMinimumBid: BigNumber;
     marketUnitPrice: BigNumber | string;
@@ -199,32 +214,11 @@ export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
     unitPrice: BigNumber;
 }
 
-export declare interface CompensationAuctionTransactionFees {
-    restartTransactionFeeEth: BigNumber;
-    allowanceTransactionFeeEth: BigNumber;
-    bidTransactionFeeEth: BigNumber;
-    collectTransactionFeeEth: BigNumber;
-    authTransactionFeeEth: BigNumber;
-    combinedBidFeesEth: BigNumber;
-    allowanceTransactionFeeDai: BigNumber;
-    restartTransactionFeeDai: BigNumber;
-    bidTransactionFeeDai: BigNumber;
-    collectTransactionFeeDai: BigNumber;
-    authTransactionFeeDai: BigNumber;
-    combinedBidFeesDai: BigNumber;
-}
-
 export declare interface SurplusAuctionTransaction
     extends SurplusAuctionEnriched,
         CompensationAuctionTransactionFees {}
 
-export declare interface DebtAuctionBase {
-    id: number;
-    network: string;
-    fetchedAt: Date;
-}
-
-export declare interface DebtAuctionActive extends DebtAuctionBase {
+export declare interface DebtAuctionActive extends CompensationAuctionBase {
     bidAmountDai: BigNumber;
     receiveAmountMKR: BigNumber;
     receiverAddress: string;
@@ -234,15 +228,13 @@ export declare interface DebtAuctionActive extends DebtAuctionBase {
     state: CompensationAuctionActiveState;
 }
 
-export declare interface DebtAuctionCollected extends DebtAuctionBase {
+export declare interface DebtAuctionCollected extends CompensationAuctionBase {
     state: CompensationAuctionInactiveState;
 }
 
 export type DebtAuction = DebtAuctionActive | DebtAuctionCollected;
 
 export type DebtAuctionStates = DebtAuction['state'];
-
-export type DebtAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'collecting';
 
 export declare interface DebtAuctionEnriched extends DebtAuctionActive {
     nextMaximumLotReceived: BigNumber;
@@ -252,32 +244,3 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 }
 
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
-
-export const getCompensationAuctionTransactionFees = async function (
-    network: string
-): Promise<CompensationAuctionTransactionFees> {
-    const gasPrice = await getGasPriceForUI(network);
-    const exchangeRate = await getMarketPrice(network, 'ETH');
-
-    const restartTransactionFeeEth = gasPrice.multipliedBy(80563);
-    const allowanceTransactionFeeEth = gasPrice.multipliedBy(48373);
-    const bidTransactionFeeEth = gasPrice.multipliedBy(85181);
-    const collectTransactionFeeEth = gasPrice.multipliedBy(94114);
-    const authTransactionFeeEth = gasPrice.multipliedBy(48356);
-    const combinedBidFeesEth = bidTransactionFeeEth.plus(collectTransactionFeeEth);
-
-    return {
-        restartTransactionFeeEth,
-        restartTransactionFeeDai: restartTransactionFeeEth.multipliedBy(exchangeRate),
-        allowanceTransactionFeeEth,
-        allowanceTransactionFeeDai: allowanceTransactionFeeEth.multipliedBy(exchangeRate),
-        bidTransactionFeeEth,
-        bidTransactionFeeDai: bidTransactionFeeEth.multipliedBy(exchangeRate),
-        collectTransactionFeeEth,
-        collectTransactionFeeDai: collectTransactionFeeEth.multipliedBy(exchangeRate),
-        authTransactionFeeEth,
-        authTransactionFeeDai: authTransactionFeeEth.multipliedBy(exchangeRate),
-        combinedBidFeesEth,
-        combinedBidFeesDai: combinedBidFeesEth.multipliedBy(exchangeRate),
-    };
-};
