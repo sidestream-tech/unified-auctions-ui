@@ -1,9 +1,9 @@
 import memoizee from 'memoizee';
 import type {
+    CompensationAuctionBase,
+    CompensationAuctionTransactionFees,
     Notifier,
     SurplusAuction,
-    SurplusAuctionBase,
-    SurplusTransactionFees,
     SurplusAuctionActive,
     SurplusAuctionTransaction,
 } from './types';
@@ -62,7 +62,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
     const fetchedAt = new Date();
-    const baseAuctionInfo: SurplusAuctionBase = {
+    const baseAuctionInfo: CompensationAuctionBase = {
         network,
         id: auctionIndex,
         fetchedAt,
@@ -152,7 +152,7 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     await executeTransaction(network, 'MCD_FLAP', 'deal', [auctionIndex], { notifier });
 };
 
-const getSurplusTransactionFees = async function (network: string): Promise<SurplusTransactionFees> {
+const getSurplusTransactionFees = async function (network: string): Promise<CompensationAuctionTransactionFees> {
     const gasPrice = await getGasPriceForUI(network);
     const exchangeRate = await getMarketPrice(network, 'ETH');
 
