@@ -35,7 +35,13 @@
                 @click="$emit('collect')"
             >
                 <span v-if="isCollecting">Collecting...</span>
-                <span v-else>Collect <format-currency :value="auction.receiveAmountDAI" :currency="currency" /> </span>
+                <span v-else
+                    >Collect
+                    <format-currency
+                        :value="auction.receiveAmountDAI || auction.receiveAmountMKR"
+                        :currency="currency"
+                    />
+                </span>
             </BaseButton>
         </div>
     </BasePanel>
