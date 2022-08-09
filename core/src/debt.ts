@@ -19,12 +19,13 @@ import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
 import { getGasPriceForUI } from './gas';
 import { getMarketPrice } from './calleeFunctions';
 
-const CONTRACT = 'MCD_FLOP';
+const CONTRACT = 'MCD_FLOP'
+
 export const getNextMaximumMkrReceived = async (
     network: string,
     debtAuction: DebtAuctionActive
 ): Promise<BigNumber> => {
-    const increaseCoefficient = await getDebtAuctionBidIncreaseCoefficient(network, CONTRACT);
+    const increaseCoefficient = await getDebtAuctionBidIncreaseCoefficient(network);
     return debtAuction.receiveAmountMKR.dividedBy(increaseCoefficient);
 };
 
@@ -112,9 +113,8 @@ export const getDebtAuctionLastIndex = async (contract: Contract): Promise<numbe
 
 const _getDebtAuctionBidIncreaseCoefficient = async (
     network: string,
-    contractName: 'MCD_FLAP' | 'MCD_FLOP'
 ): Promise<BigNumber> => {
-    const contract = await getContract(network, contractName);
+    const contract = await getContract(network, 'MCD_FLOP');
     const auctionsQuantityBinary = await contract.beg();
     return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
@@ -139,11 +139,11 @@ const getDebtAuctionState = async (network: string, earliestEndDate: Date, great
     return 'just-started';
 };
 
-const _getContractAuctionDuration = async (network: string, contractName: 'MCD_FLAP' | 'MCD_FLOP') => {
-    const contract = await getContract(network, contractName);
+const _getContractAuctionDuration = async (network: string) => {
+    const contract = await getContract(network, CONTRACT);
     return await contract.tau();
 };
-const getContractAuctionDuration = memoizee(_getContractAuctionDuration, {
+const getDebtContractAuctionDuration = memoizee(_getContractAuctionDuration, {
     maxAge: 24 * 60 * 60 * 1000,
     promise: true,
     length: 1,
@@ -152,12 +152,11 @@ const getContractAuctionDuration = memoizee(_getContractAuctionDuration, {
 export const fetchDebtAuctionByIndex = async (
     network: string,
     auctionIndex: number,
-    contractName: 'MCD_FLAP' | 'MCD_FLOP'
 ): Promise<SurplusAuction | DebtAuction> => {
-    const contract = await getContract(network, contractName);
+    const contract = await getContract(network, CONTRACT);
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
-    const auctionDuration = await getContractAuctionDuration(network, contractName);
+    const auctionDuration = await getDebtContractAuctionDuration(network);
     const fetchedAt = new Date();
     const baseAuctionInfo: CompensationAuctionBase = {
         network,
