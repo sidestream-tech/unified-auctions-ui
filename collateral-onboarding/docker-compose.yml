@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  blockchain:
+    platform: linux/amd64
+    build:
+      context: ./collateral-onboarding
+    environment:
+      - ETH_RPC_URL=http://hardhat:8545
+      - ETH_GAS=5000000
+      - ETH_FROM=0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+  hardhat:
+    platform: linux/amd64
+    build:
+      context: ./hardhat
+    expose:
+      - 8545
+    env_file: .env
+
