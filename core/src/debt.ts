@@ -1,5 +1,5 @@
 import type { DebtAuction, DebtAuctionActive, DebtAuctionTransaction, Notifier } from './types';
-import { getCompensationAuctionTransactionFees } from './types';
+import { getCompensationAuctionTransactionFees } from './compensationAuction';
 import BigNumber from './bignumber';
 import getContract from './contracts';
 import { RAD_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';

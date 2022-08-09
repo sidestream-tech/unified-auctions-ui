@@ -4,7 +4,13 @@ import getContract from './contracts';
 import { MKR_NUMBER_OF_DIGITS, RAD, WAD } from './constants/UNITS';
 import memoizee from 'memoizee';
 import getNetworkDate from './date';
-import { CompensationAuctionBase, DebtAuction, Notifier, SurplusAuction, CompensationAuctionTransactionFees } from './types';
+import {
+    CompensationAuctionBase,
+    DebtAuction,
+    Notifier,
+    SurplusAuction,
+    CompensationAuctionTransactionFees,
+} from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import executeTransaction from './execute';
 import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
@@ -44,6 +50,17 @@ const getAuctionState = async (network: string, earliestEndDate: Date, greatestB
     }
     return 'just-started';
 };
+
+const _getContractAuctionDuration = async (network: string, contractName: 'MCD_FLAP' | 'MCD_FLOP') => {
+    const contract = await getContract(network, contractName);
+    return await contract.tau();
+};
+const getContractAuctionDuration = memoizee(_getContractAuctionDuration, {
+    maxAge: 24 * 60 * 60 * 1000,
+    promise: true,
+    length: 1,
+});
+
 export const fetchCompensationAuctionByIndex = async (
     network: string,
     auctionIndex: number,
@@ -52,6 +69,7 @@ export const fetchCompensationAuctionByIndex = async (
     const contract = await getContract(network, contractName);
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
+    const auctionDuration = await getContractAuctionDuration(network, contractName);
     const fetchedAt = new Date();
     const baseAuctionInfo: CompensationAuctionBase = {
         network,
@@ -68,6 +86,7 @@ export const fetchCompensationAuctionByIndex = async (
     }
 
     const auctionEndDate = new Date(auctionData.end * 1000);
+    const auctionStartDate = new Date(auctionEndDate.getTime() - auctionDuration * 1000);
     const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
     const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
     const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
@@ -82,6 +101,7 @@ export const fetchCompensationAuctionByIndex = async (
         bidEndDate,
         state,
         fetchedAt,
+        auctionStartDate,
     };
 };
 
@@ -162,3 +182,4 @@ export const getCompensationAuctionTransactionFees = async function (
         combinedBidFeesEth,
         combinedBidFeesDai: combinedBidFeesEth.multipliedBy(exchangeRate),
     };
+};

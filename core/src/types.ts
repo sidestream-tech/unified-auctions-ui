@@ -242,6 +242,7 @@ export declare interface DebtAuctionActive extends DebtAuctionBase {
     receiveAmountMKR: BigNumber;
     receiverAddress: string;
     auctionEndDate: Date;
+    auctionStartDate: Date;
     bidEndDate?: Date;
     earliestEndDate: Date;
     state: CompensationAuctionActiveState;

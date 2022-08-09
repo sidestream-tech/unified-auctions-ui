@@ -5,7 +5,6 @@ import {
     collectSurplusAuction,
     enrichSurplusAuction,
     fetchActiveSurplusAuctions,
-    fetchSurplusAuctionByIndex,
     getNextMinimumBid,
     restartSurplusAuction,
 } from '../src/surplus';
