@@ -1,17 +1,112 @@
+<<<<<<< HEAD
 import type { Notifier, SurplusAuction, SurplusAuctionActive, SurplusAuctionTransaction } from './types';
 import { getCompensationAuctionTransactionFees } from './types';
 import BigNumber from './bignumber';
 import getContract from './contracts';
 import { RAD_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import executeTransaction from './execute';
-import {
-    getActiveCompensationAuctionOrUndefined,
-    getCompensationAuctionBidIncreaseCoefficient,
-    getCompensationAuctionLastIndex,
-    getMarketPriceMkr,
-} from './compensationAuction';
+import { getGasPriceForUI } from './gas';
+import { getMarketPrice } from './calleeFunctions';
+import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
 
-const CONTRACT = 'MCD_FLAP';
+const getSurplusAuctionLastIndex = async (contract: Contract): Promise<number> => {
+    const auctionsQuantityBinary = await contract.kicks();
+    return new BigNumber(auctionsQuantityBinary._hex).toNumber();
+};
+
+const _getSurplusAuctionBidIncreaseCoefficient = async (network: string): Promise<BigNumber> => {
+    const contract = await getContract(network, 'MCD_FLAP');
+    const auctionsQuantityBinary = await contract.beg();
+    return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
+};
+
+const getSurplusAuctionBidIncreaseCoefficient = memoizee(_getSurplusAuctionBidIncreaseCoefficient, {
+    promise: true,
+    length: 3,
+});
+
+export const getNextMinimumBid = async (network: string, surplusAuction: SurplusAuctionActive): Promise<BigNumber> => {
+    const increaseCoefficient = await getSurplusAuctionBidIncreaseCoefficient(network);
+    return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
+};
+
+const getAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
+    const isBidExpired = (await getNetworkDate(network)) > earliestEndDate;
+    const haveBids = greatestBid !== 0;
+    if (haveBids) {
+        if (isBidExpired) {
+            return 'ready-for-collection';
+        }
+        return 'have-bids';
+    }
+    if (isBidExpired) {
+        return 'requires-restart';
+    }
+    return 'just-started';
+};
+
+const _getContractAuctionDuration = async (network: string) => {
+    const contract = await getContract(network, 'MCD_FLAP');
+    return await contract.tau();
+};
+
+const getContractAuctionDuration = memoizee(_getContractAuctionDuration, {
+    maxAge: 24 * 60 * 60 * 1000,
+    promise: true,
+    length: 1,
+});
+
+export const fetchSurplusAuctionByIndex = async function (
+    network: string,
+    auctionIndex: number
+): Promise<SurplusAuction> {
+    const contract = await getContract(network, 'MCD_FLAP');
+    const auctionDuration = await getContractAuctionDuration(network);
+    const auctionData = await contract.bids(auctionIndex);
+    const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
+    const fetchedAt = new Date();
+    const baseAuctionInfo: CompensationAuctionBase = {
+        network,
+        id: auctionIndex,
+        fetchedAt,
+    };
+
+    if (isAuctionCollected) {
+        const auctionLastIndex = await getSurplusAuctionLastIndex(contract);
+        if (auctionLastIndex < auctionIndex) {
+            throw new Error('No active auction exists with this id');
+        }
+        return { ...baseAuctionInfo, state: 'collected' };
+    }
+
+    const auctionEndDate = new Date(auctionData.end * 1000);
+    const auctionStartDate = new Date(auctionEndDate.getTime() - auctionDuration * 1000);
+    const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
+    const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
+    const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
+
+    return {
+        ...baseAuctionInfo,
+        earliestEndDate,
+        bidAmountMKR: new BigNumber(auctionData.bid._hex).div(WAD),
+        receiveAmountDAI: new BigNumber(auctionData.lot._hex).div(RAD),
+        receiverAddress: auctionData.guy,
+        auctionEndDate,
+        bidEndDate,
+        state,
+        fetchedAt,
+        auctionStartDate,
+    };
+};
+
+const getActiveSurplusAuctionOrUndefined = async (network: string, auctionIndex: number) => {
+    const auction = await fetchSurplusAuctionByIndex(network, auctionIndex);
+    if (auction.state === 'collected') {
+        return;
+    }
+    return auction;
+};
+
 export const fetchActiveSurplusAuctions = async function (network: string): Promise<SurplusAuction[]> {
     const contract = await getContract(network, CONTRACT);
     const auctionLastIndex = await getCompensationAuctionLastIndex(contract);
@@ -64,9 +159,39 @@ export const collectSurplusAuction = async function (network: string, auctionInd
     await executeTransaction(network, CONTRACT, 'deal', [auctionIndex], { notifier });
 };
 
-export const getNextMinimumBid = async (network: string, surplusAuction: SurplusAuctionActive): Promise<BigNumber> => {
-    const increaseCoefficient = await getCompensationAuctionBidIncreaseCoefficient(network, CONTRACT);
-    return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
+const getSurplusTransactionFees = async function (network: string): Promise<CompensationAuctionTransactionFees> {
+    const gasPrice = await getGasPriceForUI(network);
+    const exchangeRate = await getMarketPrice(network, 'ETH');
+
+    const restartTransactionFeeEth = gasPrice.multipliedBy(80563);
+    const allowanceTransactionFeeEth = gasPrice.multipliedBy(48373);
+    const bidTransactionFeeEth = gasPrice.multipliedBy(85181);
+    const collectTransactionFeeEth = gasPrice.multipliedBy(94114);
+    const authTransactionFeeEth = gasPrice.multipliedBy(48356);
+    const combinedBidFeesEth = bidTransactionFeeEth.plus(collectTransactionFeeEth);
+
+    return {
+        restartTransactionFeeEth,
+        restartTransactionFeeDai: restartTransactionFeeEth.multipliedBy(exchangeRate),
+        allowanceTransactionFeeEth,
+        allowanceTransactionFeeDai: allowanceTransactionFeeEth.multipliedBy(exchangeRate),
+        bidTransactionFeeEth,
+        bidTransactionFeeDai: bidTransactionFeeEth.multipliedBy(exchangeRate),
+        collectTransactionFeeEth,
+        collectTransactionFeeDai: collectTransactionFeeEth.multipliedBy(exchangeRate),
+        authTransactionFeeEth,
+        authTransactionFeeDai: authTransactionFeeEth.multipliedBy(exchangeRate),
+        combinedBidFeesEth,
+        combinedBidFeesDai: combinedBidFeesEth.multipliedBy(exchangeRate),
+    };
+};
+
+const getMarketPriceMkr = async function (network: string, bidAmountMKR: BigNumber): Promise<BigNumber> {
+    try {
+        return new BigNumber(1).div((await convertMkrToDai(network, bidAmountMKR)).div(bidAmountMKR));
+    } catch (error) {
+        return new BigNumber(NaN);
+    }
 };
 
 export const enrichSurplusAuction = async (

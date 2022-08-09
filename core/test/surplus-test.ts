@@ -5,6 +5,7 @@ import {
     collectSurplusAuction,
     enrichSurplusAuction,
     fetchActiveSurplusAuctions,
+    fetchSurplusAuctionByIndex,
     getNextMinimumBid,
     restartSurplusAuction,
 } from '../src/surplus';
@@ -42,8 +43,11 @@ describe('Surplus Auction', () => {
     it('fetches active auctions', async () => {
         const auctions = await fetchActiveSurplusAuctions('custom');
         expect(auctions.length).to.equal(5);
-        expect(auctions[0].id).to.equal(2328);
-        expect(auctions[0].state).to.equal('have-bids');
+        const auction = auctions[0] as SurplusAuctionActive;
+        expect(auction.id).to.equal(2328);
+        expect(auction.state).to.equal('have-bids');
+        expect(auction.auctionStartDate.toISOString()).to.equal('2022-01-26T01:31:58.000Z');
+        expect(auction.auctionStartDate.getTime()).to.be.lessThan(auction.auctionEndDate.getTime());
     });
     it('enriches auctions with market prices', async () => {
         const network = 'custom';

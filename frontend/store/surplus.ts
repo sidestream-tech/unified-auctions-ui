@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import type {
+    CompensationAuctionActionStates,
     SurplusAuction,
-    SurplusAuctionActionStates,
     SurplusAuctionCollected,
     SurplusAuctionTransaction,
 } from 'auctions-core/src/types';
@@ -32,7 +32,7 @@ const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
 
 interface State {
     auctionStorage: Record<string, SurplusAuctionTransaction>;
-    auctionStates: Record<number, SurplusAuctionActionStates>;
+    auctionStates: Record<number, CompensationAuctionActionStates>;
     areAuctionsFetching: boolean;
     isAuthorizationLoading: boolean;
     error: string | null;
@@ -121,7 +121,10 @@ export const mutations = {
     setAuthorizationLoading(state: State, isLoading: boolean) {
         state.isAuthorizationLoading = isLoading;
     },
-    setAuctionState(state: State, { auctionId, value }: { auctionId: number; value: SurplusAuctionActionStates }) {
+    setAuctionState(
+        state: State,
+        { auctionId, value }: { auctionId: number; value: CompensationAuctionActionStates }
+    ) {
         Vue.set(state.auctionStates, auctionId, value);
     },
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
