@@ -2,7 +2,6 @@ import Vue from 'vue';
 import type {
     DebtAuction,
     DebtAuctionActionStates,
-    DebtAuctionCollected,
     DebtAuctionTransaction,
 } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
