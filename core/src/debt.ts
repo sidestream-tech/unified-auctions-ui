@@ -25,8 +25,8 @@ export const getNextMaximumMkrReceived = async (
     network: string,
     debtAuction: DebtAuctionActive
 ): Promise<BigNumber> => {
-    const increaseCoefficient = await getDebtAuctionBidIncreaseCoefficient(network);
-    return debtAuction.receiveAmountMKR.dividedBy(increaseCoefficient);
+    const decreaseCoefficient = await getDebtAuctionBidDecreaseCoefficient(network);
+    return debtAuction.receiveAmountMKR.dividedBy(decreaseCoefficient);
 };
 
 export const fetchActiveDebtAuctions = async function (network: string): Promise<DebtAuctionActive[]> {
@@ -119,7 +119,7 @@ const _getDebtAuctionBidIncreaseCoefficient = async (
     return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
 
-export const getDebtAuctionBidIncreaseCoefficient = memoizee(_getDebtAuctionBidIncreaseCoefficient, {
+export const getDebtAuctionBidDecreaseCoefficient = memoizee(_getDebtAuctionBidIncreaseCoefficient, {
     promise: true,
     length: 3,
 });
