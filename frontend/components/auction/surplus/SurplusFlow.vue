@@ -70,7 +70,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { SurplusAuctionActionStates, SurplusAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
+import { CompensationAuctionActionStates, SurplusAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import SurplusAuction from '~/components/auction/surplus/SurplusAuction.vue';
 import SurplusAuctionTransactionFlow from '~/components/auction/surplus/SurplusAuctionTransactionFlow.vue';
@@ -144,7 +144,7 @@ export default Vue.extend({
             default: () => ({}),
         },
         auctionActionState: {
-            type: Object as Vue.PropType<string, SurplusAuctionActionStates>,
+            type: Object as Vue.PropType<string, CompensationAuctionActionStates>,
             default: () => ({}),
         },
         lastUpdated: {

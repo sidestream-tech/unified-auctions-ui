@@ -88,7 +88,7 @@ import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
-import { SurplusAuctionStates, SurplusAuctionActionStates } from 'auctions-core/src/types';
+import { SurplusAuctionStates, CompensationAuctionActionStates } from 'auctions-core/src/types';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import WalletMKRBalanceCheckPanel from '~/components/panels/WalletMKRBalanceCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
@@ -116,7 +116,7 @@ export default Vue.extend({
             required: true,
         },
         auctionActionState: {
-            type: String as Vue.PropType<SurplusAuctionActionStates>,
+            type: String as Vue.PropType<CompensationAuctionActionStates>,
             default: null,
         },
         walletAddress: {
