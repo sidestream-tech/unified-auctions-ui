@@ -201,17 +201,9 @@ export const getActiveDebtAuctionOrUndefined = async (network: string, auctionIn
     return auction;
 };
 
-export const getMarketPriceMkr = async function (network: string, mkrAmount: BigNumber): Promise<BigNumber> {
-    try {
-        return new BigNumber(1).div((await convertMkrToDai(network, mkrAmount)).div(mkrAmount));
-    } catch (error) {
-        return new BigNumber(NaN);
-    }
-};
-
 export const getMarketPriceDaiToMkr = async function (network: string, mkrAmount: BigNumber): Promise<BigNumber> {
     try {
-        return (await convertMkrToDai(network, mkrAmount)).div(mkrAmount);
+        return new BigNumber(1).div((await convertMkrToDai(network, mkrAmount)).div(mkrAmount));
     } catch (error) {
         return new BigNumber(NaN);
     }
