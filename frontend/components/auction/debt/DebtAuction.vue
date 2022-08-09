@@ -40,13 +40,13 @@
                         <tr>
                             <td>Auction Fixed Bid</td>
                             <td>
-                                <format-currency :value="auction.receiveAmountDAI" currency="DAI" />
+                                <format-currency :value="auction.receiveAmountMKR" currency="DAI" />
                             </td>
                         </tr>
                         <tr>
                             <td>Current Compensation</td>
                             <td v-if="withBids">
-                                <format-currency :value="auction.bidAmountMKR" currency="MKR" />
+                                <format-currency :value="auction.bidAmountDai" currency="MKR" />
                             </td>
                             <td v-else>
                                 <span class="opacity-50">No bids yet</span>
