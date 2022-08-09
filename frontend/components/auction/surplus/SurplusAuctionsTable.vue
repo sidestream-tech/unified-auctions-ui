@@ -76,7 +76,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
-import { SurplusAuction, SurplusAuctionTransaction } from 'auctions-core/src/types';
+import { SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { compareAsc } from 'date-fns';
 import Loading from '~/components/common/other/Loading.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
@@ -225,7 +225,7 @@ export default Vue.extend({
                     dataIndex: 'state',
                     scopedSlots: { customRender: 'state' },
                     filters: statesFilters,
-                    onFilter: (selectedState: string, auction: SurplusAuction) => {
+                    onFilter: (selectedState: string, auction: SurplusAuctionTransaction) => {
                         return auction.state.includes(selectedState);
                     },
                     sorter: compareBy('earliestEndDate', (a: Date, b: Date) => compareAsc(a, b)),
