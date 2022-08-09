@@ -50,7 +50,7 @@ export const restartDebtAuction = async function (
     auctionIndex: number,
     notifier?: Notifier
 ): Promise<void> {
-    await executeTransaction(network, 'MCD_FLOP', 'tick', [auctionIndex], { notifier });
+    await executeTransaction(network, CONTRACT, 'tick', [auctionIndex], { notifier });
 };
 
 export const bidToDebtAuction = async function (
@@ -75,7 +75,7 @@ export const collectDebtAuction = async (network: string, auctionIndex: number, 
     if (!auction || auction.state !== 'ready-for-collection') {
         throw new Error('Did not find the auction to collect.');
     }
-    await executeTransaction(network, 'MCD_FLOP', 'deal', [auctionIndex], { notifier });
+    await executeTransaction(network, CONTRACT, 'deal', [auctionIndex], { notifier });
 };
 export const enrichDebtAuction = async (
     network: string,
@@ -112,7 +112,7 @@ export const getDebtAuctionLastIndex = async (contract: Contract): Promise<numbe
 };
 
 const _getDebtAuctionBidIncreaseCoefficient = async (network: string): Promise<BigNumber> => {
-    const contract = await getContract(network, 'MCD_FLOP');
+    const contract = await getContract(network, CONTRACT);
     const auctionsQuantityBinary = await contract.beg();
     return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
@@ -191,7 +191,7 @@ export const fetchDebtAuctionByIndex = async (
 };
 
 export const getActiveDebtAuctionOrUndefined = async (network: string, auctionIndex: number) => {
-    const auction = await fetchDebtAuctionByIndex(network, auctionIndex, 'MCD_FLOP');
+    const auction = await fetchDebtAuctionByIndex(network, auctionIndex);
     if (auction.state === 'collected') {
         return;
     }
