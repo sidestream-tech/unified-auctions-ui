@@ -1,6 +1,6 @@
 # Unified Auctions Notification Service
 
-## What is "Unified Auctions Notification Service?"?
+## What is "Unified Auctions Notification Service"?
 
 "Unified Auctions Notification Service" is a server-side application with the purpose of updating users to a specific
 blockchain contract. Whenever a change is made to this contract the user will be informed via email or other methods.
