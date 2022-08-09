@@ -26,7 +26,7 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
         };
     }
 
-    const receiveAmountMKR = new BigNumber(parseFloat(faker.finance.amount()));
+    const bidAmountDai = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
     const auctionEndDate = generatedState === 'ready-for-collection' ? faker.date.recent() : faker.date.soon();
     const bidEndDate = generatedState === 'have-bids' ? faker.date.recent() : undefined;
@@ -35,8 +35,8 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
             ? bidEndDate
             : auctionEndDate
         : auctionEndDate;
-    const bidAmountDai = new BigNumber(
-        generatedState === 'just-started' ? 0 : faker.datatype.number({ min: 0.0001, max: 1, precision: 0.0000001 })
+    const receiveAmountMKR = new BigNumber(
+        generatedState === 'just-started' ? 0 : faker.datatype.number({ min: 100, max: 200 })
     );
 
     return {

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <TextBlock title="Surplus transaction" />
+        <TextBlock title="Debt transaction" />
         <Alert
             v-if="auction.state === 'requires-restart'"
             message="This auction is inactive and must be restarted"
@@ -16,7 +16,7 @@
             message="This auction is finished and has been collected"
             type="error"
         />
-        <SurplusAuctionBidTransactionTable
+        <DebtAuctionBidTransactionTable
             class="mt-4 mb-6"
             :auction="auction"
             @inputBidAmount="inputBidAmount = $event"
@@ -30,32 +30,12 @@
                 @connectWallet="$emit('connectWallet')"
                 @disconnectWallet="$emit('disconnectWallet')"
             />
-            <WalletMKRBalanceCheckPanel
-                :wallet-m-k-r="walletMKR"
-                :required-m-k-r="inputBidAmount || auction.nextMinimumBid"
-                :network="network"
-                :token-address="tokenAddress"
-                :disabled="!isWalletConnected || !isActive || isHighestBidder"
-                :is-loading="isRefreshingWallet"
-                :is-explanations-shown="isExplanationsShown"
-                :is-correct.sync="isWalletMKRCheckPassed"
-                @refresh="$emit('refreshWallet')"
-            />
-            <AllowanceAmountCheckPanel
-                :disabled="!isWalletConnected || !isActive || isHighestBidder"
-                :allowance-amount="allowanceMKR"
-                :desired-amount="inputBidAmount || auction.nextMinimumBid"
-                currency="MKR"
-                :is-loading="isSettingAllowance"
-                :is-correct.sync="isAllowanceAmountCheckPassed"
-                @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
-            />
-            <HighestBidCheckPanel
+            <HighestDebtBidCheckPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
                 :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isActive"
                 :is-loading="auctionActionState === 'bidding'"
-                :bid-amount="inputBidAmount || auction.nextMinimumBid"
+                :bid-amount="inputBidAmount || auction.nextMaximumLotReceived"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isHighestBidder"
                 @bid="$emit('bid', $event)"
@@ -64,55 +44,36 @@
                 :auction="auction"
                 :wallet-address="walletAddress"
                 :is-collecting="auctionActionState === 'collecting'"
+                currency="MKR"
                 @collect="$emit('collect')"
-            />
-            <WithdrawDAIPanel
-                :is-explanations-shown="isExplanationsShown"
-                :wallet-address="walletAddress"
-                :is-authorizing="isAuthorizing"
-                :is-wallet-authorized="isWalletAuthorized"
-                :is-refreshing="isRefreshingWallet"
-                :is-withdrawing="isWithdrawing"
-                :dai-vat-balance="daiVatBalance"
-                :auction-state="auctionState"
-                @refreshWallet="$emit('refreshWallet')"
-                @authorizeWallet="$emit('authorizeWallet')"
-                @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
             />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import type { SurplusAuction } from 'auctions-core/src/types';
+import type { DebtAuction, SurplusAuctionStates, CompensationAuctionActionStates } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
-import { SurplusAuctionStates, CompensationAuctionActionStates } from 'auctions-core/src/types';
+import HighestDebtBidCheckPanel from '../../panels/HighestDebtBidCheckPanel.vue';
+import DebtAuctionBidTransactionTable from './DebtAuctionBidTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
-import WalletMKRBalanceCheckPanel from '~/components/panels/WalletMKRBalanceCheckPanel.vue';
-import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
-import HighestBidCheckPanel from '~/components/panels/HighestBidCheckPanel.vue';
-import WithdrawDAIPanel from '~/components/panels/WithdrawDAIPanel.vue';
-import SurplusAuctionBidTransactionTable from '~/components/auction/surplus/SurplusAuctionBidTransactionTable.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import CollectAuctionPanel from '~/components/panels/CollectAuctionPanel.vue';
 
 export default Vue.extend({
     components: {
         CollectAuctionPanel,
-        AllowanceAmountCheckPanel,
-        WalletMKRBalanceCheckPanel,
-        HighestBidCheckPanel,
+        HighestDebtBidCheckPanel,
+        DebtAuctionBidTransactionTable,
         TextBlock,
         Alert,
-        SurplusAuctionBidTransactionTable,
         WalletConnectionCheckPanel,
-        WithdrawDAIPanel,
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<SurplusAuction>,
+            type: Object as Vue.PropType<DebtAuction>,
             required: true,
         },
         auctionActionState: {
@@ -123,12 +84,20 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        walletMKR: {
+        walletDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        allowanceMKR: {
+        walletVatDai: {
             type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        allowanceDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        tokenAddress: {
+            type: String,
             default: undefined,
         },
         isConnectingWallet: {
@@ -142,10 +111,6 @@ export default Vue.extend({
         isSettingAllowance: {
             type: Boolean,
             default: false,
-        },
-        daiVatBalance: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
         },
         isAuthorizing: {
             type: Boolean,
@@ -162,10 +127,6 @@ export default Vue.extend({
         isFetching: {
             type: Boolean,
             default: false,
-        },
-        tokenAddress: {
-            type: String,
-            default: undefined,
         },
         network: {
             type: String,
