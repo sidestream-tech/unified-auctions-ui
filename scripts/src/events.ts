@@ -6,17 +6,11 @@ import BigNumber from 'auctions-core/dist/src/bignumber';
 import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from 'auctions-core/dist/src/constants/UNITS';
 import { getAllCollateralTypes } from 'auctions-core/dist/src/constants/COLLATERALS';
 import cliProgress from 'cli-progress';
-import { EventData } from './types';
+import { CollateralStats, EventData } from './types';
 import { getCalleeNameByAddress } from 'auctions-core/dist/src/constants/CALLEES';
 import { decodeCalleeData } from 'auctions-core/dist/src/calleeFunctions';
-import { DEBUG_MODE } from './variables';
-
-const trimError = function (errorMessage: string | undefined): string {
-    if (typeof errorMessage !== 'string') {
-        return '';
-    }
-    return errorMessage.split('(', 2)[0];
-};
+import { ARROW_EMOJI, DEBUG_MODE } from './variables';
+import colors from 'ansi-colors';
 
 const formatTransactionData = async function (
     network: string,
@@ -29,14 +23,16 @@ const formatTransactionData = async function (
         collateralType,
         auctionId: undefined,
         transactionDate: undefined,
+        minProfit: undefined,
         blockNumber: transaction.blockNumber,
         hash: transaction.hash,
         from: transaction.from,
+        profitAddress: undefined,
         takenAmount: undefined,
         maxAcceptablePrice: '',
         userOrCallee: '',
-        calleeData: '',
-        calleeName: '',
+        calleeData: undefined,
+        calleeName: undefined,
         error: '',
     };
 
@@ -61,9 +57,9 @@ const formatTransactionData = async function (
         takeParameters = contract.interface.decodeFunctionData('take', transaction.data);
     } catch (error) {
         if (DEBUG_MODE) {
-            console.error(trimError(error));
+            console.error(error);
         }
-        row.error = trimError(error.message);
+        row.error = error as string;
         return row;
     }
 
@@ -71,16 +67,24 @@ const formatTransactionData = async function (
     try {
         row.calleeName = getCalleeNameByAddress(network, takeParameters.who);
     } catch (error) {
-        row.error = trimError(error.message);
+        row.error = error as string;
     }
 
     // decode callee data
-    try {
-        row.calleeData = decodeCalleeData(collateralType, takeParameters.data).toString();
-    } catch (error) {
-        if (DEBUG_MODE) {
-            console.error(error);
+    if (takeParameters.data && row.calleeName) {
+        try {
+            const calleeData = decodeCalleeData(collateralType, takeParameters.data);
+            if (calleeData) {
+                row.minProfit = calleeData.minProfit.toNumber();
+                row.profitAddress = calleeData.profitAddress;
+            }
+        } catch (error) {
+            if (DEBUG_MODE) {
+                console.error(error);
+            }
+            row.calleeData = takeParameters.data;
         }
+    } else {
         row.calleeData = takeParameters.data;
     }
 
@@ -98,7 +102,7 @@ const getTakeEventsByCollateralType = async function (
     network: string,
     collateralType: string,
     dateLimit?: Date
-): Promise<any> {
+): Promise<{ rows: EventData[]; totalAuctions: number; totalTakenViaSAS: number }> {
     const provider = await getProvider(network);
 
     const contractName = getClipperNameByCollateralType(collateralType);
@@ -110,37 +114,76 @@ const getTakeEventsByCollateralType = async function (
     const transactions = await Promise.all(allTakeEvents.map(e => provider.getTransaction(e.transactionHash)));
 
     const rows: any = [];
+    let totalTakenViaSAS = 0;
 
     for (const transaction of transactions) {
         const formattedRow = await formatTransactionData(network, collateralType, transaction, contract, dateLimit);
         if (formattedRow) {
+            if (formattedRow.minProfit && formattedRow.minProfit === 1) {
+                totalTakenViaSAS++;
+            }
             rows.push(formattedRow);
         }
     }
-    return rows;
+    return {
+        rows,
+        totalAuctions: transactions.length,
+        totalTakenViaSAS,
+    };
 };
 
 export const getEventDataFromCollaterals = async function (
     network: string,
     progressBar: cliProgress.SingleBar,
     dateLimit?: Date
-): Promise<{ eventData: EventData[]; errors: string[] }> {
+): Promise<{ eventData: EventData[]; errors: string[]; collateralStats: Record<string, CollateralStats> }> {
     const collateralTypes = getAllCollateralTypes();
+
     let allRows: EventData[] = [];
     let errors: string[] = [];
+    const collateralStats: Record<string, CollateralStats> = {};
 
     progressBar.start(collateralTypes.length, 0);
 
     for (const collateralType of collateralTypes) {
         try {
-            const rows = await getTakeEventsByCollateralType(network, collateralType, dateLimit);
-            allRows = [...allRows, ...rows];
+            const takeEvents = await getTakeEventsByCollateralType(network, collateralType, dateLimit);
+            allRows = [...allRows, ...takeEvents.rows];
+            collateralStats[collateralType] = {
+                totalAuctions: takeEvents.totalAuctions,
+                totalTakenViaSAS: takeEvents.totalTakenViaSAS,
+            };
         } catch (error) {
-            errors = [...errors, `[${collateralType}] ${error.message}`];
+            errors = [...errors, `[${collateralType}] ${error}`];
         } finally {
             progressBar.update(collateralTypes.indexOf(collateralType) + 1);
         }
     }
 
-    return { eventData: allRows, errors: errors };
+    return { eventData: allRows, errors: errors, collateralStats };
+};
+
+export const generateCollateralStatsMessage = function (
+    collateralStats: Record<string, CollateralStats>,
+    startDate?: Date
+) {
+    const totalAuctions = Object.values(collateralStats)
+        .map(element => element.totalAuctions)
+        .reduce((a, b) => a + b, 0);
+    const totalAuctionsTakenViaSAS = Object.values(collateralStats)
+        .map(element => element.totalTakenViaSAS)
+        .reduce((a, b) => a + b, 0);
+    const sortedCollaterals = Object.keys(collateralStats).sort(function (a, b) {
+        return collateralStats[b].totalAuctions - collateralStats[a].totalAuctions;
+    });
+
+    return `\n\n${ARROW_EMOJI}Since ${
+        startDate ? startDate.toDateString() : 'the beginning'
+    } there have been a total of ${colors.bold(totalAuctions.toFixed())} auction${
+        totalAuctions === 1 ? '' : 's'
+    }, ${colors.bold(totalAuctionsTakenViaSAS.toFixed())} of which ${
+        totalAuctionsTakenViaSAS === 1 ? 'was' : 'were'
+    } taken through a SAS product.\n  The three most used collaterals were ${sortedCollaterals[0]}, ${
+        sortedCollaterals[1]
+    } and ${sortedCollaterals[2]}.`;
 };

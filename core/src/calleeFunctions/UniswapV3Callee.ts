@@ -1,4 +1,4 @@
-import type { CalleeFunctions, CollateralConfig } from '../types';
+import type { CalleeFunctions, CollateralConfig, FormattedCalleeData } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
@@ -26,8 +26,17 @@ const getCalleeData = async function (
     ]);
 };
 
-const decodeCalleeData = function (calleeData: string) {
-    return ethers.utils.defaultAbiCoder.decode(TYPES_ARRAY, calleeData);
+const decodeCalleeData = function (calleeData: string): FormattedCalleeData | undefined {
+    const decodedData = ethers.utils.defaultAbiCoder.decode(TYPES_ARRAY, calleeData);
+
+    if (!decodedData) {
+        return;
+    }
+    return {
+        profitAddress: decodedData[0],
+        joinAdapterAddress: decodedData[1],
+        minProfit: decodedData[2],
+    };
 };
 
 const getMarketPrice = async function (

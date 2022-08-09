@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import colors from 'ansi-colors';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/dist/src/rpc';
-import { getEventDataFromCollaterals } from './events';
+import { generateCollateralStatsMessage, getEventDataFromCollaterals } from './events';
 import { setupProgressBar } from './progress';
 import { createAndExportSheet } from './xlsx';
 import { setupPrompts } from './prompt';
@@ -19,7 +19,11 @@ import { ARROW_EMOJI, DEBUG_MODE, ERROR_EMOJI, NETWORK_EMOJI, RPC_URL } from './
     const { dateLimit, fileName } = await setupPrompts();
     const progressBar = setupProgressBar(true);
 
-    const { eventData, errors } = await getEventDataFromCollaterals(defaultNetwork, progressBar, dateLimit);
+    const { eventData, errors, collateralStats } = await getEventDataFromCollaterals(
+        defaultNetwork,
+        progressBar,
+        dateLimit
+    );
     progressBar.stop();
     if (errors) {
         console.info(
@@ -31,6 +35,7 @@ import { ARROW_EMOJI, DEBUG_MODE, ERROR_EMOJI, NETWORK_EMOJI, RPC_URL } from './
             console.error(`${colors.red(ARROW_EMOJI + error)}`);
         });
     }
+    console.info(generateCollateralStatsMessage(collateralStats, dateLimit));
     createAndExportSheet(eventData, fileName);
     process.exit(1);
 })();
