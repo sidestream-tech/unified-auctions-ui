@@ -1,16 +1,16 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import DebtAuction from './DebtAuction';
-import { generateFakeSurplusAuctionTransaction } from '~/helpers/generateFakeSurplusAuction';
+import { generateFakeDebtAuctionTransaction } from '~/helpers/generateFakeDebtAuction';
 
-const fakeSurplusAuctionWithBids = generateFakeSurplusAuctionTransaction('have-bids');
+const fakeAuctionWithBids = generateFakeDebtAuctionTransaction('have-bids');
 const common = {
     components: {
         DebtAuction,
     },
     data() {
         return {
-            auction: fakeSurplusAuctionWithBids,
+            auction: fakeAuctionWithBids,
         };
     },
     methods: {
@@ -23,7 +23,7 @@ storiesOf('Auction/Debt/DebtAuction', module)
         ...common,
         data() {
             return {
-                auction: generateFakeSurplusAuctionTransaction('just-started'),
+                auction: generateFakeDebtAuctionTransaction('just-started'),
             };
         },
         template: `<DebtAuction :auction="auction" :auctionId="1" @bid="bid" />`,
@@ -36,7 +36,7 @@ storiesOf('Auction/Debt/DebtAuction', module)
         ...common,
         data() {
             return {
-                auction: generateFakeSurplusAuctionTransaction('requires-restart'),
+                auction: generateFakeDebtAuctionTransaction('requires-restart'),
             };
         },
         template: `<DebtAuction :auction="auction" :auctionId="1" @bid="bid" />`,
@@ -45,7 +45,7 @@ storiesOf('Auction/Debt/DebtAuction', module)
         ...common,
         data() {
             return {
-                auction: generateFakeSurplusAuctionTransaction('ready-for-collection'),
+                auction: generateFakeDebtAuctionTransaction('ready-for-collection'),
             };
         },
         template: `<DebtAuction :auction="auction" :auctionId="1" @bid="bid" />`,
@@ -54,7 +54,7 @@ storiesOf('Auction/Debt/DebtAuction', module)
         ...common,
         data() {
             return {
-                auction: generateFakeSurplusAuctionTransaction('collected'),
+                auction: generateFakeDebtAuctionTransaction('collected'),
             };
         },
         template: `<DebtAuction :auction="auction" :auctionId="1" error="This auction is finished" />`,

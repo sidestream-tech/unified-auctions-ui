@@ -69,10 +69,10 @@
                                     <format-currency
                                         :value="auction.marketUnitPrice"
                                         :decimal-places="6"
-                                        currency="MKR"
+                                        currency="DAI"
                                     />
                                     per
-                                    <format-currency currency="DAI" />
+                                    <format-currency currency="MKR" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
@@ -146,7 +146,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import type { SurplusAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
+import type { CompensationAuctionActionStates, DebtAuctionTransaction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
@@ -158,7 +158,7 @@ import LoadingIcon from '~/assets/icons/loading.svg';
 import Loading from '~/components/common/other/Loading.vue';
 
 export default Vue.extend({
-    name: 'SurplusAuction',
+    name: 'DebtAuction',
     components: {
         AuctionRestartPanel,
         FormatCurrency,
@@ -173,7 +173,7 @@ export default Vue.extend({
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<SurplusAuctionTransaction>,
+            type: Object as Vue.PropType<DebtAuctionTransaction>,
             default: null,
         },
         auctionId: {
@@ -181,7 +181,7 @@ export default Vue.extend({
             default: null,
         },
         auctionActionState: {
-            type: String as Vue.PropType<SurplusAuctionActionStates>,
+            type: String as Vue.PropType<CompensationAuctionActionStates>,
             default: null,
         },
         error: {
@@ -242,7 +242,7 @@ export default Vue.extend({
             return this.auction.state === 'requires-restart';
         },
         withBids(): boolean {
-            return this.auction.bidAmountMKR && !this.auction.bidAmountMKR.isEqualTo(0);
+            return this.auction.bidAmountDai && !this.auction.bidAmountDai.isEqualTo(0);
         },
     },
 });
