@@ -225,7 +225,7 @@ export default Vue.extend({
                     dataIndex: 'state',
                     scopedSlots: { customRender: 'state' },
                     filters: statesFilters,
-                    onFilter: (selectedState: string, auction: SurplusAuction) => {
+                    onFilter: (selectedState: string, auction: SurplusAuctionTransaction) => {
                         return auction.state.includes(selectedState);
                     },
                     sorter: compareBy('earliestEndDate', (a: Date, b: Date) => compareAsc(a, b)),
@@ -234,7 +234,6 @@ export default Vue.extend({
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
                     scopedSlots: { customRender: 'action' },
-                    width: '20%',
                 },
             ];
         },
