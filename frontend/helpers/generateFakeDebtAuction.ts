@@ -26,7 +26,7 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
         };
     }
 
-    const receiveAmountMKR = new BigNumber(parseFloat(faker.finance.amount()));
+    const bidAmountDai = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
     const auctionEndDate = generatedState === 'ready-for-collection' ? faker.date.recent() : faker.date.soon();
     const bidEndDate = generatedState === 'have-bids' ? faker.date.recent() : undefined;
@@ -35,8 +35,8 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
             ? bidEndDate
             : auctionEndDate
         : auctionEndDate;
-    const bidAmountDai = new BigNumber(
-        generatedState === 'just-started' ? 0 : faker.datatype.number({ min: 0.0001, max: 1, precision: 0.0000001 })
+    const receiveAmountMKR = new BigNumber(
+        generatedState === 'just-started' ? 0 : faker.datatype.number({ min: 100, max: 200 })
     );
 
     return {
@@ -54,26 +54,28 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
 export const generateFakeDebtAuctionTransaction = function (
     state?: DebtAuctionStates
 ): DebtAuctionCollected | DebtAuctionTransaction {
-    const surplusAuction = generateFakeDebtAuction(state);
+    const auction = generateFakeDebtAuction(state);
 
-    if (surplusAuction.state === 'collected') {
-        return surplusAuction;
+    if (auction.state === 'collected') {
+        return auction;
     }
 
     const transactionFees = generateFakeCompensationTransactionFees();
 
     // generate fake market data
-    const approximateUnitPrice = surplusAuction.bidAmountDai.dividedBy(surplusAuction.receiveAmountMKR);
+    const approximateUnitPrice = auction.receiveAmountMKR.dividedBy(auction.bidAmountDai);
     const marketUnitPriceToUnitPriceRatio = new BigNumber(
         faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 })
     );
-    const marketUnitPrice = approximateUnitPrice.multipliedBy(new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio));
+    const marketUnitPrice =
+        approximateUnitPrice &&
+        approximateUnitPrice.multipliedBy(new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio));
 
     const increaseCoefficient = faker.datatype.number({ min: 1, max: 1.5, precision: 0.01 });
-    const nextMaximumLotReceived = surplusAuction.receiveAmountMKR.dividedBy(increaseCoefficient);
+    const nextMaximumLotReceived = auction.receiveAmountMKR.dividedBy(increaseCoefficient);
 
     return {
-        ...surplusAuction,
+        ...auction,
         ...transactionFees,
         marketUnitPrice,
         marketUnitPriceToUnitPriceRatio,
