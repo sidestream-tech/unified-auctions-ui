@@ -19,7 +19,7 @@ import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
 import { getGasPriceForUI } from './gas';
 import { getMarketPrice } from './calleeFunctions';
 
-const CONTRACT = 'MCD_FLOP'
+const CONTRACT = 'MCD_FLOP';
 
 export const getNextMaximumMkrReceived = async (
     network: string,
@@ -111,9 +111,7 @@ export const getDebtAuctionLastIndex = async (contract: Contract): Promise<numbe
     return new BigNumber(auctionsQuantityBinary._hex).toNumber();
 };
 
-const _getDebtAuctionBidIncreaseCoefficient = async (
-    network: string,
-): Promise<BigNumber> => {
+const _getDebtAuctionBidIncreaseCoefficient = async (network: string): Promise<BigNumber> => {
     const contract = await getContract(network, 'MCD_FLOP');
     const auctionsQuantityBinary = await contract.beg();
     return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
@@ -151,7 +149,7 @@ const getDebtContractAuctionDuration = memoizee(_getContractAuctionDuration, {
 
 export const fetchDebtAuctionByIndex = async (
     network: string,
-    auctionIndex: number,
+    auctionIndex: number
 ): Promise<SurplusAuction | DebtAuction> => {
     const contract = await getContract(network, CONTRACT);
     const auctionData = await contract.bids(auctionIndex);
