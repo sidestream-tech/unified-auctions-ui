@@ -10,6 +10,7 @@
     "src"
   ],
   "scripts": {
+    "preinstall": "cd ../core && npm i && npm run build",
     "dev": "tsdx watch --onSuccess 'npm run start'",
     "build": "tsdx build",
     "start": "node .",
@@ -27,7 +28,17 @@
       "pre-commit": "tsdx lint"
     }
   },
+  "dependencies": {
+    "auctions-core": "file:../core",
+    "cli-progress": "^3.11.2",
+    "dotenv": "^16.0.1",
+    "ethers": "^5.6.9",
+    "prompts": "^2.4.2",
+    "xlsx": "^0.18.5"
+  },
   "devDependencies": {
+    "@types/cli-progress": "^3.11.0",
+    "@types/prompts": "^2.0.14",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "eslint": "^7.8.0",
