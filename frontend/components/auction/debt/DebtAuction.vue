@@ -15,7 +15,7 @@
                     :is-explanations-shown="isExplanationsShown"
                     :is-restarting="auctionActionState === 'restarting'"
                     :is-connecting="isConnecting"
-                    auction-type="surplus"
+                    auction-type="compensation"
                     @restart="$emit('restart', auctionId)"
                     @connectWallet="$emit('connect')"
                     @disconnectWallet="$emit('disconnect')"
