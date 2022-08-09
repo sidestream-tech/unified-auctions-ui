@@ -212,6 +212,7 @@ export const getDebtAuctionTransactionFees = async function (
     const gasPrice = await getGasPriceForUI(network);
     const exchangeRate = await getMarketPrice(network, 'ETH');
 
+    // TODO: Adjust the gas prices when the simulation is available.
     const restartTransactionFeeEth = gasPrice.multipliedBy(80563);
     const allowanceTransactionFeeEth = gasPrice.multipliedBy(48373);
     const bidTransactionFeeEth = gasPrice.multipliedBy(85181);
