@@ -2,8 +2,8 @@
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title> {{ currentStateAndTitle.title }} </template>
         <TextBlock v-if="isExplanationsShown">
-            In order to win the auction, participants can bid on the auction. In case someone else puts the bid with
-            the lowest amount of MKR to receive, you receive your DAI back, only loosing transaction fee.
+            In order to win the auction, participants can bid on the auction. In case someone else puts the bid with a
+            lower compensation, you receive your DAI back, only loosing the transaction fee.
         </TextBlock>
 
         <div class="flex justify-between my-3">
