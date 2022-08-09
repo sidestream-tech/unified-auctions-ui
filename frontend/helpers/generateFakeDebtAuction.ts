@@ -49,7 +49,7 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
         earliestEndDate,
         state: generatedState,
         bidAmountDai,
-        auctionStartDate
+        auctionStartDate,
     };
 };
 
