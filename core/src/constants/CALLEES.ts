@@ -41,3 +41,14 @@ export const getCalleeAddressByCollateralType = function (network: string, colla
     }
     return calleeAddress;
 };
+
+export const getCalleeNameByAddress = function (network: string, calleeAddress: string): string {
+    const networkCallees = getCalleesByNetworkType(network);
+    const result = Object.entries(networkCallees).find(([_name, address]) => {
+        return calleeAddress === address;
+    });
+    if (!result) {
+        throw new Error('Unknown callee address');
+    }
+    return result[0];
+};
