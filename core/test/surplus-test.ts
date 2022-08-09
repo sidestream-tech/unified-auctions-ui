@@ -15,7 +15,7 @@ import { createWalletFromPrivateKey } from '../src/signer';
 import { SurplusAuctionActive } from '../src/types';
 
 import BigNumber from '../src/bignumber';
-import { fetchCompensationAuctionByIndex } from '../src/compensationAuction';
+import { fetchSurplusAuctionByIndex } from '../src/surplus';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
@@ -90,7 +90,7 @@ describe('Surplus Auction', () => {
 
         await collectSurplusAuction('custom', auctionsBeforeCollection[1].id);
 
-        const auctionAfterCollection = await fetchCompensationAuctionByIndex('custom', 2327, 'MCD_FLAP');
+        const auctionAfterCollection = await fetchSurplusAuctionByIndex('custom', 2327);
         expect(auctionAfterCollection.id).to.equal(2327);
         expect(auctionAfterCollection.state).to.equal('collected');
     });
@@ -126,7 +126,7 @@ describe('Surplus Auction', () => {
         );
     });
     it('forbids fetching inexistent auctions', async () => {
-        expect(fetchCompensationAuctionByIndex('custom', 3333, 'MCD_FLAP')).to.be.revertedWith(
+        expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith(
             'No active auction exists with this id'
         );
     });
