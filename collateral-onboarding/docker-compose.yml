@@ -13,7 +13,7 @@ services:
     platform: linux/amd64
     build:
       context: ./hardhat
-    expose:
-      - 8545
+    ports:
+      - 8545:8545
     env_file: .env
 
