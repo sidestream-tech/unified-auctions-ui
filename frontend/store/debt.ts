@@ -1,9 +1,5 @@
 import Vue from 'vue';
-import type {
-    DebtAuction,
-    DebtAuctionActionStates,
-    DebtAuctionTransaction,
-} from 'auctions-core/src/types';
+import type { DebtAuction, DebtAuctionActionStates, DebtAuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
