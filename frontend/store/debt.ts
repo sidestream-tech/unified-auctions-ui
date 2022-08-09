@@ -45,7 +45,7 @@ const getInitialState = (): State => ({
 export const state = (): State => getInitialState();
 
 export const getters = {
-    auctionStorage(state: State) {
+    auctions(state: State) {
         return Object.values(state.auctionStorage);
     },
     auctionStates(state: State) {
@@ -85,7 +85,7 @@ export const mutations = {
                 id: collectedAuctionId,
                 state: 'collected',
                 fetchedAt: new Date(),
-            } as DebtAuctionCollected);
+            });
         }
     },
     addAuctionToStorage(state: State, auction: DebtAuction) {
