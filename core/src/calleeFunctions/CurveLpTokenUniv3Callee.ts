@@ -7,6 +7,8 @@ import { encodeRoute, convertCollateralToDai } from './helpers/uniswapV3';
 
 export const CHARTER_MANAGER_ADDRESS = '0x8377CD01a5834a6EaD3b7efb482f678f2092b77e';
 
+const TYPES_ARRAY = ['address', 'address', 'uint256', 'bytes', 'address', 'tuple(address,uint256)'];
+
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
@@ -19,8 +21,7 @@ const getCalleeData = async function (
     const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const typesArray = ['address', 'address', 'uint256', 'bytes', 'address', 'tuple(address,uint256)'];
-    return ethers.utils.defaultAbiCoder.encode(typesArray, [
+    return ethers.utils.defaultAbiCoder.encode(TYPES_ARRAY, [
         profitAddress,
         joinAdapterAddress,
         minProfit,
@@ -28,6 +29,10 @@ const getCalleeData = async function (
         CHARTER_MANAGER_ADDRESS,
         curveData,
     ]);
+};
+
+const decodeCalleeData = function (calleeData: string) {
+    return ethers.utils.defaultAbiCoder.decode(TYPES_ARRAY, calleeData);
 };
 
 const getMarketPrice = async function (
@@ -47,6 +52,7 @@ const getMarketPrice = async function (
 
 const UniswapV2CalleeDai: CalleeFunctions = {
     getCalleeData,
+    decodeCalleeData,
     getMarketPrice,
 };
 

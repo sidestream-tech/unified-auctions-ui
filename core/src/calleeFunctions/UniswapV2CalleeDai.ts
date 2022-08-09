@@ -4,6 +4,8 @@ import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { getUniswapRouteAddressesBySymbol, getRegularTokenExchangeRateBySymbol } from './helpers/uniswapV2';
 
+const TYPES_ARRAY = ['address', 'address', 'uint256', 'address[]'];
+
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
@@ -14,13 +16,16 @@ const getCalleeData = async function (
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const typesArray = ['address', 'address', 'uint256', 'address[]'];
-    return ethers.utils.defaultAbiCoder.encode(typesArray, [
+    return ethers.utils.defaultAbiCoder.encode(TYPES_ARRAY, [
         profitAddress,
         joinAdapterAddress,
         minProfit,
         await getUniswapRouteAddressesBySymbol(network, collateral.symbol),
     ]);
+};
+
+const decodeCalleeData = function (calleeData: string) {
+    return ethers.utils.defaultAbiCoder.decode(TYPES_ARRAY, calleeData);
 };
 
 const getMarketPrice = async function (
@@ -33,6 +38,7 @@ const getMarketPrice = async function (
 
 const UniswapV2CalleeDai: CalleeFunctions = {
     getCalleeData,
+    decodeCalleeData,
     getMarketPrice,
 };
 

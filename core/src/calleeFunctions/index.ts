@@ -24,11 +24,20 @@ export const getCalleeData = async function (
     profitAddress: string
 ): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
-    const calleeFuctions = allCalleeFunctions[collateral.exchange.callee];
-    if (!calleeFuctions) {
+    const calleeFunctions = allCalleeFunctions[collateral.exchange.callee];
+    if (!calleeFunctions) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await calleeFuctions.getCalleeData(network, collateral, profitAddress);
+    return await calleeFunctions.getCalleeData(network, collateral, profitAddress);
+};
+
+export const decodeCalleeData = function (collateralType: string, calleeData: string) {
+    const collateral = getCollateralConfigByType(collateralType);
+    const calleeFunctions = allCalleeFunctions[collateral.exchange.callee];
+    if (!calleeFunctions) {
+        throw new Error(`Unsupported collateral type "${collateralType}"`);
+    }
+    return calleeFunctions.decodeCalleeData(calleeData);
 };
 
 const _getMarketPrice = async function (
@@ -37,11 +46,11 @@ const _getMarketPrice = async function (
     amount: BigNumber = new BigNumber('1')
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
-    const calleeFuctions = allCalleeFunctions[collateral.exchange.callee];
-    if (!calleeFuctions) {
+    const calleeFunctions = allCalleeFunctions[collateral.exchange.callee];
+    if (!calleeFunctions) {
         throw new Error(`Unsupported collateral symbol "${collateralSymbol}"`);
     }
-    return await calleeFuctions.getMarketPrice(network, collateral, amount);
+    return await calleeFunctions.getMarketPrice(network, collateral, amount);
 };
 
 export const getMarketPrice = memoizee(_getMarketPrice, {

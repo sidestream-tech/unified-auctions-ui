@@ -1,4 +1,5 @@
 export const RPC_URL = process.env.RPC_URL;
+export const DEBUG_MODE = process.env.DEBUG_MODE === 'true';
 
 export const ARROW_EMOJI = '➜ ';
 export const CALENDAR_EMOJI = `📆`;

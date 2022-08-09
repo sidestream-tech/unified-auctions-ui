@@ -114,6 +114,7 @@ export type CalleeNames = keyof CalleeAddresses;
 
 export declare interface CalleeFunctions {
     getCalleeData: (network: string, collateral: CollateralConfig, profitAddress: string) => Promise<string>;
+    decodeCalleeData: (calleeData: string) => any;
     getMarketPrice: (network: string, collateral: CollateralConfig, amount: BigNumber) => Promise<BigNumber>;
 }
 
