@@ -17,5 +17,5 @@ export interface EventData {
 
 export interface CollateralStats {
     totalAuctions: number;
-    totalTakenViaSAS: number;
+    totalAuctionsWithCallee: number;
 }

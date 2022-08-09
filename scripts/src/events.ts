@@ -102,7 +102,7 @@ const getTakeEventsByCollateralType = async function (
     network: string,
     collateralType: string,
     dateLimit?: Date
-): Promise<{ rows: EventData[]; totalAuctions: number; totalTakenViaSAS: number }> {
+): Promise<{ rows: EventData[]; totalAuctions: number; totalAuctionsWithCallee: number }> {
     const provider = await getProvider(network);
 
     const contractName = getClipperNameByCollateralType(collateralType);
@@ -114,13 +114,13 @@ const getTakeEventsByCollateralType = async function (
     const transactions = await Promise.all(allTakeEvents.map(e => provider.getTransaction(e.transactionHash)));
 
     const rows: any = [];
-    let totalTakenViaSAS = 0;
+    let totalAuctionsWithCallee = 0;
 
     for (const transaction of transactions) {
         const formattedRow = await formatTransactionData(network, collateralType, transaction, contract, dateLimit);
         if (formattedRow) {
-            if (formattedRow.minProfit && formattedRow.minProfit === 1) {
-                totalTakenViaSAS++;
+            if (formattedRow.calleeName) {
+                totalAuctionsWithCallee++;
             }
             rows.push(formattedRow);
         }
@@ -128,7 +128,7 @@ const getTakeEventsByCollateralType = async function (
     return {
         rows,
         totalAuctions: transactions.length,
-        totalTakenViaSAS,
+        totalAuctionsWithCallee,
     };
 };
 
@@ -151,7 +151,7 @@ export const getEventDataFromCollaterals = async function (
             allRows = [...allRows, ...takeEvents.rows];
             collateralStats[collateralType] = {
                 totalAuctions: takeEvents.totalAuctions,
-                totalTakenViaSAS: takeEvents.totalTakenViaSAS,
+                totalAuctionsWithCallee: takeEvents.totalAuctionsWithCallee,
             };
         } catch (error) {
             errors = [...errors, `[${collateralType}] ${error}`];
@@ -170,8 +170,8 @@ export const generateCollateralStatsMessage = function (
     const totalAuctions = Object.values(collateralStats)
         .map(element => element.totalAuctions)
         .reduce((a, b) => a + b, 0);
-    const totalAuctionsTakenViaSAS = Object.values(collateralStats)
-        .map(element => element.totalTakenViaSAS)
+    const totalAuctionsWithCallee = Object.values(collateralStats)
+        .map(element => element.totalAuctionsWithCallee)
         .reduce((a, b) => a + b, 0);
     const sortedCollaterals = Object.keys(collateralStats).sort(function (a, b) {
         return collateralStats[b].totalAuctions - collateralStats[a].totalAuctions;
@@ -181,9 +181,11 @@ export const generateCollateralStatsMessage = function (
         startDate ? startDate.toDateString() : 'the beginning'
     } there have been a total of ${colors.bold(totalAuctions.toFixed())} auction${
         totalAuctions === 1 ? '' : 's'
-    }, ${colors.bold(totalAuctionsTakenViaSAS.toFixed())} of which ${
-        totalAuctionsTakenViaSAS === 1 ? 'was' : 'were'
-    } taken through a SAS product.\n  The three most used collaterals were ${sortedCollaterals[0]}, ${
-        sortedCollaterals[1]
-    } and ${sortedCollaterals[2]}.`;
+    }, ${colors.bold(
+        totalAuctionsWithCallee.toFixed()
+    )} of which had a callee.\n  The three most used collaterals were ${sortedCollaterals[0]} [${
+        collateralStats[sortedCollaterals[0]].totalAuctions
+    }], ${sortedCollaterals[1]} [${collateralStats[sortedCollaterals[1]].totalAuctions}] and ${
+        sortedCollaterals[2]
+    } [${collateralStats[sortedCollaterals[2]].totalAuctions}].`;
 };
