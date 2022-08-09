@@ -126,9 +126,7 @@ describe('Surplus Auction', () => {
         );
     });
     it('forbids fetching inexistent auctions', async () => {
-        expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith(
-            'No active auction exists with this id'
-        );
+        expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
     });
     it('calculates the minimum bid increase', async () => {
         const auctions = await fetchActiveSurplusAuctions('custom');
