@@ -15,8 +15,8 @@ const common = {
         network: 'mainnet',
         tokenAddress: faker.finance.ethereumAddress(),
         walletAddress: faker.finance.ethereumAddress(),
-        walletMKR: new BigNumber(faker.finance.amount(1001, 1200)),
-        allowanceMKR: new BigNumber(faker.finance.amount(1001, 1200)),
+        walletDai: new BigNumber(faker.finance.amount(1001, 1200)),
+        allowanceDai: new BigNumber(faker.finance.amount(1001, 1200)),
     }),
     template: `
         <DebtFlow 
