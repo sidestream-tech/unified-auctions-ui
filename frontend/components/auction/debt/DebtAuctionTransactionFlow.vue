@@ -133,22 +133,6 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isAuthorizing: {
-            type: Boolean,
-            default: false,
-        },
-        isWalletAuthorized: {
-            type: Boolean,
-            default: false,
-        },
-        isWithdrawing: {
-            type: Boolean,
-            default: false,
-        },
-        isFetching: {
-            type: Boolean,
-            default: false,
-        },
         network: {
             type: String,
             default: 'mainnet',
