@@ -37,7 +37,7 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
             : auctionEndDate
         : auctionEndDate;
     const receiveAmountMKR = new BigNumber(faker.datatype.number({ min: 100, max: 200 }));
-    
+
     return {
         ...auctionBaseData,
         receiveAmountMKR,
