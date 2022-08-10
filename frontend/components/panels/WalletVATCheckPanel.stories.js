@@ -2,18 +2,21 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import WalletDaiDepositCheckPanel from './WalletDaiDepositCheckPanel';
+import WalletVATCheckPanel from './WalletVATCheckPanel';
 
 const common = {
-    components: { WalletDaiDepositCheckPanel },
+    components: { WalletVATCheckPanel },
     data() {
         return {
-            walletDai: new BigNumber(faker.finance.amount(0, 100)),
+            walletAmount: new BigNumber(faker.finance.amount(0, 100)),
+            walletVatAmount: new BigNumber(faker.finance.amount(0, 100)),
             desiredAmount: new BigNumber(faker.finance.amount(101, 200)),
-            network: 'main',
-            tokenAddressDai: faker.finance.ethereumAddress(),
+            network: 'mainnet',
+            tokenAddress: faker.finance.ethereumAddress(),
+            currency: 'DAI',
             isExplanationsShown: true,
             disabled: false,
+            isTableShown: true,
             isLoading: false,
         };
     },
@@ -27,22 +30,22 @@ const common = {
         isCorrect: action('isCorrect'),
     },
     template: `
-        <WalletDaiDepositCheckPanel
-            v-bind="$data"
-            @refresh="refresh"
-            @update:isCorrect="isCorrect"
+        <WalletVATCheckPanel
+        v-bind="$data"
+        @refresh="refresh"
+        @update:isCorrect="isCorrect"
         />`,
 };
 
-storiesOf('Panels/WalletDaiDepositCheckPanel', module)
-    .add('Insufficient amount of DAI present', () => ({
+storiesOf('Panels/WalletVATCheckPanel', module)
+    .add('Insufficient amount present', () => ({
         ...common,
     }))
-    .add('Sufficient amount of DAI present', () => ({
+    .add('Sufficient amount present', () => ({
         ...common,
         data: () => ({
             ...common.data(),
-            walletDai: new BigNumber(100),
+            walletAmount: new BigNumber(100),
             desiredAmount: new BigNumber(10),
         }),
     }))
@@ -71,7 +74,22 @@ storiesOf('Panels/WalletDaiDepositCheckPanel', module)
         ...common,
         data: () => ({
             ...common.data(),
-            walletDai: undefined,
+            walletAmount: undefined,
+            walletVatAmount: undefined,
+        }),
+    }))
+    .add('MKR Token', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            currency: 'MKR',
+        }),
+    }))
+    .add('Hidden Table', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            isTableShown: false,
         }),
     }))
     .add('Loading', () => ({

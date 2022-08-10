@@ -146,7 +146,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import type { SurplusAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
+import type { CompensationAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
@@ -181,7 +181,7 @@ export default Vue.extend({
             default: null,
         },
         auctionActionState: {
-            type: String as Vue.PropType<SurplusAuctionActionStates>,
+            type: String as Vue.PropType<CompensationAuctionActionStates>,
             default: null,
         },
         error: {
