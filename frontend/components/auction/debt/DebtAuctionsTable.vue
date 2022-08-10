@@ -20,7 +20,7 @@
                 <template v-if="receiveAmountMKR && !receiveAmountMKR.isEqualTo(0)">
                     <format-currency :value="receiveAmountMKR" currency="MKR" />
                 </template>
-                <span v-else class="opacity-50">No bids yet</span>
+                <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="unitPrice" slot-scope="unitPrice">
                 <template v-if="unitPrice && !unitPrice.isEqualTo(0)">
