@@ -8,7 +8,7 @@
 
         <div class="flex justify-between my-3">
             <span> Current compensation </span>
-            <span v-if="!wasThereAnyBids" class="text-gray-400"> There were no bids yet </span>
+            <span v-if="!wasThereAnyBids" class="text-gray-400"> Unknown </span>
             <FormatCurrency v-else :value="auction.receiveAmountMKR" currency="MKR" />
         </div>
 

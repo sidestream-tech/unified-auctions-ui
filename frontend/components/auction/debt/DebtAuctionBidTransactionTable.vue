@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="flex justify-between">
-            <div>Next lower compensation</div>
+            <div>Next highest compensation</div>
             <button
                 v-if="auction.nextMaximumLotReceived"
                 class="ClickableText"
@@ -139,7 +139,7 @@ export default Vue.extend({
         },
         validator(currentValue: BigNumber | undefined, minValue: BigNumber | undefined) {
             if (currentValue?.isGreaterThan(minValue)) {
-                throw new Error('The value cannot be higher than the next lower compensation');
+                throw new Error('The value cannot be higher than the next highest compensation');
             }
         },
     },
