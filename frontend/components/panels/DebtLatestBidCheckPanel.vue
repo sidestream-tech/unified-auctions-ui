@@ -42,7 +42,7 @@ import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
-    name: 'HighestDebtBidCheckPanel',
+    name: 'DebtLatestBidCheckPanel',
     components: {
         FormatCurrency,
         BaseButton,
@@ -116,23 +116,23 @@ export default Vue.extend({
                 if (this.isUserLatestBidder) {
                     return {
                         name: 'correct',
-                        title: 'You are the highest bidder',
+                        title: 'You are the latest bidder',
                     };
                 }
                 return {
                     name: 'notice',
-                    title: `Highest bid by ${this.auction.receiverAddress}`,
+                    title: `Latest bid by ${this.auction.receiverAddress}`,
                 };
             }
             if (this.isUserLatestBidder) {
                 return {
                     name: 'correct',
-                    title: 'You are the highest bidder',
+                    title: 'You are the latest bidder',
                 };
             }
             return {
                 name: 'inactive',
-                title: `You are not the highest bidder`,
+                title: `You are not the latest bidder`,
             };
         },
     },

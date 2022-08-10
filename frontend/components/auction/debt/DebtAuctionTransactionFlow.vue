@@ -19,7 +19,7 @@
         <DebtAuctionBidTransactionTable
             class="mt-4 mb-6"
             :auction="auction"
-            @inputBidAmount="inputBidAmount = $event"
+            @inputBidAmount="receiveAmountMKR = $event"
         />
         <div class="mb-4">
             <WalletConnectionCheckPanel
@@ -30,12 +30,12 @@
                 @connectWallet="$emit('connectWallet')"
                 @disconnectWallet="$emit('disconnectWallet')"
             />
-            <HighestDebtBidCheckPanel
+            <DebtLatestBidCheckPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
                 :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isActive"
                 :is-loading="auctionActionState === 'bidding'"
-                :bid-amount="inputBidAmount || auction.nextMaximumLotReceived"
+                :bid-amount="receiveAmountMKR || auction.nextMaximumLotReceived"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isHighestBidder"
                 @bid="$emit('bid', $event)"
@@ -52,12 +52,12 @@
 </template>
 
 <script lang="ts">
-import type { DebtAuction, SurplusAuctionStates, CompensationAuctionActionStates } from 'auctions-core/src/types';
+import type { DebtAuction, CompensationAuctionActionStates } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
-import HighestDebtBidCheckPanel from '../../panels/HighestDebtBidCheckPanel.vue';
-import DebtAuctionBidTransactionTable from './DebtAuctionBidTransactionTable.vue';
+import DebtLatestBidCheckPanel from '~/components/panels/DebtLatestBidCheckPanel.vue';
+import DebtAuctionBidTransactionTable from '~/components/auction/debt/DebtAuctionBidTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import CollectAuctionPanel from '~/components/panels/CollectAuctionPanel.vue';
@@ -65,7 +65,7 @@ import CollectAuctionPanel from '~/components/panels/CollectAuctionPanel.vue';
 export default Vue.extend({
     components: {
         CollectAuctionPanel,
-        HighestDebtBidCheckPanel,
+        DebtLatestBidCheckPanel,
         DebtAuctionBidTransactionTable,
         TextBlock,
         Alert,
@@ -143,15 +143,12 @@ export default Vue.extend({
             isWalletMKRCheckPassed: false,
             isAllowanceAmountCheckPassed: false,
             isHighestBidder: false,
-            inputBidAmount: undefined as BigNumber | undefined,
+            receiveAmountMKR: undefined as BigNumber | undefined,
         };
     },
     computed: {
         isActive(): boolean {
             return this.auction.state !== 'ready-for-collection';
-        },
-        auctionState(): SurplusAuctionStates {
-            return this.auction.state;
         },
     },
 });
