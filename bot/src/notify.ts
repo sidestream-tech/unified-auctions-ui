@@ -1,4 +1,4 @@
-import type { AuctionInitialInfo, SurplusAuction, SurplusAuctionActive } from 'auctions-core/src/types';
+import type { AuctionInitialInfo, SurplusAuctionActive } from 'auctions-core/src/types';
 import { sendNotification } from './twitter';
 
 const generateNotificationTextCollateral = function (auction: AuctionInitialInfo): string {
@@ -16,13 +16,13 @@ const generateNotificationTextSurplus = function (auction: SurplusAuctionActive)
 };
 
 export const notifyCollateral = async function (auction: AuctionInitialInfo) {
-    const text = generateNotificationTextCollateral(auction as AuctionInitialInfo);
-    console.info(`notify: content "${text}"`);
+    const text = generateNotificationTextCollateral(auction);
+    console.info(`Collateral auction notification: "${text}"`);
     await sendNotification(text);
 };
 
-export const notifySurplus = async function (auction: SurplusAuction) {
-    const text = generateNotificationTextSurplus(auction as SurplusAuctionActive);
-    console.info(`notify: content "${text}"`);
+export const notifySurplus = async function (auction: SurplusAuctionActive) {
+    const text = generateNotificationTextSurplus(auction);
+    console.info(`Surplus auction notification: "${text}"`);
     await sendNotification(text);
 };

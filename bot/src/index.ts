@@ -1,9 +1,8 @@
 import { setTimeout as delay } from 'timers/promises';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
-import { getAllAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
-import { getAllActiveSurplusAuctions, getNewSurplusAuctionsFromActiveSurplusAuctions } from './surplus';
-import { notifyCollateral, notifySurplus } from './notify';
-import participate, { setupKeeper } from './keeper';
+import { loopCollateral } from './auctions';
+import { loopSurplus } from './surplus';
+import { setupKeeper } from './keeper';
 import { RPC_URL } from './variables';
 import { setupTwitter } from './twitter';
 import { setupWhitelist } from './whitelist';
@@ -12,33 +11,6 @@ import { executePreAuthorizationsIfRequested } from './authorisation';
 const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
 const SETUP_DELAY = 3 * 1000;
 const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL ?? '') || DEFAULT_REFETCH_INTERVAL;
-
-const loopCollateral = async function (network: string): Promise<void> {
-    try {
-        const activeAuctions = await getAllAuctions(network);
-        if (activeAuctions.length === 0) {
-            return;
-        }
-        const newAuctions = getNewAuctionsFromActiveAuctions(activeAuctions);
-        newAuctions.map(notifyCollateral);
-        participate(network, activeAuctions);
-    } catch (error) {
-        console.error('loop error:', error);
-    }
-};
-
-const loopSurplus = async function (network: string): Promise<void> {
-    try {
-        const activeAuctions = await getAllActiveSurplusAuctions(network);
-        if (activeAuctions.length === 0) {
-            return;
-        }
-        const newAuctions = getNewSurplusAuctionsFromActiveSurplusAuctions(activeAuctions);
-        newAuctions.map(notifySurplus);
-    } catch (error) {
-        console.error('loop error:', error);
-    }
-};
 
 const start = async function (): Promise<void> {
     if (!RPC_URL) {

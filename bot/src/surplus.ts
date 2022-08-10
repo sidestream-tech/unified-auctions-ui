@@ -1,5 +1,6 @@
 import type { SurplusAuctionActive } from 'auctions-core/src/types';
 import { fetchActiveSurplusAuctions } from 'auctions-core/src/surplus';
+import { notifySurplus } from './notify';
 
 const THRESHOLD_FOR_NEW_AUCTIONS = 5 * 60 * 1000;
 const knownAuctionIds = new Set();
@@ -32,4 +33,17 @@ export const getAllActiveSurplusAuctions = async function (network: string): Pro
     console.info(`surplus auctions: found "${auctions.length}" auctions ${auctionIds} on "${network}" network`);
 
     return auctions;
+};
+
+export const loopSurplus = async function (network: string): Promise<void> {
+    try {
+        const activeAuctions = await getAllActiveSurplusAuctions(network);
+        if (activeAuctions.length === 0) {
+            return;
+        }
+        const newAuctions = getNewSurplusAuctionsFromActiveSurplusAuctions(activeAuctions);
+        newAuctions.map(notifySurplus);
+    } catch (error) {
+        console.error('loop error:', error);
+    }
 };
