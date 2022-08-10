@@ -116,20 +116,20 @@ const getActiveSurplusAuctionOrUndefined = async (network: string, auctionIndex:
     return auction;
 };
 
-export const fetchActiveSurplusAuctions = async function (network: string): Promise<SurplusAuction[]> {
+export const fetchActiveSurplusAuctions = async function (network: string): Promise<SurplusAuctionActive[]> {
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionLastIndex = await getSurplusAuctionLastIndex(contract);
 
-    const surplusAuctions: SurplusAuction[] = [];
+    const activeSurplusAuctions: SurplusAuctionActive[] = [];
     let currentSurplusAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
         currentSurplusAuction = await getActiveSurplusAuctionOrUndefined(network, i);
         if (!currentSurplusAuction) {
             break;
         }
-        surplusAuctions.push(currentSurplusAuction);
+        activeSurplusAuctions.push(currentSurplusAuction);
     }
-    return surplusAuctions;
+    return activeSurplusAuctions;
 };
 
 export const restartSurplusAuction = async function (
