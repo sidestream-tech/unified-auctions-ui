@@ -1,5 +1,5 @@
 <template>
-    <TextBlock :title="`Surplus auction #${auctionId}`">
+    <TextBlock :title="`Debt auction #${auctionId}`">
         <div class="my-3">
             <Alert v-if="auctionError && auctionError.showBanner" :message="auctionError.error" type="error" />
             <Alert
@@ -38,28 +38,28 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Auction Amount</td>
+                            <td>Auction Fixed Bid</td>
                             <td>
-                                <format-currency :value="auction.receiveAmountDAI" currency="DAI" />
+                                <format-currency :value="auction.bidAmountDai" currency="DAI" />
                             </td>
                         </tr>
                         <tr>
-                            <td>Highest Bid</td>
+                            <td>Current Compensation</td>
                             <td v-if="withBids">
-                                <format-currency :value="auction.bidAmountMKR" currency="MKR" />
+                                <format-currency :value="auction.receiveAmountMKR" currency="MKR" />
                             </td>
                             <td v-else>
-                                <span class="opacity-50">No bids yet</span>
+                                <span class="opacity-50">Unknown</span>
                             </td>
                         </tr>
                         <tr>
                             <td>Auction Price</td>
                             <td>
                                 <template v-if="withBids">
-                                    <format-currency :value="auction.unitPrice" :decimal-places="6" currency="MKR" />
-                                    per <format-currency currency="DAI" />
+                                    <format-currency :value="auction.unitPrice" :decimal-places="6" currency="DAI" />
+                                    per <format-currency currency="MKR" />
                                 </template>
-                                <span v-else class="opacity-50">No bids yet</span>
+                                <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
                         <tr>
@@ -69,10 +69,10 @@
                                     <format-currency
                                         :value="auction.marketUnitPrice"
                                         :decimal-places="6"
-                                        currency="MKR"
+                                        currency="DAI"
                                     />
                                     per
-                                    <format-currency currency="DAI" />
+                                    <format-currency currency="MKR" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
@@ -110,18 +110,18 @@
             <template v-if="isExplanationsShown">
                 <TextBlock class="mt-4">
                     <template v-if="error !== 'This auction is finished'">
-                        The auctioned surplus auction contains
+                        The debt auction requires you to bid
                         <format-currency :value="auction.receiveAmountDAI" currency="DAI" />.
                         <span v-if="requiresRestart">
                             This auction requires to be restarted in order to determine prices properly.
                         </span>
                         <span v-else>
-                            The highest bid for it is
+                            The lowest accepted amount to receive is
                             <format-currency :value="auction.bidAmountMKR" currency="MKR" />. This equals
-                            <format-currency :value="auction.unitPrice" currency="MKR" />
-                            per <format-currency currency="DAI" />, or approximately
+                            <format-currency :value="auction.unitPrice" currency="DAI" />
+                            per <format-currency currency="MKR" />, or approximately
                             <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you
-                            exchange <format-currency currency="MKR" /> to <format-currency currency="DAI" /> on an
+                            exchange <format-currency currency="DAI" /> to <format-currency currency="MKR" /> on an
                             exchange platform such as Uniswap.
                         </span>
                     </template>
@@ -133,7 +133,7 @@
                     <Tooltip :title="auctionError && auctionError.error" placement="top">
                         <div>
                             <Button :disabled="!!auctionError" type="primary" class="w-60 mb-4" @click="$emit('bid')">
-                                {{ auction.state === 'ready-for-collection' ? 'Collect earnings' : 'Bid using MKR' }}
+                                {{ auction.state === 'ready-for-collection' ? 'Collect earnings' : 'Bid using DAI' }}
                             </Button>
                         </div>
                     </Tooltip>
@@ -146,7 +146,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import type { CompensationAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
+import type { CompensationAuctionActionStates, DebtAuctionTransaction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
@@ -158,7 +158,7 @@ import LoadingIcon from '~/assets/icons/loading.svg';
 import Loading from '~/components/common/other/Loading.vue';
 
 export default Vue.extend({
-    name: 'SurplusAuction',
+    name: 'DebtAuction',
     components: {
         AuctionRestartPanel,
         FormatCurrency,
@@ -173,7 +173,7 @@ export default Vue.extend({
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<SurplusAuctionTransaction>,
+            type: Object as Vue.PropType<DebtAuctionTransaction>,
             default: null,
         },
         auctionId: {
@@ -242,7 +242,7 @@ export default Vue.extend({
             return this.auction.state === 'requires-restart';
         },
         withBids(): boolean {
-            return this.auction.bidAmountMKR && !this.auction.bidAmountMKR.isEqualTo(0);
+            return this.auction.bidAmountDai && !this.auction.bidAmountDai.isEqualTo(0);
         },
     },
 });
