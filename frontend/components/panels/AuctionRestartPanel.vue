@@ -40,7 +40,7 @@
             <FormatCurrency :value="transactionFee" :decimals="5" currency="eth" />.
         </TextBlock>
 
-        <TextBlock v-else-if="isExplanationsShown && auctionType === 'surplus'">
+        <TextBlock v-else-if="isExplanationsShown && auctionType === 'compensation'">
             Auction that was started but hasn't received a single bid in the allotted time. When restarted bids can be
             placed again.
         </TextBlock>
