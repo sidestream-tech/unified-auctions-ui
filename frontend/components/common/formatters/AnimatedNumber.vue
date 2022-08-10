@@ -15,8 +15,6 @@ import {
     formatToAutomaticDecimalPoints,
 } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 
-const DECIMAL_PLACES_DEFAULT = 2;
-
 export default Vue.extend({
     components: {
         AnimatedNumber,
@@ -32,7 +30,7 @@ export default Vue.extend({
         },
         decimalPlaces: {
             type: Number,
-            default: DECIMAL_PLACES_DEFAULT,
+            default: undefined,
         },
     },
     computed: {

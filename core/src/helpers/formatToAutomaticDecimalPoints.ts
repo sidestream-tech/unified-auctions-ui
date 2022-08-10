@@ -64,3 +64,8 @@ export function formatToAutomaticDecimalPoints(
 ): string {
     return limitedValue(value).toFixed(dynamicDecimalPlaces(value, decimalPlaces));
 }
+
+export function formatToAutomaticDecimalPointsString(value: number | BigNumber, decimalPlaces?: number) {
+    const formattedValue = formatToAutomaticDecimalPoints(value, decimalPlaces);
+    return isValueSmallButNotZero(value) ? `under ${formattedValue}` : formattedValue;
+}

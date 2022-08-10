@@ -1,16 +1,12 @@
 import type { AuctionInitialInfo } from 'auctions-core/src/types';
-import {
-    isValueSmallButNotZero,
-    formatToAutomaticDecimalPoints,
-} from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
+import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import { sendNotification } from './twitter';
 
 const generateNotificationText = function (auction: AuctionInitialInfo): string {
     const url = `${process.env.FRONTEND_ORIGIN}/collateral/?network=${auction.network}&auction=${auction.id}`;
-    const formattedValue = formatToAutomaticDecimalPoints(auction.collateralAmount);
-    const displayValue = isValueSmallButNotZero(auction.collateralAmount) ? `under ${formattedValue}` : formattedValue;
+    const formattedString = formatToAutomaticDecimalPointsString(auction.collateralAmount);
 
-    return `Collateral auction with ${displayValue} ${auction.collateralSymbol} just started. Follow the link to participate: ${url}`;
+    return `Collateral auction with ${formattedString} ${auction.collateralSymbol} just started. Follow the link to participate: ${url}`;
 };
 
 const notify = async function (auction: AuctionInitialInfo) {
