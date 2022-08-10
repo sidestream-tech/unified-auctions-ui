@@ -61,9 +61,9 @@
                     v-if="auction.marketUnitPrice && isActive"
                     :value="auction.marketUnitPrice"
                     :decimal-places="6"
-                    currency="MKR"
+                    currency="DAI"
                 />
-                <span v-else class="opacity-50">Unknown</span> per DAI
+                <span v-else class="opacity-50">Unknown</span> per MKR
             </div>
         </div>
         <div class="flex justify-between font-bold">
@@ -73,9 +73,9 @@
                     v-if="unitPriceAfterBid && isActive && !isBidAmountNaN"
                     :value="unitPriceAfterBid"
                     :decimal-places="6"
-                    currency="MKR"
+                    currency="DAI"
                 />
-                <span v-else class="opacity-50">Unknown</span> per DAI
+                <span v-else class="opacity-50">Unknown</span> per MKR
             </div>
         </div>
     </div>
@@ -139,7 +139,7 @@ export default Vue.extend({
         },
         validator(currentValue: BigNumber | undefined, minValue: BigNumber | undefined) {
             if (currentValue?.isGreaterThan(minValue)) {
-                throw new Error('The value cannot be higher than the highest next compensation');
+                throw new Error('The value cannot be higher than the next lower compensation');
             }
         },
     },
