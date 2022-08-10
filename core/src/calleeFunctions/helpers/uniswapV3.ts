@@ -68,6 +68,25 @@ export const convertSymbolToDai = async function (
     return daiAmount;
 };
 
+export const convertDaiToSymbol = async function (
+    network: string,
+    symbol: string,
+    amount: BigNumber,
+    decimals: number
+): Promise<BigNumber> {
+    const integerAmount = amount.shiftedBy(decimals).toFixed(0);
+    const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
+    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInputSingle(
+        await getTokenAddressByNetworkAndSymbol(network, 'MCD_DAI'),
+        await getTokenAddressByNetworkAndSymbol(network, symbol),
+        UNISWAP_FEE,
+        integerAmount,
+        0
+    );
+    const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+    return daiAmount;
+};
+
 export const convertCollateralToDai = async function (
     network: string,
     collateralSymbol: string,
@@ -79,4 +98,8 @@ export const convertCollateralToDai = async function (
 
 export const convertMkrToDai = async function (network: string, amountDai: BigNumber): Promise<BigNumber> {
     return await convertSymbolToDai(network, 'MCD_GOV', amountDai, MKR_NUMBER_OF_DIGITS);
+};
+
+export const convertDaiToMkr = async function (network: string, amount: BigNumber): Promise<BigNumber> {
+    return await convertSymbolToDai(network, 'MCD_GOV', amount, MKR_NUMBER_OF_DIGITS);
 };
