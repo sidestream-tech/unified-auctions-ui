@@ -30,10 +30,25 @@
                 @connectWallet="$emit('connectWallet')"
                 @disconnectWallet="$emit('disconnectWallet')"
             />
+            <WalletDepositFlowCheckPanel
+                :wallet-amount="walletDai"
+                :wallet-vat-amount="walletVatDai"
+                :desired-amount="auction.bidAmountDai"
+                :allowance-amount="allowanceDai"
+                :network="network"
+                :token-address="tokenAddress"
+                :is-correct.sync="isWalletDAICheckPassed"
+                :is-explanations-shown="isExplanationsShown"
+                :is-loading="isRefreshingWallet || isSettingAllowance || isDepositing"
+                currency="DAI"
+                @refresh="$emit('refreshWallet')"
+                @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
+                @deposit="$emit('deposit', $event)"
+            />
             <DebtLatestBidCheckPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
-                :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isActive"
+                :disabled="!isWalletDAICheckPassed || !isActive"
                 :is-loading="auctionActionState === 'bidding'"
                 :bid-amount="receiveAmountMKR || auction.nextMaximumLotReceived"
                 :is-explanations-shown="isExplanationsShown"
@@ -56,6 +71,7 @@ import type { DebtAuction, CompensationAuctionActionStates } from 'auctions-core
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
+import WalletDepositFlowCheckPanel from '../../panels/WalletDepositFlowCheckPanel.vue';
 import DebtLatestBidCheckPanel from '~/components/panels/DebtLatestBidCheckPanel.vue';
 import DebtAuctionBidTransactionTable from '~/components/auction/debt/DebtAuctionBidTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
@@ -64,6 +80,7 @@ import CollectAuctionPanel from '~/components/panels/CollectAuctionPanel.vue';
 
 export default Vue.extend({
     components: {
+        WalletDepositFlowCheckPanel,
         CollectAuctionPanel,
         DebtLatestBidCheckPanel,
         DebtAuctionBidTransactionTable,
@@ -112,6 +129,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isDepositing: {
+            type: Boolean,
+            default: false,
+        },
         isAuthorizing: {
             type: Boolean,
             default: false,
@@ -140,8 +161,7 @@ export default Vue.extend({
     data() {
         return {
             isWalletConnected: false,
-            isWalletMKRCheckPassed: false,
-            isAllowanceAmountCheckPassed: false,
+            isWalletDAICheckPassed: false,
             isHighestBidder: false,
             receiveAmountMKR: undefined as BigNumber | undefined,
         };

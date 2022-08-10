@@ -33,7 +33,7 @@
             class="w-full mt-2"
             :disabled="disabled || !isAmountWithinAllowance || !isEnoughInWallet || isEnoughDeposited"
             :is-loading="isLoading"
-            @click="$emit('deposit')"
+            @click="$emit('deposit', minimumDepositAmount)"
         >
             Deposit <format-currency :value="minimumDepositAmount" :currency="currency" class="ml-1" />
         </Button>

@@ -34,11 +34,11 @@ const common = {
                 this.isLoading = false;
             }, 1000);
         },
-        deposit() {
+        deposit(amount) {
             this.isLoading = true;
             setTimeout(() => {
-                this.walletAmount = this.walletMkr.minus(this.desiredAmount);
-                this.walletVatAmount = this.walletVatMkr.plus(this.desiredAmount);
+                this.walletAmount = this.walletAmount.minus(amount);
+                this.walletVatAmount = this.walletVatAmount.plus(amount);
                 this.isLoading = false;
             }, 1000);
         },
