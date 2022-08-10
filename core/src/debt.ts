@@ -170,8 +170,8 @@ export const fetchDebtAuctionByIndex = async (network: string, auctionIndex: num
     return {
         ...baseAuctionInfo,
         earliestEndDate,
-        bidAmountMKR: new BigNumber(auctionData.bid._hex).div(WAD),
-        receiveAmountDAI: new BigNumber(auctionData.lot._hex).div(RAD),
+        bidAmountDai: new BigNumber(auctionData.bid._hex).div(WAD),
+        receiveAmountMKR: new BigNumber(auctionData.lot._hex).div(RAD),
         receiverAddress: auctionData.guy,
         auctionEndDate,
         bidEndDate,
