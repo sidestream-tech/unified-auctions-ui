@@ -24,7 +24,7 @@
             </div>
             <div slot="unitPrice" slot-scope="unitPrice">
                 <template v-if="unitPrice && !unitPrice.isEqualTo(0)">
-                    <format-currency :value="unitPrice" currency="MKR" /> per <format-currency currency="DAI" />
+                    <format-currency :value="unitPrice" currency="DAI" /> per <format-currency currency="MKR" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -121,7 +121,7 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
 
 const STATES_FILTERS: { text: string; value: string }[] = [
     {
-        text: 'No bids yet',
+        text: 'Just started',
         value: 'just-started',
     },
     {
