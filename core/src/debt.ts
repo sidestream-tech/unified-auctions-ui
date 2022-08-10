@@ -6,13 +6,7 @@ import { Contract } from 'ethers';
 import { MKR_NUMBER_OF_DIGITS, RAD, WAD } from './constants/UNITS';
 import memoizee from 'memoizee';
 import getNetworkDate from './date';
-import {
-    CompensationAuctionBase,
-    DebtAuction,
-    Notifier,
-    SurplusAuction,
-    CompensationAuctionTransactionFees,
-} from './types';
+import { CompensationAuctionBase, DebtAuction, Notifier, CompensationAuctionTransactionFees } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import executeTransaction from './execute';
 import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
@@ -33,16 +27,16 @@ export const fetchActiveDebtAuctions = async function (network: string): Promise
     const contract = await getContract(network, CONTRACT);
     const auctionLastIndex = await getDebtAuctionLastIndex(contract);
 
-    const surplusAuctions: DebtAuctionActive[] = [];
-    let currentSurplusAuction;
+    const debtAuctions: DebtAuctionActive[] = [];
+    let currentDebtAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
         const currentAuction = await getActiveDebtAuctionOrUndefined(network, i);
-        if (!currentSurplusAuction) {
+        if (!currentDebtAuction) {
             break;
         }
-        surplusAuctions.push(currentAuction as DebtAuctionActive);
+        debtAuctions.push(currentAuction as DebtAuctionActive);
     }
-    return surplusAuctions;
+    return debtAuctions;
 };
 
 export const restartDebtAuction = async function (
@@ -147,10 +141,7 @@ const getDebtContractAuctionDuration = memoizee(_getContractAuctionDuration, {
     length: 1,
 });
 
-export const fetchDebtAuctionByIndex = async (
-    network: string,
-    auctionIndex: number
-): Promise<SurplusAuction | DebtAuction> => {
+export const fetchDebtAuctionByIndex = async (network: string, auctionIndex: number): Promise<DebtAuction> => {
     const contract = await getContract(network, CONTRACT);
     const auctionData = await contract.bids(auctionIndex);
     const isAuctionCollected = new BigNumber(auctionData.end).eq(0);
