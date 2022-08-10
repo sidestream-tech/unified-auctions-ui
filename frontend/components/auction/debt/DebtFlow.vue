@@ -21,7 +21,6 @@
                 </div>
             </template>
             <template #step1>
-                <!--
                 <DebtAuction
                     class="mt-6 mb-8 mx-8"
                     :auction="selectedAuction"
@@ -37,7 +36,6 @@
                     @disconnect="$emit('disconnectWallet')"
                     @bid="bid()"
                 />
-                -->
             </template>
             <template #step2>
                 <!--
@@ -76,7 +74,7 @@
 import Vue from 'vue';
 import { CompensationAuctionActionStates, DebtAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
-// import DebtAuction from '~/components/auction/debt/DebtAuction.vue';
+import DebtAuction from '~/components/auction/debt/DebtAuction.vue';
 // import DebtAuctionTransactionFlow from '~/components/auction/debt/DebtAuctionTransactionFlow.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
@@ -85,7 +83,7 @@ import SplitLayout from '~/components/layout/SplitLayout.vue';
 export default Vue.extend({
     components: {
         // DebtAuctionTransactionFlow,
-        // DebtAuction,
+        DebtAuction,
         LandingBlock,
         SplitLayout,
         // DebtText,
