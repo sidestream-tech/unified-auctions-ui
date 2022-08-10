@@ -77,9 +77,6 @@ describe('Surplus Auction', () => {
         const auctions = await fetchActiveSurplusAuctions('custom');
         const currentAuction = auctions[0];
         expect(currentAuction.id).to.equal(2328);
-        if (currentAuction.state === 'collected') {
-            throw new Error('auction state can not be "collected"');
-        }
         expect(currentAuction.bidAmountMKR && currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
     it('collects the concluded auction', async () => {
