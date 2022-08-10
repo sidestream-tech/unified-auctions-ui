@@ -49,7 +49,7 @@
                                 <format-currency :value="auction.receiveAmountMKR" currency="MKR" />
                             </td>
                             <td v-else>
-                                <span class="opacity-50">No bids yet</span>
+                                <span class="opacity-50">Unknown</span>
                             </td>
                         </tr>
                         <tr>
@@ -59,7 +59,7 @@
                                     <format-currency :value="auction.unitPrice" :decimal-places="6" currency="DAI" />
                                     per <format-currency currency="MKR" />
                                 </template>
-                                <span v-else class="opacity-50">No bids yet</span>
+                                <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
                         <tr>
