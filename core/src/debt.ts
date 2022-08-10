@@ -181,12 +181,15 @@ export const fetchDebtAuctionByIndex = async (network: string, auctionIndex: num
     };
 };
 
-export const getActiveDebtAuctionOrUndefined = async (network: string, auctionIndex: number) => {
+export const getActiveDebtAuctionOrUndefined = async (
+    network: string,
+    auctionIndex: number
+): Promise<DebtAuctionActive | undefined> => {
     const auction = await fetchDebtAuctionByIndex(network, auctionIndex);
     if (auction.state === 'collected') {
         return;
     }
-    return auction;
+    return auction as DebtAuctionActive;
 };
 
 export const getMarketPriceDaiToMkr = async function (network: string, mkrAmount: BigNumber): Promise<BigNumber> {
