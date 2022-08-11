@@ -6,7 +6,6 @@
                     <LandingBlock title="Debt auctions" @explanations="explanationsTrigger" />
                 </div>
                 <div class="mx-4 md:mx-0 DebtTextContainer">
-                    <!--
                     <DebtText
                         ref="debtText"
                         :auctions="auctions"
@@ -17,7 +16,6 @@
                         :is-explanations-shown="isExplanationsShown"
                         @selectedAuctionId:update="$emit('selectedAuctionId:update', $event)"
                     />
-                    -->
                 </div>
             </template>
             <template #step1>
@@ -38,7 +36,6 @@
                 />
             </template>
             <template #step2>
-                <!--
                 <DebtAuctionTransactionFlow
                     v-if="selectedAuction"
                     class="mt-6 mb-8 mx-8"
@@ -64,7 +61,6 @@
                     @bid="$emit('bid', $event)"
                     @collect="$emit('collect', selectedAuction.id)"
                 />
-                -->
             </template>
         </SplitLayout>
     </div>
@@ -75,18 +71,18 @@ import Vue from 'vue';
 import { CompensationAuctionActionStates, DebtAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import DebtAuction from '~/components/auction/debt/DebtAuction.vue';
-// import DebtAuctionTransactionFlow from '~/components/auction/debt/DebtAuctionTransactionFlow.vue';
+import DebtAuctionTransactionFlow from '~/components/auction/debt/DebtAuctionTransactionFlow.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
-// import DebtText from '~/components/auction/debt/DebtText.vue';
+import DebtText from '~/components/auction/debt/DebtText.vue';
 
 export default Vue.extend({
     components: {
-        // DebtAuctionTransactionFlow,
+        DebtAuctionTransactionFlow,
         DebtAuction,
         LandingBlock,
         SplitLayout,
-        // DebtText,
+        DebtText,
     },
     props: {
         auctions: {
