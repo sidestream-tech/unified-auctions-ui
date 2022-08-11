@@ -22,7 +22,7 @@ interface State {
     isFetchingBalances: boolean;
     isDepositingOrWithdrawing: boolean;
     depositingOrWithdrawingCollaterals: string[];
-    tokenAddressDai: string | undefined;
+    tokenAddressDai: string;
     isFetchingCollateralVatBalance: boolean;
     collateralVatBalanceStore: Record<string, BigNumber | undefined>;
 }
@@ -35,7 +35,7 @@ const getInitialState = (): State => ({
     isFetchingBalances: false,
     isDepositingOrWithdrawing: false,
     depositingOrWithdrawingCollaterals: [],
-    tokenAddressDai: undefined,
+    tokenAddressDai: '',
     isFetchingCollateralVatBalance: false,
     collateralVatBalanceStore: {},
 });
