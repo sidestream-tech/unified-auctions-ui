@@ -8,17 +8,17 @@ import type {
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
-    fetchActiveSurplusAuctions,
-    restartSurplusAuction,
     bidToSurplusAuction,
     collectSurplusAuction,
     enrichSurplusAuctions,
+    fetchActiveSurplusAuctions,
+    restartSurplusAuction,
 } from 'auctions-core/src/surplus';
 import {
-    setAllowanceAmountMKR,
-    fetchAllowanceAmountMKR,
     authorizeSurplus,
+    fetchAllowanceAmountMKR,
     getSurplusAuthorizationStatus,
+    setAllowanceAmountMKR,
 } from 'auctions-core/src/authorizations';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import { swapToMKR } from 'auctions-core/src/helpers/swap';
@@ -29,6 +29,7 @@ let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
 
 const delay = (delay: number) => new Promise(resolve => setTimeout(resolve, delay));
 const AUTHORIZATION_STATUS_RETRY_DELAY = 1000;
+
 interface State {
     auctionStorage: Record<string, SurplusAuctionTransaction>;
     auctionStates: Record<number, CompensationAuctionActionStates>;
@@ -195,7 +196,7 @@ export const actions = {
         try {
             await authorizeSurplus(network, walletAddress, false, notifier);
             await dispatch('fetchSurplusAuthorizationStatus');
-        } catch (error) {
+        } catch (error: any) {
             console.error(`Wallet authorization error: ${error.message}`);
         } finally {
             commit('setAuthorizationLoading', false);
@@ -208,7 +209,7 @@ export const actions = {
         try {
             await authorizeSurplus(network, walletAddress, true, notifier);
             await dispatch('fetchSurplusAuthorizationStatus');
-        } catch (error) {
+        } catch (error: any) {
             console.error(`Wallet authorization error: ${error.message}`);
         } finally {
             commit('setAuthorizationLoading', false);
@@ -222,9 +223,8 @@ export const actions = {
         }
         commit('setAuthorizationLoading', true);
         try {
-            const isAuthorized = await getSurplusAuthorizationStatus(network, walletAddress);
-            return isAuthorized;
-        } catch (error) {
+            return await getSurplusAuthorizationStatus(network, walletAddress);
+        } catch (error: any) {
             console.error(`Wallet authorization status error: ${error.message}`);
             await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
             await dispatch('fetchSurplusAuthorizationStatus');

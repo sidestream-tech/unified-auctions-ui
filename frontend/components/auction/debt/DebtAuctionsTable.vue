@@ -12,19 +12,19 @@
             :locale="{ emptyText: 'No active auctions' }"
             class="AuctionsTable relative overflow-visible"
         >
-            <div slot="auctionAmount" slot-scope="receiveAmountDAI">
-                <format-currency v-if="receiveAmountDAI" :value="receiveAmountDAI" currency="DAI" />
+            <div slot="bidAmountDai" slot-scope="bidAmountDai">
+                <format-currency v-if="bidAmountDai" :value="bidAmountDai" currency="DAI" />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="bidAmountMKR" slot-scope="bidAmountMKR">
-                <template v-if="bidAmountMKR && !bidAmountMKR.isEqualTo(0)">
-                    <format-currency :value="bidAmountMKR" currency="MKR" />
+            <div slot="receiveAmountMKR" slot-scope="receiveAmountMKR">
+                <template v-if="receiveAmountMKR && !receiveAmountMKR.isEqualTo(0)">
+                    <format-currency :value="receiveAmountMKR" currency="MKR" />
                 </template>
-                <span v-else class="opacity-50">No bids yet</span>
+                <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="unitPrice" slot-scope="unitPrice">
                 <template v-if="unitPrice && !unitPrice.isEqualTo(0)">
-                    <format-currency :value="unitPrice" currency="MKR" /> per <format-currency currency="DAI" />
+                    <format-currency :value="unitPrice" currency="DAI" /> per <format-currency currency="MKR" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -65,7 +65,7 @@
                 >
                     <span v-if="record.state === 'collected'"> See details </span>
                     <span v-else-if="record.state === 'requires-restart'"> Restart </span>
-                    <span v-else-if="record.state === 'ready-for-collection'"> Collect DAI </span>
+                    <span v-else-if="record.state === 'ready-for-collection'"> Collect MKR </span>
                     <span v-else> Participate </span>
                 </nuxt-link>
             </div>
@@ -121,7 +121,7 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
 
 const STATES_FILTERS: { text: string; value: string }[] = [
     {
-        text: 'No bids yet',
+        text: 'Just started',
         value: 'just-started',
     },
     {
@@ -143,7 +143,7 @@ const STATES_FILTERS: { text: string; value: string }[] = [
 ];
 
 export default Vue.extend({
-    name: 'SurplusAuctionsTable',
+    name: 'DebtAuctionsTable',
     components: {
         Loading,
         Table,
@@ -197,16 +197,16 @@ export default Vue.extend({
                     sorter: compareBy('id'),
                 },
                 {
-                    title: 'Auction Amount',
-                    dataIndex: 'receiveAmountDAI',
-                    scopedSlots: { customRender: 'auctionAmount' },
-                    sorter: compareBy('receiveAmountDAI'),
+                    title: 'Auction Fixed Bid',
+                    dataIndex: 'bidAmountDai',
+                    scopedSlots: { customRender: 'bidAmountDai' },
+                    sorter: compareBy('bidAmountDai'),
                 },
                 {
-                    title: 'Highest Bid',
-                    dataIndex: 'bidAmountMKR',
-                    scopedSlots: { customRender: 'bidAmountMKR' },
-                    sorter: compareBy('bidAmountMKR'),
+                    title: 'Current compensation',
+                    dataIndex: 'receiveAmountMKR',
+                    scopedSlots: { customRender: 'receiveAmountMKR' },
+                    sorter: compareBy('receiveAmountMKR'),
                 },
                 {
                     title: 'Auction Price',
@@ -225,7 +225,7 @@ export default Vue.extend({
                     dataIndex: 'state',
                     scopedSlots: { customRender: 'state' },
                     filters: statesFilters,
-                    onFilter: (selectedState: string, auction: SurplusAuctionTransaction) => {
+                    onFilter: (selectedState: string, auction: SurplusAuction) => {
                         return auction.state.includes(selectedState);
                     },
                     sorter: compareBy('earliestEndDate', (a: Date, b: Date) => compareAsc(a, b)),
@@ -234,6 +234,7 @@ export default Vue.extend({
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
                     scopedSlots: { customRender: 'action' },
+                    width: '20%',
                 },
             ];
         },

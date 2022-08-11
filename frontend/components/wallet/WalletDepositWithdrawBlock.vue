@@ -24,12 +24,13 @@
                 :disabled="!canDeposit || isAllowanceAmountLoading"
             />
             <div v-if="selectedMethod === 'deposit'">
-                <WalletDaiDepositCheckPanel
+                <WalletVATCheckPanel
                     :is-correct.sync="isWalletDaiCheckPassed"
-                    :wallet-dai="maxDeposit"
+                    :wallet-amount="maxDeposit"
                     :desired-amount="depositAmount || maxDeposit"
-                    :token-address-dai="tokenAddressDai"
+                    :token-address="tokenAddressDai"
                     :network="network"
+                    :is-table-shown="false"
                     :is-loading="isLoading"
                     :is-explanations-shown="isExplanationsShown"
                     :disabled="isLoading || isSubmitting || isAllowanceAmountLoading || isAuthorizationLoading"
@@ -89,7 +90,7 @@ import BigNumber from 'bignumber.js';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import BaseValueInput from '~/components/common/inputs/BaseValueInput.vue';
-import WalletDaiDepositCheckPanel from '~/components/panels/WalletDaiDepositCheckPanel.vue';
+import WalletVATCheckPanel from '~/components/panels/WalletVATCheckPanel.vue';
 import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
 import WalletVatDaiWithdrawCheckPanel from '~/components/panels/WalletVatDaiWithdrawCheckPanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
@@ -102,7 +103,7 @@ export default Vue.extend({
         TextBlock,
         RadioGroup: Radio.Group,
         RadioButton: Radio.Button,
-        WalletDaiDepositCheckPanel,
+        WalletVATCheckPanel,
         AllowanceAmountCheckPanel,
         WalletVatDaiWithdrawCheckPanel,
         WalletAuthorizationCheckPanel,

@@ -212,27 +212,51 @@ export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
     unitPrice: BigNumber;
 }
 
+export declare interface CompensationAuctionTransactionFees {
+    restartTransactionFeeEth: BigNumber;
+    allowanceTransactionFeeEth: BigNumber;
+    bidTransactionFeeEth: BigNumber;
+    collectTransactionFeeEth: BigNumber;
+    authTransactionFeeEth: BigNumber;
+    combinedBidFeesEth: BigNumber;
+    allowanceTransactionFeeDai: BigNumber;
+    restartTransactionFeeDai: BigNumber;
+    bidTransactionFeeDai: BigNumber;
+    collectTransactionFeeDai: BigNumber;
+    authTransactionFeeDai: BigNumber;
+    combinedBidFeesDai: BigNumber;
+}
+
 export declare interface SurplusAuctionTransaction
     extends SurplusAuctionEnriched,
         CompensationAuctionTransactionFees {}
 
-export declare interface DebtAuctionActive extends CompensationAuctionBase {
+export declare interface DebtAuctionBase {
+    id: number;
+    network: string;
+    fetchedAt: Date;
+}
+
+export declare interface DebtAuctionActive extends DebtAuctionBase {
     bidAmountDai: BigNumber;
     receiveAmountMKR: BigNumber;
     receiverAddress: string;
     auctionEndDate: Date;
+    auctionStartDate: Date;
     bidEndDate?: Date;
     earliestEndDate: Date;
     state: CompensationAuctionActiveState;
 }
 
-export declare interface DebtAuctionCollected extends CompensationAuctionBase {
+export declare interface DebtAuctionCollected extends DebtAuctionBase {
     state: CompensationAuctionInactiveState;
 }
 
 export type DebtAuction = DebtAuctionActive | DebtAuctionCollected;
 
 export type DebtAuctionStates = DebtAuction['state'];
+
+export type DebtAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'collecting';
 
 export declare interface DebtAuctionEnriched extends DebtAuctionActive {
     nextMaximumLotReceived: BigNumber;

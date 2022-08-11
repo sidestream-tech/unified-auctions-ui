@@ -1,36 +1,38 @@
 <template>
     <div class="flex flex-col space-y-8 py-8">
         <WhatIsMakerProtocol v-if="isExplanationsShown" class="TextBlock"></WhatIsMakerProtocol>
-        <TextBlock v-if="isExplanationsShown" title="What are surplus auctions?" class="TextBlock">
+        <TextBlock v-if="isExplanationsShown" title="What are debt auctions?" class="TextBlock">
             A
-            <Explain text="surplus auction"
-                >In Maker terms, surplus auctions are called
+            <Explain text="debt auction"
+                >In Maker terms, debt auctions are called
                 <a
-                    href="https://docs.makerdao.com/smart-contract-modules/system-stabilizer-module/flap-detailed-documentation"
-                    >flap auctions</a
+                    href="https://docs.makerdao.com/smart-contract-modules/system-stabilizer-module/flop-detailed-documentation"
+                    >flop auctions</a
                 >
                 and are operated via the
-                <a href="https://github.com/makerdao/dss/blob/master/src/flap.sol">flap.sol contract</a></Explain
+                <a href="https://github.com/makerdao/dss/blob/master/src/flop.sol">flop.sol contract</a></Explain
             >
-            is the process of stabilizing DAI price, where excessive DAI tokens are auctioned off for the
-            <Explain text="MKR tokens">
-                Maker governance tokens that can be used to vote within Maker DAO and whose price algorithmically
-                depends on the stability and prosperity of the Maker ecosystem </Explain
-            >. The MKR obtained by the protocol is then automatically burned, reducing overall MKR supply and therefore
-            increasing its price.
+            is the process of stabilizing DAI price, where
+            <Explain text="MKR tokens"
+                >Maker governance tokens that can be used to vote within Maker DAO and whose price algorithmically
+                depends on the stability and prosperity of the Maker ecosystem</Explain
+            >
+            are auctioned off for DAI. The DAI obtained by the protocol is used to recapitalise the system that has
+            accrued debt.
         </TextBlock>
         <TextBlock v-if="isExplanationsShown" title="Why would I participate?" class="TextBlock">
             Your participation can yield a profit by leveraging price differences between the auction price from the
-            Maker Protocol and the price on other marketplaces. Similar to an English-style auction system, bidders
-            compete with increasing amounts of MKR on the fixed amount of auctioned DAI. Once the auction has ended,
-            the DAI auctioned off can be collected by the highest bidder. As long as the auction price is below the
-            exchange rate on other marketplaces there is a chance to make a profit.
+            Maker Protocol and the price on other marketplaces. In a reverse auction system, bidders compete by
+            specifying how little MKR they are willing to receive for a fixed amount of DAI they have to pay. Once the
+            auction has ended, the MKR auctioned off can be collected by the bidder with the lowest accepted
+            compensation. As long as the auction price for MKR is below the exchange rate on other marketplaces there
+            is a chance to make a profit.
         </TextBlock>
         <div
             class="w-full self-center"
             :class="{ 'max-w-4xl': isExplanationsShown, 'md:px-10': !isExplanationsShown }"
         >
-            <SurplusAuctionsTable
+            <DebtAuctionsTable
                 class="block overflow-x-auto"
                 :auctions="auctions"
                 :selected-auction-id.sync="selectedAuctionId"
@@ -46,24 +48,25 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
-import { SurplusAuctionTransaction } from 'auctions-core/src/types';
-import SurplusAuctionsTable from '~/components/auction/surplus/SurplusAuctionsTable.vue';
+import { DebtAuctionTransaction } from 'auctions-core/src/types';
+import DebtAuctionsTable from '~/components/auction/debt/DebtAuctionsTable.vue';
 import WhatIsMakerProtocol from '~/components/common/other/WhatIsMakerProtocol.vue';
 import WhatIsCatch from '~/components/common/other/WhatIsCatch.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
+    name: 'DebtText',
     components: {
-        SurplusAuctionsTable,
         WhatIsMakerProtocol,
         WhatIsCatch,
         TextBlock,
         Explain,
+        DebtAuctionsTable,
     },
     props: {
         auctions: {
-            type: Array as PropType<SurplusAuctionTransaction[]>,
+            type: Array as PropType<DebtAuctionTransaction[]>,
             default: () => [],
         },
         areAuctionsFetching: {

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <TextBlock title="Surplus transaction" />
+        <TextBlock title="Debt transaction" />
         <Alert
             v-if="auction.state === 'requires-restart'"
             message="This auction is inactive and must be restarted"
@@ -16,10 +16,10 @@
             message="This auction is finished and has been collected"
             type="error"
         />
-        <SurplusAuctionBidTransactionTable
+        <DebtAuctionBidTransactionTable
             class="mt-4 mb-6"
             :auction="auction"
-            @inputBidAmount="inputBidAmount = $event"
+            @desiredMkrAmount="desiredMkrAmount = $event"
         />
         <div class="mb-4">
             <WalletConnectionCheckPanel
@@ -30,32 +30,28 @@
                 @connectWallet="$emit('connectWallet')"
                 @disconnectWallet="$emit('disconnectWallet')"
             />
-            <WalletMKRBalanceCheckPanel
-                :wallet-m-k-r="walletMKR"
-                :required-m-k-r="inputBidAmount || auction.nextMinimumBid"
+            <WalletDepositFlowCheckPanel
+                :wallet-amount="walletDai"
+                :wallet-vat-amount="walletVatDai"
+                :desired-amount="auction.bidAmountDai"
+                :allowance-amount="allowanceDai"
                 :network="network"
                 :token-address="tokenAddress"
-                :disabled="!isWalletConnected || !isActive || isHighestBidder"
-                :is-loading="isRefreshingWallet"
+                :is-correct.sync="isWalletDAICheckPassed"
                 :is-explanations-shown="isExplanationsShown"
-                :is-correct.sync="isWalletMKRCheckPassed"
+                :is-loading="isRefreshingWallet || isSettingAllowance || isDepositing"
+                currency="DAI"
+                :disabled="isHighestBidder"
                 @refresh="$emit('refreshWallet')"
-            />
-            <AllowanceAmountCheckPanel
-                :disabled="!isWalletConnected || !isActive || isHighestBidder"
-                :allowance-amount="allowanceMKR"
-                :desired-amount="inputBidAmount || auction.nextMinimumBid"
-                currency="MKR"
-                :is-loading="isSettingAllowance"
-                :is-correct.sync="isAllowanceAmountCheckPassed"
                 @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
+                @deposit="$emit('deposit', $event)"
             />
-            <HighestBidCheckPanel
+            <DebtLatestBidCheckPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
-                :disabled="!isWalletMKRCheckPassed || !isAllowanceAmountCheckPassed || !isActive"
+                :disabled="!isWalletDAICheckPassed || !isActive"
                 :is-loading="auctionActionState === 'bidding'"
-                :bid-amount="inputBidAmount || auction.nextMinimumBid"
+                :desired-mkr-amount="desiredMkrAmount || auction.nextMaximumLotReceived"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isHighestBidder"
                 @bid="$emit('bid', $event)"
@@ -64,55 +60,38 @@
                 :auction="auction"
                 :wallet-address="walletAddress"
                 :is-collecting="auctionActionState === 'collecting'"
+                currency="MKR"
                 @collect="$emit('collect')"
-            />
-            <WithdrawDAIPanel
-                :is-explanations-shown="isExplanationsShown"
-                :wallet-address="walletAddress"
-                :is-authorizing="isAuthorizing"
-                :is-wallet-authorized="isWalletAuthorized"
-                :is-refreshing="isRefreshingWallet"
-                :is-withdrawing="isWithdrawing"
-                :dai-vat-balance="daiVatBalance"
-                :auction-state="auctionState"
-                @refreshWallet="$emit('refreshWallet')"
-                @authorizeWallet="$emit('authorizeWallet')"
-                @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
             />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import type { SurplusAuction } from 'auctions-core/src/types';
+import type { DebtAuction, CompensationAuctionActionStates } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
-import { SurplusAuctionStates, CompensationAuctionActionStates } from 'auctions-core/src/types';
+import WalletDepositFlowCheckPanel from '../../panels/WalletDepositFlowCheckPanel.vue';
+import DebtLatestBidCheckPanel from '~/components/panels/DebtLatestBidCheckPanel.vue';
+import DebtAuctionBidTransactionTable from '~/components/auction/debt/DebtAuctionBidTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
-import WalletMKRBalanceCheckPanel from '~/components/panels/WalletMKRBalanceCheckPanel.vue';
-import AllowanceAmountCheckPanel from '~/components/panels/AllowanceAmountCheckPanel.vue';
-import HighestBidCheckPanel from '~/components/panels/HighestBidCheckPanel.vue';
-import WithdrawDAIPanel from '~/components/panels/WithdrawDAIPanel.vue';
-import SurplusAuctionBidTransactionTable from '~/components/auction/surplus/SurplusAuctionBidTransactionTable.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import CollectAuctionPanel from '~/components/panels/CollectAuctionPanel.vue';
 
 export default Vue.extend({
     components: {
+        WalletDepositFlowCheckPanel,
         CollectAuctionPanel,
-        AllowanceAmountCheckPanel,
-        WalletMKRBalanceCheckPanel,
-        HighestBidCheckPanel,
+        DebtLatestBidCheckPanel,
+        DebtAuctionBidTransactionTable,
         TextBlock,
         Alert,
-        SurplusAuctionBidTransactionTable,
         WalletConnectionCheckPanel,
-        WithdrawDAIPanel,
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<SurplusAuction>,
+            type: Object as Vue.PropType<DebtAuction>,
             required: true,
         },
         auctionActionState: {
@@ -123,12 +102,20 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        walletMKR: {
+        walletDai: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
-        allowanceMKR: {
+        walletVatDai: {
             type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        allowanceDai: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        tokenAddress: {
+            type: String,
             default: undefined,
         },
         isConnectingWallet: {
@@ -143,29 +130,9 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        daiVatBalance: {
-            type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
-        },
-        isAuthorizing: {
+        isDepositing: {
             type: Boolean,
             default: false,
-        },
-        isWalletAuthorized: {
-            type: Boolean,
-            default: false,
-        },
-        isWithdrawing: {
-            type: Boolean,
-            default: false,
-        },
-        isFetching: {
-            type: Boolean,
-            default: false,
-        },
-        tokenAddress: {
-            type: String,
-            default: undefined,
         },
         network: {
             type: String,
@@ -179,18 +146,14 @@ export default Vue.extend({
     data() {
         return {
             isWalletConnected: false,
-            isWalletMKRCheckPassed: false,
-            isAllowanceAmountCheckPassed: false,
+            isWalletDAICheckPassed: false,
             isHighestBidder: false,
-            inputBidAmount: undefined as BigNumber | undefined,
+            desiredMkrAmount: undefined as BigNumber | undefined,
         };
     },
     computed: {
         isActive(): boolean {
             return this.auction.state !== 'ready-for-collection';
-        },
-        auctionState(): SurplusAuctionStates {
-            return this.auction.state;
         },
     },
 });

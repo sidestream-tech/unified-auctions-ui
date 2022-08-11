@@ -1,8 +1,8 @@
 import { setTimeout as delay } from 'timers/promises';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
-import { getAllAuctions, getNewAuctionsFromActiveAuctions } from './auctions';
-import notify from './notify';
-import participate, { setupKeeper } from './keeper';
+import { loopCollateral } from './auctions/collateral';
+import { loopSurplus } from './auctions/surplus';
+import { setupKeeper } from './keeper';
 import { RPC_URL } from './variables';
 import { setupTwitter } from './twitter';
 import { setupWhitelist } from './whitelist';
@@ -11,20 +11,6 @@ import { executePreAuthorizationsIfRequested } from './authorisation';
 const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
 const SETUP_DELAY = 3 * 1000;
 const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL ?? '') || DEFAULT_REFETCH_INTERVAL;
-
-const loop = async function (network: string): Promise<void> {
-    try {
-        const activeAuctions = await getAllAuctions(network);
-        if (activeAuctions.length === 0) {
-            return;
-        }
-        const newAuctions = getNewAuctionsFromActiveAuctions(activeAuctions);
-        newAuctions.map(notify);
-        participate(network, activeAuctions);
-    } catch (error) {
-        console.error('loop error:', error);
-    }
-};
 
 const start = async function (): Promise<void> {
     if (!RPC_URL) {
@@ -36,8 +22,12 @@ const start = async function (): Promise<void> {
     await setupTwitter();
     await setupKeeper(network);
     await executePreAuthorizationsIfRequested(network);
-    loop(network);
-    setInterval(() => loop(network), REFETCH_INTERVAL);
+
+    loopCollateral(network);
+    setInterval(() => loopCollateral(network), REFETCH_INTERVAL);
+
+    loopSurplus(network);
+    setInterval(() => loopSurplus(network), DEFAULT_REFETCH_INTERVAL);
 };
 
 start().catch(error => {

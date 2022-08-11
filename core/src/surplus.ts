@@ -39,7 +39,7 @@ export const getNextMinimumBid = async (network: string, surplusAuction: Surplus
     return surplusAuction.bidAmountMKR.multipliedBy(increaseCoefficient);
 };
 
-const getAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
+const getSurplusAuctionState = async (network: string, earliestEndDate: Date, greatestBid: number) => {
     const isBidExpired = (await getNetworkDate(network)) > earliestEndDate;
     const haveBids = greatestBid !== 0;
     if (haveBids) {
@@ -92,7 +92,7 @@ export const fetchSurplusAuctionByIndex = async function (
     const auctionStartDate = new Date(auctionEndDate.getTime() - auctionDuration * 1000);
     const bidEndDate = auctionData.tic ? new Date(auctionData.tic * 1000) : undefined;
     const earliestEndDate = bidEndDate ? getEarliestDate(auctionEndDate, bidEndDate) : auctionEndDate;
-    const state = await getAuctionState(network, earliestEndDate, auctionData.tic);
+    const state = await getSurplusAuctionState(network, earliestEndDate, auctionData.tic);
 
     return {
         ...baseAuctionInfo,
@@ -116,20 +116,20 @@ const getActiveSurplusAuctionOrUndefined = async (network: string, auctionIndex:
     return auction;
 };
 
-export const fetchActiveSurplusAuctions = async function (network: string): Promise<SurplusAuction[]> {
+export const fetchActiveSurplusAuctions = async function (network: string): Promise<SurplusAuctionActive[]> {
     const contract = await getContract(network, 'MCD_FLAP');
     const auctionLastIndex = await getSurplusAuctionLastIndex(contract);
 
-    const surplusAuctions: SurplusAuction[] = [];
+    const activeSurplusAuctions: SurplusAuctionActive[] = [];
     let currentSurplusAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
         currentSurplusAuction = await getActiveSurplusAuctionOrUndefined(network, i);
         if (!currentSurplusAuction) {
             break;
         }
-        surplusAuctions.push(currentSurplusAuction);
+        activeSurplusAuctions.push(currentSurplusAuction);
     }
-    return surplusAuctions;
+    return activeSurplusAuctions;
 };
 
 export const restartSurplusAuction = async function (
