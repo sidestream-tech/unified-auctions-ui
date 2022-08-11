@@ -14,6 +14,7 @@ import MCD_GOV from './abis/MCD_GOV.json';
 import WSTETH from './abis/WSTETH.json';
 import WETH from './abis/WETH.json';
 import UNISWAP from './abis/UNISWAP_V2_ROUTER_02.json';
+import MCD_VOW from './abis/MCD_VOW.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
@@ -34,6 +35,9 @@ export const getContractAddressByName = async function (network: string, contrac
 const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {
     if (contractName === 'MCD_DAI') {
         return MCD_DAI;
+    }
+    if (contractName === 'MCD_VOW') {
+        return MCD_VOW;
     }
     if (contractName === 'MCD_VAT') {
         return MCD_VAT;
