@@ -111,16 +111,17 @@
                 <TextBlock class="mt-4">
                     <template v-if="error !== 'This auction is finished'">
                         The debt auction requires you to bid
-                        <format-currency :value="auction.receiveAmountDAI" currency="DAI" />.
+                        <format-currency :value="auction.bidAmountDai" currency="DAI" />.
                         <span v-if="requiresRestart">
-                            This auction requires to be restarted in order to determine prices properly.
+                            This auction requires to be restarted in order to determine its prices.
                         </span>
                         <span v-else>
-                            The lowest accepted amount to receive is
-                            <format-currency :value="auction.bidAmountMKR" currency="MKR" />. This equals
+                            The latest bid asks for
+                            <format-currency :value="auction.receiveAmountMKR" currency="MKR" /> compensation to
+                            receive in return. This equals to
                             <format-currency :value="auction.unitPrice" currency="DAI" />
                             per <format-currency currency="MKR" />, or approximately
-                            <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you
+                            <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> market than if you
                             exchange <format-currency currency="DAI" /> to <format-currency currency="MKR" /> on an
                             exchange platform such as Uniswap.
                         </span>
