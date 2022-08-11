@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
-import { causeDebt } from './helpers/causeDebt';
+import { causeDebt } from '../helpers/causeDebt';
 import hre from 'hardhat';
 import { createWalletFromPrivateKey } from '../src/signer';
 import getContract from '../src/contracts';

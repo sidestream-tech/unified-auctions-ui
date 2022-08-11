@@ -28,10 +28,9 @@ export const fetchActiveDebtAuctions = async function (network: string): Promise
     const auctionLastIndex = await getDebtAuctionLastIndex(contract);
 
     const debtAuctions: DebtAuctionActive[] = [];
-    let currentDebtAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
         const currentAuction = await getActiveDebtAuctionOrUndefined(network, i);
-        if (!currentDebtAuction) {
+        if (!currentAuction) {
             break;
         }
         debtAuctions.push(currentAuction as DebtAuctionActive);

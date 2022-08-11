@@ -33,7 +33,8 @@
         "src/**/*.ts",
         "src/**/*.json",
         "./test/**/*.ts",
-        "./test/**/*.json"
+        "./test/**/*.json",
+        "./helpers/**/*.ts"
     ],
     "exclude": [
         "node_modules"

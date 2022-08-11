@@ -2,6 +2,7 @@ import Vue from 'vue';
 import type { DebtAuction, DebtAuctionActionStates, DebtAuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
+import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import {
     bidToDebtAuction,
     collectDebtAuction,
@@ -187,5 +188,13 @@ export const actions = {
         } finally {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
+    },
+    async getMKRTokenAddress({ commit, rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'MKR');
+        commit('setTokenAddress', tokenAddress);
     },
 };
