@@ -11,7 +11,6 @@ import {
 } from 'auctions-core/src/debt';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import notifier from '~/lib/notifier';
-import { generateFakeDebtAuctionTransactions } from '~/helpers/generateFakeDebtAuction';
 
 const REFETCH_INTERVAL = 30 * 1000;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
@@ -75,14 +74,14 @@ export const mutations = {
             Vue.set(state.auctionStorage, auction.id, auction);
             auctionIdsToBeModified = auctionIdsToBeModified.filter(id => id !== auction.id);
         }
-        // // set others as collected
-        // for (const collectedAuctionId of auctionIdsToBeModified) {
-        //     Vue.set(state.auctionStorage, collectedAuctionId, {
-        //         id: collectedAuctionId,
-        //         state: 'collected',
-        //         fetchedAt: new Date(),
-        //     });
-        // }
+        // set others as collected
+        for (const collectedAuctionId of auctionIdsToBeModified) {
+            Vue.set(state.auctionStorage, collectedAuctionId, {
+                id: collectedAuctionId,
+                state: 'collected',
+                fetchedAt: new Date(),
+            });
+        }
     },
     addAuctionToStorage(state: State, auction: DebtAuction) {
         Vue.set(state.auctionStorage, auction.id, auction);
@@ -142,7 +141,6 @@ export const actions = {
             const auctions = await fetchActiveDebtAuctions(network);
             const auctionsEnriched = await enrichDebtAuctions(network, auctions);
             commit('addAuctionsToStorage', auctionsEnriched);
-            commit('addAuctionsToStorage', generateFakeDebtAuctionTransactions(undefined, network));
         } catch (error: any) {
             console.error('fetch surplus auction error', error);
             commit('setError', error.message);
