@@ -10,6 +10,7 @@ import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import MCD_CLIP from './abis/MCD_CLIP.json';
 import MCD_DOG from './abis/MCD_DOG.json';
 import MCD_FLAP from './abis/MCD_FLAP.json';
+import MCD_FLOP from './abis/MCD_FLOP.json';
 import MCD_GOV from './abis/MCD_GOV.json';
 import WSTETH from './abis/WSTETH.json';
 import WETH from './abis/WETH.json';
@@ -43,6 +44,9 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     }
     if (contractName === 'MCD_FLAP') {
         return MCD_FLAP;
+    }
+    if (contractName === 'MCD_FLOP') {
+        return MCD_FLOP;
     }
     if (contractName === 'WSTETH') {
         return WSTETH;
