@@ -26,7 +26,7 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
         };
     }
 
-    const bidAmountDai = new BigNumber(parseFloat(faker.finance.amount()));
+    const bidAmountDai = new BigNumber(faker.datatype.number({ min: 10 * 1000, max: 50 * 1000, precision: 0.01 }));
     const receiverAddress = faker.finance.ethereumAddress();
     const auctionStartDate = faker.date.past();
     const auctionEndDate = generatedState === 'ready-for-collection' ? faker.date.recent() : faker.date.soon();
@@ -36,7 +36,7 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
             ? bidEndDate
             : auctionEndDate
         : auctionEndDate;
-    const receiveAmountMKR = new BigNumber(faker.datatype.number({ min: 100, max: 200 }));
+    const receiveAmountMKR = new BigNumber(faker.datatype.number({ min: 100, max: 200, precision: 0.01 }));
 
     return {
         ...auctionBaseData,
@@ -63,7 +63,7 @@ export const generateFakeDebtAuctionTransaction = function (
     const transactionFees = generateFakeCompensationTransactionFees();
 
     // generate fake market data
-    const approximateUnitPrice = auction.receiveAmountMKR.dividedBy(auction.bidAmountDai);
+    const approximateUnitPrice = auction.bidAmountDai.dividedBy(auction.receiveAmountMKR);
     const marketUnitPriceToUnitPriceRatio = new BigNumber(
         faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 })
     );
