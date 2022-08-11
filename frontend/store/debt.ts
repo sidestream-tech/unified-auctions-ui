@@ -9,7 +9,9 @@ import {
     fetchActiveDebtAuctions,
     restartDebtAuction,
 } from 'auctions-core/src/debt';
+import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import notifier from '~/lib/notifier';
+import { generateFakeDebtAuctionTransactions } from '~/helpers/generateFakeDebtAuction';
 
 const REFETCH_INTERVAL = 30 * 1000;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
@@ -21,7 +23,6 @@ interface State {
     isAuthorizationLoading: boolean;
     error: string | null;
     lastUpdated: Date | undefined;
-    allowanceAmount?: BigNumber;
     auctionErrors: Record<string, string | undefined>;
     tokenAddress: string | undefined;
 }
@@ -74,14 +75,14 @@ export const mutations = {
             Vue.set(state.auctionStorage, auction.id, auction);
             auctionIdsToBeModified = auctionIdsToBeModified.filter(id => id !== auction.id);
         }
-        // set others as collected
-        for (const collectedAuctionId of auctionIdsToBeModified) {
-            Vue.set(state.auctionStorage, collectedAuctionId, {
-                id: collectedAuctionId,
-                state: 'collected',
-                fetchedAt: new Date(),
-            });
-        }
+        // // set others as collected
+        // for (const collectedAuctionId of auctionIdsToBeModified) {
+        //     Vue.set(state.auctionStorage, collectedAuctionId, {
+        //         id: collectedAuctionId,
+        //         state: 'collected',
+        //         fetchedAt: new Date(),
+        //     });
+        // }
     },
     addAuctionToStorage(state: State, auction: DebtAuction) {
         Vue.set(state.auctionStorage, auction.id, auction);
@@ -115,12 +116,21 @@ export const mutations = {
 export const actions = {
     async setup({ dispatch, commit }: ActionContext<State, State>) {
         commit('reset');
-        await dispatch('getMKRTokenAddress');
         await dispatch('fetchDebtAuctions');
+        await dispatch('getDaiTokenAddress');
+        await dispatch('authorizations/fetchAllowanceAmount', undefined, { root: true });
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }
         refetchIntervalId = setInterval(() => dispatch('fetchDebtAuctions'), REFETCH_INTERVAL);
+    },
+    async getDaiTokenAddress({ commit, rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'DAI');
+        commit('setTokenAddress', tokenAddress);
     },
     async fetchDebtAuctions({ rootGetters, commit }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];
@@ -132,6 +142,7 @@ export const actions = {
             const auctions = await fetchActiveDebtAuctions(network);
             const auctionsEnriched = await enrichDebtAuctions(network, auctions);
             commit('addAuctionsToStorage', auctionsEnriched);
+            commit('addAuctionsToStorage', generateFakeDebtAuctionTransactions(undefined, network));
         } catch (error: any) {
             console.error('fetch surplus auction error', error);
             commit('setError', error.message);

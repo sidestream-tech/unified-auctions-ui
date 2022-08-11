@@ -15,8 +15,8 @@ const DEBT_AUCTION_STATES: DebtAuctionStates[] = [
     'requires-restart',
 ];
 
-export const generateFakeDebtAuction = function (state?: DebtAuctionStates): DebtAuction {
-    const auctionBaseData = generateFakeCompensationAuctionBase();
+export const generateFakeDebtAuction = function (state?: DebtAuctionStates, network?: string): DebtAuction {
+    const auctionBaseData = generateFakeCompensationAuctionBase(network);
     const generatedState: DebtAuctionStates = state || faker.helpers.randomize(DEBT_AUCTION_STATES);
 
     if (generatedState === 'collected') {
@@ -52,9 +52,10 @@ export const generateFakeDebtAuction = function (state?: DebtAuctionStates): Deb
 };
 
 export const generateFakeDebtAuctionTransaction = function (
-    state?: DebtAuctionStates
+    state?: DebtAuctionStates,
+    network?: string
 ): DebtAuctionCollected | DebtAuctionTransaction {
-    const auction = generateFakeDebtAuction(state);
+    const auction = generateFakeDebtAuction(state, network);
 
     if (auction.state === 'collected') {
         return auction;
@@ -84,10 +85,22 @@ export const generateFakeDebtAuctionTransaction = function (
     };
 };
 
-export const generateFakeDebtAuctions = function (number = random(5, 15)) {
-    return Array(number).fill(null).map(generateFakeDebtAuction);
+export const generateFakeDebtAuctions = function (
+    state?: DebtAuctionStates,
+    network?: string,
+    number = random(5, 15)
+) {
+    return Array(number)
+        .fill(null)
+        .map(() => generateFakeDebtAuction(state, network));
 };
 
-export const generateFakeDebtAuctionTransactions = function (number = random(5, 15)) {
-    return Array(number).fill(null).map(generateFakeDebtAuctionTransaction);
+export const generateFakeDebtAuctionTransactions = function (
+    state?: DebtAuctionStates,
+    network?: string,
+    number = random(5, 15)
+) {
+    return Array(number)
+        .fill(null)
+        .map(() => generateFakeDebtAuctionTransaction(state, network));
 };

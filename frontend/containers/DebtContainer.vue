@@ -8,7 +8,7 @@
         :are-auctions-fetching="areAuctionsFetching"
         :wallet-address="walletAddress"
         :wallet-balances="walletBalances"
-        :allowance-m-k-r="allowanceMKR"
+        :allowance-dai="allowanceDai"
         :is-connecting-wallet="isConnectingWallet"
         :is-refreshing-wallet="isRefreshingWallet"
         :is-authorizing="isAuthorizing"
@@ -23,10 +23,9 @@
         @connectWallet="openSelectWalletModal"
         @disconnectWallet="disconnectWallet"
         @refreshWallet="refreshWallet"
-        @authorizeWallet="authorizeWallet"
         @withdrawAllDaiFromVat="withdrawAllDaiFromVat"
         @restart="restartAuction"
-        @setAllowanceAmount="setAllowanceAmountMKR"
+        @setAllowanceAmount="setAllowanceAmountDai"
         @collect="collect"
         @bid="bid"
     />
@@ -54,7 +53,6 @@ export default Vue.extend({
             areAuctionsFetching: 'areAuctionsFetching',
             auctionErrors: 'getAuctionErrors',
             auctionActionStates: 'auctionStates',
-            allowanceMKR: 'allowanceAmount',
             auctionsError: 'error',
             lastUpdated: 'lastUpdated',
             tokenAddress: 'getTokenAddress',
@@ -70,6 +68,7 @@ export default Vue.extend({
         ...mapGetters('authorizations', {
             isAuthorizing: 'isWalletAuthorizationLoading',
             isWalletAuthorized: 'isWalletAuthorizationDone',
+            allowanceDai: 'allowanceAmount',
         }),
         daiVatBalance(): BigNumber | undefined {
             return this.walletBalances?.walletVatDAI;
@@ -105,19 +104,18 @@ export default Vue.extend({
     },
     methods: {
         ...mapActions('debt', {
-            updateAllAuctions: 'fetchSurplusAuctions',
+            updateAllAuctions: 'fetchDebtAuctions',
             restartAuction: 'restartAuction',
-            setAllowanceAmountMKR: 'setAllowanceAmountMKR',
             collect: 'collectAuction',
-            bid: 'bidToSurplusAuction',
+            bid: 'bidToDebtAuction',
+        }),
+        ...mapActions('authorizations', {
+            setAllowanceAmountDai: 'setAllowanceAmount',
         }),
         ...mapActions('wallet', {
             refreshWallet: 'fetchWalletBalances',
             disconnectWallet: 'disconnect',
         }),
-        authorizeWallet() {
-            this.$store.dispatch('authorizations/authorizeWallet');
-        },
         withdrawAllDaiFromVat() {
             this.$store.dispatch('wallet/withdrawFromVAT', this.daiVatBalance);
         },

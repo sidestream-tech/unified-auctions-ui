@@ -270,7 +270,7 @@ export default Vue.extend({
         },
         getAuctionLink(auction: SurplusAuctionTransaction) {
             const searchParams = new URLSearchParams({ network: auction.network, auction: auction.id.toString() });
-            return `/surplus?${searchParams.toString()}`;
+            return `/debt?${searchParams.toString()}`;
         },
         getIsAuctionFinished(auction: SurplusAuctionTransaction) {
             return auction.state !== 'ready-for-collection' && auction.state !== 'collected';
