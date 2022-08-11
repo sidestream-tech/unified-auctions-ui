@@ -1,6 +1,10 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
+        <TextBlock v-if="isExplanationsShown && !isEnoughDeposited" class="mb-2">
+            The amount of <format-currency :value="desiredAmount" :currency="currency" /> is not present in the VAT and
+            needs to be deposited there before the participation can happen.
+        </TextBlock>
         <WalletVATCheckPanel
             :is-correct.sync="isEnoughInWallet"
             :wallet-amount="walletAmount"
@@ -24,10 +28,6 @@
             :is-explanations-shown="isExplanationsShown"
             @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
         />
-        <TextBlock v-if="isExplanationsShown && !isEnoughDeposited" class="mt-2">
-            The amount of <format-currency :value="desiredAmount" :currency="currency" /> is not present in the VAT and
-            needs to be deposited there before the participation can happen.
-        </TextBlock>
         <Button
             type="primary"
             class="w-full mt-2"
@@ -132,13 +132,13 @@ export default Vue.extend({
             }
             if (this.desiredAmount.isLessThan(0)) {
                 return {
-                    name: 'incorrect',
+                    name: this.disabled ? 'inactive' : 'incorrect',
                     title: 'The amount cannot be negative',
                 };
             }
             if (!this.isEnoughDeposited) {
                 return {
-                    name: 'incorrect',
+                    name: this.disabled ? 'inactive' : 'incorrect',
                     title: `The amount of ${this.currency} is not present in the VAT`,
                 };
             }

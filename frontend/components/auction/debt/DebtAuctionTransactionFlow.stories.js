@@ -27,12 +27,11 @@ const common = {
         allowanceDai: undefined,
         walletAddress: undefined,
 
-        amount: new BigNumber(faker.finance.amount(1, 2)),
-
         auctionActionState: undefined,
     }),
     methods: {
         connect() {
+            action('connect');
             this.isConnectingWallet = true;
             setTimeout(() => {
                 this.walletDai = new BigNumber(faker.finance.amount(1001, 1200));
@@ -44,6 +43,7 @@ const common = {
             }, 1000);
         },
         disconnect() {
+            action('disconnect');
             this.isConnectingWallet = true;
             setTimeout(() => {
                 this.walletDai = undefined;
@@ -54,14 +54,8 @@ const common = {
                 this.isConnectingWallet = false;
             }, 1000);
         },
-        authorizeWallet() {
-            this.isAuthorizing = true;
-            setTimeout(() => {
-                this.isWalletAuthorized = true;
-                this.isAuthorizing = false;
-            }, 1000);
-        },
         deposit(amount) {
+            action('deposit', amount);
             this.isDepositing = true;
             setTimeout(() => {
                 this.walletDai = this.walletDai.minus(amount);
@@ -69,7 +63,8 @@ const common = {
                 this.isDepositing = false;
             }, 1000);
         },
-        setAllowanceAmount() {
+        setAllowanceAmount(amount) {
+            action('setAllowanceAmount', amount);
             this.isSettingAllowance = true;
             setTimeout(() => {
                 this.allowanceDai = new BigNumber(faker.finance.amount(800, 1000));
@@ -77,43 +72,45 @@ const common = {
             }, 1000);
         },
         refresh() {
+            action('refresh');
             this.isRefreshingWallet = true;
             setTimeout(() => {
                 this.isRefreshingWallet = false;
             }, 1000);
         },
-        bid(amount) {
+        bid(data) {
+            action('bid', data);
             this.auctionActionState = 'bidding';
             setTimeout(() => {
+                this.auctionActionState = undefined;
                 this.auction = {
                     ...this.auction,
                     receiverAddress: this.walletAddress,
-                    receiveAmountMKR: amount,
+                    receiveAmountMKR: data.desiredMkrAmount,
+                    state: 'ready-for-collection',
                 };
-                action('bid', amount);
-                this.auctionActionState = undefined;
+                action('bid', desiredMkrAmount);
             }, 1000);
         },
         collect() {
+            action('collect');
             this.auctionActionState = 'collecting';
             setTimeout(() => {
-                this.auction.state = 'collected';
                 this.auctionActionState = undefined;
+                this.auction.state = 'collected';
             }, 1000);
         },
     },
-    template: `
-        <DebtAuctionTransactionFlow 
-          v-bind="$data" 
-          @connectWallet="connect" 
-          @disconnectWallet="disconnect" 
-          @setAllowanceAmount="setAllowanceAmount" 
-          @deposit="deposit"
-          @refreshWallet="refresh" 
-          @bid="bid(amount)"
-          @collect="collect"
-          @authorizeWallet="authorizeWallet"
-        />`,
+    template: `<DebtAuctionTransactionFlow 
+        v-bind="$data" 
+        @connectWallet="connect" 
+        @disconnectWallet="disconnect" 
+        @setAllowanceAmount="setAllowanceAmount" 
+        @deposit="deposit"
+        @refreshWallet="refresh" 
+        @bid="bid"
+        @collect="collect"
+    />`,
 };
 
 storiesOf('Auction/Debt/DebtAuctionTransactionFlow', module)
@@ -127,9 +124,9 @@ storiesOf('Auction/Debt/DebtAuctionTransactionFlow', module)
             connect() {
                 this.isConnectingWallet = true;
                 setTimeout(() => {
-                    this.walletDai = new BigNumber(faker.finance.amount(1001, 1200));
-                    this.allowanceDai = new BigNumber(faker.finance.amount(1200, 1300));
-                    this.walletVatDai = new BigNumber(faker.finance.amount(1000, 2000));
+                    this.walletDai = new BigNumber(faker.finance.amount(500001, 500200));
+                    this.allowanceDai = new BigNumber(faker.finance.amount(500200, 500300));
+                    this.walletVatDai = new BigNumber(faker.finance.amount(500000, 502000));
                     this.walletAddress = faker.finance.ethereumAddress();
                     this.isWalletConnected = true;
                     this.isConnectingWallet = false;
@@ -169,6 +166,7 @@ storiesOf('Auction/Debt/DebtAuctionTransactionFlow', module)
             ...common.data(),
             auction: collectAuction,
             walletAddress: collectAuction.receiverAddress,
+            walletDai: new BigNumber(faker.finance.amount(500000, 600000)),
             walletMKR: new BigNumber(faker.finance.amount(10, 20)),
             allowanceMKR: new BigNumber(faker.finance.amount(1, 2)),
         }),

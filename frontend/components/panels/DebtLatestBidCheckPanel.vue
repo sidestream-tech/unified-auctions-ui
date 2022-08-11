@@ -23,8 +23,8 @@
                 <span v-if="isBidding"> Bidding... </span>
                 <span v-else-if="isLoading"> Loading... </span>
                 <span v-else-if="auction"
-                    >Bid <FormatCurrency :value="bidAmount" currency="DAI" /> for
-                    <FormatCurrency :value="auction.receiveAmountMKR" currency="MKR"
+                    >Bid <FormatCurrency :value="auction.bidAmountDai" currency="DAI" /> for
+                    <FormatCurrency :value="desiredMkrAmount" currency="MKR"
                 /></span>
                 <span v-else>Unknown</span>
             </BaseButton>
@@ -59,7 +59,7 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        bidAmount: {
+        desiredMkrAmount: {
             type: Object as Vue.PropType<BigNumber>,
             default: undefined,
         },
@@ -86,10 +86,7 @@ export default Vue.extend({
     },
     computed: {
         wasThereAnyBids(): boolean {
-            if (!this.auction.bidAmountDai) {
-                return false;
-            }
-            return !this.auction.bidAmountDai.isZero();
+            return ['have-bids', 'ready-for-collection', 'collected'].includes(this.auction.state);
         },
         isUserLatestBidder(): boolean {
             return (
@@ -146,7 +143,7 @@ export default Vue.extend({
     },
     methods: {
         bid() {
-            this.$emit('bid', { auctionIndex: this.auction.id, bid: this.bidAmount });
+            this.$emit('bid', { auctionIndex: this.auction.id, desiredMkrAmount: this.desiredMkrAmount });
         },
     },
 });

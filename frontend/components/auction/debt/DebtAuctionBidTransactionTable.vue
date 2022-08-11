@@ -37,7 +37,7 @@
             <div class="flex w-1/2 items-center space-x-2 justify-end -mr-1">
                 <div class="w-full flex-shrink-0">
                     <bid-input
-                        :input-bid-amount.sync="inputBidAmount"
+                        :input-bid-amount.sync="desiredMkrAmount"
                         :min-value="auction.nextMaximumLotReceived"
                         :fallback-value="auction.nextMaximumLotReceived"
                         currency="MKR"
@@ -57,25 +57,28 @@
         <div class="flex justify-between">
             <div>Price on Uniswap</div>
             <div>
-                <format-currency
-                    v-if="auction.marketUnitPrice && isActive"
-                    :value="auction.marketUnitPrice"
-                    :decimal-places="6"
-                    currency="DAI"
-                />
-                <span v-else class="opacity-50">Unknown</span> per MKR
+                <span v-if="isActive && auction.marketUnitPrice">
+                    <format-currency :value="auction.marketUnitPrice" currency="DAI" /> per MKR
+                </span>
+                <span v-else class="opacity-50">Unknown</span>
+            </div>
+        </div>
+        <div class="flex justify-between">
+            <div>Current price</div>
+            <div>
+                <span v-if="isActive && currentPrice">
+                    <format-currency :value="currentPrice" currency="DAI" /> per MKR
+                </span>
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
         <div class="flex justify-between font-bold">
             <div>Price after the bid</div>
             <div>
-                <format-currency
-                    v-if="unitPriceAfterBid && isActive && !isBidAmountNaN"
-                    :value="unitPriceAfterBid"
-                    :decimal-places="6"
-                    currency="DAI"
-                />
-                <span v-else class="opacity-50">Unknown</span> per MKR
+                <span v-if="unitPriceAfterBid && isActive && !isDesiredMkrAmountNaN">
+                    <format-currency :value="unitPriceAfterBid" currency="DAI" /> per MKR
+                </span>
+                <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
     </div>
@@ -103,38 +106,44 @@ export default Vue.extend({
     },
     data() {
         return {
-            inputBidAmount: undefined as BigNumber | undefined,
+            desiredMkrAmount: undefined as BigNumber | undefined,
         };
     },
     computed: {
         isActive(): boolean {
             return this.auction.state === 'just-started' || this.auction.state === 'have-bids';
         },
-        isBidAmountNaN(): boolean {
-            return !!this.inputBidAmount?.isNaN();
+        isDesiredMkrAmountNaN(): boolean {
+            return !!this.desiredMkrAmount?.isNaN();
+        },
+        currentPrice(): BigNumber | undefined {
+            if (!this.auction.bidAmountDai || !this.auction.receiveAmountMKR) {
+                return;
+            }
+            return this.auction.bidAmountDai.dividedBy(this.auction.receiveAmountMKR);
         },
         unitPriceAfterBid(): BigNumber | undefined {
             if (!this.isActive) {
                 return undefined;
             }
-            if (!this.inputBidAmount) {
-                return this.auction.nextMaximumLotReceived.dividedBy(this.auction.receiveAmountMKR || 1);
+            if (!this.desiredMkrAmount) {
+                return this.auction.bidAmountDai.dividedBy(this.auction.nextMaximumLotReceived || 1);
             }
-            return this.inputBidAmount.dividedBy(this.auction.receiveAmountMKR || 1);
+            return this.auction.bidAmountDai.dividedBy(this.desiredMkrAmount || 1);
         },
     },
     watch: {
-        inputBidAmount: {
+        desiredMkrAmount: {
             immediate: true,
-            handler(inputBidAmount) {
-                this.$emit('inputBidAmount', inputBidAmount);
+            handler(desiredMkrAmount) {
+                this.$emit('desiredMkrAmount', desiredMkrAmount);
             },
         },
     },
     methods: {
         setInputBidAmount(value: BigNumber | undefined) {
             if (this.isActive) {
-                this.inputBidAmount = value;
+                this.desiredMkrAmount = value;
             }
         },
         validator(currentValue: BigNumber | undefined, minValue: BigNumber | undefined) {

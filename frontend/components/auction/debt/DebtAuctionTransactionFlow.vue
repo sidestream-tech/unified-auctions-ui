@@ -19,7 +19,7 @@
         <DebtAuctionBidTransactionTable
             class="mt-4 mb-6"
             :auction="auction"
-            @inputBidAmount="receiveAmountMKR = $event"
+            @desiredMkrAmount="desiredMkrAmount = $event"
         />
         <div class="mb-4">
             <WalletConnectionCheckPanel
@@ -41,6 +41,7 @@
                 :is-explanations-shown="isExplanationsShown"
                 :is-loading="isRefreshingWallet || isSettingAllowance || isDepositing"
                 currency="DAI"
+                :disabled="isHighestBidder"
                 @refresh="$emit('refreshWallet')"
                 @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
                 @deposit="$emit('deposit', $event)"
@@ -50,7 +51,7 @@
                 :wallet-address="walletAddress"
                 :disabled="!isWalletDAICheckPassed || !isActive"
                 :is-loading="auctionActionState === 'bidding'"
-                :bid-amount="receiveAmountMKR || auction.nextMaximumLotReceived"
+                :desired-mkr-amount="desiredMkrAmount || auction.nextMaximumLotReceived"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="isHighestBidder"
                 @bid="$emit('bid', $event)"
@@ -147,7 +148,7 @@ export default Vue.extend({
             isWalletConnected: false,
             isWalletDAICheckPassed: false,
             isHighestBidder: false,
-            receiveAmountMKR: undefined as BigNumber | undefined,
+            desiredMkrAmount: undefined as BigNumber | undefined,
         };
     },
     computed: {
