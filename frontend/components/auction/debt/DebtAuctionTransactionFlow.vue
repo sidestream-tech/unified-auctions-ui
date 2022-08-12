@@ -30,14 +30,6 @@
                 @connectWallet="$emit('connectWallet')"
                 @disconnectWallet="$emit('disconnectWallet')"
             />
-            <WalletAuthorizationCheckPanel
-                :disabled="!isWalletConnected"
-                :wallet-address="walletAddress"
-                :is-wallet-authorized="isWalletAuthorized"
-                :is-explanations-shown="isExplanationsShown"
-                :is-loading="isAuthorizing"
-                @authorizeWallet="$emit('authorizeWallet')"
-            />
             <WalletDepositFlowCheckPanel
                 :wallet-amount="walletDai"
                 :wallet-vat-amount="walletVatDai"
@@ -53,6 +45,14 @@
                 @refresh="$emit('refreshWallet')"
                 @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
                 @deposit="$emit('deposit', $event)"
+            />
+            <WalletAuthorizationCheckPanel
+                :disabled="!isWalletConnected"
+                :wallet-address="walletAddress"
+                :is-wallet-authorized="isWalletAuthorized"
+                :is-explanations-shown="isExplanationsShown"
+                :is-loading="isAuthorizing"
+                @authorizeWallet="$emit('authorizeWallet')"
             />
             <DebtLatestBidCheckPanel
                 :auction="auction"

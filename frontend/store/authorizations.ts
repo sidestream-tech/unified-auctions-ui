@@ -8,6 +8,7 @@ import {
     authorizeDebtAuction,
     setAllowanceAmountDAI,
     fetchAllowanceAmountDAI,
+    getDebtAuctionAuthorizationStatus,
 } from 'auctions-core/src/authorizations';
 import notifier from '~/lib/notifier';
 
@@ -21,6 +22,8 @@ interface State {
     collateralAuthorizations: string[];
     isAllowanceAmountLoading: boolean;
     allowanceAmount?: BigNumber;
+    isDebtAuctionAuthorizationDone: boolean;
+    isDebtAuctionAuthorizationLoading: boolean;
 }
 
 const getInitialState = (): State => ({
@@ -30,6 +33,8 @@ const getInitialState = (): State => ({
     collateralAuthorizations: [],
     isAllowanceAmountLoading: false,
     allowanceAmount: undefined,
+    isDebtAuctionAuthorizationDone: false,
+    isDebtAuctionAuthorizationLoading: false,
 });
 
 export const state = () => getInitialState();
@@ -55,6 +60,12 @@ export const getters = {
     },
     isAllowanceAmountLoading(state: State) {
         return state.isAllowanceAmountLoading;
+    },
+    isDebtAuctionAuthorizationDone(state: State) {
+        return state.isDebtAuctionAuthorizationDone;
+    },
+    isDebtAuctionAuthorizationLoading(state: State) {
+        return state.isDebtAuctionAuthorizationLoading;
     },
 };
 
@@ -94,6 +105,12 @@ export const mutations = {
     reset(state: State) {
         Object.assign(state, getInitialState());
     },
+    setIsDebtAuctionAuthorizationDone(state: State, isDone: boolean) {
+        state.isDebtAuctionAuthorizationDone = isDone;
+    },
+    setIsDebtAuctionAuthorizationLoading(state: State, isLoading: boolean) {
+        state.isDebtAuctionAuthorizationLoading = isLoading;
+    },
 };
 
 export const actions = {
@@ -102,17 +119,24 @@ export const actions = {
     },
     async setup({ dispatch, rootState }: ActionContext<State, any>) {
         dispatch('reset');
-        if (rootState.route.name !== 'collateral' && rootState.route.name !== 'surplus') {
+        if (
+            rootState.route.name !== 'collateral' &&
+            rootState.route.name !== 'surplus' &&
+            rootState.route.name !== 'debt'
+        ) {
             return;
         }
         await dispatch('refetch');
     },
-    async refetch({ dispatch }: ActionContext<State, State>) {
+    async refetch({ dispatch, rootState }: ActionContext<State, any>) {
         await dispatch('fetchWalletAuthorizationStatus');
+        await dispatch('fetchDebtAuctionAuthorizationStatus');
         await dispatch('fetchAllowanceAmount');
         const auctionParam = window?.$nuxt?.$route?.query?.auction;
+        const isCollateral = rootState.route.name === 'collateral';
+
         const auctionId = Array.isArray(auctionParam) ? auctionParam[0] : auctionParam;
-        const collateralType = auctionId ? auctionId.split(':')[0] : '';
+        const collateralType = auctionId && isCollateral ? auctionId.split(':')[0] : '';
         if (collateralType) {
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         }
@@ -138,6 +162,28 @@ export const actions = {
             commit('setIsWalletAuthorizationLoading', false);
         }
     },
+    async fetchDebtAuctionAuthorizationStatus({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+        const walletAddress = rootGetters['wallet/getAddress'];
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!walletAddress || !network) {
+            commit('setIsDebtAuctionAuthorizationDone', false);
+            return;
+        }
+        commit('setIsDebtAuctionAuthorizationLoading', true);
+        try {
+            const isAuthorized = await getDebtAuctionAuthorizationStatus(network, walletAddress);
+            commit('setIsDebtAuctionAuthorizationDone', isAuthorized);
+            return isAuthorized;
+        } catch (error) {
+            commit('setIsDebtAuctionAuthorizationDone', false);
+            console.error(`Wallet authorization status error: ${error.message}`);
+            await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
+            await dispatch('fetchDebtAuctionAuthorizationStatus');
+        } finally {
+            commit('setIsDebtAuctionAuthorizationLoading', false);
+        }
+    },
+
     async authorizeWallet({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
@@ -197,7 +243,7 @@ export const actions = {
         const walletAddress = rootGetters['wallet/getAddress'];
         try {
             await authorizeDebtAuction(network, walletAddress, false, notifier);
-            await dispatch('fetchWalletAuthorizationStatus');
+            await dispatch('fetchDebtAuctionAuthorizationStatus');
         } catch (error) {
             console.error(`Wallet authorization error: ${error.message}`);
         } finally {

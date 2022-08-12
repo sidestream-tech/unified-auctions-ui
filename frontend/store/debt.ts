@@ -198,12 +198,4 @@ export const actions = {
             commit('setAuctionState', { auctionId: auctionIndex, value: 'loaded' });
         }
     },
-    async getMKRTokenAddress({ commit, rootGetters }: ActionContext<State, State>) {
-        const network = rootGetters['network/getMakerNetwork'];
-        if (!network) {
-            return;
-        }
-        const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'MKR');
-        commit('setTokenAddress', tokenAddress);
-    },
 };
