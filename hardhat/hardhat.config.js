@@ -19,7 +19,7 @@ module.exports = {
                 url: ALCHEMY_URL,
                 // Few blocks before WSTETH-A is taken at 14052147,
                 // https://etherscan.io/address/0x49a33a28c4c7d9576ab28898f4c9ac7e52ea457a
-                blockNumber: 14078340,
+                blockNumber: 14052140,
             },
             initialBaseFeePerGas: 1,
         },
