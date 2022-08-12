@@ -9,7 +9,7 @@ import getNetworkDate from './date';
 import { CompensationAuctionBase, DebtAuction, Notifier, CompensationAuctionTransactionFees } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import executeTransaction from './execute';
-import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
+import { convertDaiToMkr } from './calleeFunctions/helpers/uniswapV3';
 import { getGasPriceForUI } from './gas';
 import { getMarketPrice } from './calleeFunctions';
 
@@ -193,7 +193,7 @@ export const getActiveDebtAuctionOrUndefined = async (
 
 export const getMarketPriceDaiToMkr = async function (network: string, mkrAmount: BigNumber): Promise<BigNumber> {
     try {
-        return new BigNumber(1).div((await convertMkrToDai(network, mkrAmount)).div(mkrAmount));
+        return new BigNumber(1).div((await convertDaiToMkr(network, mkrAmount)).div(mkrAmount));
     } catch (error) {
         return new BigNumber(NaN);
     }
