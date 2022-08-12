@@ -30,6 +30,14 @@
                 @connectWallet="$emit('connectWallet')"
                 @disconnectWallet="$emit('disconnectWallet')"
             />
+            <WalletAuthorizationCheckPanel
+                :disabled="!isWalletConnected"
+                :wallet-address="walletAddress"
+                :is-wallet-authorized="isWalletAuthorized"
+                :is-explanations-shown="isExplanationsShown"
+                :is-loading="isAuthorizing"
+                @authorizeWallet="$emit('authorizeWallet')"
+            />
             <WalletDepositFlowCheckPanel
                 :wallet-amount="walletDai"
                 :wallet-vat-amount="walletVatDai"
@@ -73,6 +81,7 @@ import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import WalletDepositFlowCheckPanel from '../../panels/WalletDepositFlowCheckPanel.vue';
+import WalletAuthorizationCheckPanel from '../../panels/WalletAuthorizationCheckPanel.vue';
 import DebtLatestBidCheckPanel from '~/components/panels/DebtLatestBidCheckPanel.vue';
 import DebtAuctionBidTransactionTable from '~/components/auction/debt/DebtAuctionBidTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
@@ -88,6 +97,7 @@ export default Vue.extend({
         TextBlock,
         Alert,
         WalletConnectionCheckPanel,
+        WalletAuthorizationCheckPanel,
     },
     props: {
         auction: {
@@ -122,6 +132,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isAuthorizing: {
+            type: Boolean,
+            default: false,
+        },
         isRefreshingWallet: {
             type: Boolean,
             default: false,
@@ -141,6 +155,10 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {

@@ -28,6 +28,7 @@
         @setAllowanceAmount="setAllowanceAmountDai"
         @collect="collect"
         @deposit="deposit"
+        @authorizeWallet="authorizeDebtAuction"
         @bid="bid"
     />
 </template>
@@ -112,6 +113,7 @@ export default Vue.extend({
         }),
         ...mapActions('authorizations', {
             setAllowanceAmountDai: 'setAllowanceAmount',
+            authorizeDebtAuction: 'authorizeDebtAuction',
         }),
         ...mapActions('wallet', {
             refreshWallet: 'fetchWalletBalances',
