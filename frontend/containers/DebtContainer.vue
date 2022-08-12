@@ -27,6 +27,7 @@
         @restart="restartAuction"
         @setAllowanceAmount="setAllowanceAmountDai"
         @collect="collect"
+        @deposit="deposit"
         @bid="bid"
     />
 </template>
@@ -115,6 +116,7 @@ export default Vue.extend({
         ...mapActions('wallet', {
             refreshWallet: 'fetchWalletBalances',
             disconnectWallet: 'disconnect',
+            deposit: 'depositToVAT',
         }),
         withdrawAllDaiFromVat() {
             this.$store.dispatch('wallet/withdrawFromVAT', this.daiVatBalance);
