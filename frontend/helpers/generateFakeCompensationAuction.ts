@@ -4,10 +4,10 @@ import BigNumber from 'bignumber.js';
 
 const NETWORKS = ['mainnet', 'kovan', 'goerli'];
 
-export const generateFakeCompensationAuctionBase = function (): CompensationAuctionBase {
+export const generateFakeCompensationAuctionBase = function (network?: string): CompensationAuctionBase {
     return {
         id: faker.datatype.number(),
-        network: faker.helpers.randomize(NETWORKS),
+        network: network ?? faker.helpers.randomize(NETWORKS),
         fetchedAt: new Date(),
     };
 };

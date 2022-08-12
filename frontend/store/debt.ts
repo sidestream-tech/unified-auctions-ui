@@ -10,6 +10,7 @@ import {
     fetchActiveDebtAuctions,
     restartDebtAuction,
 } from 'auctions-core/src/debt';
+import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
@@ -22,7 +23,6 @@ interface State {
     isAuthorizationLoading: boolean;
     error: string | null;
     lastUpdated: Date | undefined;
-    allowanceAmount?: BigNumber;
     auctionErrors: Record<string, string | undefined>;
     tokenAddress: string | undefined;
 }
@@ -116,12 +116,21 @@ export const mutations = {
 export const actions = {
     async setup({ dispatch, commit }: ActionContext<State, State>) {
         commit('reset');
-        await dispatch('getMKRTokenAddress');
         await dispatch('fetchDebtAuctions');
+        await dispatch('getDaiTokenAddress');
+        await dispatch('authorizations/fetchAllowanceAmount', undefined, { root: true });
         if (refetchIntervalId) {
             clearInterval(refetchIntervalId);
         }
         refetchIntervalId = setInterval(() => dispatch('fetchDebtAuctions'), REFETCH_INTERVAL);
+    },
+    async getDaiTokenAddress({ commit, rootGetters }: ActionContext<State, State>) {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
+        const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'DAI');
+        commit('setTokenAddress', tokenAddress);
     },
     async fetchDebtAuctions({ rootGetters, commit }: ActionContext<State, State>) {
         const network = rootGetters['network/getMakerNetwork'];

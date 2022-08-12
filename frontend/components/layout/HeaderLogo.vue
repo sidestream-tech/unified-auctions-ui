@@ -1,9 +1,9 @@
 <template>
     <div class="flex items-center">
-        <nuxt-link to="/" class="hidden md:block text-gray-700 hover:text-gray-600 no-underline">
+        <nuxt-link :to="rootUrl" class="hidden md:block text-gray-700 hover:text-gray-600 no-underline">
             <branding-icon class="h-12 w-12" />
         </nuxt-link>
-        <Select :options="options" :value="pageName" title="Unified Auction" class="md:ml-2 mb-0">
+        <Select :options="options" :value="pageName" title="Unified Auctions" class="md:ml-2 mb-0">
             <template #text-prefix>
                 <branding-icon class="md:hidden h-12 w-12" />
             </template>
@@ -31,11 +31,15 @@ export default Vue.extend({
         },
     },
     computed: {
+        rootUrl() {
+            return generateLink(this.network, '');
+        },
         options(): SelectOption[] {
             return [
-                { label: 'Maker Auction Services', value: '', href: generateLink(this.network, '') },
+                { label: 'Unified auctions', value: '', href: this.rootUrl },
                 { label: 'Collateral auctions', value: 'collateral', href: generateLink(this.network, 'collateral') },
                 { label: 'Surplus auctions', value: 'surplus', href: generateLink(this.network, 'surplus') },
+                { label: 'Debt auctions', value: 'debt', href: generateLink(this.network, 'debt') },
             ];
         },
     },

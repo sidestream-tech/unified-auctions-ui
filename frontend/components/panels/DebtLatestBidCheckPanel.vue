@@ -7,7 +7,13 @@
         </TextBlock>
 
         <div class="flex justify-between my-3">
-            <span> Current compensation </span>
+            <span>
+                Latest bid placed
+                <span v-if="auction.receiverAddress"
+                    >by <FormatAddress :value="auction.receiverAddress" type="address" shorten
+                /></span>
+                asked for
+            </span>
             <span v-if="!wasThereAnyBids" class="text-gray-400"> Unknown </span>
             <FormatCurrency v-else :value="auction.receiveAmountMKR" currency="MKR" />
         </div>
@@ -40,6 +46,7 @@ import BasePanel from '~/components/common/other/BasePanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 
 export default Vue.extend({
     name: 'DebtLatestBidCheckPanel',
@@ -48,6 +55,7 @@ export default Vue.extend({
         BaseButton,
         TextBlock,
         BasePanel,
+        FormatAddress,
     },
     props: {
         auction: {
