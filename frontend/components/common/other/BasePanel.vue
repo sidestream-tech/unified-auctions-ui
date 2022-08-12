@@ -5,7 +5,7 @@
                 <Icon v-if="currentState === 'inactive'" type="close" />
                 <Icon v-else-if="currentState === 'incorrect'" type="warning" theme="filled" />
                 <Icon v-else-if="currentState === 'correct'" type="check" />
-                <Icon v-else-if="currentState === 'notice'" type="warning" theme="filled" />
+                <Icon v-else-if="currentState === 'notice'" type="info-circle" theme="filled" />
             </div>
             <slot name="title" />
         </button>
