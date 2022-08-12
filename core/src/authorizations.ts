@@ -144,3 +144,21 @@ export const fetchAllowanceAmountMKR = async function (network: string, walletAd
     const allowanceRaw = await MKRContract.allowance(walletAddress, flapAddress);
     return new BigNumber(allowanceRaw._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
+
+const _authorizeDebtAuction = async function (
+    network: string,
+    walletAddress: string,
+    revoke: boolean,
+    notifier?: Notifier
+): Promise<string> {
+    walletAddress; // so the memoizee cache is invalidated if another address is used
+    const clipperAddress = await getContractAddressByName(network, 'MCD_FLOP');
+    const contractMethod = revoke ? 'nope' : 'hope';
+    const transaction = await executeTransaction(network, 'MCD_VAT', contractMethod, [clipperAddress], { notifier });
+    return transaction;
+};
+
+export const authorizeDebtAuction = memoizee(_authorizeDebtAuction, {
+    promise: true,
+    length: 3,
+});

@@ -5,6 +5,7 @@ import {
     authorizeWallet,
     getCollateralAuthorizationStatus,
     authorizeCollateral,
+    authorizeDebtAuction,
     setAllowanceAmountDAI,
     fetchAllowanceAmountDAI,
 } from 'auctions-core/src/authorizations';
@@ -188,6 +189,19 @@ export const actions = {
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } finally {
             commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: false });
+        }
+    },
+    async authorizeDebtAuction({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+        commit('setIsWalletAuthorizationLoading', true);
+        const network = rootGetters['network/getMakerNetwork'];
+        const walletAddress = rootGetters['wallet/getAddress'];
+        try {
+            await authorizeDebtAuction(network, walletAddress, false, notifier);
+            await dispatch('fetchWalletAuthorizationStatus');
+        } catch (error) {
+            console.error(`Wallet authorization error: ${error.message}`);
+        } finally {
+            commit('setIsWalletAuthorizationLoading', false);
         }
     },
     async authorizeCollateral({ commit, dispatch, rootGetters }: ActionContext<State, State>, collateralType: string) {

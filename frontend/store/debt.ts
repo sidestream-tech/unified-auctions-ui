@@ -167,7 +167,7 @@ export const actions = {
     },
     async bidToDebtAuction(
         { rootGetters, commit, dispatch }: ActionContext<State, State>,
-        { auctionIndex, lot }: { auctionIndex: number; lot: BigNumber }
+        { auctionIndex, desiredMkrAmount }: { auctionIndex: number; desiredMkrAmount: BigNumber }
     ) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
@@ -175,7 +175,7 @@ export const actions = {
         }
         commit('setAuctionState', { auctionId: auctionIndex, value: 'bidding' });
         try {
-            await bidToDebtAuction(network, auctionIndex, lot, notifier);
+            await bidToDebtAuction(network, auctionIndex, desiredMkrAmount, notifier);
             await dispatch('fetchDebtAuctions');
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);
