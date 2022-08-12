@@ -11,5 +11,5 @@ const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efca
     const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
     await setupRpcUrlAndGetNetworks(local_rpc_url);
     await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
-    await causeDebt('custom', provider, new BigNumber(1000000));
+    await causeDebt('custom', provider, new BigNumber(10), new BigNumber(1000), new BigNumber(1000));
 })();

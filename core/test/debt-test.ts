@@ -18,7 +18,7 @@ describe('Debt Auction', () => {
         await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
         const provider = hre.network.provider;
 
-        await causeDebt(NETWORK, provider, new BigNumber(1000000));
+        await causeDebt(NETWORK, provider, new BigNumber(1000000), new BigNumber(1000), new BigNumber(1000));
     });
     beforeEach(async () => {
         await hre.network.provider.request({
