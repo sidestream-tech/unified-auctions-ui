@@ -18,5 +18,5 @@ const customNetworkConfig = {
 export default {
     solidity: '0.8.4',
     networks: customNetworkConfig,
-    ethers: ethers
+    ethers: ethers,
 };

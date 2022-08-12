@@ -2,7 +2,7 @@ import Vue from 'vue';
 import type { DebtAuction, DebtAuctionActionStates, DebtAuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
-import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
+import { getTokenAddressByNetworkAndSymbol, getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import {
     bidToDebtAuction,
     collectDebtAuction,
@@ -10,7 +10,7 @@ import {
     fetchActiveDebtAuctions,
     restartDebtAuction,
 } from 'auctions-core/src/debt';
-import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
+
 import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
