@@ -18,7 +18,9 @@ const generateNotificationTextSurplus = function (auction: SurplusAuctionActive)
 
 const generateNotificationTextDebt = function (auction: DebtAuctionActive): string {
     const url = `${process.env.FRONTEND_ORIGIN}/debt/?network=${auction.network}&auction=${auction.id}`;
-    return `Debt auction with ${auction.receiveAmountMKR.toFixed(
+    return `Debt auction with fixed bid amount of ${auction.bidAmountDai.toFixed(
+        0
+    )} DAI and current compensation of ${auction.receiveAmountMKR.toFixed(
         0
     )} MKR just started. Follow the link to participate: ${url}`;
 };
