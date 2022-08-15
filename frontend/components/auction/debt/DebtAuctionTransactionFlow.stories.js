@@ -17,7 +17,7 @@ const common = {
         isWalletConnected: false,
         isConnectingWallet: false,
         isRefreshingWallet: false,
-        isWalletAuthorized: false,
+        isFlopperAuthorized: false,
         isSettingAllowance: false,
         isAuthorizing: false,
         isDepositing: false,
@@ -101,13 +101,13 @@ const common = {
             }, 1000);
         },
     },
-    template: `<DebtAuctionTransactionFlow 
-        v-bind="$data" 
-        @connectWallet="connect" 
-        @disconnectWallet="disconnect" 
-        @setAllowanceAmount="setAllowanceAmount" 
+    template: `<DebtAuctionTransactionFlow
+        v-bind="$data"
+        @connectWallet="connect"
+        @disconnectWallet="disconnect"
+        @setAllowanceAmount="setAllowanceAmount"
         @deposit="deposit"
-        @refreshWallet="refresh" 
+        @refreshWallet="refresh"
         @bid="bid"
         @collect="collect"
     />`,
