@@ -14,17 +14,17 @@ export const resetNetwork = async (rpcUrl: string, blockNumber: number) => {
             },
         ],
     });
-}
+};
 
 export const createWalletForRpc = async (signerPrivateKey: string, network: string) => {
     const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
     await setupRpcUrlAndGetNetworks(local_rpc_url);
     await createWalletFromPrivateKey(signerPrivateKey, network);
     return hre.network.provider;
-}
+};
 
 export default async function (rpcUrl: string, blockNumber: number, signerPrivateKey: string, network: string) {
-    await resetNetwork(rpcUrl, blockNumber)
-    const provider = await createWalletForRpc(signerPrivateKey, network)
+    await resetNetwork(rpcUrl, blockNumber);
+    const provider = await createWalletForRpc(signerPrivateKey, network);
     return provider;
 }
