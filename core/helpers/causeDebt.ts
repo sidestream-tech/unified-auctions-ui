@@ -35,6 +35,10 @@ const overwriteValueInSlot = async (
     await provider.send('hardhat_setStorageAt', storageToWrite);
 };
 
+const getMappingSlotAddress = (mappingStartSlot: string, key: string) => {
+    return stripZeros(ethers.utils.keccak256(concat(pad32(key), pad32(mappingStartSlot))));
+}
+
 const overwriteQueuedDebt = async (network: string, provider: EthereumProvider, debtAmountDai: BigNumber) => {
     const newValue = formatToHex(debtAmountDai.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
     await overwriteValueInSlot(network, 'MCD_VOW', '0x5', provider, newValue);
@@ -64,7 +68,7 @@ const stripZeros = (val: string) => {
 
 const overwriteProtocolOwnDaiBalance = async (network: string, provider: EthereumProvider) => {
     const daiOwnerAddress = await getContractAddressByName(network, 'MCD_VOW');
-    const slotAddress = stripZeros(ethers.utils.keccak256(concat(pad32(daiOwnerAddress), pad32('0x5'))));
+    const slotAddress = getMappingSlotAddress(daiOwnerAddress, '0x5')
     const newValue = pad32('0x0');
     await overwriteValueInSlot(network, 'MCD_VAT', slotAddress, provider, newValue);
 };
