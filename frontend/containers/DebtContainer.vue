@@ -12,7 +12,7 @@
         :is-connecting-wallet="isConnectingWallet"
         :is-refreshing-wallet="isRefreshingWallet"
         :is-authorizing="isAuthorizing"
-        :is-wallet-authorized="isDebtAuctionAuthorizationDone"
+        :is-flopper-authorized="isDebtAuctionAuthorizationDone"
         :is-setting-allowance="isAuthorizationLoading"
         :last-updated="lastUpdated"
         :is-explanations-shown.sync="isExplanationsShown"
@@ -28,7 +28,7 @@
         @setAllowanceAmount="setAllowanceAmountDai"
         @collect="collect"
         @deposit="deposit"
-        @authorizeWallet="authorizeDebtAuction"
+        @authorizeFlopper="authorizeDebtAuction"
         @bid="bid"
     />
 </template>

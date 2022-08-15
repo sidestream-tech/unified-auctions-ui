@@ -46,13 +46,13 @@
                 @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
                 @deposit="$emit('deposit', $event)"
             />
-            <WalletAuthorizationCheckPanel
+            <DebtAuctionAuthorizationCheckPanel
                 :disabled="!isWalletConnected"
                 :wallet-address="walletAddress"
-                :is-wallet-authorized="isWalletAuthorized"
+                :is-flopper-authorized="isFlopperAuthorized"
                 :is-explanations-shown="isExplanationsShown"
                 :is-loading="isAuthorizing"
-                @authorizeWallet="$emit('authorizeWallet')"
+                @authorizeFlopper="$emit('authorizeFlopper')"
             />
             <DebtLatestBidCheckPanel
                 :auction="auction"
@@ -81,10 +81,10 @@ import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
 import WalletDepositFlowCheckPanel from '../../panels/WalletDepositFlowCheckPanel.vue';
-import WalletAuthorizationCheckPanel from '../../panels/WalletAuthorizationCheckPanel.vue';
 import DebtLatestBidCheckPanel from '~/components/panels/DebtLatestBidCheckPanel.vue';
 import DebtAuctionBidTransactionTable from '~/components/auction/debt/DebtAuctionBidTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
+import DebtAuctionAuthorizationCheckPanel from '~/components/panels/DebtAuctionAuthorizationCheckPanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import CollectAuctionPanel from '~/components/panels/CollectAuctionPanel.vue';
 
@@ -97,7 +97,7 @@ export default Vue.extend({
         TextBlock,
         Alert,
         WalletConnectionCheckPanel,
-        WalletAuthorizationCheckPanel,
+        DebtAuctionAuthorizationCheckPanel,
     },
     props: {
         auction: {
@@ -156,7 +156,7 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isWalletAuthorized: {
+        isFlopperAuthorized: {
             type: Boolean,
             default: false,
         },

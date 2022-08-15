@@ -164,6 +164,7 @@ export const authorizeDebtAuction = memoizee(_authorizeDebtAuction, {
 });
 
 const _getDebtAuctionAuthorizationStatus = async (network: string, walletAddress: string): Promise<boolean> => {
+    walletAddress; // so the memoizee cache is invalidated if another address is used
     const flopperAddress = await getContractAddressByName(network, 'MCD_FLOP');
     const contract = await getContract(network, 'MCD_VAT');
     const authorizationStatus = await contract.can(walletAddress, flopperAddress);

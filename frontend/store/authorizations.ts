@@ -172,6 +172,7 @@ export const actions = {
         commit('setIsDebtAuctionAuthorizationLoading', true);
         try {
             const isAuthorized = await getDebtAuctionAuthorizationStatus(network, walletAddress);
+            console.log(isAuthorized);
             commit('setIsDebtAuctionAuthorizationDone', isAuthorized);
             return isAuthorized;
         } catch (error) {
