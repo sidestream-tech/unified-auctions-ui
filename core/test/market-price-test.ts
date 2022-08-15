@@ -5,7 +5,7 @@ import BigNumber from '../src/bignumber';
 import { resetNetwork } from './helpers/resetBlockchainFork';
 
 const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL || 'http://localhost:8545';
-import { HARDHAT_FORK_BLOCK_NUMBER } from '../helpers/constants';
+const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
 describe('Market Price & Conversions', () => {
     before(async () => {
