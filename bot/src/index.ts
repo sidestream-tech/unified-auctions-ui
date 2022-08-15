@@ -2,6 +2,7 @@ import { setTimeout as delay } from 'timers/promises';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
 import { loopCollateral } from './auctions/collateral';
 import { loopSurplus } from './auctions/surplus';
+import { loopDebt } from './auctions/debt';
 import { setupKeeper } from './keeper';
 import { RPC_URL } from './variables';
 import { setupTwitter } from './twitter';
@@ -28,6 +29,9 @@ const start = async function (): Promise<void> {
 
     loopSurplus(network);
     setInterval(() => loopSurplus(network), DEFAULT_REFETCH_INTERVAL);
+
+    loopDebt(network);
+    setInterval(() => loopDebt(network), DEFAULT_REFETCH_INTERVAL);
 };
 
 start().catch(error => {

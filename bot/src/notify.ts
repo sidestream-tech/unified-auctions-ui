@@ -1,4 +1,4 @@
-import type { AuctionInitialInfo, SurplusAuctionActive } from 'auctions-core/src/types';
+import type { AuctionInitialInfo, SurplusAuctionActive, DebtAuctionActive } from 'auctions-core/src/types';
 import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import { sendNotification } from './twitter';
 
@@ -16,6 +16,13 @@ const generateNotificationTextSurplus = function (auction: SurplusAuctionActive)
     )} DAI just started. Follow the link to participate: ${url}`;
 };
 
+const generateNotificationTextDebt = function (auction: DebtAuctionActive): string {
+    const url = `${process.env.FRONTEND_ORIGIN}/debt/?network=${auction.network}&auction=${auction.id}`;
+    return `Debt auction with ${auction.receiveAmountMKR.toFixed(
+        0
+    )} MKR just started. Follow the link to participate: ${url}`;
+};
+
 export const notifyCollateral = async function (auction: AuctionInitialInfo) {
     const text = generateNotificationTextCollateral(auction);
     console.info(`Collateral auction notification: "${text}"`);
@@ -25,5 +32,11 @@ export const notifyCollateral = async function (auction: AuctionInitialInfo) {
 export const notifySurplus = async function (auction: SurplusAuctionActive) {
     const text = generateNotificationTextSurplus(auction);
     console.info(`Surplus auction notification: "${text}"`);
+    await sendNotification(text);
+};
+
+export const notifyDebt = async function (auction: DebtAuctionActive) {
+    const text = generateNotificationTextDebt(auction);
+    console.info(`Debt auction notification: "${text}"`);
     await sendNotification(text);
 };
