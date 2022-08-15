@@ -12,15 +12,15 @@ export const causeDebt = async (
     mkrOnAuction: BigNumber,
     daiOnAuction: BigNumber
 ) => {
-    await overwriteSin(network, provider, debtAmountDai);
-    await ensureSinEqual(network, debtAmountDai);
-    await overwriteDai(network, provider);
+    await overwriteQueuedDebt(network, provider, debtAmountDai);
+    await ensureQueuedDebtEqual(network, debtAmountDai);
+    await overwriteProtocolOwnDaiBalance(network, provider);
     await ensureDaiIsZero(network);
-    await overwriteLotMkrAmount(network, provider, mkrOnAuction);
-    await ensureLotMkrHasValue(network, mkrOnAuction);
+    await overwriteLottedMkrAmount(network, provider, mkrOnAuction);
+    await ensureLottedMkrHasValue(network, mkrOnAuction);
     await overwriteBidDaiAmount(network, provider, daiOnAuction);
     await ensureBidDaiHasValue(network, daiOnAuction);
-    await kickFlop(network);
+    await startDebtAuction(network);
 };
 
 const overwriteValueInSlot = async (
@@ -35,12 +35,12 @@ const overwriteValueInSlot = async (
     await provider.send('hardhat_setStorageAt', storageToWrite);
 };
 
-const overwriteSin = async (network: string, provider: EthereumProvider, debtAmountDai: BigNumber) => {
+const overwriteQueuedDebt = async (network: string, provider: EthereumProvider, debtAmountDai: BigNumber) => {
     const newValue = formatToHex(debtAmountDai.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
     await overwriteValueInSlot(network, 'MCD_VOW', '0x5', provider, newValue);
 };
 
-const ensureSinEqual = async (network: string, expected: BigNumber) => {
+const ensureQueuedDebtEqual = async (network: string, expected: BigNumber) => {
     const contract = await getContract(network, 'MCD_VOW');
     const sinAsHex = await contract.Sin();
     const sin = new BigNumber(sinAsHex._hex);
@@ -62,19 +62,19 @@ const stripZeros = (val: string) => {
     return ethers.utils.hexStripZeros(val);
 };
 
-const overwriteDai = async (network: string, provider: EthereumProvider) => {
+const overwriteProtocolOwnDaiBalance = async (network: string, provider: EthereumProvider) => {
     const daiOwnerAddress = await getContractAddressByName(network, 'MCD_VOW');
     const slotAddress = stripZeros(ethers.utils.keccak256(concat(pad32(daiOwnerAddress), pad32('0x5'))));
     const newValue = pad32('0x0');
     await overwriteValueInSlot(network, 'MCD_VAT', slotAddress, provider, newValue);
 };
 
-const overwriteLotMkrAmount = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
+const overwriteLottedMkrAmount = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
     const newValue = formatToHex(amount.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
     await overwriteValueInSlot(network, 'MCD_VOW', '0x8', provider, newValue);
 };
 
-const ensureLotMkrHasValue = async (network: string, expected: BigNumber) => {
+const ensureLottedMkrHasValue = async (network: string, expected: BigNumber) => {
     const contract = await getContract(network, 'MCD_VOW');
     const dumpAsHex = await contract.dump();
     const dump = new BigNumber(dumpAsHex._hex);
@@ -108,7 +108,7 @@ const ensureDaiIsZero = async (network: string) => {
     }
 };
 
-const kickFlop = async (network: string) => {
+const startDebtAuction = async (network: string) => {
     const vow = await getContract(network, 'MCD_VOW', true);
     await vow.flop();
 };
