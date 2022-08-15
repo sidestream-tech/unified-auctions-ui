@@ -1,11 +1,11 @@
 import 'dotenv/config';
-import colors from 'ansi-colors';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/dist/src/rpc';
 import { generateCollateralStatsMessage, getEventDataFromCollaterals } from './events';
 import { setupProgressBar } from './progress';
 import { createAndExportSheet } from './xlsx';
 import { setupPrompts } from './prompt';
 import { ARROW_EMOJI, DEBUG_MODE, ERROR_EMOJI, NETWORK_EMOJI, RPC_URL } from './variables';
+import { generateErrorsMessage } from './errors';
 
 (async () => {
     if (DEBUG_MODE) {
@@ -25,17 +25,10 @@ import { ARROW_EMOJI, DEBUG_MODE, ERROR_EMOJI, NETWORK_EMOJI, RPC_URL } from './
         dateLimit
     );
     progressBar.stop();
-    if (errors) {
-        console.info(
-            `\n\n${ARROW_EMOJI}${ERROR_EMOJI} While running the script encountered ${errors.length} error${
-                errors.length !== 1 ? 's' : ''
-            }:`
-        );
-        errors.forEach(error => {
-            console.error(`${colors.red(ARROW_EMOJI + error)}`);
-        });
-    }
-    console.info(generateCollateralStatsMessage(collateralStats, dateLimit));
-    createAndExportSheet(eventData, fileName);
+
+    generateErrorsMessage(errors);
+    generateCollateralStatsMessage(collateralStats, dateLimit);
+
+    createAndExportSheet(eventData, collateralStats, fileName);
     process.exit(1);
 })();

@@ -177,15 +177,17 @@ export const generateCollateralStatsMessage = function (
         return collateralStats[b].totalAuctions - collateralStats[a].totalAuctions;
     });
 
-    return `\n\n${ARROW_EMOJI}Since ${
-        startDate ? startDate.toDateString() : 'the beginning'
-    } there have been a total of ${colors.bold(totalAuctions.toFixed())} auction${
-        totalAuctions === 1 ? '' : 's'
-    }, ${colors.bold(
-        totalAuctionsWithCallee.toFixed()
-    )} of which had a callee.\n  The three most used collaterals were ${sortedCollaterals[0]} [${
-        collateralStats[sortedCollaterals[0]].totalAuctions
-    }], ${sortedCollaterals[1]} [${collateralStats[sortedCollaterals[1]].totalAuctions}] and ${
-        sortedCollaterals[2]
-    } [${collateralStats[sortedCollaterals[2]].totalAuctions}].`;
+    console.info(
+        `\n\n${ARROW_EMOJI}Since ${
+            startDate ? startDate.toDateString() : 'the beginning'
+        } there have been a total of ${colors.bold(totalAuctions.toFixed())} auction${
+            totalAuctions === 1 ? '' : 's'
+        }, ${colors.bold(
+            totalAuctionsWithCallee.toFixed()
+        )} of which had a callee.\n  The three most used collaterals were ${sortedCollaterals[0]} [${
+            collateralStats[sortedCollaterals[0]].totalAuctions
+        }], ${sortedCollaterals[1]} [${collateralStats[sortedCollaterals[1]].totalAuctions}] and ${
+            sortedCollaterals[2]
+        } [${collateralStats[sortedCollaterals[2]].totalAuctions}].`
+    );
 };
