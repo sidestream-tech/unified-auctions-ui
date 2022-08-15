@@ -3,6 +3,7 @@ import BigNumber from '../src/bignumber';
 import { WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 import { EthereumProvider } from 'hardhat/types';
 import { ethers } from 'ethers';
+import { formatToHex } from './format';
 
 export const causeDebt = async (
     network: string,
@@ -22,12 +23,21 @@ export const causeDebt = async (
     await kickFlop(network);
 };
 
-const overwriteSin = async (network: string, provider: EthereumProvider, debtAmountDai: BigNumber) => {
-    const contract_address = await getContractAddressByName(network, 'MCD_VOW');
-    const slot_address = '0x5';
-    const new_value = ethers.utils.hexZeroPad('0x' + debtAmountDai.shiftedBy(WAD_NUMBER_OF_DIGITS).toString(16), 32);
-    const storageToWrite = [contract_address, slot_address, new_value];
+const overwriteValueInSlot = async (
+    network: string,
+    contractName: string,
+    slotAddress: string,
+    provider: EthereumProvider,
+    newValue: string
+) => {
+    const contractAddress = await getContractAddressByName(network, contractName);
+    const storageToWrite = [contractAddress, slotAddress, newValue];
     await provider.send('hardhat_setStorageAt', storageToWrite);
+};
+
+const overwriteSin = async (network: string, provider: EthereumProvider, debtAmountDai: BigNumber) => {
+    const newValue = formatToHex(debtAmountDai.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
+    await overwriteValueInSlot(network, 'MCD_VOW', '0x5', provider, newValue);
 };
 
 const ensureSinEqual = async (network: string, expected: BigNumber) => {
@@ -53,20 +63,15 @@ const stripZeros = (val: string) => {
 };
 
 const overwriteDai = async (network: string, provider: EthereumProvider) => {
-    const contract_address = await getContractAddressByName(network, 'MCD_VAT');
     const daiOwnerAddress = await getContractAddressByName(network, 'MCD_VOW');
-    const slot_address = stripZeros(ethers.utils.keccak256(concat(pad32(daiOwnerAddress), pad32('0x5'))));
-    const new_value = pad32('0x0');
-    const storageToWrite = [contract_address, slot_address, new_value];
-    await provider.send('hardhat_setStorageAt', storageToWrite);
+    const slotAddress = stripZeros(ethers.utils.keccak256(concat(pad32(daiOwnerAddress), pad32('0x5'))));
+    const newValue = pad32('0x0');
+    await overwriteValueInSlot(network, 'MCD_VAT', slotAddress, provider, newValue);
 };
 
 const overwriteLotMkrAmount = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
-    const contract_address = await getContractAddressByName(network, 'MCD_VOW');
-    const slot_address = '0x8';
-    const new_value = ethers.utils.hexZeroPad('0x' + amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toString(16), 32);
-    const storageToWrite = [contract_address, slot_address, new_value];
-    await provider.send('hardhat_setStorageAt', storageToWrite);
+    const newValue = formatToHex(amount.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
+    await overwriteValueInSlot(network, 'MCD_VOW', '0x8', provider, newValue);
 };
 
 const ensureLotMkrHasValue = async (network: string, expected: BigNumber) => {
@@ -80,11 +85,8 @@ const ensureLotMkrHasValue = async (network: string, expected: BigNumber) => {
 };
 
 const overwriteBidDaiAmount = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
-    const contract_address = await getContractAddressByName(network, 'MCD_VOW');
-    const slot_address = '0x9';
-    const new_value = ethers.utils.hexZeroPad('0x' + amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toString(16), 32);
-    const storageToWrite = [contract_address, slot_address, new_value];
-    await provider.send('hardhat_setStorageAt', storageToWrite);
+    const newValue = formatToHex(amount.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
+    await overwriteValueInSlot(network, 'MCD_VOW', '0x9', provider, newValue);
 };
 
 const ensureBidDaiHasValue = async (network: string, expected: BigNumber) => {
