@@ -68,7 +68,7 @@ const stripZeros = (val: string) => {
 
 const overwriteProtocolOwnDaiBalance = async (network: string, provider: EthereumProvider) => {
     const daiOwnerAddress = await getContractAddressByName(network, 'MCD_VOW');
-    const slotAddress = getMappingSlotAddress(daiOwnerAddress, '0x5');
+    const slotAddress = getMappingSlotAddress('0x5', daiOwnerAddress);
     const newValue = pad32('0x0');
     await overwriteValueInSlot(network, 'MCD_VAT', slotAddress, provider, newValue);
 };
