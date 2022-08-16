@@ -1,6 +1,7 @@
 import type { SurplusAuctionActive } from 'auctions-core/src/types';
 import { fetchActiveSurplusAuctions } from 'auctions-core/src/surplus';
 import { notifySurplus } from '../notify';
+import participate from '../keeper/surplus';
 
 const THRESHOLD_FOR_NEW_AUCTIONS = 5 * 60 * 1000;
 const knownAuctionIds = new Set();
@@ -43,6 +44,7 @@ export const loopSurplus = async function (network: string): Promise<void> {
         }
         const newAuctions = getNewSurplusAuctionsFromActiveSurplusAuctions(activeAuctions);
         newAuctions.map(notifySurplus);
+        participate(network, activeAuctions);
     } catch (error) {
         console.error('loop error:', error);
     }

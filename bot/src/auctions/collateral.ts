@@ -2,7 +2,7 @@ import type { AuctionInitialInfo } from 'auctions-core/src/types';
 import { fetchAllInitialAuctions } from 'auctions-core/src/auctions';
 import { getWhitelistedCollaterals } from '../whitelist';
 import { notifyCollateral } from '../notify';
-import participate from '../keeper';
+import participate from '../keeper/collateral';
 
 const THRESHOLD_FOR_NEW_AUCTIONS = 5 * 60 * 1000;
 const knownAuctionIds = new Set();

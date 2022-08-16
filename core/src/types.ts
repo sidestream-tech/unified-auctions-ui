@@ -207,7 +207,7 @@ export type SurplusAuctionStates = SurplusAuction['state'];
 
 export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
     nextMinimumBid: BigNumber;
-    marketUnitPrice: BigNumber | string;
+    marketUnitPrice: BigNumber;
     marketUnitPriceToUnitPriceRatio: BigNumber;
     unitPrice: BigNumber;
 }
