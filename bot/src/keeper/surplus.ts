@@ -2,6 +2,7 @@ import { SurplusAuctionActive } from 'auctions-core/src/types';
 import { bidToSurplusAuction, enrichSurplusAuction } from 'auctions-core/src/surplus';
 import getSigner from 'auctions-core/src/signer';
 import { fetchAllowanceAmountMKR, setAllowanceAmountMKR } from 'auctions-core/src/authorizations';
+import { fetchBalanceMKR } from 'auctions-core/src/wallet';
 import { KEEPER_MINIMUM_NET_PROFIT_DAI } from '../variables';
 import { isSetupCompleted } from './setup';
 import BigNumber from '~/../core/src/bignumber';
@@ -53,23 +54,36 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         console.info(
             `keeper: surplus auction "${auction.id}" clear profit is ${clearProfit.toFixed(
                 0
-            )} DAI after transaction fees, checking wallet MKR allowance`
+            )} DAI after transaction fees, checking wallet MKR balance`
         );
     }
 
     const walletAddress = await signer.getAddress();
 
-    // check the wallet's MKR allowance
-    const allowance = await fetchAllowanceAmountMKR(network, walletAddress);
-    if (allowance.isLessThan(auctionTransaction.bidAmountMKR)) {
+    // check the wallet's MKR balance
+    const balanceMkr = await fetchBalanceMKR(network, walletAddress);
+    if (balanceMkr.isLessThan(auctionTransaction.nextMinimumBid)) {
         console.info(
-            `keeper: wallet MKR allowance (${allowance.toFixed(
+            `keeper: wallet MKR balance (${balanceMkr.toFixed(
                 0
-            )}) is less than desired bid amount (${auctionTransaction.bidAmountMKR.toFixed(
+            )}) is less than min bid amount (${auctionTransaction.nextMinimumBid.toFixed(0)})`
+        );
+        return;
+    } else {
+        console.info('keeper: wallet MKR balance is within limits, checking wallet MKR allowance');
+    }
+
+    // check the wallet's MKR allowance
+    const allowanceMkr = await fetchAllowanceAmountMKR(network, walletAddress);
+    if (allowanceMkr.isLessThan(auctionTransaction.nextMinimumBid)) {
+        console.info(
+            `keeper: wallet MKR allowance (${allowanceMkr.toFixed(
+                0
+            )}) is less than desired bid amount (${auctionTransaction.nextMinimumBid.toFixed(
                 0
             )}), increasing wallet MKR allowance`
         );
-        await setAllowanceAmountMKR(network, walletAddress, auctionTransaction.bidAmountMKR);
+        await setAllowanceAmountMKR(network, walletAddress, auctionTransaction.nextMinimumBid);
         await checkAndParticipateIfPossible(network, auction);
         return;
     } else {
@@ -78,7 +92,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
 
     // bid on the Auction
     console.info(`keeper: surplus auction "${auctionTransaction.id}": attempting bid execution`);
-    await bidToSurplusAuction(network, auctionTransaction.id, auctionTransaction.bidAmountMKR);
+    await bidToSurplusAuction(network, auctionTransaction.id, auctionTransaction.nextMinimumBid);
     console.info(`keeper: surplus auction "${auctionTransaction.id}" was succesfully executed`);
 };
 
