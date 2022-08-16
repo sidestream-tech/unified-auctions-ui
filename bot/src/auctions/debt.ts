@@ -30,7 +30,9 @@ export const getAllActiveDebtAuctions = async function (network: string): Promis
     const auctions = await fetchActiveDebtAuctions(network);
     const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
 
-    console.info(`debt auctions: found "${auctions.length}" auctions ${auctionIds} on "${network}" network`);
+    auctionIds
+        ? console.info(`debt auctions: found "${auctions.length}" auctions ${auctionIds} on "${network}" network`)
+        : console.info(`debt auctions: found "${auctions.length}" auctions on "${network}" network`);
 
     return auctions;
 };
