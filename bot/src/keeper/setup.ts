@@ -1,7 +1,7 @@
 import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
 import {
     KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL,
-    KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS,
+    KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS,
     KEEPER_WALLET_PRIVATE_KEY,
 } from '../variables';
 
@@ -14,12 +14,9 @@ export const setupKeeper = async function (network: string) {
         console.warn('keeper: KEEPER_WALLET_PRIVATE_KEY variable is not set, keeper will not run');
         return;
     }
-    if (
-        Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL) &&
-        Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS)
-    ) {
+    if (Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL) && Number.isNaN(KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS)) {
         console.warn(
-            'keeper: KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL and KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS are not set or not numbers, keeper will not run'
+            'keeper: KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL and KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS are not set or not numbers, keeper will not run'
         );
         return;
     }
@@ -28,14 +25,15 @@ export const setupKeeper = async function (network: string) {
         const signer = await getSigner(network);
         const address = await signer.getAddress();
         isSetupCompleted(true);
+        console.info('keeper: setup complete');
         if (!Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL)) {
             console.info(
-                `keeper: setup complete: using wallet "${address}", looking for minimum clear profit of "${KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL}" DAI`
+                `keeper: using wallet "${address}", looking for minimum clear profit of "${KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL}" DAI`
             );
         }
-        if (!Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS)) {
+        if (!Number.isNaN(KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS)) {
             console.info(
-                `keeper: setup complete: using wallet "${address}", looking for minimum clear profit of "${KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS}" DAI`
+                `keeper: using wallet "${address}", looking for maximum unit price of "${KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS}" MKR per DAI`
             );
         }
     } catch (error) {

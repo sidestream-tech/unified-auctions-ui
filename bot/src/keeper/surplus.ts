@@ -3,7 +3,8 @@ import { bidToSurplusAuction, enrichSurplusAuction, collectSurplusAuction } from
 import getSigner from 'auctions-core/src/signer';
 import { fetchAllowanceAmountMKR, setAllowanceAmountMKR } from 'auctions-core/src/authorizations';
 import { fetchBalanceMKR } from 'auctions-core/src/wallet';
-import { KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS } from '../variables';
+import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
+import { KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS } from '../variables';
 import { isSetupCompleted } from './setup';
 import BigNumber from '~/../core/src/bignumber';
 
@@ -39,31 +40,40 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         return;
     }
 
-    // check auction's profit
-    const profit = new BigNumber(1)
-        .div(auctionTransaction.marketUnitPrice.minus(auctionTransaction.unitPrice))
-        .times(auctionTransaction.bidAmountMKR);
-    if (profit.isLessThan(0)) {
+    // check auction's unit price
+    const unitPriceDifference = auctionTransaction.marketUnitPrice.minus(auctionTransaction.unitPrice);
+    if (unitPriceDifference.isLessThan(0)) {
         console.info(
-            `keeper: surplus auction "${auction.id}" is not yet profitable (current profit: ${profit.toFixed(0)} DAI)`
+            `keeper: surplus auction "${
+                auction.id
+            }" is not yet profitable (current unit price difference: ${formatToAutomaticDecimalPointsString(
+                unitPriceDifference,
+                6
+            )} MKR per DAI)`
         );
         return;
     }
 
-    // check auction's clear profit – profit without transaction fees
-    const clearProfit = profit.minus(auctionTransaction.combinedBidFeesDai);
-    if (clearProfit.isLessThan(new BigNumber(KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS))) {
+    // check auction's clear unit price – unit price with transaction fees
+    const clearUnitPrice = auctionTransaction.nextMinimumBid.div(
+        auctionTransaction.receiveAmountDAI.minus(auctionTransaction.combinedBidFeesDai)
+    );
+    if (clearUnitPrice.isGreaterThan(new BigNumber(KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS))) {
         console.info(
-            `keeper: surplus auction "${auction.id}" clear profit is smaller than min profit (${clearProfit.toFixed(
-                0
-            )} < ${KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS})`
+            `keeper: surplus auction "${
+                auction.id
+            }" clear unit price is higher than max unit price (${formatToAutomaticDecimalPointsString(
+                clearUnitPrice,
+                6
+            )} > ${KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS})`
         );
         return;
     } else {
         console.info(
-            `keeper: surplus auction "${auction.id}" clear profit is ${clearProfit.toFixed(
-                0
-            )} DAI after transaction fees, checking wallet MKR balance`
+            `keeper: surplus auction "${auction.id}" clear unit price is ${formatToAutomaticDecimalPointsString(
+                clearUnitPrice,
+                6
+            )} MKR per DAI after transaction fees, checking wallet MKR balance`
         );
     }
 
@@ -71,9 +81,11 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     const balanceMkr = await fetchBalanceMKR(network, walletAddress);
     if (balanceMkr.isLessThan(auctionTransaction.nextMinimumBid)) {
         console.info(
-            `keeper: wallet MKR balance (${balanceMkr.toFixed(
-                0
-            )}) is less than min bid amount (${auctionTransaction.nextMinimumBid.toFixed(0)})`
+            `keeper: wallet MKR balance (${formatToAutomaticDecimalPointsString(
+                balanceMkr
+            )}) is less than min bid amount (${formatToAutomaticDecimalPointsString(
+                auctionTransaction.nextMinimumBid
+            )})`
         );
         return;
     } else {
@@ -84,10 +96,10 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     const allowanceMkr = await fetchAllowanceAmountMKR(network, walletAddress);
     if (allowanceMkr.isLessThan(auctionTransaction.nextMinimumBid)) {
         console.info(
-            `keeper: wallet MKR allowance (${allowanceMkr.toFixed(
-                0
-            )}) is less than desired bid amount (${auctionTransaction.nextMinimumBid.toFixed(
-                0
+            `keeper: wallet MKR allowance (${formatToAutomaticDecimalPointsString(
+                allowanceMkr
+            )}) is less than desired bid amount (${formatToAutomaticDecimalPointsString(
+                auctionTransaction.nextMinimumBid
             )}), increasing wallet MKR allowance`
         );
         await setAllowanceAmountMKR(network, walletAddress, auctionTransaction.nextMinimumBid);
