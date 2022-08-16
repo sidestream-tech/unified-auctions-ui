@@ -11,17 +11,17 @@ const generateNotificationTextCollateral = function (auction: AuctionInitialInfo
 
 const generateNotificationTextSurplus = function (auction: SurplusAuctionActive): string {
     const url = `${process.env.FRONTEND_ORIGIN}/surplus/?network=${auction.network}&auction=${auction.id}`;
-    return `Surplus auction with ${auction.receiveAmountDAI.toFixed(
-        0
+    return `Surplus auction with ${formatToAutomaticDecimalPointsString(
+        auction.receiveAmountDAI
     )} DAI just started. Follow the link to participate: ${url}`;
 };
 
 const generateNotificationTextDebt = function (auction: DebtAuctionActive): string {
     const url = `${process.env.FRONTEND_ORIGIN}/debt/?network=${auction.network}&auction=${auction.id}`;
-    return `Debt auction with fixed bid amount of ${auction.bidAmountDai.toFixed(
-        0
-    )} DAI and current compensation of ${auction.receiveAmountMKR.toFixed(
-        0
+    return `Debt auction with fixed bid amount of ${formatToAutomaticDecimalPointsString(
+        auction.bidAmountDai
+    )} DAI and current compensation of ${formatToAutomaticDecimalPointsString(
+        auction.receiveAmountMKR
     )} MKR just started. Follow the link to participate: ${url}`;
 };
 
