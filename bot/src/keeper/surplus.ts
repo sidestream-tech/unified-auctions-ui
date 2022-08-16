@@ -4,7 +4,7 @@ import getSigner from 'auctions-core/src/signer';
 import { fetchAllowanceAmountMKR, setAllowanceAmountMKR } from 'auctions-core/src/authorizations';
 import { fetchBalanceMKR } from 'auctions-core/src/wallet';
 import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
-import { KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS } from '../variables';
+import { KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI } from '../variables';
 import { isSetupCompleted } from './setup';
 import BigNumber from '~/../core/src/bignumber';
 
@@ -58,14 +58,14 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     const clearUnitPrice = auctionTransaction.nextMinimumBid.div(
         auctionTransaction.receiveAmountDAI.minus(auctionTransaction.combinedBidFeesDai)
     );
-    if (clearUnitPrice.isGreaterThan(new BigNumber(KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS))) {
+    if (clearUnitPrice.isGreaterThan(new BigNumber(KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI))) {
         console.info(
             `keeper: surplus auction "${
                 auction.id
             }" clear unit price is higher than max unit price (${formatToAutomaticDecimalPointsString(
                 clearUnitPrice,
                 6
-            )} > ${KEEPER_MAXIMUM_MKR_PER_DAI_SURPLUS})`
+            )} > ${KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI})`
         );
         return;
     } else {
