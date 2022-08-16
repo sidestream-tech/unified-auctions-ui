@@ -1,8 +1,8 @@
 import type { DebtAuctionActive } from 'auctions-core/src/types';
 import { fetchActiveDebtAuctions } from 'auctions-core/src/debt';
+import { THRESHOLD_FOR_NEW_AUCTIONS } from '../variables';
 import { notifyDebt } from '../notify';
 
-const THRESHOLD_FOR_NEW_AUCTIONS = 5 * 60 * 1000;
 const knownAuctionIds = new Set();
 
 const checkIfAuctionIsAlreadyKnown = function (auction: DebtAuctionActive): boolean {

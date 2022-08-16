@@ -1,10 +1,10 @@
 import type { AuctionInitialInfo } from 'auctions-core/src/types';
 import { fetchAllInitialAuctions } from 'auctions-core/src/auctions';
+import { THRESHOLD_FOR_NEW_AUCTIONS } from '../variables';
 import { getWhitelistedCollaterals } from '../whitelist';
 import { notifyCollateral } from '../notify';
 import participate from '../keeper';
 
-const THRESHOLD_FOR_NEW_AUCTIONS = 5 * 60 * 1000;
 const knownAuctionIds = new Set();
 
 const checkIfAuctionIsAlreadyKnown = function (auction: AuctionInitialInfo): boolean {
