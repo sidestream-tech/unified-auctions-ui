@@ -1,7 +1,7 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
 import getSigner from 'auctions-core/src/signer';
-import { KEEPER_MINIMUM_NET_PROFIT_DAI } from '../variables';
+import { KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL } from '../variables';
 import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from '../authorisation';
 import { isSetupCompleted } from './setup';
 
@@ -42,14 +42,14 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     // check auction's clear profit – profit without transaction fees
     if (
         auctionTransaction.transactionNetProfit &&
-        auctionTransaction.transactionNetProfit.toNumber() < KEEPER_MINIMUM_NET_PROFIT_DAI
+        auctionTransaction.transactionNetProfit.toNumber() < KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL
     ) {
         console.info(
             `keeper: auction "${
                 auction.id
             }" clear profit is smaller than min profit (${auctionTransaction.transactionNetProfit.toFixed(
                 0
-            )} < ${KEEPER_MINIMUM_NET_PROFIT_DAI})`
+            )} < ${KEEPER_MINIMUM_NET_PROFIT_DAI_COLLATERAL})`
         );
         return;
     } else {

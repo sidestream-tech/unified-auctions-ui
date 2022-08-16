@@ -1,9 +1,9 @@
 import { SurplusAuctionActive } from 'auctions-core/src/types';
-import { bidToSurplusAuction, enrichSurplusAuction } from 'auctions-core/src/surplus';
+import { bidToSurplusAuction, enrichSurplusAuction, collectSurplusAuction } from 'auctions-core/src/surplus';
 import getSigner from 'auctions-core/src/signer';
 import { fetchAllowanceAmountMKR, setAllowanceAmountMKR } from 'auctions-core/src/authorizations';
 import { fetchBalanceMKR } from 'auctions-core/src/wallet';
-import { KEEPER_MINIMUM_NET_PROFIT_DAI } from '../variables';
+import { KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS } from '../variables';
 import { isSetupCompleted } from './setup';
 import BigNumber from '~/../core/src/bignumber';
 
@@ -16,6 +16,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     }
 
     const signer = await getSigner(network);
+    const walletAddress = await signer.getAddress();
 
     // enrich the auction with more numbers
     const auctionTransaction = await enrichSurplusAuction(network, auction);
@@ -23,6 +24,14 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     // check if auction became inactive or finished
     if (auctionTransaction.state === 'ready-for-collection') {
         console.info(`keeper: surplus auction "${auction.id}" has already finished`);
+        // check if the current user is the winner
+        if (auctionTransaction.receiverAddress === walletAddress) {
+            console.info(
+                `keeper: wallet ${walletAddress} won surplus auction "${auction.id}", moving on to collection`
+            );
+            await collectSurplusAuction(network, auction.id);
+            console.info(`keeper: surplus auction "${auction.id}" was successfully collected`);
+        }
         return;
     }
     if (auctionTransaction.state === 'requires-restart') {
@@ -43,11 +52,11 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
 
     // check auction's clear profit – profit without transaction fees
     const clearProfit = profit.minus(auctionTransaction.combinedBidFeesDai);
-    if (clearProfit.isLessThan(new BigNumber(KEEPER_MINIMUM_NET_PROFIT_DAI))) {
+    if (clearProfit.isLessThan(new BigNumber(KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS))) {
         console.info(
             `keeper: surplus auction "${auction.id}" clear profit is smaller than min profit (${clearProfit.toFixed(
                 0
-            )} < ${KEEPER_MINIMUM_NET_PROFIT_DAI})`
+            )} < ${KEEPER_MINIMUM_NET_PROFIT_DAI_SURPLUS})`
         );
         return;
     } else {
@@ -57,8 +66,6 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
             )} DAI after transaction fees, checking wallet MKR balance`
         );
     }
-
-    const walletAddress = await signer.getAddress();
 
     // check the wallet's MKR balance
     const balanceMkr = await fetchBalanceMKR(network, walletAddress);
