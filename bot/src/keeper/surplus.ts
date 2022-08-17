@@ -4,7 +4,7 @@ import getSigner from 'auctions-core/src/signer';
 import { fetchAllowanceAmountMKR, setAllowanceAmountMKR } from 'auctions-core/src/authorizations';
 import { fetchBalanceMKR } from 'auctions-core/src/wallet';
 import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
-import { KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI } from '../variables';
+import { KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI } from '../variables';
 import { isSetupCompleted } from './setup';
 import BigNumber from '~/../core/src/bignumber';
 
@@ -40,40 +40,25 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         return;
     }
 
-    // check auction's unit price
-    const unitPriceDifference = auctionTransaction.marketUnitPrice.minus(auctionTransaction.unitPrice);
-    if (unitPriceDifference.isLessThan(0)) {
+    // check auction's clear profit – profit without transaction fees
+    const clearProfit = new BigNumber(1)
+        .div(auctionTransaction.marketUnitPrice.minus(auctionTransaction.unitPrice))
+        .times(auctionTransaction.nextMinimumBid)
+        .minus(auctionTransaction.combinedBidFeesDai);
+    if (clearProfit.isLessThan(new BigNumber(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI))) {
         console.info(
             `keeper: surplus auction "${
                 auction.id
-            }" is not yet profitable (current unit price difference: ${formatToAutomaticDecimalPointsString(
-                unitPriceDifference,
-                6
-            )} MKR per DAI)`
-        );
-        return;
-    }
-
-    // check auction's clear unit price – unit price with transaction fees
-    const clearUnitPrice = auctionTransaction.nextMinimumBid.div(
-        auctionTransaction.receiveAmountDAI.minus(auctionTransaction.combinedBidFeesDai)
-    );
-    if (clearUnitPrice.isGreaterThan(new BigNumber(KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI))) {
-        console.info(
-            `keeper: surplus auction "${
-                auction.id
-            }" clear unit price is higher than max unit price (${formatToAutomaticDecimalPointsString(
-                clearUnitPrice,
-                6
-            )} > ${KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI})`
+            }" clear profit is smaller than min profit (${formatToAutomaticDecimalPointsString(
+                clearProfit
+            )} < ${KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI})`
         );
         return;
     } else {
         console.info(
-            `keeper: surplus auction "${auction.id}" clear unit price is ${formatToAutomaticDecimalPointsString(
-                clearUnitPrice,
-                6
-            )} MKR per DAI after transaction fees, checking wallet MKR balance`
+            `keeper: surplus auction "${auction.id}" clear profit is ${formatToAutomaticDecimalPointsString(
+                clearProfit
+            )} DAI after transaction fees, checking wallet MKR balance`
         );
     }
 

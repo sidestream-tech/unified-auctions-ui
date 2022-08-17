@@ -1,7 +1,7 @@
 import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
 import {
     KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI,
-    KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI,
+    KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI,
     KEEPER_WALLET_PRIVATE_KEY,
 } from '../variables';
 
@@ -14,9 +14,12 @@ export const setupKeeper = async function (network: string) {
         console.warn('keeper: KEEPER_WALLET_PRIVATE_KEY variable is not set, keeper will not run');
         return;
     }
-    if (Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI) && Number.isNaN(KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI)) {
+    if (
+        Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI) &&
+        Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)
+    ) {
         console.warn(
-            'keeper: KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI and KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI are not set or not numbers, keeper will not run'
+            'keeper: KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI and KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI are not set or not numbers, keeper will not run'
         );
         return;
     }
@@ -31,9 +34,9 @@ export const setupKeeper = async function (network: string) {
                 `keeper: using wallet "${address}", looking for minimum clear profit of "${KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI}" DAI`
             );
         }
-        if (!Number.isNaN(KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI)) {
+        if (!Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)) {
             console.info(
-                `keeper: using wallet "${address}", looking for maximum unit price of "${KEEPER_SURPLUS_MAXIMUM_MKR_PER_DAI}" MKR per DAI`
+                `keeper: using wallet "${address}", looking for minimum clear profit of "${KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI}" DAI`
             );
         }
     } catch (error) {
