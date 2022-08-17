@@ -25,9 +25,9 @@ export const causeDebt = async (
 
 const overwriteValueInSlot = async (
     network: string,
+    provider: EthereumProvider,
     contractName: string,
     slotAddress: string,
-    provider: EthereumProvider,
     newValue: string
 ) => {
     const contractAddress = await getContractAddressByName(network, contractName);
@@ -41,7 +41,7 @@ const getMappingSlotAddress = (mappingStartSlot: string, key: string) => {
 
 const overwriteQueuedDebt = async (network: string, provider: EthereumProvider, debtAmountDai: BigNumber) => {
     const newValue = formatToHex(debtAmountDai.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
-    await overwriteValueInSlot(network, 'MCD_VOW', '0x5', provider, newValue);
+    await overwriteValueInSlot(network, provider, 'MCD_VOW', '0x5', newValue);
 };
 
 const ensureQueuedDebtEqual = async (network: string, expected: BigNumber) => {
@@ -70,12 +70,12 @@ const overwriteProtocolOwnDaiBalance = async (network: string, provider: Ethereu
     const daiOwnerAddress = await getContractAddressByName(network, 'MCD_VOW');
     const slotAddress = getMappingSlotAddress('0x5', daiOwnerAddress);
     const newValue = pad32('0x0');
-    await overwriteValueInSlot(network, 'MCD_VAT', slotAddress, provider, newValue);
+    await overwriteValueInSlot(network, provider, 'MCD_VAT', slotAddress, newValue);
 };
 
 const overwriteLottedMkrAmount = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
     const newValue = formatToHex(amount.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
-    await overwriteValueInSlot(network, 'MCD_VOW', '0x8', provider, newValue);
+    await overwriteValueInSlot(network, provider, 'MCD_VOW', '0x8', newValue);
 };
 
 const ensureLottedMkrHasValue = async (network: string, expected: BigNumber) => {
@@ -90,7 +90,7 @@ const ensureLottedMkrHasValue = async (network: string, expected: BigNumber) => 
 
 const overwriteBidDaiAmount = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
     const newValue = formatToHex(amount.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
-    await overwriteValueInSlot(network, 'MCD_VOW', '0x9', provider, newValue);
+    await overwriteValueInSlot(network, provider, 'MCD_VOW', '0x9', newValue);
 };
 
 const ensureBidDaiHasValue = async (network: string, expected: BigNumber) => {
