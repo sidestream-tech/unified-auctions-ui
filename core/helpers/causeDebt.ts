@@ -35,7 +35,7 @@ const overwriteValueInSlot = async (
     await provider.send('hardhat_setStorageAt', storageToWrite);
 };
 
-const getMappingSlotAddress = (mappingStartSlot: string, key: string) => {
+const generateMappingSlotAddress = (mappingStartSlot: string, key: string) => {
     return stripZeros(ethers.utils.keccak256(concat(pad32(key), pad32(mappingStartSlot))));
 };
 
@@ -68,7 +68,7 @@ const stripZeros = (val: string) => {
 
 const overwriteProtocolOwnDaiBalance = async (network: string, provider: EthereumProvider) => {
     const daiOwnerAddress = await getContractAddressByName(network, 'MCD_VOW');
-    const slotAddress = getMappingSlotAddress('0x5', daiOwnerAddress);
+    const slotAddress = generateMappingSlotAddress('0x5', daiOwnerAddress);
     const newValue = pad32('0x0');
     await overwriteValueInSlot(network, provider, 'MCD_VAT', slotAddress, newValue);
 };
