@@ -104,17 +104,6 @@ export default Vue.extend({
             },
         },
     },
-    watch: {
-        selectedAuctionId: {
-            immediate: true,
-            handler(): void {
-                this.fetchRelatedData();
-            },
-        },
-        walletAddress(): void {
-            this.fetchRelatedData();
-        },
-    },
     methods: {
         ...mapActions('debt', {
             updateAllAuctions: 'fetchDebtAuctions',
@@ -140,13 +129,6 @@ export default Vue.extend({
                 return;
             }
             this.$store.commit('modals/setSelectWalletModal', true);
-        },
-        fetchRelatedData(): void {
-            if (!this.selectedAuctionId || !this.walletAddress) {
-                return;
-            }
-            this.$store.dispatch('wallet/setup');
-            this.$store.dispatch('authorizations/setup');
         },
     },
 });
