@@ -39,9 +39,31 @@ const generateMappingSlotAddress = (mappingStartSlot: string, key: string) => {
     return stripZeros(ethers.utils.keccak256(concat(pad32(key), pad32(mappingStartSlot))));
 };
 
+const overwriteUintValue = async (
+    network: string,
+    provider: EthereumProvider,
+    contractName: string,
+    slotAddress: string,
+    value: BigNumber
+) => {
+    const newValue = formatToHex(value, 32);
+    await overwriteValueInSlot(network, provider, contractName, slotAddress, newValue);
+};
+
+const overwriteUintMapping = async (
+    network: string,
+    provider: EthereumProvider,
+    contractName: string,
+    mappingStartSlot: string,
+    key: string,
+    newValue: BigNumber
+) => {
+    const slotAddress = generateMappingSlotAddress(mappingStartSlot, key);
+    await overwriteUintValue(network, provider, contractName, slotAddress, newValue);
+};
+
 const overwriteQueuedDebt = async (network: string, provider: EthereumProvider, debtAmountDai: BigNumber) => {
-    const newValue = formatToHex(debtAmountDai.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
-    await overwriteValueInSlot(network, provider, 'MCD_VOW', '0x5', newValue);
+    await overwriteUintValue(network, provider, 'MCD_VOW', '0x5', debtAmountDai.shiftedBy(WAD_NUMBER_OF_DIGITS));
 };
 
 const ensureQueuedDebtEqual = async (network: string, expected: BigNumber) => {
@@ -68,14 +90,11 @@ const stripZeros = (val: string) => {
 
 const overwriteProtocolOwnDaiBalance = async (network: string, provider: EthereumProvider) => {
     const daiOwnerAddress = await getContractAddressByName(network, 'MCD_VOW');
-    const slotAddress = generateMappingSlotAddress('0x5', daiOwnerAddress);
-    const newValue = pad32('0x0');
-    await overwriteValueInSlot(network, provider, 'MCD_VAT', slotAddress, newValue);
+    await overwriteUintMapping(network, provider, 'MCD_VAT', '0x5', daiOwnerAddress, new BigNumber(0));
 };
 
 const overwriteLottedMkrAmount = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
-    const newValue = formatToHex(amount.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
-    await overwriteValueInSlot(network, provider, 'MCD_VOW', '0x8', newValue);
+    await overwriteUintValue(network, provider, 'MCD_VOW', '0x8', amount.shiftedBy(WAD_NUMBER_OF_DIGITS));
 };
 
 const ensureLottedMkrHasValue = async (network: string, expected: BigNumber) => {
@@ -89,8 +108,7 @@ const ensureLottedMkrHasValue = async (network: string, expected: BigNumber) => 
 };
 
 const overwriteBidDaiAmount = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
-    const newValue = formatToHex(amount.shiftedBy(WAD_NUMBER_OF_DIGITS), 32);
-    await overwriteValueInSlot(network, provider, 'MCD_VOW', '0x9', newValue);
+    await overwriteUintValue(network, provider, 'MCD_VOW', '0x9', amount.shiftedBy(WAD_NUMBER_OF_DIGITS));
 };
 
 const ensureBidDaiHasValue = async (network: string, expected: BigNumber) => {
