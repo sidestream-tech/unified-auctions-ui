@@ -22,8 +22,8 @@ const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
 describe('Surplus Auction', () => {
     before(async () => {
-        const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
-        await setupRpcUrlAndGetNetworks(local_rpc_url);
+        const localRpcUrl = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
+        await setupRpcUrlAndGetNetworks(localRpcUrl);
     });
     beforeEach(async () => {
         resetNetwork(HARDHAT_FORK_BLOCK_NUMBER);

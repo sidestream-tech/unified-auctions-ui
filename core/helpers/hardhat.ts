@@ -63,8 +63,8 @@ export const resetNetwork = async (blockNumber: number, rpcUrl: string = REMOTE_
 };
 
 export const createWalletForRpc = async (signerPrivateKey: string, network: string = NETWORK) => {
-    const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
-    await setupRpcUrlAndGetNetworks(local_rpc_url);
+    const localRpcUrl = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
+    await setupRpcUrlAndGetNetworks(localRpcUrl);
     await createWalletFromPrivateKey(signerPrivateKey, network);
     return hre.network.provider;
 };
