@@ -57,7 +57,7 @@
             <DebtLatestBidCheckPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
-                :disabled="!isWalletDAICheckPassed || !isActive"
+                :disabled="!isWalletDAICheckPassed || !isActive || !isDebtAuctionAuthorized"
                 :is-loading="auctionActionState === 'bidding'"
                 :desired-mkr-amount="desiredMkrAmount || auction.nextMaximumLotReceived"
                 :is-explanations-shown="isExplanationsShown"
