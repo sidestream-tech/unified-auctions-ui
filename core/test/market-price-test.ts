@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { convertMkrToDai } from '../src/calleeFunctions/helpers/uniswapV3';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import BigNumber from '../src/bignumber';
-import { resetNetwork } from './helpers/resetBlockchainFork';
+import { resetNetwork } from '../helpers/hardhat';
 
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 

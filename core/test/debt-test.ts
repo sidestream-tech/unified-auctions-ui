@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import { causeDebt } from '../helpers/causeDebt';
 import getContract from '../src/contracts';
 import BigNumber from '../src/bignumber';
-import reset from './helpers/resetBlockchainFork';
 import { HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import { resetBlockchainFork as reset } from '../helpers/hardhat';
 const HARDHAT_FORK_BLOCK_NUMBER = 14052140;
 
 describe('Debt Auction', () => {
