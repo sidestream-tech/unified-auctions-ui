@@ -2,8 +2,7 @@ import getContract, { getContractAddressByName } from '../src/contracts';
 import BigNumber from '../src/bignumber';
 import { WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 import { EthereumProvider } from 'hardhat/types';
-import { ethers } from 'ethers';
-import { formatToHex } from './format';
+import { overwriteUintMapping, overwriteUintValue } from './hardhat';
 
 export const causeDebt = async (
     network: string,
@@ -23,45 +22,6 @@ export const causeDebt = async (
     await startDebtAuction(network);
 };
 
-const overwriteValueInSlot = async (
-    network: string,
-    provider: EthereumProvider,
-    contractName: string,
-    slotAddress: string,
-    newValue: string
-) => {
-    const contractAddress = await getContractAddressByName(network, contractName);
-    const storageToWrite = [contractAddress, slotAddress, newValue];
-    await provider.send('hardhat_setStorageAt', storageToWrite);
-};
-
-const generateMappingSlotAddress = (mappingStartSlot: string, key: string) => {
-    return stripZeros(ethers.utils.keccak256(concat(pad32(key), pad32(mappingStartSlot))));
-};
-
-const overwriteUintValue = async (
-    network: string,
-    provider: EthereumProvider,
-    contractName: string,
-    slotAddress: string,
-    value: BigNumber
-) => {
-    const newValue = formatToHex(value, 32);
-    await overwriteValueInSlot(network, provider, contractName, slotAddress, newValue);
-};
-
-const overwriteUintMapping = async (
-    network: string,
-    provider: EthereumProvider,
-    contractName: string,
-    mappingStartSlot: string,
-    key: string,
-    newValue: BigNumber
-) => {
-    const slotAddress = generateMappingSlotAddress(mappingStartSlot, key);
-    await overwriteUintValue(network, provider, contractName, slotAddress, newValue);
-};
-
 const overwriteQueuedDebt = async (network: string, provider: EthereumProvider, debtAmountDai: BigNumber) => {
     await overwriteUintValue(network, provider, 'MCD_VOW', '0x5', debtAmountDai.shiftedBy(WAD_NUMBER_OF_DIGITS));
 };
@@ -74,18 +34,6 @@ const ensureQueuedDebtEqual = async (network: string, expected: BigNumber) => {
         return;
     }
     throw new Error(`Unexpected Sin value ${sin}, expected ${expected}`);
-};
-
-const pad32 = (val: string) => {
-    return ethers.utils.hexZeroPad(val, 32);
-};
-
-const concat = (prefix: string, postfix: string) => {
-    return ethers.utils.concat([prefix, postfix]);
-};
-
-const stripZeros = (val: string) => {
-    return ethers.utils.hexStripZeros(val);
 };
 
 const overwriteProtocolOwnDaiBalance = async (network: string, provider: EthereumProvider) => {
