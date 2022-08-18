@@ -14,11 +14,11 @@
                 class="w-full md:w-80"
                 type="primary"
                 :is-loading="isLoading"
-                :disabled="disabled || isFlopperAuthorized || !walletAddress"
+                :disabled="disabled || isDebtAuctionAuthorized || !walletAddress"
                 @click="$emit('authorizeFlopper')"
             >
                 <span v-if="isLoading">Authorizing...</span>
-                <span v-else-if="!isFlopperAuthorized">Authorize Flopper Transactions</span>
+                <span v-else-if="!isDebtAuctionAuthorized">Authorize Flopper Transactions</span>
                 <span v-else>Already authorized</span>
             </BaseButton>
         </div>
@@ -40,7 +40,7 @@ export default Vue.extend({
         Explain,
     },
     props: {
-        isFlopperAuthorized: {
+        isDebtAuctionAuthorized: {
             type: Boolean,
             required: true,
         },
@@ -69,7 +69,7 @@ export default Vue.extend({
                     title: 'The DAI authorization is unknown until a wallet is connected',
                 };
             }
-            if (!this.isFlopperAuthorized) {
+            if (!this.isDebtAuctionAuthorized) {
                 return {
                     name: this.disabled ? 'inactive' : 'incorrect',
                     title: 'The wallet is not yet authorized to execute DAI transactions',

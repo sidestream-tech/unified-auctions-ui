@@ -7,7 +7,7 @@ const common = {
     components: { DebtAuctionAuthorizationCheckPanel },
     data() {
         return {
-            isFlopperAuthorized: false,
+            isDebtAuctionAuthorized: false,
             walletAddress: faker.finance.ethereumAddress(),
             isLoading: false,
             disabled: false,
@@ -18,7 +18,7 @@ const common = {
         authorize() {
             this.isLoading = true;
             setTimeout(() => {
-                this.isFlopperAuthorized = true;
+                this.isDebtAuctionAuthorized = true;
                 this.isLoading = false;
             }, 1000);
         },
@@ -37,7 +37,7 @@ storiesOf('Panels/DebtAuctionAuthorizationCheckPanel', module)
         ...common,
         data: () => ({
             ...common.data(),
-            isFlopperAuthorized: true,
+            isDebtAuctionAuthorized: true,
         }),
     }))
     .add('Unauthorized', () => ({

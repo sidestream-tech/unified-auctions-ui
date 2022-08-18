@@ -53,7 +53,7 @@
                     :is-depositing="isDepositing"
                     :is-explanations-shown="isExplanationsShown"
                     :is-authorizing="isAuthorizing"
-                    :is-flopper-authorized="isFlopperAuthorized"
+                    :is-debt-auction-authorized="isDebtAuctionAuthorized"
                     @authorizeFlopper="$emit('authorizeFlopper')"
                     @connectWallet="$emit('connectWallet')"
                     @disconnectWallet="$emit('disconnectWallet')"
@@ -159,7 +159,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isFlopperAuthorized: {
+        isDebtAuctionAuthorized: {
             type: Boolean,
             default: false,
         },

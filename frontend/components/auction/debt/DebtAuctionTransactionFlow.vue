@@ -49,7 +49,7 @@
             <DebtAuctionAuthorizationCheckPanel
                 :disabled="!isWalletConnected"
                 :wallet-address="walletAddress"
-                :is-flopper-authorized="isFlopperAuthorized"
+                :is-debt-auction-authorized="isDebtAuctionAuthorized"
                 :is-explanations-shown="isExplanationsShown"
                 :is-loading="isAuthorizing"
                 @authorizeFlopper="$emit('authorizeFlopper')"
@@ -156,7 +156,7 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        isFlopperAuthorized: {
+        isDebtAuctionAuthorized: {
             type: Boolean,
             default: false,
         },

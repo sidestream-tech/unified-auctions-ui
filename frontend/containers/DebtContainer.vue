@@ -12,7 +12,7 @@
         :is-connecting-wallet="isConnectingWallet"
         :is-refreshing-wallet="isRefreshingWallet"
         :is-authorizing="isAuthorizing"
-        :is-flopper-authorized="isDebtAuctionAuthorizationDone"
+        :is-debt-auction-authorized="isDebtAuctionAuthorizationDone"
         :is-setting-allowance="isAuthorizationLoading"
         :last-updated="lastUpdated"
         :is-explanations-shown.sync="isExplanationsShown"
