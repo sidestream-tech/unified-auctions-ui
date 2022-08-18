@@ -8,7 +8,7 @@ const HARDHAT_FORK_BLOCK_NUMBER = 14052140;
 
 describe('Debt Auction', () => {
     beforeEach(async () => {
-        const provider = await reset(REMOTE_RPC_URL, HARDHAT_FORK_BLOCK_NUMBER, HARDHAT_PRIVATE_KEY, NETWORK);
+        const provider = await reset(HARDHAT_FORK_BLOCK_NUMBER, HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL);
         await causeDebt(NETWORK, provider, new BigNumber(10), new BigNumber(1000), new BigNumber(1000));
     });
     it('Flopper kicked', async () => {

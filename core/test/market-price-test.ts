@@ -3,7 +3,6 @@ import { convertMkrToDai } from '../src/calleeFunctions/helpers/uniswapV3';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import BigNumber from '../src/bignumber';
 import { resetNetwork } from './helpers/resetBlockchainFork';
-import { REMOTE_RPC_URL } from '../helpers/constants';
 
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
@@ -13,7 +12,7 @@ describe('Market Price & Conversions', () => {
         await setupRpcUrlAndGetNetworks(local_rpc_url);
     });
     beforeEach(async () => {
-        await resetNetwork(REMOTE_RPC_URL, HARDHAT_FORK_BLOCK_NUMBER);
+        await resetNetwork(HARDHAT_FORK_BLOCK_NUMBER);
     });
     it('gets MKR-DAI exchange rate with Uniswap v3', async () => {
         const rate = await convertMkrToDai('custom', new BigNumber(1));

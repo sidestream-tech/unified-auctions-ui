@@ -26,7 +26,7 @@ describe('Surplus Auction', () => {
         await setupRpcUrlAndGetNetworks(local_rpc_url);
     });
     beforeEach(async () => {
-        resetNetwork(REMOTE_RPC_URL, HARDHAT_FORK_BLOCK_NUMBER);
+        resetNetwork(HARDHAT_FORK_BLOCK_NUMBER);
     });
     it('fetches active auctions', async () => {
         const auctions = await fetchActiveSurplusAuctions(NETWORK);
