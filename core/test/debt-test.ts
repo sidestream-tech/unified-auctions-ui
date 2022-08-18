@@ -3,10 +3,8 @@ import { causeDebt } from '../helpers/causeDebt';
 import getContract from '../src/contracts';
 import BigNumber from '../src/bignumber';
 import reset from './helpers/resetBlockchainFork';
-import { HARDHAT_PRIVATE_KEY, NETWORK } from '../helpers/constants';
+import { HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 const HARDHAT_FORK_BLOCK_NUMBER = 14052140;
-
-const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL || 'http://localhost:8545';
 
 describe('Debt Auction', () => {
     beforeEach(async () => {

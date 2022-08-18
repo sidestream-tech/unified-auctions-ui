@@ -17,10 +17,8 @@ import { resetNetwork } from './helpers/resetBlockchainFork';
 
 import BigNumber from '../src/bignumber';
 import { fetchSurplusAuctionByIndex } from '../src/surplus';
-import { HARDHAT_PRIVATE_KEY, NETWORK } from '../helpers/constants';
+import { HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
-
-const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL || 'http://localhost:8545';
 
 describe('Surplus Auction', () => {
     before(async () => {

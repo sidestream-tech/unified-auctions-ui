@@ -3,8 +3,8 @@ import { convertMkrToDai } from '../src/calleeFunctions/helpers/uniswapV3';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import BigNumber from '../src/bignumber';
 import { resetNetwork } from './helpers/resetBlockchainFork';
+import { REMOTE_RPC_URL } from '../helpers/constants';
 
-const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL || 'http://localhost:8545';
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
 describe('Market Price & Conversions', () => {
