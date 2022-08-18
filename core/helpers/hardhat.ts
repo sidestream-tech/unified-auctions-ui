@@ -3,18 +3,7 @@ import BigNumber from '../src/bignumber';
 import { EthereumProvider } from 'hardhat/types';
 import { ethers } from 'ethers';
 import { formatToHex } from './format';
-
-const pad32 = (val: string) => {
-    return ethers.utils.hexZeroPad(val, 32);
-};
-
-const concat = (prefix: string, postfix: string) => {
-    return ethers.utils.concat([prefix, postfix]);
-};
-
-const stripZeros = (val: string) => {
-    return ethers.utils.hexStripZeros(val);
-};
+import { pad32, concat, stripZeros } from './hex';
 
 export const overwriteValueInSlot = async (
     network: string,
