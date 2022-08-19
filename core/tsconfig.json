@@ -34,7 +34,9 @@
         "src/**/*.json",
         "./test/**/*.ts",
         "./test/**/*.json",
-        "./helpers/**/*.ts"
+        "./helpers/**/*.ts",
+        "./simulation/**/*.ts",
+        "./simulation/**/*.json"
     ],
     "exclude": [
         "node_modules"

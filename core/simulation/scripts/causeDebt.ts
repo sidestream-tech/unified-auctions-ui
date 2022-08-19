@@ -1,16 +1,39 @@
-import getContract, { getContractAddressByName } from '../src/contracts';
-import BigNumber from '../src/bignumber';
-import { WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
+import hre from 'hardhat';
+import BigNumber from '../../src/bignumber';
+import { HARDHAT_PRIVATE_KEY } from '../../helpers/constants';
+import { createWalletForRpc } from '../../helpers/hardhat';
+
+const PROVIDER = hre.network.provider;
+
+import getContract, { getContractAddressByName } from '../../src/contracts';
+import { WAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
 import { EthereumProvider } from 'hardhat/types';
-import { overwriteUintMapping, overwriteUintValue } from './hardhat';
+import { overwriteUintMapping, overwriteUintValue } from '../../helpers/hardhat';
+
+const preprocessArguments = ({
+    network,
+    debtAmountDai,
+    mkrOnAuction,
+    daiOnAuction,
+}: {
+    network: string;
+    debtAmountDai: string;
+    mkrOnAuction: string;
+    daiOnAuction: string;
+}) => {
+    return {
+        network,
+        debtAmountDai: new BigNumber(debtAmountDai),
+        mkrOnAuction: new BigNumber(mkrOnAuction),
+        daiOnAuction: new BigNumber(daiOnAuction),
+    };
+};
 
 export const causeDebt = async (
-    network: string,
-    provider: EthereumProvider,
-    debtAmountDai: BigNumber,
-    mkrOnAuction: BigNumber,
-    daiOnAuction: BigNumber
+    argumentConfig: { network: string; debtAmountDai: string; mkrOnAuction: string; daiOnAuction: string },
+    provider: EthereumProvider = PROVIDER
 ) => {
+    const { network, debtAmountDai, mkrOnAuction, daiOnAuction } = preprocessArguments(argumentConfig);
     await overwriteQueuedDebt(network, provider, debtAmountDai);
     await ensureQueuedDebtEqual(network, debtAmountDai);
     await overwriteProtocolOwnDaiBalance(network, provider);
@@ -82,3 +105,16 @@ const startDebtAuction = async (network: string) => {
     const vow = await getContract(network, 'MCD_VOW', true);
     await vow.flop();
 };
+
+(async () => {
+    await createWalletForRpc(HARDHAT_PRIVATE_KEY, 'custom');
+    await causeDebt(
+        {
+            network: 'custom',
+            debtAmountDai: '10',
+            mkrOnAuction: '1000',
+            daiOnAuction: '1000',
+        },
+        PROVIDER
+    );
+})();
