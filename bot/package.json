@@ -30,6 +30,7 @@
   "dependencies": {
     "@nuxtjs/dotenv": "^1.4.1",
     "auctions-core": "file:../core",
+    "bignumber.js": "^9.0.1",
     "core-js": "^3.15.2",
     "nuxt": "^2.15.8",
     "twitter-api-v2": "^1.8.0"

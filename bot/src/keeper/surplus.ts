@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { SurplusAuctionActive } from 'auctions-core/src/types';
 import { bidToSurplusAuction, enrichSurplusAuction, collectSurplusAuction } from 'auctions-core/src/surplus';
 import getSigner from 'auctions-core/src/signer';
@@ -6,7 +7,6 @@ import { fetchBalanceMKR } from 'auctions-core/src/wallet';
 import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import { KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI } from '../variables';
 import { isSetupCompleted } from './setup';
-import BigNumber from '~/../core/src/bignumber';
 
 const currentlyExecutedAuctions = new Set();
 
@@ -70,7 +70,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
                 balanceMkr
             )}) is less than min bid amount (${formatToAutomaticDecimalPointsString(
                 auctionTransaction.nextMinimumBid
-            )})`
+            )}) for surplus auction "${auction.id}"`
         );
         return;
     } else {
