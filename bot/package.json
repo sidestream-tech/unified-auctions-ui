@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "description": "A keeper and twitter bot for interacting with the Maker protocol.",
-  "module": "dist/bot.esm.js",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
@@ -33,7 +32,6 @@
     "auctions-core": "file:../core",
     "dotenv": "^16.0.1",
     "twitter-api-v2": "^1.8.0"
-
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.33.0",

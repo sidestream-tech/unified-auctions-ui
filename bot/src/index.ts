@@ -34,5 +34,3 @@ const start = async function (): Promise<void> {
 start().catch(error => {
     throw error;
 });
-
-export default function () {} // required by nuxt
