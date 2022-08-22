@@ -17,11 +17,11 @@ export const setupKeeper = async function (network: string) {
         return;
     }
     if (
-        !(KEEPER_COLLATERAL && !Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) &&
+        !(KEEPER_COLLATERAL && !Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) ||
         !(KEEPER_SURPLUS && !Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI))
     ) {
         console.warn(
-            'keeper: boolean flags and profit variables are not set or are combined incorrectly, keeper will not run'
+            'keeper: boolean flags and profit variables are not set properly or are combined incorrectly, keeper will not run'
         );
         return;
     }
