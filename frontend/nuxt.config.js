@@ -2,6 +2,7 @@ import pkg from './package.json';
 
 const SITE_TITLE = 'Unified Auctions';
 const SITE_DESCRIPTION = `The "${SITE_TITLE}" is the portal to all Maker Auctions related services. Easily interact with the Maker Protocol through streamlined interfaces, inform yourself about how the protocol works and receive updates on current auctions.`;
+const TWITTER_HANDEL = '@MakerDAO_SAS';
 
 export default {
     // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -38,8 +39,12 @@ export default {
             { property: 'og:type', content: 'website' },
             { property: 'og:description', content: SITE_DESCRIPTION },
             { property: 'og:image', content: '/preview.jpeg' },
-            { name: 'twitter:card', content: 'summary_large_image' },
             { name: 'theme-color', content: '#1aab9b' },
+            { name: 'twitter:card', content: 'summary_large_image' },
+            { name: 'twitter:site', content: TWITTER_HANDEL },
+            { name: 'twitter:title', content: SITE_TITLE },
+            { name: 'twitter:description', content: SITE_DESCRIPTION },
+            { name: 'twitter:image', content: '/preview.jpeg' },
         ],
         link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
         script: [{ src: '/js/HeapIO.js' }],
