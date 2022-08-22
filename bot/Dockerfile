@@ -47,9 +47,6 @@ COPY --from=chamber /chamber /bin/chamber
 COPY --from=production-base /core /core
 COPY --from=production-base /bot /bot
 
-# Service hostname
-ENV NUXT_HOST=0.0.0.0
-
 # start the app
 WORKDIR /bot
 CMD chamber exec $SECRET_CHAMBER_PATH -- npm start

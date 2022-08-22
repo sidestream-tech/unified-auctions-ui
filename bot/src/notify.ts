@@ -1,5 +1,5 @@
-import type { AuctionInitialInfo, SurplusAuctionActive } from 'auctions-core/src/types';
-import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
+import type { AuctionInitialInfo, SurplusAuctionActive } from 'auctions-core/dist/src/types';
+import { formatToAutomaticDecimalPointsString } from 'auctions-core/dist/src/helpers/formatToAutomaticDecimalPoints';
 import { sendNotification } from './twitter';
 
 const generateNotificationTextCollateral = function (auction: AuctionInitialInfo): string {

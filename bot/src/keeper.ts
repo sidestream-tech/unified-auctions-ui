@@ -1,6 +1,6 @@
-import { AuctionInitialInfo } from 'auctions-core/src/types';
-import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
-import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
+import { AuctionInitialInfo } from 'auctions-core/dist/src/types';
+import getSigner, { createSigner, setSigner } from 'auctions-core/dist/src/signer';
+import { bidWithCallee, enrichAuction } from 'auctions-core/dist/src/auctions';
 import { KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
 import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from './authorisation';
 

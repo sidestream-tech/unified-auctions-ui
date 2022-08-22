@@ -1,10 +1,10 @@
-import getSigner from 'auctions-core/src/signer';
+import getSigner from 'auctions-core/dist/src/signer';
 import {
     authorizeCollateral,
     authorizeWallet,
     getCollateralAuthorizationStatus,
     getWalletAuthorizationStatus,
-} from 'auctions-core/src/authorizations';
+} from 'auctions-core/dist/src/authorizations';
 import { KEEPER_PREAUTHORIZE } from './variables';
 import { getWhitelistedCollaterals } from './whitelist';
 

@@ -6,8 +6,9 @@ module.exports = {
         es6: true,
         jest: true,
     },
+    parser: '@typescript-eslint/parser',
     plugins: ['prettier'],
-    extends: ['@nuxtjs/eslint-config-typescript', 'plugin:nuxt/recommended', 'plugin:prettier/recommended'],
+    extends: ['plugin:prettier/recommended', 'plugin:@typescript-eslint/recommended'],
     globals: {
         process: 'readonly',
     },
@@ -17,6 +18,8 @@ module.exports = {
         'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
         curly: 'warn',
         'no-undef': 'off',
-        'eol-last': ['error', 'always'],
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
 };

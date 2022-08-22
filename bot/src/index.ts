@@ -1,5 +1,6 @@
+import 'dotenv/config';
 import { setTimeout as delay } from 'timers/promises';
-import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
+import { setupRpcUrlAndGetNetworks } from 'auctions-core/dist/src/rpc';
 import { loopCollateral } from './auctions/collateral';
 import { loopSurplus } from './auctions/surplus';
 import { setupKeeper } from './keeper';

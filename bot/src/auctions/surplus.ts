@@ -1,5 +1,5 @@
-import type { SurplusAuctionActive } from 'auctions-core/src/types';
-import { fetchActiveSurplusAuctions } from 'auctions-core/src/surplus';
+import type { SurplusAuctionActive } from 'auctions-core/dist/src/types';
+import { fetchActiveSurplusAuctions } from 'auctions-core/dist/src/surplus';
 import { notifySurplus } from '../notify';
 
 const THRESHOLD_FOR_NEW_AUCTIONS = 5 * 60 * 1000;

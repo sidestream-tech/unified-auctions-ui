@@ -1,5 +1,5 @@
-import type { AuctionInitialInfo } from 'auctions-core/src/types';
-import { fetchAllInitialAuctions } from 'auctions-core/src/auctions';
+import type { AuctionInitialInfo } from 'auctions-core/dist/src/types';
+import { fetchAllInitialAuctions } from 'auctions-core/dist/src/auctions';
 import { getWhitelistedCollaterals } from '../whitelist';
 import { notifyCollateral } from '../notify';
 import participate from '../keeper';
