@@ -3,7 +3,13 @@ import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
 import { loopCollateral } from './auctions/collateral';
 import { loopSurplus } from './auctions/surplus';
 import { setupKeeper } from './keeper/setup';
-import { RPC_URL } from './variables';
+import {
+    RPC_URL,
+    KEEPER_COLLATERAL,
+    KEEPER_SURPLUS,
+    KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI,
+    KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI,
+} from './variables';
 import { setupTwitter } from './twitter';
 import { setupWhitelist } from './whitelist';
 import { executePreAuthorizationsIfRequested } from './authorisation';
@@ -23,11 +29,15 @@ const start = async function (): Promise<void> {
     await setupKeeper(network);
     await executePreAuthorizationsIfRequested(network);
 
-    loopCollateral(network);
-    setInterval(() => loopCollateral(network), REFETCH_INTERVAL);
+    if (KEEPER_COLLATERAL && !Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) {
+        loopCollateral(network);
+        setInterval(() => loopCollateral(network), REFETCH_INTERVAL);
+    }
 
-    loopSurplus(network);
-    setInterval(() => loopSurplus(network), DEFAULT_REFETCH_INTERVAL);
+    if (KEEPER_SURPLUS && !Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)) {
+        loopSurplus(network);
+        setInterval(() => loopSurplus(network), DEFAULT_REFETCH_INTERVAL);
+    }
 };
 
 start().catch(error => {

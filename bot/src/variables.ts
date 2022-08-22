@@ -1,4 +1,6 @@
 export const RPC_URL = process.env.RPC_URL;
+export const KEEPER_COLLATERAL = process.env.KEEPER_COLLATERAL?.toLowerCase().trim() === 'true' || false;
+export const KEEPER_SURPLUS = process.env.KEEPER_SURPLUS?.toLowerCase().trim() === 'true' || false;
 export const KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI = parseInt(
     process.env.KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI || ''
 );

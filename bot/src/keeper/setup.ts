@@ -1,5 +1,7 @@
 import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
 import {
+    KEEPER_COLLATERAL,
+    KEEPER_SURPLUS,
     KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI,
     KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI,
     KEEPER_WALLET_PRIVATE_KEY,
@@ -15,11 +17,11 @@ export const setupKeeper = async function (network: string) {
         return;
     }
     if (
-        Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI) &&
-        Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)
+        !(KEEPER_COLLATERAL && !Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) &&
+        !(KEEPER_SURPLUS && !Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI))
     ) {
         console.warn(
-            'keeper: KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI and KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI are not set or not numbers, keeper will not run'
+            'keeper: boolean flags and profit variables are not set or are combined incorrectly, keeper will not run'
         );
         return;
     }
@@ -29,14 +31,14 @@ export const setupKeeper = async function (network: string) {
         const address = await signer.getAddress();
         isSetupCompleted(true);
         console.info('keeper: setup complete');
-        if (!Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) {
+        if (KEEPER_COLLATERAL && !Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) {
             console.info(
-                `keeper: using wallet "${address}", looking for minimum clear profit of "${KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI}" DAI`
+                `keeper: using wallet "${address}", looking for minimum clear profit of "${KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI}" DAI in collateral auctions`
             );
         }
-        if (!Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)) {
+        if (KEEPER_SURPLUS && !Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)) {
             console.info(
-                `keeper: using wallet "${address}", looking for minimum clear profit of "${KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI}" DAI`
+                `keeper: using wallet "${address}", looking for minimum clear profit of "${KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI}" DAI in surplus auctions`
             );
         }
     } catch (error) {
