@@ -1,22 +1,12 @@
 import prompt, { Choice, PromptObject } from 'prompts';
-import configurations from './configurations.json';
+import configurations, { KnownConfigs, ConfigConfigurations } from './configurations';
 import scripts from './scripts';
 
-interface SimulationConfiguration {
-    names: Record<string, string>;
-    promts: Record<string, Array<PromptObject>>;
-}
-
-type KnownSimulations = 'causeDebt';
-
-const chooseScript = async (configuration: SimulationConfiguration) => {
-    const namesMap = configuration.names;
-    const promptedNameOptions: Choice[] = Object.entries(namesMap).map(([functionName, functionDescription]) => {
-        return {
-            title: functionDescription,
-            value: functionName,
-        };
-    });
+const chooseScript = async (configuration: ConfigConfigurations) => {
+    const promptedNameOptions: Choice[] = Object.entries(configuration).map(([configName, configBody]) => ({
+        title: configBody.title,
+        value: configName,
+    }));
     const promptConfig: PromptObject = {
         type: 'select',
         name: 'simulation',
@@ -26,14 +16,13 @@ const chooseScript = async (configuration: SimulationConfiguration) => {
     return await prompt([promptConfig]);
 };
 
-const chooseArgsByScriptName = async (scriptName: KnownSimulations): Promise<Record<string, any>> => {
-    const promts = configurations.promts;
-    const promtConfig = promts[scriptName] as PromptObject[];
+const chooseArgsByScriptName = async (scriptName: KnownConfigs): Promise<Record<string, any>> => {
+    const promtConfig = configurations[scriptName].configuration;
     return await prompt(promtConfig);
 };
 
 export const chooseSimulation = async () => {
-    const scriptName = (await chooseScript(configurations as SimulationConfiguration)).simulation;
+    const scriptName = (await chooseScript(configurations)).simulation;
     const simulationArgs = await chooseArgsByScriptName(scriptName);
     await scripts.causeDebt(simulationArgs as any);
 };
