@@ -20,7 +20,7 @@ export const getNewAuctionsFromActiveAuctions = function (activeActions: Auction
         const isNew = activeAction.startDate > new Date(Date.now() - THRESHOLD_FOR_NEW_AUCTIONS);
         return isNew && checkIfAuctionIsAlreadyKnown(activeAction);
     });
-    console.info(`auctions: "${newAuctions.length}" of "${activeActions.length}" auctions are new`);
+    console.info(`collateral auctions: "${newAuctions.length}" of "${activeActions.length}" auctions are new`);
 
     newAuctions.map(markAuctionAsKnown);
     return newAuctions;
@@ -32,7 +32,7 @@ export const getAllAuctions = async function (network: string): Promise<AuctionI
 
     const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
     console.info(
-        `auctions: found "${auctions.length}" auctions ${
+        `collateral auctions: found "${auctions.length}" auctions ${
             auctionIds.length !== 0 ? '(' + auctionIds + ') ' : ''
         }on "${network}" network`
     );
