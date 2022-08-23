@@ -6,7 +6,7 @@ import {
     KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI,
     KEEPER_WALLET_PRIVATE_KEY,
 } from '../variables';
-import { executePreAuthorizationsIfRequested } from '~/src/authorisation';
+import { executePreAuthorizationsIfRequested } from '../authorisation';
 
 export const isSetupCompleted = (isSetupCompleted: boolean = false): boolean => {
     return isSetupCompleted;

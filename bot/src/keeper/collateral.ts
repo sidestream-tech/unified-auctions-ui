@@ -20,11 +20,11 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
 
     // check if auction became inactive or finished
     if (auctionTransaction.isFinished) {
-        console.info(`keeper: auction "${auction.id}" has already finished`);
+        console.info(`keeper: collateral auction "${auction.id}" has already finished`);
         return;
     }
     if (!auctionTransaction.isActive) {
-        console.info(`keeper: auction "${auction.id}" is inactive`);
+        console.info(`keeper: collateral auction "${auction.id}" is inactive`);
         return;
     }
 
@@ -32,9 +32,11 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     if (!auctionTransaction.transactionGrossProfit || auctionTransaction.transactionGrossProfit.isLessThan(0)) {
         if (auctionTransaction.transactionGrossProfit) {
             const profit = `${auctionTransaction.transactionGrossProfit.toFixed(0)} DAI`;
-            console.info(`keeper: auction "${auction.id}" is not yet profitable (current profit: ${profit})`);
+            console.info(
+                `keeper: collateral auction "${auction.id}" is not yet profitable (current profit: ${profit})`
+            );
         } else {
-            console.info(`keeper: auction "${auction.id}" is not tradable`);
+            console.info(`keeper: collateral auction "${auction.id}" is not tradable`);
         }
         return;
     }
@@ -45,7 +47,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         auctionTransaction.transactionNetProfit.toNumber() < KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI
     ) {
         console.info(
-            `keeper: auction "${
+            `keeper: collateral auction "${
                 auction.id
             }" clear profit is smaller than min profit (${auctionTransaction.transactionNetProfit.toFixed(
                 0
@@ -54,7 +56,9 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         return;
     } else {
         console.info(
-            `keeper: auction "${auction.id}" clear profit is ${auctionTransaction.transactionNetProfit.toFixed(
+            `keeper: collateral auction "${
+                auction.id
+            }" clear profit is ${auctionTransaction.transactionNetProfit.toFixed(
                 0
             )} DAI after transaction fees, moving on to the execution`
         );
@@ -83,9 +87,11 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     }
 
     // bid on the Auction
-    console.info(`keeper: auction "${auctionTransaction.id}": attempting swap execution`);
+    console.info(`keeper: collateral auction "${auctionTransaction.id}": attempting swap execution`);
     const bidHash = await bidWithCallee(network, auctionTransaction, walletAddress);
-    console.info(`keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`);
+    console.info(
+        `keeper: collateral auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`
+    );
 };
 
 const participateInAuction = async function (network: string, auction: AuctionInitialInfo) {
