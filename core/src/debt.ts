@@ -20,7 +20,11 @@ export const getNextMaximumMkrReceived = async (
     debtAuction: DebtAuctionActive
 ): Promise<BigNumber> => {
     const decreaseCoefficient = await getDebtAuctionBidDecreaseCoefficient(network);
-    return new BigNumber(debtAuction.receiveAmountMKR.dividedBy(decreaseCoefficient).toPrecision(MKR_NUMBER_OF_DIGITS - 1, BigNumber.ROUND_FLOOR));
+    return new BigNumber(
+        debtAuction.receiveAmountMKR
+            .dividedBy(decreaseCoefficient)
+            .toPrecision(MKR_NUMBER_OF_DIGITS - 1, BigNumber.ROUND_FLOOR)
+    );
 };
 
 export const fetchActiveDebtAuctions = async function (network: string): Promise<DebtAuctionActive[]> {
