@@ -40,7 +40,7 @@ export default {
             { property: 'og:description', content: SITE_DESCRIPTION },
             { property: 'og:image', content: '/preview.jpeg' },
             { name: 'theme-color', content: '#1aab9b' },
-            { name: 'twitter:card', content: 'summary_large_image' },
+            { name: 'twitter:card', content: 'app' },
             { name: 'twitter:site', content: TWITTER_HANDEL },
             { name: 'twitter:title', content: SITE_TITLE },
             { name: 'twitter:description', content: SITE_DESCRIPTION },
