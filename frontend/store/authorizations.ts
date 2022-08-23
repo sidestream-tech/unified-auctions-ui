@@ -237,7 +237,7 @@ export const actions = {
             commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: false });
         }
     },
-    async authorizeDebtAuction({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
+    async authorizeDebtAuctionContract({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
         commit('setIsWalletAuthorizationLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];

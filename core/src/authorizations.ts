@@ -163,14 +163,9 @@ export const authorizeDebtAuction = memoizee(_authorizeDebtAuction, {
     length: 3,
 });
 
-const _getDebtAuctionAuthorizationStatus = async (network: string, walletAddress: string): Promise<boolean> => {
+export const getDebtAuctionAuthorizationStatus = async (network: string, walletAddress: string): Promise<boolean> => {
     const flopperAddress = await getContractAddressByName(network, 'MCD_FLOP');
     const contract = await getContract(network, 'MCD_VAT');
     const authorizationStatus = await contract.can(walletAddress, flopperAddress);
     return authorizationStatus.toNumber() === 1;
 };
-
-export const getDebtAuctionAuthorizationStatus = memoizee(_getDebtAuctionAuthorizationStatus, {
-    promise: true,
-    length: 2,
-});
