@@ -31,8 +31,11 @@ export const getAllActiveSurplusAuctions = async function (network: string): Pro
     const auctions = await fetchActiveSurplusAuctions(network);
     const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
 
-    console.info(`surplus auctions: found "${auctions.length}" auctions ${auctionIds} on "${network}" network`);
-
+    console.info(
+        `auctions: found "${auctions.length}" auctions ${
+            auctionIds.length !== 0 ? '(' + auctionIds + ') ' : ''
+        }on "${network}" network`
+    );
     return auctions;
 };
 

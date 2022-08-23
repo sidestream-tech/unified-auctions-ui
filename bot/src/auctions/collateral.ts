@@ -31,7 +31,11 @@ export const getAllAuctions = async function (network: string): Promise<AuctionI
     const auctions = await fetchAllInitialAuctions(network, collaterals);
 
     const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
-    console.info(`auctions: found "${auctions.length}" auctions (${auctionIds}) on "${network}" network`);
+    console.info(
+        `auctions: found "${auctions.length}" auctions ${
+            auctionIds.length !== 0 ? '(' + auctionIds + ') ' : ''
+        }on "${network}" network`
+    );
     return auctions;
 };
 

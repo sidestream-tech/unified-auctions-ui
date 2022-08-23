@@ -5,7 +5,7 @@ import getSigner from 'auctions-core/src/signer';
 import { fetchAllowanceAmountMKR, setAllowanceAmountMKR } from 'auctions-core/src/authorizations';
 import { fetchBalanceMKR } from 'auctions-core/src/wallet';
 import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
-import { KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI } from '../variables';
+import { KEEPER_SURPLUS, KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI } from '../variables';
 import { isSetupCompleted } from './setup';
 
 const currentlyExecutedAuctions = new Set();
@@ -13,6 +13,10 @@ const currentlyExecutedAuctions = new Set();
 const checkAndParticipateIfPossible = async function (network: string, auction: SurplusAuctionActive) {
     // check if setupKeeper hasn't run
     if (!isSetupCompleted) {
+        return;
+    }
+
+    if (!KEEPER_SURPLUS || Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)) {
         return;
     }
 

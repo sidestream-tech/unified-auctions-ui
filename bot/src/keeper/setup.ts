@@ -25,15 +25,13 @@ export const setupKeeper = async function (network: string) {
     }
 
     if (KEEPER_COLLATERAL && Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) {
-        return console.warn(
+        console.warn(
             'keeper: KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI is not set. Collateral auctions will not be taken.'
         );
     }
 
     if (KEEPER_SURPLUS && Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)) {
-        return console.warn(
-            'keeper: KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI is not set. Surplus auctions will not be taken.'
-        );
+        console.warn('keeper: KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI is not set. Surplus auctions will not be taken.');
     }
 
     try {

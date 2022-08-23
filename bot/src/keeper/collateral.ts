@@ -1,7 +1,7 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
 import getSigner from 'auctions-core/src/signer';
-import { KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI } from '../variables';
+import { KEEPER_COLLATERAL, KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI } from '../variables';
 import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from '../authorisation';
 import { isSetupCompleted } from './setup';
 
@@ -10,6 +10,10 @@ const currentlyExecutedAuctions = new Set();
 const checkAndParticipateIfPossible = async function (network: string, auction: AuctionInitialInfo) {
     // check if setupKeeper hasn't run
     if (!isSetupCompleted) {
+        return;
+    }
+
+    if (!KEEPER_COLLATERAL || Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) {
         return;
     }
 
