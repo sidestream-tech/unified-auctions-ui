@@ -12,7 +12,6 @@ import {
 } from './variables';
 import { setupTwitter } from './twitter';
 import { setupWhitelist } from './whitelist';
-import { executePreAuthorizationsIfRequested } from './authorisation';
 
 const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
 const SETUP_DELAY = 3 * 1000;
@@ -27,7 +26,6 @@ const start = async function (): Promise<void> {
     setupWhitelist();
     await setupTwitter();
     await setupKeeper(network);
-    await executePreAuthorizationsIfRequested(network);
 
     if (KEEPER_COLLATERAL && !Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) {
         loopCollateral(network);
