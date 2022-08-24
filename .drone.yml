@@ -25,7 +25,7 @@ data:
         - key: HEAPIO_ID
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/heapio_id
         - key: FRONTEND_ORIGIN
-          vault_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/frontend_origin
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/frontend_origin
       tags_to_cache_from:
         - "main"
       trigger:
@@ -129,7 +129,7 @@ data:
         - key: HEAPIO_ID
           value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/heapio_id
         - key: FRONTEND_ORIGIN
-          vault_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/frontend_origin
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/frontend_origin
       tags_to_cache_from:
         - "main"
       trigger:
