@@ -24,6 +24,8 @@ data:
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/staging_banner_url
         - key: HEAPIO_ID
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/heapio_id
+        - key: FRONTEND_ORIGIN
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/frontend_origin
       tags_to_cache_from:
         - "main"
       trigger:
@@ -126,6 +128,8 @@ data:
           value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/contact_email
         - key: HEAPIO_ID
           value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/heapio_id
+        - key: FRONTEND_ORIGIN
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/frontend_origin
       tags_to_cache_from:
         - "main"
       trigger:
