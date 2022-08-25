@@ -7,5 +7,3 @@ if (!process.env.REMOTE_RPC_URL) {
 }
 export const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
 export const LOCAL_RPC_URL = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
-
-
