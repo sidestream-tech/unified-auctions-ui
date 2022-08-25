@@ -9,7 +9,7 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { createWalletFromPrivateKey } from '../src/signer';
 import { LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 
-function checkRpcUrl (){
+function checkRpcUrl() {
     if (!REMOTE_RPC_URL) {
         throw Error('Environment varialbe REMOTE_RPC_URL was not provided');
     }
@@ -55,7 +55,7 @@ export const overwriteUintMapping = async (
 };
 
 export const resetNetwork = async (blockNumber: number, rpcUrl: string | undefined = REMOTE_RPC_URL) => {
-    checkRpcUrl()
+    checkRpcUrl();
 
     await hre.network.provider.request({
         method: 'hardhat_reset',
@@ -82,7 +82,7 @@ export const resetBlockchainFork = async function (
     network: string = NETWORK,
     rpcUrl: string | undefined = REMOTE_RPC_URL
 ) {
-    checkRpcUrl()
+    checkRpcUrl();
     await resetNetwork(blockNumber, rpcUrl);
     const provider = await createWalletForRpc(signerPrivateKey, network);
     return provider;
