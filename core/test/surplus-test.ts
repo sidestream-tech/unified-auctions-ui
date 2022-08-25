@@ -17,13 +17,12 @@ import { resetNetwork } from '../helpers/hardhat';
 
 import BigNumber from '../src/bignumber';
 import { fetchSurplusAuctionByIndex } from '../src/surplus';
-import { HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
 describe('Surplus Auction', () => {
     before(async () => {
-        const localRpcUrl = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
-        await setupRpcUrlAndGetNetworks(localRpcUrl);
+        await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
     });
     beforeEach(async () => {
         resetNetwork(HARDHAT_FORK_BLOCK_NUMBER);

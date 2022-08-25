@@ -7,7 +7,7 @@ import { pad32, concat, stripZeros } from './hex';
 import hre from 'hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { createWalletFromPrivateKey } from '../src/signer';
-import { NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import { LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 
 export const overwriteValueInSlot = async (
     network: string,
@@ -63,8 +63,7 @@ export const resetNetwork = async (blockNumber: number, rpcUrl: string = REMOTE_
 };
 
 export const createWalletForRpc = async (signerPrivateKey: string, network: string = NETWORK) => {
-    const localRpcUrl = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
-    await setupRpcUrlAndGetNetworks(localRpcUrl);
+    await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
     await createWalletFromPrivateKey(signerPrivateKey, network);
     return hre.network.provider;
 };
