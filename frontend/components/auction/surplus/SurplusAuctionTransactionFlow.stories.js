@@ -17,10 +17,12 @@ const common = {
         isConnectingWallet: false,
         isRefreshingWallet: false,
         isSettingAllowance: false,
+        isAuthorizing: false,
 
         walletAddress: undefined,
         walletMKR: undefined,
         allowanceMKR: undefined,
+        daiVatBalance: undefined,
 
         surplusAuctionActionState: 'loaded',
     }),
@@ -30,6 +32,7 @@ const common = {
             setTimeout(() => {
                 this.walletMKR = new BigNumber(faker.finance.amount(1001, 1200));
                 this.allowanceMKR = new BigNumber(faker.finance.amount(1, 2));
+                this.daiVatBalance = new BigNumber(faker.finance.amount(100, 200));
                 this.walletAddress = faker.finance.ethereumAddress();
                 this.isWalletConnected = true;
                 this.isConnectingWallet = false;
@@ -43,6 +46,13 @@ const common = {
                 this.walletAddress = undefined;
                 this.isWalletConnected = false;
                 this.isConnectingWallet = false;
+            }, 1000);
+        },
+        authorizeWallet() {
+            this.isAuthorizing = true;
+            setTimeout(() => {
+                this.isWalletAuthorized = true;
+                this.isAuthorizing = false;
             }, 1000);
         },
         setAllowanceAmount(amount) {
@@ -66,6 +76,7 @@ const common = {
                     receiverAddress: this.walletAddress,
                     bidAmountMKR: new BigNumber(amount),
                 };
+                action('bid', amount);
                 this.surplusAuctionActionState = 'loaded';
             }, 1000);
         },
@@ -86,6 +97,7 @@ const common = {
           @refreshWallet="refresh" 
           @bid="bid"
           @collect="collect"
+          @authorizeWallet="authorizeWallet"
         />`,
 };
 
@@ -125,6 +137,23 @@ storiesOf('Auction/Surplus/SurplusAuctionTransactionFlow', module)
             ...common.data(),
             auction: generateFakeSurplusAuctionTransaction('requires-restart'),
         }),
+    }))
+    .add('No DAI In VAT', () => ({
+        ...common,
+        methods: {
+            ...common.methods,
+            connect() {
+                this.isConnectingWallet = true;
+                setTimeout(() => {
+                    this.walletMKR = new BigNumber(faker.finance.amount(1001, 1200));
+                    this.allowanceMKR = new BigNumber(faker.finance.amount(1, 2));
+                    this.daiVatBalance = new BigNumber(0);
+                    this.walletAddress = faker.finance.ethereumAddress();
+                    this.isWalletConnected = true;
+                    this.isConnectingWallet = false;
+                }, 1000);
+            },
+        },
     }))
     .add('Collected', () => ({
         ...common,

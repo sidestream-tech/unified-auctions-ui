@@ -15,7 +15,7 @@
                     :is-explanations-shown="isExplanationsShown"
                     :is-restarting="auctionActionState === 'restarting'"
                     :is-connecting="isConnecting"
-                    auction-type="surplus"
+                    auction-type="compensation"
                     @restart="$emit('restart', auctionId)"
                     @connectWallet="$emit('connect')"
                     @disconnectWallet="$emit('disconnect')"
@@ -146,7 +146,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import type { SurplusAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
+import type { CompensationAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
@@ -155,7 +155,7 @@ import FormatMarketValue from '~/components/common/formatters/FormatMarketValue.
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import AuctionRestartPanel from '~/components/panels/AuctionRestartPanel.vue';
 import LoadingIcon from '~/assets/icons/loading.svg';
-import Loading from '~/components/common/other/Loading';
+import Loading from '~/components/common/other/Loading.vue';
 
 export default Vue.extend({
     name: 'SurplusAuction',
@@ -181,7 +181,7 @@ export default Vue.extend({
             default: null,
         },
         auctionActionState: {
-            type: String as Vue.PropType<SurplusAuctionActionStates>,
+            type: String as Vue.PropType<CompensationAuctionActionStates>,
             default: null,
         },
         error: {

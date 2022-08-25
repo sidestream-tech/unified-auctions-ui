@@ -9,7 +9,7 @@ const common = {
     data() {
         return {
             allowanceAmount: new BigNumber(faker.finance.amount(0, 100)),
-            desiredAmount: new BigNumber(faker.finance.amount(100, 200)),
+            desiredAmount: new BigNumber(faker.finance.amount(101, 200)),
             isLoading: false,
             disabled: false,
             isExplanationsShown: true,
@@ -38,7 +38,7 @@ storiesOf('Panels/AllowanceAmountCheckPanel', module)
         ...common,
         data: () => ({
             ...common.data(),
-            allowanceAmount: new BigNumber(faker.finance.amount(100, 200)),
+            allowanceAmount: new BigNumber(faker.finance.amount(101, 200)),
             desiredAmount: new BigNumber(faker.finance.amount(0, 100)),
         }),
     }))

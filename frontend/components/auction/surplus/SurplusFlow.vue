@@ -48,8 +48,14 @@
                     :token-address="tokenAddress"
                     :is-connecting-wallet="isConnectingWallet"
                     :is-refreshing-wallet="isRefreshingWallet"
+                    :is-authorizing="isAuthorizing"
+                    :is-wallet-authorized="isWalletAuthorized"
+                    :is-withdrawing="isWithdrawing"
                     :is-setting-allowance="isSettingAllowance"
                     :is-explanations-shown="isExplanationsShown"
+                    :dai-vat-balance="daiVatBalance"
+                    @authorizeWallet="$emit('authorizeWallet')"
+                    @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
                     @connectWallet="$emit('connectWallet')"
                     @disconnectWallet="$emit('disconnectWallet')"
                     @refreshWallet="$emit('refreshWallet')"
@@ -64,7 +70,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { SurplusAuctionActionStates, SurplusAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
+import { CompensationAuctionActionStates, SurplusAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import SurplusAuction from '~/components/auction/surplus/SurplusAuction.vue';
 import SurplusAuctionTransactionFlow from '~/components/auction/surplus/SurplusAuctionTransactionFlow.vue';
@@ -113,6 +119,18 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isAuthorizing: {
+            type: Boolean,
+            default: false,
+        },
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isWithdrawing: {
+            type: Boolean,
+            default: false,
+        },
         areAuctionsFetching: {
             type: Boolean,
             default: false,
@@ -126,7 +144,7 @@ export default Vue.extend({
             default: () => ({}),
         },
         auctionActionState: {
-            type: Object as Vue.PropType<string, SurplusAuctionActionStates>,
+            type: Object as Vue.PropType<string, CompensationAuctionActionStates>,
             default: () => ({}),
         },
         lastUpdated: {
@@ -144,6 +162,10 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        daiVatBalance: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
         },
     },
     data: () => ({

@@ -29,23 +29,42 @@ const enrichAuctionWithActualNumbers = async function (
     network: string,
     auction: AuctionInitialInfo
 ): Promise<Auction> {
+    const defaultAcution = {
+        ...auction,
+        minimumBidDai: new BigNumber(0),
+        unitPrice: new BigNumber(0),
+        approximateUnitPrice: new BigNumber(0),
+        totalPrice: new BigNumber(0),
+        collateralToCoverDebt: new BigNumber(NaN),
+    };
     if (!auction.isActive || auction.isFinished) {
-        return {
-            ...auction,
-            minimumBidDai: new BigNumber(0),
-            unitPrice: new BigNumber(0),
-            approximateUnitPrice: new BigNumber(0),
-            totalPrice: new BigNumber(0),
-        };
+        return defaultAcution;
     }
     const auctionStatus = await fetchAuctionStatus(network, auction.collateralType, auction.index);
     const minimumBidDai = await fetchMinimumBidDai(network, auction.collateralType);
     return {
-        ...auction,
+        ...defaultAcution,
         ...auctionStatus,
         minimumBidDai,
         approximateUnitPrice: auctionStatus.unitPrice,
     };
+};
+
+const calculateCollateralToCoverDebt = async function (network: string, auction: Auction): Promise<BigNumber> {
+    const collateralToCoverDebt = calculateTransactionCollateralOutcome(
+        auction.debtDAI,
+        auction.approximateUnitPrice,
+        auction
+    );
+    if (!collateralToCoverDebt.isNaN()) {
+        return collateralToCoverDebt;
+    }
+    const marketPriceForAllCollateral = await getMarketPrice(
+        network,
+        auction.collateralSymbol,
+        auction.collateralAmount
+    );
+    return auction.debtDAI.dividedBy(marketPriceForAllCollateral);
 };
 
 const enrichAuctionWithMarketValues = async function (auction: Auction, network: string): Promise<Auction> {
@@ -53,18 +72,21 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
         return auction;
     }
     try {
-        const marketUnitPrice = await getMarketPrice(network, auction.collateralSymbol, auction.collateralAmount);
+        const collateralToCoverDebt = await calculateCollateralToCoverDebt(network, auction);
+        const marketUnitPrice = await getMarketPrice(network, auction.collateralSymbol, collateralToCoverDebt);
         const marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
             .minus(marketUnitPrice)
             .dividedBy(marketUnitPrice);
         const auctionWithMarketValues = {
             ...auction,
+            collateralToCoverDebt,
             marketUnitPrice,
             marketUnitPriceToUnitPriceRatio,
         };
+        const transactionGrossProfit = calculateTransactionGrossProfit(auctionWithMarketValues);
         return {
             ...auctionWithMarketValues,
-            transactionGrossProfit: calculateTransactionGrossProfit(auctionWithMarketValues),
+            transactionGrossProfit,
         };
     } catch (error) {
         // since it's expected that some collaterals are not tradable on some networks

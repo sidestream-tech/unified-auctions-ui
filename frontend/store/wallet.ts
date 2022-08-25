@@ -22,7 +22,7 @@ interface State {
     isFetchingBalances: boolean;
     isDepositingOrWithdrawing: boolean;
     depositingOrWithdrawingCollaterals: string[];
-    tokenAddressDai: string | undefined;
+    tokenAddressDai: string;
     isFetchingCollateralVatBalance: boolean;
     collateralVatBalanceStore: Record<string, BigNumber | undefined>;
 }
@@ -35,7 +35,7 @@ const getInitialState = (): State => ({
     isFetchingBalances: false,
     isDepositingOrWithdrawing: false,
     depositingOrWithdrawingCollaterals: [],
-    tokenAddressDai: undefined,
+    tokenAddressDai: '',
     isFetchingCollateralVatBalance: false,
     collateralVatBalanceStore: {},
 });
@@ -292,11 +292,8 @@ export const actions = {
             await dispatch('fetchCollateralVatBalance', collateralType);
         }
     },
-    async setup({ commit, dispatch, getters }: ActionContext<State, State>): Promise<void> {
+    setup({ commit, dispatch }: ActionContext<State, State>): void {
         commit('reset');
-        if (!getters.isConnected) {
-            await dispatch('autoConnect');
-        }
         dispatch('refetch');
         dispatch('surplus/setup', undefined, { root: true });
     },

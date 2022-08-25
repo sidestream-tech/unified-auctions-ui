@@ -30,7 +30,7 @@
         <div class="flex justify-end mt-2 gap-5">
             <BaseButton
                 class="w-full md:w-80"
-                :disabled="isDisabled"
+                :disabled="isDisabled || isInvalidDesiredAmount"
                 :is-loading="isLoading"
                 @click="$emit('setAllowanceAmount', alwaysValidDesiredAmount)"
             >
@@ -104,7 +104,7 @@ export default Vue.extend({
             return this.allowanceAmount?.toFixed(0).length > 50 ?? false;
         },
         isInvalidDesiredAmount(): boolean {
-            return !this.desiredAmount || this.desiredAmount.isNaN() || this.desiredAmount.isLessThan(0);
+            return !this.desiredAmount || this.desiredAmount.isNaN() || this.desiredAmount.isLessThanOrEqualTo(0);
         },
         alwaysValidDesiredAmount(): BigNumber {
             if (this.isInvalidDesiredAmount) {
@@ -132,7 +132,7 @@ export default Vue.extend({
                 };
             }
             return {
-                name: this.disabled ? 'inactive' : 'correct',
+                name: 'correct',
                 title: `The desired amount is within ${this.currency} allowance`,
             };
         },

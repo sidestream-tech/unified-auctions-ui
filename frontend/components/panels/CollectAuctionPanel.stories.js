@@ -1,21 +1,23 @@
 import { storiesOf } from '@storybook/vue';
-import CollectSurplusAuctionPanel from './CollectSurplusAuctionPanel';
+import CollectAuctionPanel from './CollectAuctionPanel';
 import { generateFakeSurplusAuction } from '~/helpers/generateFakeSurplusAuction';
+import { generateFakeDebtAuction } from '~/helpers/generateFakeDebtAuction';
 
 const fakeSurplusAuction = generateFakeSurplusAuction('have-bids');
+const fakeDebtAuction = generateFakeDebtAuction('have-bids');
 const fakeFinishedSurplusAuction = generateFakeSurplusAuction('ready-for-collection');
 const fakeCollectedSurplusAuction = generateFakeSurplusAuction('collected');
 
 const common = {
-    components: { CollectSurplusAuctionPanel },
+    components: { CollectAuctionPanel },
     template: `
-    <CollectSurplusAuctionPanel 
+    <CollectAuctionPanel 
         v-bind="$data"
     />
     `,
 };
 
-storiesOf('Panels/CollectSurplusAuctionPanel', module)
+storiesOf('Panels/CollectAuctionPanel', module)
     .add('No bids yet', () => ({
         ...common,
         data: () => ({
@@ -67,5 +69,12 @@ storiesOf('Panels/CollectSurplusAuctionPanel', module)
             auction: fakeFinishedSurplusAuction,
             walletAddress: fakeFinishedSurplusAuction.receiverAddress,
             isCollecting: true,
+        }),
+    }))
+    .add('Debt Auction', () => ({
+        ...common,
+        data: () => ({
+            auction: fakeDebtAuction,
+            currency: 'MKR',
         }),
     }));

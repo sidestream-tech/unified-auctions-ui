@@ -39,7 +39,7 @@ export const swapToMKR = async function (
 
     // Get some mkr
     const deadline = await getNetworkDate(network);
-    deadline.setHours(deadline.getDate() + 1);
+    deadline.setMonth(deadline.getMonth() + 1);
 
     const transactionParamsSwapMkr = [
         new BigNumber(amountReceivedMinMKR).shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(0),

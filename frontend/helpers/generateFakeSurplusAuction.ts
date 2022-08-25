@@ -1,14 +1,16 @@
 import {
     SurplusAuction,
-    SurplusAuctionBase,
-    SurplusAuctionStates,
     SurplusAuctionCollected,
+    SurplusAuctionStates,
     SurplusAuctionTransaction,
-    SurplusTransactionFees,
 } from 'auctions-core/src/types';
 import BigNumber from 'bignumber.js';
 import faker from 'faker';
 import { random } from 'lodash';
+import {
+    generateFakeCompensationAuctionBase,
+    generateFakeCompensationTransactionFees,
+} from '~/helpers/generateFakeCompensationAuction';
 
 const SURPLUS_AUCTION_STATES: SurplusAuctionStates[] = [
     'just-started',
@@ -18,18 +20,8 @@ const SURPLUS_AUCTION_STATES: SurplusAuctionStates[] = [
     'requires-restart',
 ];
 
-const NETWORKS = ['mainnet', 'kovan', 'goerli'];
-
-const generateFakeSurplusAuctionBase = function (): SurplusAuctionBase {
-    return {
-        id: faker.datatype.number(),
-        network: faker.helpers.randomize(NETWORKS),
-        fetchedAt: new Date(),
-    };
-};
-
 export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates): SurplusAuction {
-    const auctionBaseData = generateFakeSurplusAuctionBase();
+    const auctionBaseData = generateFakeCompensationAuctionBase();
     const generatedState: SurplusAuctionStates = state || faker.helpers.randomize(SURPLUS_AUCTION_STATES);
 
     if (generatedState === 'collected') {
@@ -42,6 +34,7 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
     const receiveAmountDAI = new BigNumber(parseFloat(faker.finance.amount()));
     const receiverAddress = faker.finance.ethereumAddress();
     const auctionEndDate = generatedState === 'ready-for-collection' ? faker.date.recent() : faker.date.soon();
+    const auctionStartDate = generatedState === 'ready-for-collection' ? faker.date.recent() : faker.date.soon();
     const bidEndDate = generatedState === 'have-bids' ? faker.date.recent() : undefined;
     const earliestEndDate = bidEndDate
         ? auctionEndDate.getUTCMilliseconds() > bidEndDate.getUTCMilliseconds()
@@ -57,30 +50,11 @@ export const generateFakeSurplusAuction = function (state?: SurplusAuctionStates
         receiveAmountDAI,
         receiverAddress,
         auctionEndDate,
+        auctionStartDate,
         bidEndDate,
         earliestEndDate,
         state: generatedState,
         bidAmountMKR,
-    };
-};
-
-export const generateFakeSurplusTransactionFees = function (): SurplusTransactionFees {
-    const fees = {
-        restartTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
-        allowanceTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
-        bidTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
-        collectTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
-        authTransactionFeeEth: new BigNumber(faker.finance.amount(0.01, 1)),
-        allowanceTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
-        restartTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
-        bidTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
-        collectTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
-        authTransactionFeeDai: new BigNumber(faker.finance.amount(0.01, 1)),
-    };
-    return {
-        ...fees,
-        combinedBidFeesDai: fees.bidTransactionFeeDai.plus(fees.collectTransactionFeeDai),
-        combinedBidFeesEth: fees.bidTransactionFeeEth.plus(fees.collectTransactionFeeEth),
     };
 };
 
@@ -93,7 +67,7 @@ export const generateFakeSurplusAuctionTransaction = function (
         return surplusAuction;
     }
 
-    const transactionFees = generateFakeSurplusTransactionFees();
+    const transactionFees = generateFakeCompensationTransactionFees();
 
     // generate fake market data
     const approximateUnitPrice = surplusAuction.bidAmountMKR.dividedBy(surplusAuction.receiveAmountDAI);

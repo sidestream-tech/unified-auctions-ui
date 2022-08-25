@@ -26,6 +26,7 @@ declare interface SelectOption {
     label: string;
     value: string;
     icon?: object;
+    href?: string;
 }
 
 declare interface FeatureItem {

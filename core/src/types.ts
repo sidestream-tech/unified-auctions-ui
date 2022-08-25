@@ -37,6 +37,7 @@ export declare interface AuctionStatus {
 }
 
 export declare interface Auction extends AuctionInitialInfo {
+    collateralToCoverDebt: BigNumber;
     unitPrice: BigNumber;
     totalPrice: BigNumber;
     approximateUnitPrice: BigNumber;
@@ -155,40 +156,22 @@ export declare interface CollateralStatus {
     balance?: BigNumber;
 }
 
-export declare interface SurplusAuctionBase {
+export declare type CompensationAuctionActiveState =
+    | 'just-started'
+    | 'have-bids'
+    | 'ready-for-collection'
+    | 'requires-restart';
+export declare type CompensationAuctionInactiveState = 'collected';
+
+export declare type CompensationAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'collecting';
+
+export declare interface CompensationAuctionBase {
     id: number;
     network: string;
     fetchedAt: Date;
 }
 
-export declare interface SurplusAuctionActive extends SurplusAuctionBase {
-    bidAmountMKR: BigNumber;
-    receiveAmountDAI: BigNumber;
-    receiverAddress: string;
-    auctionEndDate: Date;
-    bidEndDate?: Date;
-    earliestEndDate: Date;
-    state: 'just-started' | 'have-bids' | 'ready-for-collection' | 'requires-restart';
-}
-
-export declare interface SurplusAuctionCollected extends SurplusAuctionBase {
-    state: 'collected';
-}
-
-export type SurplusAuction = SurplusAuctionActive | SurplusAuctionCollected;
-
-export type SurplusAuctionStates = SurplusAuction['state'];
-
-export type SurplusAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'collecting';
-
-export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
-    nextMinimumBid: BigNumber;
-    marketUnitPrice: BigNumber | string;
-    marketUnitPriceToUnitPriceRatio: BigNumber;
-    unitPrice: BigNumber;
-}
-
-export declare interface SurplusTransactionFees {
+export declare interface CompensationAuctionTransactionFees {
     restartTransactionFeeEth: BigNumber;
     allowanceTransactionFeeEth: BigNumber;
     bidTransactionFeeEth: BigNumber;
@@ -203,4 +186,83 @@ export declare interface SurplusTransactionFees {
     combinedBidFeesDai: BigNumber;
 }
 
-export declare interface SurplusAuctionTransaction extends SurplusAuctionEnriched, SurplusTransactionFees {}
+export declare interface SurplusAuctionActive extends CompensationAuctionBase {
+    bidAmountMKR: BigNumber;
+    receiveAmountDAI: BigNumber;
+    receiverAddress: string;
+    auctionEndDate: Date;
+    bidEndDate?: Date;
+    auctionStartDate: Date;
+    earliestEndDate: Date;
+    state: CompensationAuctionActiveState;
+}
+
+export declare interface SurplusAuctionCollected extends CompensationAuctionBase {
+    state: CompensationAuctionInactiveState;
+}
+
+export type SurplusAuction = SurplusAuctionActive | SurplusAuctionCollected;
+
+export type SurplusAuctionStates = SurplusAuction['state'];
+
+export declare interface SurplusAuctionEnriched extends SurplusAuctionActive {
+    nextMinimumBid: BigNumber;
+    marketUnitPrice: BigNumber | string;
+    marketUnitPriceToUnitPriceRatio: BigNumber;
+    unitPrice: BigNumber;
+}
+
+export declare interface CompensationAuctionTransactionFees {
+    restartTransactionFeeEth: BigNumber;
+    allowanceTransactionFeeEth: BigNumber;
+    bidTransactionFeeEth: BigNumber;
+    collectTransactionFeeEth: BigNumber;
+    authTransactionFeeEth: BigNumber;
+    combinedBidFeesEth: BigNumber;
+    allowanceTransactionFeeDai: BigNumber;
+    restartTransactionFeeDai: BigNumber;
+    bidTransactionFeeDai: BigNumber;
+    collectTransactionFeeDai: BigNumber;
+    authTransactionFeeDai: BigNumber;
+    combinedBidFeesDai: BigNumber;
+}
+
+export declare interface SurplusAuctionTransaction
+    extends SurplusAuctionEnriched,
+        CompensationAuctionTransactionFees {}
+
+export declare interface DebtAuctionBase {
+    id: number;
+    network: string;
+    fetchedAt: Date;
+}
+
+export declare interface DebtAuctionActive extends DebtAuctionBase {
+    bidAmountDai: BigNumber;
+    receiveAmountMKR: BigNumber;
+    receiverAddress: string;
+    auctionEndDate: Date;
+    auctionStartDate: Date;
+    bidEndDate?: Date;
+    earliestEndDate: Date;
+    state: CompensationAuctionActiveState;
+}
+
+export declare interface DebtAuctionCollected extends DebtAuctionBase {
+    state: CompensationAuctionInactiveState;
+}
+
+export type DebtAuction = DebtAuctionActive | DebtAuctionCollected;
+
+export type DebtAuctionStates = DebtAuction['state'];
+
+export type DebtAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'collecting';
+
+export declare interface DebtAuctionEnriched extends DebtAuctionActive {
+    nextMaximumLotReceived: BigNumber;
+    marketUnitPrice: BigNumber | string;
+    marketUnitPriceToUnitPriceRatio: BigNumber;
+    unitPrice: BigNumber;
+}
+
+export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}

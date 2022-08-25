@@ -187,7 +187,6 @@ export default Vue.extend({
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
                     scopedSlots: { customRender: 'action' },
-                    width: '20%',
                 },
             ];
         },

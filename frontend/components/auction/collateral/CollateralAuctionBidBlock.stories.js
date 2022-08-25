@@ -11,6 +11,11 @@ const common = {
     data() {
         return {
             auction: fakeAuction,
+            fees: {
+                'Swap Transaction Fee': fakeAuction.swapTransactionFeeETH,
+                'Wallet Authorization Fee': fakeAuction.authTransactionFeeETH,
+                'Collateral Authorization Fee': fakeAuction.authTransactionFeeETH,
+            },
             transactionBidAmount: new BigNumber(faker.finance.amount()),
         };
     },
@@ -20,22 +25,22 @@ storiesOf('Auction/Collateral/CollateralAuctionBidBlock', module)
     .add('Default', () => ({
         ...common,
         template:
-            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" />',
+            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" :fees="fees" />',
     }))
     .add('Disabled', () => ({
         ...common,
         template:
-            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" disabled />',
+            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" :fees="fees" disabled />',
     }))
     .add('Loading', () => ({
         ...common,
         template:
-            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" is-loading />',
+            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" :fees="fees" is-loading />',
     }))
     .add('Expert Mode', () => ({
         ...common,
         template:
-            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" :is-explanations-shown="false" />',
+            '<CollateralAuctionBidBlock :auctionTransaction="auction" :transactionBidAmount="transactionBidAmount" :fees="fees" :is-explanations-shown="false" />',
     }))
     .add('Finished', () => ({
         ...common,
