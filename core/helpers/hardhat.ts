@@ -9,6 +9,10 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { createWalletFromPrivateKey } from '../src/signer';
 import { LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 
+if (!REMOTE_RPC_URL) {
+    throw Error('Environment varialbe REMOTE_RPC_URL was not provided');
+}
+
 export const overwriteValueInSlot = async (
     network: string,
     provider: EthereumProvider,
@@ -48,7 +52,11 @@ export const overwriteUintMapping = async (
     await overwriteUintValue(network, provider, contractName, slotAddress, newValue);
 };
 
-export const resetNetwork = async (blockNumber: number, rpcUrl: string = REMOTE_RPC_URL) => {
+export const resetNetwork = async (blockNumber: number, rpcUrl: string | undefined = REMOTE_RPC_URL) => {
+    if (!REMOTE_RPC_URL) {
+        throw Error('Environment varialbe REMOTE_RPC_URL was not provided');
+    }
+
     await hre.network.provider.request({
         method: 'hardhat_reset',
         params: [
@@ -72,8 +80,11 @@ export const resetBlockchainFork = async function (
     blockNumber: number,
     signerPrivateKey: string,
     network: string = NETWORK,
-    rpcUrl: string = REMOTE_RPC_URL
+    rpcUrl: string | undefined = REMOTE_RPC_URL
 ) {
+    if (!REMOTE_RPC_URL) {
+        throw Error('Environment varialbe REMOTE_RPC_URL was not provided');
+    }
     await resetNetwork(blockNumber, rpcUrl);
     const provider = await createWalletForRpc(signerPrivateKey, network);
     return provider;
