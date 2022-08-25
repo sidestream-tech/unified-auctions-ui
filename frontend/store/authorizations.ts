@@ -245,7 +245,7 @@ export const actions = {
             await authorizeDebtAuction(network, walletAddress, false, notifier);
             await dispatch('fetchDebtAuctionAuthorizationStatus');
         } catch (error) {
-            console.error(`Wallet authorization error: ${error.message}`);
+            console.error(`Debt auction authorization error: ${error.message}`);
         } finally {
             commit('setIsWalletAuthorizationLoading', false);
         }
