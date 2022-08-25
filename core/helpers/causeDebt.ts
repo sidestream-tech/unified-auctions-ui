@@ -15,8 +15,8 @@ export const causeDebt = async (
     await ensureQueuedDebtEqual(network, debtAmountDai);
     await overwriteProtocolOwnDaiBalance(network, provider);
     await ensureDaiIsZero(network);
-    await overwriteLottedMkrAmount(network, provider, mkrOnAuction);
-    await ensureLottedMkrHasValue(network, mkrOnAuction);
+    await overwriteReceivedAmountMKR(network, provider, mkrOnAuction);
+    await ensureReceivedAmountMKR(network, mkrOnAuction);
     await overwriteBidDaiAmount(network, provider, daiOnAuction);
     await ensureBidDaiHasValue(network, daiOnAuction);
     await startDebtAuction(network);
@@ -41,11 +41,11 @@ const overwriteProtocolOwnDaiBalance = async (network: string, provider: Ethereu
     await overwriteUintMapping(network, provider, 'MCD_VAT', '0x5', daiOwnerAddress, new BigNumber(0));
 };
 
-const overwriteLottedMkrAmount = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
+const overwriteReceivedAmountMKR = async (network: string, provider: EthereumProvider, amount: BigNumber) => {
     await overwriteUintValue(network, provider, 'MCD_VOW', '0x8', amount.shiftedBy(WAD_NUMBER_OF_DIGITS));
 };
 
-const ensureLottedMkrHasValue = async (network: string, expected: BigNumber) => {
+const ensureReceivedAmountMKR = async (network: string, expected: BigNumber) => {
     const contract = await getContract(network, 'MCD_VOW');
     const dumpAsHex = await contract.dump();
     const dump = new BigNumber(dumpAsHex._hex);
