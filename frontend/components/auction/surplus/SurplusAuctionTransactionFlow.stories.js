@@ -1,7 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import { action } from '@storybook/addon-actions';
 import SurplusAuctionTransactionFlow from './SurplusAuctionTransactionFlow';
 import { generateFakeSurplusAuctionTransaction } from '~/helpers/generateFakeSurplusAuction';
 
@@ -17,18 +16,15 @@ const common = {
         isWalletConnected: false,
         isConnectingWallet: false,
         isRefreshingWallet: false,
-        isWalletAuthorized: false,
-
-        walletMKR: undefined,
-        allowanceMKR: undefined,
-        walletAddress: undefined,
         isSettingAllowance: false,
         isAuthorizing: false,
 
-        amount: new BigNumber(faker.finance.amount(1, 2)),
+        walletAddress: undefined,
+        walletMKR: undefined,
+        allowanceMKR: undefined,
         daiVatBalance: undefined,
 
-        auctionActionState: undefined,
+        surplusAuctionActionState: 'loaded',
     }),
     methods: {
         connect() {
@@ -59,10 +55,10 @@ const common = {
                 this.isAuthorizing = false;
             }, 1000);
         },
-        setAllowanceAmount() {
+        setAllowanceAmount(amount) {
             this.isSettingAllowance = true;
             setTimeout(() => {
-                this.allowanceMKR = new BigNumber(faker.finance.amount(800, 1000));
+                this.allowanceMKR = new BigNumber(amount);
                 this.isSettingAllowance = false;
             }, 1000);
         },
@@ -73,22 +69,22 @@ const common = {
             }, 1000);
         },
         bid(amount) {
-            this.auctionActionState = 'bidding';
+            this.surplusAuctionActionState = 'bidding';
             setTimeout(() => {
                 this.auction = {
                     ...this.auction,
                     receiverAddress: this.walletAddress,
-                    bidAmountMKR: amount,
+                    bidAmountMKR: new BigNumber(amount),
                 };
                 action('bid', amount);
-                this.auctionActionState = undefined;
+                this.surplusAuctionActionState = 'loaded';
             }, 1000);
         },
         collect() {
-            this.auctionActionState = 'collecting';
+            this.surplusAuctionActionState = 'collecting';
             setTimeout(() => {
                 this.auction.state = 'collected';
-                this.auctionActionState = undefined;
+                this.surplusAuctionActionState = 'loaded';
             }, 1000);
         },
     },
@@ -99,7 +95,7 @@ const common = {
           @disconnectWallet="disconnect" 
           @setAllowanceAmount="setAllowanceAmount" 
           @refreshWallet="refresh" 
-          @bid="bid(amount)"
+          @bid="bid"
           @collect="collect"
           @authorizeWallet="authorizeWallet"
         />`,
@@ -116,8 +112,8 @@ storiesOf('Auction/Surplus/SurplusAuctionTransactionFlow', module)
             connect() {
                 this.isConnectingWallet = true;
                 setTimeout(() => {
-                    this.walletMKR = new BigNumber(0);
-                    this.allowanceMKR = new BigNumber(faker.finance.amount(1, 2));
+                    this.walletMKR = new BigNumber(faker.finance.amount(0, this.auction.bidAmountMKR.toNumber()));
+                    this.allowanceMKR = new BigNumber(faker.finance.amount(0, this.walletMKR.toNumber()));
                     this.walletAddress = faker.finance.ethereumAddress();
                     this.isWalletConnected = true;
                     this.isConnectingWallet = false;

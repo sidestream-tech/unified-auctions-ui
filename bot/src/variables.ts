@@ -8,3 +8,5 @@ export const KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI = parseInt(process.env.KEEPER
 export const KEEPER_WALLET_PRIVATE_KEY = process.env.KEEPER_WALLET_PRIVATE_KEY;
 export const WHITELISTED_COLLATERALS = process.env.WHITELISTED_COLLATERALS;
 export const KEEPER_PREAUTHORIZE = process.env.KEEPER_PREAUTHORIZE?.toLowerCase().trim() === 'true' || false;
+
+export const THRESHOLD_FOR_NEW_AUCTIONS = 5 * 60 * 1000;

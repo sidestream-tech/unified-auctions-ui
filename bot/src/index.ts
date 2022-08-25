@@ -10,6 +10,7 @@ import {
     KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI,
     KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI,
 } from './variables';
+import { loopDebt } from './auctions/debt';
 import { setupTwitter } from './twitter';
 import { setupWhitelist } from './whitelist';
 
@@ -36,6 +37,9 @@ const start = async function (): Promise<void> {
         loopSurplus(network);
         setInterval(() => loopSurplus(network), DEFAULT_REFETCH_INTERVAL);
     }
+
+    loopDebt(network);
+    setInterval(() => loopDebt(network), DEFAULT_REFETCH_INTERVAL);
 };
 
 start().catch(error => {

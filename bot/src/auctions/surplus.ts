@@ -1,9 +1,9 @@
 import type { SurplusAuctionActive } from 'auctions-core/src/types';
 import { fetchActiveSurplusAuctions } from 'auctions-core/src/surplus';
+import { THRESHOLD_FOR_NEW_AUCTIONS } from '../variables';
 import { notifySurplus } from '../notify';
 import participate from '../keeper/surplus';
 
-const THRESHOLD_FOR_NEW_AUCTIONS = 5 * 60 * 1000;
 const knownAuctionIds = new Set();
 
 const checkIfAuctionIsAlreadyKnown = function (auction: SurplusAuctionActive): boolean {
@@ -29,13 +29,8 @@ export const getNewSurplusAuctionsFromActiveSurplusAuctions = function (
 
 export const getAllActiveSurplusAuctions = async function (network: string): Promise<SurplusAuctionActive[]> {
     const auctions = await fetchActiveSurplusAuctions(network);
-    const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
-
-    console.info(
-        `surplus auctions: found "${auctions.length}" auctions ${
-            auctionIds.length !== 0 ? '(' + auctionIds + ') ' : ''
-        }on "${network}" network`
-    );
+    const auctionIds = auctions.map(auction => auction.id).join(', ');
+    console.info(`surplus auctions: found "${auctions.length}" auctions "${auctionIds}" on "${network}" network`);
     return auctions;
 };
 
@@ -49,6 +44,6 @@ export const loopSurplus = async function (network: string): Promise<void> {
         newAuctions.map(notifySurplus);
         participate(network, activeAuctions);
     } catch (error) {
-        console.error('loop error:', error);
+        console.error('surplus loop error', error);
     }
 };
