@@ -238,7 +238,7 @@ export const actions = {
         }
     },
     async authorizeDebtAuctionContract({ commit, dispatch, rootGetters }: ActionContext<State, State>) {
-        commit('setIsWalletAuthorizationLoading', true);
+        commit('setIsDebtAuctionAuthorizationLoading', true);
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
         try {
@@ -247,7 +247,7 @@ export const actions = {
         } catch (error) {
             console.error(`Debt auction authorization error: ${error.message}`);
         } finally {
-            commit('setIsWalletAuthorizationLoading', false);
+            commit('setIsDebtAuctionAuthorizationLoading', false);
         }
     },
     async authorizeCollateral({ commit, dispatch, rootGetters }: ActionContext<State, State>, collateralType: string) {
