@@ -5,6 +5,10 @@ import { HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL } from '../helpers/constan
 import { resetBlockchainFork as reset } from '../helpers/hardhat';
 const HARDHAT_FORK_BLOCK_NUMBER = 14052140;
 
+if (!REMOTE_RPC_URL) {
+    throw new Error("REMOTE_RPC_URL environment varialbe is not set.")
+}
+
 describe('Debt Auction', () => {
     beforeEach(async () => {
         const provider = await reset(HARDHAT_FORK_BLOCK_NUMBER, HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL);

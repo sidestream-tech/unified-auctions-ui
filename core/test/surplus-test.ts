@@ -20,6 +20,10 @@ import { fetchSurplusAuctionByIndex } from '../src/surplus';
 import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
+if (!REMOTE_RPC_URL) {
+    throw new Error("REMOTE_RPC_URL environment varialbe is not set.")
+}
+
 describe('Surplus Auction', () => {
     before(async () => {
         await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
