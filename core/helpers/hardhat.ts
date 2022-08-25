@@ -40,11 +40,11 @@ export const overwriteUintMapping = async (
     network: string,
     provider: EthereumProvider,
     contractName: string,
-    mappingStartSlot: string,
-    key: string,
+    mappingSlotAddress: string,
+    mappingKey: string,
     newValue: BigNumber
 ) => {
-    const slotAddress = generateMappingSlotAddress(mappingStartSlot, key);
+    const slotAddress = generateMappingSlotAddress(mappingSlotAddress, mappingKey);
     await overwriteUintValue(network, provider, contractName, slotAddress, newValue);
 };
 
