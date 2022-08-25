@@ -7,9 +7,9 @@ import { overwriteUintMapping, overwriteUintValue } from './hardhat';
 export const causeDebt = async (
     network: string,
     provider: EthereumProvider,
-    debtAmountDai: BigNumber,
-    mkrOnAuction: BigNumber,
-    daiOnAuction: BigNumber
+    debtAmountDai: BigNumber = new BigNumber(10),
+    mkrOnAuction: BigNumber = new BigNumber(1000),
+    daiOnAuction: BigNumber = new BigNumber(1000)
 ) => {
     await overwriteQueuedDebt(network, provider, debtAmountDai);
     await ensureQueuedDebtEqual(network, debtAmountDai);
