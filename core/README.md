@@ -23,5 +23,5 @@ The process of adding new collaterals depends on the token type used. This is du
 
 ## Environment Variables
 
-`LOCAL_RPC_URL` - link to the blockchiain RPC the tests will interact with, defaults to `localhost:8545`
-`REMOTE_RPC_URL` - linkt to the blockchain RPC where hardhat fork will copy data from, no default value - it has to be provided.
+- `REMOTE_RPC_URL`: (required for tests, simulations) Ethereum RPC url with access to historical data. Used by hardhat to fetch relevant data
+- `LOCAL_RPC_URL`: (optional, default `http://localhost:8545`) Hardhat RPC url. Used by tests and simulations
