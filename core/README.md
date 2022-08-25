@@ -6,7 +6,7 @@ Set of typescript functions to work with MakerDAO auctions.
 
 The process of adding new collaterals depends on the token type used. This is due collateral token address as well as related contract addresses (such as clip and calc) are always up to date, as our library fetches current contract addresses from the [chainlog](https://chainlog.makerdao.com) contract.
 
-1. Adding standard ERC-20 collateral is straightforward and consists of only one step. 
+1. Adding standard ERC-20 collateral is straightforward and consists of only one step.
 
    1. Add collateral configuration to the [`COLLATERALS.ts`](./src/constants/COLLATERALS.ts)
 
@@ -20,3 +20,8 @@ The process of adding new collaterals depends on the token type used. This is du
         - The file should be named using the name from `1.`
         - The file should export `CalleeFunctions`
         - The file should be imported in the [`calleeFunctions/index.ts`](./src/calleeFunctions/index.ts)
+
+## Environment Variables
+
+`LOCAL_RPC_URL` - link to the blockchiain RPC the tests will interact with, defaults to `localhost:8545`
+`REMOTE_RPC_URL` - linkt to the blockchain RPC where hardhat fork will copy data from, no default value - it has to be provided.
