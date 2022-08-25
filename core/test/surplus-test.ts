@@ -21,7 +21,7 @@ import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
 if (!REMOTE_RPC_URL) {
-    throw new Error("REMOTE_RPC_URL environment varialbe is not set.")
+    throw new Error('REMOTE_RPC_URL environment varialbe is not set.');
 }
 
 describe('Surplus Auction', () => {

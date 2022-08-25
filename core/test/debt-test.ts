@@ -6,7 +6,7 @@ import { resetBlockchainFork as reset } from '../helpers/hardhat';
 const HARDHAT_FORK_BLOCK_NUMBER = 14052140;
 
 if (!REMOTE_RPC_URL) {
-    throw new Error("REMOTE_RPC_URL environment varialbe is not set.")
+    throw new Error('REMOTE_RPC_URL environment varialbe is not set.');
 }
 
 describe('Debt Auction', () => {
