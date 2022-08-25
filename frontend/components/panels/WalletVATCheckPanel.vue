@@ -89,7 +89,7 @@ export default Vue.extend({
         },
         tokenAddress: {
             type: String,
-            required: true,
+            default: '',
         },
         currency: {
             type: String,
