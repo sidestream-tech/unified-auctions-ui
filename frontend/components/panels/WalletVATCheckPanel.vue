@@ -39,7 +39,8 @@
                         By purchasing it on a decentralized exchange like
                         <a href="https://uniswap.org/" target="_blank">uniswap.org</a> (correct {{ currency }} token
                         address used on the “{{ networkTitle }}” network is
-                        <FormatAddress type="address" :value="tokenAddress" shorten />)
+                        <FormatAddress v-if="tokenAddress" type="address" :value="tokenAddress" shorten />
+                        <span v-else> unknown </span>)
                     </li>
                 </ul>
             </TextBlock>
