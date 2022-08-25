@@ -2,6 +2,7 @@ import Vue from 'vue';
 import type { DebtAuction, DebtAuctionActionStates, DebtAuctionTransaction } from 'auctions-core/src/types';
 import { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
+import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import {
     bidToDebtAuction,
     collectDebtAuction,
@@ -9,7 +10,7 @@ import {
     fetchActiveDebtAuctions,
     restartDebtAuction,
 } from 'auctions-core/src/debt';
-import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
+
 import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
@@ -166,7 +167,7 @@ export const actions = {
     },
     async bidToDebtAuction(
         { rootGetters, commit, dispatch }: ActionContext<State, State>,
-        { auctionIndex, lot }: { auctionIndex: number; lot: BigNumber }
+        { auctionIndex, desiredMkrAmount }: { auctionIndex: number; desiredMkrAmount: BigNumber }
     ) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
@@ -174,7 +175,7 @@ export const actions = {
         }
         commit('setAuctionState', { auctionId: auctionIndex, value: 'bidding' });
         try {
-            await bidToDebtAuction(network, auctionIndex, lot, notifier);
+            await bidToDebtAuction(network, auctionIndex, desiredMkrAmount, notifier);
             await dispatch('fetchDebtAuctions');
         } catch (error: any) {
             console.error(`Failed to bid on auction: ${error.message}`);

@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import '@nomiclabs/hardhat-waffle';
+import ethers from '@nomiclabs/hardhat-ethers';
 
 dotenv.config();
 
@@ -17,4 +18,5 @@ const customNetworkConfig = {
 export default {
     solidity: '0.8.4',
     networks: customNetworkConfig,
+    ethers: ethers,
 };

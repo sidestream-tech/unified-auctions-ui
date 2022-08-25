@@ -296,5 +296,6 @@ export const actions = {
         commit('reset');
         dispatch('refetch');
         dispatch('surplus/setup', undefined, { root: true });
+        dispatch('debt/setup', undefined, { root: true });
     },
 };

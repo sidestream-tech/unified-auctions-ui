@@ -52,7 +52,9 @@
                     :is-setting-allowance="isSettingAllowance"
                     :is-depositing="isDepositing"
                     :is-explanations-shown="isExplanationsShown"
-                    @authorizeWallet="$emit('authorizeWallet')"
+                    :is-authorizing="isAuthorizing"
+                    :is-debt-auction-authorized="isDebtAuctionAuthorized"
+                    @authorizeFlopper="$emit('authorizeFlopper')"
                     @connectWallet="$emit('connectWallet')"
                     @disconnectWallet="$emit('disconnectWallet')"
                     @refreshWallet="$emit('refreshWallet')"
@@ -152,6 +154,14 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        isAuthorizing: {
+            type: Boolean,
+            default: false,
+        },
+        isDebtAuctionAuthorized: {
+            type: Boolean,
+            default: false,
         },
     },
     data: () => ({

@@ -12,7 +12,7 @@
         :is-connecting-wallet="isConnectingWallet"
         :is-refreshing-wallet="isRefreshingWallet"
         :is-authorizing="isAuthorizing"
-        :is-wallet-authorized="isWalletAuthorized"
+        :is-debt-auction-authorized="isDebtAuctionAuthorizationDone"
         :is-setting-allowance="isAuthorizationLoading"
         :last-updated="lastUpdated"
         :is-explanations-shown.sync="isExplanationsShown"
@@ -27,6 +27,8 @@
         @restart="restartAuction"
         @setAllowanceAmount="setAllowanceAmountDai"
         @collect="collect"
+        @deposit="deposit"
+        @authorizeFlopper="authorizeDebtAuctionContract"
         @bid="bid"
     />
 </template>
@@ -66,8 +68,8 @@ export default Vue.extend({
             isWithdrawing: 'isDepositingOrWithdrawing',
         }),
         ...mapGetters('authorizations', {
-            isAuthorizing: 'isWalletAuthorizationLoading',
-            isWalletAuthorized: 'isWalletAuthorizationDone',
+            isAuthorizing: 'isDebtAuctionAuthorizationLoading',
+            isDebtAuctionAuthorizationDone: 'isDebtAuctionAuthorizationDone',
             allowanceDai: 'allowanceAmount',
         }),
         daiVatBalance(): BigNumber | undefined {
@@ -111,10 +113,12 @@ export default Vue.extend({
         }),
         ...mapActions('authorizations', {
             setAllowanceAmountDai: 'setAllowanceAmount',
+            authorizeDebtAuctionContract: 'authorizeDebtAuctionContract',
         }),
         ...mapActions('wallet', {
             refreshWallet: 'fetchWalletBalances',
             disconnectWallet: 'disconnect',
+            deposit: 'depositToVAT',
         }),
         withdrawAllDaiFromVat() {
             this.$store.dispatch('wallet/withdrawFromVAT', this.daiVatBalance);

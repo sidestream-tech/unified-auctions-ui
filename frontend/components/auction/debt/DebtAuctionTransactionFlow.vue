@@ -46,10 +46,18 @@
                 @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
                 @deposit="$emit('deposit', $event)"
             />
+            <DebtAuctionAuthorizationCheckPanel
+                :disabled="!isWalletConnected"
+                :wallet-address="walletAddress"
+                :is-debt-auction-authorized="isDebtAuctionAuthorized"
+                :is-explanations-shown="isExplanationsShown"
+                :is-loading="isAuthorizing"
+                @authorizeFlopper="$emit('authorizeFlopper')"
+            />
             <DebtLatestBidCheckPanel
                 :auction="auction"
                 :wallet-address="walletAddress"
-                :disabled="!isWalletDAICheckPassed || !isActive"
+                :disabled="!isWalletDAICheckPassed || !isActive || !isDebtAuctionAuthorized"
                 :is-loading="auctionActionState === 'bidding'"
                 :desired-mkr-amount="desiredMkrAmount || auction.nextMaximumLotReceived"
                 :is-explanations-shown="isExplanationsShown"
@@ -76,6 +84,7 @@ import WalletDepositFlowCheckPanel from '../../panels/WalletDepositFlowCheckPane
 import DebtLatestBidCheckPanel from '~/components/panels/DebtLatestBidCheckPanel.vue';
 import DebtAuctionBidTransactionTable from '~/components/auction/debt/DebtAuctionBidTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
+import DebtAuctionAuthorizationCheckPanel from '~/components/panels/DebtAuctionAuthorizationCheckPanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import CollectAuctionPanel from '~/components/panels/CollectAuctionPanel.vue';
 
@@ -88,6 +97,7 @@ export default Vue.extend({
         TextBlock,
         Alert,
         WalletConnectionCheckPanel,
+        DebtAuctionAuthorizationCheckPanel,
     },
     props: {
         auction: {
@@ -122,6 +132,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isAuthorizing: {
+            type: Boolean,
+            default: false,
+        },
         isRefreshingWallet: {
             type: Boolean,
             default: false,
@@ -141,6 +155,10 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        isDebtAuctionAuthorized: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {

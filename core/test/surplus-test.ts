@@ -13,34 +13,26 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 import { SurplusAuctionActive } from '../src/types';
+import { resetNetwork } from '../helpers/hardhat';
 
 import BigNumber from '../src/bignumber';
 import { fetchSurplusAuctionByIndex } from '../src/surplus';
-
-const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
-const HARDHAT_PRIVATE_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; // deterministic private key from hardhat.
+import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
+
+if (!REMOTE_RPC_URL) {
+    throw new Error('REMOTE_RPC_URL environment varialbe is not set.');
+}
 
 describe('Surplus Auction', () => {
     before(async () => {
-        const local_rpc_url = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
-        await setupRpcUrlAndGetNetworks(local_rpc_url);
+        await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
     });
     beforeEach(async () => {
-        await hre.network.provider.request({
-            method: 'hardhat_reset',
-            params: [
-                {
-                    forking: {
-                        jsonRpcUrl: REMOTE_RPC_URL,
-                        blockNumber: HARDHAT_FORK_BLOCK_NUMBER,
-                    },
-                },
-            ],
-        });
+        resetNetwork(HARDHAT_FORK_BLOCK_NUMBER);
     });
     it('fetches active auctions', async () => {
-        const auctions = await fetchActiveSurplusAuctions('custom');
+        const auctions = await fetchActiveSurplusAuctions(NETWORK);
         expect(auctions.length).to.equal(5);
         const auction = auctions[0] as SurplusAuctionActive;
         expect(auction.id).to.equal(2328);
@@ -49,7 +41,7 @@ describe('Surplus Auction', () => {
         expect(auction.auctionStartDate.getTime()).to.be.lessThan(auction.auctionEndDate.getTime());
     });
     it('enriches auctions with market prices', async () => {
-        const network = 'custom';
+        const network = NETWORK;
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0] as SurplusAuctionActive;
         const enrichedAucton = await enrichSurplusAuction(network, auction);
@@ -58,7 +50,7 @@ describe('Surplus Auction', () => {
         expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('-0.61098300970253348099040009');
     });
     it('enrichesAuctionWithMinimumBids', async () => {
-        const network = 'custom';
+        const network = NETWORK;
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0] as SurplusAuctionActive;
         const enrichedAuction = await enrichSurplusAuction(network, auction);
@@ -70,24 +62,24 @@ describe('Surplus Auction', () => {
         expect(enrichedAuction.nextMinimumBid.div(enrichedAuction.bidAmountMKR).toString()).to.be.equal('1.04');
     });
     it('participates in active auction', async () => {
-        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
-        await setAllowanceAmountMKR('custom', address, new BigNumber('20'));
-        await swapToMKR('custom', 20, 20);
-        await bidToSurplusAuction('custom', 2328, new BigNumber('20'));
-        const auctions = await fetchActiveSurplusAuctions('custom');
+        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
+        await setAllowanceAmountMKR(NETWORK, address, new BigNumber('20'));
+        await swapToMKR(NETWORK, 20, 20);
+        await bidToSurplusAuction(NETWORK, 2328, new BigNumber('20'));
+        const auctions = await fetchActiveSurplusAuctions(NETWORK);
         const currentAuction = auctions[0];
         expect(currentAuction.id).to.equal(2328);
         expect(currentAuction.bidAmountMKR && currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
     it('collects the concluded auction', async () => {
-        const auctionsBeforeCollection = await fetchActiveSurplusAuctions('custom');
+        const auctionsBeforeCollection = await fetchActiveSurplusAuctions(NETWORK);
         expect(auctionsBeforeCollection.length).to.equal(5);
         expect(auctionsBeforeCollection[1].id).to.equal(2327);
         expect(auctionsBeforeCollection[1].state).to.equal('ready-for-collection');
 
-        await collectSurplusAuction('custom', auctionsBeforeCollection[1].id);
+        await collectSurplusAuction(NETWORK, auctionsBeforeCollection[1].id);
 
-        const auctionAfterCollection = await fetchSurplusAuctionByIndex('custom', 2327);
+        const auctionAfterCollection = await fetchSurplusAuctionByIndex(NETWORK, 2327);
         expect(auctionAfterCollection.id).to.equal(2327);
         expect(auctionAfterCollection.state).to.equal('collected');
     });
@@ -109,33 +101,33 @@ describe('Surplus Auction', () => {
             `0x${blocks.toString(16)}`,
             `0x${secondsBetweenBlocks.toString(16)}`,
         ]);
-        await restartSurplusAuction('custom', 2328);
+        await restartSurplusAuction(NETWORK, 2328);
     });
     it('forbids restarting active auctions', async () => {
-        expect(restartSurplusAuction('custom', 2328)).to.be.reverted;
+        expect(restartSurplusAuction(NETWORK, 2328)).to.be.reverted;
     });
     it('forbids collecting inexistent auctions', async () => {
-        expect(collectSurplusAuction('custom', 3333)).to.be.revertedWith('Did not find the auction to collect.');
+        expect(collectSurplusAuction(NETWORK, 3333)).to.be.revertedWith('Did not find the auction to collect.');
     });
     it('forbids bidding on inexistent auctions', async () => {
-        expect(bidToSurplusAuction('custom', 3333, new BigNumber('20'))).to.be.revertedWith(
+        expect(bidToSurplusAuction(NETWORK, 3333, new BigNumber('20'))).to.be.revertedWith(
             'Did not find the auction to bid on.'
         );
     });
     it('forbids fetching inexistent auctions', async () => {
-        expect(fetchSurplusAuctionByIndex('custom', 3333)).to.be.revertedWith('No active auction exists with this id');
+        expect(fetchSurplusAuctionByIndex(NETWORK, 3333)).to.be.revertedWith('No active auction exists with this id');
     });
     it('calculates the minimum bid increase', async () => {
-        const auctions = await fetchActiveSurplusAuctions('custom');
+        const auctions = await fetchActiveSurplusAuctions(NETWORK);
         expect(auctions[0].id).to.equal(2328);
         const auction = auctions[0] as SurplusAuctionActive;
 
-        const bid = await getNextMinimumBid('custom', auction);
+        const bid = await getNextMinimumBid(NETWORK, auction);
         expect(bid.toString()).to.equal('16.94241213279722952');
         expect(auction.bidAmountMKR.toString()).to.equal('16.290780896920413');
-        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, 'custom');
-        await setAllowanceAmountMKR('custom', address, new BigNumber('20'));
-        await swapToMKR('custom', 20, 20);
-        await bidToSurplusAuction('custom', 2328, bid);
+        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
+        await setAllowanceAmountMKR(NETWORK, address, new BigNumber('20'));
+        await swapToMKR(NETWORK, 20, 20);
+        await bidToSurplusAuction(NETWORK, 2328, bid);
     });
 });

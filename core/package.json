@@ -8,7 +8,8 @@
     "build": "tsc --build tsconfig.json",
     "start": "node .",
     "test": "npx hardhat test --network testnetwork",
-    "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0"
+    "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0",
+    "fake-flop": "npx hardhat --network testnetwork run ./scripts/causeDebt.ts"
   },
   "engines": {
     "node": ">=16.0.0",
@@ -23,6 +24,7 @@
     }
   },
   "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.1.0",
     "@uniswap/sdk": "^3.0.3",
     "bignumber.js": "^9.0.1",
     "date-fns": "^2.28.0",

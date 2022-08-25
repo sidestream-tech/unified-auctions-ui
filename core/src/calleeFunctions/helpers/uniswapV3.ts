@@ -101,5 +101,5 @@ export const convertMkrToDai = async function (network: string, amountDai: BigNu
 };
 
 export const convertDaiToMkr = async function (network: string, amount: BigNumber): Promise<BigNumber> {
-    return await convertSymbolToDai(network, 'MCD_GOV', amount, MKR_NUMBER_OF_DIGITS);
+    return await convertDaiToSymbol(network, 'MCD_GOV', amount, MKR_NUMBER_OF_DIGITS);
 };

@@ -1,15 +1,15 @@
 import type { DebtAuctionActive, DebtAuctionTransaction } from './types';
 import BigNumber from './bignumber';
 import getContract from './contracts';
-import { RAD_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { Contract } from 'ethers';
-import { MKR_NUMBER_OF_DIGITS, RAD, WAD } from './constants/UNITS';
+import { MKR_NUMBER_OF_DIGITS, WAD } from './constants/UNITS';
 import memoizee from 'memoizee';
 import getNetworkDate from './date';
 import { CompensationAuctionBase, DebtAuction, Notifier, CompensationAuctionTransactionFees } from './types';
 import { getEarliestDate } from './helpers/getEarliestDate';
 import executeTransaction from './execute';
-import { convertMkrToDai } from './calleeFunctions/helpers/uniswapV3';
+import { convertDaiToMkr } from './calleeFunctions/helpers/uniswapV3';
 import { getGasPriceForUI } from './gas';
 import { getMarketPrice } from './calleeFunctions';
 
@@ -20,7 +20,11 @@ export const getNextMaximumMkrReceived = async (
     debtAuction: DebtAuctionActive
 ): Promise<BigNumber> => {
     const decreaseCoefficient = await getDebtAuctionBidDecreaseCoefficient(network);
-    return debtAuction.receiveAmountMKR.dividedBy(decreaseCoefficient);
+    return new BigNumber(
+        debtAuction.receiveAmountMKR
+            .dividedBy(decreaseCoefficient)
+            .toPrecision(MKR_NUMBER_OF_DIGITS - 1, BigNumber.ROUND_FLOOR)
+    );
 };
 
 export const fetchActiveDebtAuctions = async function (network: string): Promise<DebtAuctionActive[]> {
@@ -28,10 +32,9 @@ export const fetchActiveDebtAuctions = async function (network: string): Promise
     const auctionLastIndex = await getDebtAuctionLastIndex(contract);
 
     const debtAuctions: DebtAuctionActive[] = [];
-    let currentDebtAuction;
     for (let i = auctionLastIndex; i > 0; i--) {
         const currentAuction = await getActiveDebtAuctionOrUndefined(network, i);
-        if (!currentDebtAuction) {
+        if (!currentAuction) {
             break;
         }
         debtAuctions.push(currentAuction as DebtAuctionActive);
@@ -60,7 +63,7 @@ export const bidToDebtAuction = async function (
     const transactionParameters = [
         auctionIndex,
         acceptableReceivedAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
-        auction.bidAmountDai.shiftedBy(RAD_NUMBER_OF_DIGITS).toFixed(0),
+        auction.bidAmountDai.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
     ];
     await executeTransaction(network, CONTRACT, 'dent', transactionParameters, { notifier });
 };
@@ -105,13 +108,13 @@ export const getDebtAuctionLastIndex = async (contract: Contract): Promise<numbe
     return new BigNumber(auctionsQuantityBinary._hex).toNumber();
 };
 
-const _getDebtAuctionBidIncreaseCoefficient = async (network: string): Promise<BigNumber> => {
+const _getDebtAuctionBidDecreaseCoefficient = async (network: string): Promise<BigNumber> => {
     const contract = await getContract(network, CONTRACT);
     const auctionsQuantityBinary = await contract.beg();
     return new BigNumber(auctionsQuantityBinary._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 };
 
-export const getDebtAuctionBidDecreaseCoefficient = memoizee(_getDebtAuctionBidIncreaseCoefficient, {
+export const getDebtAuctionBidDecreaseCoefficient = memoizee(_getDebtAuctionBidDecreaseCoefficient, {
     promise: true,
     length: 3,
 });
@@ -171,7 +174,7 @@ export const fetchDebtAuctionByIndex = async (network: string, auctionIndex: num
         ...baseAuctionInfo,
         earliestEndDate,
         bidAmountDai: new BigNumber(auctionData.bid._hex).div(WAD),
-        receiveAmountMKR: new BigNumber(auctionData.lot._hex).div(RAD),
+        receiveAmountMKR: new BigNumber(auctionData.lot._hex).div(WAD),
         receiverAddress: auctionData.guy,
         auctionEndDate,
         bidEndDate,
@@ -194,7 +197,7 @@ export const getActiveDebtAuctionOrUndefined = async (
 
 export const getMarketPriceDaiToMkr = async function (network: string, mkrAmount: BigNumber): Promise<BigNumber> {
     try {
-        return new BigNumber(1).div((await convertMkrToDai(network, mkrAmount)).div(mkrAmount));
+        return new BigNumber(1).div((await convertDaiToMkr(network, mkrAmount)).div(mkrAmount));
     } catch (error) {
         return new BigNumber(NaN);
     }
