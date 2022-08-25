@@ -28,12 +28,8 @@ export const getNewDebtAuctionsFromActiveDebtAuctions = function (
 
 export const getAllActiveDebtAuctions = async function (network: string): Promise<DebtAuctionActive[]> {
     const auctions = await fetchActiveDebtAuctions(network);
-    const auctionIds = auctions.map(auction => `"${auction.id}"`).join(', ');
-
-    auctionIds
-        ? console.info(`debt auctions: found "${auctions.length}" auctions ${auctionIds} on "${network}" network`)
-        : console.info(`debt auctions: found "${auctions.length}" auctions on "${network}" network`);
-
+    const auctionIds = auctions.map(auction => auction.id).join(', ');
+    console.info(`debt auctions: found "${auctions.length}" auctions "${auctionIds}" on "${network}" network`);
     return auctions;
 };
 
@@ -46,6 +42,6 @@ export const loopDebt = async function (network: string): Promise<void> {
         const newAuctions = getNewDebtAuctionsFromActiveDebtAuctions(activeAuctions);
         newAuctions.map(notifyDebt);
     } catch (error) {
-        console.error('loop error:', error);
+        console.error('debt loop error', error);
     }
 };
