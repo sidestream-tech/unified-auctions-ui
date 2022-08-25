@@ -36,7 +36,7 @@
                 :desired-amount="auction.bidAmountDai"
                 :allowance-amount="allowanceDai"
                 :network="network"
-                :token-address="tokenAddress || ''"
+                :token-address="tokenAddress"
                 :is-correct.sync="isWalletDAICheckPassed"
                 :is-explanations-shown="isExplanationsShown"
                 :is-loading="isRefreshingWallet || isSettingAllowance || isDepositing"
