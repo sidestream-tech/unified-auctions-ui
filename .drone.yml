@@ -83,6 +83,8 @@ data:
       build_args:
         - key: REMOTE_RPC_URL
           value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+        - key: ALCHEMY_URL
+          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
       tags_to_cache_from:
         - "main"
       trigger:
