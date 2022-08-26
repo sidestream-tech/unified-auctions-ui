@@ -20,7 +20,7 @@ export const setupSurplusKeeper = async function (network: string) {
         return;
     }
     console.info(
-        `surplus keeper: setup complete, looking for minimum clear profit of "${KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI}" DAI`
+        `surplus keeper: setup complete, looking for minimum net profit of "${KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI}" DAI`
     );
     isSetupCompleted = true;
 };
@@ -59,24 +59,24 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         return;
     }
 
-    // check auction's clear profit – profit without transaction fees
-    const clearProfit = new BigNumber(1)
+    // check auction's net profit – profit without transaction fees
+    const netProfit = new BigNumber(1)
         .div(auctionTransaction.marketUnitPrice.minus(auctionTransaction.unitPrice))
         .times(auctionTransaction.nextMinimumBid)
         .minus(auctionTransaction.combinedBidFeesDai);
-    if (clearProfit.isLessThan(new BigNumber(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI))) {
+    if (netProfit.isLessThan(new BigNumber(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI))) {
         console.info(
             `surplus keeper: auction "${
                 auction.id
-            }" clear profit is smaller than min profit (${formatToAutomaticDecimalPointsString(
-                clearProfit
+            }" net profit is smaller than min profit (${formatToAutomaticDecimalPointsString(
+                netProfit
             )} < ${KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI})`
         );
         return;
     } else {
         console.info(
-            `surplus keeper: auction "${auction.id}" clear profit is ${formatToAutomaticDecimalPointsString(
-                clearProfit
+            `surplus keeper: auction "${auction.id}" net profit is ${formatToAutomaticDecimalPointsString(
+                netProfit
             )} DAI after transaction fees, checking wallet MKR balance`
         );
     }
