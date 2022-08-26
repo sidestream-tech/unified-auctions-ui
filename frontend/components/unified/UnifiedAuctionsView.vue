@@ -126,8 +126,8 @@ export default Vue.extend({
                     description:
                         'Web tool that supports participation in debt auctions by bidding on MKR with own Dai',
                     links: {
-                        source: 'https://github.com/makerdao/auctions-ui',
-                        participate: 'https://auctions.makerdao.com/flop',
+                        source: 'https://github.com/sidestream-tech/unified-auctions-ui',
+                        participate: '/debt',
                     },
                     filters: ['debt'],
                 },
