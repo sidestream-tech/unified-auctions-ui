@@ -26,3 +26,10 @@ COPY --from=dependency-base /core /core
 WORKDIR /core
 
 CMD [ "npm", "run", "test"]
+
+FROM $NODE_VERSION AS hardhat
+ARG ALCHEMY_URL
+ENV ALCHEMY_URL=${ALCHEMY_URL}
+COPY --from=dependency-base /core /core
+WORKDIR /core
+CMD [ "npm", "run", "hardhat"]
