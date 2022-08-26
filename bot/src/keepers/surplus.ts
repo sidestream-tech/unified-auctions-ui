@@ -1,22 +1,33 @@
-import BigNumber from 'bignumber.js';
+import BigNumber from 'auctions-core/src/bignumber';
 import { SurplusAuctionActive } from 'auctions-core/src/types';
 import { bidToSurplusAuction, enrichSurplusAuction, collectSurplusAuction } from 'auctions-core/src/surplus';
 import getSigner from 'auctions-core/src/signer';
 import { fetchAllowanceAmountMKR, setAllowanceAmountMKR } from 'auctions-core/src/authorizations';
 import { fetchBalanceMKR } from 'auctions-core/src/wallet';
 import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
-import { KEEPER_SURPLUS, KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI } from '../variables';
-import { isSetupCompleted } from './setup';
+import { KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI } from '../variables';
+import { setupWallet } from '../signer';
 
+let isSetupCompleted = false;
 const currentlyExecutedAuctions = new Set();
 
-const checkAndParticipateIfPossible = async function (network: string, auction: SurplusAuctionActive) {
-    // check if setupKeeper hasn't run
-    if (!isSetupCompleted) {
+export const setupSurplusKeeper = async function (network: string) {
+    await setupWallet(network);
+    if (Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)) {
+        console.info(
+            'surplus keeper: no KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI env variable provided, keeper will not run'
+        );
         return;
     }
+    console.info(
+        `surplus keeper: setup complete, looking for minimum clear profit of "${KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI}" DAI`
+    );
+    isSetupCompleted = true;
+};
 
-    if (!KEEPER_SURPLUS || Number.isNaN(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI)) {
+const checkAndParticipateIfPossible = async function (network: string, auction: SurplusAuctionActive) {
+    // check if setupSurplusKeeper hasn't run
+    if (!isSetupCompleted) {
         return;
     }
 
@@ -28,19 +39,23 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
 
     // check if auction became inactive or finished
     if (auctionTransaction.state === 'ready-for-collection') {
-        console.info(`keeper: surplus auction "${auction.id}" has already finished`);
         // check if the current user is the winner
-        if (auctionTransaction.receiverAddress === walletAddress) {
+        if (auctionTransaction.receiverAddress.toLocaleLowerCase() === walletAddress.toLowerCase()) {
             console.info(
-                `keeper: wallet ${walletAddress} won surplus auction "${auction.id}", moving on to collection`
+                `surplus keeper: wallet "${walletAddress}" won auction "${auction.id}", moving on to collection`
             );
             await collectSurplusAuction(network, auction.id);
-            console.info(`keeper: surplus auction "${auction.id}" was successfully collected`);
+            console.info(`surplus keeper: auction "${auction.id}" was successfully collected`);
+            return;
+        } else {
+            console.info(
+                `surplus keeper: auction "${auction.id}" has already finished and the winner is not "${walletAddress}"`
+            );
+            return;
         }
-        return;
     }
     if (auctionTransaction.state === 'requires-restart') {
-        console.info(`keeper: surplus auction "${auction.id}" is inactive`);
+        console.info(`surplus keeper: auction "${auction.id}" is inactive`);
         return;
     }
 
@@ -51,7 +66,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         .minus(auctionTransaction.combinedBidFeesDai);
     if (clearProfit.isLessThan(new BigNumber(KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI))) {
         console.info(
-            `keeper: surplus auction "${
+            `surplus keeper: auction "${
                 auction.id
             }" clear profit is smaller than min profit (${formatToAutomaticDecimalPointsString(
                 clearProfit
@@ -60,7 +75,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         return;
     } else {
         console.info(
-            `keeper: surplus auction "${auction.id}" clear profit is ${formatToAutomaticDecimalPointsString(
+            `surplus keeper: auction "${auction.id}" clear profit is ${formatToAutomaticDecimalPointsString(
                 clearProfit
             )} DAI after transaction fees, checking wallet MKR balance`
         );
@@ -70,22 +85,22 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     const balanceMkr = await fetchBalanceMKR(network, walletAddress);
     if (balanceMkr.isLessThan(auctionTransaction.nextMinimumBid)) {
         console.info(
-            `keeper: wallet MKR balance (${formatToAutomaticDecimalPointsString(
+            `surplus keeper: wallet MKR balance (${formatToAutomaticDecimalPointsString(
                 balanceMkr
             )}) is less than min bid amount (${formatToAutomaticDecimalPointsString(
                 auctionTransaction.nextMinimumBid
-            )}) for surplus auction "${auction.id}"`
+            )}) for auction "${auction.id}"`
         );
         return;
     } else {
-        console.info('keeper: wallet MKR balance is within limits, checking wallet MKR allowance');
+        console.info('surplus keeper: wallet MKR balance is within limits, checking wallet MKR allowance');
     }
 
     // check the wallet's MKR allowance
     const allowanceMkr = await fetchAllowanceAmountMKR(network, walletAddress);
     if (allowanceMkr.isLessThan(auctionTransaction.nextMinimumBid)) {
         console.info(
-            `keeper: wallet MKR allowance (${formatToAutomaticDecimalPointsString(
+            `surplus keeper: wallet MKR allowance (${formatToAutomaticDecimalPointsString(
                 allowanceMkr
             )}) is less than desired bid amount (${formatToAutomaticDecimalPointsString(
                 auctionTransaction.nextMinimumBid
@@ -95,13 +110,13 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         await checkAndParticipateIfPossible(network, auction);
         return;
     } else {
-        console.info('keeper: wallet MKR allowance is within limits, moving on to execution');
+        console.info('surplus keeper: wallet MKR allowance is within limits, moving on to execution');
     }
 
     // bid on the Auction
-    console.info(`keeper: surplus auction "${auctionTransaction.id}": attempting bid execution`);
+    console.info(`surplus keeper: auction "${auctionTransaction.id}": attempting bid execution`);
     await bidToSurplusAuction(network, auctionTransaction.id, auctionTransaction.nextMinimumBid);
-    console.info(`keeper: surplus auction "${auctionTransaction.id}" was succesfully executed`);
+    console.info(`surplus keeper: auction "${auctionTransaction.id}" was succesfully executed`);
 };
 
 const participateInAuction = async function (network: string, auction: SurplusAuctionActive) {
@@ -115,7 +130,7 @@ const participateInAuction = async function (network: string, auction: SurplusAu
     try {
         await checkAndParticipateIfPossible(network, auction);
     } catch (error) {
-        console.error(`keeper: unexpected error: ${(error instanceof Error && error.message) || 'unknown'}`);
+        console.error(`surplus keeper: unexpected error: ${(error instanceof Error && error.message) || 'unknown'}`);
     }
 
     // clear pool of currently executed auctions

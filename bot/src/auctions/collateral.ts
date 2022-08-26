@@ -3,7 +3,7 @@ import { fetchAllInitialAuctions } from 'auctions-core/src/auctions';
 import { THRESHOLD_FOR_NEW_AUCTIONS } from '../variables';
 import { getWhitelistedCollaterals } from '../whitelist';
 import { notifyCollateral } from '../notify';
-import participate from '../keeper/collateral';
+import participate from '../keepers/collateral';
 
 const knownAuctionIds = new Set();
 

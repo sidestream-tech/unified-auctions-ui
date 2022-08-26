@@ -2,7 +2,7 @@ import type { SurplusAuctionActive } from 'auctions-core/src/types';
 import { fetchActiveSurplusAuctions } from 'auctions-core/src/surplus';
 import { THRESHOLD_FOR_NEW_AUCTIONS } from '../variables';
 import { notifySurplus } from '../notify';
-import participate from '../keeper/surplus';
+import participate from '../keepers/surplus';
 
 const knownAuctionIds = new Set();
 
@@ -22,7 +22,6 @@ export const getNewSurplusAuctionsFromActiveSurplusAuctions = function (
         return isNew && checkIfAuctionIsAlreadyKnown(activeAction);
     });
     console.info(`surplus auctions: "${newAuctions.length}" of "${activeActions.length}" auctions are new`);
-
     newAuctions.map(markAuctionAsKnown);
     return newAuctions;
 };

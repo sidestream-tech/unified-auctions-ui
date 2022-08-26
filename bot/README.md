@@ -28,13 +28,12 @@ $ npm run start
 ## Environment variables
 
 -   `RPC_URL`: (required) Etherium RPC url used for fetching data from the blockchain and participating in the auctions
+-   `SUPPORTED_AUCTION_TYPES`: (optional, default `COLLATERAL, SURPLUS, DEBT`) a comma-separated list of auction types the bot will interact with
 -   `WHITELISTED_COLLATERALS`: (optional) a comma-separated list of collaterals the bot will fetch. Example: `MATIC-A, UNI-A`
 -   `MAX_PRIORITY_FEE_PER_GAS_WEI`: (optional, default can be found in core/src/gas.ts) – [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559) `max_priority_fee_per_gas` value
 -   `REFETCH_INTERVAL`: (optional, default 60 seconds) – interval between auction fetching requests
 -   `KEEPER_*`: (optional) set of env variables to enable keeper bot:
     -   `KEEPER_WALLET_PRIVATE_KEY`: (required) The wallet private key (https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key)
-    -   `KEEPER_COLLATERAL`: (required to bid on collateral auctions) A boolean flag that determines whether the keeper should bid on collateral auctions
-    -   `KEEPER_SURPLUS`: (required to bid on surplus auctions) A boolean flag that determines whether the keeper should bid on surplus auctions
     -   `KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI`: (required if `KEEPER_COLLATERAL` is set to `true`) The minimum net profit a collateral auction must yield before the keeper automatically bids on it. Can be negative if one is willing to spend ETH on transaction fees to keep DAI stable
     -   `KEEPER_SURPLUS_MINIMUM_NET_PROFIT_DAI`: (required if `KEEPER_SURPLUS` is set to `true`) The minimum net profit a surplus auction must yield before the keeper automatically bids on it. Can be negative if one is willing to spend ETH on transaction fees to keep DAI stable
     -   `KEEPER_PREAUTHORIZE`: (optional, default `false`) if set to `true`, the wallet will execute all required authorizations (for DAI and collateralals) on start. Default behaviour is to wait until specific auction is profitable and then execute authorizations only required for the particular auction. Note that it's recommended to set this to `true` only in combination with `WHITELISTED_COLLATERALS`

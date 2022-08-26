@@ -260,7 +260,7 @@ export type DebtAuctionActionStates = 'loaded' | 'restarting' | 'bidding' | 'col
 
 export declare interface DebtAuctionEnriched extends DebtAuctionActive {
     nextMaximumLotReceived: BigNumber;
-    marketUnitPrice: BigNumber | string;
+    marketUnitPrice: BigNumber;
     marketUnitPriceToUnitPriceRatio: BigNumber;
     unitPrice: BigNumber;
 }
