@@ -1,18 +1,21 @@
+import causeDebt from './scripts/causeDebt';
+import resetFork from './scripts/resetFork';
+import warpTime from './scripts/warpTime'
 export const SIMULATIONS = [
     {
         title: 'create debt auction',
         steps: [
             {
                 'title': 'Reset blockchain fork',
-                'entry': console.log
+                'entry': resetFork
             },
             {
                 'title': 'Create debt auction',
-                'entry': console.log
+                'entry': causeDebt
             },
             {
                 'title': 'Expire the auction',
-                'entry': console.log
+                'entry': warpTime
             }
         ]
     },
@@ -21,7 +24,7 @@ export const SIMULATIONS = [
         steps: [
             {
                 'title': 'Reset blockchain fork',
-                'entry': console.log
+                'entry': resetFork
             },
         ]
     }

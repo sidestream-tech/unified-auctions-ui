@@ -8,6 +8,7 @@ import hre from 'hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { createWalletFromPrivateKey } from '../src/signer';
 import { LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import getProvider from '../src/provider';
 
 function checkRpcUrl() {
     if (!REMOTE_RPC_URL) {
@@ -74,6 +75,12 @@ export const createWalletForRpc = async (signerPrivateKey: string, network: stri
     await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
     await createWalletFromPrivateKey(signerPrivateKey, network);
     return hre.network.provider;
+};
+
+export const warpTime = async function (network: string, blocks = 20000, secondsBetweenBlocks = 270) {
+    const provider = await getProvider(network);
+    await provider.send('hardhat_mine', [`0x${blocks.toString(16)}`, `0x${secondsBetweenBlocks.toString(16)}`]);
+    return blocks * secondsBetweenBlocks;
 };
 
 export const resetBlockchainFork = async function (
