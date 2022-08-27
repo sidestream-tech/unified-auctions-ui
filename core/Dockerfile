@@ -28,8 +28,8 @@ WORKDIR /core
 CMD [ "npm", "run", "test"]
 
 FROM $NODE_VERSION AS hardhat
-ARG ALCHEMY_URL
-ENV ALCHEMY_URL=${ALCHEMY_URL}
+ARG REMOTE_RPC_URL
+ENV REMOTE_RPC_URL=${REMOTE_RPC_URL}
 COPY --from=dependency-base /core /core
 WORKDIR /core
 CMD [ "npm", "run", "hardhat"]
