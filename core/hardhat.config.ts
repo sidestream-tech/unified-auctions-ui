@@ -25,7 +25,6 @@ const customNetworkConfig = {
         },
         initialBaseFeePerGas: 1,
     },
-
 };
 
 /**
