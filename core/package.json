@@ -9,8 +9,8 @@
     "start": "node .",
     "test": "npx hardhat test --network testnetwork",
     "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0",
-    "fake-flop": "npx hardhat --network testnetwork run ./scripts/causeDebt.ts",
-    "hardhat": "npx hardhat node"
+    "hardhat": "npx hardhat node",
+    "simulate": "npx hardhat --network testnetwork run ./simulations/index.ts"
   },
   "engines": {
     "node": ">=16.0.0",
