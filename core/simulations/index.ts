@@ -31,6 +31,7 @@ const selectAndRunSimulation = async () => {
         for (const step of simulationConfig.steps) {
             console.info(`Executing: ${step.title}`);
             await step.entry();
+            console.info(`Done: ${step.title}`);
             await keypress();
         }
         console.info('Simulation completed');
