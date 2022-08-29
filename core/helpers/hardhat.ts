@@ -1,4 +1,4 @@
-import { getContractAddressByName } from '../src/contracts';
+import getContract, { getContractAddressByName } from '../src/contracts';
 import BigNumber from '../src/bignumber';
 import { EthereumProvider } from 'hardhat/types';
 import { ethers } from 'ethers';
@@ -9,6 +9,7 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { createWalletFromPrivateKey } from '../src/signer';
 import { LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 import getProvider from '../src/provider';
+import { WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 
 function checkRpcUrl() {
     if (!REMOTE_RPC_URL) {
@@ -55,7 +56,7 @@ export const overwriteUintMapping = async (
     await overwriteUintValue(network, provider, contractName, slotAddress, newValue);
 };
 
-export const resetNetwork = async (blockNumber: number, rpcUrl: string | undefined = REMOTE_RPC_URL) => {
+export const resetNetwork = async (blockNumber: number | undefined = undefined, rpcUrl: string | undefined = REMOTE_RPC_URL) => {
     checkRpcUrl();
 
     await hre.network.provider.request({
@@ -84,7 +85,7 @@ export const warpTime = async function (network: string, blocks = 20000, seconds
 };
 
 export const resetBlockchainFork = async function (
-    blockNumber: number,
+    blockNumber: number | undefined,
     signerPrivateKey: string,
     network: string = NETWORK,
     rpcUrl: string | undefined = REMOTE_RPC_URL
@@ -94,3 +95,20 @@ export const resetBlockchainFork = async function (
     const provider = await createWalletForRpc(signerPrivateKey, network);
     return provider;
 };
+
+export const addToBalance = async (network: string, walletAddress: string, mkrAmount: BigNumber, daiAmount: BigNumber) => {
+    const daiContract = await getContract(network, 'MCD_DAI', false)
+    const mkrContract = await getContract(network, 'MCD_GOV', false)
+
+    const daiBalanceBefore = await daiContract.balanceOf(walletAddress)
+    const mkrBalanceBefore = await mkrContract.balanceOf(walletAddress)
+    console.info(`Balances: mkr - ${mkrBalanceBefore}, dai - ${daiBalanceBefore}`)
+
+    const provider = hre.network.provider
+    await overwriteUintMapping(network, provider, 'MCD_DAI', '0x2', walletAddress, daiAmount.shiftedBy(WAD_NUMBER_OF_DIGITS))
+    await overwriteUintMapping(network, provider, 'MCD_GOV', '0x1', walletAddress, mkrAmount.shiftedBy(WAD_NUMBER_OF_DIGITS))
+
+    const daiBalance = await daiContract.balanceOf(walletAddress)
+    const mkrBalance = await mkrContract.balanceOf(walletAddress)
+    console.info(`Balances: mkr - ${mkrBalance}, dai - ${daiBalance}`)
+}
