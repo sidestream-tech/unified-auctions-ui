@@ -29,10 +29,11 @@ const selectAndRunSimulation = async () => {
             throw new Error(`Simulation config not found: ${answer.value}`);
         }
         for (const step of simulationConfig.steps) {
-            console.info(`Next step: ${step.title}`);
-            await keypress();
+            console.info(`Executing: ${step.title}`);
             await step.entry();
+            await keypress();
         }
+        console.info('Simulation completed')
     }
 };
 
