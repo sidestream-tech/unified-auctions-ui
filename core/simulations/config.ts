@@ -36,4 +36,15 @@ export const SIMULATIONS = [
             },
         ],
     },
+    {
+        title: 'Fork while system is in surplus',
+        steps: [
+            {
+                title: 'Reset blockchain fork',
+                // Few blocks before with various states of surplus auctions at 14078339,
+                entry: async () => await resetFork(14078339),
+            },
+        ],
+    },
+    14078339
 ];
