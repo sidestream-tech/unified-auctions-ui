@@ -46,5 +46,4 @@ export const SIMULATIONS = [
             },
         ],
     },
-    14078339,
 ];
