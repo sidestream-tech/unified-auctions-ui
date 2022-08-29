@@ -117,9 +117,3 @@ export const getNetworkConfigByType = function (networkType: string | undefined)
     }
     return networks[networkType];
 };
-
-export const warpTime = async function (network: string, blocks = 20000, secondsBetweenBlocks = 270) {
-    const provider = await getProvider(network);
-    await provider.send('hardhat_mine', [`0x${blocks.toString(16)}`, `0x${secondsBetweenBlocks.toString(16)}`]);
-    return blocks * secondsBetweenBlocks;
-};
