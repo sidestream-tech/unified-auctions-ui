@@ -22,15 +22,17 @@ const selectAndRunSimulation = async () => {
         message: 'Select Simulation',
         choices: promtChoices,
     };
-    const answer = await prompts(promtConfig);
-    const simulationConfig = SIMULATIONS.find(item => item.title === answer.value);
-    if (!simulationConfig) {
-        throw new Error(`Simulation config not found: ${answer.value}`);
-    }
-    for (const step of simulationConfig.steps) {
-        console.info(`Next step: ${step.title}`);
-        await keypress();
-        step.entry();
+    while (true) {
+        const answer = await prompts(promtConfig);
+        const simulationConfig = SIMULATIONS.find(item => item.title === answer.value);
+        if (!simulationConfig) {
+            throw new Error(`Simulation config not found: ${answer.value}`);
+        }
+        for (const step of simulationConfig.steps) {
+            console.info(`Next step: ${step.title}`);
+            await keypress();
+            step.entry();
+        }
     }
 };
 
