@@ -33,7 +33,7 @@ const selectAndRunSimulation = async () => {
             await step.entry();
             await keypress();
         }
-        console.info('Simulation completed')
+        console.info('Simulation completed');
     }
 };
 

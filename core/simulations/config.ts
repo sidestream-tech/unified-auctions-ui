@@ -1,7 +1,7 @@
 import causeDebt from './scripts/causeDebt';
 import resetFork from './scripts/resetFork';
 import warpTime from './scripts/warpTime';
-import increaseBalances from './scripts/addDaiAndMkrToWallet'
+import increaseBalances from './scripts/addDaiAndMkrToWallet';
 
 export const SIMULATIONS = [
     {
@@ -46,5 +46,5 @@ export const SIMULATIONS = [
             },
         ],
     },
-    14078339
+    14078339,
 ];
