@@ -26,11 +26,13 @@ export const SIMULATIONS = [
         ],
     },
     {
-        title: 'Reset blockchin fork',
+        title: 'Fork while WSTETH-A is running',
         steps: [
             {
                 title: 'Reset blockchain fork',
-                entry: resetFork,
+                // Few blocks before WSTETH-A is taken at 14052147,
+                // https://etherscan.io/address/0x49a33a28c4c7d9576ab28898f4c9ac7e52ea457at
+                entry: async () => await resetFork(14052140),
             },
         ],
     },
