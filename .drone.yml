@@ -82,7 +82,7 @@ data:
       path_to_context: ./
       build_args:
         - key: REMOTE_RPC_URL
-          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+          value_from_secret: auction-ui/localhost/hardhat/remote_rpc_url
       tags_to_cache_from:
         - "main"
       trigger:
@@ -95,7 +95,7 @@ data:
       repository: ghcr.io/sidestream-tech/unified-auctions-ui/core-hardhat
       build_args:
         - key: REMOTE_RPC_URL
-          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+          value_from_secret: auction-ui/localhost/hardhat/remote_rpc_url
       tags:
         - "pr-${DRONE_PULL_REQUEST}"
       labels:
