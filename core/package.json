@@ -9,10 +9,10 @@
     "start": "node .",
     "test": "npx hardhat test --network testnetwork",
     "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0",
-    "hardhat:null": "npx hardhat node 1>&/dev/null",
+    "hardhat:silent": "npx hardhat node 1>&/dev/null",
     "hardhat": "npx hardhat node",
     "scripts": "npx hardhat --network testnetwork run ./simulations/index.ts",
-    "simulate": "npm-run-all --parallel hardhat:null scripts"
+    "simulate": "npm-run-all --parallel hardhat:silent scripts"
   },
   "engines": {
     "node": ">=16.0.0",
