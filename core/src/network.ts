@@ -1,5 +1,4 @@
 import type { NetworkConfig } from './types';
-import getProvider from './provider';
 
 const networks: Record<string, NetworkConfig> = {};
 
