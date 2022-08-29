@@ -108,10 +108,6 @@ export const addToBalance = async (
     const daiContract = await getContract(network, 'MCD_DAI', false);
     const mkrContract = await getContract(network, 'MCD_GOV', false);
 
-    const daiBalanceBefore = await daiContract.balanceOf(walletAddress);
-    const mkrBalanceBefore = await mkrContract.balanceOf(walletAddress);
-    console.info(`Balances: mkr - ${mkrBalanceBefore}, dai - ${daiBalanceBefore}`);
-
     const provider = hre.network.provider;
     await overwriteUintMapping(
         network,
