@@ -34,6 +34,10 @@ export const SIMULATIONS = [
                 // https://etherscan.io/address/0x49a33a28c4c7d9576ab28898f4c9ac7e52ea457at
                 entry: async () => await resetFork(14052140),
             },
+            {
+                title: 'Skip time',
+                entry: async () => await warpTime(),
+            },
         ],
     },
     {
@@ -43,6 +47,10 @@ export const SIMULATIONS = [
                 title: 'Reset blockchain fork',
                 // Few blocks before with various states of surplus auctions at 14078339,
                 entry: async () => await resetFork(14078339),
+            },
+            {
+                title: 'Skip time',
+                entry: async () => await warpTime(),
             },
         ],
     },
