@@ -126,7 +126,10 @@ export const addToBalance = async (
         mkrAmount.shiftedBy(WAD_NUMBER_OF_DIGITS)
     );
 
-    const daiBalance = await daiContract.balanceOf(walletAddress);
-    const mkrBalance = await mkrContract.balanceOf(walletAddress);
-    console.info(`Balances: mkr - ${mkrBalance}, dai - ${daiBalance}`);
+    const daiBalanceHex = await daiContract.balanceOf(walletAddress);
+    const mkrBalanceHex = await mkrContract.balanceOf(walletAddress);
+    const daiBalance = new BigNumber(daiBalanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    const mkrBalance = new BigNumber(mkrBalanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+
+    console.info(`Balances\nmkr: ${mkrBalance},\ndai: ${daiBalance}`);
 };

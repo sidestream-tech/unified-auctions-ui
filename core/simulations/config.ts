@@ -26,7 +26,7 @@ export const SIMULATIONS = [
         ],
     },
     {
-        title: 'Fork while WSTETH-A is running',
+        title: 'Fork block with active WSTETH-A auction',
         steps: [
             {
                 title: 'Reset blockchain fork',
@@ -37,7 +37,7 @@ export const SIMULATIONS = [
         ],
     },
     {
-        title: 'Fork while system is in surplus',
+        title: 'Fork block with active surplus auction',
         steps: [
             {
                 title: 'Reset blockchain fork',
