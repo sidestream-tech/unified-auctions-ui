@@ -20,7 +20,7 @@ export const SIMULATIONS = [
                 entry: async () => await increaseBalances(),
             },
             {
-                title: 'Expire the auction',
+                title: 'Skip time',
                 entry: async () => await warpTime('custom'),
             },
         ],
