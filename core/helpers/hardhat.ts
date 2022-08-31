@@ -83,10 +83,7 @@ export const createWalletForRpc = async (signerPrivateKey: string, network: stri
 
 export const warpTime = async function (network: string, blocks = 20000, secondsBetweenBlocks = 270) {
     const provider = await getProvider(network);
-    await provider.send('hardhat_mine', [
-        formatToHexWithoutPad(blocks),
-        formatToHexWithoutPad(secondsBetweenBlocks),
-    ]);
+    await provider.send('hardhat_mine', [formatToHexWithoutPad(blocks), formatToHexWithoutPad(secondsBetweenBlocks)]);
     return blocks * secondsBetweenBlocks;
 };
 
