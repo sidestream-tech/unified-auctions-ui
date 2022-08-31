@@ -5,7 +5,7 @@ import { warpTime } from '../helpers/hardhat';
 
 export const SIMULATIONS = [
     {
-        title: 'create debt auction',
+        title: 'Create debt auction',
         steps: [
             {
                 title: 'Reset blockchain fork',
