@@ -9,7 +9,7 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { createWalletFromPrivateKey } from '../src/signer';
 import { LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 import getProvider from '../src/provider';
-import { WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 
 function checkRpcUrl() {
     if (!REMOTE_RPC_URL) {
@@ -115,7 +115,7 @@ export const addToBalance = async (
         'MCD_DAI',
         '0x2',
         walletAddress,
-        daiAmount.shiftedBy(WAD_NUMBER_OF_DIGITS)
+        daiAmount.shiftedBy(DAI_NUMBER_OF_DIGITS)
     );
     await overwriteUintMapping(
         network,
@@ -123,13 +123,13 @@ export const addToBalance = async (
         'MCD_GOV',
         '0x1',
         walletAddress,
-        mkrAmount.shiftedBy(WAD_NUMBER_OF_DIGITS)
+        mkrAmount.shiftedBy(MKR_NUMBER_OF_DIGITS)
     );
 
     const daiBalanceHex = await daiContract.balanceOf(walletAddress);
     const mkrBalanceHex = await mkrContract.balanceOf(walletAddress);
-    const daiBalance = new BigNumber(daiBalanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
-    const mkrBalance = new BigNumber(mkrBalanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    const daiBalance = new BigNumber(daiBalanceHex._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+    const mkrBalance = new BigNumber(mkrBalanceHex._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 
     console.info(`Balances\nmkr: ${mkrBalance},\ndai: ${daiBalance}`);
 };
