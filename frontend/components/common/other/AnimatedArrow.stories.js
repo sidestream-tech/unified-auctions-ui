@@ -14,11 +14,11 @@ const common = {
     methods: {
         switch() {
             setInterval(() => {
-                this.index = Math.floor(Math.random() * 4);
-            }, 1500);
+                this.index = (this.index + 1) % 4;
+            }, 2500);
         },
     },
-    beforeMount() {
+    mounted() {
         this.switch();
     },
 };
@@ -44,7 +44,7 @@ storiesOf('Common/Other/AnimatedArrow', module)
         ...common,
         template: '<AnimatedArrow :size="64" />',
     }))
-    .add('Switching', () => ({
+    .add('Up Down Left Right', () => ({
         ...common,
         template: '<AnimatedArrow :size="16" :direction="directions[index]" />',
     }));
