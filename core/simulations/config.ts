@@ -1,7 +1,7 @@
 import causeDebt from './scripts/causeDebt';
 import resetFork from './scripts/resetFork';
-import warpTime from './scripts/warpTime';
 import increaseBalances from './scripts/addDaiAndMkrToWallet';
+import { warpTime } from '../helpers/hardhat';
 
 export const SIMULATIONS = [
     {
@@ -21,7 +21,7 @@ export const SIMULATIONS = [
             },
             {
                 title: 'Expire the auction',
-                entry: async () => await warpTime(),
+                entry: async () => await warpTime('custom'),
             },
         ],
     },
@@ -36,7 +36,7 @@ export const SIMULATIONS = [
             },
             {
                 title: 'Skip time',
-                entry: async () => await warpTime(),
+                entry: async () => await warpTime('custom'),
             },
         ],
     },
@@ -50,7 +50,7 @@ export const SIMULATIONS = [
             },
             {
                 title: 'Skip time',
-                entry: async () => await warpTime(),
+                entry: async () => await warpTime('custom'),
             },
         ],
     },
