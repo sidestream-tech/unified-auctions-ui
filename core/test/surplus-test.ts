@@ -18,6 +18,7 @@ import { resetNetwork } from '../helpers/hardhat';
 import BigNumber from '../src/bignumber';
 import { fetchSurplusAuctionByIndex } from '../src/surplus';
 import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import { formatToHexWithoutPad } from '../helpers/format';
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
 if (!REMOTE_RPC_URL) {
@@ -98,8 +99,8 @@ describe('Surplus Auction', () => {
         const blocks = 20000;
         const secondsBetweenBlocks = 270;
         await hre.network.provider.send('hardhat_mine', [
-            `0x${blocks.toString(16)}`,
-            `0x${secondsBetweenBlocks.toString(16)}`,
+            formatToHexWithoutPad(blocks),
+            formatToHexWithoutPad(secondsBetweenBlocks),
         ]);
         await restartSurplusAuction(NETWORK, 2328);
     });

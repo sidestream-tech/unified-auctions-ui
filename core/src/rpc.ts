@@ -7,6 +7,7 @@ import {
     setNetwork,
     getNetworkTypeByChainId,
 } from './network';
+import { formatToHexWithoutPad } from '../helpers/format';
 
 const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<string> {
     const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcUrl });
@@ -14,7 +15,7 @@ const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<string> {
     if (!networkInfo || !networkInfo.chainId) {
         throw new Error(`Can not verify RPC url`);
     }
-    return `0x${networkInfo.chainId.toString(16)}`;
+    return formatToHexWithoutPad(networkInfo.chainId);
 };
 
 const parseInfuraProjectIdFromRpcUrl = function (rpcUrl: string): string | undefined {

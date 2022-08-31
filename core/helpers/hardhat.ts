@@ -2,7 +2,7 @@ import getContract, { getContractAddressByName } from '../src/contracts';
 import BigNumber from '../src/bignumber';
 import { EthereumProvider } from 'hardhat/types';
 import { ethers } from 'ethers';
-import { formatToHex } from './format';
+import { formatToHex, formatToHexWithoutPad } from './format';
 import { pad32, concat, stripZeros } from './hex';
 import hre from 'hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
@@ -83,7 +83,10 @@ export const createWalletForRpc = async (signerPrivateKey: string, network: stri
 
 export const warpTime = async function (network: string, blocks = 20000, secondsBetweenBlocks = 270) {
     const provider = await getProvider(network);
-    await provider.send('hardhat_mine', [`0x${blocks.toString(16)}`, `0x${secondsBetweenBlocks.toString(16)}`]);
+    await provider.send('hardhat_mine', [
+        formatToHexWithoutPad(blocks),
+        formatToHexWithoutPad(secondsBetweenBlocks),
+    ]);
     return blocks * secondsBetweenBlocks;
 };
 
@@ -99,11 +102,7 @@ export const resetBlockchainFork = async function (
     return provider;
 };
 
-export const addDaiToBalance = async (
-    network: string,
-    walletAddress: string,
-    daiAmount: BigNumber
-) => {
+export const addDaiToBalance = async (network: string, walletAddress: string, daiAmount: BigNumber) => {
     const daiContract = await getContract(network, 'MCD_DAI', false);
 
     const provider = hre.network.provider;
@@ -122,11 +121,7 @@ export const addDaiToBalance = async (
     console.info(`Balance dai: ${daiBalance}`);
 };
 
-export const addMkrToBalance = async (
-    network: string,
-    walletAddress: string,
-    mkrAmount: BigNumber,
-) => {
+export const addMkrToBalance = async (network: string, walletAddress: string, mkrAmount: BigNumber) => {
     const mkrContract = await getContract(network, 'MCD_GOV', false);
 
     const provider = hre.network.provider;
