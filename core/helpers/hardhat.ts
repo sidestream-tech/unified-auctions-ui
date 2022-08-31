@@ -99,14 +99,12 @@ export const resetBlockchainFork = async function (
     return provider;
 };
 
-export const addToBalance = async (
+export const addDaiToBalance = async (
     network: string,
     walletAddress: string,
-    mkrAmount: BigNumber,
     daiAmount: BigNumber
 ) => {
     const daiContract = await getContract(network, 'MCD_DAI', false);
-    const mkrContract = await getContract(network, 'MCD_GOV', false);
 
     const provider = hre.network.provider;
     await overwriteUintMapping(
@@ -117,6 +115,21 @@ export const addToBalance = async (
         walletAddress,
         daiAmount.shiftedBy(DAI_NUMBER_OF_DIGITS)
     );
+
+    const daiBalanceHex = await daiContract.balanceOf(walletAddress);
+    const daiBalance = new BigNumber(daiBalanceHex._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+
+    console.info(`Balance dai: ${daiBalance}`);
+};
+
+export const addMkrToBalance = async (
+    network: string,
+    walletAddress: string,
+    mkrAmount: BigNumber,
+) => {
+    const mkrContract = await getContract(network, 'MCD_GOV', false);
+
+    const provider = hre.network.provider;
     await overwriteUintMapping(
         network,
         provider,
@@ -126,10 +139,8 @@ export const addToBalance = async (
         mkrAmount.shiftedBy(MKR_NUMBER_OF_DIGITS)
     );
 
-    const daiBalanceHex = await daiContract.balanceOf(walletAddress);
     const mkrBalanceHex = await mkrContract.balanceOf(walletAddress);
-    const daiBalance = new BigNumber(daiBalanceHex._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     const mkrBalance = new BigNumber(mkrBalanceHex._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
 
-    console.info(`Balances\nmkr: ${mkrBalance},\ndai: ${daiBalance}`);
+    console.info(`Balance mkr: ${mkrBalance}`);
 };
