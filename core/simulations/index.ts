@@ -1,7 +1,6 @@
 import prompts, { PromptObject } from 'prompts';
 import { SIMULATIONS } from './config';
 import readline from 'readline';
-import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY } from '../helpers/constants';
 
 const keypress = async () => {
     await prompts({
@@ -23,7 +22,6 @@ const selectAndRunSimulation = async () => {
         message: 'Select Simulation',
         choices: promtChoices,
     };
-    console.info(`Wallet Credentials: public key: ${HARDHAT_PUBLIC_KEY}, private key: ${HARDHAT_PRIVATE_KEY}`);
     while (true) {
         const answer = await prompts(promtConfig);
         const simulationConfig = SIMULATIONS.find(item => item.title === answer.value);
