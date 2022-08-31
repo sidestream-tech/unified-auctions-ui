@@ -13,17 +13,12 @@ export default Vue.extend({
     props: {
         size: {
             type: Number,
-            default: undefined,
+            default: 16,
         },
         direction: {
             type: String,
-            default: undefined,
+            default: 'up',
         },
-    },
-    data() {
-        return {
-            currentOrientation: 'up',
-        };
     },
     computed: {
         style(): Object {

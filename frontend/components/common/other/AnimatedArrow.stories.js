@@ -26,19 +26,19 @@ const common = {
 storiesOf('Common/Other/AnimatedArrow', module)
     .add('Default', () => ({
         ...common,
-        template: '<AnimatedArrow :size="16" />',
+        template: '<AnimatedArrow />',
     }))
     .add('Down', () => ({
         ...common,
-        template: `<AnimatedArrow :size="16" direction="down" />`,
+        template: `<AnimatedArrow direction="down" />`,
     }))
     .add('Left', () => ({
         ...common,
-        template: '<AnimatedArrow :size="16" direction="left" />',
+        template: '<AnimatedArrow direction="left" />',
     }))
     .add('Right', () => ({
         ...common,
-        template: '<AnimatedArrow :size="16" direction="right" />',
+        template: '<AnimatedArrow direction="right" />',
     }))
     .add('Big', () => ({
         ...common,
@@ -46,5 +46,5 @@ storiesOf('Common/Other/AnimatedArrow', module)
     }))
     .add('Up Down Left Right', () => ({
         ...common,
-        template: '<AnimatedArrow :size="16" :direction="directions[index]" />',
+        template: '<AnimatedArrow :direction="directions[index]" />',
     }));
