@@ -32,7 +32,7 @@ export default {
             },
         },
         {
-            title: 'Expire the auction',
+            title: 'Skip time',
             entry: async () => await warpTime('custom'),
         },
     ],
