@@ -7,7 +7,7 @@ import { pad32, concat, stripZeros } from './hex';
 import hre from 'hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { createWalletFromPrivateKey } from '../src/signer';
-import { LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 import getProvider from '../src/provider';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 
@@ -75,7 +75,10 @@ export const resetNetwork = async (
     });
 };
 
-export const createWalletForRpc = async (signerPrivateKey: string, network: string = NETWORK) => {
+export const createWalletForRpc = async (
+    network: string = NETWORK,
+    signerPrivateKey: string = HARDHAT_PRIVATE_KEY
+) => {
     await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
     await createWalletFromPrivateKey(signerPrivateKey, network);
     return hre.network.provider;
@@ -89,13 +92,13 @@ export const warpTime = async function (network: string, blocks = 20000, seconds
 
 export const resetBlockchainFork = async function (
     blockNumber: number | undefined,
-    signerPrivateKey: string,
+    signerPrivateKey: string = HARDHAT_PRIVATE_KEY,
     network: string = NETWORK,
     rpcUrl: string | undefined = REMOTE_RPC_URL
 ) {
     checkRpcUrl();
     await resetNetwork(blockNumber, rpcUrl);
-    const provider = await createWalletForRpc(signerPrivateKey, network);
+    const provider = await createWalletForRpc(network, signerPrivateKey);
     return provider;
 };
 

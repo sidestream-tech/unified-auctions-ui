@@ -1,6 +1,6 @@
 import { HARDHAT_PUBLIC_KEY, HARDHAT_PRIVATE_KEY } from '../../helpers/constants';
 import BigNumber from '../../src/bignumber';
-import { resetBlockchainFork, warpTime, createWalletForRpc, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
+import { resetBlockchainFork, warpTime, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
 import { causeDebt } from '../../helpers/causeDebt';
 import hre from 'hardhat';
 
@@ -15,13 +15,12 @@ export default {
                 console.info(
                     `Wallet Credentials: public key: ${HARDHAT_PUBLIC_KEY}, private key: ${HARDHAT_PRIVATE_KEY}`
                 );
-                await resetBlockchainFork(undefined, HARDHAT_PRIVATE_KEY);
+                await resetBlockchainFork(undefined);
             },
         },
         {
             title: 'Create debt auction',
             entry: async () => {
-                await createWalletForRpc(HARDHAT_PRIVATE_KEY, 'custom');
                 await causeDebt('custom', provider);
             },
         },

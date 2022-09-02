@@ -11,7 +11,7 @@ export default {
                 console.info(
                     `Wallet Credentials: public key: ${HARDHAT_PUBLIC_KEY}, private key: ${HARDHAT_PRIVATE_KEY}`
                 );
-                await resetBlockchainFork(14052140, HARDHAT_PRIVATE_KEY);
+                await resetBlockchainFork(14052140);
             },
         },
         {
