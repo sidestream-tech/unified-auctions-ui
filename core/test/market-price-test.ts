@@ -3,13 +3,12 @@ import { convertMkrToDai } from '../src/calleeFunctions/helpers/uniswapV3';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import BigNumber from '../src/bignumber';
 import { resetNetwork } from '../helpers/hardhat';
-import { LOCAL_RPC_URL } from '../helpers/constants';
 
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
 describe('Market Price & Conversions', () => {
     before(async () => {
-        await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
+        await setupRpcUrlAndGetNetworks();
     });
     beforeEach(async () => {
         await resetNetwork(HARDHAT_FORK_BLOCK_NUMBER);

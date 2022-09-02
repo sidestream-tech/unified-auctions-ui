@@ -31,7 +31,7 @@ const SUPPORTED_NETWORKS: NetworkConfig[] = [
     },
 ];
 
-export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev?: boolean): NetworkConfig[] {
+export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev: boolean = false): NetworkConfig[] {
     const infuraNetworksWithProjectId = SUPPORTED_NETWORKS.map(network => ({
         ...network,
         url: `https://${network.type}.infura.io/v3/${infuraProjectId}`,

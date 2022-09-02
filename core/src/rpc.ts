@@ -8,6 +8,7 @@ import {
     getNetworkTypeByChainId,
 } from './network';
 import { formatToHexWithoutPad } from '../helpers/format';
+import { LOCAL_RPC_URL } from '../helpers/constants';
 
 const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<string> {
     const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcUrl });
@@ -24,8 +25,8 @@ const parseInfuraProjectIdFromRpcUrl = function (rpcUrl: string): string | undef
 };
 
 export const setupRpcUrlAndGetNetworks = async function (
-    rpcUrl?: string,
-    isDev?: boolean
+    rpcUrl: string = LOCAL_RPC_URL,
+    isDev: boolean = false
 ): Promise<{ networks: NetworkConfig[]; defaultNetwork: string; defaultChainId: string }> {
     if (!rpcUrl) {
         throw new Error(`No RPC_URL env variable was provided`);
