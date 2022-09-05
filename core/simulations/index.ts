@@ -23,10 +23,10 @@ const selectAndRunSimulation = async () => {
         choices: promtChoices,
     };
     while (true) {
-        const answer = await prompts(promtConfig);
-        const simulationConfig = SIMULATIONS.find(item => item.title === answer.value);
+        const selectedSimulation = await prompts(promtConfig);
+        const simulationConfig = SIMULATIONS.find(simulation => simulation.title === selectedSimulation.value);
         if (!simulationConfig) {
-            throw new Error(`Simulation config not found: ${answer.value}`);
+            throw new Error(`Simulation config not found: ${selectedSimulation.value}`);
         }
         for (const [i, step] of simulationConfig.steps.entries()) {
             console.info(`Next step is "${step.title}"`);
