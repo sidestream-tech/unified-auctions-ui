@@ -267,22 +267,22 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
 
-type CollateralType = CollateralConfig['title']
+type CollateralType = CollateralConfig['title'];
 export declare interface Collateral {
-	type: CollateralType;
-	stabilityFeeRate: BigNumber;
-	maxDebtPerCollateralUnit: BigNumber;
+    type: CollateralType;
+    stabilityFeeRate: BigNumber;
+    maxDebtPerCollateralUnit: BigNumber;
     liquidationLimits: LiquidationLimit;
 }
 export declare interface VaultAddress {
-	id: number;
-	address: string;
-	collateralType: CollateralType;
+    id: number;
+    address: string;
+    collateralType: CollateralType;
 }
 export declare interface VaultDebtAmount {
-	initialDebt: BigNumber;
-	collateralAmount: BigNumber;
-	collateralType: CollateralType;
+    initialDebt: BigNumber;
+    collateralAmount: BigNumber;
+    collateralType: CollateralType;
 }
 export declare interface VaultBaseInfo extends VaultAddress, VaultDebtAmount {}
 export declare interface Vault extends VaultBaseInfo {
@@ -293,13 +293,13 @@ export declare interface Vault extends VaultBaseInfo {
     incentiveCombined?: BigNumber;
     grossProfit?: BigNumber;
     transactionFees?: BigNumber;
-};
+}
 
 export declare interface LiquidationLimit {
-	maximumAmountAuctioned: BigNumber;
-	currentlyAuctioned: BigNumber;
+    maximumAmountAuctioned: BigNumber;
+    currentlyAuctioned: BigNumber;
 }
 export declare interface OraclePrices {
-	current: BigNumber;
-	next: BigNumber;
+    current: BigNumber;
+    next: BigNumber;
 }
