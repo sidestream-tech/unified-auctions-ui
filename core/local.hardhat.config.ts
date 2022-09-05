@@ -7,7 +7,7 @@ dotenv.config();
 const LOCAL_RPC_URL = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
 
 const customNetworkConfig = {
-    testnetwork: {
+    hardhat: {
         url: LOCAL_RPC_URL,
     },
 };
