@@ -6,7 +6,7 @@ import { formatToHex, formatToHexWithoutPad } from './format';
 import { pad32, concat, stripZeros } from './hex';
 import hre from 'hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
-import { createWalletFromPrivateKey } from '../src/signer';
+import getSigner, { createSigner, createWalletFromPrivateKey } from '../src/signer';
 import { HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 import getProvider from '../src/provider';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
@@ -99,6 +99,10 @@ export const resetBlockchainFork = async function (
     checkRpcUrl();
     await resetNetwork(blockNumber, rpcUrl);
     const provider = await createWalletForRpc(network, signerPrivateKey);
+    const signerAddress = (await createSigner(network, signerPrivateKey)).getAddress()
+    console.info(
+        `Wallet Credentials: public key: ${signerAddress}, private key: ${signerPrivateKey}`
+    );
     return provider;
 };
 
