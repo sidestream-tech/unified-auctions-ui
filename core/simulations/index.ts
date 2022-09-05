@@ -2,17 +2,20 @@ import prompts, { PromptObject } from 'prompts';
 import { SIMULATIONS } from './config';
 import readline from 'readline';
 
-const keypress = async (title: string) => {
-    await prompts({
+const keypress = async (message: string) => {
+    const userInput = await prompts({
         type: 'invisible',
-        name: 'irrelevant',
-        message: `Press Enter to proceed to the next step "${title}"`,
+        name: 'value',
+        message,
     });
+    if (userInput.value === undefined) {
+        throw new Error('Simulation is terminated');
+    }
 };
 
 const selectAndRunSimulation = async () => {
     readline.emitKeypressEvents(process.stdin);
-    const promtChoices = SIMULATIONS.map(simulationConfig => simulationConfig.title).map(simulationName => ({
+    const simulationChoices = SIMULATIONS.map(simulationConfig => simulationConfig.title).map(simulationName => ({
         title: simulationName,
         value: simulationName,
     }));
@@ -20,23 +23,23 @@ const selectAndRunSimulation = async () => {
         type: 'select',
         name: 'value',
         message: 'Select Simulation',
-        choices: promtChoices,
+        choices: simulationChoices,
     };
     while (true) {
         const selectedSimulation = await prompts(selectSimulationPrompt);
         const simulationConfig = SIMULATIONS.find(simulation => simulation.title === selectedSimulation.value);
         if (!simulationConfig) {
-            throw new Error(`Simulation config not found: ${selectedSimulation.value}`);
+            throw new Error(`Simulation config not found for "${selectedSimulation?.value}"`);
         }
         for (const [i, step] of simulationConfig.steps.entries()) {
-            console.info(`Next step is "${step.title}"`);
             if (i !== 0) {
-                await keypress(step.title);
+                await keypress(`Press Enter to proceed to the next step "${step.title}"`);
             }
             await step.entry();
-            console.info(`Step "${step.title}" is done.`);
+            console.info(`Step "${step.title}" is successfully completed\n`);
         }
-        console.info('Simulation completed');
+        console.info(`Simulation "${selectedSimulation.value}" is completed`);
+        await keypress('Press Enter to start over');
     }
 };
 
