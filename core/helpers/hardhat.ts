@@ -99,10 +99,8 @@ export const resetBlockchainFork = async function (
     checkRpcUrl();
     await resetNetwork(blockNumber, rpcUrl);
     const provider = await createWalletForRpc(network, signerPrivateKey);
-    const signerAddress = (await createSigner(network, signerPrivateKey)).getAddress()
-    console.info(
-        `Wallet Credentials: public key: ${signerAddress}, private key: ${signerPrivateKey}`
-    );
+    const signerAddress = (await createSigner(network, signerPrivateKey)).getAddress();
+    console.info(`Wallet Credentials: public key: ${signerAddress}, private key: ${signerPrivateKey}`);
     return provider;
 };
 
