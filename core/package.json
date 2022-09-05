@@ -7,11 +7,11 @@
     "dev": "tsc-watch --noClear",
     "build": "tsc --build tsconfig.json",
     "start": "node .",
-    "test": "npx hardhat test --config local.hardhat.config.ts",
+    "test": "npx hardhat test --network testnetwork --config local.hardhat.config.ts",
     "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0",
     "hardhat:silent": "npx hardhat node 1>&/dev/null",
     "hardhat": "npx hardhat node",
-    "hardhat:simulations": "npx hardhat --config local.hardhat.config.ts run ./simulations/index.ts",
+    "hardhat:simulations": "npx hardhat --network testnetwork --config local.hardhat.config.ts run ./simulations/index.ts",
     "simulate": "npm-run-all --parallel hardhat:silent scripts"
   },
   "engines": {
