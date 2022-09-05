@@ -2,11 +2,11 @@ import prompts, { PromptObject } from 'prompts';
 import { SIMULATIONS } from './config';
 import readline from 'readline';
 
-const keypress = async () => {
+const keypress = async (title: string) => {
     await prompts({
         type: 'invisible',
         name: 'irrelevant',
-        message: 'Press Enter to continue',
+        message: `Press Enter to continue to step ${title}`,
     });
 };
 
@@ -31,9 +31,8 @@ const selectAndRunSimulation = async () => {
         for (const [i, step] of simulationConfig.steps.entries()) {
             console.info(`Next step is "${step.title}"`);
             if (i !== 0) {
-                await keypress();
+                await keypress(step.title);
             }
-            console.info(`Running "${simulationConfig.title}" step "${step.title}"...`);
             await step.entry();
             console.info(`Step "${step.title}" is done.`);
         }
