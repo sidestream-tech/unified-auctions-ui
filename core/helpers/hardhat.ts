@@ -6,8 +6,8 @@ import { formatToHex, formatToHexWithoutPad } from './format';
 import { pad32, concat, stripZeros } from './hex';
 import hre from 'hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
-import getSigner, { createSigner, createWalletFromPrivateKey } from '../src/signer';
-import { HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import { createSigner, createWalletFromPrivateKey } from '../src/signer';
+import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 import getProvider from '../src/provider';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 
@@ -79,7 +79,7 @@ export const createWalletForRpc = async (
     network: string = NETWORK,
     signerPrivateKey: string = HARDHAT_PRIVATE_KEY
 ) => {
-    await setupRpcUrlAndGetNetworks();
+    await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
     await createWalletFromPrivateKey(signerPrivateKey, network);
     return hre.network.provider;
 };
