@@ -6,7 +6,7 @@ const keypress = async (title: string) => {
     await prompts({
         type: 'invisible',
         name: 'irrelevant',
-        message: `Press Enter to continue to step ${title}`,
+        message: `Press Enter to proceed to the next step "${title}"`,
     });
 };
 
