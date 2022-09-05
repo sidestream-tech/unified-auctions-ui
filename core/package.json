@@ -12,7 +12,7 @@
     "hardhat:silent": "npx hardhat node 1>&/dev/null",
     "hardhat": "npx hardhat node",
     "hardhat:simulations": "npx hardhat --network testnetwork --config local.hardhat.config.ts run ./simulations/index.ts",
-    "simulate": "npm-run-all --parallel hardhat:silent scripts"
+    "simulate": "npm-run-all --parallel hardhat:silent hardhat:simulations"
   },
   "engines": {
     "node": ">=16.0.0",
