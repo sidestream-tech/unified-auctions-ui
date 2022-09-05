@@ -1,4 +1,4 @@
-import { HARDHAT_PUBLIC_KEY, HARDHAT_PRIVATE_KEY } from '../../helpers/constants';
+import { HARDHAT_PUBLIC_KEY } from '../../helpers/constants';
 import BigNumber from '../../src/bignumber';
 import { resetBlockchainFork, warpTime, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
 import { causeDebt } from '../../helpers/causeDebt';
@@ -12,9 +12,6 @@ export default {
         {
             title: 'Reset blockchain fork',
             entry: async () => {
-                console.info(
-                    `Wallet Credentials: public key: ${HARDHAT_PUBLIC_KEY}, private key: ${HARDHAT_PRIVATE_KEY}`
-                );
                 await resetBlockchainFork(undefined);
             },
         },
