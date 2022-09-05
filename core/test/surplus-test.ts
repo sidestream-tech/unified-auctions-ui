@@ -17,7 +17,7 @@ import { resetNetwork } from '../helpers/hardhat';
 
 import BigNumber from '../src/bignumber';
 import { fetchSurplusAuctionByIndex } from '../src/surplus';
-import { HARDHAT_PRIVATE_KEY, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
 import { formatToHexWithoutPad } from '../helpers/format';
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
@@ -27,7 +27,7 @@ if (!REMOTE_RPC_URL) {
 
 describe('Surplus Auction', () => {
     before(async () => {
-        await setupRpcUrlAndGetNetworks();
+        await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
     });
     beforeEach(async () => {
         resetNetwork(HARDHAT_FORK_BLOCK_NUMBER);
