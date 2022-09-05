@@ -24,7 +24,7 @@ const parseInfuraProjectIdFromRpcUrl = function (rpcUrl: string): string | undef
 };
 
 export const setupRpcUrlAndGetNetworks = async function (
-    rpcUrl: string,
+    rpcUrl: string | undefined,
     isDev = false
 ): Promise<{ networks: NetworkConfig[]; defaultNetwork: string; defaultChainId: string }> {
     if (!rpcUrl) {
