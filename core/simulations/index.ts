@@ -16,14 +16,14 @@ const selectAndRunSimulation = async () => {
         title: simulationName,
         value: simulationName,
     }));
-    const promtConfig: PromptObject = {
+    const selectSimulationPrompt: PromptObject = {
         type: 'select',
         name: 'value',
         message: 'Select Simulation',
         choices: promtChoices,
     };
     while (true) {
-        const selectedSimulation = await prompts(promtConfig);
+        const selectedSimulation = await prompts(selectSimulationPrompt);
         const simulationConfig = SIMULATIONS.find(simulation => simulation.title === selectedSimulation.value);
         if (!simulationConfig) {
             throw new Error(`Simulation config not found: ${selectedSimulation.value}`);
