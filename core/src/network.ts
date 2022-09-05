@@ -1,5 +1,4 @@
 import type { NetworkConfig } from './types';
-import getProvider from './provider';
 
 const networks: Record<string, NetworkConfig> = {};
 
@@ -32,7 +31,7 @@ const SUPPORTED_NETWORKS: NetworkConfig[] = [
     },
 ];
 
-export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev?: boolean): NetworkConfig[] {
+export const getDefaultNetworkConfigs = function (infuraProjectId: string, isDev = false): NetworkConfig[] {
     const infuraNetworksWithProjectId = SUPPORTED_NETWORKS.map(network => ({
         ...network,
         url: `https://${network.type}.infura.io/v3/${infuraProjectId}`,
@@ -116,10 +115,4 @@ export const getNetworkConfigByType = function (networkType: string | undefined)
         throw new Error(`No network found with name "${networkType}"`);
     }
     return networks[networkType];
-};
-
-export const warpTime = async function (network: string, blocks = 20000, secondsBetweenBlocks = 270) {
-    const provider = await getProvider(network);
-    await provider.send('hardhat_mine', [`0x${blocks.toString(16)}`, `0x${secondsBetweenBlocks.toString(16)}`]);
-    return blocks * secondsBetweenBlocks;
 };
