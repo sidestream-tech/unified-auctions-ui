@@ -299,8 +299,8 @@ export declare interface VaultTransactionFees {
 
 export declare interface VaultBaseInfo extends VaultBase, VaultAmount {}
 export declare interface OraclePrices {
-    current: BigNumber;
-    next: BigNumber;
+    currentUnitPrice: BigNumber;
+    nextUnitPrice: BigNumber;
     nextPriceChange: Date;
 }
 
@@ -310,7 +310,9 @@ export declare interface Vault extends VaultBaseInfo, VaultTransactionFees, Orac
     proximityToLiquidation: number;
     state: 'liquidated' | 'liquidatable' | 'not-liquidateable';
     incentiveRelativeDai: BigNumber;
+    incentiveConstantDai: BigNumber;
     incentiveCombinedDai: BigNumber;
     grossProfitDai: BigNumber;
+    netProfitDai: BigNumber;
     debtDai: BigNumber;
 }
