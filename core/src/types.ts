@@ -268,11 +268,10 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
 
 type CollateralType = CollateralConfig['title'];
-export declare interface VaultCollateralParameters {
+export declare interface VaultCollateralParameters extends LiquidationLimit {
     type: CollateralType;
     stabilityFeeRate: BigNumber;
     maxDebtPerCollateralUnit: BigNumber;
-    liquidationLimits: LiquidationLimit;
 }
 export declare interface VaultBase {
     id: number;
@@ -289,7 +288,7 @@ export declare interface VaultTransactionFees {
     transactionFeeLiquidationDai: BigNumber;
 }
 export declare interface VaultBaseInfo extends VaultBase, VaultAmount {}
-export declare interface Vault extends VaultBaseInfo, VaultTransactionFees {
+export declare interface Vault extends VaultBaseInfo, VaultTransactionFees, OraclePrices {
     liquidationRatio: number;
     collateralizationRatio: number;
     proximityToLiquidation: number;
@@ -297,7 +296,6 @@ export declare interface Vault extends VaultBaseInfo, VaultTransactionFees {
     incentiveRelativeDai: BigNumber;
     incentiveCombinedDai: BigNumber;
     grossProfitDai: BigNumber;
-    oraclePrices: OraclePrices;
 }
 
 export declare interface LiquidationLimit {
