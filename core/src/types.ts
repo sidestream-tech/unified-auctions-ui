@@ -278,13 +278,15 @@ export declare interface LiquidationLimits {
 
 export declare interface VaultCollateralParameters extends LiquidationLimits {
     stabilityFeeRate: BigNumber;
-    maxDebtPerCollateralUnit: BigNumber;
+    minUintPrice: BigNumber;
 }
 
-export declare interface VaultBase {
+export declare interface Vault {
     id: number;
     address: string;
     collateralType: CollateralType;
+    network: string;
+    lastSyncedAt: Date;
 }
 
 export declare interface VaultAmount {
@@ -297,7 +299,7 @@ export declare interface VaultTransactionFees {
     transactionFeeLiquidationDai: BigNumber;
 }
 
-export declare interface VaultBaseInfo extends VaultBase, VaultAmount {}
+export declare interface VaultBaseInfo extends Vault, VaultAmount {}
 export declare interface OraclePrices {
     currentUnitPrice: BigNumber;
     nextUnitPrice: BigNumber;
