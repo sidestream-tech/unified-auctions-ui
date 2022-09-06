@@ -284,15 +284,19 @@ export declare interface VaultDebtAmount {
     collateralAmount: BigNumber;
     collateralType: CollateralType;
 }
+export declare interface VaultTransactionFees {
+    transactionFeeLiquidation?: BigNumber;
+}
 export declare interface VaultBaseInfo extends VaultAddress, VaultDebtAmount {}
-export declare interface Vault extends VaultBaseInfo {
+export declare interface Vault extends VaultBaseInfo, VaultTransactionFees {
+    liquidationRatio: number;
+    collateralizationRatio: number;
     proximityToLiquidation: number;
-    nextPriceChange: Date;
-    state: 'loaded' | 'liquidated' | 'not-liquidatable';
+    state: 'loaded' | 'liquidated';
     incentiveRelative?: BigNumber;
     incentiveCombined?: BigNumber;
     grossProfit?: BigNumber;
-    transactionFees?: BigNumber;
+    oraclePrices?: OraclePrices;
 }
 
 export declare interface LiquidationLimit {
@@ -302,4 +306,5 @@ export declare interface LiquidationLimit {
 export declare interface OraclePrices {
     current: BigNumber;
     next: BigNumber;
+    nextPriceChange: Date;
 }
