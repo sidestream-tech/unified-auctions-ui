@@ -272,9 +272,11 @@ export declare interface VaultCollateralType {
     collateralType: CollateralType;
 }
 
-export declare interface LiquidationLimit {
-    maximumAmountAuctionedCollateral: BigNumber;
-    currentlyAuctionedCollateral: BigNumber;
+export declare interface LiquidationLimits {
+    maximumProtocolDebtDai: BigNumber;
+    maximumCollateralDebtDai: BigNumber;
+    currentProtocolDebtDai: BigNumber;
+    currentCollateralDebtDai: BigNumber;
 }
 
 export declare interface VaultCollateralParameters extends LiquidationLimit {
