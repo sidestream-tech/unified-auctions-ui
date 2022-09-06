@@ -17,7 +17,9 @@ import { resetNetwork } from '../helpers/hardhat';
 
 import BigNumber from '../src/bignumber';
 import { fetchSurplusAuctionByIndex } from '../src/surplus';
-import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, TEST_NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import { formatToHexWithoutPad } from '../helpers/format';
+
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
 if (!REMOTE_RPC_URL) {
@@ -32,7 +34,7 @@ describe('Surplus Auction', () => {
         resetNetwork(HARDHAT_FORK_BLOCK_NUMBER);
     });
     it('fetches active auctions', async () => {
-        const auctions = await fetchActiveSurplusAuctions(NETWORK);
+        const auctions = await fetchActiveSurplusAuctions(TEST_NETWORK);
         expect(auctions.length).to.equal(5);
         const auction = auctions[0] as SurplusAuctionActive;
         expect(auction.id).to.equal(2328);
@@ -41,7 +43,7 @@ describe('Surplus Auction', () => {
         expect(auction.auctionStartDate.getTime()).to.be.lessThan(auction.auctionEndDate.getTime());
     });
     it('enriches auctions with market prices', async () => {
-        const network = NETWORK;
+        const network = TEST_NETWORK;
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0] as SurplusAuctionActive;
         const enrichedAucton = await enrichSurplusAuction(network, auction);
@@ -50,7 +52,7 @@ describe('Surplus Auction', () => {
         expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('-0.61098300970253348099040009');
     });
     it('enrichesAuctionWithMinimumBids', async () => {
-        const network = NETWORK;
+        const network = TEST_NETWORK;
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0] as SurplusAuctionActive;
         const enrichedAuction = await enrichSurplusAuction(network, auction);
@@ -62,24 +64,24 @@ describe('Surplus Auction', () => {
         expect(enrichedAuction.nextMinimumBid.div(enrichedAuction.bidAmountMKR).toString()).to.be.equal('1.04');
     });
     it('participates in active auction', async () => {
-        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
-        await setAllowanceAmountMKR(NETWORK, address, new BigNumber('20'));
-        await swapToMKR(NETWORK, 20, 20);
-        await bidToSurplusAuction(NETWORK, 2328, new BigNumber('20'));
-        const auctions = await fetchActiveSurplusAuctions(NETWORK);
+        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, TEST_NETWORK);
+        await setAllowanceAmountMKR(TEST_NETWORK, address, new BigNumber('20'));
+        await swapToMKR(TEST_NETWORK, 20, 20);
+        await bidToSurplusAuction(TEST_NETWORK, 2328, new BigNumber('20'));
+        const auctions = await fetchActiveSurplusAuctions(TEST_NETWORK);
         const currentAuction = auctions[0];
         expect(currentAuction.id).to.equal(2328);
         expect(currentAuction.bidAmountMKR && currentAuction.bidAmountMKR.eq(20)).to.be.true;
     });
     it('collects the concluded auction', async () => {
-        const auctionsBeforeCollection = await fetchActiveSurplusAuctions(NETWORK);
+        const auctionsBeforeCollection = await fetchActiveSurplusAuctions(TEST_NETWORK);
         expect(auctionsBeforeCollection.length).to.equal(5);
         expect(auctionsBeforeCollection[1].id).to.equal(2327);
         expect(auctionsBeforeCollection[1].state).to.equal('ready-for-collection');
 
-        await collectSurplusAuction(NETWORK, auctionsBeforeCollection[1].id);
+        await collectSurplusAuction(TEST_NETWORK, auctionsBeforeCollection[1].id);
 
-        const auctionAfterCollection = await fetchSurplusAuctionByIndex(NETWORK, 2327);
+        const auctionAfterCollection = await fetchSurplusAuctionByIndex(TEST_NETWORK, 2327);
         expect(auctionAfterCollection.id).to.equal(2327);
         expect(auctionAfterCollection.state).to.equal('collected');
     });
@@ -98,36 +100,38 @@ describe('Surplus Auction', () => {
         const blocks = 20000;
         const secondsBetweenBlocks = 270;
         await hre.network.provider.send('hardhat_mine', [
-            `0x${blocks.toString(16)}`,
-            `0x${secondsBetweenBlocks.toString(16)}`,
+            formatToHexWithoutPad(blocks),
+            formatToHexWithoutPad(secondsBetweenBlocks),
         ]);
-        await restartSurplusAuction(NETWORK, 2328);
+        await restartSurplusAuction(TEST_NETWORK, 2328);
     });
     it('forbids restarting active auctions', async () => {
-        expect(restartSurplusAuction(NETWORK, 2328)).to.be.reverted;
+        expect(restartSurplusAuction(TEST_NETWORK, 2328)).to.be.reverted;
     });
     it('forbids collecting inexistent auctions', async () => {
-        expect(collectSurplusAuction(NETWORK, 3333)).to.be.revertedWith('Did not find the auction to collect.');
+        expect(collectSurplusAuction(TEST_NETWORK, 3333)).to.be.revertedWith('Did not find the auction to collect.');
     });
     it('forbids bidding on inexistent auctions', async () => {
-        expect(bidToSurplusAuction(NETWORK, 3333, new BigNumber('20'))).to.be.revertedWith(
+        expect(bidToSurplusAuction(TEST_NETWORK, 3333, new BigNumber('20'))).to.be.revertedWith(
             'Did not find the auction to bid on.'
         );
     });
     it('forbids fetching inexistent auctions', async () => {
-        expect(fetchSurplusAuctionByIndex(NETWORK, 3333)).to.be.revertedWith('No active auction exists with this id');
+        expect(fetchSurplusAuctionByIndex(TEST_NETWORK, 3333)).to.be.revertedWith(
+            'No active auction exists with this id'
+        );
     });
     it('calculates the minimum bid increase', async () => {
-        const auctions = await fetchActiveSurplusAuctions(NETWORK);
+        const auctions = await fetchActiveSurplusAuctions(TEST_NETWORK);
         expect(auctions[0].id).to.equal(2328);
         const auction = auctions[0] as SurplusAuctionActive;
 
-        const bid = await getNextMinimumBid(NETWORK, auction);
+        const bid = await getNextMinimumBid(TEST_NETWORK, auction);
         expect(bid.toString()).to.equal('16.94241213279722952');
         expect(auction.bidAmountMKR.toString()).to.equal('16.290780896920413');
-        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, NETWORK);
-        await setAllowanceAmountMKR(NETWORK, address, new BigNumber('20'));
-        await swapToMKR(NETWORK, 20, 20);
-        await bidToSurplusAuction(NETWORK, 2328, bid);
+        const address = await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, TEST_NETWORK);
+        await setAllowanceAmountMKR(TEST_NETWORK, address, new BigNumber('20'));
+        await swapToMKR(TEST_NETWORK, 20, 20);
+        await bidToSurplusAuction(TEST_NETWORK, 2328, bid);
     });
 });

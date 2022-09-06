@@ -82,7 +82,7 @@ data:
       path_to_context: ./
       build_args:
         - key: REMOTE_RPC_URL
-          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+          value_from_secret: auction-ui/localhost/hardhat/remote_rpc_url
       tags_to_cache_from:
         - "main"
       trigger:
@@ -91,17 +91,17 @@ data:
 
     # hardhat:pr-$PULL_REQUEST_NUMBER
     - name: publish-hardhat-on-pr-push
-      target: development
-      repository: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat
+      target: hardhat
+      repository: ghcr.io/sidestream-tech/unified-auctions-ui/core-hardhat
       build_args:
-        - key: ALCHEMY_URL
-          value_from_secret: auction-ui/localhost/hardhat/alchemy_url
+        - key: REMOTE_RPC_URL
+          value_from_secret: auction-ui/localhost/hardhat/remote_rpc_url
       tags:
         - "pr-${DRONE_PULL_REQUEST}"
       labels:
         - key: org.opencontainers.image.source
           value: https://github.com/sidestream-tech/unified-auctions-ui
-      path_to_dockerfile: hardhat/Dockerfile
+      path_to_dockerfile: core/Dockerfile
       path_to_context: ./
       tags_to_cache_from:
         - "main"
@@ -328,7 +328,7 @@ data:
 
       services:
         - name: hardhat-service  # named with 'service' to avoid duplication with the default value
-          image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:pr-${DRONE_PULL_REQUEST}
+          image: ghcr.io/sidestream-tech/unified-auctions-ui/core-hardhat:pr-${DRONE_PULL_REQUEST}
           expose: 8545
 
       depends_on:
