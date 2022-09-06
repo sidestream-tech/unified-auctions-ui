@@ -3,7 +3,12 @@ import { DebtAuctionActive } from 'auctions-core/src/types';
 import { bidToDebtAuction, enrichDebtAuction, collectDebtAuction } from 'auctions-core/src/debt';
 import getSigner from 'auctions-core/src/signer';
 import { fetchVATbalanceDAI, depositToVAT, fetchBalanceDAI } from 'auctions-core/src/wallet';
-import { getDebtAuctionAuthorizationStatus, authorizeDebtAuction } from 'auctions-core/src/authorizations';
+import {
+    getDebtAuctionAuthorizationStatus,
+    authorizeDebtAuction,
+    fetchAllowanceAmountDAI,
+    setAllowanceAmountDAI,
+} from 'auctions-core/src/authorizations';
 import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import { KEEPER_DEBT_MINIMUM_NET_PROFIT_DAI } from '../variables';
 import { setupWallet } from '../signer';
@@ -35,23 +40,32 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     // enrich the auction with more numbers
     const auctionTransaction = await enrichDebtAuction(network, auction);
 
-    // check if auction became inactive or finished
-    if (auctionTransaction.state === 'ready-for-collection') {
-        // check if the current user is the winner
-        if (auctionTransaction.receiverAddress.toLocaleLowerCase() === walletAddress.toLowerCase()) {
+    // check if the current user is the winner
+    if (auctionTransaction.receiverAddress.toLocaleLowerCase() === walletAddress.toLowerCase()) {
+        // check if auction became inactive or finished
+        if (auctionTransaction.state !== 'ready-for-collection') {
+            console.info(
+                `debt keeper: current wallet "${walletAddress}" is the latest bidder of the auction "${
+                    auction.id
+                }", waiting for auction expiration at ${auction.earliestEndDate.toISOString()}`
+            );
+        } else {
             console.info(
                 `debt keeper: wallet "${walletAddress}" won auction "${auction.id}", moving on to collection`
             );
             await collectDebtAuction(network, auction.id);
             console.info(`debt keeper: auction "${auction.id}" was successfully collected`);
-            return;
-        } else {
-            console.info(
-                `debt keeper: auction "${auction.id}" has already finished and the winner is not "${walletAddress}"`
-            );
-            return;
         }
+        return;
     }
+
+    if (auctionTransaction.state === 'ready-for-collection') {
+        console.info(
+            `debt keeper: auction "${auction.id}" has already finished and the winner is not "${walletAddress}"`
+        );
+        return;
+    }
+
     if (auctionTransaction.state === 'requires-restart') {
         console.info(`debt keeper: auction "${auction.id}" is inactive`);
         return;
@@ -100,13 +114,37 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
                 )}) for auction "${auction.id}"`
             );
         } else {
-            console.info('debt keeper: wallet DAI balance is within limits, depositing to VAT');
-            await depositToVAT(network, walletAddress, auctionTransaction.bidAmountDai);
-            await checkAndParticipateIfPossible(network, auction);
+            console.info(
+                `debt keeper: wallet DAI balance (${formatToAutomaticDecimalPointsString(
+                    balanceDai
+                )}) is within limits, checking allowance`
+            );
+            const allowanceAmount = await fetchAllowanceAmountDAI(network, walletAddress);
+            if (allowanceAmount.isGreaterThanOrEqualTo(auctionTransaction.bidAmountDai)) {
+                console.info(
+                    `debt keeper: current allowance (${formatToAutomaticDecimalPointsString(
+                        allowanceAmount
+                    )}) is within limits, depositing to VAT`
+                );
+                await depositToVAT(network, walletAddress, auctionTransaction.bidAmountDai);
+                await checkAndParticipateIfPossible(network, auction);
+            } else {
+                console.info(
+                    `debt keeper: current allowance (${formatToAutomaticDecimalPointsString(
+                        allowanceAmount
+                    )}) is not within limits, increasing allowance`
+                );
+                await setAllowanceAmountDAI(network, walletAddress);
+                await checkAndParticipateIfPossible(network, auction);
+            }
         }
         return;
     } else {
-        console.info('debt keeper: VAT DAI balance is within limits, checking if contract is authorized');
+        console.info(
+            `debt keeper: VAT DAI balance (${formatToAutomaticDecimalPointsString(
+                vatBalanceDai
+            )}) is within limits, checking if contract is authorized`
+        );
     }
 
     // check the authorization status of the contract
@@ -115,14 +153,14 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         console.info('debt keeper: contract is authorized, moving on to execution');
     } else {
         console.info('debt keeper: contract is not authorized, authorizing contract');
-        await authorizeDebtAuction(network, walletAddress, false); // Which value should be provided for 'revoke' here?
+        await authorizeDebtAuction(network, walletAddress, false);
         await checkAndParticipateIfPossible(network, auction);
         return;
     }
 
     // bid on the Auction
     console.info(`debt keeper: auction "${auctionTransaction.id}": attempting bid execution`);
-    await bidToDebtAuction(network, auctionTransaction.id, auctionTransaction.bidAmountDai);
+    await bidToDebtAuction(network, auctionTransaction.id, auctionTransaction.nextMaximumLotReceived);
     console.info(`debt keeper: auction "${auctionTransaction.id}" was succesfully executed`);
 };
 
