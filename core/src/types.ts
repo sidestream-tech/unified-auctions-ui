@@ -276,7 +276,7 @@ export declare interface CollateralLiquidationLimit {
 export declare interface LiquidationLimits {
     maximumProtocolDebtDai: BigNumber;
     currentProtocolDebtDai: BigNumber;
-    collateralDebts: Record<CollateralType, CollateralLiquidationLimit>
+    collateralDebts: Record<CollateralType, CollateralLiquidationLimit>;
 }
 
 export declare interface VaultCollateralParameters {
