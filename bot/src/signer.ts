@@ -13,9 +13,9 @@ export const setupWallet = async function (network: string) {
         try {
             setSigner(network, createSigner(network, KEEPER_WALLET_PRIVATE_KEY));
             const signer = await getSigner(network);
-            const address = signer.getAddress();
-            console.info(`wallet: setup complete, using wallet "${address}"`);
-            return address;
+            const walletAddress = await signer.getAddress();
+            console.info(`wallet: setup complete, using wallet "${walletAddress}"`);
+            return walletAddress;
         } catch (error) {
             console.warn('wallet: setup error, please check that KEEPER_WALLET_PRIVATE_KEY is valid');
         }

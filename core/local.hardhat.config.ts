@@ -4,19 +4,11 @@ import ethers from '@nomiclabs/hardhat-ethers';
 
 dotenv.config();
 
-const REMOTE_RPC_URL = process.env.REMOTE_RPC_URL;
-
-if (!REMOTE_RPC_URL) {
-    throw new Error('REMOTE_RPC_URL env variable not set, please check your `hardhat/.env` file');
-}
+const LOCAL_RPC_URL = process.env.LOCAL_RPC_URL || 'http://localhost:8545';
 
 const customNetworkConfig = {
-    hardhat: {
-        chainId: 1337,
-        forking: {
-            url: REMOTE_RPC_URL,
-        },
-        initialBaseFeePerGas: 1,
+    testnetwork: {
+        url: LOCAL_RPC_URL,
     },
 };
 

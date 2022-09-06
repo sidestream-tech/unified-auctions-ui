@@ -1,6 +1,19 @@
 # Auctions Core
 
-Set of typescript functions to work with MakerDAO auctions.
+Set of typescript functions, tests and simulation to work with MakerDAO auctions.
+
+## Simulations
+
+In order to run create specific situations relevant to the Maker auctions:
+1. Create `core/.env` file with required env variables (see the list below)
+2. Start RPC node and the simulation via a single command `npm run simulate`
+3. Select desired simulation from the list
+4. Connect to the created RPC endpoint using `frontend` or the `bot`
+
+## Environment Variables
+
+- `REMOTE_RPC_URL`: (required for tests, simulations) Ethereum RPC url _with access to historical data_. Used by hardhat to fetch relevant block data
+- `LOCAL_RPC_URL`: (optional, default `http://localhost:8545`) Hardhat RPC url. Used by tests and simulations
 
 ## Collateral onboarding
 
@@ -20,8 +33,3 @@ The process of adding new collaterals depends on the token type used. This is du
         - The file should be named using the name from `1.`
         - The file should export `CalleeFunctions`
         - The file should be imported in the [`calleeFunctions/index.ts`](./src/calleeFunctions/index.ts)
-
-## Environment Variables
-
-- `REMOTE_RPC_URL`: (required for tests, simulations) Ethereum RPC url with access to historical data. Used by hardhat to fetch relevant data
-- `LOCAL_RPC_URL`: (optional, default `http://localhost:8545`) Hardhat RPC url. Used by tests and simulations

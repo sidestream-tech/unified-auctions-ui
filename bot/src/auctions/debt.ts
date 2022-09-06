@@ -2,6 +2,7 @@ import type { DebtAuctionActive } from 'auctions-core/src/types';
 import { fetchActiveDebtAuctions } from 'auctions-core/src/debt';
 import { THRESHOLD_FOR_NEW_AUCTIONS } from '../variables';
 import { notifyDebt } from '../notify';
+import { participate } from '../keepers/debt';
 
 const knownAuctionIds = new Set();
 
@@ -39,8 +40,8 @@ export const loopDebt = async function (network: string): Promise<void> {
         if (activeAuctions.length === 0) {
             return;
         }
-        const newAuctions = getNewDebtAuctionsFromActiveDebtAuctions(activeAuctions);
-        newAuctions.map(notifyDebt);
+        getNewDebtAuctionsFromActiveDebtAuctions(activeAuctions).map(notifyDebt);
+        participate(network, activeAuctions);
     } catch (error) {
         console.error('debt loop error', error);
     }
