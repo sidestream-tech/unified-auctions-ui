@@ -281,7 +281,7 @@ export declare interface LiquidationLimits {
 
 export declare interface VaultCollateralParameters {
     stabilityFeeRate: BigNumber;
-    minUintPrice: BigNumber;
+    minUnitPrice: BigNumber;
 }
 
 export declare interface VaultBase {
