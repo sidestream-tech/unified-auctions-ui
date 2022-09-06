@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';type
+import BigNumber from 'bignumber.js';
 
 export declare interface GasParameters {
     maxFeePerGas?: string;
