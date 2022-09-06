@@ -269,14 +269,17 @@ export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, Com
 
 type CollateralType = CollateralConfig['title'];
 
+export declare interface CollateralLiquidationLimit {
+    currentCollateralDebtDai: BigNumber;
+    maximumCollateralDebtDai: BigNumber;
+}
 export declare interface LiquidationLimits {
     maximumProtocolDebtDai: BigNumber;
-    maximumCollateralDebtDai: BigNumber;
     currentProtocolDebtDai: BigNumber;
-    currentCollateralDebtDai: BigNumber;
+    collateralDebts: Record<CollateralType, CollateralLiquidationLimit>
 }
 
-export declare interface VaultCollateralParameters extends LiquidationLimits {
+export declare interface VaultCollateralParameters {
     stabilityFeeRate: BigNumber;
     minUintPrice: BigNumber;
 }
