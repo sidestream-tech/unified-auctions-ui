@@ -308,7 +308,7 @@ export declare interface Vault extends VaultBaseInfo, VaultTransactionFees, Orac
     liquidationRatio: number;
     collateralizationRatio: number;
     proximityToLiquidation: number;
-    state: 'loaded' | 'liquidated';
+    state: 'liquidated' | 'liquidatable' | 'not-liquidateable';
     incentiveRelativeDai: BigNumber;
     incentiveCombinedDai: BigNumber;
     grossProfitDai: BigNumber;
