@@ -304,7 +304,7 @@ export declare interface OraclePrices {
     nextPriceChange: Date;
 }
 
-export declare interface Vault extends VaultBaseInfo, VaultTransactionFees, OraclePrices {
+export declare interface VaultTransaction extends VaultBaseInfo, VaultTransactionFees, OraclePrices {
     liquidationRatio: number;
     collateralizationRatio: number;
     proximityToLiquidation: number;
