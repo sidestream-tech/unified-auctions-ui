@@ -268,26 +268,43 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
 
 type CollateralType = CollateralConfig['title'];
-export declare interface VaultCollateralParameters extends LiquidationLimit {
-    type: CollateralType;
+export declare interface VaultCollateralType {
+    collateralType: CollateralType;
+}
+
+export declare interface LiquidationLimit {
+    maximumAmountAuctionedCollateral: BigNumber;
+    currentlyAuctionedCollateral: BigNumber;
+}
+
+export declare interface VaultCollateralParameters extends LiquidationLimit, VaultCollateralType {
     stabilityFeeRate: BigNumber;
     maxDebtPerCollateralUnit: BigNumber;
 }
-export declare interface VaultBase {
+
+export declare interface VaultBase extends VaultCollateralType {
     id: number;
     address: string;
-    collateralType: CollateralType;
 }
+
 export declare interface VaultAmount {
     initialDebtDai: BigNumber;
     collateralAmount: BigNumber;
     collateralType: CollateralType;
 }
+
 export declare interface VaultTransactionFees {
     transactionFeeLiquidationEth: BigNumber;
     transactionFeeLiquidationDai: BigNumber;
 }
+
 export declare interface VaultBaseInfo extends VaultBase, VaultAmount {}
+export declare interface OraclePrices {
+    current: BigNumber;
+    next: BigNumber;
+    nextPriceChange: Date;
+}
+
 export declare interface Vault extends VaultBaseInfo, VaultTransactionFees, OraclePrices {
     liquidationRatio: number;
     collateralizationRatio: number;
@@ -296,14 +313,4 @@ export declare interface Vault extends VaultBaseInfo, VaultTransactionFees, Orac
     incentiveRelativeDai: BigNumber;
     incentiveCombinedDai: BigNumber;
     grossProfitDai: BigNumber;
-}
-
-export declare interface LiquidationLimit {
-    maximumAmountAuctionedCollateral: BigNumber;
-    currentlyAuctionedCollateral: BigNumber;
-}
-export declare interface OraclePrices {
-    current: BigNumber;
-    next: BigNumber;
-    nextPriceChange: Date;
 }
