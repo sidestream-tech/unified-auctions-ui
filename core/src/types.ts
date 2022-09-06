@@ -277,7 +277,7 @@ export declare interface LiquidationLimit {
     currentlyAuctionedCollateral: BigNumber;
 }
 
-export declare interface VaultCollateralParameters extends LiquidationLimit, VaultCollateralType {
+export declare interface VaultCollateralParameters extends LiquidationLimit {
     stabilityFeeRate: BigNumber;
     maxDebtPerCollateralUnit: BigNumber;
 }
@@ -290,7 +290,6 @@ export declare interface VaultBase extends VaultCollateralType {
 export declare interface VaultAmount {
     initialDebtDai: BigNumber;
     collateralAmount: BigNumber;
-    collateralType: CollateralType;
 }
 
 export declare interface VaultTransactionFees {
