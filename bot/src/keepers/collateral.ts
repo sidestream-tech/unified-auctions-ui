@@ -1,36 +1,29 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
-import getSigner, { createSigner, setSigner } from 'auctions-core/src/signer';
 import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
-import { KEEPER_MINIMUM_NET_PROFIT_DAI, KEEPER_WALLET_PRIVATE_KEY } from './variables';
-import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from './authorisation';
+import getSigner from 'auctions-core/src/signer';
+import { KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI } from '../variables';
+import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from '../authorisation';
+import { setupWallet } from '../signer';
 
 let isSetupCompleted = false;
 const currentlyExecutedAuctions = new Set();
 
-export const setupKeeper = async function (network: string) {
-    if (!KEEPER_WALLET_PRIVATE_KEY) {
-        console.warn('keeper: KEEPER_WALLET_PRIVATE_KEY variable is not set, keeper will not run');
-        return;
-    }
-    if (Number.isNaN(KEEPER_MINIMUM_NET_PROFIT_DAI)) {
-        console.warn('keeper: KEEPER_MINIMUM_NET_PROFIT_DAI is not set or not a number, keeper will not run');
-        return;
-    }
-    try {
-        setSigner(network, createSigner(network, KEEPER_WALLET_PRIVATE_KEY));
-        const signer = await getSigner(network);
-        const address = await signer.getAddress();
-        isSetupCompleted = true;
+export const setupCollateralKeeper = async function (network: string) {
+    await setupWallet(network);
+    if (Number.isNaN(KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI)) {
         console.info(
-            `keeper: setup complete: using wallet "${address}", looking for minimum clear profit of "${KEEPER_MINIMUM_NET_PROFIT_DAI}" DAI`
+            'collateral keeper: no KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI env variable provided, keeper will not run'
         );
-    } catch (error) {
-        console.warn('keeper: setup error, keeper will not run, please check that KEEPER_WALLET_PRIVATE_KEY is valid');
+        return;
     }
+    console.info(
+        `collateral keeper: setup complete, looking for minimum net profit of "${KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI}" DAI`
+    );
+    isSetupCompleted = true;
 };
 
 const checkAndParticipateIfPossible = async function (network: string, auction: AuctionInitialInfo) {
-    // check if setupKeeper hasn't run
+    // check if setupCollateralKeeper hasn't run
     if (!isSetupCompleted) {
         return;
     }
@@ -42,11 +35,11 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
 
     // check if auction became inactive or finished
     if (auctionTransaction.isFinished) {
-        console.info(`keeper: auction "${auction.id}" has already finished`);
+        console.info(`collateral keeper: auction "${auction.id}" has already finished`);
         return;
     }
     if (!auctionTransaction.isActive) {
-        console.info(`keeper: auction "${auction.id}" is inactive`);
+        console.info(`collateral keeper: auction "${auction.id}" is inactive`);
         return;
     }
 
@@ -54,29 +47,33 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     if (!auctionTransaction.transactionGrossProfit || auctionTransaction.transactionGrossProfit.isLessThan(0)) {
         if (auctionTransaction.transactionGrossProfit) {
             const profit = `${auctionTransaction.transactionGrossProfit.toFixed(0)} DAI`;
-            console.info(`keeper: auction "${auction.id}" is not yet profitable (current profit: ${profit})`);
+            console.info(
+                `collateral keeper: auction "${auction.id}" is not yet profitable (current profit: ${profit})`
+            );
         } else {
-            console.info(`keeper: auction "${auction.id}" is not tradable`);
+            console.info(`collateral keeper: auction "${auction.id}" is not tradable`);
         }
         return;
     }
 
-    // check auction's clear profit – profit without transaction fees
+    // check auction's net profit – profit without transaction fees
     if (
         auctionTransaction.transactionNetProfit &&
-        auctionTransaction.transactionNetProfit.toNumber() < KEEPER_MINIMUM_NET_PROFIT_DAI
+        auctionTransaction.transactionNetProfit.toNumber() < KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI
     ) {
         console.info(
-            `keeper: auction "${
+            `collateral keeper: auction "${
                 auction.id
-            }" clear profit is smaller than min profit (${auctionTransaction.transactionNetProfit.toFixed(
+            }" net profit is smaller than min profit (${auctionTransaction.transactionNetProfit.toFixed(
                 0
-            )} < ${KEEPER_MINIMUM_NET_PROFIT_DAI})`
+            )} < ${KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI})`
         );
         return;
     } else {
         console.info(
-            `keeper: auction "${auction.id}" clear profit is ${auctionTransaction.transactionNetProfit.toFixed(
+            `collateral keeper: auction "${
+                auction.id
+            }" net profit is ${auctionTransaction.transactionNetProfit.toFixed(
                 0
             )} DAI after transaction fees, moving on to the execution`
         );
@@ -105,9 +102,11 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     }
 
     // bid on the Auction
-    console.info(`keeper: auction "${auctionTransaction.id}": attempting swap execution`);
+    console.info(`collateral keeper: auction "${auctionTransaction.id}": attempting swap execution`);
     const bidHash = await bidWithCallee(network, auctionTransaction, walletAddress);
-    console.info(`keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`);
+    console.info(
+        `collateral keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`
+    );
 };
 
 const participateInAuction = async function (network: string, auction: AuctionInitialInfo) {
@@ -121,7 +120,9 @@ const participateInAuction = async function (network: string, auction: AuctionIn
     try {
         await checkAndParticipateIfPossible(network, auction);
     } catch (error) {
-        console.error(`keeper: unexpected error: ${(error instanceof Error && error.message) || 'unknown'}`);
+        console.error(
+            `collateral keeper: unexpected error: ${(error instanceof Error && error.message) || 'unknown'}`
+        );
     }
 
     // clear pool of currently executed auctions

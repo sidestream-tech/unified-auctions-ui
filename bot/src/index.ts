@@ -1,37 +1,38 @@
 import { setTimeout as delay } from 'timers/promises';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
+import { RPC_URL, SETUP_DELAY_MS, REFETCH_INTERVAL_MS } from './variables';
+import { setupSupportedAuctionTypes, getSupportedAuctionTypes } from './supported';
+import { setupWhitelistedCollaterals } from './whitelist';
+import { setupTwitter } from './twitter';
+import { setupCollateralKeeper } from './keepers/collateral';
+import { setupSurplusKeeper } from './keepers/surplus';
 import { loopCollateral } from './auctions/collateral';
 import { loopSurplus } from './auctions/surplus';
 import { loopDebt } from './auctions/debt';
-import { setupKeeper } from './keeper';
-import { RPC_URL } from './variables';
-import { setupTwitter } from './twitter';
-import { setupWhitelist } from './whitelist';
-import { executePreAuthorizationsIfRequested } from './authorisation';
-
-const DEFAULT_REFETCH_INTERVAL = 60 * 1000;
-const SETUP_DELAY = 3 * 1000;
-const REFETCH_INTERVAL = parseInt(process.env.REFETCH_INTERVAL ?? '') || DEFAULT_REFETCH_INTERVAL;
 
 const start = async function (): Promise<void> {
-    if (!RPC_URL) {
-        throw new Error('Required `RPC_URL` env variable was not provided, please refer to the readme');
-    }
-    await delay(SETUP_DELAY);
+    await delay(SETUP_DELAY_MS);
+    setupSupportedAuctionTypes();
     const { defaultNetwork: network } = await setupRpcUrlAndGetNetworks(RPC_URL);
-    setupWhitelist();
     await setupTwitter();
-    await setupKeeper(network);
-    await executePreAuthorizationsIfRequested(network);
 
-    loopCollateral(network);
-    setInterval(() => loopCollateral(network), REFETCH_INTERVAL);
+    if (getSupportedAuctionTypes().includes('COLLATERAL')) {
+        setupWhitelistedCollaterals();
+        await setupCollateralKeeper(network);
+        loopCollateral(network);
+        setInterval(() => loopCollateral(network), REFETCH_INTERVAL_MS);
+    }
 
-    loopSurplus(network);
-    setInterval(() => loopSurplus(network), DEFAULT_REFETCH_INTERVAL);
+    if (getSupportedAuctionTypes().includes('SURPLUS')) {
+        await setupSurplusKeeper(network);
+        loopSurplus(network);
+        setInterval(() => loopSurplus(network), REFETCH_INTERVAL_MS);
+    }
 
-    loopDebt(network);
-    setInterval(() => loopDebt(network), DEFAULT_REFETCH_INTERVAL);
+    if (getSupportedAuctionTypes().includes('DEBT')) {
+        loopDebt(network);
+        setInterval(() => loopDebt(network), REFETCH_INTERVAL_MS);
+    }
 };
 
 start().catch(error => {

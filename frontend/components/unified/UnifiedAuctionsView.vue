@@ -117,7 +117,6 @@ export default Vue.extend({
                         'Web tool that supports participation in surplus auctions by bidding on Dai with own MKR',
                     links: {
                         source: 'https://github.com/makerdao/auctions-ui',
-                        participate: 'https://auctions.makerdao.com/flap',
                     },
                     filters: ['surplus'],
                 },
@@ -127,7 +126,6 @@ export default Vue.extend({
                         'Web tool that supports participation in debt auctions by bidding on MKR with own Dai',
                     links: {
                         source: 'https://github.com/makerdao/auctions-ui',
-                        participate: 'https://auctions.makerdao.com/flop',
                     },
                     filters: ['debt'],
                 },

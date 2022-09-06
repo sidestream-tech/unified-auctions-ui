@@ -2,7 +2,7 @@ import { getCollateralConfigByType } from 'auctions-core/src/constants/COLLATERA
 import { getSupportedCollateralTypes } from 'auctions-core/src/addresses';
 import { WHITELISTED_COLLATERALS } from './variables';
 
-const validateWhitelist = function (whitelist: string[]) {
+const validateWhitelistedCollaterals = function (whitelist: string[]) {
     const unsupportedCollateralTypes: string[] = [];
     whitelist.forEach(collateralType => {
         try {
@@ -18,25 +18,25 @@ const validateWhitelist = function (whitelist: string[]) {
     }
 };
 
-const parseCollateralWhitelist = function (whitelist: string): string[] {
+const parseWhitelistedCollaterals = function (whitelist: string): string[] {
     return whitelist.split(',').map(item => item.trim());
 };
 
 export const getWhitelistedCollaterals = async function (network: string) {
     if (WHITELISTED_COLLATERALS) {
-        return parseCollateralWhitelist(WHITELISTED_COLLATERALS);
+        return parseWhitelistedCollaterals(WHITELISTED_COLLATERALS);
     }
     return await getSupportedCollateralTypes(network);
 };
 
-export const setupWhitelist = function () {
-    if (WHITELISTED_COLLATERALS) {
-        const parsedWhitelist = parseCollateralWhitelist(WHITELISTED_COLLATERALS);
-        validateWhitelist(parsedWhitelist);
-        console.info(
-            `collateral whitelisting: whitelist is enabled, only fetching auctions of type "${WHITELISTED_COLLATERALS}"`
-        );
+export const setupWhitelistedCollaterals = function () {
+    if (!WHITELISTED_COLLATERALS) {
+        console.warn(`no WHITELISTED_COLLATERALS env variable provided, activating all collateral auctions`);
     } else {
-        console.warn(`collateral whitelisting: skipping setup due to missing WHITELISTED_COLLATERALS`);
+        const parsedWhitelist = parseWhitelistedCollaterals(WHITELISTED_COLLATERALS);
+        validateWhitelistedCollaterals(parsedWhitelist);
+        console.info(
+            `WHITELISTED_COLLATERALS is provided, only fetching auctions of type "${WHITELISTED_COLLATERALS}"`
+        );
     }
 };
