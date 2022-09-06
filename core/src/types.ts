@@ -268,9 +268,6 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
 
 type CollateralType = CollateralConfig['title'];
-export declare interface VaultCollateralType {
-    collateralType: CollateralType;
-}
 
 export declare interface LiquidationLimit {
     maximumAmountAuctionedCollateral: BigNumber;
@@ -282,9 +279,10 @@ export declare interface VaultCollateralParameters extends LiquidationLimit {
     maxDebtPerCollateralUnit: BigNumber;
 }
 
-export declare interface VaultBase extends VaultCollateralType {
+export declare interface VaultBase {
     id: number;
     address: string;
+    collateralType: CollateralType;
 }
 
 export declare interface VaultAmount {
