@@ -284,7 +284,7 @@ export declare interface VaultCollateralParameters {
     minUintPrice: BigNumber;
 }
 
-export declare interface Vault {
+export declare interface VaultBase {
     id: number;
     address: string;
     collateralType: CollateralType;
