@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import BigNumber from 'bignumber.js';type
 
 export declare interface GasParameters {
     maxFeePerGas?: string;
@@ -276,7 +276,7 @@ export declare interface LiquidationLimits {
     currentCollateralDebtDai: BigNumber;
 }
 
-export declare interface VaultCollateralParameters extends LiquidationLimit {
+export declare interface VaultCollateralParameters extends LiquidationLimits {
     stabilityFeeRate: BigNumber;
     maxDebtPerCollateralUnit: BigNumber;
 }
