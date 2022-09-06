@@ -285,7 +285,8 @@ export declare interface VaultAmount {
     collateralType: CollateralType;
 }
 export declare interface VaultTransactionFees {
-    transactionFeeLiquidation?: BigNumber;
+    transactionFeeLiquidationEth: BigNumber;
+    transactionFeeLiquidationDai: BigNumber;
 }
 export declare interface VaultBaseInfo extends VaultBase, VaultAmount {}
 export declare interface Vault extends VaultBaseInfo, VaultTransactionFees {
