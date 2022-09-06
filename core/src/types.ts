@@ -312,4 +312,5 @@ export declare interface Vault extends VaultBaseInfo, VaultTransactionFees, Orac
     incentiveRelativeDai: BigNumber;
     incentiveCombinedDai: BigNumber;
     grossProfitDai: BigNumber;
+    debtDai: BigNumber;
 }
