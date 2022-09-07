@@ -1,6 +1,7 @@
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat';
+import { Simulation } from '../types';
 
-export default {
+const simulation: Simulation = {
     title: 'Fork block with active WSTETH-A auction',
     steps: [
         {
@@ -17,3 +18,5 @@ export default {
         },
     ],
 };
+
+export default simulation;
