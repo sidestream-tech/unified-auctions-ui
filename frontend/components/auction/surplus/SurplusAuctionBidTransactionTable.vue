@@ -3,7 +3,14 @@
         <div class="flex justify-between">
             <div>Auction State</div>
             <div>
-                <time-till :date="auction.auctionEndDate" />
+                <span v-if="isActive">Ends in </span>
+                <span v-else-if="auction.state === 'requires-restart'">Requires restart</span>
+                <span v-else-if="auction.state === 'ready-for-collection'">Ended </span>
+                <span v-else>Collected </span>
+                <time-till
+                    v-if="auction.earliestEndDate && auction.state !== 'requires-restart'"
+                    :date="auction.earliestEndDate"
+                />
             </div>
         </div>
         <div class="flex justify-between">
