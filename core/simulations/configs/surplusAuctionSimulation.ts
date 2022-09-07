@@ -1,10 +1,11 @@
 import { HARDHAT_PUBLIC_KEY } from '../../helpers/constants';
 import BigNumber from '../../src/bignumber';
 import { warpTime, resetNetworkAndSetupWallet, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
+import { Simulation } from '../types';
 
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
 
-export default {
+const simulation: Simulation = {
     title: 'Fork block with active surplus auction',
     steps: [
         {
@@ -27,3 +28,4 @@ export default {
         },
     ],
 };
+export default simulation;

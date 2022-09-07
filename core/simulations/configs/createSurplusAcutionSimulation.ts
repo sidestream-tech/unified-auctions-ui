@@ -2,8 +2,9 @@ import { HARDHAT_PUBLIC_KEY } from '../../helpers/constants';
 import BigNumber from '../../src/bignumber';
 import { resetNetworkAndSetupWallet, warpTime, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
 import { causeSurplus } from '../../helpers/auctionSimulators';
+import { Simulation } from '../types';
 
-export default {
+const simulation: Simulation = {
     title: 'Create surplus auction',
     steps: [
         {
@@ -31,3 +32,4 @@ export default {
         },
     ],
 };
+export default simulation;
