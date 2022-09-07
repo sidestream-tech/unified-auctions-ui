@@ -1,10 +1,10 @@
 import { HARDHAT_PUBLIC_KEY } from '../../helpers/constants';
 import BigNumber from '../../src/bignumber';
 import { resetNetworkAndSetupWallet, warpTime, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
-import { causeDebt } from '../../helpers/auctionSimulators';
+import { causeSurplus } from '../../helpers/auctionSimulators';
 
 export default {
-    title: 'Create debt auction',
+    title: 'Create surplus auction',
     steps: [
         {
             title: 'Reset blockchain fork',
@@ -13,9 +13,9 @@ export default {
             },
         },
         {
-            title: 'Create debt auction',
+            title: 'Create surplus auction',
             entry: async () => {
-                await causeDebt();
+                await causeSurplus();
             },
         },
         {
