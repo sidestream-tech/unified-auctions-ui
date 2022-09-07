@@ -35,7 +35,7 @@ export const causeSurplus = async (
 
     // Ash
     await overwriteOnAuctionDebt(debtAmountDai);
-    await ensureOnAuctionDebt(debtAmountDai);
+    await ensureOverallAuctionDebt(debtAmountDai);
 
     // vat.sin
     await overwriteDebtQueueEntry(debtAmountDai.multipliedBy(2));
@@ -78,7 +78,7 @@ const overwriteProtocolOwnDaiBalance = async (amount: BigNumber) => {
     const daiOwnerAddress = await getContractAddressByName(TEST_NETWORK, 'MCD_VOW');
     await overwriteUintMapping('MCD_VAT', '0x5', daiOwnerAddress, amount.shiftedBy(RAD_NUMBER_OF_DIGITS));
 };
-const ensureOnAuctionDebt = async (expected: BigNumber) => {
+const ensureOverallAuctionDebt = async (expected: BigNumber) => {
     const contract = await getContract(TEST_NETWORK, 'MCD_VOW');
     const ashAsHex = await contract.Ash();
     const ash = new BigNumber(ashAsHex._hex);
