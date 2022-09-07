@@ -23,7 +23,7 @@ export const causeDebt = async (
 export const causeSurplus = async (
     daiOnAuction: BigNumber = new BigNumber(10000),
     debtAmountDai: BigNumber = new BigNumber(1000),
-
+    daiInContract: BigNumber = new BigNumber(100000)
 ) => {
     // conditions that have to be fulfilled:
     // vat.dai(address(this)) >= vat.sin(address(this)) + bump + hump
@@ -42,8 +42,8 @@ export const causeSurplus = async (
     await ensureDebtQueueEntry(debtAmountDai.multipliedBy(2))
 
     // vat.dai
-    await overwriteProtocolOwnDaiBalance(daiOnAuction);
-    await ensureDaiEquals(daiOnAuction)
+    await overwriteProtocolOwnDaiBalance(daiInContract);
+    await ensureDaiEquals(daiInContract)
 
     // bump
     await overwriteFlapFixedSlotSize(daiOnAuction)
