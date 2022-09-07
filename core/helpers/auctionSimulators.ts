@@ -21,30 +21,37 @@ export const causeDebt = async (
 };
 
 export const causeSurplus = async (
+    daiOnAuction: BigNumber = new BigNumber(10000),
+    debtAmountDai: BigNumber = new BigNumber(1000),
+
 ) => {
+    // conditions that have to be fulfilled:
+    // vat.dai(address(this)) >= vat.sin(address(this)) + bump + hump
+    // vat.sin(address(this) - Sin - Ash) == 0
+    // see https://github.com/makerdao/dss/blob/fa4f6630afb0624d04a003e920b0d71a00331d98/src/vow.sol#L149
     // Sin
-    await overwriteQueuedDebt(new BigNumber(1000));
-    await ensureQueuedDebtEqual(new BigNumber(1000));
+    await overwriteQueuedDebt(debtAmountDai);
+    await ensureQueuedDebtEqual(debtAmountDai);
 
     // Ash
-    await overwriteOnAuctionDebt(new BigNumber(1000));
-    await ensureOnAuctionDebt(new BigNumber(1000))
+    await overwriteOnAuctionDebt(debtAmountDai);
+    await ensureOnAuctionDebt(debtAmountDai)
 
-    //sin
-    await overwriteDebtQueueEntry(new BigNumber(2000));
-    await ensureDebtQueueEntry(new BigNumber(2000))
+    // vat.sin
+    await overwriteDebtQueueEntry(debtAmountDai.multipliedBy(2));
+    await ensureDebtQueueEntry(debtAmountDai.multipliedBy(2))
 
     // vat.dai
-    await overwriteProtocolOwnDaiBalance(new BigNumber(100000).shiftedBy(RAD_NUMBER_OF_DIGITS));
-    await ensureDaiEquals(new BigNumber(100000))
+    await overwriteProtocolOwnDaiBalance(daiOnAuction);
+    await ensureDaiEquals(daiOnAuction)
 
     // bump
-    await overwriteFlapFixedSlotSize(new BigNumber(10000))
-    await ensureFlapFixedSlotSize(new BigNumber(10000))
+    await overwriteFlapFixedSlotSize(daiOnAuction)
+    await ensureFlapFixedSlotSize(daiOnAuction)
 
     // hump
-    await overwriteSurplusBuffer(new BigNumber(10000))
-    await ensureSurplusBuffer(new BigNumber(10000))
+    await overwriteSurplusBuffer(daiOnAuction)
+    await ensureSurplusBuffer(daiOnAuction)
 
     await startSurplusAuction();
 }
@@ -69,7 +76,7 @@ const ensureQueuedDebtEqual = async (expected: BigNumber) => {
 
 const overwriteProtocolOwnDaiBalance = async (amount: BigNumber) => {
     const daiOwnerAddress = await getContractAddressByName(TEST_NETWORK, 'MCD_VOW');
-    await overwriteUintMapping('MCD_VAT', '0x5', daiOwnerAddress, amount);
+    await overwriteUintMapping('MCD_VAT', '0x5', daiOwnerAddress, amount.shiftedBy(RAD_NUMBER_OF_DIGITS));
 };
 const ensureOnAuctionDebt = async (expected: BigNumber) => {
     const contract = await getContract(TEST_NETWORK, 'MCD_VOW');
