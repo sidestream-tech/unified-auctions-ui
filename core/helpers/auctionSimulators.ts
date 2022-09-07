@@ -35,26 +35,26 @@ export const causeSurplus = async (
 
     // Ash
     await overwriteOnAuctionDebt(debtAmountDai);
-    await ensureOnAuctionDebt(debtAmountDai)
+    await ensureOnAuctionDebt(debtAmountDai);
 
     // vat.sin
     await overwriteDebtQueueEntry(debtAmountDai.multipliedBy(2));
-    await ensureDebtQueueEntry(debtAmountDai.multipliedBy(2))
+    await ensureDebtQueueEntry(debtAmountDai.multipliedBy(2));
 
     // vat.dai
     await overwriteProtocolOwnDaiBalance(daiInContract);
-    await ensureDaiEquals(daiInContract)
+    await ensureDaiEquals(daiInContract);
 
     // bump
-    await overwriteFlapFixedSlotSize(daiOnAuction)
-    await ensureFlapFixedSlotSize(daiOnAuction)
+    await overwriteFlapFixedSlotSize(daiOnAuction);
+    await ensureFlapFixedSlotSize(daiOnAuction);
 
     // hump
-    await overwriteSurplusBuffer(daiOnAuction)
-    await ensureSurplusBuffer(daiOnAuction)
+    await overwriteSurplusBuffer(daiOnAuction);
+    await ensureSurplusBuffer(daiOnAuction);
 
     await startSurplusAuction();
-}
+};
 
 const overwriteQueuedDebt = async (debtAmountDai: BigNumber) => {
     await overwriteUintValue('MCD_VOW', '0x5', debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS));
@@ -86,12 +86,12 @@ const ensureOnAuctionDebt = async (expected: BigNumber) => {
         return;
     }
     throw new Error(`Unexpected Ash value ${ash}, expected ${expected}`);
-}
+};
 
 const overwriteDebtQueueEntry = async (value: BigNumber) => {
     const daiOwnerAddress = await getContractAddressByName(TEST_NETWORK, 'MCD_VOW');
     await overwriteUintMapping('MCD_VAT', '0x6', daiOwnerAddress, value.shiftedBy(DAI_NUMBER_OF_DIGITS));
-}
+};
 
 const overwriteReceivedAmountMKR = async (amount: BigNumber) => {
     await overwriteUintValue('MCD_VOW', '0x8', amount.shiftedBy(MKR_NUMBER_OF_DIGITS));
@@ -99,7 +99,7 @@ const overwriteReceivedAmountMKR = async (amount: BigNumber) => {
 
 const overwriteFlapFixedSlotSize = async (amount: BigNumber) => {
     await overwriteUintValue('MCD_VOW', '0xa', amount.shiftedBy(RAD_NUMBER_OF_DIGITS));
-}
+};
 const ensureFlapFixedSlotSize = async (expected: BigNumber) => {
     const contract = await getContract(TEST_NETWORK, 'MCD_VOW');
     const bumpAsHex = await contract.bump();
@@ -108,10 +108,10 @@ const ensureFlapFixedSlotSize = async (expected: BigNumber) => {
         return;
     }
     throw new Error(`Unexpected dump value ${bump.shiftedBy(-RAD_NUMBER_OF_DIGITS)}, expected ${expected}`);
-}
+};
 const overwriteSurplusBuffer = async (amount: BigNumber) => {
     await overwriteUintValue('MCD_VOW', '0xb', amount.shiftedBy(RAD_NUMBER_OF_DIGITS));
-}
+};
 const ensureSurplusBuffer = async (expected: BigNumber) => {
     const contract = await getContract(TEST_NETWORK, 'MCD_VOW');
     const humpAsHex = await contract.hump();
@@ -120,7 +120,7 @@ const ensureSurplusBuffer = async (expected: BigNumber) => {
         return;
     }
     throw new Error(`Unexpected hump value ${hump.shiftedBy(-RAD_NUMBER_OF_DIGITS)}, expected ${expected}`);
-}
+};
 
 const ensureReceivedAmountMKR = async (expected: BigNumber) => {
     const contract = await getContract(TEST_NETWORK, 'MCD_VOW');
@@ -159,9 +159,9 @@ const ensureDaiEquals = async (expectedDai: BigNumber) => {
     const vatContract = await getContract(TEST_NETWORK, 'MCD_VAT');
     const daiOwnerAddress = await getContractAddressByName(TEST_NETWORK, 'MCD_VOW');
     const balanceHex = await vatContract.dai(daiOwnerAddress);
-    const balance = new BigNumber(balanceHex._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS)
+    const balance = new BigNumber(balanceHex._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
     if (!balance.eq(expectedDai)) {
-        throw new Error(`Unexpected amount of dai: found ${balance.toFixed()}, expected: ${expectedDai.toFixed()}`)
+        throw new Error(`Unexpected amount of dai: found ${balance.toFixed()}, expected: ${expectedDai.toFixed()}`);
     }
 };
 
@@ -184,4 +184,4 @@ const ensureDebtQueueEntry = async (expectedDai: BigNumber) => {
         return;
     }
     throw new Error(`Unexpected sin value ${sin.shiftedBy(-DAI_NUMBER_OF_DIGITS)}, expected ${expectedDai}`);
-}
+};
