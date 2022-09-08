@@ -322,9 +322,11 @@ export declare interface VaultTransactionLiquidated extends VaultTransactionBase
     state: 'liquidated';
     liqudiationDate: Date;
     transactionHash: string;
-    auctionId: BigNumber;
+    auctionId: string;
 }
 
 export declare interface VaultTransactionNotLiquidated extends VaultTransactionBase {
     state: 'liquidatable' | 'not-liquidatable';
 }
+
+export type VaultTransaction = VaultTransactionLiquidated | VaultTransactionNotLiquidated;
