@@ -6,6 +6,8 @@ import {
     VaultBase,
     VaultTransaction,
     VaultTransactionFees,
+    VaultTransactionLiquidated,
+    VaultTransactionNotLiquidated,
     VaultTransactionState,
 } from 'auctions-core/src/types';
 import faker from 'faker';
@@ -87,7 +89,23 @@ const generateFakeOraclePrices = function (): OraclePrices {
     };
 };
 
-export const generateFakeVaultTransaction = function (): VaultTransaction {
+const generateFakeVaultLiqudatedTransaction = function (): VaultTransactionLiquidated {
+    const fakeVault = generateFakeVault();
+
+    const liqudiationDate = faker.date.recent();
+    const transactionHash = faker.finance.ethereumAddress();
+    const auctionId = `${fakeVault.collateralType}:${faker.datatype.number()}`;
+
+    return {
+        ...fakeVault,
+        state: 'liquidated',
+        liqudiationDate,
+        transactionHash,
+        auctionId,
+    };
+};
+
+export const generateFakeVaultNotLiquidatedTransaction = function (): VaultTransactionNotLiquidated {
     const fakeVault = generateFakeVault();
     const fakeTransactionFees = generateFakeVaultTransactionFees();
     const fakeOraclePrices = generateFakeOraclePrices();
@@ -97,8 +115,7 @@ export const generateFakeVaultTransaction = function (): VaultTransaction {
     const collateralizationRatio = fakeVault.collateralAmount.multipliedBy(minUnitPrice).toNumber();
     const proximityToLiquidation = liquidationRatio - collateralizationRatio;
 
-    const state: VaultTransactionState =
-        proximityToLiquidation < 0 ? faker.helpers.randomize(['liquidatable', 'liquidated']) : 'not-liquidatable';
+    const state: VaultTransactionState = proximityToLiquidation < 0 ? 'liquidatable' : 'not-liquidatable';
 
     const incentiveRelativeDai = new BigNumber(faker.finance.amount());
     const incentiveConstantDai = new BigNumber(faker.finance.amount());
@@ -106,16 +123,6 @@ export const generateFakeVaultTransaction = function (): VaultTransaction {
 
     const grossProfitDai = incentiveCombinedDai.minus(fakeTransactionFees.transactionFeeLiquidationDai);
     const debtDai = new BigNumber(faker.finance.amount());
-
-    let liqudiationDate;
-    let transactionHash;
-    let auctionId;
-
-    if (state === 'liquidated') {
-        liqudiationDate = faker.date.recent();
-        transactionHash = faker.finance.ethereumAddress();
-        auctionId = `${fakeVault.collateralType}:${faker.datatype.number()}`;
-    }
 
     return {
         ...fakeVault,
@@ -131,9 +138,6 @@ export const generateFakeVaultTransaction = function (): VaultTransaction {
         grossProfitDai,
         netProfitDai: incentiveCombinedDai,
         debtDai,
-        liqudiationDate,
-        transactionHash,
-        auctionId,
     };
 };
 
@@ -141,6 +145,12 @@ export const generateFakeVaults = function (number = random(5, 15)) {
     return Array(number).fill(null).map(generateFakeVault);
 };
 
-export const generateFakeVaultTransactions = function (number = random(5, 15)) {
-    return Array(number).fill(null).map(generateFakeVaultTransaction);
+export const generateFakeVaultTransactions = function (
+    liquidatedVaultsAmount = random(1, 5),
+    notLiquidatedVaultsAmount = random(5, 15)
+) {
+    const vaults = [];
+    vaults.push(Array(liquidatedVaultsAmount).fill(null).map(generateFakeVaultLiqudatedTransaction));
+    vaults.push(Array(notLiquidatedVaultsAmount).fill(null).map(generateFakeVaultNotLiquidatedTransaction));
+    return vaults;
 };
