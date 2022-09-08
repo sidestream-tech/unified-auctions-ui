@@ -16,6 +16,7 @@ import WSTETH from './abis/WSTETH.json';
 import WETH from './abis/WETH.json';
 import UNISWAP from './abis/UNISWAP_V2_ROUTER_02.json';
 import MCD_VOW from './abis/MCD_VOW.json';
+import CDP_MANAGER from './abis/CDP_MANAGER.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
@@ -75,6 +76,9 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     }
     if (contractName === 'UNISWAP') {
         return UNISWAP;
+    }
+    if (contractName === 'CDP_MANAGER') {
+        return CDP_MANAGER;
     }
     throw new Error(`No contract interface found for "${contractName}"`);
 };

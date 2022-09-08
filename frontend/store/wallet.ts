@@ -10,6 +10,7 @@ import {
     fetchCollateralVatBalance,
     withdrawCollateralFromVat,
 } from 'auctions-core/src/wallet';
+import { fetchVatVault } from 'auctions-core/src/vaults';
 import getWallet, { WALLETS } from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 import { getContractAddressByName } from '~/../core/src/contracts';
@@ -291,6 +292,9 @@ export const actions = {
         if (collateralType) {
             await dispatch('fetchCollateralVatBalance', collateralType);
         }
+    },
+    async kirill(): Promise<void> {
+        await fetchVatVault('custom', 'ETH-A', '0x95dc6d7ED8991facab34159D8231e04247dfaf65')
     },
     setup({ commit, dispatch }: ActionContext<State, State>): void {
         commit('reset');
