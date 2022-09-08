@@ -318,7 +318,7 @@ export declare interface VaultTransactionBase extends Vault, VaultTransactionFee
     debtDai: BigNumber;
 }
 
-export declare interface VaultTransactionLiquidated extends VaultTransactionBase {
+export declare interface VaultTransactionLiquidated extends VaultBase {
     state: 'liquidated';
     liqudiationDate: Date;
     transactionHash: string;
