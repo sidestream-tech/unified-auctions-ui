@@ -306,15 +306,25 @@ export declare interface OraclePrices {
     nextPriceChange: Date;
 }
 
-export declare interface VaultTransaction extends Vault, VaultTransactionFees, OraclePrices {
+export declare interface VaultTransactionBase extends Vault, VaultTransactionFees, OraclePrices {
     liquidationRatio: number;
     collateralizationRatio: number;
     proximityToLiquidation: number;
-    state: 'liquidated' | 'liquidatable' | 'not-liquidateable';
     incentiveRelativeDai: BigNumber;
     incentiveConstantDai: BigNumber;
     incentiveCombinedDai: BigNumber;
     grossProfitDai: BigNumber;
     netProfitDai: BigNumber;
     debtDai: BigNumber;
+}
+
+export declare interface VaultTransactionLiquidated extends VaultTransactionBase {
+    state: 'liquidated'
+    liqudiationDate: Date;
+    transactionHash: string;
+    auctionId: BigNumber;
+}
+
+export declare interface VaultTransactionNotLiquidated extends VaultTransactionBase {
+    state: 'liquidatable' | 'not-liquidatable'
 }
