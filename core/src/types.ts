@@ -320,9 +320,9 @@ export declare interface VaultTransactionBase extends Vault, VaultTransactionFee
 
 export declare interface VaultTransactionLiquidated extends VaultBase {
     state: 'liquidated';
-    liqudiationDate: Date;
-    transactionHash: string;
-    auctionId: string;
+    liqudiationDate?: Date;
+    transactionHash?: string;
+    auctionId?: string;
 }
 
 export declare interface VaultTransactionNotLiquidated extends VaultTransactionBase {
@@ -330,3 +330,4 @@ export declare interface VaultTransactionNotLiquidated extends VaultTransactionB
 }
 
 export type VaultTransaction = VaultTransactionLiquidated | VaultTransactionNotLiquidated;
+export type VaultTransactionState = VaultTransaction['state'];

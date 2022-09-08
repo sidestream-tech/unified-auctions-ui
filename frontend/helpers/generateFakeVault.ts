@@ -6,6 +6,7 @@ import {
     VaultBase,
     VaultTransaction,
     VaultTransactionFees,
+    VaultTransactionState,
 } from 'auctions-core/src/types';
 import faker from 'faker';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
@@ -96,15 +97,25 @@ export const generateFakeVaultTransaction = function (): VaultTransaction {
     const collateralizationRatio = fakeVault.collateralAmount.multipliedBy(minUnitPrice).toNumber();
     const proximityToLiquidation = liquidationRatio - collateralizationRatio;
 
-    const state = proximityToLiquidation < 0 ? 'liquidatable' : 'not-liquidateable';
+    const state: VaultTransactionState =
+        proximityToLiquidation < 0 ? faker.helpers.randomize(['liquidatable', 'liquidated']) : 'not-liquidatable';
 
     const incentiveRelativeDai = new BigNumber(faker.finance.amount());
     const incentiveConstantDai = new BigNumber(faker.finance.amount());
     const incentiveCombinedDai = incentiveRelativeDai.plus(incentiveConstantDai);
 
     const grossProfitDai = incentiveCombinedDai.minus(fakeTransactionFees.transactionFeeLiquidationDai);
-
     const debtDai = new BigNumber(faker.finance.amount());
+
+    let liqudiationDate;
+    let transactionHash;
+    let auctionId;
+
+    if (state === 'liquidated') {
+        liqudiationDate = faker.date.recent();
+        transactionHash = faker.finance.ethereumAddress();
+        auctionId = `${fakeVault.collateralType}:${faker.datatype.number()}`;
+    }
 
     return {
         ...fakeVault,
@@ -120,6 +131,9 @@ export const generateFakeVaultTransaction = function (): VaultTransaction {
         grossProfitDai,
         netProfitDai: incentiveCombinedDai,
         debtDai,
+        liqudiationDate,
+        transactionHash,
+        auctionId,
     };
 };
 
