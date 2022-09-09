@@ -17,6 +17,9 @@ import WETH from './abis/WETH.json';
 import UNISWAP from './abis/UNISWAP_V2_ROUTER_02.json';
 import MCD_VOW from './abis/MCD_VOW.json';
 import CDP_MANAGER from './abis/CDP_MANAGER.json';
+import OSM_MOM from './abis/OSM_MOM.json';
+import OSM from './abis/OSM.json'
+import MEDIAN_PRICE_FEED from './abis/MEDIAN_PRICE_FEED.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
@@ -34,7 +37,7 @@ export const getContractAddressByName = async function (network: string, contrac
     return await fetchContractAddressByNetwork(network, contractName);
 };
 
-const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {
+export const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {
     if (contractName === 'MCD_DAI') {
         return MCD_DAI;
     }
@@ -79,6 +82,15 @@ const getContractInterfaceByName = async function (contractName: string): Promis
     }
     if (contractName === 'CDP_MANAGER') {
         return CDP_MANAGER;
+    }
+    if (contractName === 'OSM_MOM') {
+        return OSM_MOM;
+    }
+    if (contractName === 'OSM') {
+        return OSM;
+    }
+    if (contractName === 'MEDIAN_PRICE_FEED') {
+        return MEDIAN_PRICE_FEED;
     }
     throw new Error(`No contract interface found for "${contractName}"`);
 };

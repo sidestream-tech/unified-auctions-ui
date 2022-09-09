@@ -299,7 +299,7 @@ export declare interface VaultTransactionFees {
     transactionFeeLiquidationDai: BigNumber;
 }
 
-export declare interface Vault extends VaultBase, VaultAmount, LiquidationLimits {}
+export declare interface Vault extends VaultBase, VaultAmount, VaultCollateralParameters, LiquidationLimits {}
 export declare interface OraclePrices {
     currentUnitPrice: BigNumber;
     nextUnitPrice: BigNumber;
