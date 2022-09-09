@@ -42,7 +42,7 @@ export default Vue.extend({
             default: undefined,
         },
         auctionState: {
-            type: Object as Vue.PropType<VaultTransactionState>,
+            type: String as Vue.PropType<VaultTransactionState>,
             required: true,
         },
         collateralType: {
