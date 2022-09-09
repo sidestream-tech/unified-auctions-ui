@@ -7,12 +7,13 @@ import {
     VaultCollateralParameters,
     Vault,
     OraclePrices,
-    VaultTransactionBase,
+    VaultTransactionNotLiquidated,
 } from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
 import { RAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { getApproximateLiquidationFees } from './fees';
+import { fetchDateByBlockNumber } from './date';
 
 export const fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
     const contract = await getContract(network, 'CDP_MANAGER');
@@ -154,10 +155,27 @@ export const fetchVaultLiquidationIncentive = async (
     };
 };
 
-export const enrichVaultWithTransactonBaseInformation = async (
+export const isVaultLiquidated = async (network: string, vault: Vault) => {
+    const contract = await getContract(network, 'MCD_DOG');
+    const typeHex = ethers.utils.formatBytes32String(vault.collateralType);
+    const eventFilter = contract.filters.Bark(typeHex, vault.address, null, null, null, null, null);
+    const liquidationEvents = await contract.queryFilter(eventFilter);
+    if (liquidationEvents.length !== 0 && vault.initialDebtDai.eq(0)) {
+        const latestEvent = liquidationEvents[liquidationEvents.length - 1];
+        return {
+            isLiquidated: true,
+            liquidationDate: fetchDateByBlockNumber(network, latestEvent.blockNumber),
+            transactionHash: latestEvent.transactionHash,
+            auctionId: latestEvent.args?.id,
+        };
+    }
+    return { isLiquidated: false };
+};
+
+export const enrichVaultWithTransactonInformation = async (
     network: string,
     vault: Vault
-): Promise<VaultTransactionBase> => {
+): Promise<VaultTransactionNotLiquidated> => {
     const debtDai = vault.initialDebtDai.multipliedBy(vault.stabilityFeeRate);
     const { liquidatiorContractAddress } = await fetchCollateralLiquidationLimitsAndLiquidatorAddress(
         network,
@@ -180,6 +198,7 @@ export const enrichVaultWithTransactonBaseInformation = async (
         network
     );
     const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(network, vault.collateralType);
+    const state = collateralizationRatio < 0 ? 'liquidatable' : 'not-liquidatable';
     return {
         ...vault,
         liquidationRatio,
@@ -196,5 +215,19 @@ export const enrichVaultWithTransactonBaseInformation = async (
         nextPriceChange,
         currentUnitPrice,
         transactionFeeLiquidationEth,
+        state,
     };
+};
+
+export const getVaultTransaction = async (network: string, vault: Vault) => {
+    const { isLiquidated, liquidationDate, transactionHash, auctionId } = await isVaultLiquidated(network, vault);
+    if (isLiquidated) {
+        return {
+            state: 'liquidated',
+            liquidationDate,
+            transactionHash,
+            auctionId,
+        };
+    }
+    return await enrichVaultWithTransactonInformation(network, vault);
 };
