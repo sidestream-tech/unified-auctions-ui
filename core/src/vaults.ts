@@ -1,9 +1,18 @@
 import getContract, { getContractInterfaceByName } from './contracts';
 import getProvider from './provider';
-import { VaultBase, CollateralType, VaultAmount, VaultCollateralParameters, Vault, OraclePrices, VaultTransactionBase } from './types';
+import {
+    VaultBase,
+    CollateralType,
+    VaultAmount,
+    VaultCollateralParameters,
+    Vault,
+    OraclePrices,
+    VaultTransactionBase,
+} from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
 import { RAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { getApproximateLiquidationFees } from './fees';
 
 export const fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
     const contract = await getContract(network, 'CDP_MANAGER');
@@ -147,10 +156,10 @@ export const fetchVaultTransactonBase = async (network: string, vault: Vault): P
         .dividedBy(debtDai)
         .toNumber();
     const proximityToLiquidation = liquidationRatio - collateralizationRatio;
-    // TODO: add real fees
-    const transactionFeeLiquidationDai = new BigNumber(0)
-    const transactionFeeLiquidationEth = new BigNumber(0)
-    const {nextUnitPrice, nextPriceChange, currentUnitPrice} = await getOsmPrices(network, vault.collateralType);
+    const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
+        network
+    );
+    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(network, vault.collateralType);
     return {
         ...vault,
         liquidationRatio,
@@ -166,7 +175,6 @@ export const fetchVaultTransactonBase = async (network: string, vault: Vault): P
         nextUnitPrice,
         nextPriceChange,
         currentUnitPrice,
-        transactionFeeLiquidationEth
-    }
+        transactionFeeLiquidationEth,
+    };
 };
-
