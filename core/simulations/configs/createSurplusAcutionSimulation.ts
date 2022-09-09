@@ -1,18 +1,22 @@
 import { HARDHAT_PUBLIC_KEY } from '../../helpers/constants';
 import BigNumber from '../../src/bignumber';
-import { warpTime, resetNetworkAndSetupWallet, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
+import { resetNetworkAndSetupWallet, warpTime, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
+import { causeSurplus } from '../../helpers/auctionSimulators';
 import { Simulation } from '../types';
 
-const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
-
 const simulation: Simulation = {
-    title: 'Fork block with active surplus auction',
+    title: 'Create surplus auction',
     steps: [
         {
             title: 'Reset blockchain fork',
-            // Block with various states of surplus auctions at 14078339,
             entry: async () => {
-                await resetNetworkAndSetupWallet(HARDHAT_FORK_BLOCK_NUMBER);
+                await resetNetworkAndSetupWallet(undefined);
+            },
+        },
+        {
+            title: 'Create surplus auction',
+            entry: async () => {
+                await causeSurplus();
             },
         },
         {

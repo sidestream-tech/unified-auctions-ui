@@ -1,9 +1,10 @@
 import { HARDHAT_PUBLIC_KEY } from '../../helpers/constants';
 import BigNumber from '../../src/bignumber';
 import { resetNetworkAndSetupWallet, warpTime, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
-import { causeDebt } from '../../helpers/causeDebt';
+import { causeDebt } from '../../helpers/auctionSimulators';
+import { Simulation } from '../types';
 
-export default {
+const simulation: Simulation = {
     title: 'Create debt auction',
     steps: [
         {
@@ -31,3 +32,5 @@ export default {
         },
     ],
 };
+
+export default simulation;
