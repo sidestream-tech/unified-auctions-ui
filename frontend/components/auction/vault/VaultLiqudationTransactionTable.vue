@@ -50,7 +50,7 @@
         <div class="flex justify-between">
             <div>Potential gross profit</div>
             <div>
-                <FormatCurrency v-if="auction.grossProfitDai" :value="auction.grossProfitDai" currency="DAI" />
+                +<FormatCurrency v-if="auction.grossProfitDai" :value="auction.grossProfitDai" currency="DAI" />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
         </div>
@@ -62,7 +62,7 @@
                 >
             </div>
             <div>
-                <FormatCurrency
+                -<FormatCurrency
                     v-if="auction.transactionFeeLiquidationDai"
                     :value="auction.transactionFeeLiquidationDai"
                     currency="DAI"
