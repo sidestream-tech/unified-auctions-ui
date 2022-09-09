@@ -20,8 +20,11 @@ import {
 } from './constants/UNITS';
 import { getApproximateLiquidationFees } from './fees';
 import { fetchDateByBlockNumber } from './date';
+import memoizee from 'memoizee';
 
-export const fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
+const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
+
+const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
     const contract = await getContract(network, 'CDP_MANAGER');
     const address = await contract.urns(id);
     const collateralTypeHex = await contract.ilks(id);
@@ -35,13 +38,25 @@ export const fetchVaultBase = async (network: string, id: number): Promise<Vault
     };
 };
 
-export const fetchVaultsCount = async (network: string): Promise<BigNumber> => {
+export const fetchVaultBase = memoizee(_fetchVaultBase, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
+
+const _fetchVaultsCount = async (network: string): Promise<BigNumber> => {
     const contract = await getContract(network, 'CDP_MANAGER');
     const countHex = contract.count();
     return new BigNumber(countHex._hex);
 };
 
-export const fetchVaultCollateralParameters = async (
+export const fetchVaultsCount = memoizee(_fetchVaultsCount, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 1,
+});
+
+const _fetchVaultCollateralParameters = async (
     network: string,
     type: CollateralType
 ): Promise<VaultCollateralParameters> => {
@@ -54,7 +69,13 @@ export const fetchVaultCollateralParameters = async (
     };
 };
 
-export const fetchVaultAmount = async (
+export const fetchVaultCollateralParameters = memoizee(_fetchVaultCollateralParameters, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
+
+const _fetchVaultAmount = async (
     network: string,
     type: CollateralType,
     vaultAddress: string
@@ -68,7 +89,13 @@ export const fetchVaultAmount = async (
     };
 };
 
-export const fetchGlobalLiquidationLimits = async (network: string) => {
+export const fetchVaultAmount = memoizee(_fetchVaultAmount, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 3,
+});
+
+const _fetchGlobalLiquidationLimits = async (network: string) => {
     const contract = await getContract(network, 'MCD_DOG');
     const maximumProtocolDebtDaiHex = await contract.Hole();
     const maximumProtocolDebtDai = new BigNumber(maximumProtocolDebtDaiHex._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
@@ -80,7 +107,13 @@ export const fetchGlobalLiquidationLimits = async (network: string) => {
     };
 };
 
-export const fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (network: string, type: string) => {
+export const fetchGlobalLiquidationLimits = memoizee(_fetchGlobalLiquidationLimits, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 1,
+});
+
+const _fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (network: string, type: string) => {
     const contract = await getContract(network, 'MCD_DOG');
     const typeHex = ethers.utils.formatBytes32String(type);
     const { hole, dirt, clip } = await contract.ilks(typeHex);
@@ -91,7 +124,16 @@ export const fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (netwo
     };
 };
 
-export const fetchVault = async (network: string, index: number): Promise<Vault> => {
+export const fetchCollateralLiquidationLimitsAndLiquidatorAddress = memoizee(
+    _fetchCollateralLiquidationLimitsAndLiquidatorAddress,
+    {
+        maxAge: CACHE_EXPIRY_MS,
+        promise: true,
+        length: 2,
+    }
+);
+
+const _fetchVault = async (network: string, index: number): Promise<Vault> => {
     const vaultBase = await fetchVaultBase(network, index);
     const vaultCollateralParameters = await fetchVaultCollateralParameters(network, vaultBase.collateralType);
     const vaultAmount = await fetchVaultAmount(network, vaultBase.collateralType, vaultBase.address);
@@ -107,8 +149,13 @@ export const fetchVault = async (network: string, index: number): Promise<Vault>
         maximumCollateralDebtDai,
     };
 };
+export const fetchVault = memoizee(_fetchVault, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
 
-export const getOsmPrices = async (network: string, type: CollateralType): Promise<OraclePrices> => {
+const _getOsmPrices = async (network: string, type: CollateralType): Promise<OraclePrices> => {
     const contract = await getContract(network, 'OSM_MOM');
     const typeHex = ethers.utils.formatBytes32String(type);
     const provider = await getProvider(network);
@@ -137,14 +184,26 @@ export const getOsmPrices = async (network: string, type: CollateralType): Promi
     };
 };
 
-export const fetchLiquidationRatio = async (network: string, collateralType: CollateralType): Promise<number> => {
+export const getOsmPrices = memoizee(_getOsmPrices, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
+
+const _fetchLiquidationRatio = async (network: string, collateralType: CollateralType): Promise<number> => {
     const contract = await getContract(network, 'MCD_SPOT');
     const collateralTypeAsHex = ethers.utils.formatBytes32String(collateralType);
     const liquidationRatioAsHex = (await contract.ilks(collateralTypeAsHex)).mat;
     return new BigNumber(liquidationRatioAsHex._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS).toNumber();
 };
 
-export const fetchVaultLiquidationIncentive = async (
+export const fetchLiquidationRatio = memoizee(_fetchLiquidationRatio, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
+
+const _fetchVaultLiquidationIncentive = async (
     network: string,
     liquidatiorContractAddress: string,
     debtDai: BigNumber
@@ -166,7 +225,13 @@ export const fetchVaultLiquidationIncentive = async (
     };
 };
 
-export const isVaultLiquidated = async (network: string, vault: Vault) => {
+export const fetchVaultLiquidationIncentive = memoizee(_fetchVaultLiquidationIncentive, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 3,
+});
+
+const _isVaultLiquidated = async (network: string, vault: Vault) => {
     const contract = await getContract(network, 'MCD_DOG');
     const typeHex = ethers.utils.formatBytes32String(vault.collateralType);
     const eventFilter = contract.filters.Bark(typeHex, vault.address, null, null, null, null, null);
@@ -182,8 +247,13 @@ export const isVaultLiquidated = async (network: string, vault: Vault) => {
     }
     return { isLiquidated: false };
 };
+export const isVaultLiquidated = memoizee(_isVaultLiquidated, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
 
-export const enrichVaultWithTransactonInformation = async (
+const _enrichVaultWithTransactonInformation = async (
     network: string,
     vault: Vault
 ): Promise<VaultTransactionNotLiquidated> => {
@@ -230,7 +300,13 @@ export const enrichVaultWithTransactonInformation = async (
     };
 };
 
-export const getVaultTransaction = async (network: string, vault: Vault): Promise<VaultTransaction> => {
+export const enrichVaultWithTransactonInformation = memoizee(_enrichVaultWithTransactonInformation, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
+
+const _getVaultTransaction = async (network: string, vault: Vault): Promise<VaultTransaction> => {
     const { isLiquidated, liquidationDate, transactionHash, auctionId } = await isVaultLiquidated(network, vault);
     if (isLiquidated) {
         return {
@@ -243,3 +319,9 @@ export const getVaultTransaction = async (network: string, vault: Vault): Promis
     }
     return await enrichVaultWithTransactonInformation(network, vault);
 };
+
+export const getVaultTransaction = memoizee(_getVaultTransaction, {
+    maxAge: CACHE_EXPIRY_MS,
+    promise: true,
+    length: 2,
+});
