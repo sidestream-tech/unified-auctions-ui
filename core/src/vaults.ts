@@ -155,7 +155,7 @@ export const fetchVault = memoizee(_fetchVault, {
     length: 2,
 });
 
-const _getOsmPrices = async (network: string, type: CollateralType): Promise<OraclePrices> => {
+const _getOsmPrices = async (network: string, type: CollateralType, amountBlocksToFetchEventFrom: number = 30000): Promise<OraclePrices> => {
     const contract = await getContract(network, 'OSM_MOM');
     const typeHex = ethers.utils.formatBytes32String(type);
     const provider = await getProvider(network);
@@ -164,7 +164,7 @@ const _getOsmPrices = async (network: string, type: CollateralType): Promise<Ora
     const osmContractInterface = await getContractInterfaceByName('OSM');
     const osmContract = new ethers.Contract(osmAddress, osmContractInterface, provider);
     const osmEventFilter = osmContract.filters.LogValue(null);
-    const osmEvents = await osmContract.queryFilter(osmEventFilter, -1000);
+    const osmEvents = await osmContract.queryFilter(osmEventFilter, -amountBlocksToFetchEventFrom);
     const currentUnitCollateralPrice = new BigNumber(osmEvents[osmEvents.length - 1].args?.val);
     const lastPriceUpdateAsHex = await osmContract.zzz();
     const lastPriceUpdateTimestampInSeconds = new BigNumber(lastPriceUpdateAsHex._hex).toNumber();
@@ -174,7 +174,7 @@ const _getOsmPrices = async (network: string, type: CollateralType): Promise<Ora
     const priceFeedContractInterface = await getContractInterfaceByName('MEDIAN_PRICE_FEED');
     const priceFeedContract = new ethers.Contract(priceFeedContractAddress, priceFeedContractInterface, provider);
     const feedEventsFilter = priceFeedContract.filters.LogMedianPrice(null, null);
-    const feedEvents = await priceFeedContract.queryFilter(feedEventsFilter, -1000);
+    const feedEvents = await priceFeedContract.queryFilter(feedEventsFilter, -amountBlocksToFetchEventFrom);
     const nextUnitCollateralPrice = new BigNumber(feedEvents[feedEvents.length - 1].args?.val._hex);
 
     return {
@@ -187,7 +187,7 @@ const _getOsmPrices = async (network: string, type: CollateralType): Promise<Ora
 export const getOsmPrices = memoizee(_getOsmPrices, {
     maxAge: CACHE_EXPIRY_MS,
     promise: true,
-    length: 2,
+    length: 3,
 });
 
 const _fetchLiquidationRatio = async (network: string, collateralType: CollateralType): Promise<number> => {
