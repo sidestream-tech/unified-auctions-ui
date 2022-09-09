@@ -20,6 +20,7 @@ import CDP_MANAGER from './abis/CDP_MANAGER.json';
 import OSM_MOM from './abis/OSM_MOM.json';
 import OSM from './abis/OSM.json'
 import MEDIAN_PRICE_FEED from './abis/MEDIAN_PRICE_FEED.json';
+import MCD_SPOT from './abis/MCD_SPOT.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
@@ -91,6 +92,9 @@ export const getContractInterfaceByName = async function (contractName: string):
     }
     if (contractName === 'MEDIAN_PRICE_FEED') {
         return MEDIAN_PRICE_FEED;
+    }
+    if (contractName === 'MCD_SPOT') {
+        return MCD_SPOT;
     }
     throw new Error(`No contract interface found for "${contractName}"`);
 };
