@@ -42,7 +42,7 @@ storiesOf('Common/Other/AnimatedArrow', module)
     }))
     .add('Big', () => ({
         ...common,
-        template: '<AnimatedArrow :size="64" />',
+        template: '<AnimatedArrow size="64px" />',
     }))
     .add('Up Down Left Right', () => ({
         ...common,

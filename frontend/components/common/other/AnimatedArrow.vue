@@ -6,17 +6,19 @@
 import Vue from 'vue';
 import UpArrow from '~/assets/icons/uparrow.svg';
 
+type ArrowDirections = 'up' | 'down' | 'left' | 'right';
+
 export default Vue.extend({
     components: {
         UpArrow,
     },
     props: {
         size: {
-            type: Number,
-            default: 16,
+            type: String,
+            default: '16px',
         },
         direction: {
-            type: String,
+            type: String as Vue.PropType<ArrowDirections>,
             default: 'up',
         },
     },
@@ -33,7 +35,7 @@ export default Vue.extend({
                 rotationDegree = 90;
             }
             return {
-                height: `${this.size}px`,
+                height: this.size,
                 width: 'auto',
                 transform: `rotate(${rotationDegree}deg)`,
                 transition: 'transform 0.5s linear',
