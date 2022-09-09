@@ -132,13 +132,12 @@ export const fetchLiquidationRatio = async (network: string, collateralType: Col
     return new BigNumber(liquidationRatioAsHex._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS).toNumber();
 };
 
-export const fetchVaultTransactonBase = async (network: string, vault: Vault): Promise<VaultTransactionBase> => {
-    const debtDai = vault.initialDebtDai.multipliedBy(vault.stabilityFeeRate);
-    const { liquidatiorContractAddress } = await fetchCollateralLiquidationLimitsAndLiquidatorAddress(
-        network,
-        vault.collateralType
-    );
-    const liquidatorContractInterface = await getContractInterfaceByName('MCD_CLIP_' + vault.collateralType);
+export const fetchVaultLiquidationIncentive = async (
+    network: string,
+    liquidatiorContractAddress: string,
+    debtDai: BigNumber
+) => {
+    const liquidatorContractInterface = await getContractInterfaceByName('MCD_CLIP_');
     const provider = await getProvider(network);
     const liquidatorContract = new ethers.Contract(liquidatiorContractAddress, liquidatorContractInterface, provider);
     const incentiveConstantDaiHex = await liquidatorContract.tip();
@@ -148,6 +147,27 @@ export const fetchVaultTransactonBase = async (network: string, vault: Vault): P
         .multipliedBy(debtDai);
     const incentiveConstantDai = new BigNumber(incentiveConstantDaiHex._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
     const incentiveCombinedDai = incentiveRelativeDai.plus(incentiveConstantDai);
+    return {
+        incentiveCombinedDai,
+        incentiveConstantDai,
+        incentiveRelativeDai,
+    };
+};
+
+export const enrichVaultWithTransactonBaseInformation = async (
+    network: string,
+    vault: Vault
+): Promise<VaultTransactionBase> => {
+    const debtDai = vault.initialDebtDai.multipliedBy(vault.stabilityFeeRate);
+    const { liquidatiorContractAddress } = await fetchCollateralLiquidationLimitsAndLiquidatorAddress(
+        network,
+        vault.collateralType
+    );
+    const { incentiveCombinedDai, incentiveConstantDai, incentiveRelativeDai } = await fetchVaultLiquidationIncentive(
+        network,
+        liquidatiorContractAddress,
+        debtDai
+    );
 
     const liquidationRatio = await fetchLiquidationRatio(network, vault.collateralType);
     const collateralizationRatio = vault.collateralAmount
