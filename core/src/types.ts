@@ -308,7 +308,7 @@ export declare interface OraclePrices {
 
 export declare interface VaultTransactionLiquidated extends VaultBase {
     state: 'liquidated';
-    liqudiationDate: Date;
+    liquidationDate: Date;
     transactionHash: string;
     auctionId: string;
 }

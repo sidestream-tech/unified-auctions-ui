@@ -8,17 +8,24 @@ import {
     Vault,
     OraclePrices,
     VaultTransactionNotLiquidated,
+    VaultTransaction,
 } from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
-import { RAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import {
+    DAI_NUMBER_OF_DIGITS,
+    RAD_NUMBER_OF_DIGITS,
+    RAY_NUMBER_OF_DIGITS,
+    WAD_NUMBER_OF_DIGITS,
+} from './constants/UNITS';
 import { getApproximateLiquidationFees } from './fees';
 import { fetchDateByBlockNumber } from './date';
 
 export const fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
     const contract = await getContract(network, 'CDP_MANAGER');
     const address = await contract.urns(id);
-    const collateralType = await contract.ilks(id);
+    const collateralTypeHex = await contract.ilks(id);
+    const collateralType = ethers.utils.parseBytes32String(collateralTypeHex);
     return {
         id,
         address,
@@ -42,8 +49,8 @@ export const fetchVaultCollateralParameters = async (
     const typeHex = ethers.utils.formatBytes32String(type);
     const { rate, spot } = await contract.ilks(typeHex);
     return {
-        stabilityFeeRate: rate,
-        minUnitPrice: spot,
+        stabilityFeeRate: new BigNumber(rate._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS),
+        minUnitPrice: new BigNumber(spot._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS),
     };
 };
 
@@ -56,17 +63,17 @@ export const fetchVaultAmount = async (
     const typeHex = ethers.utils.formatBytes32String(type);
     const { ink, art } = await contract.urns(typeHex, vaultAddress);
     return {
-        initialDebtDai: art,
-        collateralAmount: ink,
+        initialDebtDai: new BigNumber(art._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS),
+        collateralAmount: new BigNumber(ink._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS),
     };
 };
 
 export const fetchGlobalLiquidationLimits = async (network: string) => {
     const contract = await getContract(network, 'MCD_DOG');
     const maximumProtocolDebtDaiHex = await contract.Hole();
-    const maximumProtocolDebtDai = new BigNumber(maximumProtocolDebtDaiHex._hex);
-    const currentProtocolDebtDaiHex = await contract.Hole();
-    const currentProtocolDebtDai = new BigNumber(currentProtocolDebtDaiHex._hex);
+    const maximumProtocolDebtDai = new BigNumber(maximumProtocolDebtDaiHex._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
+    const currentProtocolDebtDaiHex = await contract.Dirt();
+    const currentProtocolDebtDai = new BigNumber(currentProtocolDebtDaiHex._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
     return {
         currentProtocolDebtDai,
         maximumProtocolDebtDai,
@@ -77,7 +84,11 @@ export const fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (netwo
     const contract = await getContract(network, 'MCD_DOG');
     const typeHex = ethers.utils.formatBytes32String(type);
     const { hole, dirt, clip } = await contract.ilks(typeHex);
-    return { currentCollateralDebtDai: dirt, maximumCollateralDebtDai: hole, liquidatiorContractAddress: clip };
+    return {
+        currentCollateralDebtDai: new BigNumber(dirt._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
+        maximumCollateralDebtDai: new BigNumber(hole._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
+        liquidatiorContractAddress: clip,
+    };
 };
 
 export const fetchVault = async (network: string, index: number): Promise<Vault> => {
@@ -113,7 +124,7 @@ export const getOsmPrices = async (network: string, type: CollateralType): Promi
     const priceUpdateFrequencyInSeconds = await osmContract.hop();
 
     const priceFeedContractAddress = await osmContract.src();
-    const priceFeedContractInterface = await getContractInterfaceByName('MEDIAN');
+    const priceFeedContractInterface = await getContractInterfaceByName('MEDIAN_PRICE_FEED');
     const priceFeedContract = new ethers.Contract(priceFeedContractAddress, priceFeedContractInterface, provider);
     const feedEventsFilter = priceFeedContract.filters.LogMedianPrice(null, null);
     const feedEvents = await priceFeedContract.queryFilter(feedEventsFilter, -1000);
@@ -164,7 +175,7 @@ export const isVaultLiquidated = async (network: string, vault: Vault) => {
         const latestEvent = liquidationEvents[liquidationEvents.length - 1];
         return {
             isLiquidated: true,
-            liquidationDate: fetchDateByBlockNumber(network, latestEvent.blockNumber),
+            liquidationDate: await fetchDateByBlockNumber(network, latestEvent.blockNumber),
             transactionHash: latestEvent.transactionHash,
             auctionId: latestEvent.args?.id,
         };
@@ -193,12 +204,12 @@ export const enrichVaultWithTransactonInformation = async (
         .multipliedBy(liquidationRatio)
         .dividedBy(debtDai)
         .toNumber();
-    const proximityToLiquidation = liquidationRatio - collateralizationRatio;
+    const proximityToLiquidation = collateralizationRatio - liquidationRatio;
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
     const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(network, vault.collateralType);
-    const state = collateralizationRatio < 0 ? 'liquidatable' : 'not-liquidatable';
+    const state = proximityToLiquidation < 0 ? 'liquidatable' : 'not-liquidatable';
     return {
         ...vault,
         liquidationRatio,
@@ -219,13 +230,14 @@ export const enrichVaultWithTransactonInformation = async (
     };
 };
 
-export const getVaultTransaction = async (network: string, vault: Vault) => {
+export const getVaultTransaction = async (network: string, vault: Vault): Promise<VaultTransaction> => {
     const { isLiquidated, liquidationDate, transactionHash, auctionId } = await isVaultLiquidated(network, vault);
     if (isLiquidated) {
         return {
+            ...vault,
             state: 'liquidated',
-            liquidationDate,
-            transactionHash,
+            liquidationDate: liquidationDate as Date,
+            transactionHash: transactionHash as string,
             auctionId,
         };
     }
