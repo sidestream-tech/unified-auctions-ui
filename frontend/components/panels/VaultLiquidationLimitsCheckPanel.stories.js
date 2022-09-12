@@ -1,24 +1,19 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
+import { getAllCollateralTypes } from 'auctions-core/src/constants/COLLATERALS.ts';
 import VaultLiquidationLimitsCheckPanel from './VaultLiquidationLimitsCheckPanel';
-import { generateFakeVaultNotLiquidatedTransaction } from '~/helpers/generateFakeVault';
+import { generateFakeLiquidationLimits } from '~/helpers/generateFakeVault';
 
-const fakeVaultLiquidationTransaction = generateFakeVaultNotLiquidatedTransaction();
-const liquidationLimits = {
-    maximumProtocolDebtDai: fakeVaultLiquidationTransaction.maximumProtocolDebtDai,
-    currentProtocolDebtDai: fakeVaultLiquidationTransaction.currentProtocolDebtDai,
-    maximumCollateralDebtDai: fakeVaultLiquidationTransaction.maximumCollateralDebtDai,
-    currentCollateralDebtDai: fakeVaultLiquidationTransaction.currentCollateralDebtDai,
-};
+const COLLATERALS = getAllCollateralTypes();
 
 const common = {
     components: { VaultLiquidationLimitsCheckPanel },
     data() {
         return {
-            collateralType: fakeVaultLiquidationTransaction.collateralType,
+            collateralType: faker.helpers.randomize(COLLATERALS),
             debtDai: new BigNumber(0),
-            liquidationLimits,
+            liquidationLimits: generateFakeLiquidationLimits(),
             isExplanationsShown: true,
             isRefreshing: false,
         };
@@ -38,12 +33,39 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
     .add('Default', () => ({
         ...common,
     }))
+    .add('Expert Mode', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                isExplanationsShown: false,
+            };
+        },
+    }))
     .add('Global Limits Reached', () => ({
         ...common,
         data() {
             return {
                 ...common.data(),
                 debtDai: new BigNumber(faker.finance.amount(1000)),
+            };
+        },
+    }))
+    .add('Undefined Liquidation Limits', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                liquidationLimits: undefined,
+            };
+        },
+    }))
+    .add('Refreshing', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                isRefreshing: true,
             };
         },
     }));

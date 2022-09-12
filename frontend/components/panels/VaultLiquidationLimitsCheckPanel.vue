@@ -44,12 +44,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
+import { LiquidationLimits } from 'auctions-core/src/types';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Explain from '~/components/common/other/Explain.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import BasePanel from '~/components/common/other/BasePanel.vue';
-import { LiquidationLimits } from '~/../core/src/types';
 
 export default Vue.extend({
     name: 'VaultLiquidationLimitsCheckPanel',
@@ -93,25 +93,28 @@ export default Vue.extend({
                 .minus(this.liquidationLimits.currentCollateralDebtDai)
                 .minus(this.debtDai);
         },
-        isGlobalLimitsReached(): Boolean {
-            if (this.globalDifference.isNegative()) {
-                return true;
-            }
-            if (this.collateralDifference.isNegative()) {
-                return true;
-            }
-            return false;
-        },
         currentStateAndTitle(): PanelProps {
-            if (this.isGlobalLimitsReached) {
+            if (!this.liquidationLimits) {
+                return {
+                    name: 'inactive',
+                    title: 'No liquidation limits are provided',
+                };
+            }
+            if (this.globalDifference.isNegative()) {
                 return {
                     name: 'incorrect',
-                    title: 'Current global liquidation limits are reached',
+                    title: 'Current global liquidation limits are reached, please wait for them to lower',
+                };
+            }
+            if (this.collateralDifference.isNegative()) {
+                return {
+                    name: 'incorrect',
+                    title: `Current ${this.collateralType} liquidation limits are reached, please wait for them to lower`,
                 };
             }
             return {
                 name: 'correct',
-                title: 'Current global liquidation limits are not reached',
+                title: `Current global and ${this.collateralType} liquidation limits are not reached`,
             };
         },
     },
