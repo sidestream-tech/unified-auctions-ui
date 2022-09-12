@@ -30,10 +30,11 @@
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="nextPriceChange" slot-scope="nextPriceChange">
-                <template v-if="nextPriceChange">
+            <div slot="nextPriceChange" slot-scope="nextPriceChange, record">
+                <div v-if="nextPriceChange" class="flex items-center space-x-2">
+                    <AnimatedArrow :direction="getIsPriceGoingUpOrDown(record)" class="h-4 opacity-50" />
                     <TimeTill :date="nextPriceChange" />
-                </template>
+                </div>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="updatingStatus" class="opacity-50 font-normal">
@@ -63,8 +64,9 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
-import { Auction, VaultTransaction } from 'auctions-core/src/types';
+import { Auction, VaultTransaction, VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import { compareAsc } from 'date-fns';
+import AnimatedArrow from '../common/other/AnimatedArrow.vue';
 import Loading from '~/components/common/other/Loading.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
@@ -94,6 +96,7 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
 export default Vue.extend({
     name: 'VaultsTable',
     components: {
+        AnimatedArrow,
         Loading,
         Table,
         TimeTill,
@@ -218,8 +221,14 @@ export default Vue.extend({
             });
             return `/vaults?${searchParams.toString()}`;
         },
-        getIsVaultFinished(auction: VaultTransaction) {
-            return auction.state !== 'liquidated';
+        getIsVaultFinished(vault: VaultTransaction) {
+            return vault.state !== 'liquidated';
+        },
+        getIsPriceGoingUpOrDown(vault: VaultTransactionNotLiquidated) {
+            if (vault.nextUnitPrice > vault.currentUnitPrice) {
+                return 'up';
+            }
+            return 'down';
         },
     },
 });
