@@ -25,6 +25,7 @@ import fetchLatestBlockNumber from './helpers/blockNumber';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 const EVENTS_PER_RPC_REQUEST = 100000;
+const EVENTS_ON_FIRST_RPC_REQUEST = 200;
 
 const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
     const contract = await getContract(network, 'CDP_MANAGER');
@@ -157,10 +158,7 @@ export const fetchVault = memoizee(_fetchVault, {
     length: 2,
 });
 
-const _getOsmPrices = async (
-    network: string,
-    type: CollateralType,
-): Promise<OraclePrices> => {
+const _getOsmPrices = async (network: string, type: CollateralType): Promise<OraclePrices> => {
     const contract = await getContract(network, 'OSM_MOM');
     const typeHex = ethers.utils.formatBytes32String(type);
     const provider = await getProvider(network);
@@ -172,17 +170,15 @@ const _getOsmPrices = async (
     const osmContract = new ethers.Contract(osmAddress, osmContractInterface, provider);
     const osmEventFilter = osmContract.filters.LogValue(null);
     let osmEvents: Array<Event> = [];
+    let fromBlock = -EVENTS_ON_FIRST_RPC_REQUEST;
+    let toBlock = undefined;
     while (osmEvents.length === 0 && latestBlockNumber > rpcEventFilterSegmentIndex * EVENTS_PER_RPC_REQUEST) {
-        const fromBlock =-EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1);
-        const toBlock = rpcEventFilterSegmentIndex ? -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex : undefined;
-        osmEvents = await osmContract.queryFilter(
-            osmEventFilter,
-            fromBlock,
-            toBlock
-        );
+        osmEvents = await osmContract.queryFilter(osmEventFilter, fromBlock, toBlock);
         rpcEventFilterSegmentIndex += 1;
+        fromBlock = -EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1) - EVENTS_ON_FIRST_RPC_REQUEST;
+        toBlock = -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex - EVENTS_ON_FIRST_RPC_REQUEST;
     }
-    console.log(rpcEventFilterSegmentIndex)
+    console.log(rpcEventFilterSegmentIndex);
     const currentUnitCollateralPrice = new BigNumber(osmEvents[osmEvents.length - 1].args?.val).shiftedBy(
         -WAD_NUMBER_OF_DIGITS
     );
@@ -197,17 +193,15 @@ const _getOsmPrices = async (
 
     let feedEvents: Array<Event> = [];
     rpcEventFilterSegmentIndex = 0;
+    fromBlock = -EVENTS_ON_FIRST_RPC_REQUEST;
+    toBlock = undefined;
     while (feedEvents.length === 0 && latestBlockNumber > rpcEventFilterSegmentIndex * EVENTS_PER_RPC_REQUEST) {
-        const fromBlock =-EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1);
-        const toBlock = rpcEventFilterSegmentIndex ? -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex : undefined;
-        feedEvents = await priceFeedContract.queryFilter(
-            feedEventsFilter,
-            fromBlock,
-            toBlock
-        );
+        feedEvents = await priceFeedContract.queryFilter(feedEventsFilter, fromBlock, toBlock);
         rpcEventFilterSegmentIndex += 1;
+        fromBlock = -EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1) - EVENTS_ON_FIRST_RPC_REQUEST;
+        toBlock = -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex - EVENTS_ON_FIRST_RPC_REQUEST;
     }
-    console.log(rpcEventFilterSegmentIndex)
+    console.log(rpcEventFilterSegmentIndex);
 
     const nextUnitCollateralPrice = new BigNumber(feedEvents[feedEvents.length - 1].args?.val._hex).shiftedBy(
         -WAD_NUMBER_OF_DIGITS
