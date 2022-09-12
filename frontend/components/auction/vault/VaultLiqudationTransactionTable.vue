@@ -11,9 +11,9 @@
         </div>
         <div class="flex justify-between">
             <div>Next price update</div>
-            <div>
-                <!--AnimatedArrow-->
-                in <TimeTill :date="auction.nextPriceChange" />
+            <div class="flex items-center space-x-1">
+                <AnimatedArrow :direction="getIsPriceGoingUpOrDown" class="h-3" />
+                <span>in <TimeTill :date="auction.nextPriceChange" /></span>
             </div>
         </div>
         <div class="flex justify-between">
@@ -82,26 +82,39 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import type { VaultTransaction } from 'auctions-core/src/types';
+import { VaultTransactionNotLiquidated } from 'auctions-core/src/types';
+import { formatToAutomaticDecimalPoints } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import Explain from '~/components/common/other/Explain.vue';
+import AnimatedArrow, { ArrowDirections } from '~/components/common/other/AnimatedArrow.vue';
 
 export default Vue.extend({
     components: {
         TimeTill,
         FormatCurrency,
         Explain,
+        AnimatedArrow,
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<VaultTransaction>,
+            type: Object as Vue.PropType<VaultTransactionNotLiquidated>,
             required: true,
         },
     },
     computed: {
         incentiveRelativePercentage(): String {
-            return this.auction.incentiveRelativeDai.div(this.auction.debtDai).times(100).toFixed(2) + '%';
+            return (
+                formatToAutomaticDecimalPoints(
+                    this.auction.incentiveRelativeDai.div(this.auction.debtDai).times(100)
+                ) + '%'
+            );
+        },
+        getIsPriceGoingUpOrDown(): ArrowDirections {
+            if (this.auction.nextUnitPrice.isGreaterThan(this.auction.currentUnitPrice)) {
+                return 'up';
+            }
+            return 'down';
         },
     },
 });
