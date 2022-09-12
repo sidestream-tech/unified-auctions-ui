@@ -63,7 +63,7 @@ export default Vue.extend({
     props: {
         liquidationLimits: {
             type: Object as Vue.PropType<LiquidationLimits>,
-            required: true,
+            default: undefined,
         },
         debtDai: {
             type: BigNumber,
