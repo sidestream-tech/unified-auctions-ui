@@ -13,14 +13,18 @@
             class="VaultsTable relative overflow-visible"
         >
             <div slot="collateralAmount" slot-scope="collateralAmount, record">
-                <format-currency v-if="collateralAmount" :value="collateralAmount" :currency="record.collateralType" />
+                <format-currency
+                    v-if="collateralAmount && record.collateralType"
+                    :value="collateralAmount"
+                    :currency="record.collateralType"
+                />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="proximityToLiquidation" slot-scope="proximityToLiquidation">
                 <template v-if="proximityToLiquidation"> {{ proximityToLiquidation }}% </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="unitPrice" slot-scope="grossProfitDai">
+            <div slot="grossProfitDai" slot-scope="grossProfitDai">
                 <template v-if="grossProfitDai">
                     <format-currency :value="grossProfitDai" currency="DAI" />
                 </template>
@@ -48,10 +52,8 @@
                     "
                     class="flex items-center justify-center w-full h-full hover:text-white p-2 whitespace-nowrap"
                 >
-                    <span v-if="record.state === 'collected'"> See details </span>
-                    <span v-else-if="record.state === 'requires-restart'"> Restart </span>
-                    <span v-else-if="record.state === 'ready-for-collection'"> Collect MKR </span>
-                    <span v-else> Participate </span>
+                    <span v-if="record.state === 'liquidatable'"> Liquidate </span>
+                    <span v-else> See details </span>
                 </nuxt-link>
             </div>
         </Table>
@@ -76,7 +78,7 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
         if (aVault.state === 'liquidated') {
             return greaterVal;
         }
-        if (bVault.isActive === 'liquidated') {
+        if (bVault.state === 'liquidated') {
             return -greaterVal;
         }
         if (typeof aVal === 'undefined') {
@@ -158,6 +160,7 @@ export default Vue.extend({
                     dataIndex: 'proximityToLiquidation',
                     scopedSlots: { customRender: 'proximityToLiquidation' },
                     sorter: compareBy('proximityToLiquidation'),
+                    defaultSortOrder: 'ascend',
                 },
                 {
                     title: 'Potential profit',
