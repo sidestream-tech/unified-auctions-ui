@@ -30,9 +30,13 @@
                         <tr>
                             <td>Next price update</td>
                             <td>
-                                <template v-if="vaultTransaction.nextPriceChange">
-                                    in <TimeTill :date="vaultTransaction.nextPriceChange" />
-                                </template>
+                                <div v-if="vaultTransaction.nextPriceChange" class="flex items-center space-x-1">
+                                    <AnimatedArrow
+                                        :direction="getIsPriceGoingUpOrDown(vaultTransaction)"
+                                        class="h-4 opacity-50"
+                                    />
+                                    <span>in <TimeTill :date="vaultTransaction.nextPriceChange" /></span>
+                                </div>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
@@ -135,11 +139,12 @@
 </template>
 
 <script lang="ts">
-import type { VaultTransaction } from 'auctions-core/src/types';
+import type { VaultTransaction, VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert, Tooltip } from 'ant-design-vue';
 import TimeTill from '../common/formatters/TimeTill.vue';
 import { generateLink } from '../../helpers/generateLink';
+import AnimatedArrow from '../common/other/AnimatedArrow.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Button from '~/components/common/inputs/BaseButton.vue';
 import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
@@ -150,6 +155,7 @@ import AnimatedNumber from '~/components/common/formatters/AnimatedNumber.vue';
 export default Vue.extend({
     name: 'Vault',
     components: {
+        AnimatedArrow,
         TimeTill,
         Loading,
         FormatCurrency,
@@ -234,6 +240,12 @@ export default Vue.extend({
     methods: {
         toggleExpandable(): void {
             this.isTableExpanded = !this.isTableExpanded;
+        },
+        getIsPriceGoingUpOrDown(vault: VaultTransactionNotLiquidated) {
+            if (vault.nextUnitPrice > vault.currentUnitPrice) {
+                return 'up';
+            }
+            return 'down';
         },
     },
 });
