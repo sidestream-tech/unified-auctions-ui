@@ -129,7 +129,7 @@ describe('Vaults', () => {
             network: TEST_NETWORK,
 
             lastSyncedAt: new Date(),
-            nextPriceChange: undefined,
+            nextPriceChange: new Date('2022-06-13T11:00:00.000Z'),
 
             liquidationRatio: 1.7,
             collateralizationRatio: 1.698313241866927,
@@ -151,7 +151,7 @@ describe('Vaults', () => {
             transactionFeeLiquidationDai: new BigNumber('12.13033371206823860131666558500731154'),
             debtDai: new BigNumber('8973.717449711589422115275593184791275895341629034'),
             collateralAmount: new BigNumber('12.42'),
-            currentUnitPrice: new BigNumber('1687.413632944418846403'),
+            currentUnitPrice: new BigNumber('1227.067888375'),
             nextUnitPrice: undefined,
             initialDebtDai: new BigNumber('8851.309396336731694851'),
         };
