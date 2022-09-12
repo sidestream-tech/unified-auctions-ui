@@ -112,7 +112,9 @@ describe('Vaults', () => {
         const vaultTransaction = (await getVaultTransaction(TEST_NETWORK, vault)) as VaultTransactionLiquidated;
         expect(vaultTransaction.state).to.eq('liquidated');
         expect(vaultTransaction.auctionId).to.eq('726');
-        expect(vaultTransaction.transactionHash).to.eq('0x3f66c60e348c8df6da2ed4474e212be13401a865bca4a35d046be44fc2f3f1b9');
+        expect(vaultTransaction.transactionHash).to.eq(
+            '0x3f66c60e348c8df6da2ed4474e212be13401a865bca4a35d046be44fc2f3f1b9'
+        );
         expect(vaultTransaction.liquidationDate.toISOString()).to.eq('2022-06-13T10:04:52.000Z');
     });
     it('Fetches non-liquidated vault', async () => {

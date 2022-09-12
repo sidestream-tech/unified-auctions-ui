@@ -18,7 +18,7 @@ import UNISWAP from './abis/UNISWAP_V2_ROUTER_02.json';
 import MCD_VOW from './abis/MCD_VOW.json';
 import CDP_MANAGER from './abis/CDP_MANAGER.json';
 import OSM_MOM from './abis/OSM_MOM.json';
-import OSM from './abis/OSM.json'
+import OSM from './abis/OSM.json';
 import MEDIAN_PRICE_FEED from './abis/MEDIAN_PRICE_FEED.json';
 import MCD_SPOT from './abis/MCD_SPOT.json';
 import getSigner from './signer';

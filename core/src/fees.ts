@@ -38,8 +38,8 @@ export const getApproximateLiquidationFees = async function (network: string): P
     return {
         transactionFeeLiquidationEth,
         transactionFeeLiquidationDai: await convertETHtoDAI(network, transactionFeeLiquidationEth),
-    }
-}
+    };
+};
 
 export const enrichAuctionWithTransactionFees = async function (
     auction: Auction,
