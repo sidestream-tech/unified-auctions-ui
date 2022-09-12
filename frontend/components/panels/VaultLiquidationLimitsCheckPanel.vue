@@ -5,15 +5,15 @@
         <div class="flex justify-between mt-4">
             <span>Current global limit</span>
             <span v-if="!isGlobalLimitMissing"
-                ><Explain :text="fortmat(liquidationLimits.maximumProtocolDebtDai)"
+                ><Explain :text="format(liquidationLimits.maximumProtocolDebtDai)"
                     >The maximum amount of DAI allowed to cover the debt and fees of all active auctions</Explain
                 >
                 -
-                <Explain :text="fortmat(liquidationLimits.currentProtocolDebtDai)"
+                <Explain :text="format(liquidationLimits.currentProtocolDebtDai)"
                     >The amount of DAI needed to cover the debt and fees of all active auctions</Explain
                 >
                 -
-                <Explain :text="fortmat(debtDai)">The amount of DAI that will be auctioned after liquidation</Explain>
+                <Explain :text="format(debtDai)">The amount of DAI that will be auctioned after liquidation</Explain>
                 = <FormatCurrency :value="globalDifference" currency="DAI"
             /></span>
             <div v-else>
@@ -24,17 +24,17 @@
         <div class="flex justify-between">
             <span>Current {{ collateralType }} limit</span>
             <span v-if="!isCollateralLimitMissing"
-                ><Explain :text="fortmat(liquidationLimits.maximumCollateralDebtDai)"
+                ><Explain :text="format(liquidationLimits.maximumCollateralDebtDai)"
                     >The maximum amount of DAI allowed to cover the debt and fees of all active
                     {{ collateralType }} auctions</Explain
                 >
                 -
-                <Explain :text="fortmat(liquidationLimits.currentCollateralDebtDai)"
+                <Explain :text="format(liquidationLimits.currentCollateralDebtDai)"
                     >The amount of DAI needed to cover the debt and fees of all active
                     {{ collateralType }} auctions</Explain
                 >
                 -
-                <Explain :text="fortmat(debtDai)">The amount of DAI that will be auctioned after liquidation</Explain>
+                <Explain :text="format(debtDai)">The amount of DAI that will be auctioned after liquidation</Explain>
                 = <FormatCurrency :value="collateralDifference" currency="DAI"
             /></span>
             <div v-else>
@@ -142,7 +142,7 @@ export default Vue.extend({
         },
     },
     methods: {
-        fortmat(value: BigNumber): string {
+        format(value: BigNumber): string {
             return formatToAutomaticDecimalPoints(value);
         },
     },
