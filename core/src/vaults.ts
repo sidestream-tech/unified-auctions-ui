@@ -178,7 +178,6 @@ const _getOsmPrices = async (network: string, type: CollateralType): Promise<Ora
         fromBlock = -EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1) - EVENTS_ON_FIRST_RPC_REQUEST;
         toBlock = -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex - EVENTS_ON_FIRST_RPC_REQUEST;
     }
-    console.log(rpcEventFilterSegmentIndex);
     const currentUnitCollateralPrice = new BigNumber(osmEvents[osmEvents.length - 1].args?.val).shiftedBy(
         -WAD_NUMBER_OF_DIGITS
     );
@@ -201,7 +200,6 @@ const _getOsmPrices = async (network: string, type: CollateralType): Promise<Ora
         fromBlock = -EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1) - EVENTS_ON_FIRST_RPC_REQUEST;
         toBlock = -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex - EVENTS_ON_FIRST_RPC_REQUEST;
     }
-    console.log(rpcEventFilterSegmentIndex);
 
     const nextUnitCollateralPrice = new BigNumber(feedEvents[feedEvents.length - 1].args?.val._hex).shiftedBy(
         -WAD_NUMBER_OF_DIGITS
