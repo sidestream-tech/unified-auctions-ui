@@ -294,7 +294,7 @@ export const actions = {
         }
     },
     async kirill(): Promise<void> {
-        await fetchVatVault('custom', 'ETH-A', '0x95dc6d7ED8991facab34159D8231e04247dfaf65')
+        await fetchVatVault('custom', 'ETH-A', '0x95dc6d7ED8991facab34159D8231e04247dfaf65');
     },
     setup({ commit, dispatch }: ActionContext<State, State>): void {
         commit('reset');
