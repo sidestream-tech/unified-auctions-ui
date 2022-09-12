@@ -13,13 +13,9 @@ export default Vue.extend({
         UpArrow,
     },
     props: {
-        size: {
-            type: String,
-            default: '16px',
-        },
         direction: {
             type: String as Vue.PropType<ArrowDirections>,
-            default: 'up',
+            required: true,
         },
     },
     computed: {
@@ -35,8 +31,6 @@ export default Vue.extend({
                 rotationDegree = 90;
             }
             return {
-                height: this.size,
-                width: 'auto',
                 transform: `rotate(${rotationDegree}deg)`,
                 transition: 'transform 0.5s linear',
             };
