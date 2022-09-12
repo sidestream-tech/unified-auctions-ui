@@ -21,6 +21,8 @@ import {
 import { getApproximateLiquidationFees } from './fees';
 import { fetchDateByBlockNumber } from './date';
 import memoizee from 'memoizee';
+import { getMarketPrice } from './calleeFunctions';
+import { getCollateralConfigByType } from './constants/COLLATERALS';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
@@ -155,7 +157,18 @@ export const fetchVault = memoizee(_fetchVault, {
     length: 2,
 });
 
-const _getOsmPrices = async (network: string, type: CollateralType, amountBlocksToFetchEventFrom: number = 30000): Promise<OraclePrices> => {
+const isListEmpty = (list: Array<any>) => {
+    if (list.length === 0) {
+        return true;
+    }
+    return false;
+};
+
+const _getOsmPrices = async (
+    network: string,
+    type: CollateralType,
+    amountLatestBlocksToFetchEventFrom: number = 100000
+): Promise<OraclePrices> => {
     const contract = await getContract(network, 'OSM_MOM');
     const typeHex = ethers.utils.formatBytes32String(type);
     const provider = await getProvider(network);
@@ -164,8 +177,15 @@ const _getOsmPrices = async (network: string, type: CollateralType, amountBlocks
     const osmContractInterface = await getContractInterfaceByName('OSM');
     const osmContract = new ethers.Contract(osmAddress, osmContractInterface, provider);
     const osmEventFilter = osmContract.filters.LogValue(null);
-    const osmEvents = await osmContract.queryFilter(osmEventFilter, -amountBlocksToFetchEventFrom);
-    const currentUnitCollateralPrice = new BigNumber(osmEvents[osmEvents.length - 1].args?.val);
+    const osmEvents = await osmContract.queryFilter(osmEventFilter, -amountLatestBlocksToFetchEventFrom);
+    if (isListEmpty(osmEvents)) {
+        return {
+            currentUnitPrice: await getMarketPrice(network, getCollateralConfigByType(type).symbol),
+            nextUnitPrice: undefined,
+            nextPriceChange: undefined,
+        };
+    }
+    const currentUnitCollateralPrice = new BigNumber(osmEvents[osmEvents.length - 1].args?.val).shiftedBy(-WAD_NUMBER_OF_DIGITS);
     const lastPriceUpdateAsHex = await osmContract.zzz();
     const lastPriceUpdateTimestampInSeconds = new BigNumber(lastPriceUpdateAsHex._hex).toNumber();
     const priceUpdateFrequencyInSeconds = await osmContract.hop();
@@ -174,8 +194,15 @@ const _getOsmPrices = async (network: string, type: CollateralType, amountBlocks
     const priceFeedContractInterface = await getContractInterfaceByName('MEDIAN_PRICE_FEED');
     const priceFeedContract = new ethers.Contract(priceFeedContractAddress, priceFeedContractInterface, provider);
     const feedEventsFilter = priceFeedContract.filters.LogMedianPrice(null, null);
-    const feedEvents = await priceFeedContract.queryFilter(feedEventsFilter, -amountBlocksToFetchEventFrom);
-    const nextUnitCollateralPrice = new BigNumber(feedEvents[feedEvents.length - 1].args?.val._hex);
+    const feedEvents = await priceFeedContract.queryFilter(feedEventsFilter, -amountLatestBlocksToFetchEventFrom);
+    if (isListEmpty(feedEvents)) {
+        return {
+            currentUnitPrice: await getMarketPrice(network, getCollateralConfigByType(type).symbol),
+            nextUnitPrice: undefined,
+            nextPriceChange: undefined,
+        };
+    }
+    const nextUnitCollateralPrice = new BigNumber(feedEvents[feedEvents.length - 1].args?.val._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
 
     return {
         currentUnitPrice: currentUnitCollateralPrice,
@@ -237,12 +264,13 @@ const _isVaultLiquidated = async (network: string, vault: Vault) => {
     const eventFilter = contract.filters.Bark(typeHex, vault.address, null, null, null, null, null);
     const liquidationEvents = await contract.queryFilter(eventFilter);
     if (liquidationEvents.length !== 0 && vault.initialDebtDai.eq(0)) {
+        // there was a liquidation and the vault was not used again
         const latestEvent = liquidationEvents[liquidationEvents.length - 1];
         return {
             isLiquidated: true,
             liquidationDate: await fetchDateByBlockNumber(network, latestEvent.blockNumber),
             transactionHash: latestEvent.transactionHash,
-            auctionId: latestEvent.args?.id,
+            auctionId: new BigNumber(latestEvent.args?.id._hex).toFixed(),
         };
     }
     return { isLiquidated: false };
@@ -314,7 +342,7 @@ const _getVaultTransaction = async (network: string, vault: Vault): Promise<Vaul
             state: 'liquidated',
             liquidationDate: liquidationDate as Date,
             transactionHash: transactionHash as string,
-            auctionId,
+            auctionId: auctionId as string,
         };
     }
     return await enrichVaultWithTransactonInformation(network, vault);
