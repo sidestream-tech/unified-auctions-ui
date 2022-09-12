@@ -4,11 +4,17 @@
         <TextBlock v-if="isExplanationsShown"></TextBlock>
         <div class="flex justify-between mt-4">
             <span>Current global limit</span>
-            <span v-if="liquidationLimits"
-                ><Explain :text="liquidationLimits.maximumProtocolDebtDai.toFixed()"></Explain> -
-                <Explain :text="liquidationLimits.currentProtocolDebtDai.toFixed()"></Explain> -
-                <Explain :text="debtDai.toFixed()"></Explain> =
-                <FormatCurrency :value="globalDifference" currency="DAI"
+            <span v-if="!isGlobalLimitMissing"
+                ><Explain :text="fortmat(liquidationLimits.maximumProtocolDebtDai)"
+                    >The maximum amount of DAI allowed to cover the debt and fees of all active auctions</Explain
+                >
+                -
+                <Explain :text="fortmat(liquidationLimits.currentProtocolDebtDai)"
+                    >The amount of DAI needed to cover the debt and fees of all active auctions</Explain
+                >
+                -
+                <Explain :text="fortmat(debtDai)">The amount of DAI that will be auctioned after liquidation</Explain>
+                = <FormatCurrency :value="globalDifference" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -17,11 +23,19 @@
         </div>
         <div class="flex justify-between">
             <span>Current {{ collateralType }} limit</span>
-            <span v-if="liquidationLimits"
-                ><Explain :text="liquidationLimits.maximumCollateralDebtDai.toFixed()"></Explain> -
-                <Explain :text="liquidationLimits.currentCollateralDebtDai.toFixed()"></Explain> -
-                <Explain :text="debtDai.toFixed()"></Explain> =
-                <FormatCurrency :value="collateralDifference" currency="DAI"
+            <span v-if="!isCollateralLimitMissing"
+                ><Explain :text="fortmat(liquidationLimits.maximumCollateralDebtDai)"
+                    >The maximum amount of DAI allowed to cover the debt and fees of all active
+                    {{ collateralType }} auctions</Explain
+                >
+                -
+                <Explain :text="fortmat(liquidationLimits.currentCollateralDebtDai)"
+                    >The amount of DAI needed to cover the debt and fees of all active
+                    {{ collateralType }} auctions</Explain
+                >
+                -
+                <Explain :text="fortmat(debtDai)">The amount of DAI that will be auctioned after liquidation</Explain>
+                = <FormatCurrency :value="collateralDifference" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -45,6 +59,7 @@
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { LiquidationLimits } from 'auctions-core/src/types';
+import { formatToAutomaticDecimalPoints } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Explain from '~/components/common/other/Explain.vue';
@@ -63,7 +78,7 @@ export default Vue.extend({
     props: {
         liquidationLimits: {
             type: Object as Vue.PropType<LiquidationLimits>,
-            default: undefined,
+            required: true,
         },
         debtDai: {
             type: BigNumber,
@@ -93,29 +108,42 @@ export default Vue.extend({
                 .minus(this.liquidationLimits.currentCollateralDebtDai)
                 .minus(this.debtDai);
         },
+        isGlobalLimitMissing(): boolean {
+            return !this.liquidationLimits.maximumProtocolDebtDai || !this.liquidationLimits.currentProtocolDebtDai;
+        },
+        isCollateralLimitMissing(): boolean {
+            return (
+                !this.liquidationLimits.maximumCollateralDebtDai || !this.liquidationLimits.currentCollateralDebtDai
+            );
+        },
         currentStateAndTitle(): PanelProps {
-            if (!this.liquidationLimits) {
+            if (this.isGlobalLimitMissing && this.isCollateralLimitMissing) {
                 return {
                     name: 'inactive',
-                    title: 'No liquidation limits are provided',
+                    title: 'Liquidation limits are unknown',
                 };
             }
             if (this.globalDifference.isNegative()) {
                 return {
                     name: 'incorrect',
-                    title: 'Current global liquidation limits are reached, please wait for them to lower',
+                    title: 'Current global liquidation limits are reached',
                 };
             }
             if (this.collateralDifference.isNegative()) {
                 return {
                     name: 'incorrect',
-                    title: `Current ${this.collateralType} liquidation limits are reached, please wait for them to lower`,
+                    title: `Current ${this.collateralType} liquidation limits are reached`,
                 };
             }
             return {
                 name: 'correct',
                 title: `Current global and ${this.collateralType} liquidation limits are not reached`,
             };
+        },
+    },
+    methods: {
+        fortmat(value: BigNumber): string {
+            return formatToAutomaticDecimalPoints(value);
         },
     },
 });

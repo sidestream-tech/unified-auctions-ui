@@ -6,6 +6,7 @@ import VaultLiquidationLimitsCheckPanel from './VaultLiquidationLimitsCheckPanel
 import { generateFakeLiquidationLimits } from '~/helpers/generateFakeVault';
 
 const COLLATERALS = getAllCollateralTypes();
+const liquidationLimits = generateFakeLiquidationLimits();
 
 const common = {
     components: { VaultLiquidationLimitsCheckPanel },
@@ -13,7 +14,7 @@ const common = {
         return {
             collateralType: faker.helpers.randomize(COLLATERALS),
             debtDai: new BigNumber(0),
-            liquidationLimits: generateFakeLiquidationLimits(),
+            liquidationLimits,
             isExplanationsShown: true,
             isRefreshing: false,
         };
@@ -51,12 +52,25 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
             };
         },
     }))
-    .add('Undefined Liquidation Limits', () => ({
+    .add('Collateral Limits Reached', () => ({
         ...common,
         data() {
             return {
                 ...common.data(),
-                liquidationLimits: undefined,
+                liquidationLimits: {
+                    ...liquidationLimits,
+                    maximumProtocolDebtDai: new BigNumber(faker.finance.amount(10000)),
+                },
+                debtDai: new BigNumber(faker.finance.amount(1000)),
+            };
+        },
+    }))
+    .add('Empty Liquidation Limits', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                liquidationLimits: {},
             };
         },
     }))
