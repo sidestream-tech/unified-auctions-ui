@@ -54,7 +54,7 @@ You can find examples below:
 {
   "receiver": "test@example.com",
   "type": "email",
-  "subscriptions": ["MCD_DAI_Transfer", "ChainLogUpdateAddress"]
+  "subscriptions": ["ChainLogUpdateAddress"]
 }
 ```
 Please make sure to include the required [`Environment variables`](#environment-variables).
@@ -64,7 +64,7 @@ Please make sure to include the required [`Environment variables`](#environment-
 {
   "receiver": "https://discord.com/api/webhooks/YOUR_WEBHOOK_ADDRESS",
   "type": "discord",
-  "subscriptions": ["MCD_DAI_Transfer", "ChainLogUpdateAddress"]
+  "subscriptions": ["ChainLogUpdateAddress"]
 }
 ````
 Please provide a [Discord Webhook URL](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) to which we can send updates.
