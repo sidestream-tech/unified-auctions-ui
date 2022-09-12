@@ -11,15 +11,6 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
                     > Address: [${event.args.addr}](${formatEtherscanLink('address', event.args.addr)})`;
         },
     },
-    {
-        id: 'MCD_DAI_Transfer',
-        address: '0x4f96fe3b7a6cf9725f59d353f723c1bdb64ca6aa',
-        eventName: 'Transfer',
-        formatData: (event, formatEtherscanLink) => {
-            return `> From: [${event.args.src}](${formatEtherscanLink('address', event.args.src)})<br />
-                    > To: [${event.args.dst}](${formatEtherscanLink('address', event.args.dst)})`;
-        },
-    },
 ];
 
 export function getSubscriptionById(id: string) {

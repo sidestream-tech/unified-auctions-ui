@@ -29,7 +29,7 @@ Note: env variables are accessible via the `secret` command under `auction-ui/${
 
 - `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum ->
 - `ETHERSCAN_API_KEY`: (required) [Etherscan API Key](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics), which is used to automatically download ABIs 
-- `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
+- `ETHEREUM_NETWORK`: (optional, default `mainnet`) – internal network name on which the bot poll for auctions. Available
 - `SMTP_*`: (optional, required for email usage) - SMTP data for the service to send emails
     - `SMTP_HOST`: (required) - SMTP host address
     - `SMTP_PORT`: (optional) - SMTP port. Defaults to `465`
