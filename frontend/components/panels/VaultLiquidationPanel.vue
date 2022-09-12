@@ -2,7 +2,7 @@
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown"></TextBlock>
-        <div class="flex my-4 justify-end gap-5">
+        <div class="flex mt-4 justify-end gap-5">
             <BaseButton
                 :disabled="!isLiquidatable || isGlobalLimitsReached || isLiquidating"
                 @click="$emit('chooseWallet')"
