@@ -14,9 +14,7 @@ describe('Vaults', () => {
         await resetNetwork(15502000);
 
         const vault = await fetchVault(TEST_NETWORK, 22025);
-        const vaultTransaction = await getVaultTransaction(TEST_NETWORK, vault);
-        expect(vaultTransaction.state).to.eq('not-liquidatable');
-        const vaultTransactionLiquidatable = vaultTransaction as VaultTransactionNotLiquidated;
+        const vaultTransactionLiquidatable = await getVaultTransaction(TEST_NETWORK, vault) as VaultTransactionNotLiquidated;
         const expectedObject: VaultTransactionNotLiquidated = {
             state: 'not-liquidatable',
             collateralType: 'ETH-A',
@@ -35,15 +33,15 @@ describe('Vaults', () => {
             incentiveRelativeDai: new BigNumber('32198.31588349647029073587039891649505768393987481484'),
             incentiveConstantDai: new BigNumber('300'),
             grossProfitDai: new BigNumber('32498.31588349647029073587039891649505768393987481484'),
-            netProfitDai: new BigNumber('32486.18554978440205213455373333148774614393987481484'),
+            netProfitDai: new BigNumber('32497.18533829802106158776170392239838650993987481484'),
             stabilityFeeRate: new BigNumber('1.077990181020998014318011624'),
             minUnitPrice: new BigNumber('1180.834957655172413793103448275'),
             maximumProtocolDebtDai: new BigNumber('100000000'),
             currentProtocolDebtDai: new BigNumber(0),
             currentCollateralDebtDai: new BigNumber(0),
             maximumCollateralDebtDai: new BigNumber(65000000),
-            transactionFeeLiquidationEth: new BigNumber('0.00718871382525318'),
-            transactionFeeLiquidationDai: new BigNumber('12.13033371206823860131666558500731154'),
+            transactionFeeLiquidationEth: new BigNumber('0.000669987000446658'),
+            transactionFeeLiquidationDai: new BigNumber('1.130545198449229148108694994096671174'),
             debtDai: new BigNumber('32198315.88349647029073587039891649505768393987481484'),
             collateralAmount: new BigNumber('60266.446946772373610407'),
             currentUnitPrice: new BigNumber('1712.2106886'),
@@ -122,8 +120,10 @@ describe('Vaults', () => {
 
         const vault = await fetchVault(TEST_NETWORK, 27435);
 
-        const vaultTransaction = (await getVaultTransaction(TEST_NETWORK, vault)) as VaultTransactionLiquidated;
-        const vaultTransactionNotLiquidated = vaultTransaction as unknown as VaultTransactionNotLiquidated;
+        const vaultTransactionNotLiquidated = (await getVaultTransaction(
+            TEST_NETWORK,
+            vault
+        )) as VaultTransactionNotLiquidated;
         const expectedObject: VaultTransactionNotLiquidated = {
             state: 'liquidatable',
             collateralType: 'ETH-C',
@@ -142,15 +142,15 @@ describe('Vaults', () => {
             incentiveRelativeDai: new BigNumber('8.973717449711589422115275593184791275895341629034'),
             incentiveConstantDai: new BigNumber('300'),
             grossProfitDai: new BigNumber('308.973717449711589422115275593184791275895341629034'),
-            netProfitDai: new BigNumber('296.843383737643350820798610008177479735895341629034'),
+            netProfitDai: new BigNumber('307.843172251262360274006580599088120101895341629034'),
             stabilityFeeRate: new BigNumber('1.013829372344109723319869134'),
             minUnitPrice: new BigNumber('721.804640220588235294117647058'),
             maximumProtocolDebtDai: new BigNumber('100000000'),
             currentProtocolDebtDai: new BigNumber(0),
             currentCollateralDebtDai: new BigNumber('105882.900090330108539882708255451806124201305822084'),
             maximumCollateralDebtDai: new BigNumber(35000000),
-            transactionFeeLiquidationEth: new BigNumber('0.00718871382525318'),
-            transactionFeeLiquidationDai: new BigNumber('12.13033371206823860131666558500731154'),
+            transactionFeeLiquidationEth: new BigNumber('0.000669987000446658'),
+            transactionFeeLiquidationDai: new BigNumber('1.130545198449229148108694994096671174'),
             debtDai: new BigNumber('8973.717449711589422115275593184791275895341629034'),
             collateralAmount: new BigNumber('12.42'),
             currentUnitPrice: new BigNumber('1227.067888375'),
