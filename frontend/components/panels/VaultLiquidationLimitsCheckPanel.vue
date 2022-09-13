@@ -3,10 +3,10 @@
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown"
             >The limits restrict the amount of simultaneously running auctions. There are two types of limits: a global
-            limit, which restricts the maximum total amount of DAI owned by all active auctions; and a collateral limit
-            (here: {{ collateralType }}), which is the amount of DAI owned by all active auctions of the same
-            collateral type. The limits go down when the liquidated vaults are successfully auctioned out in the
-            collateral auctions.
+            limit, which restricts the maximum total amount of DAI owed by all active auctions; and a collateral limit
+            (here: {{ collateralType }}), which is the amount of DAI owed by all active auctions of the same collateral
+            type. The limits go down when the liquidated vaults are successfully auctioned out in the collateral
+            auctions.
         </TextBlock>
         <div class="flex justify-between mt-4">
             <span>Current global limit</span>
