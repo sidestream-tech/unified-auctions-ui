@@ -22,7 +22,14 @@
         </div>
         <div class="flex justify-between">
             <div>
-                <Explain text="Liquidation incentive relative" />
+                <Explain text="Liquidation incentive relative"
+                    >A variable collateral-based reward for liquidators set by the
+                    <a
+                        href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#liquidation-incentive-mechanism"
+                        target="blank"
+                        >incentive mechanism</a
+                    >, which scales linearly with the amount of debt associated with the liquidation</Explain
+                >
                 <span v-if="auction.incentiveRelativeDai" class="opacity-50"
                     >(~ {{ incentiveRelativePercentage }} for {{ auction.collateralType }})</span
                 >
@@ -37,7 +44,16 @@
             </div>
         </div>
         <div class="flex justify-between">
-            <div><Explain text="Liquidation incentive constant" /></div>
+            <div>
+                <Explain text="Liquidation incentive constant"
+                    >A constant collateral-based reward for liquidators set by the
+                    <a
+                        href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#liquidation-incentive-mechanism"
+                        target="blank"
+                        >incentive mechanism</a
+                    ></Explain
+                >
+            </div>
             <div>
                 <FormatCurrency
                     v-if="auction.incentiveConstantDai"
