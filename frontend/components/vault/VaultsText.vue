@@ -1,5 +1,16 @@
 <template>
     <div class="flex flex-col space-y-8 py-8">
+        <Alert type="error" show-icon>
+            <div slot="message" class="font-bold">UnifiedAuction Vaults is currently still in development!</div>
+            <template slot="description"
+                >A list of at risk vaults can currenlty not be fetched. If you wish to liqudate a specific vault,
+                please navigate to
+                <Explain :text="demoURL">
+                    You can find a list of all vaults that are at risk
+                    <a href="https://maker.blockanalitica.com/vaults-at-risk/" target="_blank">here</a>.
+                </Explain>
+            </template>
+        </Alert>
         <WhatIsMakerProtocol v-if="isExplanationsShown" class="TextBlock"></WhatIsMakerProtocol>
         <template v-if="isExplanationsShown">
             <TextBlock title="What are vaults?" class="TextBlock"> TODO </TextBlock>
@@ -21,13 +32,17 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import type { VaultTransaction } from 'auctions-core/src/types';
+import { Alert } from 'ant-design-vue';
 import WhatIsMakerProtocol from '~/components/common/other/WhatIsMakerProtocol.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
+import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
     components: {
         TextBlock,
         WhatIsMakerProtocol,
+        Alert,
+        Explain,
     },
     props: {
         vaultTransactions: {
@@ -53,6 +68,11 @@ export default Vue.extend({
         lastUpdated: {
             type: Date,
             default: null,
+        },
+    },
+    computed: {
+        demoURL(): string {
+            return `${process.env.FRONTEND_ORIGIN || ''}/vaults?vault=COLLATERAL_ILK:VAULT_ID`;
         },
     },
 });
