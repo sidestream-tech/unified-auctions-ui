@@ -71,36 +71,12 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
             };
         },
     }))
-    .add('Empty Liquidation Limits', () => ({
+    .add('Missing Liquidation Limits', () => ({
         ...common,
         data() {
             return {
                 ...common.data(),
                 liquidationLimits: {},
-            };
-        },
-    }))
-    .add('No Global Liquidation Limits', () => ({
-        ...common,
-        data() {
-            return {
-                ...common.data(),
-                liquidationLimits: {
-                    ...liquidationLimits,
-                    maximumProtocolDebtDai: undefined,
-                },
-            };
-        },
-    }))
-    .add('No Collateral Liquidation Limits', () => ({
-        ...common,
-        data() {
-            return {
-                ...common.data(),
-                liquidationLimits: {
-                    ...liquidationLimits,
-                    maximumCollateralDebtDai: undefined,
-                },
             };
         },
     }))

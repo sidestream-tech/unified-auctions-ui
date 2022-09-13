@@ -156,22 +156,10 @@ export default Vue.extend({
             );
         },
         currentStateAndTitle(): PanelProps {
-            if (this.isGlobalLimitMissing && this.isCollateralLimitMissing) {
+            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
                 return {
                     name: 'inactive',
                     title: 'Current liquidation limits are unknown',
-                };
-            }
-            if (this.isGlobalLimitMissing) {
-                return {
-                    name: 'inactive',
-                    title: 'Current global liquidation limits are unknown',
-                };
-            }
-            if (this.isCollateralLimitMissing) {
-                return {
-                    name: 'inactive',
-                    title: `Current ${this.collateralType} liquidation limits are unknown`,
                 };
             }
             if (this.globalDifference.isNegative()) {
