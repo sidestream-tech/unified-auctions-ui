@@ -6,7 +6,7 @@
             <span>Current global limit</span>
             <span v-if="!isGlobalLimitMissing"
                 ><Explain :text="format(liquidationLimits.maximumProtocolDebtDai)"
-                    >The maximum allowed amount of DAI needed to cover the debt and liquidation insensitives of all
+                    >The maximum allowed amount of DAI needed to cover the debt and liquidation incentives of all
                     active auctions. In maker terms it is called
                     <a
                         href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#dog-hole-rad"
@@ -16,7 +16,7 @@
                 >
                 -
                 <Explain :text="format(liquidationLimits.currentProtocolDebtDai)"
-                    >The amount of DAI needed to cover the debt and liquidation insensitives of all active auctions. In
+                    >The amount of DAI needed to cover the debt and liquidation incentives of all active auctions. In
                     maker terms it is called
                     <a
                         href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#limits-on-dai-needed-to-cover-debt-and-fees-of-active-auctions"
@@ -26,8 +26,8 @@
                 >
                 -
                 <Explain :text="format(debtAndIncentives)"
-                    >The amount of DAI that will be auctioned after the current liquidation plus liquidation
-                    insensitives of this auction</Explain
+                    >The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
+                    of this auction</Explain
                 >
                 = <FormatCurrency :value="globalDifference" currency="DAI"
             /></span>
@@ -40,7 +40,7 @@
             <span>Current {{ collateralType }} limit</span>
             <span v-if="!isCollateralLimitMissing"
                 ><Explain :text="format(liquidationLimits.maximumCollateralDebtDai)"
-                    >The amount of DAI needed to cover the debt and liquidation insensitives of active
+                    >The amount of DAI needed to cover the debt and liquidation incentives of active
                     {{ collateralType }} auctions. In maker terms it is called
                     <a
                         href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#dog-ilk.hole-rad"
@@ -50,7 +50,7 @@
                 >
                 -
                 <Explain :text="format(liquidationLimits.currentCollateralDebtDai)"
-                    >The amount of DAI needed to cover the debt and liquidation insensitives of active
+                    >The amount of DAI needed to cover the debt and liquidation incentives of active
                     {{ collateralType }} auctions. In maker terms it is called
                     <a
                         href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#limits-on-dai-needed-to-cover-debt-and-fees-of-active-auctions"
@@ -60,8 +60,8 @@
                 >
                 -
                 <Explain :text="format(debtAndIncentives)"
-                    >The amount of DAI that will be auctioned after the current liquidation plus liquidation
-                    insensitives of this auction</Explain
+                    >The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
+                    of this auction</Explain
                 >
                 = <FormatCurrency :value="collateralDifference" currency="DAI"
             /></span>
