@@ -304,7 +304,7 @@ const _enrichVaultWithTransactonInformation = async (
         debtDai
     );
 
-    const {liquidationRatio, oracleAddress} = await fetchLiquidationRatio(network, vault.collateralType);
+    const { liquidationRatio, oracleAddress } = await fetchLiquidationRatio(network, vault.collateralType);
     const collateralizationRatio = vault.collateralAmount
         .multipliedBy(vault.minUnitPrice)
         .multipliedBy(liquidationRatio)
