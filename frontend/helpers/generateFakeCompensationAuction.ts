@@ -2,7 +2,7 @@ import { CompensationAuctionBase, CompensationAuctionTransactionFees } from 'auc
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
 
-const NETWORKS = ['mainnet', 'kovan', 'goerli'];
+const NETWORKS = ['mainnet', 'goerli'];
 
 export const generateFakeCompensationAuctionBase = function (network?: string): CompensationAuctionBase {
     return {

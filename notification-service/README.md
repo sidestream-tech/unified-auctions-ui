@@ -29,7 +29,7 @@ Note: env variables are accessible via the `secret` command under `auction-ui/${
 
 - `INFURA_PROJECT_ID`: (required) [infura](https://infura.io/) project id (can be found in: dashboard -> ethereum ->
 - `ETHERSCAN_API_KEY`: (required) [Etherscan API Key](https://docs.etherscan.io/getting-started/viewing-api-usage-statistics), which is used to automatically download ABIs 
-- `ETHEREUM_NETWORK`: (optional, default `kovan`) – internal network name on which the bot poll for auctions. Available
+- `ETHEREUM_NETWORK`: (optional, default `mainnet`) – internal network name on which the bot poll for auctions.
 - `SMTP_*`: (optional, required for email usage) - SMTP data for the service to send emails
     - `SMTP_HOST`: (required) - SMTP host address
     - `SMTP_PORT`: (optional) - SMTP port. Defaults to `465`
@@ -54,7 +54,7 @@ You can find examples below:
 {
   "receiver": "test@example.com",
   "type": "email",
-  "subscriptions": ["MCD_DAI_Transfer", "ChainLogUpdateAddress"]
+  "subscriptions": ["ChainLogUpdateAddress"]
 }
 ```
 Please make sure to include the required [`Environment variables`](#environment-variables).
@@ -64,7 +64,7 @@ Please make sure to include the required [`Environment variables`](#environment-
 {
   "receiver": "https://discord.com/api/webhooks/YOUR_WEBHOOK_ADDRESS",
   "type": "discord",
-  "subscriptions": ["MCD_DAI_Transfer", "ChainLogUpdateAddress"]
+  "subscriptions": ["ChainLogUpdateAddress"]
 }
 ````
 Please provide a [Discord Webhook URL](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks) to which we can send updates.
@@ -93,10 +93,10 @@ export const SUBSCRIPTIONS: EventSubscription[] = [
     address: '0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F',
     eventName: 'UpdateAddress',
     formatData: (event, formatEtherscanLink) => {
-      return `> From: [${event.args.src}](${formatEtherscanLink('address', event.args.src)})<br />
-              > To: [${event.args.dst}](${formatEtherscanLink('address', event.args.src)})`;
-    }
-  }
+        return `> Key: ${ethers.utils.formatBytes32String(event.args.key)}<br />
+                > Address: [${event.args.addr}](${formatEtherscanLink('address', event.args.addr)})`;
+    },
+  },
 ]
 ```
 
