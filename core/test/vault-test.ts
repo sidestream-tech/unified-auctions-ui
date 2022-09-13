@@ -14,7 +14,10 @@ describe('Vaults', () => {
         await resetNetwork(15502000);
 
         const vault = await fetchVault(TEST_NETWORK, 22025);
-        const vaultTransactionLiquidatable = await getVaultTransaction(TEST_NETWORK, vault) as VaultTransactionNotLiquidated;
+        const vaultTransactionLiquidatable = (await getVaultTransaction(
+            TEST_NETWORK,
+            vault
+        )) as VaultTransactionNotLiquidated;
         const expectedObject: VaultTransactionNotLiquidated = {
             state: 'not-liquidatable',
             collateralType: 'ETH-A',
