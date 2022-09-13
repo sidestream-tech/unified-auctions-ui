@@ -66,7 +66,7 @@ Testing scenario:
 
 1. Create `./bot/.env` file all variables from `auction-ui/bot/staging` or `auction-ui/bot/production`
 2. Start the project in production mode, i.e.: `npm run build && npm start` or using docker image
-3. Restart auction on kovan using frontend
+3. Restart auction on goerli using frontend
 4. Check the logs for the tweet message and its url
 
 Using the `Dockerfile`:
