@@ -2,25 +2,23 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
+import { getAllCollateralTypes } from 'auctions-core/src/constants/COLLATERALS.ts';
 import VaultLiquidationPanel from './VaultLiquidationPanel';
-import { generateFakeVaultNotLiquidatedTransaction } from '~/helpers/generateFakeVault';
+import { generateFakeLiquidationLimits } from '~/helpers/generateFakeVault';
 
-const fakeVaultLiquidationTransaction = generateFakeVaultNotLiquidatedTransaction();
-const liquidationLimits = {
-    maximumProtocolDebtDai: fakeVaultLiquidationTransaction.maximumProtocolDebtDai,
-    currentProtocolDebtDai: fakeVaultLiquidationTransaction.currentProtocolDebtDai,
-    maximumCollateralDebtDai: fakeVaultLiquidationTransaction.maximumCollateralDebtDai,
-    currentCollateralDebtDai: fakeVaultLiquidationTransaction.currentCollateralDebtDai,
-};
+const COLLATERALS = getAllCollateralTypes();
+const liquidationLimits = generateFakeLiquidationLimits();
 
 const common = {
     components: { VaultLiquidationPanel },
     data() {
         return {
             auctionId: '1',
-            auctionState: fakeVaultLiquidationTransaction.state,
-            collateralType: fakeVaultLiquidationTransaction.collateralType,
+            auctionState: 'liquidatable',
+            collateralType: faker.helpers.randomize(Object.values(COLLATERALS)),
             debtDai: new BigNumber(0),
+            incentiveRelativeDai: new BigNumber(0),
+            incentiveConstantDai: new BigNumber(0),
             liquidationLimits,
             isExplanationsShown: true,
             isWalletConnected: true,
@@ -43,6 +41,15 @@ storiesOf('Panels/VaultLiquidationPanel', module)
     .add('Default', () => ({
         ...common,
     }))
+    .add('Expert Mode', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                isExplanationsShown: false,
+            };
+        },
+    }))
     .add('Wallet Not Connected', () => ({
         ...common,
         data() {
@@ -61,12 +68,23 @@ storiesOf('Panels/VaultLiquidationPanel', module)
             };
         },
     }))
-    .add('Global Limits Reached', () => ({
+    .add('No Liquidation Limits', () => ({
         ...common,
         data() {
             return {
                 ...common.data(),
-                debtDai: new BigNumber(faker.finance.amount(1000)),
+                liquidationLimits: {},
+            };
+        },
+    }))
+    .add('Liquidation Limits Reached', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                debtDai: new BigNumber(faker.datatype.float({ min: 1000 })),
+                incentiveRelativeDai: new BigNumber(faker.finance.amount()),
+                incentiveConstantDai: new BigNumber(faker.finance.amount()),
             };
         },
     }));

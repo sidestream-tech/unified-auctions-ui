@@ -1,17 +1,21 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
-        <TextBlock v-if="isExplanationsShown"></TextBlock>
+        <TextBlock v-if="isExplanationsShown"
+            >A vault can be liquidated into a collateral auction if the liquidation limits are not reached. The
+            liquidation incentives will be transferred to the connected wallet. You can also choose another wallet for
+            that transfer.</TextBlock
+        >
         <div class="flex mt-4 justify-end gap-5">
             <BaseButton
-                :disabled="!isLiquidatable || isGlobalLimitsReached || isLiquidating"
+                :disabled="!isLiquidatable || areLimitsMissing || areLimitsReached || isLiquidating"
                 @click="$emit('chooseWallet')"
             >
                 Liquidate to another wallet
             </BaseButton>
             <BaseButton
                 type="primary"
-                :disabled="!isWalletConnected || !isLiquidatable || isGlobalLimitsReached"
+                :disabled="!isWalletConnected || !isLiquidatable || areLimitsMissing || areLimitsReached"
                 :is-loading="isLiquidating"
                 @click="$emit('liquidate')"
             >
@@ -53,6 +57,14 @@ export default Vue.extend({
             type: BigNumber,
             required: true,
         },
+        incentiveRelativeDai: {
+            type: BigNumber,
+            required: true,
+        },
+        incentiveConstantDai: {
+            type: BigNumber,
+            required: true,
+        },
         liquidationLimits: {
             type: Object as Vue.PropType<LiquidationLimits>,
             required: true,
@@ -78,10 +90,22 @@ export default Vue.extend({
                     title: 'Vault is not ready to be liquidated',
                 };
             }
-            if (this.isLiquidatable && this.isGlobalLimitsReached) {
+            if (!this.isWalletConnected) {
                 return {
                     name: 'inactive',
-                    title: 'Vault is ready to be liquidated, but global limits are reached',
+                    title: 'Vault is ready to be liquidated, but no wallet is connected',
+                };
+            }
+            if (this.areLimitsMissing) {
+                return {
+                    name: 'inactive',
+                    title: 'Vault is ready to be liquidated, but current liquidation limits are not known',
+                };
+            }
+            if (this.areLimitsReached) {
+                return {
+                    name: 'inactive',
+                    title: 'Vault is ready to be liquidated, but current liquidation limits are reached',
                 };
             }
             return {
@@ -90,23 +114,26 @@ export default Vue.extend({
             };
         },
         isLiquidatable(): Boolean {
-            return this.isWalletConnected && this.auctionState === 'liquidatable';
+            return this.auctionState === 'liquidatable';
         },
-        isGlobalLimitsReached(): Boolean {
-            if (
-                this.liquidationLimits.maximumProtocolDebtDai
-                    .minus(this.liquidationLimits.currentProtocolDebtDai)
-                    .minus(this.debtDai)
-                    .isNegative()
-            ) {
-                return true;
-            }
-            if (
-                this.liquidationLimits.maximumCollateralDebtDai
-                    .minus(this.liquidationLimits.currentCollateralDebtDai)
-                    .minus(this.debtDai)
-                    .isNegative()
-            ) {
+        debtAndIncentives(): BigNumber {
+            return this.debtDai.plus(this.incentiveRelativeDai).plus(this.incentiveConstantDai);
+        },
+        areLimitsMissing(): boolean {
+            return Object.values(this.liquidationLimits).reduce((prev, curr) => !prev || !curr, true);
+        },
+        globalDifference(): BigNumber {
+            return this.liquidationLimits.maximumProtocolDebtDai
+                .minus(this.liquidationLimits.currentProtocolDebtDai)
+                .minus(this.debtAndIncentives);
+        },
+        collateralDifference(): BigNumber {
+            return this.liquidationLimits.maximumCollateralDebtDai
+                .minus(this.liquidationLimits.currentCollateralDebtDai)
+                .minus(this.debtAndIncentives);
+        },
+        areLimitsReached(): Boolean {
+            if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
                 return true;
             }
             return false;
