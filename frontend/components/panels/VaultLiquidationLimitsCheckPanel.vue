@@ -1,7 +1,14 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
-        <TextBlock v-if="isExplanationsShown"></TextBlock>
+        <TextBlock v-if="isExplanationsShown"
+            >The amount of DAI that will be auctioned in case the current vault is liquidated must be less than the
+            currently available DAI to cover the debt and liquidation incentives of all active auuctions in general
+            (global limit) and all active {{ collateralType }} auctions in particular ({{
+                collateralType
+            }}
+            limit).</TextBlock
+        >
         <div class="flex justify-between mt-4">
             <span>Current global limit</span>
             <span v-if="!isGlobalLimitMissing"
