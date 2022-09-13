@@ -73,7 +73,6 @@ describe('Vaults', () => {
             vaultTransactionLiquidatable.incentiveConstantDai.toFixed()
         );
         expect(expectedObject.grossProfitDai.toFixed()).to.eq(vaultTransactionLiquidatable.grossProfitDai.toFixed());
-        expect(expectedObject.netProfitDai.toFixed()).to.eq(vaultTransactionLiquidatable.netProfitDai.toFixed());
         expect(expectedObject.stabilityFeeRate.toFixed()).to.eq(
             vaultTransactionLiquidatable.stabilityFeeRate.toFixed()
         );
@@ -89,12 +88,6 @@ describe('Vaults', () => {
         );
         expect(expectedObject.maximumCollateralDebtDai.toFixed()).to.eq(
             vaultTransactionLiquidatable.maximumCollateralDebtDai.toFixed()
-        );
-        expect(expectedObject.transactionFeeLiquidationEth.toFixed()).to.eq(
-            vaultTransactionLiquidatable.transactionFeeLiquidationEth.toFixed()
-        );
-        expect(expectedObject.transactionFeeLiquidationDai.toFixed()).to.eq(
-            vaultTransactionLiquidatable.transactionFeeLiquidationDai.toFixed()
         );
         expect(expectedObject.debtDai.toFixed()).to.eq(vaultTransactionLiquidatable.debtDai.toFixed());
         expect(expectedObject.collateralAmount.toFixed()).to.eq(
@@ -157,7 +150,7 @@ describe('Vaults', () => {
             debtDai: new BigNumber('8973.717449711589422115275593184791275895341629034'),
             collateralAmount: new BigNumber('12.42'),
             currentUnitPrice: new BigNumber('1227.067888375'),
-            nextUnitPrice: undefined,
+            nextUnitPrice: new BigNumber('1208.0159951'),
             initialDebtDai: new BigNumber('8851.309396336731694851'),
         };
         expect(expectedObject.state).to.eq(vaultTransactionNotLiquidated.state);
@@ -182,7 +175,6 @@ describe('Vaults', () => {
             vaultTransactionNotLiquidated.incentiveConstantDai.toFixed()
         );
         expect(expectedObject.grossProfitDai.toFixed()).to.eq(vaultTransactionNotLiquidated.grossProfitDai.toFixed());
-        expect(expectedObject.netProfitDai.toFixed()).to.eq(vaultTransactionNotLiquidated.netProfitDai.toFixed());
         expect(expectedObject.stabilityFeeRate.toFixed()).to.eq(
             vaultTransactionNotLiquidated.stabilityFeeRate.toFixed()
         );
@@ -199,12 +191,6 @@ describe('Vaults', () => {
         expect(expectedObject.maximumCollateralDebtDai.toFixed()).to.eq(
             vaultTransactionNotLiquidated.maximumCollateralDebtDai.toFixed()
         );
-        expect(expectedObject.transactionFeeLiquidationEth.toFixed()).to.eq(
-            vaultTransactionNotLiquidated.transactionFeeLiquidationEth.toFixed()
-        );
-        expect(expectedObject.transactionFeeLiquidationDai.toFixed()).to.eq(
-            vaultTransactionNotLiquidated.transactionFeeLiquidationDai.toFixed()
-        );
         expect(expectedObject.debtDai.toFixed()).to.eq(vaultTransactionNotLiquidated.debtDai.toFixed());
         expect(expectedObject.collateralAmount.toFixed()).to.eq(
             vaultTransactionNotLiquidated.collateralAmount.toFixed()
@@ -212,7 +198,7 @@ describe('Vaults', () => {
         expect(expectedObject.currentUnitPrice?.toFixed()).to.eq(
             vaultTransactionNotLiquidated.currentUnitPrice?.toFixed()
         );
-        expect(expectedObject.nextUnitPrice).to.be.undefined;
+        expect(expectedObject.nextUnitPrice.toFixed()).to.eq(vaultTransactionNotLiquidated.nextUnitPrice.toFixed());
         expect(expectedObject.initialDebtDai.toFixed()).to.eq(vaultTransactionNotLiquidated.initialDebtDai.toFixed());
     });
 });

@@ -301,8 +301,9 @@ export declare interface VaultTransactionFees {
 
 export declare interface Vault extends VaultBase, VaultAmount, VaultCollateralParameters, LiquidationLimits {}
 export declare interface OraclePrices {
-    currentUnitPrice?: BigNumber;
-    nextUnitPrice?: BigNumber;
+    // can be set to NaN
+    currentUnitPrice: BigNumber | number;
+    nextUnitPrice: BigNumber | number;
     nextPriceChange?: Date;
 }
 

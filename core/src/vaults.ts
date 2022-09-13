@@ -158,7 +158,7 @@ export const fetchVault = memoizee(_fetchVault, {
     length: 2,
 });
 
-const _getOsmPrices = async (network: string, type: CollateralType): Promise<OraclePrices> => {
+const _getOsmPrices = async (network: string, type: CollateralType): Promise<OraclePrices | undefined> => {
     const contract = await getContract(network, 'OSM_MOM');
     const typeHex = ethers.utils.formatBytes32String(type);
     const provider = await getProvider(network);
@@ -177,6 +177,9 @@ const _getOsmPrices = async (network: string, type: CollateralType): Promise<Ora
         rpcEventFilterSegmentIndex += 1;
         fromBlock = -EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1) - EVENTS_ON_FIRST_RPC_REQUEST;
         toBlock = -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex - EVENTS_ON_FIRST_RPC_REQUEST;
+    }
+    if (osmEvents.length === 0) {
+        return undefined;
     }
     const currentUnitCollateralPrice = new BigNumber(osmEvents[osmEvents.length - 1].args?.val).shiftedBy(
         -WAD_NUMBER_OF_DIGITS
@@ -199,6 +202,10 @@ const _getOsmPrices = async (network: string, type: CollateralType): Promise<Ora
         rpcEventFilterSegmentIndex += 1;
         fromBlock = -EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1) - EVENTS_ON_FIRST_RPC_REQUEST;
         toBlock = -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex - EVENTS_ON_FIRST_RPC_REQUEST;
+    }
+
+    if (feedEvents.length === 0) {
+        return undefined;
     }
 
     const nextUnitCollateralPrice = new BigNumber(feedEvents[feedEvents.length - 1].args?.val._hex).shiftedBy(
@@ -307,7 +314,14 @@ const _enrichVaultWithTransactonInformation = async (
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
-    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(network, vault.collateralType);
+    const osmPrices = await getOsmPrices(network, vault.collateralType);
+    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = osmPrices
+        ? osmPrices
+        : {
+              nextUnitPrice: new BigNumber(NaN),
+              currentUnitPrice: new BigNumber(NaN),
+              nextPriceChange: undefined,
+          };
     const state = proximityToLiquidation < 0 ? 'liquidatable' : 'not-liquidatable';
     return {
         ...vault,
