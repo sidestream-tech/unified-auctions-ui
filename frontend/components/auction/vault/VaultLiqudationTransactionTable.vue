@@ -72,7 +72,7 @@
         </div>
         <div class="flex justify-between">
             <div>
-                <Explain text="Combined Transaction Fees" />
+                Transaction fee
                 <span v-if="auction.transactionFeeLiquidationDai" class="opacity-50"
                     >(~ <FormatCurrency :value="auction.transactionFeeLiquidationEth" currency="ETH" />)</span
                 >
