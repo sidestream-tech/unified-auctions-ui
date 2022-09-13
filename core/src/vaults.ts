@@ -158,16 +158,13 @@ export const fetchVault = memoizee(_fetchVault, {
     length: 2,
 });
 
-const _getOsmPrices = async (network: string, type: CollateralType): Promise<OraclePrices | undefined> => {
-    const contract = await getContract(network, 'OSM_MOM');
-    const typeHex = ethers.utils.formatBytes32String(type);
+const _getOsmPrices = async (network: string, oracleAddress: string): Promise<OraclePrices | undefined> => {
     const provider = await getProvider(network);
     const latestBlockNumber = await fetchLatestBlockNumber(network);
     let rpcEventFilterSegmentIndex = 0;
 
-    const osmAddress = await contract.osms(typeHex);
     const osmContractInterface = await getContractInterfaceByName('OSM');
-    const osmContract = new ethers.Contract(osmAddress, osmContractInterface, provider);
+    const osmContract = new ethers.Contract(oracleAddress, osmContractInterface, provider);
     const osmEventFilter = osmContract.filters.LogValue(null);
     let osmEvents: Array<Event> = [];
     let fromBlock = -EVENTS_ON_FIRST_RPC_REQUEST;
@@ -225,11 +222,14 @@ export const getOsmPrices = memoizee(_getOsmPrices, {
     length: 2,
 });
 
-const _fetchLiquidationRatio = async (network: string, collateralType: CollateralType): Promise<number> => {
+const _fetchLiquidationRatio = async (network: string, collateralType: CollateralType) => {
     const contract = await getContract(network, 'MCD_SPOT');
     const collateralTypeAsHex = ethers.utils.formatBytes32String(collateralType);
-    const liquidationRatioAsHex = (await contract.ilks(collateralTypeAsHex)).mat;
-    return new BigNumber(liquidationRatioAsHex._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS).toNumber();
+    const oracleAndLiquidationRatio = await contract.ilks(collateralTypeAsHex);
+    const liquidationRatioAsHex = oracleAndLiquidationRatio.mat;
+    const oracleAddress = oracleAndLiquidationRatio.pip;
+    const liquidationRatio = new BigNumber(liquidationRatioAsHex._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS).toNumber();
+    return { oracleAddress, liquidationRatio };
 };
 
 export const fetchLiquidationRatio = memoizee(_fetchLiquidationRatio, {
@@ -304,7 +304,7 @@ const _enrichVaultWithTransactonInformation = async (
         debtDai
     );
 
-    const liquidationRatio = await fetchLiquidationRatio(network, vault.collateralType);
+    const {liquidationRatio, oracleAddress} = await fetchLiquidationRatio(network, vault.collateralType);
     const collateralizationRatio = vault.collateralAmount
         .multipliedBy(vault.minUnitPrice)
         .multipliedBy(liquidationRatio)
@@ -314,7 +314,7 @@ const _enrichVaultWithTransactonInformation = async (
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
-    const osmPrices = await getOsmPrices(network, vault.collateralType);
+    const osmPrices = await getOsmPrices(network, oracleAddress);
     const { nextUnitPrice, nextPriceChange, currentUnitPrice } = osmPrices
         ? osmPrices
         : {

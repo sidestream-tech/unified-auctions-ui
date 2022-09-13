@@ -129,7 +129,7 @@ describe('Vaults', () => {
             network: TEST_NETWORK,
 
             lastSyncedAt: new Date(),
-            nextPriceChange: new Date('2022-06-13T11:00:00.000Z'),
+            nextPriceChange: new Date('2022-09-09T10:00:00.000Z'),
 
             liquidationRatio: 1.7,
             collateralizationRatio: 1.698313241866927,
@@ -151,8 +151,8 @@ describe('Vaults', () => {
             transactionFeeLiquidationDai: new BigNumber('1.130545198449229148108694994096671174'),
             debtDai: new BigNumber('8973.717449711589422115275593184791275895341629034'),
             collateralAmount: new BigNumber('12.42'),
-            currentUnitPrice: new BigNumber('1227.067888375'),
-            nextUnitPrice: new BigNumber('1208.0159951'),
+            currentUnitPrice: new BigNumber('1712.2106886'),
+            nextUnitPrice: new BigNumber('1698.4'),
             initialDebtDai: new BigNumber('8851.309396336731694851'),
         };
         expect(expectedObject.state).to.eq(vaultTransactionNotLiquidated.state);
