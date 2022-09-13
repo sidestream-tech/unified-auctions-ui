@@ -14,6 +14,8 @@ const common = {
         return {
             collateralType: faker.helpers.randomize(COLLATERALS),
             debtDai: new BigNumber(0),
+            incentiveRelativeDai: new BigNumber(0),
+            incentiveConstantDai: new BigNumber(0),
             liquidationLimits,
             isExplanationsShown: true,
             isRefreshing: false,
@@ -48,7 +50,9 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
         data() {
             return {
                 ...common.data(),
-                debtDai: new BigNumber(faker.finance.amount(1000)),
+                debtDai: new BigNumber(faker.datatype.float({ min: 1000 })),
+                incentiveRelativeDai: new BigNumber(faker.finance.amount()),
+                incentiveConstantDai: new BigNumber(faker.finance.amount()),
             };
         },
     }))
@@ -59,9 +63,11 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
                 ...common.data(),
                 liquidationLimits: {
                     ...liquidationLimits,
-                    maximumProtocolDebtDai: new BigNumber(faker.finance.amount(10000)),
+                    maximumProtocolDebtDai: new BigNumber(faker.datatype.float({ min: 5000 })),
                 },
-                debtDai: new BigNumber(faker.finance.amount(1000)),
+                debtDai: new BigNumber(faker.datatype.float({ min: 1000, max: 2000 })),
+                incentiveRelativeDai: new BigNumber(faker.finance.amount()),
+                incentiveConstantDai: new BigNumber(faker.finance.amount()),
             };
         },
     }))
@@ -71,6 +77,30 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
             return {
                 ...common.data(),
                 liquidationLimits: {},
+            };
+        },
+    }))
+    .add('No Global Liquidation Limits', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                liquidationLimits: {
+                    ...liquidationLimits,
+                    maximumProtocolDebtDai: undefined,
+                },
+            };
+        },
+    }))
+    .add('No Collateral Liquidation Limits', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                liquidationLimits: {
+                    ...liquidationLimits,
+                    maximumCollateralDebtDai: undefined,
+                },
             };
         },
     }))

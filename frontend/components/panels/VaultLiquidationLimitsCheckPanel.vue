@@ -6,14 +6,29 @@
             <span>Current global limit</span>
             <span v-if="!isGlobalLimitMissing"
                 ><Explain :text="format(liquidationLimits.maximumProtocolDebtDai)"
-                    >The maximum amount of DAI allowed to cover the debt and fees of all active auctions</Explain
+                    >The maximum allowed amount of DAI needed to cover the debt and liquidation insensitives of all
+                    active auctions. In maker terms it is called
+                    <a
+                        href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#dog-hole-rad"
+                        target="_blank"
+                        >dog.Hole</a
+                    ></Explain
                 >
                 -
                 <Explain :text="format(liquidationLimits.currentProtocolDebtDai)"
-                    >The amount of DAI needed to cover the debt and fees of all active auctions</Explain
+                    >The amount of DAI needed to cover the debt and liquidation insensitives of all active auctions. In
+                    maker terms it is called
+                    <a
+                        href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#limits-on-dai-needed-to-cover-debt-and-fees-of-active-auctions"
+                        target="_blank"
+                        >dog.Dirt</a
+                    ></Explain
                 >
                 -
-                <Explain :text="format(debtDai)">The amount of DAI that will be auctioned after liquidation</Explain>
+                <Explain :text="format(debtAndIncentives)"
+                    >The amount of DAI that will be auctioned after the current liquidation plus liquidation
+                    insensitives of this auction</Explain
+                >
                 = <FormatCurrency :value="globalDifference" currency="DAI"
             /></span>
             <div v-else>
@@ -25,16 +40,29 @@
             <span>Current {{ collateralType }} limit</span>
             <span v-if="!isCollateralLimitMissing"
                 ><Explain :text="format(liquidationLimits.maximumCollateralDebtDai)"
-                    >The maximum amount of DAI allowed to cover the debt and fees of all active
-                    {{ collateralType }} auctions</Explain
+                    >The amount of DAI needed to cover the debt and liquidation insensitives of active
+                    {{ collateralType }} auctions. In maker terms it is called
+                    <a
+                        href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#dog-ilk.hole-rad"
+                        target="_blank"
+                        >ilk.hole</a
+                    ></Explain
                 >
                 -
                 <Explain :text="format(liquidationLimits.currentCollateralDebtDai)"
-                    >The amount of DAI needed to cover the debt and fees of all active
-                    {{ collateralType }} auctions</Explain
+                    >The amount of DAI needed to cover the debt and liquidation insensitives of active
+                    {{ collateralType }} auctions. In maker terms it is called
+                    <a
+                        href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#limits-on-dai-needed-to-cover-debt-and-fees-of-active-auctions"
+                        target="_blank"
+                        >ilk.dirt</a
+                    ></Explain
                 >
                 -
-                <Explain :text="format(debtDai)">The amount of DAI that will be auctioned after liquidation</Explain>
+                <Explain :text="format(debtAndIncentives)"
+                    >The amount of DAI that will be auctioned after the current liquidation plus liquidation
+                    insensitives of this auction</Explain
+                >
                 = <FormatCurrency :value="collateralDifference" currency="DAI"
             /></span>
             <div v-else>
@@ -84,6 +112,14 @@ export default Vue.extend({
             type: BigNumber,
             required: true,
         },
+        incentiveRelativeDai: {
+            type: BigNumber,
+            required: true,
+        },
+        incentiveConstantDai: {
+            type: BigNumber,
+            required: true,
+        },
         collateralType: {
             type: String,
             required: true,
@@ -98,15 +134,18 @@ export default Vue.extend({
         },
     },
     computed: {
+        debtAndIncentives(): BigNumber {
+            return this.debtDai.plus(this.incentiveRelativeDai).plus(this.incentiveConstantDai);
+        },
         globalDifference(): BigNumber {
             return this.liquidationLimits.maximumProtocolDebtDai
                 .minus(this.liquidationLimits.currentProtocolDebtDai)
-                .minus(this.debtDai);
+                .minus(this.debtAndIncentives);
         },
         collateralDifference(): BigNumber {
             return this.liquidationLimits.maximumCollateralDebtDai
                 .minus(this.liquidationLimits.currentCollateralDebtDai)
-                .minus(this.debtDai);
+                .minus(this.debtAndIncentives);
         },
         isGlobalLimitMissing(): boolean {
             return !this.liquidationLimits.maximumProtocolDebtDai || !this.liquidationLimits.currentProtocolDebtDai;
@@ -120,7 +159,19 @@ export default Vue.extend({
             if (this.isGlobalLimitMissing && this.isCollateralLimitMissing) {
                 return {
                     name: 'inactive',
-                    title: 'Liquidation limits are unknown',
+                    title: 'Current liquidation limits are unknown',
+                };
+            }
+            if (this.isGlobalLimitMissing) {
+                return {
+                    name: 'inactive',
+                    title: 'Current global liquidation limits are unknown',
+                };
+            }
+            if (this.isCollateralLimitMissing) {
+                return {
+                    name: 'inactive',
+                    title: `Current ${this.collateralType} liquidation limits are unknown`,
                 };
             }
             if (this.globalDifference.isNegative()) {
