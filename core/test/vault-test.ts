@@ -1,10 +1,11 @@
-import { fetchVault, getVaultTransaction } from '../src/vaults';
+import { fetchVault, fetchVaultAmount, getVaultTransaction, isVaultLiquidated, liquidateVault } from '../src/vaults';
 import { resetNetwork } from '../helpers/hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
-import { LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
+import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
 import { expect } from 'chai';
-import { VaultTransactionLiquidated, VaultTransactionNotLiquidated } from '../src/types';
+import { VaultTransactionLiquidated, VaultTransactionNotLiquidated, Vault } from '../src/types';
 import BigNumber from '../src/bignumber';
+import { createWalletFromPrivateKey } from '../src/signer';
 
 describe('Vaults', () => {
     before(async () => {
@@ -113,6 +114,7 @@ describe('Vaults', () => {
     });
     it('Fetches non-liquidated vault', async () => {
         await resetNetwork(14955381);
+        await createWalletFromPrivateKey(HARDHAT_PRIVATE_KEY, TEST_NETWORK);
 
         const vault = await fetchVault(TEST_NETWORK, 27435);
 
@@ -200,5 +202,13 @@ describe('Vaults', () => {
         );
         expect(expectedObject.nextUnitPrice.toFixed()).to.eq(vaultTransactionNotLiquidated.nextUnitPrice.toFixed());
         expect(expectedObject.initialDebtDai.toFixed()).to.eq(vaultTransactionNotLiquidated.initialDebtDai.toFixed());
+        await liquidateVault(TEST_NETWORK, vaultTransactionNotLiquidated, HARDHAT_PUBLIC_KEY);
+        getVaultTransaction.clear();
+        isVaultLiquidated.clear();
+        fetchVault.clear();
+        fetchVaultAmount.clear();
+        const updatedVault = (await fetchVault(TEST_NETWORK, 27435)) as Vault;
+        expect(updatedVault.collateralAmount.toFixed()).to.eq('0');
+        expect(updatedVault.initialDebtDai.toFixed()).to.eq('0');
     });
 });

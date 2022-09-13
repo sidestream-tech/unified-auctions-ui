@@ -368,3 +368,11 @@ export const getVaultTransaction = memoizee(_getVaultTransaction, {
     promise: true,
     length: 2,
 });
+
+export const liquidateVault = async (network: string, vault: Vault, incentiveBeneficiaryAddress: string) => {
+    const contract = await getContract(network, 'MCD_DOG', true);
+    const typeHex = ethers.utils.formatBytes32String(vault.collateralType);
+    const vaultAddress = vault.address;
+    const liquidationTransaction = await contract.bark(typeHex, vaultAddress, incentiveBeneficiaryAddress);
+    return new BigNumber(liquidationTransaction.value._hex);
+};
