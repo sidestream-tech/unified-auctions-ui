@@ -64,7 +64,7 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
-import { Auction, VaultTransaction, VaultTransactionNotLiquidated } from 'auctions-core/src/types';
+import { VaultTransaction, VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import { compareAsc } from 'date-fns';
 import AnimatedArrow from '../common/other/AnimatedArrow.vue';
 import Loading from '~/components/common/other/Loading.vue';
@@ -154,8 +154,8 @@ export default Vue.extend({
                     scopedSlots: { customRender: 'collateralAmount' },
                     sorter: compareBy('collateralAmount'),
                     filters: currenciesFilters,
-                    onFilter: (selectedCurrency: string, auction: Auction) => {
-                        return auction.collateralSymbol.includes(selectedCurrency);
+                    onFilter: (selectedCurrency: string, vault: VaultTransaction) => {
+                        return vault.collateralType.includes(selectedCurrency);
                     },
                 },
                 {
@@ -225,7 +225,7 @@ export default Vue.extend({
             return vault.state !== 'liquidated';
         },
         getIsPriceGoingUpOrDown(vault: VaultTransactionNotLiquidated) {
-            if (vault.nextUnitPrice > vault.currentUnitPrice) {
+            if (vault.nextUnitPrice.isGreaterThan(vault.currentUnitPrice)) {
                 return 'up';
             }
             return 'down';
