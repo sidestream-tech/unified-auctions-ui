@@ -8,6 +8,7 @@ import {
     VaultTransactionLiquidated,
     VaultTransactionNotLiquidated,
     VaultTransactionState,
+    VaultCollateralParameters,
 } from 'auctions-core/src/types';
 import faker from 'faker';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
@@ -54,15 +55,26 @@ const generateFakerLiquidationLimits = function (): LiquidationLimits {
     };
 };
 
+export const generateFakeVaultCollateralParameters = (): VaultCollateralParameters => {
+    const stabilityFeeRate = new BigNumber(faker.datatype.float({ max: 1.5 }));
+    const minUnitPrice = new BigNumber(faker.finance.amount());
+    return {
+        stabilityFeeRate,
+        minUnitPrice,
+    };
+};
+
 export const generateFakeVault = function (): Vault {
     const vaultBase = generateFakeVaultBase();
     const vaultAmount = generateFakeVaultAmount();
     const liquidationLimits = generateFakerLiquidationLimits();
+    const vaultCollateralParameters = generateFakeVaultCollateralParameters();
 
     return {
         ...vaultBase,
         ...vaultAmount,
         ...liquidationLimits,
+        ...vaultCollateralParameters,
     };
 };
 
@@ -91,14 +103,14 @@ const generateFakeOraclePrices = function (): OraclePrices {
 const generateFakeVaultLiqudatedTransaction = function (): VaultTransactionLiquidated {
     const fakeVault = generateFakeVault();
 
-    const liqudiationDate = faker.date.recent();
+    const liquidationDate = faker.date.recent();
     const transactionHash = faker.finance.ethereumAddress();
     const auctionId = `${fakeVault.collateralType}:${faker.datatype.number()}`;
 
     return {
         ...fakeVault,
         state: 'liquidated',
-        liqudiationDate,
+        liquidationDate,
         transactionHash,
         auctionId,
     };
