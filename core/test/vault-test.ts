@@ -276,7 +276,7 @@ describe('Sound values are extracted', () => {
             'KNC-A': {
                 nextUnitPrice: '1.5108',
                 currentUnitPrice: '1.4869',
-                nextPriceChange:  '2021-10-28T05:00:00.000Z',
+                nextPriceChange: '2021-10-28T05:00:00.000Z',
             },
             'LINK-A': {
                 nextUnitPrice: '7.2245',
@@ -424,14 +424,10 @@ describe('Sound values are extracted', () => {
                 nextPriceChange: '2022-09-14T12:01:47.000Z',
             },
         };
-        for (let type of Object.keys(COLLATERALS)) {
+        for (const type of Object.keys(COLLATERALS)) {
             const liquidationRatioAndAddress = await fetchLiquidationRatioAndOracleAddress(TEST_NETWORK, type);
             expect(liquidationRatioAndAddress.oracleAddress).not.to.eq('0x0000000000000000000000000000000000000000');
-            const prices = await getOsmPrices(
-                TEST_NETWORK,
-                liquidationRatioAndAddress.oracleAddress,
-                type
-            );
+            const prices = await getOsmPrices(TEST_NETWORK, liquidationRatioAndAddress.oracleAddress, type);
             expect(expectedReturn[type].currentUnitPrice).to.eq(prices.currentUnitPrice.toFixed());
             expect(expectedReturn[type].nextPriceChange).to.eq(prices.nextPriceChange?.toISOString());
             expect(expectedReturn[type].nextUnitPrice).to.eq(prices.nextUnitPrice.toFixed());

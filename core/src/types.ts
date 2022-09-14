@@ -94,7 +94,7 @@ export declare interface CollateralConfig {
     nextPriceSlotAddress?: string;
     whitelistSlotAddress?: string;
     hasDelay: boolean;
-    slotPriceValueBeginsAtPosition: number
+    slotPriceValueBeginsAtPosition: number;
 }
 
 export declare interface NetworkConfig {

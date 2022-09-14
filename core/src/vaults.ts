@@ -168,15 +168,11 @@ const _getOsmPrices = async (
     if (collateralConfig.nextPriceSlotAddress) {
         const slot = collateralConfig.nextPriceSlotAddress;
         const nextPriceFeed = await provider.getStorageAt(oracleAddress, slot);
-        nextPrice = new BigNumber(
-            `0x${nextPriceFeed.substring(34)}`
-        );
+        nextPrice = new BigNumber(`0x${nextPriceFeed.substring(34)}`);
     }
-    const currentPriceFeed = await provider.getStorageAt(oracleAddress, collateralConfig.currentPriceSlotAddress)
+    const currentPriceFeed = await provider.getStorageAt(oracleAddress, collateralConfig.currentPriceSlotAddress);
     const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
-    const currentPrice = new BigNumber(
-        `0x${currentPriceFeed.substring(valueSplitPosition)}`
-    );
+    const currentPrice = new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`);
     let nextPriceChange: Date | undefined = undefined;
     if (collateralConfig.hasDelay) {
         const osmContractInterface = await getContractInterfaceByName('OSM');
