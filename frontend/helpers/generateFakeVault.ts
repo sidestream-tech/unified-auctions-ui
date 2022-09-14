@@ -4,6 +4,7 @@ import {
     Vault,
     VaultAmount,
     VaultBase,
+    VaultTransaction,
     VaultTransactionFees,
     VaultTransactionLiquidated,
     VaultTransactionNotLiquidated,
