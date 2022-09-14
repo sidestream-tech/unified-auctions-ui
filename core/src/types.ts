@@ -90,6 +90,9 @@ export declare interface CollateralConfig {
     symbol: string;
     decimals: number;
     exchange: RegularCalleeConfig | UniswapV2LpTokenCalleeConfig;
+    slotCurrentPrice?: string,
+    slotNextPrice?: string,
+    slotWhitelist?: string,
 }
 
 export declare interface NetworkConfig {
@@ -332,3 +335,10 @@ export declare interface VaultTransactionNotLiquidated extends VaultTransactionB
 
 export type VaultTransaction = VaultTransactionLiquidated | VaultTransactionNotLiquidated;
 export type VaultTransactionState = VaultTransaction['state'];
+
+export type PriceOracleType = 'dsThing' | 'default' | 'univ';
+export declare interface PriceOracleConfig {
+    currentPriceSlotAddress: string;
+    nextPriceSlotAddress?: string;
+    whitelistSlotAddress?: string;
+}
