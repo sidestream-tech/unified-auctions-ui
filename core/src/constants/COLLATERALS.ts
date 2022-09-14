@@ -10,6 +10,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default',
     },
     'BAL-A': {
         title: 'Balancer',
@@ -20,6 +21,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default',
     },
     'BAT-A': {
         title: 'Basic Attention Token',
@@ -30,6 +32,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default',
     },
     'COMP-A': {
         title: 'Compound',
@@ -40,6 +43,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'ETH-A': {
         title: 'Ether',
@@ -50,6 +54,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: [],
         },
+        priceOracleType: 'default'
     },
     'ETH-B': {
         title: 'Ether',
@@ -60,6 +65,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: [],
         },
+        priceOracleType: 'default',
     },
     'ETH-C': {
         title: 'Ether',
@@ -70,6 +76,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: [],
         },
+        priceOracleType: 'default',
     },
     'GUSD-A': {
         title: 'Gemini Dollar',
@@ -80,6 +87,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'dsThing',
     },
     'KNC-A': {
         title: 'Kyber Network Crystal',
@@ -90,6 +98,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'LINK-A': {
         title: 'Chainlink',
@@ -100,6 +109,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'LRC-A': {
         title: 'Loopring',
@@ -110,6 +120,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'MANA-A': {
         title: 'Decentraland',
@@ -120,6 +131,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'PAXUSD-A': {
         title: 'Paxos Standard',
@@ -130,6 +142,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'dsThing',
     },
     'RENBTC-A': {
         title: 'renBTC',
@@ -140,6 +153,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'TUSD-A': {
         title: 'True USD',
@@ -150,6 +164,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'dsThing'
     },
     'UNI-A': {
         title: 'Uniswap',
@@ -160,6 +175,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'USDC-A': {
         title: 'USD Coin',
@@ -170,6 +186,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'dsThing'
     },
     'USDC-B': {
         title: 'USD Coin',
@@ -180,6 +197,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'dsThing'
     },
     'USDT-A': {
         title: 'Tether USD',
@@ -190,6 +208,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'WBTC-A': {
         title: 'Wrapped Bitcoin',
@@ -200,6 +219,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'WBTC-B': {
         title: 'Wrapped BTC',
@@ -210,6 +230,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'WBTC-C': {
         title: 'Wrapped BTC',
@@ -220,6 +241,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'YFI-A': {
         title: 'yearn.finance',
@@ -230,6 +252,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'ZRX-A': {
         title: '0x',
@@ -240,6 +263,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'MATIC-A': {
         title: 'Matic',
@@ -250,6 +274,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'default'
     },
     'WSTETH-A': {
         title: 'Lido wstETH',
@@ -260,6 +285,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'WstETHCurveUniv3Callee',
             route: [],
         },
+        priceOracleType: 'default'
     },
     'WSTETH-B': {
         title: 'Lido wstETH',
@@ -270,6 +296,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'WstETHCurveUniv3Callee',
             route: [],
         },
+        priceOracleType: 'default'
     },
     'CRVV1ETHSTETH-A': {
         title: 'Curve stETH',
@@ -280,6 +307,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'CurveLpTokenUniv3Callee',
             route: ['ETH'],
         },
+        priceOracleType: 'univ',
     },
     'UNIV2DAIETH-A': {
         title: 'UNIV2DAIETH LP',
@@ -291,6 +319,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'DAI',
             token1: 'ETH',
         },
+        priceOracleType: 'univ'
     },
     'UNIV2USDCETH-A': {
         title: 'UNIV2USDCETH LP',
@@ -302,6 +331,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'USDC',
             token1: 'ETH',
         },
+        priceOracleType: 'univ'
     },
     'UNIV2ETHUSDT-A': {
         title: 'UNIV2ETHUSDT LP',
@@ -313,6 +343,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'ETH',
             token1: 'USDT',
         },
+        priceOracleType: 'univ'
     },
     'UNIV2WBTCDAI-A': {
         title: 'UNIV2WBTCDAI LP',
@@ -324,6 +355,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'WBTC',
             token1: 'DAI',
         },
+        priceOracleType: 'univ'
     },
     'UNIV2WBTCETH-A': {
         title: 'UNIV2WBTCETH LP',
@@ -335,6 +367,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'WBTC',
             token1: 'ETH',
         },
+        priceOracleType: 'univ'
     },
     'UNIV2LINKETH-A': {
         title: 'UNIV2LINKETH LP',
@@ -346,6 +379,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'LINK',
             token1: 'ETH',
         },
+        priceOracleType: 'univ'
     },
     'UNIV2UNIETH-A': {
         title: 'UNIV2UNIETH LP',
@@ -357,6 +391,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'UNI',
             token1: 'ETH',
         },
+        priceOracleType: 'univ'
     },
     'UNIV2AAVEETH-A': {
         title: 'UNIV2AAVEETH LP',
@@ -368,6 +403,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'AAVE',
             token1: 'ETH',
         },
+        priceOracleType: 'univ'
     },
     'UNIV2DAIUSDT-A': {
         title: 'UNIV2DAIUSDT LP',
@@ -379,6 +415,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'DAI',
             token1: 'USDT',
         },
+        priceOracleType: 'univ'
     },
     'UNIV2DAIUSDC-A': {
         title: 'UNIV2DAIUSDC LP',
@@ -390,6 +427,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'DAI',
             token1: 'USDC',
         },
+        priceOracleType: 'univ'
     },
 };
 
