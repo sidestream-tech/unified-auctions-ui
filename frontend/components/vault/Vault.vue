@@ -106,6 +106,22 @@
             >
                 {{ isTableExpanded ? 'Hide additional info' : 'Show additional info' }}
             </button>
+            <template v-if="isExplanationsShown">
+                <TextBlock class="mt-4">
+                    <template v-if="!error">
+                        The vault
+                        <format-address type="address" :value="vaultTransaction.address" shorten disable /> contains
+                        <format-currency
+                            :value="vaultTransaction.collateralAmount"
+                            :currency="vaultTransaction.collateralType"
+                        />. The initial debt taken by the vault is
+                        <format-currency :value="vaultTransaction.initialDebtDai" currency="DAI" />. The current
+                        proximity to liquidation is
+                        <AnimatedNumber :value="vaultTransaction.proximityToLiquidation" />. The next price update will
+                        happen in <TimeTill :date="vaultTransaction.nextPriceChange" />.
+                    </template>
+                </TextBlock>
+            </template>
             <TextBlock>
                 <div class="flex w-full justify-end flex-wrap mt-4">
                     <Tooltip :title="error" placement="bottom">
