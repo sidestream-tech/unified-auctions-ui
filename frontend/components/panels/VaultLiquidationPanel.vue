@@ -7,9 +7,16 @@
             that transfer.</TextBlock
         >
         <div class="flex mt-4 justify-end gap-5">
+            <ExecuteWithOtherWalletModal
+                :is-shown.sync="isExecuteToAnotherWalletModalShown"
+                :default-wallet="walletAddress"
+                class="pb-3"
+                @execute="executeWithOtherWallet"
+                @close="closeExecuteToOtherWalletModal"
+            />
             <BaseButton
-                :disabled="!isLiquidatable || areLimitsMissing || areLimitsReached || isLiquidating"
-                @click="$emit('chooseWallet')"
+                :disabled="!isWalletConnected || !isLiquidatable || areLimitsMissing || areLimitsReached"
+                @click="isExecuteToAnotherWalletModalShown = true"
             >
                 Liquidate to another wallet
             </BaseButton>
@@ -17,7 +24,7 @@
                 type="primary"
                 :disabled="!isWalletConnected || !isLiquidatable || areLimitsMissing || areLimitsReached"
                 :is-loading="isLiquidating"
-                @click="$emit('liquidate')"
+                @click="$emit('liquidate', walletAddress)"
             >
                 Liquidate {{ collateralType }}:{{ auctionId }} vault
             </BaseButton>
@@ -28,6 +35,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
+import ExecuteWithOtherWalletModal from '../modals/ExecuteWithOtherWalletModal.vue';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import BasePanel from '~/components/common/other/BasePanel.vue';
@@ -36,6 +44,7 @@ import { LiquidationLimits, VaultTransactionState } from '~/../core/src/types';
 export default Vue.extend({
     name: 'VaultLiquidationPanel',
     components: {
+        ExecuteWithOtherWalletModal,
         BaseButton,
         BasePanel,
         TextBlock,
@@ -81,6 +90,15 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        walletAddress: {
+            type: String,
+            default: null,
+        },
+    },
+    data() {
+        return {
+            isExecuteToAnotherWalletModalShown: false,
+        };
     },
     computed: {
         currentStateAndTitle(): PanelProps {
@@ -120,23 +138,40 @@ export default Vue.extend({
             return this.debtDai.plus(this.incentiveRelativeDai).plus(this.incentiveConstantDai);
         },
         areLimitsMissing(): boolean {
-            return Object.values(this.liquidationLimits).reduce((prev, curr) => !prev || !curr, true);
+            if (!this.liquidationLimits) {
+                return true;
+            }
+            return (
+                Object.values(this.liquidationLimits).includes(null) ||
+                Object.values(this.liquidationLimits).length !== 4
+            );
         },
-        globalDifference(): BigNumber {
+        globalDifference(): BigNumber | undefined {
+            if (this.areLimitsMissing) {
+                return undefined;
+            }
             return this.liquidationLimits.maximumProtocolDebtDai
                 .minus(this.liquidationLimits.currentProtocolDebtDai)
                 .minus(this.debtAndIncentives);
         },
-        collateralDifference(): BigNumber {
+        collateralDifference(): BigNumber | undefined {
+            if (this.areLimitsMissing) {
+                return undefined;
+            }
             return this.liquidationLimits.maximumCollateralDebtDai
                 .minus(this.liquidationLimits.currentCollateralDebtDai)
                 .minus(this.debtAndIncentives);
         },
         areLimitsReached(): Boolean {
-            if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
-                return true;
-            }
-            return false;
+            return this.globalDifference.isNegative() || this.collateralDifference.isNegative();
+        },
+    },
+    methods: {
+        closeExecuteToOtherWalletModal() {
+            this.isExecuteToAnotherWalletModalShown = false;
+        },
+        executeWithOtherWallet(wallet: string | undefined) {
+            this.$emit('liquidate', wallet);
         },
     },
 });

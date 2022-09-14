@@ -23,18 +23,13 @@ const common = {
             isExplanationsShown: true,
             isWalletConnected: true,
             isLiquidating: false,
+            walletAddress: faker.finance.ethereumAddress(),
         };
     },
     methods: {
-        liquidate() {
-            this.isLiquidating = true;
-            setTimeout(() => {
-                this.isLiquidating = false;
-            }, 1000);
-        },
-        chooseWallet: action('chooseWallet'),
+        liquidate: action('liquidate'),
     },
-    template: '<VaultLiquidationPanel v-bind="$data" @liquidate="liquidate" @chooseWallet="chooseWallet" />',
+    template: '<VaultLiquidationPanel v-bind="$data" @liquidate="liquidate" />',
 };
 
 storiesOf('Panels/VaultLiquidationPanel', module)
