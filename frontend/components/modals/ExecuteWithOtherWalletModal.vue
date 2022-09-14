@@ -1,12 +1,6 @@
 <template>
     <div>
         <modal :visible="isShown" title="Execute to another wallet" destroy-on-close @cancel="$emit('close')">
-            <Alert v-if="!isOutcomeWalletInputValueValid && outcomeWalletInputValue" type="error" banner>
-                <template slot="message">
-                    Address <span class="font-bold">{{ outcomeWalletInputValue }}</span> is not a valid address.
-                </template>
-            </Alert>
-
             <TextBlock class="py-4 px-6 text-sm">
                 Currently, the wallet which will receive the transaction profit is
                 <format-address type="address" shorten :value="defaultWallet" />. If you want to use a different
@@ -33,7 +27,14 @@
                 <div
                     v-if="!isOutcomeWalletInputValueValid && outcomeWalletInputValue"
                     class="flex flex-col space-y-3 my-3 md:mb-0"
-                ></div>
+                >
+                    <Alert type="error">
+                        <template slot="message">
+                            Address <span class="font-bold">{{ outcomeWalletInputValue }}</span> is not a valid
+                            address.
+                        </template>
+                    </Alert>
+                </div>
             </TextBlock>
             <template slot="footer">
                 <div class="py-2 px-2">

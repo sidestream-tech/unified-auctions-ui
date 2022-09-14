@@ -1,30 +1,20 @@
 import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
-import BigNumber from 'bignumber.js';
-import { getAllCollateralTypes } from 'auctions-core/src/constants/COLLATERALS.ts';
 import VaultLiquidationPanel from './VaultLiquidationPanel';
-import { generateFakeLiquidationLimits } from '~/helpers/generateFakeVault';
+import {
+    generateFakeVaultLiquidatedTransaction,
+    generateFakeVaultNotLiquidatedTransaction,
+} from '~/helpers/generateFakeVault';
 
-const COLLATERALS = getAllCollateralTypes();
-const liquidationLimits = generateFakeLiquidationLimits();
+const vaultTransaction = generateFakeVaultNotLiquidatedTransaction();
 
 const common = {
     components: { VaultLiquidationPanel },
     data() {
         return {
-            auctionId: '1',
-            auctionState: 'liquidatable',
-            collateralType: faker.helpers.randomize(Object.values(COLLATERALS)),
-            debtDai: new BigNumber(0),
-            incentiveRelativeDai: new BigNumber(0),
-            incentiveConstantDai: new BigNumber(0),
-            liquidationLimits,
-            isExplanationsShown: true,
-            isWalletConnected: true,
-            isLiquidating: false,
+            vaultTransaction,
             walletAddress: faker.finance.ethereumAddress(),
-            network: 'mainnet',
         };
     },
     methods: {
@@ -46,41 +36,33 @@ storiesOf('Panels/VaultLiquidationPanel', module)
             };
         },
     }))
-    .add('Wallet Not Connected', () => ({
+    .add('Disabled', () => ({
         ...common,
         data() {
             return {
                 ...common.data(),
-                isWalletConnected: false,
+                disabled: true,
             };
         },
     }))
-    .add('Not Liquidatable State', () => ({
+    .add('Not Liquidatable', () => ({
         ...common,
         data() {
             return {
                 ...common.data(),
-                auctionState: 'not-liquidatable',
+                vaultTransaction: {
+                    ...vaultTransaction,
+                    state: 'not-liquidatable',
+                },
             };
         },
     }))
-    .add('No Liquidation Limits', () => ({
+    .add('Liquidated', () => ({
         ...common,
         data() {
             return {
                 ...common.data(),
-                liquidationLimits: {},
-            };
-        },
-    }))
-    .add('Liquidation Limits Reached', () => ({
-        ...common,
-        data() {
-            return {
-                ...common.data(),
-                debtDai: new BigNumber(faker.datatype.float({ min: 1000 })),
-                incentiveRelativeDai: new BigNumber(faker.finance.amount()),
-                incentiveConstantDai: new BigNumber(faker.finance.amount()),
+                vaultTransaction: generateFakeVaultLiquidatedTransaction(),
             };
         },
     }));
