@@ -138,7 +138,7 @@ describe('Vaults', () => {
             network: TEST_NETWORK,
 
             lastSyncedAt: new Date(),
-            nextPriceChange: new Date('2022-09-09T10:00:00.000Z'),
+            nextPriceChange: new Date('2022-06-13T11:00:00.000Z'),
 
             liquidationRatio: 1.7,
             collateralizationRatio: 1.698313241866927,
@@ -160,8 +160,8 @@ describe('Vaults', () => {
             transactionFeeLiquidationDai: new BigNumber('1.130545198449229148108694994096671174'),
             debtDai: new BigNumber('8973.717449711589422115275593184791275895341629034'),
             collateralAmount: new BigNumber('12.42'),
-            currentUnitPrice: new BigNumber('1712.2106886'),
-            nextUnitPrice: new BigNumber('1712.2106886'),
+            currentUnitPrice: new BigNumber('1227.067888375'),
+            nextUnitPrice: new BigNumber('1208.0159951'),
             initialDebtDai: new BigNumber('8851.309396336731694851'),
         };
         expect(expectedObject.state).to.eq(vaultTransactionNotLiquidated.state);
@@ -259,14 +259,14 @@ describe('Sound values are extracted', () => {
                 nextPriceChange: '2022-09-09T10:00:00.000Z',
             },
             'ETH-B': {
-                nextUnitPrice: '1712.2106886',
-                currentUnitPrice: '1712.2106886',
-                nextPriceChange: '2022-09-09T10:00:00.000Z',
+                nextUnitPrice: '1602.1803800999999',
+                currentUnitPrice: '1602.1803800999999',
+                nextPriceChange: '2022-09-14T13:00:00.000Z',
             },
             'ETH-C': {
-                nextUnitPrice: '1712.2106886',
-                currentUnitPrice: '1712.2106886',
-                nextPriceChange: '2022-09-09T10:00:00.000Z',
+                nextUnitPrice: '1208.0159951',
+                currentUnitPrice: '1227.067888375',
+                nextPriceChange: '2022-06-13T11:00:00.000Z',
             },
             'GUSD-A': {
                 nextUnitPrice: 'NaN',
@@ -424,13 +424,13 @@ describe('Sound values are extracted', () => {
                 nextPriceChange: '2022-09-14T12:01:47.000Z',
             },
         };
-        for (let [type, collateral] of Object.entries(COLLATERALS)) {
+        for (let type of Object.keys(COLLATERALS)) {
             const liquidationRatioAndAddress = await fetchLiquidationRatioAndOracleAddress(TEST_NETWORK, type);
             expect(liquidationRatioAndAddress.oracleAddress).not.to.eq('0x0000000000000000000000000000000000000000');
             const prices = await getOsmPrices(
                 TEST_NETWORK,
                 liquidationRatioAndAddress.oracleAddress,
-                collateral.priceOracleType
+                type
             );
             expect(expectedReturn[type].currentUnitPrice).to.eq(prices.currentUnitPrice.toFixed());
             expect(expectedReturn[type].nextPriceChange).to.eq(prices.nextPriceChange?.toISOString());

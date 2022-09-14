@@ -10,7 +10,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default',
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'BAL-A': {
         title: 'Balancer',
@@ -21,7 +25,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default',
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'BAT-A': {
         title: 'Basic Attention Token',
@@ -32,7 +40,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default',
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'COMP-A': {
         title: 'Compound',
@@ -43,7 +55,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'ETH-A': {
         title: 'Ether',
@@ -54,7 +70,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: [],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'ETH-B': {
         title: 'Ether',
@@ -65,7 +85,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: [],
         },
-        priceOracleType: 'default',
+
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        slotPriceValueBeginsAtPosition: 34,
+        hasDelay: true,
     },
     'ETH-C': {
         title: 'Ether',
@@ -76,7 +101,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: [],
         },
-        priceOracleType: 'default',
+
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        slotPriceValueBeginsAtPosition: 34,
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
     },
     'GUSD-A': {
         title: 'Gemini Dollar',
@@ -87,7 +117,9 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'dsThing',
+        currentPriceSlotAddress: '0x2',
+        hasDelay: false,
+        slotPriceValueBeginsAtPosition: 26,
     },
     'KNC-A': {
         title: 'Kyber Network Crystal',
@@ -98,7 +130,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'LINK-A': {
         title: 'Chainlink',
@@ -109,7 +145,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'LRC-A': {
         title: 'Loopring',
@@ -120,7 +160,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'MANA-A': {
         title: 'Decentraland',
@@ -131,7 +175,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'PAXUSD-A': {
         title: 'Paxos Standard',
@@ -142,7 +190,9 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'dsThing',
+        currentPriceSlotAddress: '0x2',
+        hasDelay: false,
+        slotPriceValueBeginsAtPosition: 26,
     },
     'RENBTC-A': {
         title: 'renBTC',
@@ -153,7 +203,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'TUSD-A': {
         title: 'True USD',
@@ -164,7 +218,9 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'dsThing'
+        currentPriceSlotAddress: '0x2',
+        hasDelay: false,
+        slotPriceValueBeginsAtPosition: 26,
     },
     'UNI-A': {
         title: 'Uniswap',
@@ -175,7 +231,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'USDC-A': {
         title: 'USD Coin',
@@ -186,7 +246,9 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'dsThing'
+        currentPriceSlotAddress: '0x2',
+        hasDelay: false,
+        slotPriceValueBeginsAtPosition: 26,
     },
     'USDC-B': {
         title: 'USD Coin',
@@ -197,7 +259,9 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'dsThing'
+        currentPriceSlotAddress: '0x2',
+        hasDelay: false,
+        slotPriceValueBeginsAtPosition: 26,
     },
     'USDT-A': {
         title: 'Tether USD',
@@ -208,7 +272,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'WBTC-A': {
         title: 'Wrapped Bitcoin',
@@ -219,7 +287,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'WBTC-B': {
         title: 'Wrapped BTC',
@@ -230,7 +302,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'WBTC-C': {
         title: 'Wrapped BTC',
@@ -241,7 +317,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'YFI-A': {
         title: 'yearn.finance',
@@ -252,7 +332,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'ZRX-A': {
         title: '0x',
@@ -263,7 +347,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'MATIC-A': {
         title: 'Matic',
@@ -274,7 +362,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'WSTETH-A': {
         title: 'Lido wstETH',
@@ -285,7 +377,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'WstETHCurveUniv3Callee',
             route: [],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'WSTETH-B': {
         title: 'Lido wstETH',
@@ -296,7 +392,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'WstETHCurveUniv3Callee',
             route: [],
         },
-        priceOracleType: 'default'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x5',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'CRVV1ETHSTETH-A': {
         title: 'Curve stETH',
@@ -307,7 +407,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'CurveLpTokenUniv3Callee',
             route: ['ETH'],
         },
-        priceOracleType: 'univ',
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'UNIV2DAIETH-A': {
         title: 'UNIV2DAIETH LP',
@@ -319,7 +423,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'DAI',
             token1: 'ETH',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        slotPriceValueBeginsAtPosition: 34,
+        hasDelay: true,
     },
     'UNIV2USDCETH-A': {
         title: 'UNIV2USDCETH LP',
@@ -331,7 +439,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'USDC',
             token1: 'ETH',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        slotPriceValueBeginsAtPosition: 34,
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
     },
     'UNIV2ETHUSDT-A': {
         title: 'UNIV2ETHUSDT LP',
@@ -343,7 +455,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'ETH',
             token1: 'USDT',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'UNIV2WBTCDAI-A': {
         title: 'UNIV2WBTCDAI LP',
@@ -355,7 +471,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'WBTC',
             token1: 'DAI',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'UNIV2WBTCETH-A': {
         title: 'UNIV2WBTCETH LP',
@@ -367,7 +487,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'WBTC',
             token1: 'ETH',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'UNIV2LINKETH-A': {
         title: 'UNIV2LINKETH LP',
@@ -379,7 +503,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'LINK',
             token1: 'ETH',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'UNIV2UNIETH-A': {
         title: 'UNIV2UNIETH LP',
@@ -391,7 +519,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'UNI',
             token1: 'ETH',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'UNIV2AAVEETH-A': {
         title: 'UNIV2AAVEETH LP',
@@ -403,7 +535,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'AAVE',
             token1: 'ETH',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'UNIV2DAIUSDT-A': {
         title: 'UNIV2DAIUSDT LP',
@@ -415,7 +551,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'DAI',
             token1: 'USDT',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
     'UNIV2DAIUSDC-A': {
         title: 'UNIV2DAIUSDC LP',
@@ -427,7 +567,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token0: 'DAI',
             token1: 'USDC',
         },
-        priceOracleType: 'univ'
+        currentPriceSlotAddress: '0x3',
+        whitelistSlotAddress: '0x2',
+        nextPriceSlotAddress: '0x4',
+        hasDelay: true,
+        slotPriceValueBeginsAtPosition: 34,
     },
 };
 

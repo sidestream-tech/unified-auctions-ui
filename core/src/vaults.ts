@@ -9,7 +9,6 @@ import {
     OraclePrices,
     VaultTransactionNotLiquidated,
     VaultTransaction,
-    PriceOracleType,
 } from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
@@ -23,7 +22,6 @@ import { getApproximateLiquidationFees } from './fees';
 import { fetchDateByBlockNumber } from './date';
 import memoizee from 'memoizee';
 import COLLATERALS from './constants/COLLATERALS';
-import { priceOracleTypeToConfig } from './priceOracleConfigs';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
@@ -161,24 +159,26 @@ export const fetchVault = memoizee(_fetchVault, {
 const _getOsmPrices = async (
     network: string,
     oracleAddress: string,
-    oracleType: PriceOracleType
+    collateralType: CollateralType
 ): Promise<OraclePrices> => {
     const provider = await getProvider(network);
+    const collateralConfig = COLLATERALS[collateralType];
 
-    const oracleConfig = priceOracleTypeToConfig[oracleType];
     let nextPrice = new BigNumber(NaN);
-    if (oracleConfig.nextPriceSlotAddress) {
-        const nextPriceFeed = await provider.getStorageAt(oracleAddress, oracleConfig.nextPriceSlotAddress);
+    if (collateralConfig.nextPriceSlotAddress) {
+        const slot = collateralConfig.nextPriceSlotAddress;
+        const nextPriceFeed = await provider.getStorageAt(oracleAddress, slot);
         nextPrice = new BigNumber(
             `0x${nextPriceFeed.substring(34)}`
         );
     }
-    const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracleConfig.currentPriceSlotAddress)
+    const currentPriceFeed = await provider.getStorageAt(oracleAddress, collateralConfig.currentPriceSlotAddress)
+    const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
     const currentPrice = new BigNumber(
-        `0x${currentPriceFeed.substring(34)}`
+        `0x${currentPriceFeed.substring(valueSplitPosition)}`
     );
     let nextPriceChange: Date | undefined = undefined;
-    if (oracleConfig.hasDelay) {
+    if (collateralConfig.hasDelay) {
         const osmContractInterface = await getContractInterfaceByName('OSM');
         const osmContract = new ethers.Contract(oracleAddress, osmContractInterface, provider);
         const lastPriceUpdateAsHex = (await osmContract.zzz())._hex;
@@ -297,7 +297,7 @@ const _enrichVaultWithTransactonInformation = async (
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
-    const osmPrices = await getOsmPrices(network, oracleAddress, COLLATERALS[vault.collateralType].priceOracleType);
+    const osmPrices = await getOsmPrices(network, oracleAddress, vault.collateralType);
     const { nextUnitPrice, nextPriceChange, currentUnitPrice } = osmPrices
         ? osmPrices
         : {
