@@ -118,11 +118,13 @@ export const fetchGlobalLiquidationLimits = memoizee(_fetchGlobalLiquidationLimi
 const _fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (network: string, type: string) => {
     const contract = await getContract(network, 'MCD_DOG');
     const typeHex = ethers.utils.formatBytes32String(type);
-    const { hole, dirt, clip } = await contract.ilks(typeHex);
+    const { hole, dirt, clip, chop, dust } = await contract.ilks(typeHex);
     return {
         currentCollateralDebtDai: new BigNumber(dirt._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
         maximumCollateralDebtDai: new BigNumber(hole._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
         liquidatiorContractAddress: clip,
+        liquidationPenalty: new BigNumber(chop._hex),
+        minimalAuctionedDai: new BigNumber(dust._hex)
     };
 };
 
@@ -140,7 +142,7 @@ const _fetchVault = async (network: string, index: number): Promise<Vault> => {
     const vaultCollateralParameters = await fetchVaultCollateralParameters(network, vaultBase.collateralType);
     const vaultAmount = await fetchVaultAmount(network, vaultBase.collateralType, vaultBase.address);
     const globalLiquidationLimits = await fetchGlobalLiquidationLimits(network);
-    const { currentCollateralDebtDai, maximumCollateralDebtDai } =
+    const { currentCollateralDebtDai, maximumCollateralDebtDai, liquidationPenalty, minimalAuctionedDai } =
         await fetchCollateralLiquidationLimitsAndLiquidatorAddress(network, vaultBase.collateralType);
     return {
         ...vaultBase,
@@ -149,6 +151,8 @@ const _fetchVault = async (network: string, index: number): Promise<Vault> => {
         ...globalLiquidationLimits,
         currentCollateralDebtDai,
         maximumCollateralDebtDai,
+        liquidationPenalty,
+        minimalAuctionedDai,
     };
 };
 export const fetchVault = memoizee(_fetchVault, {
@@ -300,11 +304,6 @@ const _enrichVaultWithTransactonInformation = async (
         network,
         vault.collateralType
     );
-    const { incentiveCombinedDai, incentiveConstantDai, incentiveRelativeDai } = await fetchVaultLiquidationIncentive(
-        network,
-        liquidatiorContractAddress,
-        debtDai
-    );
 
     const { liquidationRatio, oracleAddress } = await fetchLiquidationRatioAndOracleAddress(
         network,
@@ -327,7 +326,34 @@ const _enrichVaultWithTransactonInformation = async (
               currentUnitPrice: new BigNumber(NaN),
               nextPriceChange: undefined,
           };
-    const state = proximityToLiquidation < 0 ? 'liquidatable' : 'not-liquidatable';
+
+    let state: 'liquidatable' | 'not-liquidatable' = proximityToLiquidation < 0 ? 'liquidatable' : 'not-liquidatable';
+    // logic from https://github.com/makerdao/dss/blob/fa4f6630afb0624d04a003e920b0d71a00331d98/src/dog.sol#L186
+    // detemines if the vault is liquidatable and what amount of debt can be covered.
+    const amountDaiCanBeAuctionedGloballyDai = vault.maximumProtocolDebtDai.minus(vault.currentProtocolDebtDai);
+    const amountDaiCanBeAuctionedCollateralDai = vault.maximumCollateralDebtDai.minus(vault.currentCollateralDebtDai);
+    const minimumDebtCovered = amountDaiCanBeAuctionedCollateralDai.isLessThan(amountDaiCanBeAuctionedGloballyDai)
+        ? amountDaiCanBeAuctionedCollateralDai
+        : amountDaiCanBeAuctionedGloballyDai;
+    if (amountDaiCanBeAuctionedGloballyDai.eq(0) || amountDaiCanBeAuctionedCollateralDai.eq(0)) {
+        state = 'not-liquidatable';
+    }
+    let auctionedAmountDai = BigNumber.min(vault.initialDebtDai, minimumDebtCovered.div(vault.stabilityFeeRate).div(vault.liquidationPenalty))
+    if (auctionedAmountDai.isLessThan(vault.initialDebtDai)) {
+        if (vault.initialDebtDai.minus(auctionedAmountDai).multipliedBy(vault.stabilityFeeRate).isLessThan(vault.minimalAuctionedDai)) {
+            auctionedAmountDai = debtDai;
+        } else {
+            if (auctionedAmountDai.multipliedBy(vault.stabilityFeeRate).isGreaterThanOrEqualTo(vault.minimalAuctionedDai)) {
+                state = 'not-liquidatable'
+            }
+        }
+    }
+    const { incentiveCombinedDai, incentiveConstantDai, incentiveRelativeDai } = await fetchVaultLiquidationIncentive(
+        network,
+        liquidatiorContractAddress,
+        auctionedAmountDai
+    );
+
     return {
         ...vault,
         liquidationRatio,
@@ -376,7 +402,9 @@ export const getVaultTransaction = memoizee(_getVaultTransaction, {
 
 export const liquidateVault = async (network: string, vault: Vault, incentiveBeneficiaryAddress?: string) => {
     const contract = await getContract(network, 'MCD_DOG', true);
-    const sendIncentiveTo = incentiveBeneficiaryAddress ? incentiveBeneficiaryAddress : await (await getSigner(network)).getAddress();
+    const sendIncentiveTo = incentiveBeneficiaryAddress
+        ? incentiveBeneficiaryAddress
+        : await (await getSigner(network)).getAddress();
     const typeHex = ethers.utils.formatBytes32String(vault.collateralType);
     const vaultAddress = vault.address;
     const liquidationTransaction = await contract.bark(typeHex, vaultAddress, sendIncentiveTo);

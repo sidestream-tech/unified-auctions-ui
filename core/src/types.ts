@@ -281,6 +281,8 @@ export declare interface LiquidationLimits {
     currentProtocolDebtDai: BigNumber;
     currentCollateralDebtDai: BigNumber;
     maximumCollateralDebtDai: BigNumber;
+    liquidationPenalty: BigNumber;
+    minimalAuctionedDai: BigNumber;
 }
 
 export declare interface VaultCollateralParameters {
