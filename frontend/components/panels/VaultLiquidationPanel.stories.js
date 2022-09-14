@@ -24,6 +24,7 @@ const common = {
             isWalletConnected: true,
             isLiquidating: false,
             walletAddress: faker.finance.ethereumAddress(),
+            network: 'mainnet',
         };
     },
     methods: {

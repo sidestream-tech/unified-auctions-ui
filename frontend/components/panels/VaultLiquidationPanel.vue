@@ -1,11 +1,11 @@
 <template>
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
-        <TextBlock v-if="isExplanationsShown"
-            >A vault can be liquidated into a collateral auction if the liquidation limits are not reached. The
-            liquidation incentives will be transferred to the connected wallet. You can also choose another wallet for
-            that transfer.</TextBlock
-        >
+        <TextBlock v-if="isExplanationsShown">
+            Successful liquidation of the vault will transfer combined incentive into the wallet that executes the
+            transaction (or a specified wallet). This transaction will start a collateral auction that one can also
+            participate in on a <nuxt-link :to="`/collateral?network=${network}`">separate page</nuxt-link>.
+        </TextBlock>
         <div class="flex mt-4 justify-end gap-5">
             <ExecuteWithOtherWalletModal
                 :is-shown.sync="isExecuteToAnotherWalletModalShown"
@@ -93,6 +93,10 @@ export default Vue.extend({
         walletAddress: {
             type: String,
             default: null,
+        },
+        network: {
+            type: String,
+            default: 'mainnet',
         },
     },
     data() {
