@@ -119,7 +119,8 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        slotPriceValueBeginsAtPosition: 26,
+        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        slotPriceValueBeginsAtPosition: 0,
     },
     'KNC-A': {
         title: 'Kyber Network Crystal',
@@ -192,7 +193,8 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        slotPriceValueBeginsAtPosition: 26,
+        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        slotPriceValueBeginsAtPosition: 0,
     },
     'RENBTC-A': {
         title: 'renBTC',
@@ -220,7 +222,8 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        slotPriceValueBeginsAtPosition: 26,
+        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        slotPriceValueBeginsAtPosition: 0,
     },
     'UNI-A': {
         title: 'Uniswap',
@@ -248,7 +251,8 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        slotPriceValueBeginsAtPosition: 26,
+        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        slotPriceValueBeginsAtPosition: 0,
     },
     'USDC-B': {
         title: 'USD Coin',
@@ -261,7 +265,8 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        slotPriceValueBeginsAtPosition: 26,
+        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        slotPriceValueBeginsAtPosition: 0,
     },
     'USDT-A': {
         title: 'Tether USD',

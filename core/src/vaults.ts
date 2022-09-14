@@ -168,11 +168,30 @@ const _getOsmPrices = async (
     if (collateralConfig.nextPriceSlotAddress) {
         const slot = collateralConfig.nextPriceSlotAddress;
         const nextPriceFeed = await provider.getStorageAt(oracleAddress, slot);
-        nextPrice = new BigNumber(`0x${nextPriceFeed.substring(34)}`);
+        const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
+        let isPriceValid;
+        if (collateralConfig.nextPriceValiditySlotAndOffset) {
+            isPriceValid = await provider.getStorageAt(oracleAddress, collateralConfig.nextPriceValiditySlotAndOffset.slot);
+            isPriceValid = isPriceValid[collateralConfig.nextPriceValiditySlotAndOffset.offset]
+        } else {
+            isPriceValid = nextPriceFeed.substring(0, valueSplitPosition);
+        }
+        if (new BigNumber(isPriceValid).eq(1)) {
+            nextPrice = new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`);
+        }
     }
     const currentPriceFeed = await provider.getStorageAt(oracleAddress, collateralConfig.currentPriceSlotAddress);
     const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
-    const currentPrice = new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`);
+    let isPriceValid;
+    if (collateralConfig.currentPriceValiditySlotAndOffset) {
+        isPriceValid = await provider.getStorageAt(oracleAddress, collateralConfig.currentPriceValiditySlotAndOffset.slot);
+        isPriceValid = isPriceValid[collateralConfig.currentPriceValiditySlotAndOffset.offset]
+    } else {
+        isPriceValid = currentPriceFeed.substring(0, valueSplitPosition);
+    }
+    const currentPrice = new BigNumber(isPriceValid).eq(1)
+        ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`)
+        : new BigNumber(NaN);
     let nextPriceChange: Date | undefined = undefined;
     if (collateralConfig.hasDelay) {
         const osmContractInterface = await getContractInterfaceByName('OSM');
