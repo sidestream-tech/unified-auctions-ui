@@ -10,7 +10,7 @@ const common = {
     components: { VaultsText },
     data: () => ({
         vaultTransactions: fakeVaults,
-        selectedVaultId: randomSelectedVault.id,
+        selectedVaultId: randomSelectedVault.id.toString(),
     }),
 };
 
