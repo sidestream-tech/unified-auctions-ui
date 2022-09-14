@@ -50,7 +50,7 @@ describe('Vaults', () => {
             debtDai: new BigNumber('32198315.88349647029073587039891649505768393987481484'),
             collateralAmount: new BigNumber('60266.446946772373610407'),
             currentUnitPrice: new BigNumber('1712.2106886'),
-            nextUnitPrice: new BigNumber('1698.4'),
+            nextUnitPrice: new BigNumber('1712.2106886'),
             initialDebtDai: new BigNumber('29868839.670692031996967035'),
         };
         expect(expectedObject.state).to.eq(vaultTransactionLiquidatable.state);
@@ -153,7 +153,7 @@ describe('Vaults', () => {
             debtDai: new BigNumber('8973.717449711589422115275593184791275895341629034'),
             collateralAmount: new BigNumber('12.42'),
             currentUnitPrice: new BigNumber('1712.2106886'),
-            nextUnitPrice: new BigNumber('1698.4'),
+            nextUnitPrice: new BigNumber('1712.2106886'),
             initialDebtDai: new BigNumber('8851.309396336731694851'),
         };
         expect(expectedObject.state).to.eq(vaultTransactionNotLiquidated.state);
