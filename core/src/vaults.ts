@@ -22,6 +22,7 @@ import { getApproximateLiquidationFees } from './fees';
 import { fetchDateByBlockNumber } from './date';
 import memoizee from 'memoizee';
 import COLLATERALS from './constants/COLLATERALS';
+import getSigner from './signer';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
@@ -373,10 +374,11 @@ export const getVaultTransaction = memoizee(_getVaultTransaction, {
     length: 2,
 });
 
-export const liquidateVault = async (network: string, vault: Vault, incentiveBeneficiaryAddress: string) => {
+export const liquidateVault = async (network: string, vault: Vault, incentiveBeneficiaryAddress?: string) => {
     const contract = await getContract(network, 'MCD_DOG', true);
+    const sendIncentiveTo = incentiveBeneficiaryAddress ? incentiveBeneficiaryAddress : await (await getSigner(network)).getAddress();
     const typeHex = ethers.utils.formatBytes32String(vault.collateralType);
     const vaultAddress = vault.address;
-    const liquidationTransaction = await contract.bark(typeHex, vaultAddress, incentiveBeneficiaryAddress);
+    const liquidationTransaction = await contract.bark(typeHex, vaultAddress, sendIncentiveTo);
     return new BigNumber(liquidationTransaction.value._hex);
 };
