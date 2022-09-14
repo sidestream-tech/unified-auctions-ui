@@ -5,7 +5,7 @@
             <div slot="message">
                 <p>This vault has been liquidated into a collateral auction</p>
                 <div class="flex justify-end mt-2">
-                    <nuxt-link :to="vaultLink">
+                    <nuxt-link :to="auctionLink">
                         <Button> View collateral auction {{ vaultTransaction.auctionId }} </Button>
                     </nuxt-link>
                 </div>
@@ -85,10 +85,6 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        network: {
-            type: String,
-            default: 'mainnet',
-        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
@@ -100,13 +96,12 @@ export default Vue.extend({
         };
     },
     computed: {
-        vaultLink(): string | undefined {
+        auctionLink(): string | undefined {
             if (!this.vaultTransaction || !this.vaultTransaction.auctionId) {
                 return undefined;
             }
-            const link = generateLink(this.network, 'collateral');
-            const formattedAuctionId = this.vaultTransaction.auctionId.replace(':', '%3A');
-            return `${link}&auction=${formattedAuctionId}`;
+            const link = generateLink(this.vaultTransaction.network, 'collateral');
+            return `${link}&auction=${encodeURIComponent(this.vaultTransaction.auctionId)}`;
         },
     },
 });

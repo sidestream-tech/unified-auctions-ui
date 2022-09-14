@@ -43,7 +43,8 @@
                 <span
                     v-if="vaultTransaction.incentiveRelativeDai && vaultTransaction.collateralType"
                     class="opacity-50"
-                    >(~ {{ incentiveRelativePercentage }} for {{ vaultTransaction.collateralType }})</span
+                    >(~ <format-percentage :value="incentiveRelativePercentage" /> for
+                    {{ vaultTransaction.collateralType }})</span
                 >
             </div>
             <div>
@@ -118,6 +119,7 @@
 import Vue from 'vue';
 import { VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import { formatToAutomaticDecimalPoints } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
+import FormatPercentage from '../common/formatters/FormatPercentage.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import Explain from '~/components/common/other/Explain.vue';
@@ -125,6 +127,7 @@ import AnimatedArrow, { ArrowDirections } from '~/components/common/other/Animat
 
 export default Vue.extend({
     components: {
+        FormatPercentage,
         TimeTill,
         FormatCurrency,
         Explain,
@@ -137,16 +140,14 @@ export default Vue.extend({
         },
     },
     computed: {
-        incentiveRelativePercentage(): String {
-            return (
-                formatToAutomaticDecimalPoints(
-                    this.vaultTransaction.incentiveRelativeDai.div(this.vaultTransaction.debtDai).times(100)
-                ) + '%'
+        incentiveRelativePercentage(): string {
+            return formatToAutomaticDecimalPoints(
+                this.vaultTransaction.incentiveRelativeDai.div(this.vaultTransaction.debtDai).times(100)
             );
         },
         getIsPriceGoingUpOrDown(): ArrowDirections {
             if (!this.vaultTransaction.nextUnitPrice || !this.vaultTransaction.currentUnitPrice) {
-                return 'up';
+                return undefined;
             }
             if (this.vaultTransaction.nextUnitPrice.isGreaterThan(this.vaultTransaction.currentUnitPrice)) {
                 return 'up';

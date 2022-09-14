@@ -10,7 +10,6 @@ const common = {
     components: { VaultLiquidationTransactionFlow },
     data: () => ({
         vaultTransaction: generateFakeVaultNotLiquidatedTransaction(),
-        network: 'mainnet',
 
         isConnectingWallet: false,
         walletAddress: undefined,

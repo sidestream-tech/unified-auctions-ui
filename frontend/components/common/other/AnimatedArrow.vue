@@ -1,5 +1,5 @@
 <template>
-    <UpArrow :style="style" />
+    <UpArrow v-if="direction" :style="style" />
 </template>
 
 <script lang="ts">
@@ -15,11 +15,14 @@ export default Vue.extend({
     props: {
         direction: {
             type: String as Vue.PropType<ArrowDirections>,
-            required: true,
+            default: undefined,
         },
     },
     computed: {
         style(): Object {
+            if (!this.direction) {
+                return undefined;
+            }
             let rotationDegree = 0;
             if (this.direction === 'down') {
                 rotationDegree = 180;
