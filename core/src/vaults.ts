@@ -124,7 +124,7 @@ const _fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (network: st
         maximumCollateralDebtDai: new BigNumber(hole._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
         liquidatiorContractAddress: clip,
         liquidationPenalty: new BigNumber(chop._hex),
-        minimalAuctionedDai: new BigNumber(dust._hex)
+        minimalAuctionedDai: new BigNumber(dust._hex),
     };
 };
 
@@ -338,13 +338,25 @@ const _enrichVaultWithTransactonInformation = async (
     if (amountDaiCanBeAuctionedGloballyDai.eq(0) || amountDaiCanBeAuctionedCollateralDai.eq(0)) {
         state = 'not-liquidatable';
     }
-    let auctionedAmountDai = BigNumber.min(vault.initialDebtDai, minimumDebtCovered.div(vault.stabilityFeeRate).div(vault.liquidationPenalty))
+    let auctionedAmountDai = BigNumber.min(
+        vault.initialDebtDai,
+        minimumDebtCovered.div(vault.stabilityFeeRate).div(vault.liquidationPenalty)
+    );
     if (auctionedAmountDai.isLessThan(vault.initialDebtDai)) {
-        if (vault.initialDebtDai.minus(auctionedAmountDai).multipliedBy(vault.stabilityFeeRate).isLessThan(vault.minimalAuctionedDai)) {
+        if (
+            vault.initialDebtDai
+                .minus(auctionedAmountDai)
+                .multipliedBy(vault.stabilityFeeRate)
+                .isLessThan(vault.minimalAuctionedDai)
+        ) {
             auctionedAmountDai = debtDai;
         } else {
-            if (auctionedAmountDai.multipliedBy(vault.stabilityFeeRate).isGreaterThanOrEqualTo(vault.minimalAuctionedDai)) {
-                state = 'not-liquidatable'
+            if (
+                auctionedAmountDai
+                    .multipliedBy(vault.stabilityFeeRate)
+                    .isGreaterThanOrEqualTo(vault.minimalAuctionedDai)
+            ) {
+                state = 'not-liquidatable';
             }
         }
     }
