@@ -119,7 +119,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
         slotPriceValueBeginsAtPosition: 0,
     },
     'KNC-A': {
@@ -193,7 +193,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
         slotPriceValueBeginsAtPosition: 0,
     },
     'RENBTC-A': {
@@ -222,7 +222,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
         slotPriceValueBeginsAtPosition: 0,
     },
     'UNI-A': {
@@ -251,7 +251,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
         slotPriceValueBeginsAtPosition: 0,
     },
     'USDC-B': {
@@ -265,7 +265,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         currentPriceSlotAddress: '0x2',
         hasDelay: false,
-        currentPriceValiditySlotAndOffset: {slot: '0x1', offset: 25},
+        currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
         slotPriceValueBeginsAtPosition: 0,
     },
     'USDT-A': {

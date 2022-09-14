@@ -171,8 +171,11 @@ const _getOsmPrices = async (
         const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
         let isPriceValid;
         if (collateralConfig.nextPriceValiditySlotAndOffset) {
-            isPriceValid = await provider.getStorageAt(oracleAddress, collateralConfig.nextPriceValiditySlotAndOffset.slot);
-            isPriceValid = isPriceValid[collateralConfig.nextPriceValiditySlotAndOffset.offset]
+            isPriceValid = await provider.getStorageAt(
+                oracleAddress,
+                collateralConfig.nextPriceValiditySlotAndOffset.slot
+            );
+            isPriceValid = isPriceValid[collateralConfig.nextPriceValiditySlotAndOffset.offset];
         } else {
             isPriceValid = nextPriceFeed.substring(0, valueSplitPosition);
         }
@@ -184,8 +187,11 @@ const _getOsmPrices = async (
     const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
     let isPriceValid;
     if (collateralConfig.currentPriceValiditySlotAndOffset) {
-        isPriceValid = await provider.getStorageAt(oracleAddress, collateralConfig.currentPriceValiditySlotAndOffset.slot);
-        isPriceValid = isPriceValid[collateralConfig.currentPriceValiditySlotAndOffset.offset]
+        isPriceValid = await provider.getStorageAt(
+            oracleAddress,
+            collateralConfig.currentPriceValiditySlotAndOffset.slot
+        );
+        isPriceValid = isPriceValid[collateralConfig.currentPriceValiditySlotAndOffset.offset];
     } else {
         isPriceValid = currentPriceFeed.substring(0, valueSplitPosition);
     }
