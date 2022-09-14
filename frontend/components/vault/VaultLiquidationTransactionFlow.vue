@@ -41,7 +41,16 @@
                 @connectWallet="$emit('connectWallet')"
                 @disconnectWallet="$emit('disconnectWallet')"
             />
-            <!-- LiquidationLimitsCheckPanel -->
+            <VaultLiquidationLimitsCheckPanel
+                :liquidation-limits="liquidationLimits"
+                :collateral-type="vaultTransaction.collateralType"
+                :debt-dai="vaultTransaction.debtDai"
+                :incentive-relative-dai="vaultTransaction.incentiveRelativeDai"
+                :incentive-constant-dai="vaultTransaction.incentiveConstantDai"
+                :is-refreshing="isRefreshingLimits"
+                :is-explanations-shown="isExplanationsShown"
+                @refreshLimits="$emit('refreshLimits')"
+            />
             <!-- LiquidationPanel -->
         </div>
     </div>
@@ -50,11 +59,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Alert, Button } from 'ant-design-vue';
-import { VaultTransactionNotLiquidated } from 'auctions-core/dist/src/types';
+import { LiquidationLimits, VaultTransactionNotLiquidated } from 'auctions-core/dist/src/types';
 import TransactionFeesTable from '../auction/TransactionFeesTable.vue';
 import { generateLink } from '../../helpers/generateLink';
 import TimeTill from '../common/formatters/TimeTill.vue';
 import FormatAddress from '../common/formatters/FormatAddress.vue';
+import VaultLiquidationLimitsCheckPanel from '../panels/VaultLiquidationLimitsCheckPanel.vue';
 import VaultLiquidationTransactionTable from './VaultLiquidationTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
@@ -62,6 +72,7 @@ import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
     components: {
+        VaultLiquidationLimitsCheckPanel,
         FormatAddress,
         TimeTill,
         TransactionFeesTable,
@@ -77,11 +88,19 @@ export default Vue.extend({
             type: Object as Vue.PropType<VaultTransactionNotLiquidated>,
             required: true,
         },
+        liquidationLimits: {
+            type: Object as Vue.PropType<LiquidationLimits>,
+            required: true,
+        },
         walletAddress: {
             type: String,
             default: null,
         },
         isConnectingWallet: {
+            type: Boolean,
+            default: false,
+        },
+        isRefreshingLimits: {
             type: Boolean,
             default: false,
         },
