@@ -10,13 +10,21 @@
             show-different-wallet-info
         />
         <div class="flex flex-col md:flex-row md:space-x-4 justify-end flex-wrap mt-4">
-            <CollateralAuctionExecuteWithOtherWalletBlock
-                :disabled="disabled || isLoading || state === 'executed'"
+            <ExecuteWithOtherWalletModal
+                :is-shown.sync="isExecuteToAnotherWalletModalShown"
                 :default-wallet="walletAddress"
-                :is-loading="state === 'loading'"
                 class="pb-3"
                 @execute="executeWithOtherWallet"
+                @close="closeExecuteToOtherWalletModal"
             />
+            <base-button
+                class="w-full md:w-80"
+                :is-loading="state === 'loading'"
+                :disabled="state !== 'notExecuted'"
+                @click="isExecuteToAnotherWalletModalShown = true"
+            >
+                Execute to another wallet
+            </base-button>
             <div>
                 <base-button
                     v-if="state === 'notExecuted'"
@@ -38,13 +46,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
-import CollateralAuctionExecuteWithOtherWalletBlock from '~/components/auction/collateral/CollateralAuctionExecuteWithOtherWalletBlock.vue';
+import ExecuteWithOtherWalletModal from '~/components/modals/ExecuteWithOtherWalletModal.vue';
 import TransactionMessage from '~/components/auction/TransactionMessage.vue';
 
 export default Vue.extend({
     name: 'ExecutionBlock',
     components: {
-        CollateralAuctionExecuteWithOtherWalletBlock,
+        ExecuteWithOtherWalletModal,
         BaseButton,
         TransactionMessage,
     },
@@ -90,6 +98,11 @@ export default Vue.extend({
             default: null,
         },
     },
+    data() {
+        return {
+            isExecuteToAnotherWalletModalShown: false,
+        };
+    },
     computed: {
         state(): string {
             if (this.isLoading) {
@@ -105,6 +118,9 @@ export default Vue.extend({
         },
     },
     methods: {
+        closeExecuteToOtherWalletModal() {
+            this.isExecuteToAnotherWalletModalShown = false;
+        },
         executeWithOtherWallet(wallet: string | undefined) {
             this.$emit('execute', wallet);
         },

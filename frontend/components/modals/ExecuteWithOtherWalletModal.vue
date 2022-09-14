@@ -1,16 +1,12 @@
 <template>
     <div>
-        <div class="flex flex-row-reverse md:mb-0">
-            <base-button
-                :disabled="disabled"
-                class="w-full md:w-80"
-                :is-loading="isLoading"
-                @click="setModalVisibility(true)"
-            >
-                Execute to another wallet
-            </base-button>
-        </div>
-        <modal v-model="isVisible" title="Execute to another wallet" destroy-on-close>
+        <modal :visible="isShown" title="Execute to another wallet" destroy-on-close @cancel="$emit('close')">
+            <Alert v-if="!isOutcomeWalletInputValueValid && outcomeWalletInputValue" type="error" banner>
+                <template slot="message">
+                    Address <span class="font-bold">{{ outcomeWalletInputValue }}</span> is not a valid address.
+                </template>
+            </Alert>
+
             <TextBlock class="py-4 px-6 text-sm">
                 Currently, the wallet which will receive the transaction profit is
                 <format-address type="address" shorten :value="defaultWallet" />. If you want to use a different
@@ -37,9 +33,7 @@
                 <div
                     v-if="!isOutcomeWalletInputValueValid && outcomeWalletInputValue"
                     class="flex flex-col space-y-3 my-3 md:mb-0"
-                >
-                    <Alert type="error" :message="`Address ${outcomeWalletInputValue} seems to be incorrect`" />
-                </div>
+                ></div>
             </TextBlock>
             <template slot="footer">
                 <div class="py-2 px-2">
@@ -63,25 +57,20 @@ import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
-    name: 'CollateralAuctionExecuteWithOtherWalletBlock',
+    name: 'ExecuteWithOtherWalletModal',
     components: { TextBlock, BaseButton, Modal, Input, Alert, FormatAddress, Explain },
     props: {
+        isShown: {
+            type: Boolean,
+            default: false,
+        },
         defaultWallet: {
             type: String,
             default: undefined,
         },
-        disabled: {
-            type: Boolean,
-            default: false,
-        },
-        isLoading: {
-            type: Boolean,
-            default: false,
-        },
     },
     data() {
         return {
-            isVisible: false,
             outcomeWalletInputValue: undefined as string | undefined,
         };
     },
@@ -98,16 +87,13 @@ export default Vue.extend({
         },
     },
     methods: {
-        setModalVisibility(newState: boolean): void {
-            this.isVisible = newState;
-        },
         cancel(): void {
             this.outcomeWalletInputValue = undefined;
-            this.setModalVisibility(false);
+            this.$emit('close');
         },
         execute(): void {
             this.$emit('execute', this.outcomeWalletInputValue);
-            this.setModalVisibility(false);
+            this.$emit('close');
         },
     },
 });
