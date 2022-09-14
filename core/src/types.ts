@@ -90,9 +90,7 @@ export declare interface CollateralConfig {
     symbol: string;
     decimals: number;
     exchange: RegularCalleeConfig | UniswapV2LpTokenCalleeConfig;
-    slotCurrentPrice?: string,
-    slotNextPrice?: string,
-    slotWhitelist?: string,
+    priceOracleType: PriceOracleType;
 }
 
 export declare interface NetworkConfig {
@@ -341,4 +339,5 @@ export declare interface PriceOracleConfig {
     currentPriceSlotAddress: string;
     nextPriceSlotAddress?: string;
     whitelistSlotAddress?: string;
+    hasDelay: boolean;
 }

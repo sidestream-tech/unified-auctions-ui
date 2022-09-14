@@ -1,4 +1,4 @@
-import { fetchVault, fetchVaultAmount, getVaultTransaction, isVaultLiquidated, liquidateVault } from '../src/vaults';
+import { /*fetchLiquidationRatioAndOracleAddress,*/ fetchVault, fetchVaultAmount, getVaultTransaction, isVaultLiquidated, liquidateVault } from '../src/vaults';
 import { resetNetwork } from '../helpers/hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
@@ -6,6 +6,7 @@ import { expect } from 'chai';
 import { VaultTransactionLiquidated, VaultTransactionNotLiquidated, Vault } from '../src/types';
 import BigNumber from '../src/bignumber';
 import { createWalletFromPrivateKey } from '../src/signer';
+// import COLLATERALS from '../src/constants/COLLATERALS';
 
 describe('Vaults', () => {
     before(async () => {
@@ -212,3 +213,21 @@ describe('Vaults', () => {
         expect(updatedVault.initialDebtDai.toFixed()).to.eq('0');
     });
 });
+// describe('Sound values are extracted', () => {
+//     before(async () => {
+//         await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
+//     });
+//     beforeEach(async () => {
+//         await resetNetwork()
+//     });
+//     it('can reach all the oracles', async () => {
+//         const promises = Object.keys(COLLATERALS).map((type) => {
+//             return fetchLiquidationRatioAndOracleAddress(TEST_NETWORK, type)
+//         })
+//         const promiseResults = await Promise.all(promises)
+//         for (const result of promiseResults) {
+//             console.log(result.oracleAddress)
+//             expect(result.oracleAddress).not.to.be.null;
+//         }
+//     })
+// })

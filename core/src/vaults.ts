@@ -9,9 +9,10 @@ import {
     OraclePrices,
     VaultTransactionNotLiquidated,
     VaultTransaction,
+    PriceOracleType,
 } from './types';
 import BigNumber from './bignumber';
-import { ethers, Event } from 'ethers';
+import { ethers } from 'ethers';
 import {
     DAI_NUMBER_OF_DIGITS,
     RAD_NUMBER_OF_DIGITS,
@@ -21,11 +22,10 @@ import {
 import { getApproximateLiquidationFees } from './fees';
 import { fetchDateByBlockNumber } from './date';
 import memoizee from 'memoizee';
-import fetchLatestBlockNumber from './helpers/blockNumber';
+import COLLATERALS from './constants/COLLATERALS';
+import { priceOracleTypeToConfig } from './priceOracleConfigs';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
-const EVENTS_PER_RPC_REQUEST = 100000;
-const EVENTS_ON_FIRST_RPC_REQUEST = 200;
 
 const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
     const contract = await getContract(network, 'CDP_MANAGER');
@@ -158,71 +158,52 @@ export const fetchVault = memoizee(_fetchVault, {
     length: 2,
 });
 
-const _getOsmPrices = async (network: string, oracleAddress: string): Promise<OraclePrices | undefined> => {
+const _getOsmPrices = async (
+    network: string,
+    oracleAddress: string,
+    oracleType: PriceOracleType
+): Promise<OraclePrices> => {
     const provider = await getProvider(network);
-    const latestBlockNumber = await fetchLatestBlockNumber(network);
-    let rpcEventFilterSegmentIndex = 0;
 
-    const osmContractInterface = await getContractInterfaceByName('OSM');
-    const osmContract = new ethers.Contract(oracleAddress, osmContractInterface, provider);
-    const osmEventFilter = osmContract.filters.LogValue(null);
-    let osmEvents: Array<Event> = [];
-    let fromBlock = -EVENTS_ON_FIRST_RPC_REQUEST;
-    let toBlock = undefined;
-    while (osmEvents.length === 0 && latestBlockNumber > rpcEventFilterSegmentIndex * EVENTS_PER_RPC_REQUEST) {
-        osmEvents = await osmContract.queryFilter(osmEventFilter, fromBlock, toBlock);
-        rpcEventFilterSegmentIndex += 1;
-        fromBlock = -EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1) - EVENTS_ON_FIRST_RPC_REQUEST;
-        toBlock = -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex - EVENTS_ON_FIRST_RPC_REQUEST;
+    const oracleConfig = priceOracleTypeToConfig[oracleType];
+    let nextPrice = new BigNumber(NaN);
+    if (oracleConfig.nextPriceSlotAddress) {
+        const nextPriceFeed = await provider.getStorageAt(oracleAddress, oracleConfig.nextPriceSlotAddress);
+        nextPrice = new BigNumber(
+            `0x${nextPriceFeed.substring(34)}`
+        );
     }
-    if (osmEvents.length === 0) {
-        return undefined;
-    }
-    const currentUnitCollateralPrice = new BigNumber(osmEvents[osmEvents.length - 1].args?.val).shiftedBy(
-        -WAD_NUMBER_OF_DIGITS
+    const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracleConfig.currentPriceSlotAddress)
+    const currentPrice = new BigNumber(
+        `0x${currentPriceFeed.substring(34)}`
     );
-    const lastPriceUpdateAsHex = await osmContract.zzz();
-    const lastPriceUpdateTimestampInSeconds = new BigNumber(lastPriceUpdateAsHex._hex).toNumber();
-    const priceUpdateFrequencyInSeconds = await osmContract.hop();
-
-    const priceFeedContractAddress = await osmContract.src();
-    const priceFeedContractInterface = await getContractInterfaceByName('MEDIAN_PRICE_FEED');
-    const priceFeedContract = new ethers.Contract(priceFeedContractAddress, priceFeedContractInterface, provider);
-    const feedEventsFilter = priceFeedContract.filters.LogMedianPrice(null, null);
-
-    let feedEvents: Array<Event> = [];
-    rpcEventFilterSegmentIndex = 0;
-    fromBlock = -EVENTS_ON_FIRST_RPC_REQUEST;
-    toBlock = undefined;
-    while (feedEvents.length === 0 && latestBlockNumber > rpcEventFilterSegmentIndex * EVENTS_PER_RPC_REQUEST) {
-        feedEvents = await priceFeedContract.queryFilter(feedEventsFilter, fromBlock, toBlock);
-        rpcEventFilterSegmentIndex += 1;
-        fromBlock = -EVENTS_PER_RPC_REQUEST * (rpcEventFilterSegmentIndex + 1) - EVENTS_ON_FIRST_RPC_REQUEST;
-        toBlock = -EVENTS_PER_RPC_REQUEST * rpcEventFilterSegmentIndex - EVENTS_ON_FIRST_RPC_REQUEST;
+    let nextPriceChange: Date | undefined = undefined;
+    if (oracleConfig.hasDelay) {
+        const osmContractInterface = await getContractInterfaceByName('OSM');
+        const osmContract = new ethers.Contract(oracleAddress, osmContractInterface, provider);
+        const lastPriceUpdateAsHex = (await osmContract.zzz())._hex;
+        const priceUpdateFrequencyInSeconds = await osmContract.hop();
+        const lastPriceUpdateTimestampInSeconds = new BigNumber(lastPriceUpdateAsHex).toNumber();
+        nextPriceChange = new Date((lastPriceUpdateTimestampInSeconds + priceUpdateFrequencyInSeconds) * 1000);
     }
-
-    if (feedEvents.length === 0) {
-        return undefined;
-    }
-
-    const nextUnitCollateralPrice = new BigNumber(feedEvents[feedEvents.length - 1].args?.val._hex).shiftedBy(
-        -WAD_NUMBER_OF_DIGITS
-    );
+    const currentUnitCollateralPrice = new BigNumber(currentPrice).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    const nextUnitCollateralPrice = new BigNumber(nextPrice).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    console.log(currentUnitCollateralPrice.toFixed(), nextUnitCollateralPrice.toFixed())
 
     return {
         currentUnitPrice: currentUnitCollateralPrice,
-        nextUnitPrice: nextUnitCollateralPrice,
-        nextPriceChange: new Date((lastPriceUpdateTimestampInSeconds + priceUpdateFrequencyInSeconds) * 1000),
+        nextUnitPrice: nextUnitCollateralPrice || new BigNumber(NaN),
+        nextPriceChange,
     };
 };
 
 export const getOsmPrices = memoizee(_getOsmPrices, {
     maxAge: CACHE_EXPIRY_MS,
     promise: true,
-    length: 2,
+    length: 3,
 });
 
-const _fetchLiquidationRatio = async (network: string, collateralType: CollateralType) => {
+const _fetchLiquidationRatioAndOracleAddress = async (network: string, collateralType: CollateralType) => {
     const contract = await getContract(network, 'MCD_SPOT');
     const collateralTypeAsHex = ethers.utils.formatBytes32String(collateralType);
     const oracleAndLiquidationRatio = await contract.ilks(collateralTypeAsHex);
@@ -232,7 +213,7 @@ const _fetchLiquidationRatio = async (network: string, collateralType: Collatera
     return { oracleAddress, liquidationRatio };
 };
 
-export const fetchLiquidationRatio = memoizee(_fetchLiquidationRatio, {
+export const fetchLiquidationRatioAndOracleAddress = memoizee(_fetchLiquidationRatioAndOracleAddress, {
     maxAge: CACHE_EXPIRY_MS,
     promise: true,
     length: 2,
@@ -304,7 +285,10 @@ const _enrichVaultWithTransactonInformation = async (
         debtDai
     );
 
-    const { liquidationRatio, oracleAddress } = await fetchLiquidationRatio(network, vault.collateralType);
+    const { liquidationRatio, oracleAddress } = await fetchLiquidationRatioAndOracleAddress(
+        network,
+        vault.collateralType
+    );
     const collateralizationRatio = vault.collateralAmount
         .multipliedBy(vault.minUnitPrice)
         .multipliedBy(liquidationRatio)
@@ -314,7 +298,7 @@ const _enrichVaultWithTransactonInformation = async (
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
-    const osmPrices = await getOsmPrices(network, oracleAddress);
+    const osmPrices = await getOsmPrices(network, oracleAddress, COLLATERALS[vault.collateralType].priceOracleType);
     const { nextUnitPrice, nextPriceChange, currentUnitPrice } = osmPrices
         ? osmPrices
         : {
