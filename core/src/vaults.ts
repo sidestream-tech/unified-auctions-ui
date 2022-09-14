@@ -188,7 +188,6 @@ const _getOsmPrices = async (
     }
     const currentUnitCollateralPrice = new BigNumber(currentPrice).shiftedBy(-WAD_NUMBER_OF_DIGITS);
     const nextUnitCollateralPrice = new BigNumber(nextPrice).shiftedBy(-WAD_NUMBER_OF_DIGITS);
-    console.log(currentUnitCollateralPrice.toFixed(), nextUnitCollateralPrice.toFixed())
 
     return {
         currentUnitPrice: currentUnitCollateralPrice,
