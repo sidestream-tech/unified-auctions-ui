@@ -186,9 +186,9 @@ const _getOsmPrices = async (
         } else {
             isPriceValid = nextPriceFeed.substring(0, valueSplitPosition);
         }
-        if (new BigNumber(isPriceValid).eq(1)) {
-            nextPrice = new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`);
-        }
+        nextPrice = new BigNumber(isPriceValid).eq(1)
+            ? new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`)
+            : new BigNumber(NaN);
     }
     const currentPriceFeed = await provider.getStorageAt(oracleAddress, collateralConfig.currentPriceSlotAddress);
     const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
@@ -318,7 +318,11 @@ const _enrichVaultWithTransactonInformation = async (
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
-    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(network, oracleAddress, vault.collateralType);
+    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(
+        network,
+        oracleAddress,
+        vault.collateralType
+    );
     let state: 'liquidatable' | 'not-liquidatable' = proximityToLiquidation.isLessThanOrEqualTo(0)
         ? 'liquidatable'
         : 'not-liquidatable';
