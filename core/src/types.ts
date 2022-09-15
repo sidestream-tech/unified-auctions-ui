@@ -340,11 +340,3 @@ export declare interface VaultTransactionNotLiquidated extends VaultTransactionB
 
 export type VaultTransaction = VaultTransactionLiquidated | VaultTransactionNotLiquidated;
 export type VaultTransactionState = VaultTransaction['state'];
-
-export type PriceOracleType = 'dsThing' | 'default' | 'univ';
-export declare interface PriceOracleConfig {
-    currentPriceSlotAddress: string;
-    nextPriceSlotAddress?: string;
-    whitelistSlotAddress?: string;
-    hasDelay: boolean;
-}
