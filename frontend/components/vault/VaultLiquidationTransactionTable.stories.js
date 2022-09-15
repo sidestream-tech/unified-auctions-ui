@@ -1,9 +1,6 @@
 import { storiesOf } from '@storybook/vue';
 import VaultLiquidationTransactionTable from '~/components/vault/VaultLiquidationTransactionTable';
-import {
-    generateFakeVaultLiquidatedTransaction,
-    generateFakeVaultNotLiquidatedTransaction,
-} from '~/helpers/generateFakeVault';
+import { generateFakeVaultNotLiquidatedTransaction } from '~/helpers/generateFakeVault';
 
 const common = {
     components: { VaultLiquidationTransactionTable },
@@ -13,14 +10,6 @@ const common = {
     template: '<VaultLiquidationTransactionTable :vaultTransaction="vaultTransaction" />',
 };
 
-storiesOf('Vault/VaultLiquidationTransactionTable', module)
-    .add('Default', () => ({
-        ...common,
-    }))
-    .add('Liquidated', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            vaultTransaction: generateFakeVaultLiquidatedTransaction(),
-        }),
-    }));
+storiesOf('Vault/VaultLiquidationTransactionTable', module).add('Default', () => ({
+    ...common,
+}));

@@ -6,27 +6,20 @@
                 <span v-if="vaultTransaction.proximityToLiquidation < 0" class="text-green-500 mr-1">
                     (Ready for liquidation)
                 </span>
-                <span v-if="vaultTransaction.proximityToLiquidation">
-                    {{ vaultTransaction.proximityToLiquidation }}%
-                </span>
-                <span v-else class="opacity-50"> </span>
+                {{ vaultTransaction.proximityToLiquidation }}%
             </div>
         </div>
         <div class="flex justify-between">
             <div>Next price update</div>
             <div class="flex items-center space-x-1">
-                <template v-if="vaultTransaction.nextPriceChange">
-                    <AnimatedArrow :direction="getIsPriceGoingUpOrDown" class="h-3" />
-                    <span>in <TimeTill :date="vaultTransaction.nextPriceChange" /></span>
-                </template>
-                <span v-else class="opacity-50">Unknown</span>
+                <AnimatedArrow v-if="getIsPriceGoingUpOrDown" :direction="getIsPriceGoingUpOrDown" class="h-3" />
+                <span>in <TimeTill :date="vaultTransaction.nextPriceChange" /></span>
             </div>
         </div>
         <div class="flex justify-between">
             <div>Debt</div>
             <div>
-                <FormatCurrency v-if="vaultTransaction.debtDai" :value="vaultTransaction.debtDai" currency="DAI" />
-                <span v-else class="opacity-50">Unknown</span>
+                <FormatCurrency :value="vaultTransaction.debtDai" currency="DAI" />
             </div>
         </div>
         <div class="flex justify-between">
@@ -40,20 +33,13 @@
                         >clip.chip</a
                     >.
                 </Explain>
-                <span
-                    v-if="vaultTransaction.incentiveRelativeDai && vaultTransaction.collateralType"
-                    class="opacity-50"
+                <span class="opacity-50"
                     >(~ <format-percentage :value="incentiveRelativePercentage" /> for
                     {{ vaultTransaction.collateralType }})</span
                 >
             </div>
             <div>
-                <FormatCurrency
-                    v-if="vaultTransaction.incentiveRelativeDai"
-                    :value="vaultTransaction.incentiveRelativeDai"
-                    currency="DAI"
-                />
-                <span v-else class="opacity-50">Unknown</span>
+                <FormatCurrency :value="vaultTransaction.incentiveRelativeDai" currency="DAI" />
             </div>
         </div>
         <div class="flex justify-between">
@@ -70,46 +56,26 @@
                 </Explain>
             </div>
             <div>
-                <FormatCurrency
-                    v-if="vaultTransaction.incentiveConstantDai"
-                    :value="vaultTransaction.incentiveConstantDai"
-                    currency="DAI"
-                />
-                <span v-else class="opacity-50">Unknown</span>
+                <FormatCurrency :value="vaultTransaction.incentiveConstantDai" currency="DAI" />
             </div>
         </div>
         <div class="flex justify-between">
             <div>Potential gross profit</div>
-            <div>
-                <template v-if="vaultTransaction.grossProfitDai">
-                    +<FormatCurrency :value="vaultTransaction.grossProfitDai" currency="DAI" />
-                </template>
-                <span v-else class="opacity-50">Unknown</span>
-            </div>
+            <div>+<FormatCurrency :value="vaultTransaction.grossProfitDai" currency="DAI" /></div>
         </div>
         <div class="flex justify-between">
             <div>
                 Transaction fee
-                <span v-if="vaultTransaction.transactionFeeLiquidationDai" class="opacity-50"
-                    >(~ <FormatCurrency :value="vaultTransaction.transactionFeeLiquidationEth" currency="ETH" />)</span
-                >
+                <span class="opacity-50">
+                    (~ <FormatCurrency :value="vaultTransaction.transactionFeeLiquidationEth" currency="ETH" />)
+                </span>
             </div>
-            <div>
-                <template v-if="vaultTransaction.transactionFeeLiquidationDai">
-                    -<FormatCurrency :value="vaultTransaction.transactionFeeLiquidationDai" currency="DAI" />
-                </template>
-                <span v-else class="opacity-50">Unknown</span>
-            </div>
+            <div>-<FormatCurrency :value="vaultTransaction.transactionFeeLiquidationDai" currency="DAI" /></div>
         </div>
         <div class="flex justify-between font-bold">
             <div>Potential net profit</div>
             <div>
-                <FormatCurrency
-                    v-if="vaultTransaction.netProfitDai"
-                    :value="vaultTransaction.netProfitDai"
-                    currency="DAI"
-                />
-                <span v-else class="opacity-50">Unknown</span>
+                <FormatCurrency :value="vaultTransaction.netProfitDai" currency="DAI" />
             </div>
         </div>
     </div>

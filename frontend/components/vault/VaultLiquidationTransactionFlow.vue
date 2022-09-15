@@ -1,7 +1,7 @@
 <template>
     <div>
         <TextBlock title="Vault Liquidation transaction" />
-        <Alert v-if="vaultTransaction.state === 'liquidated'" show-icon type="warning">
+        <Alert v-if="wasLiquidated" show-icon type="warning">
             <div slot="message">
                 <p>This vault has been liquidated into a collateral auction</p>
                 <div class="flex justify-end mt-2">
@@ -11,9 +11,9 @@
                 </div>
             </div>
         </Alert>
-        <VaultLiquidationTransactionTable class="my-4" :vault-transaction="vaultTransaction" />
-        <TextBlock class="mb-8">
-            <template v-if="vaultTransaction.state === 'liquidated'">
+        <VaultLiquidationTransactionTable v-if="!wasLiquidated" class="my-4" :vault-transaction="vaultTransaction" />
+        <TextBlock class="mt-4">
+            <template v-if="wasLiquidated">
                 This vault was liquidated <TimeTill :date="vaultTransaction.liqudiationDate" /> in the transaction
                 <FormatAddress :value="vaultTransaction.transactionHash" />.
             </template>
@@ -32,7 +32,7 @@
                 it will only result in the loss of the transaction fee.
             </template>
         </TextBlock>
-        <div class="mb-4">
+        <div v-if="!wasLiquidated" class="mb-4">
             <WalletConnectionCheckPanel
                 :wallet-address="walletAddress"
                 :is-loading="isConnectingWallet"
@@ -52,7 +52,16 @@
                 :is-correct.sync="areLimitsNotReached"
                 @refreshLimits="$emit('refreshLimits')"
             />
-            <!-- LiquidationPanel -->
+            <VaultLiquidationPanel
+                :vault-id="vaultTransaction.id"
+                :network="vaultTransaction.network"
+                :vault-state="vaultTransaction.state"
+                :wallet-address="walletAddress"
+                :disabled="!isWalletConnected || !areLimitsNotReached"
+                :is-liquidating="isLiquidating"
+                :is-explanations-shown="isExplanationsShown"
+                @liquidate="$emit('liquidate', $event)"
+            />
         </div>
     </div>
 </template>
@@ -66,6 +75,7 @@ import { generateLink } from '../../helpers/generateLink';
 import TimeTill from '../common/formatters/TimeTill.vue';
 import FormatAddress from '../common/formatters/FormatAddress.vue';
 import VaultLiquidationLimitsCheckPanel from '../panels/VaultLiquidationLimitsCheckPanel.vue';
+import VaultLiquidationPanel from '../panels/VaultLiquidationPanel.vue';
 import VaultLiquidationTransactionTable from './VaultLiquidationTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
@@ -73,6 +83,7 @@ import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
     components: {
+        VaultLiquidationPanel,
         VaultLiquidationLimitsCheckPanel,
         FormatAddress,
         TimeTill,
@@ -105,6 +116,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isLiquidating: {
+            type: Boolean,
+            default: false,
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
@@ -123,6 +138,9 @@ export default Vue.extend({
             }
             const link = generateLink(this.vaultTransaction.network, 'collateral');
             return `${link}&auction=${encodeURIComponent(this.vaultTransaction.auctionId)}`;
+        },
+        wasLiquidated(): boolean {
+            return this.vaultTransaction.state === 'liquidated';
         },
     },
 });

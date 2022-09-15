@@ -15,7 +15,7 @@ export default Vue.extend({
     props: {
         direction: {
             type: String as Vue.PropType<ArrowDirections>,
-            default: undefined,
+            required: true,
         },
     },
     computed: {

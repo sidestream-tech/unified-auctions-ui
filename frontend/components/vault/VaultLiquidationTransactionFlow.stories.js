@@ -18,6 +18,7 @@ const common = {
         walletAddress: undefined,
 
         isRefreshingLimits: false,
+        isLiquidating: false,
     }),
     methods: {
         connect() {
@@ -46,6 +47,13 @@ const common = {
                 this.isRefreshingLimits = false;
             }, 1000);
         },
+        liquidate() {
+            this.isLiquidating = true;
+            setTimeout(() => {
+                this.vaultTransaction = generateFakeVaultLiquidatedTransaction();
+                this.isLiquidating = false;
+            }, 1000);
+        },
     },
     template: `
         <VaultLiquidationTransactionFlow 
@@ -53,6 +61,7 @@ const common = {
           @connectWallet="connect" 
           @disconnectWallet="disconnect"
           @refreshLimits='refreshLimits'
+          @liquidate='liquidate'
         />`,
 };
 
