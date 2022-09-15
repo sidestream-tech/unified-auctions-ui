@@ -30,11 +30,19 @@ export const getTestQuote = async function (network: string, walletAddress: stri
     const inputAmountWithCurrency = CurrencyAmount.fromRawAmount(inputToken, inputAmountInteger);
 
     // get auto route
-    const route = await router.route(inputAmountWithCurrency, outputToken, TradeType.EXACT_INPUT, {
-        recipient: walletAddress,
-        slippageTolerance: new Percent(10, 100),
-        deadline: Math.floor(Date.now() / 1000 + 1800),
-    });
+    const route = await router.route(
+        inputAmountWithCurrency,
+        outputToken,
+        TradeType.EXACT_INPUT,
+        {
+            recipient: walletAddress,
+            slippageTolerance: new Percent(10, 100),
+            deadline: Math.floor(Date.now() / 1000 + 1800),
+        },
+        {
+            maxSplits: 0,
+        }
+    );
     if (!route) {
         throw new Error('the route is null, probably the input parameters are invalid');
     }
