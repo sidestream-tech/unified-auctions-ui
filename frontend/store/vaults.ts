@@ -1,6 +1,6 @@
 import { Vault, VaultTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
-import { fetchVault, fetchVaultsCount, liquidateVault } from 'auctions-core/src/vaults';
+import { fetchVault, liquidateVault } from 'auctions-core/src/vaults';
 import { ActionContext } from 'vuex';
 
 interface State {
@@ -42,18 +42,6 @@ export const actions = {
             commit('setVault', vaultTransaction);
         } catch (e) {
             console.error(`Failed to fetch vault ${vaultId}: ${e}`);
-        } finally {
-            commit('setIsVaultLoading', false);
-        }
-    },
-    async fetchVaultsCount({ rootGetters, commit }: ActionContext<State, State>) {
-        const network = rootGetters['network/getMakerNetwork'];
-        commit('setIsVaultLoading', true);
-        try {
-            const vaultCount = await fetchVaultsCount(network);
-            commit('setVaultsCount', vaultCount);
-        } catch (e) {
-            console.error(`Failed to fetch vault count: ${e}`);
         } finally {
             commit('setIsVaultLoading', false);
         }
