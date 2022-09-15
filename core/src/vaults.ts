@@ -47,17 +47,11 @@ export const fetchVaultBase = memoizee(_fetchVaultBase, {
     length: 2,
 });
 
-const _fetchVaultsCount = async (network: string): Promise<BigNumber> => {
+export const fetchVaultsCount = async (network: string): Promise<number> => {
     const contract = await getContract(network, 'CDP_MANAGER');
     const countHex = contract.count();
-    return new BigNumber(countHex._hex);
+    return parseInt(countHex._hex, 16);
 };
-
-export const fetchVaultsCount = memoizee(_fetchVaultsCount, {
-    maxAge: CACHE_EXPIRY_MS,
-    promise: true,
-    length: 1,
-});
 
 const _fetchVaultCollateralParameters = async (
     network: string,
