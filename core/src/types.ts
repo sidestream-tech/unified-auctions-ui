@@ -324,8 +324,8 @@ export declare interface VaultTransactionLiquidated extends VaultBase {
 }
 
 export declare interface VaultTransactionBase extends Vault, VaultTransactionFees, OraclePrices {
-    liquidationRatio: number;
-    collateralizationRatio: number;
+    liquidationRatio: BigNumber;
+    collateralizationRatio: BigNumber;
     proximityToLiquidation: BigNumber;
     incentiveRelativeDai: BigNumber;
     incentiveConstantDai: BigNumber;

@@ -117,8 +117,10 @@ export const fetchGlobalLiquidationLimits = memoizee(_fetchGlobalLiquidationLimi
 
 const _fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (network: string, type: string) => {
     const contract = await getContract(network, 'MCD_DOG');
+    const contractVat = await getContract(network, 'MCD_VAT');
     const typeHex = ethers.utils.formatBytes32String(type);
-    const { hole, dirt, clip, chop, dust } = await contract.ilks(typeHex);
+    const { hole, dirt, clip, chop } = await contract.ilks(typeHex);
+    const { dust } = await contractVat.ilks(typeHex);
     return {
         currentCollateralDebtDai: new BigNumber(dirt._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
         maximumCollateralDebtDai: new BigNumber(hole._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
@@ -234,7 +236,7 @@ const _fetchLiquidationRatioAndOracleAddress = async (network: string, collatera
     const oracleAndLiquidationRatio = await contract.ilks(collateralTypeAsHex);
     const liquidationRatioAsHex = oracleAndLiquidationRatio.mat;
     const oracleAddress = oracleAndLiquidationRatio.pip;
-    const liquidationRatio = new BigNumber(liquidationRatioAsHex._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS).toNumber();
+    const liquidationRatio = new BigNumber(liquidationRatioAsHex._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS);
     return { oracleAddress, liquidationRatio };
 };
 
@@ -311,8 +313,7 @@ const _enrichVaultWithTransactonInformation = async (
     const collateralizationRatio = vault.collateralAmount
         .multipliedBy(vault.minUnitPrice)
         .multipliedBy(liquidationRatio)
-        .dividedBy(debtDai)
-        .toNumber();
+        .dividedBy(debtDai);
     const proximityToLiquidation = vault.minUnitPrice.multipliedBy(vault.collateralAmount).minus(debtDai);
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network

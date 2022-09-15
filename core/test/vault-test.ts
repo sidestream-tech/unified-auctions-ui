@@ -37,9 +37,11 @@ describe('Vaults', () => {
             lastSyncedAt: new Date(),
             nextPriceChange: new Date('2022-09-09T10:00:00.000Z'),
 
-            liquidationRatio: 1.45,
-            collateralizationRatio: 3.2047904306417108,
-            proximityToLiquidation: 1.7547904306417108,
+            liquidationRatio: new BigNumber('1.45'),
+            collateralizationRatio: new BigNumber('3.204790430641710905476031356'),
+            proximityToLiquidation: new BigNumber('38966411.444923180307147879667417895936327463251383085'),
+            liquidationPenalty: new BigNumber('22'),
+            minimalAuctionedDai: new BigNumber('22'),
             id: 22025,
 
             incentiveCombinedDai: new BigNumber('32498.31588349647029073587039891649505768393987481484'),
@@ -69,9 +71,9 @@ describe('Vaults', () => {
             vaultTransactionLiquidatable.nextPriceChange?.toISOString()
         );
 
-        expect(expectedObject.liquidationRatio).to.eq(vaultTransactionLiquidatable.liquidationRatio);
-        expect(expectedObject.collateralizationRatio).to.eq(vaultTransactionLiquidatable.collateralizationRatio);
-        expect(expectedObject.proximityToLiquidation).to.eq(vaultTransactionLiquidatable.proximityToLiquidation);
+        expect(expectedObject.liquidationRatio.toFixed()).to.eq(vaultTransactionLiquidatable.liquidationRatio.toFixed());
+        expect(expectedObject.collateralizationRatio.toFixed()).to.eq(vaultTransactionLiquidatable.collateralizationRatio.toFixed());
+        expect(expectedObject.proximityToLiquidation.toFixed()).to.eq(vaultTransactionLiquidatable.proximityToLiquidation.toFixed());
         expect(expectedObject.id).to.eq(vaultTransactionLiquidatable.id),
             expect(expectedObject.incentiveCombinedDai.toFixed()).to.eq(
                 vaultTransactionLiquidatable.incentiveCombinedDai.toFixed()
@@ -115,7 +117,7 @@ describe('Vaults', () => {
         const vault = await fetchVault(TEST_NETWORK, 7370);
         const vaultTransaction = (await getVaultTransaction(TEST_NETWORK, vault)) as VaultTransactionLiquidated;
         expect(vaultTransaction.state).to.eq('liquidated');
-        expect(vaultTransaction.auctionId).to.eq('726');
+        expect(vaultTransaction.auctionId).to.eq('ETH-A:726');
         expect(vaultTransaction.transactionHash).to.eq(
             '0x3f66c60e348c8df6da2ed4474e212be13401a865bca4a35d046be44fc2f3f1b9'
         );
@@ -140,9 +142,11 @@ describe('Vaults', () => {
             lastSyncedAt: new Date(),
             nextPriceChange: new Date('2022-06-13T11:00:00.000Z'),
 
-            liquidationRatio: 1.7,
-            collateralizationRatio: 1.698313241866927,
-            proximityToLiquidation: -0.001686758133073063,
+            liquidationRatio: new BigNumber(1.7),
+            collateralizationRatio: new BigNumber('1.698313241866926788910221381'),
+            proximityToLiquidation: new BigNumber('-8.903818171883539762334416724431275895341629034'),
+            liquidationPenalty: new BigNumber('22'),
+            minimalAuctionedDai: new BigNumber('22'),
             id: 27435,
 
             incentiveCombinedDai: new BigNumber('308.973717449711589422115275593184791275895341629034'),
@@ -172,9 +176,9 @@ describe('Vaults', () => {
             vaultTransactionNotLiquidated.nextPriceChange?.toISOString()
         );
 
-        expect(expectedObject.liquidationRatio).to.eq(vaultTransactionNotLiquidated.liquidationRatio);
-        expect(expectedObject.collateralizationRatio).to.eq(vaultTransactionNotLiquidated.collateralizationRatio);
-        expect(expectedObject.proximityToLiquidation).to.eq(vaultTransactionNotLiquidated.proximityToLiquidation);
+        expect(expectedObject.liquidationRatio.toFixed()).to.eq(vaultTransactionNotLiquidated.liquidationRatio.toFixed());
+        expect(expectedObject.collateralizationRatio.toFixed()).to.eq(vaultTransactionNotLiquidated.collateralizationRatio.toFixed());
+        expect(expectedObject.proximityToLiquidation.toFixed()).to.eq(vaultTransactionNotLiquidated.proximityToLiquidation.toFixed());
         expect(expectedObject.id).to.eq(vaultTransactionNotLiquidated.id),
             expect(expectedObject.incentiveCombinedDai.toFixed()).to.eq(
                 vaultTransactionNotLiquidated.incentiveCombinedDai.toFixed()
