@@ -28,7 +28,9 @@
   },
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.0",
+    "@types/bunyan": "^1.8.8",
     "@uniswap/sdk": "^3.0.3",
+    "@uniswap/smart-order-router": "^2.10.0",
     "bignumber.js": "^9.0.1",
     "date-fns": "^2.28.0",
     "ethers": "^5.4.6",
@@ -38,6 +40,7 @@
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@types/async-retry": "^1.4.5",
     "@types/memoizee": "^0.4.7",
     "@types/mocha": "^9.1.1",
     "@types/node": "^14.14.35",
