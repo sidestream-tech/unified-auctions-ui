@@ -49,6 +49,7 @@
                 :incentive-constant-dai="vaultTransaction.incentiveConstantDai"
                 :is-refreshing="isRefreshingLimits"
                 :is-explanations-shown="isExplanationsShown"
+                :is-correct.sync="areLimitsNotReached"
                 @refreshLimits="$emit('refreshLimits')"
             />
             <!-- LiquidationPanel -->
@@ -112,6 +113,7 @@ export default Vue.extend({
     data() {
         return {
             isWalletConnected: false,
+            areLimitsNotReached: false,
         };
     },
     computed: {

@@ -188,6 +188,14 @@ export default Vue.extend({
             };
         },
     },
+    watch: {
+        currentStateAndTitle: {
+            immediate: true,
+            handler(newCurrentStateAndTitle) {
+                this.$emit('update:isCorrect', newCurrentStateAndTitle.name === 'correct');
+            },
+        },
+    },
     methods: {
         format(value: BigNumber): string {
             return formatToAutomaticDecimalPoints(value);
