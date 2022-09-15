@@ -13,6 +13,7 @@ const common = {
             isLoading: false,
             transactionAddress: null,
             demoTransactionAddress: faker.finance.ethereumAddress(),
+            walletAddress: faker.finance.ethereumAddress(),
             fees: {
                 'Swap Transaction Fee': fakeAuctionTransaction.swapTransactionFeeETH,
                 'Wallet Authorization Fee': fakeAuctionTransaction.authTransactionFeeETH,
@@ -36,6 +37,7 @@ storiesOf('Auction/Collateral/CollateralAuctionExecutionBlock', module)
         ...common,
         template: `<CollateralAuctionExecutionBlock :isLoading="isLoading" 
                                    @execute="execute" 
+                                   :walletAddress='walletAddress'
                                    :transactionAddress="transactionAddress" 
                                    :fees="fees"
                                    :collateral-type="auctionTransaction.collateralType" />`,
@@ -44,22 +46,25 @@ storiesOf('Auction/Collateral/CollateralAuctionExecutionBlock', module)
         ...common,
         template: `<CollateralAuctionExecutionBlock :disabled="true"
                                    :fees="fees"
+                                   :walletAddress='walletAddress'
                                    :collateral-type="auctionTransaction.collateralType" />`,
     }))
     .add('Not Executed', () => ({
         ...common,
-        template: `<CollateralAuctionExecutionBlock :fees="fees"
+        template: `<CollateralAuctionExecutionBlock :fees="fees" :walletAddress='walletAddress'
                                    :collateral-type="auctionTransaction.collateralType" />`,
     }))
     .add('Executing', () => ({
         ...common,
         template: `<CollateralAuctionExecutionBlock :isLoading="true"
                                    :fees="fees"
+                                   :walletAddress='walletAddress'
                                    :collateral-type="auctionTransaction.collateralType" />`,
     }))
     .add('Executed', () => ({
         ...common,
         template: `<CollateralAuctionExecutionBlock :transactionAddress="demoTransactionAddress"
                                    :fees="fees"
+                                   :walletAddress='walletAddress'
                                    :collateral-type="auctionTransaction.collateralType" />`,
     }));

@@ -88,7 +88,7 @@ const generateFakeOraclePrices = function (): OraclePrices {
     };
 };
 
-const generateFakeVaultLiqudatedTransaction = function (): VaultTransactionLiquidated {
+export const generateFakeVaultLiquidatedTransaction = function (): VaultTransactionLiquidated {
     const fakeVault = generateFakeVault();
 
     const liqudiationDate = faker.date.recent();
@@ -149,7 +149,7 @@ export const generateFakeVaultTransactions = function (
     notLiquidatedVaultsAmount = random(5, 15)
 ) {
     const vaults = [];
-    vaults.push(Array(liquidatedVaultsAmount).fill(null).map(generateFakeVaultLiqudatedTransaction));
+    vaults.push(Array(liquidatedVaultsAmount).fill(null).map(generateFakeVaultLiquidatedTransaction));
     vaults.push(Array(notLiquidatedVaultsAmount).fill(null).map(generateFakeVaultNotLiquidatedTransaction));
     return vaults;
 };
