@@ -1,6 +1,6 @@
 <template>
     <div>
-        <modal :visible="isShown" title="Execute to another wallet" destroy-on-close @cancel="$emit('close')">
+        <modal :visible="isShown" title="Execute to another wallet" destroy-on-close @cancel="cancel">
             <TextBlock class="py-4 px-6 text-sm">
                 Currently, the wallet which will receive the transaction profit is
                 <format-address type="address" shorten :value="defaultWallet" />. If you want to use a different
@@ -90,11 +90,11 @@ export default Vue.extend({
     methods: {
         cancel(): void {
             this.outcomeWalletInputValue = undefined;
-            this.$emit('close');
+            this.$emit('update:isShown', false);
         },
         execute(): void {
             this.$emit('execute', this.outcomeWalletInputValue);
-            this.$emit('close');
+            this.$emit('update:isShown', false);
         },
     },
 });

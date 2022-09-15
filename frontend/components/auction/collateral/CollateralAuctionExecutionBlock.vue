@@ -15,7 +15,6 @@
                 :default-wallet="walletAddress"
                 class="pb-3"
                 @execute="executeWithOtherWallet"
-                @close="closeExecuteToOtherWalletModal"
             />
             <base-button
                 class="w-full md:w-80"
@@ -118,10 +117,8 @@ export default Vue.extend({
         },
     },
     methods: {
-        closeExecuteToOtherWalletModal() {
-            this.isExecuteToAnotherWalletModalShown = false;
-        },
         executeWithOtherWallet(wallet: string | undefined) {
+            this.isExecuteToAnotherWalletModalShown = false;
             this.$emit('execute', wallet);
         },
     },

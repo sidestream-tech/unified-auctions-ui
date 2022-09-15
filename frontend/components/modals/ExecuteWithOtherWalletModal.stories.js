@@ -12,12 +12,10 @@ const common = {
     },
     methods: {
         execute: action('execute'),
-        close: action('close'),
     },
 };
 
 storiesOf('Modals/ExecuteWithOtherWalletModal', module).add('Default', () => ({
     ...common,
-    template:
-        '<ExecuteWithOtherWalletModal :isShown="true" :defaultWallet="defaultWallet" @close="close" @execute="execute" />',
+    template: '<ExecuteWithOtherWalletModal :isShown="true" :defaultWallet="defaultWallet" @execute="execute" />',
 }));

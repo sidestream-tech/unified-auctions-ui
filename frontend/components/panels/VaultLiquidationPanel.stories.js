@@ -53,6 +53,15 @@ storiesOf('Panels/VaultLiquidationPanel', module)
             };
         },
     }))
+    .add('Liquidating', () => ({
+        ...common,
+        data() {
+            return {
+                ...common.data(),
+                isLiquidating: true,
+            };
+        },
+    }))
     .add('Liquidated', () => ({
         ...common,
         data() {

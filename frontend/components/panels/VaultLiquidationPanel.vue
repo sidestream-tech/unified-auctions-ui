@@ -13,9 +13,12 @@
                 :default-wallet="walletAddress"
                 class="pb-3"
                 @execute="executeWithOtherWallet"
-                @close="isExecuteToAnotherWalletModalShown = false"
             />
-            <BaseButton :disabled="!isLiquidatable || disabled" @click="isExecuteToAnotherWalletModalShown = true">
+            <BaseButton
+                :disabled="!isLiquidatable || disabled"
+                :is-loading="isLiquidating"
+                @click="isExecuteToAnotherWalletModalShown = true"
+            >
                 Liquidate to another wallet
             </BaseButton>
             <BaseButton
