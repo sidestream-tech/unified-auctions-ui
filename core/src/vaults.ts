@@ -183,7 +183,7 @@ const getNextOraclePrice = async (
             isPriceValid = nextPriceFeed.substring(0, valueSplitPosition);
         }
         if (new BigNumber(isPriceValid).eq(1)) {
-            new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`);
+            return new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`);
         }
     }
     return nextPrice;
