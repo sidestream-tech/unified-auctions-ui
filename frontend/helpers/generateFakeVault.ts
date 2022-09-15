@@ -41,11 +41,11 @@ const generateFakeVaultAmount = function (): VaultAmount {
     };
 };
 
-const generateFakerLiquidationLimits = function (): LiquidationLimits {
+export const generateFakeLiquidationLimits = function (): LiquidationLimits {
     const maximumProtocolDebtDai = new BigNumber(faker.finance.amount());
-    const currentProtocolDebtDai = maximumProtocolDebtDai.dividedBy(faker.datatype.number({ max: 5 }));
+    const currentProtocolDebtDai = maximumProtocolDebtDai.dividedBy(faker.datatype.number({ min: 1, max: 5 }));
     const maximumCollateralDebtDai = new BigNumber(faker.finance.amount());
-    const currentCollateralDebtDai = maximumCollateralDebtDai.dividedBy(faker.datatype.number({ max: 5 }));
+    const currentCollateralDebtDai = maximumCollateralDebtDai.dividedBy(faker.datatype.number({ min: 1, max: 5 }));
 
     return {
         maximumProtocolDebtDai,
@@ -58,7 +58,7 @@ const generateFakerLiquidationLimits = function (): LiquidationLimits {
 export const generateFakeVault = function (): Vault {
     const vaultBase = generateFakeVaultBase();
     const vaultAmount = generateFakeVaultAmount();
-    const liquidationLimits = generateFakerLiquidationLimits();
+    const liquidationLimits = generateFakeLiquidationLimits();
 
     return {
         ...vaultBase,
@@ -68,7 +68,7 @@ export const generateFakeVault = function (): Vault {
 };
 
 const generateFakeVaultTransactionFees = function (): VaultTransactionFees {
-    const transactionFeeLiquidationEth = new BigNumber(faker.datatype.number(0.5));
+    const transactionFeeLiquidationEth = new BigNumber(faker.datatype.float({ max: 0.5 }));
     const transactionFeeLiquidationDai = transactionFeeLiquidationEth.multipliedBy(1600);
 
     return {
@@ -89,7 +89,7 @@ const generateFakeOraclePrices = function (): OraclePrices {
     };
 };
 
-const generateFakeVaultLiqudatedTransaction = function (): VaultTransactionLiquidated {
+export const generateFakeVaultLiquidatedTransaction = function (): VaultTransactionLiquidated {
     const fakeVault = generateFakeVault();
 
     const liqudiationDate = faker.date.recent();
@@ -121,7 +121,7 @@ export const generateFakeVaultNotLiquidatedTransaction = function (): VaultTrans
     const incentiveConstantDai = new BigNumber(faker.finance.amount());
     const incentiveCombinedDai = incentiveRelativeDai.plus(incentiveConstantDai);
 
-    const grossProfitDai = incentiveCombinedDai.minus(fakeTransactionFees.transactionFeeLiquidationDai);
+    const netProfitDai = incentiveCombinedDai.minus(fakeTransactionFees.transactionFeeLiquidationDai);
     const debtDai = new BigNumber(faker.finance.amount());
 
     return {
@@ -135,8 +135,8 @@ export const generateFakeVaultNotLiquidatedTransaction = function (): VaultTrans
         incentiveRelativeDai,
         incentiveConstantDai,
         incentiveCombinedDai,
-        grossProfitDai,
-        netProfitDai: incentiveCombinedDai,
+        grossProfitDai: incentiveCombinedDai,
+        netProfitDai,
         debtDai,
     };
 };
