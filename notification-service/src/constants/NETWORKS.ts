@@ -9,11 +9,6 @@ export const NETWORKS: Record<string, { network: string; etherscanURL: string; e
         etherscanURL: 'https://ropsten.etherscan.io',
         etherscanAPI: 'https://api-ropsten.etherscan.io',
     },
-    kovan: {
-        network: 'kovan',
-        etherscanURL: 'https://kovan.etherscan.io',
-        etherscanAPI: 'https://api-kovan.etherscan.io',
-    },
     rinkeby: {
         network: 'rinkeby',
         etherscanURL: 'https://rinkeby.etherscan.io',

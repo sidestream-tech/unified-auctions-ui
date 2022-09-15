@@ -12,15 +12,6 @@ const SUPPORTED_NETWORKS: NetworkConfig[] = [
         isFork: false,
     },
     {
-        chainId: '0x2a',
-        type: 'kovan',
-        title: 'Kovan',
-        gasPrice: 2000000000,
-        url: '',
-        etherscanUrl: 'https://kovan.etherscan.io',
-        isFork: false,
-    },
-    {
         chainId: '0x5',
         type: 'goerli',
         title: 'Goerli',
@@ -82,7 +73,6 @@ export const setNetwork = function (networkConfig: NetworkConfig): void {
 const NETWORK_TITLES: Record<string, string | undefined> = {
     // full list can be found on https://chainlist.org
     '0x1': 'mainnet',
-    '0x2a': 'kovan',
     '0x5': 'goerli',
     '0x539': 'custom',
 };
