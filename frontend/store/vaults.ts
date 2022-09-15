@@ -5,14 +5,14 @@ import { ActionContext } from 'vuex';
 
 interface State {
     vaultTransactions: Record<Vault['id'], VaultTransaction>;
-    vaultsCount?: number;
     isVaultLoading: boolean;
+    isVaultBeingLiquidated: boolean;
 }
 
 const getInitialState = (): State => ({
     vaultTransactions: {},
-    vaultsCount: undefined,
     isVaultLoading: false,
+    isVaultBeingLiquidated: false,
 });
 
 export const state = (): State => getInitialState();
@@ -29,8 +29,8 @@ export const mutations = {
     setIsVaultLoading(state: State, isLoading: boolean) {
         state.isVaultLoading = isLoading;
     },
-    setVaultsCount(state: State, count: number) {
-        state.vaultsCount = count;
+    setIsVaultBeingLiquidated(state: State, isLoading: boolean) {
+        state.isVaultBeingLiquidated = isLoading;
     },
 };
 export const actions = {
@@ -62,13 +62,13 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
         const vaultTransaction = getters.vaultTransactions[vaultId];
-        commit('setIsVaultLoading', true);
+        commit('setIsVaultBeingLiquidated', true);
         try {
             await liquidateVault(network, vaultTransaction, walletAddress);
         } catch (e) {
             console.error(`Failed to liquidate vault ${vaultId}: ${e}`);
         } finally {
-            commit('setIsVaultLoading', false);
+            commit('setIsVaultBeingLiquidated', false);
         }
     },
 };
