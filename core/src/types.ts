@@ -313,7 +313,7 @@ export declare interface OraclePrices {
     // can be set to NaN
     currentUnitPrice: BigNumber | number;
     nextUnitPrice: BigNumber | number;
-    nextPriceChange?: Date;
+    nextPriceChange: Date;
 }
 
 export declare interface VaultTransactionLiquidated extends VaultBase {

@@ -205,7 +205,7 @@ const _getOsmPrices = async (
     const currentPrice = new BigNumber(isPriceValid).eq(1)
         ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`)
         : new BigNumber(NaN);
-    let nextPriceChange: Date | undefined = undefined;
+    let nextPriceChange: Date = new Date(NaN);
     if (collateralConfig.hasDelay) {
         const osmContractInterface = await getContractInterfaceByName('OSM');
         const osmContract = new ethers.Contract(oracleAddress, osmContractInterface, provider);
@@ -318,15 +318,7 @@ const _enrichVaultWithTransactonInformation = async (
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
-    const osmPrices = await getOsmPrices(network, oracleAddress, vault.collateralType);
-    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = osmPrices
-        ? osmPrices
-        : {
-              nextUnitPrice: new BigNumber(NaN),
-              currentUnitPrice: new BigNumber(NaN),
-              nextPriceChange: undefined,
-          };
-
+    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(network, oracleAddress, vault.collateralType);
     let state: 'liquidatable' | 'not-liquidatable' = proximityToLiquidation.isLessThanOrEqualTo(0)
         ? 'liquidatable'
         : 'not-liquidatable';
