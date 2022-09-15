@@ -41,11 +41,11 @@ const generateFakeVaultAmount = function (): VaultAmount {
     };
 };
 
-const generateFakerLiquidationLimits = function (): LiquidationLimits {
+export const generateFakeLiquidationLimits = function (): LiquidationLimits {
     const maximumProtocolDebtDai = new BigNumber(faker.finance.amount());
-    const currentProtocolDebtDai = maximumProtocolDebtDai.dividedBy(faker.datatype.number({ max: 5 }));
+    const currentProtocolDebtDai = maximumProtocolDebtDai.dividedBy(faker.datatype.number({ min: 1, max: 5 }));
     const maximumCollateralDebtDai = new BigNumber(faker.finance.amount());
-    const currentCollateralDebtDai = maximumCollateralDebtDai.dividedBy(faker.datatype.number({ max: 5 }));
+    const currentCollateralDebtDai = maximumCollateralDebtDai.dividedBy(faker.datatype.number({ min: 1, max: 5 }));
 
     return {
         maximumProtocolDebtDai,
@@ -67,7 +67,7 @@ export const generateFakeVaultCollateralParameters = (): VaultCollateralParamete
 export const generateFakeVault = function (): Vault {
     const vaultBase = generateFakeVaultBase();
     const vaultAmount = generateFakeVaultAmount();
-    const liquidationLimits = generateFakerLiquidationLimits();
+    const liquidationLimits = generateFakeLiquidationLimits();
     const vaultCollateralParameters = generateFakeVaultCollateralParameters();
 
     return {
