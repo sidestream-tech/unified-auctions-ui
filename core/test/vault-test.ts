@@ -70,7 +70,7 @@ describe('Vaults', () => {
 
             liquidationRatio: new BigNumber('1.45'),
             collateralizationRatio: new BigNumber('3.204790430641710905476031356'),
-            proximityToLiquidation: new BigNumber('38966411.444923180307147879667417895936327463251383085'),
+            proximityToLiquidation: new BigNumber('0.547552318511616565008415095'),
             liquidationPenalty: new BigNumber('22'),
             minimalAuctionedDai: new BigNumber('22'),
             id: 22025,
@@ -102,11 +102,11 @@ describe('Vaults', () => {
         const vault = await fetchVault(TEST_NETWORK, 7370);
         const vaultTransaction = (await getVaultTransaction(TEST_NETWORK, vault)) as VaultTransactionLiquidated;
         expect(vaultTransaction.state).to.eq('liquidated');
-        expect(vaultTransaction.auctionId).to.eq('ETH-A:726');
-        expect(vaultTransaction.transactionHash).to.eq(
+        expect(vaultTransaction.pastLiquidations[0].auctionId).to.eq('ETH-A:726');
+        expect(vaultTransaction.pastLiquidations[0].transactionHash).to.eq(
             '0x3f66c60e348c8df6da2ed4474e212be13401a865bca4a35d046be44fc2f3f1b9'
         );
-        expect(vaultTransaction.liquidationDate.toISOString()).to.eq('2022-06-13T10:04:52.000Z');
+        expect(vaultTransaction.pastLiquidations[0].liquidationDate.toISOString()).to.eq('2022-06-13T10:04:52.000Z');
     });
     it('Fetches non-liquidated vault', async () => {
         await resetNetwork(14955381);
@@ -129,7 +129,7 @@ describe('Vaults', () => {
 
             liquidationRatio: new BigNumber(1.7),
             collateralizationRatio: new BigNumber('1.698313241866926788910221381'),
-            proximityToLiquidation: new BigNumber('-8.903818171883539762334416724431275895341629034'),
+            proximityToLiquidation: new BigNumber('-0.000993196126304112564617121'),
             liquidationPenalty: new BigNumber('22'),
             minimalAuctionedDai: new BigNumber('22'),
             id: 27435,

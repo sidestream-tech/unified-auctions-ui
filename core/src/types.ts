@@ -333,11 +333,14 @@ export declare interface OraclePrices {
     nextPriceChange: Date;
 }
 
-export declare interface VaultTransactionLiquidated extends VaultBase {
-    state: 'liquidated';
+interface LiquidationEvent {
     liquidationDate: Date;
     transactionHash: string;
     auctionId: string;
+}
+export declare interface VaultTransactionLiquidated extends VaultBase {
+    state: 'liquidated';
+    pastLiquidations: LiquidationEvent[];
 }
 
 export declare interface VaultTransactionBase extends Vault, VaultTransactionFees, OraclePrices {

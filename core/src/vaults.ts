@@ -116,7 +116,10 @@ export const fetchGlobalLiquidationLimits = memoizee(_fetchGlobalLiquidationLimi
     length: 1,
 });
 
-const _fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (network: string, collateralType: CollateralType) => {
+const _fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (
+    network: string,
+    collateralType: CollateralType
+) => {
     const contract = await getContract(network, 'MCD_DOG');
     const contractVat = await getContract(network, 'MCD_VAT');
     const typeHex = ethers.utils.formatBytes32String(collateralType);
@@ -297,12 +300,11 @@ const _fetchLiquidatedParameters = async (network: string, vault: Vault) => {
     const liquidationEvents = await contract.queryFilter(eventFilter);
     if (liquidationEvents.length !== 0 && vault.initialDebtDai.eq(0)) {
         // there was a liquidation and the vault was not used again
-        const latestEvent = liquidationEvents[liquidationEvents.length - 1];
-        return {
-            liquidationDate: await fetchDateByBlockNumber(network, latestEvent.blockNumber),
-            transactionHash: latestEvent.transactionHash,
-            auctionId: `${vault.collateralType}:${new BigNumber(latestEvent.args?.id._hex).toFixed(0)}`,
-        };
+        return Promise.all(liquidationEvents.map(async (event) => ({
+            liquidationDate: await fetchDateByBlockNumber(network, event.blockNumber),
+            transactionHash: event.transactionHash,
+            auctionId: `${vault.collateralType}:${new BigNumber(event.args?.id._hex).toFixed(0)}`,
+        })));
     }
     return undefined;
 };
@@ -412,9 +414,7 @@ const _getVaultTransaction = async (network: string, vault: Vault): Promise<Vaul
         return {
             ...vault,
             state: 'liquidated',
-            liquidationDate: liquidatedParameters.liquidationDate,
-            transactionHash: liquidatedParameters.transactionHash,
-            auctionId: liquidatedParameters.auctionId,
+            pastLiquidations: liquidatedParameters,
         };
     }
     return await enrichVaultWithTransactonInformation(network, vault);
@@ -426,7 +426,12 @@ export const getVaultTransaction = memoizee(_getVaultTransaction, {
     length: 2,
 });
 
-export const liquidateVault = async (network: string, collateralType: CollateralType, vaultAddress: string, incentiveBeneficiaryAddress?: string) => {
+export const liquidateVault = async (
+    network: string,
+    collateralType: CollateralType,
+    vaultAddress: string,
+    incentiveBeneficiaryAddress?: string
+) => {
     const sendIncentiveTo = incentiveBeneficiaryAddress
         ? incentiveBeneficiaryAddress
         : await (await getSigner(network)).getAddress();
