@@ -272,7 +272,7 @@ export const fetchVaultLiquidationIncentive = memoizee(_fetchVaultLiquidationInc
     length: 3,
 });
 
-const _isVaultLiquidated = async (network: string, vault: Vault) => {
+const _fetchLiquidatedParameters = async (network: string, vault: Vault) => {
     const contract = await getContract(network, 'MCD_DOG');
     const typeHex = ethers.utils.formatBytes32String(vault.collateralType);
     const eventFilter = contract.filters.Bark(typeHex, vault.address, null, null, null, null, null);
@@ -281,15 +281,14 @@ const _isVaultLiquidated = async (network: string, vault: Vault) => {
         // there was a liquidation and the vault was not used again
         const latestEvent = liquidationEvents[liquidationEvents.length - 1];
         return {
-            isLiquidated: true,
             liquidationDate: await fetchDateByBlockNumber(network, latestEvent.blockNumber),
             transactionHash: latestEvent.transactionHash,
-            auctionId: new BigNumber(latestEvent.args?.id._hex).toFixed(),
+            auctionId: `${vault.collateralType}:${new BigNumber(latestEvent.args?.id._hex).toFixed(0)}`,
         };
     }
-    return { isLiquidated: false };
+    return undefined;
 };
-export const isVaultLiquidated = memoizee(_isVaultLiquidated, {
+export const fetchLiquidatedParameters = memoizee(_fetchLiquidatedParameters, {
     maxAge: CACHE_EXPIRY_MS,
     promise: true,
     length: 2,
@@ -314,7 +313,7 @@ const _enrichVaultWithTransactonInformation = async (
         .multipliedBy(liquidationRatio)
         .dividedBy(debtDai)
         .toNumber();
-    const proximityToLiquidation = collateralizationRatio - liquidationRatio;
+    const proximityToLiquidation = vault.minUnitPrice.multipliedBy(vault.collateralAmount).minus(debtDai);
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
@@ -327,7 +326,9 @@ const _enrichVaultWithTransactonInformation = async (
               nextPriceChange: undefined,
           };
 
-    let state: 'liquidatable' | 'not-liquidatable' = proximityToLiquidation < 0 ? 'liquidatable' : 'not-liquidatable';
+    let state: 'liquidatable' | 'not-liquidatable' = proximityToLiquidation.isLessThanOrEqualTo(0)
+        ? 'liquidatable'
+        : 'not-liquidatable';
     // logic from https://github.com/makerdao/dss/blob/fa4f6630afb0624d04a003e920b0d71a00331d98/src/dog.sol#L186
     // detemines if the vault is liquidatable and what amount of debt can be covered.
     const amountDaiCanBeAuctionedGloballyDai = vault.maximumProtocolDebtDai.minus(vault.currentProtocolDebtDai);
@@ -393,14 +394,14 @@ export const enrichVaultWithTransactonInformation = memoizee(_enrichVaultWithTra
 });
 
 const _getVaultTransaction = async (network: string, vault: Vault): Promise<VaultTransaction> => {
-    const { isLiquidated, liquidationDate, transactionHash, auctionId } = await isVaultLiquidated(network, vault);
-    if (isLiquidated) {
+    const liquidatedParameters = await fetchLiquidatedParameters(network, vault);
+    if (liquidatedParameters) {
         return {
             ...vault,
             state: 'liquidated',
-            liquidationDate: liquidationDate as Date,
-            transactionHash: transactionHash as string,
-            auctionId: auctionId as string,
+            liquidationDate: liquidatedParameters.liquidationDate,
+            transactionHash: liquidatedParameters.transactionHash,
+            auctionId: liquidatedParameters.auctionId,
         };
     }
     return await enrichVaultWithTransactonInformation(network, vault);

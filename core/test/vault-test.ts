@@ -4,7 +4,7 @@ import {
     fetchVaultAmount,
     getOsmPrices,
     getVaultTransaction,
-    isVaultLiquidated,
+    fetchLiquidatedParameters,
     liquidateVault,
 } from '../src/vaults';
 import { resetNetwork } from '../helpers/hardhat';
@@ -213,7 +213,7 @@ describe('Vaults', () => {
         expect(expectedObject.initialDebtDai.toFixed()).to.eq(vaultTransactionNotLiquidated.initialDebtDai.toFixed());
         await liquidateVault(TEST_NETWORK, vaultTransactionNotLiquidated, HARDHAT_PUBLIC_KEY);
         getVaultTransaction.clear();
-        isVaultLiquidated.clear();
+        fetchLiquidatedParameters.clear();
         fetchVault.clear();
         fetchVaultAmount.clear();
         const updatedVault = (await fetchVault(TEST_NETWORK, 27435)) as Vault;
