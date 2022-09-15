@@ -28,6 +28,10 @@ import getSigner from './signer';
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
 const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
+    const vaultsCount = await fetchVaultsCount(network);
+    if (id > vaultsCount) {
+        throw new Error('Vault does not exist');
+    }
     const contract = await getContract(network, 'CDP_MANAGER');
     const address = await contract.urns(id);
     const collateralTypeHex = await contract.ilks(id);
