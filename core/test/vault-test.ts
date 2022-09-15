@@ -71,9 +71,15 @@ describe('Vaults', () => {
             vaultTransactionLiquidatable.nextPriceChange?.toISOString()
         );
 
-        expect(expectedObject.liquidationRatio.toFixed()).to.eq(vaultTransactionLiquidatable.liquidationRatio.toFixed());
-        expect(expectedObject.collateralizationRatio.toFixed()).to.eq(vaultTransactionLiquidatable.collateralizationRatio.toFixed());
-        expect(expectedObject.proximityToLiquidation.toFixed()).to.eq(vaultTransactionLiquidatable.proximityToLiquidation.toFixed());
+        expect(expectedObject.liquidationRatio.toFixed()).to.eq(
+            vaultTransactionLiquidatable.liquidationRatio.toFixed()
+        );
+        expect(expectedObject.collateralizationRatio.toFixed()).to.eq(
+            vaultTransactionLiquidatable.collateralizationRatio.toFixed()
+        );
+        expect(expectedObject.proximityToLiquidation.toFixed()).to.eq(
+            vaultTransactionLiquidatable.proximityToLiquidation.toFixed()
+        );
         expect(expectedObject.id).to.eq(vaultTransactionLiquidatable.id),
             expect(expectedObject.incentiveCombinedDai.toFixed()).to.eq(
                 vaultTransactionLiquidatable.incentiveCombinedDai.toFixed()
@@ -176,9 +182,15 @@ describe('Vaults', () => {
             vaultTransactionNotLiquidated.nextPriceChange?.toISOString()
         );
 
-        expect(expectedObject.liquidationRatio.toFixed()).to.eq(vaultTransactionNotLiquidated.liquidationRatio.toFixed());
-        expect(expectedObject.collateralizationRatio.toFixed()).to.eq(vaultTransactionNotLiquidated.collateralizationRatio.toFixed());
-        expect(expectedObject.proximityToLiquidation.toFixed()).to.eq(vaultTransactionNotLiquidated.proximityToLiquidation.toFixed());
+        expect(expectedObject.liquidationRatio.toFixed()).to.eq(
+            vaultTransactionNotLiquidated.liquidationRatio.toFixed()
+        );
+        expect(expectedObject.collateralizationRatio.toFixed()).to.eq(
+            vaultTransactionNotLiquidated.collateralizationRatio.toFixed()
+        );
+        expect(expectedObject.proximityToLiquidation.toFixed()).to.eq(
+            vaultTransactionNotLiquidated.proximityToLiquidation.toFixed()
+        );
         expect(expectedObject.id).to.eq(vaultTransactionNotLiquidated.id),
             expect(expectedObject.incentiveCombinedDai.toFixed()).to.eq(
                 vaultTransactionNotLiquidated.incentiveCombinedDai.toFixed()
@@ -276,7 +288,6 @@ describe('Sound values are extracted', () => {
                 nextUnitPrice: 'NaN',
                 currentUnitPrice: '1',
                 nextPriceChange: new Date(NaN),
-
             },
             'KNC-A': {
                 nextUnitPrice: '1.5108',
@@ -322,13 +333,11 @@ describe('Sound values are extracted', () => {
                 nextUnitPrice: 'NaN',
                 currentUnitPrice: '1',
                 nextPriceChange: new Date(NaN),
-
             },
             'USDC-B': {
                 nextUnitPrice: 'NaN',
                 currentUnitPrice: '1',
                 nextPriceChange: new Date(NaN),
-
             },
             'USDT-A': {
                 nextUnitPrice: '1.0007712772150232',

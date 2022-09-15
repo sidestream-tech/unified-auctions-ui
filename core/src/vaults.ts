@@ -167,7 +167,7 @@ const getNextOraclePrice = async (
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
 ) => {
-    let nextPrice = new BigNumber(NaN);
+    const nextPrice = new BigNumber(NaN);
     if (collateralConfig.nextPriceSlotAddress) {
         const slot = collateralConfig.nextPriceSlotAddress;
         const nextPriceFeed = await provider.getStorageAt(oracleAddress, slot);
