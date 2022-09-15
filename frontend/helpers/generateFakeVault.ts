@@ -46,12 +46,16 @@ export const generateFakeLiquidationLimits = function (): LiquidationLimits {
     const currentProtocolDebtDai = maximumProtocolDebtDai.dividedBy(faker.datatype.number({ min: 1, max: 5 }));
     const maximumCollateralDebtDai = new BigNumber(faker.finance.amount());
     const currentCollateralDebtDai = maximumCollateralDebtDai.dividedBy(faker.datatype.number({ min: 1, max: 5 }));
+    const liquidationPenalty = new BigNumber(faker.datatype.float({ min: 0.1, max: 0.5 }));
+    const minimalAuctionedDai = new BigNumber(faker.finance.amount());
 
     return {
         maximumProtocolDebtDai,
         currentProtocolDebtDai,
         maximumCollateralDebtDai,
         currentCollateralDebtDai,
+        liquidationPenalty,
+        minimalAuctionedDai,
     };
 };
 
@@ -121,19 +125,24 @@ export const generateFakeVaultNotLiquidatedTransaction = function (): VaultTrans
     const fakeTransactionFees = generateFakeVaultTransactionFees();
     const fakeOraclePrices = generateFakeOraclePrices();
 
-    const liquidationRatio = faker.datatype.number({ min: 110, max: 150 });
+    const liquidationRatio = new BigNumber(faker.datatype.number({ min: 110, max: 150 }));
     const minUnitPrice = faker.datatype.number();
-    const collateralizationRatio = fakeVault.collateralAmount.multipliedBy(minUnitPrice).toNumber();
-    const proximityToLiquidation = liquidationRatio - collateralizationRatio;
+    const collateralizationRatio = new BigNumber(fakeVault.collateralAmount.multipliedBy(minUnitPrice).toNumber());
+    const debtDai = new BigNumber(faker.finance.amount());
+    const proximityToLiquidation = liquidationRatio
+        .minus(collateralizationRatio)
+        .multipliedBy(debtDai)
+        .dividedBy(liquidationRatio);
 
-    const state: VaultTransactionState = proximityToLiquidation < 0 ? 'liquidatable' : 'not-liquidatable';
+    const state: VaultTransactionState = proximityToLiquidation.isLessThanOrEqualTo(0)
+        ? 'liquidatable'
+        : 'not-liquidatable';
 
     const incentiveRelativeDai = new BigNumber(faker.finance.amount());
     const incentiveConstantDai = new BigNumber(faker.finance.amount());
     const incentiveCombinedDai = incentiveRelativeDai.plus(incentiveConstantDai);
 
     const grossProfitDai = incentiveCombinedDai.minus(fakeTransactionFees.transactionFeeLiquidationDai);
-    const debtDai = new BigNumber(faker.finance.amount());
 
     return {
         ...fakeVault,
