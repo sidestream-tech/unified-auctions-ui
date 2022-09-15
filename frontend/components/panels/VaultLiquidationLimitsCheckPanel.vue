@@ -9,31 +9,31 @@
         </TextBlock>
         <div class="flex justify-between mt-4">
             <span>Current global limit</span>
-            <span v-if="!isGlobalLimitMissing"
-                ><Explain :text="format(liquidationLimits.maximumProtocolDebtDai)"
-                    >The maximum allowed amount of DAI needed to cover the debt and liquidation incentives of all
-                    active auctions. In maker terms it is called
+            <span v-if="!isGlobalLimitMissing && debtAndIncentives">
+                <Explain :text="format(liquidationLimits.maximumProtocolDebtDai)">
+                    The maximum allowed amount of DAI needed to cover the debt and liquidation incentives of all active
+                    auctions. In maker terms it is called
                     <a
                         href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#dog-hole-rad"
                         target="_blank"
                         >dog.Hole</a
-                    ></Explain
-                >
+                    >
+                </Explain>
                 -
-                <Explain :text="format(liquidationLimits.currentProtocolDebtDai)"
-                    >The amount of DAI needed to cover the debt and liquidation incentives of all active auctions. In
+                <Explain :text="format(liquidationLimits.currentProtocolDebtDai)">
+                    The amount of DAI needed to cover the debt and liquidation incentives of all active auctions. In
                     maker terms it is called
                     <a
                         href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#limits-on-dai-needed-to-cover-debt-and-fees-of-active-auctions"
                         target="_blank"
                         >dog.Dirt</a
-                    ></Explain
-                >
+                    >
+                </Explain>
                 -
-                <Explain :text="format(debtAndIncentives)"
-                    >The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
-                    of this auction</Explain
-                >
+                <Explain :text="format(debtAndIncentives)">
+                    The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
+                    of this auction
+                </Explain>
                 = <FormatCurrency :value="globalDifference" currency="DAI"
             /></span>
             <div v-else>
@@ -43,31 +43,31 @@
         </div>
         <div class="flex justify-between">
             <span>Current {{ collateralType }} limit</span>
-            <span v-if="!isCollateralLimitMissing"
-                ><Explain :text="format(liquidationLimits.maximumCollateralDebtDai)"
-                    >The amount of DAI needed to cover the debt and liquidation incentives of active
+            <span v-if="!isCollateralLimitMissing && debtAndIncentives">
+                <Explain :text="format(liquidationLimits.maximumCollateralDebtDai)">
+                    The amount of DAI needed to cover the debt and liquidation incentives of active
                     {{ collateralType }} auctions. In maker terms it is called
                     <a
                         href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#dog-ilk.hole-rad"
                         target="_blank"
                         >ilk.hole</a
-                    ></Explain
-                >
+                    >
+                </Explain>
                 -
-                <Explain :text="format(liquidationLimits.currentCollateralDebtDai)"
-                    >The amount of DAI needed to cover the debt and liquidation incentives of active
+                <Explain :text="format(liquidationLimits.currentCollateralDebtDai)">
+                    The amount of DAI needed to cover the debt and liquidation incentives of active
                     {{ collateralType }} auctions. In maker terms it is called
                     <a
                         href="https://docs.makerdao.com/smart-contract-modules/dog-and-clipper-detailed-documentation#limits-on-dai-needed-to-cover-debt-and-fees-of-active-auctions"
                         target="_blank"
                         >ilk.dirt</a
-                    ></Explain
-                >
+                    >
+                </Explain>
                 -
-                <Explain :text="format(debtAndIncentives)"
-                    >The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
-                    of this auction</Explain
-                >
+                <Explain :text="format(debtAndIncentives)">
+                    The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
+                    of this auction
+                </Explain>
                 = <FormatCurrency :value="collateralDifference" currency="DAI"
             /></span>
             <div v-else>
@@ -111,23 +111,23 @@ export default Vue.extend({
     props: {
         liquidationLimits: {
             type: Object as Vue.PropType<LiquidationLimits>,
-            required: true,
-        },
-        debtDai: {
-            type: BigNumber,
-            required: true,
-        },
-        incentiveRelativeDai: {
-            type: BigNumber,
-            required: true,
-        },
-        incentiveConstantDai: {
-            type: BigNumber,
-            required: true,
+            default: undefined,
         },
         collateralType: {
             type: String,
             required: true,
+        },
+        debtDai: {
+            type: BigNumber,
+            default: undefined,
+        },
+        incentiveRelativeDai: {
+            type: BigNumber,
+            default: undefined,
+        },
+        incentiveConstantDai: {
+            type: BigNumber,
+            default: undefined,
         },
         isRefreshing: {
             type: Boolean,
@@ -139,7 +139,10 @@ export default Vue.extend({
         },
     },
     computed: {
-        debtAndIncentives(): BigNumber {
+        debtAndIncentives(): BigNumber | undefined {
+            if (!this.debtDai || !this.incentiveConstantDai || !this.incentiveRelativeDai) {
+                return undefined;
+            }
             return this.debtDai.plus(this.incentiveRelativeDai).plus(this.incentiveConstantDai);
         },
         globalDifference(): BigNumber {
@@ -161,7 +164,7 @@ export default Vue.extend({
             );
         },
         currentStateAndTitle(): PanelProps {
-            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
+            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing || !this.debtAndIncentives) {
                 return {
                     name: 'inactive',
                     title: 'Current liquidation limits are unknown',
