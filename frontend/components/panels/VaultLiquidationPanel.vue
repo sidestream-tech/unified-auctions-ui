@@ -27,7 +27,7 @@
                 :is-loading="isLiquidating"
                 @click="$emit('liquidate', walletAddress)"
             >
-                Liquidate vault#{{ vaultId }}
+                Liquidate vault #{{ vaultId }}
             </BaseButton>
         </div>
     </BasePanel>
