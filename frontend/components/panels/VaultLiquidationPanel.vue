@@ -5,7 +5,7 @@
             Successful liquidation of the vault will transfer combined incentive into the wallet that executes the
             transaction (or a specified wallet). This transaction will start a collateral auction that one can also
             participate in on a
-            <nuxt-link :to="`/collateral?network=${vaultTransaction.network}`">separate page</nuxt-link>.
+            <nuxt-link :to="`/collateral?network=${network}`">separate page</nuxt-link>.
         </TextBlock>
         <div class="flex mt-4 justify-end gap-5">
             <ExecuteWithOtherWalletModal
@@ -24,7 +24,7 @@
                 :is-loading="isLiquidating"
                 @click="$emit('liquidate', walletAddress)"
             >
-                Liquidate vault#{{ vaultTransaction.id }}
+                Liquidate vault#{{ vaultId }}
             </BaseButton>
         </div>
     </BasePanel>
@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VaultTransaction } from 'auctions-core/src/types';
+import { VaultTransactionState } from 'auctions-core/src/types';
 import ExecuteWithOtherWalletModal from '../modals/ExecuteWithOtherWalletModal.vue';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
@@ -47,8 +47,16 @@ export default Vue.extend({
         TextBlock,
     },
     props: {
-        vaultTransaction: {
-            type: String as Vue.PropType<VaultTransaction>,
+        vaultId: {
+            type: Number,
+            required: true,
+        },
+        network: {
+            type: String,
+            default: 'mainnet',
+        },
+        vaultState: {
+            type: String as Vue.PropType<VaultTransactionState>,
             required: true,
         },
         walletAddress: {
@@ -75,7 +83,7 @@ export default Vue.extend({
     },
     computed: {
         currentStateAndTitle(): PanelProps {
-            if (this.vaultTransaction.state === 'liquidated') {
+            if (this.vaultState === 'liquidated') {
                 return {
                     name: 'inactive',
                     title: 'The vault has been liquidated',
@@ -99,7 +107,7 @@ export default Vue.extend({
             };
         },
         isLiquidatable(): Boolean {
-            return this.vaultTransaction.state === 'liquidatable';
+            return this.vaultState === 'liquidatable';
         },
     },
     methods: {

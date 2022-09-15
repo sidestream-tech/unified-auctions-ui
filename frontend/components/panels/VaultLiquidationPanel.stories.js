@@ -2,10 +2,7 @@ import { storiesOf } from '@storybook/vue';
 import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import VaultLiquidationPanel from './VaultLiquidationPanel';
-import {
-    generateFakeVaultLiquidatedTransaction,
-    generateFakeVaultNotLiquidatedTransaction,
-} from '~/helpers/generateFakeVault';
+import { generateFakeVaultNotLiquidatedTransaction } from '~/helpers/generateFakeVault';
 
 const vaultTransaction = generateFakeVaultNotLiquidatedTransaction();
 
@@ -13,7 +10,9 @@ const common = {
     components: { VaultLiquidationPanel },
     data() {
         return {
-            vaultTransaction,
+            vaultId: vaultTransaction.id,
+            vaultState: vaultTransaction.state,
+            network: vaultTransaction.network,
             walletAddress: faker.finance.ethereumAddress(),
         };
     },
@@ -50,10 +49,7 @@ storiesOf('Panels/VaultLiquidationPanel', module)
         data() {
             return {
                 ...common.data(),
-                vaultTransaction: {
-                    ...vaultTransaction,
-                    state: 'not-liquidatable',
-                },
+                vaultState: 'not-liquidatable',
             };
         },
     }))
@@ -62,7 +58,7 @@ storiesOf('Panels/VaultLiquidationPanel', module)
         data() {
             return {
                 ...common.data(),
-                vaultTransaction: generateFakeVaultLiquidatedTransaction(),
+                vaultState: 'liquidated',
             };
         },
     }));
