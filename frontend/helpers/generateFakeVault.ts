@@ -46,7 +46,7 @@ export const generateFakeLiquidationLimits = function (): LiquidationLimits {
     const currentProtocolDebtDai = maximumProtocolDebtDai.dividedBy(faker.datatype.number({ min: 1, max: 5 }));
     const maximumCollateralDebtDai = new BigNumber(faker.finance.amount());
     const currentCollateralDebtDai = maximumCollateralDebtDai.dividedBy(faker.datatype.number({ min: 1, max: 5 }));
-    const liquidationPenalty = new BigNumber(faker.datatype.float({ min: 0.1, max: 0.5 }));
+    const liquidationPenaltyRatio = new BigNumber(faker.datatype.float({ min: 0.1, max: 0.5 }));
     const minimalAuctionedDai = new BigNumber(faker.finance.amount());
 
     return {
@@ -54,7 +54,7 @@ export const generateFakeLiquidationLimits = function (): LiquidationLimits {
         currentProtocolDebtDai,
         maximumCollateralDebtDai,
         currentCollateralDebtDai,
-        liquidationPenalty,
+        liquidationPenaltyRatio,
         minimalAuctionedDai,
     };
 };

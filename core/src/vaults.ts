@@ -128,8 +128,8 @@ const _fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (
         currentCollateralDebtDai: new BigNumber(dirt._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
         maximumCollateralDebtDai: new BigNumber(hole._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
         liquidatiorContractAddress: clip,
-        liquidationPenalty: new BigNumber(chop._hex),
-        minimalAuctionedDai: new BigNumber(dust._hex),
+        liquidationPenaltyRatio: new BigNumber(chop._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS),
+        minimalAuctionedDai: new BigNumber(dust._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS),
     };
 };
 
@@ -147,7 +147,7 @@ const _fetchVault = async (network: string, index: number): Promise<Vault> => {
     const vaultCollateralParameters = await fetchVaultCollateralParameters(network, vaultBase.collateralType);
     const vaultAmount = await fetchVaultAmount(network, vaultBase.collateralType, vaultBase.address);
     const globalLiquidationLimits = await fetchGlobalLiquidationLimits(network);
-    const { currentCollateralDebtDai, maximumCollateralDebtDai, liquidationPenalty, minimalAuctionedDai } =
+    const { currentCollateralDebtDai, maximumCollateralDebtDai, liquidationPenaltyRatio, minimalAuctionedDai } =
         await fetchCollateralLiquidationLimitsAndLiquidatorAddress(network, vaultBase.collateralType);
     return {
         ...vaultBase,
@@ -156,7 +156,7 @@ const _fetchVault = async (network: string, index: number): Promise<Vault> => {
         ...globalLiquidationLimits,
         currentCollateralDebtDai,
         maximumCollateralDebtDai,
-        liquidationPenalty,
+        liquidationPenaltyRatio,
         minimalAuctionedDai,
     };
 };
@@ -331,7 +331,7 @@ const getAuctionedDaiAndAuctionState = (proximityToLiquidation: BigNumber, vault
     }
     let auctionedAmountDai = BigNumber.min(
         vault.initialDebtDai,
-        minimumDebtCovered.div(vault.stabilityFeeRate).div(vault.liquidationPenalty)
+        minimumDebtCovered.div(vault.stabilityFeeRate).div(vault.liquidationPenaltyRatio)
     );
     if (auctionedAmountDai.isLessThan(vault.initialDebtDai)) {
         if (

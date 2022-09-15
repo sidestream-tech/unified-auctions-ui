@@ -297,7 +297,7 @@ export declare interface LiquidationLimits {
     currentProtocolDebtDai: BigNumber;
     currentCollateralDebtDai: BigNumber;
     maximumCollateralDebtDai: BigNumber;
-    liquidationPenalty: BigNumber;
+    liquidationPenaltyRatio: BigNumber;
     minimalAuctionedDai: BigNumber;
 }
 

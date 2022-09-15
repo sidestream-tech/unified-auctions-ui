@@ -45,6 +45,8 @@ const compareVaultTransactionsNotLiquidated = (
     expect(expected.currentUnitPrice?.toFixed()).to.eq(actual.currentUnitPrice?.toFixed());
     expect(expected.nextUnitPrice?.toFixed()).to.eq(actual.nextUnitPrice?.toFixed());
     expect(expected.initialDebtDai.toFixed()).to.eq(actual.initialDebtDai.toFixed());
+    expect(expected.liquidationPenaltyRatio.toFixed()).to.eq(actual.liquidationPenaltyRatio.toFixed());
+    expect(expected.minimalAuctionedDai.toFixed()).to.eq(actual.minimalAuctionedDai.toFixed());
 };
 
 describe('Vaults', () => {
@@ -71,14 +73,14 @@ describe('Vaults', () => {
             liquidationRatio: new BigNumber('1.45'),
             collateralizationRatio: new BigNumber('3.204790430641710905476031356'),
             proximityToLiquidation: new BigNumber('0.547552318511616565008415095'),
-            liquidationPenalty: new BigNumber('22'),
-            minimalAuctionedDai: new BigNumber('22'),
+            liquidationPenaltyRatio: new BigNumber('1.13'),
+            minimalAuctionedDai: new BigNumber('15000'),
             id: 22025,
 
-            incentiveCombinedDai: new BigNumber('32498.31588349647029073587039891649505768393987481484'),
-            incentiveRelativeDai: new BigNumber('32198.31588349647029073587039891649505768393987481484'),
+            incentiveCombinedDai: new BigNumber('30168.839670692031996967035'),
+            incentiveRelativeDai: new BigNumber('29868.839670692031996967035'),
             incentiveConstantDai: new BigNumber('300'),
-            grossProfitDai: new BigNumber('32498.31588349647029073587039891649505768393987481484'),
+            grossProfitDai: new BigNumber('30168.839670692031996967035'),
             netProfitDai: new BigNumber('32497.18533829802106158776170392239838650993987481484'),
             stabilityFeeRate: new BigNumber('1.077990181020998014318011624'),
             minUnitPrice: new BigNumber('1180.834957655172413793103448275'),
@@ -130,14 +132,14 @@ describe('Vaults', () => {
             liquidationRatio: new BigNumber(1.7),
             collateralizationRatio: new BigNumber('1.698313241866926788910221381'),
             proximityToLiquidation: new BigNumber('-0.000993196126304112564617121'),
-            liquidationPenalty: new BigNumber('22'),
-            minimalAuctionedDai: new BigNumber('22'),
+            liquidationPenaltyRatio: new BigNumber('1.13'),
+            minimalAuctionedDai: new BigNumber('5000'),
             id: 27435,
 
-            incentiveCombinedDai: new BigNumber('308.973717449711589422115275593184791275895341629034'),
-            incentiveRelativeDai: new BigNumber('8.973717449711589422115275593184791275895341629034'),
+            incentiveCombinedDai: new BigNumber('308.851309396336731694851'),
+            incentiveRelativeDai: new BigNumber('8.851309396336731694851'),
             incentiveConstantDai: new BigNumber('300'),
-            grossProfitDai: new BigNumber('308.973717449711589422115275593184791275895341629034'),
+            grossProfitDai: new BigNumber('308.851309396336731694851'),
             netProfitDai: new BigNumber('307.843172251262360274006580599088120101895341629034'),
             stabilityFeeRate: new BigNumber('1.013829372344109723319869134'),
             minUnitPrice: new BigNumber('721.804640220588235294117647058'),
