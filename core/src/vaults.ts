@@ -116,10 +116,10 @@ export const fetchGlobalLiquidationLimits = memoizee(_fetchGlobalLiquidationLimi
     length: 1,
 });
 
-const _fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (network: string, type: string) => {
+const _fetchCollateralLiquidationLimitsAndLiquidatorAddress = async (network: string, collateralType: CollateralType) => {
     const contract = await getContract(network, 'MCD_DOG');
     const contractVat = await getContract(network, 'MCD_VAT');
-    const typeHex = ethers.utils.formatBytes32String(type);
+    const typeHex = ethers.utils.formatBytes32String(collateralType);
     const { hole, dirt, clip, chop } = await contract.ilks(typeHex);
     const { dust } = await contractVat.ilks(typeHex);
     return {
@@ -330,7 +330,7 @@ const _enrichVaultWithTransactonInformation = async (
         .multipliedBy(vault.minUnitPrice)
         .multipliedBy(liquidationRatio)
         .dividedBy(debtDai);
-    const proximityToLiquidation = vault.minUnitPrice.multipliedBy(vault.collateralAmount).minus(debtDai);
+    const proximityToLiquidation = new BigNumber(1).minus(debtDai.div(vault.collateralAmount).div(vault.minUnitPrice));
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
@@ -426,11 +426,10 @@ export const getVaultTransaction = memoizee(_getVaultTransaction, {
     length: 2,
 });
 
-export const liquidateVault = async (network: string, vault: Vault, incentiveBeneficiaryAddress?: string) => {
+export const liquidateVault = async (network: string, collateralType: CollateralType, vaultAddress: string, incentiveBeneficiaryAddress?: string) => {
     const sendIncentiveTo = incentiveBeneficiaryAddress
         ? incentiveBeneficiaryAddress
         : await (await getSigner(network)).getAddress();
-    const typeHex = ethers.utils.formatBytes32String(vault.collateralType);
-    const vaultAddress = vault.address;
+    const typeHex = ethers.utils.formatBytes32String(collateralType);
     return await executeTransaction(network, 'MCD_DOG', 'bark', [typeHex, vaultAddress, sendIncentiveTo]);
 };
