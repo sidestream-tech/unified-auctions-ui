@@ -32,7 +32,7 @@
                 it will only result in the loss of the transaction fee.
             </template>
         </TextBlock>
-        <div v-if="!wasLiquidated" class="mb-4">
+        <div v-if="!wasLiquidated" class="my-4">
             <WalletConnectionCheckPanel
                 :wallet-address="walletAddress"
                 :is-loading="isConnectingWallet"
