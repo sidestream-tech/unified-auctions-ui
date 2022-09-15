@@ -69,7 +69,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Alert, Button } from 'ant-design-vue';
-import { LiquidationLimits, VaultTransactionNotLiquidated } from 'auctions-core/dist/src/types';
+import { LiquidationLimits, VaultTransaction } from 'auctions-core/dist/src/types';
 import TransactionFeesTable from '../auction/TransactionFeesTable.vue';
 import { generateLink } from '../../helpers/generateLink';
 import TimeTill from '../common/formatters/TimeTill.vue';
@@ -97,7 +97,7 @@ export default Vue.extend({
     },
     props: {
         vaultTransaction: {
-            type: Object as Vue.PropType<VaultTransactionNotLiquidated>,
+            type: Object as Vue.PropType<VaultTransaction>,
             required: true,
         },
         liquidationLimits: {

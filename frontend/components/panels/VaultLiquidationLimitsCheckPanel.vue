@@ -9,7 +9,7 @@
         </TextBlock>
         <div class="flex justify-between mt-4">
             <span>Current global limit</span>
-            <span v-if="!isGlobalLimitMissing && debtAndIncentives">
+            <span v-if="!isGlobalLimitMissing">
                 <Explain :text="format(liquidationLimits.maximumProtocolDebtDai)">
                     The maximum allowed amount of DAI needed to cover the debt and liquidation incentives of all active
                     auctions. In maker terms it is called
@@ -43,7 +43,7 @@
         </div>
         <div class="flex justify-between">
             <span>Current {{ collateralType }} limit</span>
-            <span v-if="!isCollateralLimitMissing && debtAndIncentives">
+            <span v-if="!isCollateralLimitMissing">
                 <Explain :text="format(liquidationLimits.maximumCollateralDebtDai)">
                     The amount of DAI needed to cover the debt and liquidation incentives of active
                     {{ collateralType }} auctions. In maker terms it is called
@@ -111,7 +111,7 @@ export default Vue.extend({
     props: {
         liquidationLimits: {
             type: Object as Vue.PropType<LiquidationLimits>,
-            default: undefined,
+            required: true,
         },
         collateralType: {
             type: String,
@@ -119,15 +119,15 @@ export default Vue.extend({
         },
         debtDai: {
             type: BigNumber,
-            default: undefined,
+            required: true,
         },
         incentiveRelativeDai: {
             type: BigNumber,
-            default: undefined,
+            required: true,
         },
         incentiveConstantDai: {
             type: BigNumber,
-            default: undefined,
+            required: true,
         },
         isRefreshing: {
             type: Boolean,
@@ -139,10 +139,7 @@ export default Vue.extend({
         },
     },
     computed: {
-        debtAndIncentives(): BigNumber | undefined {
-            if (!this.debtDai || !this.incentiveConstantDai || !this.incentiveRelativeDai) {
-                return undefined;
-            }
+        debtAndIncentives(): BigNumber {
             return this.debtDai.plus(this.incentiveRelativeDai).plus(this.incentiveConstantDai);
         },
         globalDifference(): BigNumber {
