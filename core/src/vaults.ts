@@ -9,6 +9,7 @@ import {
     OraclePrices,
     VaultTransactionNotLiquidated,
     VaultTransaction,
+    CollateralConfig,
 } from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
@@ -163,14 +164,11 @@ export const fetchVault = memoizee(_fetchVault, {
     length: 2,
 });
 
-const _getOsmPrices = async (
-    network: string,
-    oracleAddress: string,
-    collateralType: CollateralType
-): Promise<OraclePrices> => {
-    const provider = await getProvider(network);
-    const collateralConfig = COLLATERALS[collateralType];
-
+const getNextOraclePrice = async (
+    collateralConfig: CollateralConfig,
+    provider: ethers.providers.JsonRpcProvider,
+    oracleAddress: string
+) => {
     let nextPrice = new BigNumber(NaN);
     if (collateralConfig.nextPriceSlotAddress) {
         const slot = collateralConfig.nextPriceSlotAddress;
@@ -186,10 +184,18 @@ const _getOsmPrices = async (
         } else {
             isPriceValid = nextPriceFeed.substring(0, valueSplitPosition);
         }
-        nextPrice = new BigNumber(isPriceValid).eq(1)
-            ? new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`)
-            : new BigNumber(NaN);
+        if (new BigNumber(isPriceValid).eq(1)) {
+            new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`);
+        }
     }
+    return nextPrice;
+};
+
+const getCurrentOraclePrice = async (
+    collateralConfig: CollateralConfig,
+    provider: ethers.providers.JsonRpcProvider,
+    oracleAddress: string
+) => {
     const currentPriceFeed = await provider.getStorageAt(oracleAddress, collateralConfig.currentPriceSlotAddress);
     const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
     let isPriceValid;
@@ -205,6 +211,14 @@ const _getOsmPrices = async (
     const currentPrice = new BigNumber(isPriceValid).eq(1)
         ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`)
         : new BigNumber(NaN);
+    return currentPrice;
+};
+
+const getNextOraclePriceChange = async (
+    collateralConfig: CollateralConfig,
+    provider: ethers.providers.JsonRpcProvider,
+    oracleAddress: string
+) => {
     let nextPriceChange: Date = new Date(NaN);
     if (collateralConfig.hasDelay) {
         const osmContractInterface = await getContractInterfaceByName('OSM');
@@ -214,6 +228,21 @@ const _getOsmPrices = async (
         const lastPriceUpdateTimestampInSeconds = new BigNumber(lastPriceUpdateAsHex).toNumber();
         nextPriceChange = new Date((lastPriceUpdateTimestampInSeconds + priceUpdateFrequencyInSeconds) * 1000);
     }
+    return nextPriceChange;
+};
+
+const _getOsmPrices = async (
+    network: string,
+    oracleAddress: string,
+    collateralType: CollateralType
+): Promise<OraclePrices> => {
+    const provider = await getProvider(network);
+    const collateralConfig = COLLATERALS[collateralType];
+
+    const nextPrice = await getNextOraclePrice(collateralConfig, provider, oracleAddress);
+    const currentPrice = await getCurrentOraclePrice(collateralConfig, provider, oracleAddress);
+    const nextPriceChange = await getNextOraclePriceChange(collateralConfig, provider, oracleAddress);
+
     const currentUnitCollateralPrice = new BigNumber(currentPrice).shiftedBy(-WAD_NUMBER_OF_DIGITS);
     const nextUnitCollateralPrice = new BigNumber(nextPrice).shiftedBy(-WAD_NUMBER_OF_DIGITS);
 
