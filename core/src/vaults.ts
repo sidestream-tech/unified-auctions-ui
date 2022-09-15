@@ -61,10 +61,10 @@ export const fetchVaultsCount = memoizee(_fetchVaultsCount, {
 
 const _fetchVaultCollateralParameters = async (
     network: string,
-    type: CollateralType
+    collateralType: CollateralType
 ): Promise<VaultCollateralParameters> => {
     const contract = await getContract(network, 'MCD_VAT');
-    const typeHex = ethers.utils.formatBytes32String(type);
+    const typeHex = ethers.utils.formatBytes32String(collateralType);
     const { rate, spot } = await contract.ilks(typeHex);
     return {
         stabilityFeeRate: new BigNumber(rate._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS),
@@ -80,11 +80,11 @@ export const fetchVaultCollateralParameters = memoizee(_fetchVaultCollateralPara
 
 const _fetchVaultAmount = async (
     network: string,
-    type: CollateralType,
+    collateralType: CollateralType,
     vaultAddress: string
 ): Promise<VaultAmount> => {
     const contract = await getContract(network, 'MCD_VAT');
-    const typeHex = ethers.utils.formatBytes32String(type);
+    const typeHex = ethers.utils.formatBytes32String(collateralType);
     const { ink, art } = await contract.urns(typeHex, vaultAddress);
     return {
         initialDebtDai: new BigNumber(art._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS),
