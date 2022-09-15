@@ -30,12 +30,11 @@ import executeTransaction from './execute';
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
 const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
-    const vaultsCount = await fetchVaultsCount(network);
-    if (id > vaultsCount) {
-        throw new Error('Vault does not exist');
-    }
     const contract = await getContract(network, 'CDP_MANAGER');
     const address = await contract.urns(id);
+    if (address === '0x0000000000000000000000000000000000000000') {
+        throw new Error('Vault does not exist');
+    }
     const collateralTypeHex = await contract.ilks(id);
     const collateralType = ethers.utils.parseBytes32String(collateralTypeHex);
     return {
@@ -300,11 +299,13 @@ const _fetchLiquidatedParameters = async (network: string, vault: Vault) => {
     const liquidationEvents = await contract.queryFilter(eventFilter);
     if (liquidationEvents.length !== 0 && vault.initialDebtDai.eq(0)) {
         // there was a liquidation and the vault was not used again
-        return Promise.all(liquidationEvents.map(async (event) => ({
-            liquidationDate: await fetchDateByBlockNumber(network, event.blockNumber),
-            transactionHash: event.transactionHash,
-            auctionId: `${vault.collateralType}:${new BigNumber(event.args?.id._hex).toFixed(0)}`,
-        })));
+        return Promise.all(
+            liquidationEvents.map(async event => ({
+                liquidationDate: await fetchDateByBlockNumber(network, event.blockNumber),
+                transactionHash: event.transactionHash,
+                auctionId: `${vault.collateralType}:${new BigNumber(event.args?.id._hex).toFixed(0)}`,
+            }))
+        );
     }
     return undefined;
 };
@@ -314,38 +315,12 @@ export const fetchLiquidatedParameters = memoizee(_fetchLiquidatedParameters, {
     length: 2,
 });
 
-const _enrichVaultWithTransactonInformation = async (
-    network: string,
-    vault: Vault
-): Promise<VaultTransactionNotLiquidated> => {
-    const debtDai = vault.initialDebtDai.multipliedBy(vault.stabilityFeeRate);
-    const { liquidatiorContractAddress } = await fetchCollateralLiquidationLimitsAndLiquidatorAddress(
-        network,
-        vault.collateralType
-    );
-
-    const { liquidationRatio, oracleAddress } = await fetchLiquidationRatioAndOracleAddress(
-        network,
-        vault.collateralType
-    );
-    const collateralizationRatio = vault.collateralAmount
-        .multipliedBy(vault.minUnitPrice)
-        .multipliedBy(liquidationRatio)
-        .dividedBy(debtDai);
-    const proximityToLiquidation = new BigNumber(1).minus(debtDai.div(vault.collateralAmount).div(vault.minUnitPrice));
-    const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
-        network
-    );
-    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(
-        network,
-        oracleAddress,
-        vault.collateralType
-    );
+const getAuctionedDaiAndAuctionState = (proximityToLiquidation: BigNumber, vault: Vault, debtDai: BigNumber) => {
+    // logic from https://github.com/makerdao/dss/blob/fa4f6630afb0624d04a003e920b0d71a00331d98/src/dog.sol#L186
+    // detemines if the vault is liquidatable and what amount of debt can be covered.
     let state: 'liquidatable' | 'not-liquidatable' = proximityToLiquidation.isLessThanOrEqualTo(0)
         ? 'liquidatable'
         : 'not-liquidatable';
-    // logic from https://github.com/makerdao/dss/blob/fa4f6630afb0624d04a003e920b0d71a00331d98/src/dog.sol#L186
-    // detemines if the vault is liquidatable and what amount of debt can be covered.
     const amountDaiCanBeAuctionedGloballyDai = vault.maximumProtocolDebtDai.minus(vault.currentProtocolDebtDai);
     const amountDaiCanBeAuctionedCollateralDai = vault.maximumCollateralDebtDai.minus(vault.currentCollateralDebtDai);
     const minimumDebtCovered = amountDaiCanBeAuctionedCollateralDai.isLessThan(amountDaiCanBeAuctionedGloballyDai)
@@ -376,6 +351,37 @@ const _enrichVaultWithTransactonInformation = async (
             }
         }
     }
+    return { state, auctionedAmountDai };
+};
+
+const _enrichVaultWithTransactonInformation = async (
+    network: string,
+    vault: Vault
+): Promise<VaultTransactionNotLiquidated> => {
+    const debtDai = vault.initialDebtDai.multipliedBy(vault.stabilityFeeRate);
+    const { liquidatiorContractAddress } = await fetchCollateralLiquidationLimitsAndLiquidatorAddress(
+        network,
+        vault.collateralType
+    );
+
+    const { liquidationRatio, oracleAddress } = await fetchLiquidationRatioAndOracleAddress(
+        network,
+        vault.collateralType
+    );
+    const collateralizationRatio = vault.collateralAmount
+        .multipliedBy(vault.minUnitPrice)
+        .multipliedBy(liquidationRatio)
+        .dividedBy(debtDai);
+    const proximityToLiquidation = new BigNumber(1).minus(debtDai.div(vault.collateralAmount).div(vault.minUnitPrice));
+    const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
+        network
+    );
+    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(
+        network,
+        oracleAddress,
+        vault.collateralType
+    );
+    const { auctionedAmountDai, state } = getAuctionedDaiAndAuctionState(proximityToLiquidation, vault, debtDai);
     const { incentiveCombinedDai, incentiveConstantDai, incentiveRelativeDai } = await fetchVaultLiquidationIncentive(
         network,
         liquidatiorContractAddress,

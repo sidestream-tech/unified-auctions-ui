@@ -154,7 +154,12 @@ describe('Vaults', () => {
             initialDebtDai: new BigNumber('8851.309396336731694851'),
         };
         compareVaultTransactionsNotLiquidated(expectedObject, vaultTransactionNotLiquidated);
-        await liquidateVault(TEST_NETWORK, vaultTransactionNotLiquidated.collateralType, vaultTransactionNotLiquidated.address, HARDHAT_PUBLIC_KEY);
+        await liquidateVault(
+            TEST_NETWORK,
+            vaultTransactionNotLiquidated.collateralType,
+            vaultTransactionNotLiquidated.address,
+            HARDHAT_PUBLIC_KEY
+        );
         getVaultTransaction.clear();
         fetchLiquidatedParameters.clear();
         fetchVault.clear();
