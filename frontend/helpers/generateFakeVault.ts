@@ -114,9 +114,7 @@ const generateFakeVaultLiqudatedTransaction = function (): VaultTransactionLiqui
     return {
         ...fakeVault,
         state: 'liquidated',
-        liquidationDate,
-        transactionHash,
-        auctionId,
+        pastLiquidations: [{ liquidationDate, transactionHash, auctionId }],
     };
 };
 
