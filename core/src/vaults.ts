@@ -6,10 +6,11 @@ import {
     VaultAmount,
     VaultCollateralParameters,
     Vault,
-    OraclePrices,
     VaultTransactionNotLiquidated,
     VaultTransaction,
     CollateralConfig,
+    CollateralPriceSourceConfig,
+    OraclePrices,
 } from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
@@ -164,53 +165,40 @@ export const fetchVault = memoizee(_fetchVault, {
 });
 
 const getNextOraclePrice = async (
-    collateralConfig: CollateralConfig,
+    oracle: CollateralPriceSourceConfig,
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
-) => {
-    const nextPrice = new BigNumber(NaN);
-    if (collateralConfig.nextPriceSlotAddress) {
-        const slot = collateralConfig.nextPriceSlotAddress;
-        const nextPriceFeed = await provider.getStorageAt(oracleAddress, slot);
-        const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
-        let isPriceValid;
-        if (collateralConfig.nextPriceValiditySlotAndOffset) {
-            isPriceValid = await provider.getStorageAt(
-                oracleAddress,
-                collateralConfig.nextPriceValiditySlotAndOffset.slot
-            );
-            isPriceValid = isPriceValid[collateralConfig.nextPriceValiditySlotAndOffset.offset];
-        } else {
-            isPriceValid = nextPriceFeed.substring(0, valueSplitPosition);
-        }
-        if (new BigNumber(isPriceValid).eq(1)) {
-            return new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`);
-        }
+): Promise<BigNumber> => {
+    if (!('nextPriceSlotAddress' in oracle)) {
+        return new BigNumber(NaN);
     }
-    return nextPrice;
+    const slot = oracle.nextPriceSlotAddress;
+    const nextPriceFeed = await provider.getStorageAt(oracleAddress, slot);
+    const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
+    const isPriceValid = nextPriceFeed.substring(0, valueSplitPosition);
+    if (parseInt(isPriceValid, 16) === 1) {
+        return new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`);
+    }
+    return new BigNumber(NaN);
 };
 
 const getCurrentOraclePrice = async (
-    collateralConfig: CollateralConfig,
+    oracle: CollateralPriceSourceConfig,
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
 ) => {
-    const currentPriceFeed = await provider.getStorageAt(oracleAddress, collateralConfig.currentPriceSlotAddress);
-    const valueSplitPosition = collateralConfig.slotPriceValueBeginsAtPosition;
+    const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracle.currentPriceSlotAddress);
+    const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
     let isPriceValid;
-    if (collateralConfig.currentPriceValiditySlotAndOffset) {
-        isPriceValid = await provider.getStorageAt(
-            oracleAddress,
-            collateralConfig.currentPriceValiditySlotAndOffset.slot
-        );
-        isPriceValid = isPriceValid[collateralConfig.currentPriceValiditySlotAndOffset.offset];
+    if ('currentPriceValiditySlotAndOffset' in oracle) {
+        isPriceValid = await provider.getStorageAt(oracleAddress, oracle.currentPriceValiditySlotAndOffset.slot);
+        isPriceValid = isPriceValid[oracle.currentPriceValiditySlotAndOffset.offset];
     } else {
         isPriceValid = currentPriceFeed.substring(0, valueSplitPosition);
     }
-    const currentPrice = new BigNumber(isPriceValid).eq(1)
+    return parseInt(isPriceValid, 16) === 1
         ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`)
         : new BigNumber(NaN);
-    return currentPrice;
 };
 
 const getNextOraclePriceChange = async (
@@ -219,7 +207,7 @@ const getNextOraclePriceChange = async (
     oracleAddress: string
 ) => {
     let nextPriceChange: Date = new Date(NaN);
-    if (collateralConfig.hasDelay) {
+    if (collateralConfig.oracle.hasDelay) {
         const osmContractInterface = await getContractInterfaceByName('OSM');
         const osmContract = new ethers.Contract(oracleAddress, osmContractInterface, provider);
         const lastPriceUpdateAsHex = (await osmContract.zzz())._hex;
@@ -238,8 +226,8 @@ const _getOsmPrices = async (
     const provider = await getProvider(network);
     const collateralConfig = COLLATERALS[collateralType];
 
-    const nextPrice = await getNextOraclePrice(collateralConfig, provider, oracleAddress);
-    const currentPrice = await getCurrentOraclePrice(collateralConfig, provider, oracleAddress);
+    const nextPrice = await getNextOraclePrice(collateralConfig.oracle, provider, oracleAddress);
+    const currentPrice = await getCurrentOraclePrice(collateralConfig.oracle, provider, oracleAddress);
     const nextPriceChange = await getNextOraclePriceChange(collateralConfig, provider, oracleAddress);
 
     const currentUnitCollateralPrice = new BigNumber(currentPrice).shiftedBy(-WAD_NUMBER_OF_DIGITS);

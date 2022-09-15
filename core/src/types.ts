@@ -84,20 +84,38 @@ export declare interface UniswapV2LpTokenCalleeConfig {
     token1: string;
 }
 
+interface ValueSlotAddressAndOffset {
+    slot: string;
+    offset: number;
+}
+
 export declare interface CollateralConfig {
     title: string;
     ilk: string;
     symbol: string;
     decimals: number;
     exchange: RegularCalleeConfig | UniswapV2LpTokenCalleeConfig;
-    currentPriceSlotAddress: string;
-    nextPriceSlotAddress?: string;
-    whitelistSlotAddress?: string;
+    oracle: CollateralPriceSourceConfig;
+}
+
+interface OracleConfigBase {
     hasDelay: boolean;
     slotPriceValueBeginsAtPosition: number;
-    currentPriceValiditySlotAndOffset?: { slot: string; offset: number };
-    nextPriceValiditySlotAndOffset?: { slot: string; offset: number };
 }
+
+export declare interface OracleCurrentAndNextPrices extends OracleConfigBase {
+    currentPriceSlotAddress: string;
+    nextPriceSlotAddress: string;
+}
+
+export declare interface OracleCurrentPriceOnly extends OracleConfigBase {
+    currentPriceSlotAddress: string;
+    currentPriceValiditySlotAndOffset: ValueSlotAddressAndOffset;
+}
+
+export type CollateralPriceSourceConfig =
+    | OracleCurrentAndNextPrices
+    | OracleCurrentPriceOnly
 
 export declare interface NetworkConfig {
     chainId: string;
