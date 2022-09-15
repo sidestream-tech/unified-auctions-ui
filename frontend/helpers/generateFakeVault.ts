@@ -67,7 +67,7 @@ export const generateFakeVault = function (): Vault {
 };
 
 const generateFakeVaultTransactionFees = function (): VaultTransactionFees {
-    const transactionFeeLiquidationEth = new BigNumber(faker.datatype.number(0.5));
+    const transactionFeeLiquidationEth = new BigNumber(faker.datatype.float({ max: 0.5 }));
     const transactionFeeLiquidationDai = transactionFeeLiquidationEth.multipliedBy(1600);
 
     return {
@@ -120,7 +120,7 @@ export const generateFakeVaultNotLiquidatedTransaction = function (): VaultTrans
     const incentiveConstantDai = new BigNumber(faker.finance.amount());
     const incentiveCombinedDai = incentiveRelativeDai.plus(incentiveConstantDai);
 
-    const grossProfitDai = incentiveCombinedDai.minus(fakeTransactionFees.transactionFeeLiquidationDai);
+    const netProfitDai = incentiveCombinedDai.minus(fakeTransactionFees.transactionFeeLiquidationDai);
     const debtDai = new BigNumber(faker.finance.amount());
 
     return {
@@ -134,8 +134,8 @@ export const generateFakeVaultNotLiquidatedTransaction = function (): VaultTrans
         incentiveRelativeDai,
         incentiveConstantDai,
         incentiveCombinedDai,
-        grossProfitDai,
-        netProfitDai: incentiveCombinedDai,
+        grossProfitDai: incentiveCombinedDai,
+        netProfitDai,
         debtDai,
     };
 };
