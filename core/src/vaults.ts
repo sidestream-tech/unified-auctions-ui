@@ -221,7 +221,7 @@ const _fetchLiquidatedParameters = async (network: string, vault: Vault) => {
                 auctionId: `${vault.collateralType}:${new BigNumber(event.args?.id._hex).toFixed(0)}`,
             }))
         );
-        return liquidations.reverse()
+        return liquidations.reverse();
     }
     return undefined;
 };
