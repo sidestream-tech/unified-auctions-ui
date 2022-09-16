@@ -2,6 +2,13 @@
 
 Set of typescript functions, tests and simulation to work with MakerDAO auctions.
 
+## Collateral price extraction
+
+The functionality of the tool includes fetching collateral prices from the blockchain in order to determine wether the vault is or will be undercollateralized.
+The price is fetched from the private variables of the contract. Since the variables are private, they are only accessible via memory address. Different contracts have different memory layouts.
+On top of that the information that is contained in the contracts differs - e.g. some of them do not contain future prices.
+Therefore it is necessary to specify the memory addresses for each collateral type since there's one price source (contract) per collateral. The fetching is done based on the provided values.
+
 ## Simulations
 
 In order to run create specific situations relevant to the Maker auctions:
