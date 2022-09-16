@@ -40,7 +40,7 @@ const getNextOraclePrice = async (
     return new BigNumber(NaN);
 };
 
-const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Function> = {
+const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], CallableFunction> = {
     CurrentPriceOnly: async (
         oracle: OracleCurrentPriceOnly,
         provider: ethers.providers.JsonRpcProvider,

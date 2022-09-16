@@ -163,7 +163,6 @@ export const fetchVault = memoizee(_fetchVault, {
     length: 2,
 });
 
-
 const _fetchLiquidationRatioAndOracleAddress = async (network: string, collateralType: CollateralType) => {
     const contract = await getContract(network, 'MCD_SPOT');
     const collateralTypeAsHex = ethers.utils.formatBytes32String(collateralType);
