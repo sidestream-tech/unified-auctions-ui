@@ -214,13 +214,14 @@ const _fetchLiquidatedParameters = async (network: string, vault: Vault) => {
     const liquidationEvents = await contract.queryFilter(eventFilter);
     if (liquidationEvents.length !== 0 && vault.initialDebtDai.eq(0)) {
         // there was a liquidation and the vault was not used again
-        return Promise.all(
+        const liquidations = await Promise.all(
             liquidationEvents.map(async event => ({
                 liquidationDate: await fetchDateByBlockNumber(network, event.blockNumber),
                 transactionHash: event.transactionHash,
                 auctionId: `${vault.collateralType}:${new BigNumber(event.args?.id._hex).toFixed(0)}`,
             }))
         );
+        return liquidations.reverse()
     }
     return undefined;
 };
