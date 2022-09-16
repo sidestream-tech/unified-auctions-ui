@@ -174,12 +174,12 @@ const getNextOraclePrice = async (
     oracleAddress: string
 ): Promise<BigNumber> => {
     /**
-        * Determine if the next price can be fetched from the contract,
-        * If yes, fetch the price by direct memory access (via slot address)
-        * The price is stored in the same slot as a validity marker:
-        *   - split the received value into validity marker part and price part
-        * If the price is valid - return it, otherwise provide a NaN
-    **/
+     * Determine if the next price can be fetched from the contract,
+     * If yes, fetch the price by direct memory access (via slot address)
+     * The price is stored in the same slot as a validity marker:
+     *   - split the received value into validity marker part and price part
+     * If the price is valid - return it, otherwise provide a NaN
+     **/
     if (oracle.type !== 'CurrentAndNextPrice') {
         return new BigNumber(NaN);
     }
@@ -200,17 +200,19 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Functi
         oracleAddress: string
     ) => {
         /**
-            * Get current price from the contract via direct memory access (slot address)
-            * The price is stored in separate slot as a validity marker:
-            *   - the marker might be stored in the same slot as some other irrelevent value
-            *   - extract the byte that contains validity marker only
-            * If the price is valid - return it, otherwise provide a NaN
-        **/
+         * Get current price from the contract via direct memory access (slot address)
+         * The price is stored in separate slot as a validity marker:
+         *   - the marker might be stored in the same slot as some other irrelevent value
+         *   - extract the byte that contains validity marker only
+         * If the price is valid - return it, otherwise provide a NaN
+         **/
         const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracle.currentPriceSlotAddress);
         const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
         const storageValue = await provider.getStorageAt(oracleAddress, oracle.currentPriceValiditySlotAndOffset.slot);
         const isPriceValid = parseInt(storageValue[oracle.currentPriceValiditySlotAndOffset.offset], 16) === 1;
-        return isPriceValid ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`) : new BigNumber(NaN);
+        return isPriceValid
+            ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`)
+            : new BigNumber(NaN);
     },
     CurrentAndNextPrice: async (
         oracle: OracleCurrentAndNextPrices,
@@ -218,16 +220,18 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Functi
         oracleAddress: string
     ) => {
         /**
-            * Determine if the current price can be fetched from the contract,
-            * If yes, fetch the price by direct memory access (via slot address)
-            * The price is stored in the same slot as a validity marker:
-            *   - split the received value into validity marker part and price part
-            * If the price is valid - return it, otherwise provide a NaN
-        **/
+         * Determine if the current price can be fetched from the contract,
+         * If yes, fetch the price by direct memory access (via slot address)
+         * The price is stored in the same slot as a validity marker:
+         *   - split the received value into validity marker part and price part
+         * If the price is valid - return it, otherwise provide a NaN
+         **/
         const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracle.currentPriceSlotAddress);
         const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
         const isPriceValid = parseInt(currentPriceFeed.substring(0, valueSplitPosition), 16) === 1;
-        return isPriceValid ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`) : new BigNumber(NaN);
+        return isPriceValid
+            ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`)
+            : new BigNumber(NaN);
     },
 };
 const getCurrentOraclePrice = async (
@@ -358,9 +362,7 @@ const getAuctionedDaiAndAuctionState = (proximityToLiquidation: BigNumber, vault
         : 'not-liquidatable';
     const amountDaiCanBeAuctionedGloballyDai = vault.maximumProtocolDebtDai.minus(vault.currentProtocolDebtDai);
     const amountDaiCanBeAuctionedCollateralDai = vault.maximumCollateralDebtDai.minus(vault.currentCollateralDebtDai);
-    const minimumDebtCovered = amountDaiCanBeAuctionedCollateralDai.isLessThan(amountDaiCanBeAuctionedGloballyDai)
-        ? amountDaiCanBeAuctionedCollateralDai
-        : amountDaiCanBeAuctionedGloballyDai;
+    const minimumDebtCovered = BigNumber.min(amountDaiCanBeAuctionedCollateralDai, amountDaiCanBeAuctionedGloballyDai);
     if (amountDaiCanBeAuctionedGloballyDai.eq(0) || amountDaiCanBeAuctionedCollateralDai.eq(0)) {
         state = 'not-liquidatable';
     }
