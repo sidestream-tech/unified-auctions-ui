@@ -363,7 +363,7 @@ const getAuctionedDaiAndAuctionState = (proximityToLiquidation: BigNumber, vault
     const amountDaiCanBeAuctionedGloballyDai = vault.maximumProtocolDebtDai.minus(vault.currentProtocolDebtDai);
     const amountDaiCanBeAuctionedCollateralDai = vault.maximumCollateralDebtDai.minus(vault.currentCollateralDebtDai);
     const minimumDebtCovered = BigNumber.min(amountDaiCanBeAuctionedCollateralDai, amountDaiCanBeAuctionedGloballyDai);
-    if (amountDaiCanBeAuctionedGloballyDai.eq(0) || amountDaiCanBeAuctionedCollateralDai.eq(0)) {
+    if (amountDaiCanBeAuctionedGloballyDai.lte(0) || amountDaiCanBeAuctionedCollateralDai.lte(0)) {
         state = 'not-liquidatable';
     }
     let auctionedAmountDai = BigNumber.min(
