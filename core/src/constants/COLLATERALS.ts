@@ -11,6 +11,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -27,6 +28,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -43,6 +45,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -59,6 +62,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -75,6 +79,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: [],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -93,6 +98,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
 
         oracle: {
             currentPriceSlotAddress: '0x3',
+            type: 'CurrentAndNextPrice',
             nextPriceSlotAddress: '0x4',
             slotPriceValueBeginsAtPosition: 34,
             hasDelay: true,
@@ -110,6 +116,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
 
         oracle: {
             currentPriceSlotAddress: '0x3',
+            type: 'CurrentAndNextPrice',
             slotPriceValueBeginsAtPosition: 34,
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -125,6 +132,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentPriceOnly',
             currentPriceSlotAddress: '0x2',
             hasDelay: false,
             currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
@@ -141,6 +149,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -157,6 +166,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -173,6 +183,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -189,6 +200,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -204,7 +216,9 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: ['ETH'],
         },
+
         oracle: {
+            type: 'CurrentPriceOnly',
             currentPriceSlotAddress: '0x2',
             hasDelay: false,
             currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
@@ -221,6 +235,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -237,6 +252,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentPriceOnly',
             currentPriceSlotAddress: '0x2',
             hasDelay: false,
             currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
@@ -253,6 +269,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -269,6 +286,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentPriceOnly',
             currentPriceSlotAddress: '0x2',
             hasDelay: false,
             currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
@@ -285,6 +303,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentPriceOnly',
             currentPriceSlotAddress: '0x2',
             hasDelay: false,
             currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
@@ -301,6 +320,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -317,6 +337,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -333,6 +354,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -349,6 +371,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -365,6 +388,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -381,6 +405,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -397,6 +422,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -413,6 +439,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: [],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -429,6 +456,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: [],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -445,6 +473,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -463,6 +492,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         oracle: {
             currentPriceSlotAddress: '0x3',
+            type: 'CurrentAndNextPrice',
             nextPriceSlotAddress: '0x4',
             slotPriceValueBeginsAtPosition: 34,
             hasDelay: true,
@@ -480,6 +510,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         oracle: {
             currentPriceSlotAddress: '0x3',
+            type: 'CurrentAndNextPrice',
             slotPriceValueBeginsAtPosition: 34,
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -496,6 +527,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'USDT',
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -513,6 +545,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'DAI',
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -530,6 +563,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -547,6 +581,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -564,6 +599,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -581,6 +617,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -598,6 +635,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'USDT',
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,
@@ -615,6 +653,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'USDC',
         },
         oracle: {
+            type: 'CurrentAndNextPrice',
             currentPriceSlotAddress: '0x3',
             nextPriceSlotAddress: '0x4',
             hasDelay: true,

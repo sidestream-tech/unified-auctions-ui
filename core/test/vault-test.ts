@@ -2,11 +2,11 @@ import {
     fetchLiquidationRatioAndOracleAddress,
     fetchVault,
     fetchVaultAmount,
-    getOsmPrices,
     getVaultTransaction,
     fetchLiquidatedParameters,
     liquidateVault,
 } from '../src/vaults';
+import {getOsmPrices} from '../src/oracles'
 import { resetNetwork } from '../helpers/hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
