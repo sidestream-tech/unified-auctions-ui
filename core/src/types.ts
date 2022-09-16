@@ -84,7 +84,7 @@ export declare interface UniswapV2LpTokenCalleeConfig {
     token1: string;
 }
 
-interface ValueSlotAddressAndOffset {
+export declare interface ValueSlotAddressAndOffset {
     slot: string;
     offset: number;
 }
@@ -101,15 +101,16 @@ export declare interface CollateralConfig {
 interface OracleConfigBase {
     hasDelay: boolean;
     slotPriceValueBeginsAtPosition: number;
+    currentPriceSlotAddress: string;
 }
 
 export declare interface OracleCurrentAndNextPrices extends OracleConfigBase {
-    currentPriceSlotAddress: string;
+    type: 'CurrentAndNextPrice';
     nextPriceSlotAddress: string;
 }
 
 export declare interface OracleCurrentPriceOnly extends OracleConfigBase {
-    currentPriceSlotAddress: string;
+    type: 'CurrentPriceOnly';
     currentPriceValiditySlotAndOffset: ValueSlotAddressAndOffset;
 }
 

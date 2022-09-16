@@ -11,6 +11,8 @@ import {
     CollateralConfig,
     CollateralPriceSourceConfig,
     OraclePrices,
+    OracleCurrentPriceOnly,
+    OracleCurrentAndNextPrices,
 } from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
@@ -171,7 +173,7 @@ const getNextOraclePrice = async (
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
 ): Promise<BigNumber> => {
-    if (!('nextPriceSlotAddress' in oracle)) {
+    if (oracle.type !== 'CurrentAndNextPrice') {
         return new BigNumber(NaN);
     }
     const slot = oracle.nextPriceSlotAddress;
@@ -184,23 +186,35 @@ const getNextOraclePrice = async (
     return new BigNumber(NaN);
 };
 
+const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Function> = {
+    CurrentPriceOnly: async (
+        oracle: OracleCurrentPriceOnly,
+        provider: ethers.providers.JsonRpcProvider,
+        oracleAddress: string
+    ) => {
+        const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracle.currentPriceSlotAddress);
+        const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
+        const storageValue = await provider.getStorageAt(oracleAddress, oracle.currentPriceValiditySlotAndOffset.slot);
+        const isPriceValid = parseInt(storageValue[oracle.currentPriceValiditySlotAndOffset.offset], 16) === 1;
+        return isPriceValid ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`) : new BigNumber(NaN);
+    },
+    CurrentAndNextPrice: async (
+        oracle: OracleCurrentAndNextPrices,
+        provider: ethers.providers.JsonRpcProvider,
+        oracleAddress: string
+    ) => {
+        const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracle.currentPriceSlotAddress);
+        const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
+        const isPriceValid = parseInt(currentPriceFeed.substring(0, valueSplitPosition), 16) === 1;
+        return isPriceValid ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`) : new BigNumber(NaN);
+    },
+};
 const getCurrentOraclePrice = async (
     oracle: CollateralPriceSourceConfig,
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
 ) => {
-    const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracle.currentPriceSlotAddress);
-    const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
-    let isPriceValid;
-    if ('currentPriceValiditySlotAndOffset' in oracle) {
-        isPriceValid = await provider.getStorageAt(oracleAddress, oracle.currentPriceValiditySlotAndOffset.slot);
-        isPriceValid = isPriceValid[oracle.currentPriceValiditySlotAndOffset.offset];
-    } else {
-        isPriceValid = currentPriceFeed.substring(0, valueSplitPosition);
-    }
-    return parseInt(isPriceValid, 16) === 1
-        ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`)
-        : new BigNumber(NaN);
+    return currentPriceExtractors[oracle.type](oracle, provider, oracleAddress);
 };
 
 const getNextOraclePriceChange = async (
