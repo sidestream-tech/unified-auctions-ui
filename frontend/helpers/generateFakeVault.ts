@@ -125,7 +125,7 @@ export const generateFakeVaultNotLiquidatedTransaction = function (): VaultTrans
 
     const liquidationRatio = new BigNumber(faker.datatype.number({ min: 110, max: 150 }));
     const minUnitPrice = faker.datatype.number();
-    const collateralizationRatio = new BigNumber(fakeVault.collateralAmount.multipliedBy(minUnitPrice).toNumber());
+    const collateralizationRatio = fakeVault.collateralAmount.multipliedBy(minUnitPrice);
     const debtDai = new BigNumber(faker.finance.amount());
     const proximityToLiquidation = liquidationRatio
         .minus(collateralizationRatio)
