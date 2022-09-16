@@ -83,7 +83,7 @@ export const generateFakeVault = function (): Vault {
 };
 
 const generateFakeVaultTransactionFees = function (): VaultTransactionFees {
-    const transactionFeeLiquidationEth = new BigNumber(faker.datatype.number(0.5));
+    const transactionFeeLiquidationEth = new BigNumber(faker.datatype.float({ max: 0.5 }));
     const transactionFeeLiquidationDai = transactionFeeLiquidationEth.multipliedBy(1600);
 
     return {
@@ -104,7 +104,7 @@ const generateFakeOraclePrices = function (): OraclePrices {
     };
 };
 
-const generateFakeVaultLiqudatedTransaction = function (): VaultTransactionLiquidated {
+export const generateFakeVaultLiquidatedTransaction = function (): VaultTransactionLiquidated {
     const fakeVault = generateFakeVault();
 
     const liquidationDate = faker.date.recent();
@@ -140,7 +140,7 @@ export const generateFakeVaultNotLiquidatedTransaction = function (): VaultTrans
     const incentiveConstantDai = new BigNumber(faker.finance.amount());
     const incentiveCombinedDai = incentiveRelativeDai.plus(incentiveConstantDai);
 
-    const grossProfitDai = incentiveCombinedDai.minus(fakeTransactionFees.transactionFeeLiquidationDai);
+    const netProfitDai = incentiveCombinedDai.minus(fakeTransactionFees.transactionFeeLiquidationDai);
 
     return {
         ...fakeVault,
@@ -153,8 +153,8 @@ export const generateFakeVaultNotLiquidatedTransaction = function (): VaultTrans
         incentiveRelativeDai,
         incentiveConstantDai,
         incentiveCombinedDai,
-        grossProfitDai,
-        netProfitDai: incentiveCombinedDai,
+        grossProfitDai: incentiveCombinedDai,
+        netProfitDai,
         debtDai,
     };
 };
@@ -168,7 +168,7 @@ export const generateFakeVaultTransactions = function (
     notLiquidatedVaultsAmount = random(5, 15)
 ) {
     const vaults = [];
-    vaults.push(Array(liquidatedVaultsAmount).fill(null).map(generateFakeVaultLiqudatedTransaction));
+    vaults.push(Array(liquidatedVaultsAmount).fill(null).map(generateFakeVaultLiquidatedTransaction));
     vaults.push(Array(notLiquidatedVaultsAmount).fill(null).map(generateFakeVaultNotLiquidatedTransaction));
     return vaults;
 };
