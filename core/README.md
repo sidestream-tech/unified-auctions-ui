@@ -40,3 +40,13 @@ The process of adding new collaterals depends on the token type used. This is du
         - The file should be named using the name from `1.`
         - The file should export `CalleeFunctions`
         - The file should be imported in the [`calleeFunctions/index.ts`](./src/calleeFunctions/index.ts)
+3. Adding price oracle configurations for the token:
+    1. Get the source code of the price oracle contract:
+       - read `ilks(collateralType)` from [`Spot` contract](https://etherscan.io/address/0x65c79fcb50ca1594b025960e539ed7a9a6d434a3#code)
+    2. Read the contract and determine the slot address of the variable:
+       - Depending on the variable type it can be stored in different slots for memory consumption minimization
+       - https://docs.soliditylang.org/en/v0.8.13/internals/layout_in_storage.html documentation is helpful
+       - Generally the slot number increments with each (big enough) variable in top-to-bottom manner
+       - Experimenting with blockchain fork (e.g. hardhat) helps: try to fetch the value you're looking for / overwrite it / ... and validate that it's correct via some public method or comparing against your expectation.
+    3. Extend collateral config with the proper slot addresses.
+    4. If needed, add the oracle type to `types` file if the existing types are not sufficient to cover for the set of values you need.
