@@ -354,41 +354,42 @@ export const fetchLiquidatedParameters = memoizee(_fetchLiquidatedParameters, {
     length: 2,
 });
 
-const getAuctionedDaiAndAuctionState = (proximityToLiquidation: BigNumber, vault: Vault, debtDai: BigNumber) => {
+const getInitialAuctionableDebtDai = (vault: Vault) => {
+    const amountDaiCanBeAuctionedGloballyDai = vault.maximumProtocolDebtDai.minus(vault.currentProtocolDebtDai);
+    const amountDaiCanBeAuctionedCollateralDai = vault.maximumCollateralDebtDai.minus(vault.currentCollateralDebtDai);
+    const minimumDebtCovered = BigNumber.min(amountDaiCanBeAuctionedCollateralDai, amountDaiCanBeAuctionedGloballyDai);
+    const amountNeededToCoverActiveAuctionsDai = minimumDebtCovered
+        .div(vault.stabilityFeeRate)
+        .div(vault.liquidationPenaltyRatio);
+    if (vault.initialDebtDai.lte(amountNeededToCoverActiveAuctionsDai)) {
+        return { initialDebtThatCanBeAuctionedDai: vault.initialDebtDai, isPartialLiquidation: false };
+    }
+    if (
+        vault.initialDebtDai
+            .minus(amountNeededToCoverActiveAuctionsDai)
+            .multipliedBy(vault.stabilityFeeRate)
+            .isLessThan(vault.minimalAuctionedDai)
+    ) {
+        return { initialDebtThatCanBeAuctionedDai: vault.initialDebtDai, isPartialLiquidation: false };
+    }
+
+    return { initialDebtThatCanBeAuctionedDai: amountNeededToCoverActiveAuctionsDai, isPartialLiquidation: true };
+};
+
+const getAuctionedDaiAndAuctionState = (proximityToLiquidation: BigNumber, vault: Vault) => {
     // logic from https://github.com/makerdao/dss/blob/fa4f6630afb0624d04a003e920b0d71a00331d98/src/dog.sol#L186
     // detemines if the vault is liquidatable and what amount of debt can be covered.
     let state: 'liquidatable' | 'not-liquidatable' = proximityToLiquidation.isLessThanOrEqualTo(0)
         ? 'liquidatable'
         : 'not-liquidatable';
-    const amountDaiCanBeAuctionedGloballyDai = vault.maximumProtocolDebtDai.minus(vault.currentProtocolDebtDai);
-    const amountDaiCanBeAuctionedCollateralDai = vault.maximumCollateralDebtDai.minus(vault.currentCollateralDebtDai);
-    const minimumDebtCovered = BigNumber.min(amountDaiCanBeAuctionedCollateralDai, amountDaiCanBeAuctionedGloballyDai);
-    if (amountDaiCanBeAuctionedGloballyDai.lte(0) || amountDaiCanBeAuctionedCollateralDai.lte(0)) {
+    const { initialDebtThatCanBeAuctionedDai, isPartialLiquidation } = getInitialAuctionableDebtDai(vault);
+    if (
+        isPartialLiquidation &&
+        initialDebtThatCanBeAuctionedDai.multipliedBy(vault.stabilityFeeRate).lt(vault.minimalAuctionedDai)
+    ) {
         state = 'not-liquidatable';
     }
-    let auctionedAmountDai = BigNumber.min(
-        vault.initialDebtDai,
-        minimumDebtCovered.div(vault.stabilityFeeRate).div(vault.liquidationPenaltyRatio)
-    );
-    if (auctionedAmountDai.isLessThan(vault.initialDebtDai)) {
-        if (
-            vault.initialDebtDai
-                .minus(auctionedAmountDai)
-                .multipliedBy(vault.stabilityFeeRate)
-                .isLessThan(vault.minimalAuctionedDai)
-        ) {
-            auctionedAmountDai = debtDai;
-        } else {
-            if (
-                auctionedAmountDai
-                    .multipliedBy(vault.stabilityFeeRate)
-                    .isGreaterThanOrEqualTo(vault.minimalAuctionedDai)
-            ) {
-                state = 'not-liquidatable';
-            }
-        }
-    }
-    return { state, auctionedAmountDai };
+    return { state, auctionedAmountDai: initialDebtThatCanBeAuctionedDai };
 };
 
 const _enrichVaultWithTransactonInformation = async (
