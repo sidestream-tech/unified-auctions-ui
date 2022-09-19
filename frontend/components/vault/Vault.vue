@@ -139,7 +139,7 @@
                 <div slot="message">
                     <p>This vault has been liquidated into a collateral auction</p>
                     <div class="flex justify-end mt-2">
-                        <nuxt-link :to="vaultLink">
+                        <nuxt-link :to="auctionLink">
                             <Button type="primary"> View collateral auction {{ vaultTransaction.auctionId }} </Button>
                         </nuxt-link>
                     </div>
@@ -158,9 +158,9 @@
 import type { VaultTransaction, VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert, Tooltip } from 'ant-design-vue';
-import TimeTill from '../common/formatters/TimeTill.vue';
-import { generateLink } from '../../helpers/generateLink';
-import AnimatedArrow from '../common/other/AnimatedArrow.vue';
+import { generateLink } from '~/helpers/generateLink';
+import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import AnimatedArrow from '~/components/common/other/AnimatedArrow.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Button from '~/components/common/inputs/BaseButton.vue';
 import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
@@ -233,14 +233,12 @@ export default Vue.extend({
             }
             return null;
         },
-        vaultLink(): string | undefined {
+        auctionLink(): string | undefined {
             if (!this.vaultTransaction || !this.vaultTransaction.auctionId) {
                 return undefined;
             }
-            const link = generateLink(this.network, 'collateral');
-            const formattedAuctionId = this.vaultTransaction.auctionId.replace(':', '%3A');
-
-            return `${link}&auction=${formattedAuctionId}`;
+            const link = generateLink(this.vaultTransaction.network, 'collateral');
+            return `${link}&auction=${encodeURIComponent(this.vaultTransaction.auctionId)}`;
         },
     },
     watch: {
