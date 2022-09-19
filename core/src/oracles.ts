@@ -68,8 +68,12 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Callab
          **/
         const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracle.currentPriceSlotAddress);
         const slotPriceValueBeginsAtPosition = oracle.slotPriceValueBeginsAtPosition;
-        const priceValiditySlotValue = await provider.getStorageAt(oracleAddress, oracle.currentPriceValiditySlotAndOffset.slot);
-        const isPriceValid = parseInt(priceValiditySlotValue[oracle.currentPriceValiditySlotAndOffset.offset], 16) === 1;
+        const priceValiditySlotValue = await provider.getStorageAt(
+            oracleAddress,
+            oracle.currentPriceValiditySlotAndOffset.slot
+        );
+        const isPriceValid =
+            parseInt(priceValiditySlotValue[oracle.currentPriceValiditySlotAndOffset.offset], 16) === 1;
         return isPriceValid
             ? new BigNumber(`0x${currentPriceFeed.substring(slotPriceValueBeginsAtPosition)}`)
             : new BigNumber(NaN);
