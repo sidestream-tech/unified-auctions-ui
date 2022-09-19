@@ -15,29 +15,42 @@ import memoizee from 'memoizee';
 import COLLATERALS from './constants/COLLATERALS';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
+
+const getOraclePriceSameSlotValidity = async (
+    slot: string,
+    slotPriceValueBeginsAtPosition: number,
+    provider: ethers.providers.JsonRpcProvider,
+    oracleAddress: string
+) => {
+    /**
+     * Fetch the price by direct memory access (via slot address)
+     * The price is stored in the same slot as a validity marker:
+     *   - split the received value into validity marker part and price part
+     * If the price is valid - return it, otherwise provide a NaN
+     **/
+    const priceAndValidityHex = await provider.getStorageAt(oracleAddress, slot);
+    const isPriceValid = priceAndValidityHex.substring(0, slotPriceValueBeginsAtPosition);
+    if (parseInt(isPriceValid, 16) === 1) {
+        return new BigNumber(`0x${priceAndValidityHex.substring(slotPriceValueBeginsAtPosition)}`);
+    }
+    return new BigNumber(NaN);
+};
+
 const getNextOraclePrice = async (
     oracle: CollateralPriceSourceConfig,
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
 ): Promise<BigNumber> => {
-    /**
-     * Determine if the next price can be fetched from the contract,
-     * If yes, fetch the price by direct memory access (via slot address)
-     * The price is stored in the same slot as a validity marker:
-     *   - split the received value into validity marker part and price part
-     * If the price is valid - return it, otherwise provide a NaN
-     **/
+    // Determine if the next price can be fetched from the contract.
     if (oracle.type !== 'CurrentAndNextPrice') {
         return new BigNumber(NaN);
     }
-    const slot = oracle.nextPriceSlotAddress;
-    const nextPriceFeed = await provider.getStorageAt(oracleAddress, slot);
-    const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
-    const isPriceValid = nextPriceFeed.substring(0, valueSplitPosition);
-    if (parseInt(isPriceValid, 16) === 1) {
-        return new BigNumber(`0x${nextPriceFeed.substring(valueSplitPosition)}`);
-    }
-    return new BigNumber(NaN);
+    return await getOraclePriceSameSlotValidity(
+        oracle.nextPriceSlotAddress,
+        oracle.slotPriceValueBeginsAtPosition,
+        provider,
+        oracleAddress
+    );
 };
 
 const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], CallableFunction> = {
@@ -54,11 +67,11 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Callab
          * If the price is valid - return it, otherwise provide a NaN
          **/
         const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracle.currentPriceSlotAddress);
-        const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
-        const storageValue = await provider.getStorageAt(oracleAddress, oracle.currentPriceValiditySlotAndOffset.slot);
-        const isPriceValid = parseInt(storageValue[oracle.currentPriceValiditySlotAndOffset.offset], 16) === 1;
+        const slotPriceValueBeginsAtPosition = oracle.slotPriceValueBeginsAtPosition;
+        const priceValiditySlotValue = await provider.getStorageAt(oracleAddress, oracle.currentPriceValiditySlotAndOffset.slot);
+        const isPriceValid = parseInt(priceValiditySlotValue[oracle.currentPriceValiditySlotAndOffset.offset], 16) === 1;
         return isPriceValid
-            ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`)
+            ? new BigNumber(`0x${currentPriceFeed.substring(slotPriceValueBeginsAtPosition)}`)
             : new BigNumber(NaN);
     },
     CurrentAndNextPrice: async (
@@ -66,19 +79,12 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Callab
         provider: ethers.providers.JsonRpcProvider,
         oracleAddress: string
     ) => {
-        /**
-         * Determine if the current price can be fetched from the contract,
-         * If yes, fetch the price by direct memory access (via slot address)
-         * The price is stored in the same slot as a validity marker:
-         *   - split the received value into validity marker part and price part
-         * If the price is valid - return it, otherwise provide a NaN
-         **/
-        const currentPriceFeed = await provider.getStorageAt(oracleAddress, oracle.currentPriceSlotAddress);
-        const valueSplitPosition = oracle.slotPriceValueBeginsAtPosition;
-        const isPriceValid = parseInt(currentPriceFeed.substring(0, valueSplitPosition), 16) === 1;
-        return isPriceValid
-            ? new BigNumber(`0x${currentPriceFeed.substring(valueSplitPosition)}`)
-            : new BigNumber(NaN);
+        return await getOraclePriceSameSlotValidity(
+            oracle.currentPriceSlotAddress,
+            oracle.slotPriceValueBeginsAtPosition,
+            provider,
+            oracleAddress
+        );
     },
 };
 const getCurrentOraclePrice = async (
