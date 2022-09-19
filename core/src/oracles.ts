@@ -129,7 +129,7 @@ const _getOsmPrices = async (
 
     return {
         currentUnitPrice: currentUnitCollateralPrice,
-        nextUnitPrice: nextUnitCollateralPrice || new BigNumber(NaN),
+        nextUnitPrice: nextUnitCollateralPrice,
         nextPriceChange,
     };
 };
