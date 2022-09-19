@@ -9,7 +9,7 @@ export default Vue.extend({
     name: 'FormatPercentage',
     props: {
         value: {
-            type: Number,
+            type: [Number, String],
             required: true,
         },
     },

@@ -14,7 +14,7 @@ storiesOf('Modals/ChangeWalletNetworkModal', module).add('Default', () => ({
     ...common,
     template: `<ChangeWalletNetworkModal
         invalid-network="invalid-network"
-        page-network="kovan"
+        page-network="mainnet"
         @setPageNetwork="setPageNetwork"
         @fixWalletNetwork="fixWalletNetwork"
     />`,
