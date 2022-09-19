@@ -38,7 +38,7 @@ The process of adding new collaterals depends on the token type used. This is du
        - read value `ilks(collateralType)` from [`Spot` contract](https://etherscan.io/address/0x65c79fcb50ca1594b025960e539ed7a9a6d434a3#code) via "Read Contract" tabl - and receive the address of the oracle for the specified collateral. The linked conract is responsible for updating the unit prices for collaterals.
     2. Read the contract and determine the slot address of the variable:
        - Generally a slot number can be determined by counting definition of variables in the contract source code, but there are exceptions, [please read the docs on the solidity version the contract was compiled with](https://docs.soliditylang.org/en/v0.8.13/internals/layout_in_storage.html)
-       - Experimenting with blockchain fork (e.g. hardhat) helps: try to fetch the value you're looking for / overwrite it / ... and validate that it's correct via some public method or comparing against your expectation. See section [Overwriting values of price oracles](./README.md#Overwriting values of price oracles)
+       - Experimenting with blockchain fork (e.g. hardhat) helps: try to fetch the value you're looking for / overwrite it / ... and validate that it's correct via some public method or comparing against your expectation. See section [Overwriting values of price oracles](./README.md#overwriting-values-of-price-oracles)
     3. Extend collateral config with the proper slot addresses.
     4. If needed, add the oracle type to `types` file if the existing types are not sufficient to cover for the set of values you need.
 
