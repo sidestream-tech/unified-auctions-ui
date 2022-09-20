@@ -4,6 +4,7 @@ import {
     Vault,
     VaultAmount,
     VaultBase,
+    VaultTransaction,
     VaultTransactionFees,
     VaultTransactionLiquidated,
     VaultTransactionNotLiquidated,
@@ -148,8 +149,9 @@ export const generateFakeVaultTransactions = function (
     liquidatedVaultsAmount = random(1, 5),
     notLiquidatedVaultsAmount = random(5, 15)
 ) {
-    const vaults = [];
-    vaults.push(Array(liquidatedVaultsAmount).fill(null).map(generateFakeVaultLiquidatedTransaction));
-    vaults.push(Array(notLiquidatedVaultsAmount).fill(null).map(generateFakeVaultNotLiquidatedTransaction));
-    return vaults;
+    const vaults: VaultTransaction[] = [
+        ...Array(liquidatedVaultsAmount).fill(null).map(generateFakeVaultLiquidatedTransaction),
+        ...Array(notLiquidatedVaultsAmount).fill(null).map(generateFakeVaultNotLiquidatedTransaction),
+    ];
+    return faker.helpers.shuffle(vaults);
 };
