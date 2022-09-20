@@ -155,5 +155,5 @@ export const generateFakeVaultTransactions = function (
         ...vaults,
         ...Array(notLiquidatedVaultsAmount).fill(null).map(generateFakeVaultNotLiquidatedTransaction),
     ];
-    return vaults;
+    return faker.helpers.shuffle(vaults);
 };
