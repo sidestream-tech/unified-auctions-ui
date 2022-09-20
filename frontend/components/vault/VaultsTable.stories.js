@@ -30,7 +30,7 @@ storiesOf('Vault/VaultsTable', module)
         ...common,
         template: '<VaultsTable :last-updated="lastUpdated" :is-loading="true" />',
     }))
-    .add('Empty auctions', () => ({
+    .add('Empty vaults', () => ({
         ...common,
         template: '<VaultsTable :last-updated="lastUpdated" />',
     }))
