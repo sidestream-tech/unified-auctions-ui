@@ -22,7 +22,7 @@
             </div>
             <div slot="proximityToLiquidation" slot-scope="proximityToLiquidation">
                 <template v-if="proximityToLiquidation">
-                    <format-percentage :value="proximityToLiquidation" />
+                    <AnimatedNumber :value="proximityToLiquidation" />%
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -68,8 +68,8 @@ import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
 import { VaultTransaction, VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import { compareAsc } from 'date-fns';
-import AnimatedArrow from '../common/other/AnimatedArrow.vue';
-import FormatPercentage from '../common/formatters/FormatPercentage.vue';
+import AnimatedArrow from '~/components/common/other/AnimatedArrow.vue';
+import AnimatedNumber from '~/components/common/formatters/AnimatedNumber.vue';
 import Loading from '~/components/common/other/Loading.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
@@ -99,13 +99,13 @@ const compareBy = function (field: string, cmp: Function = (a: number, b: number
 export default Vue.extend({
     name: 'VaultsTable',
     components: {
-        FormatPercentage,
         AnimatedArrow,
         Loading,
         Table,
         TimeTill,
         FormatCurrency,
         LoadingIcon,
+        AnimatedNumber,
     },
     props: {
         vaultTransactions: {
