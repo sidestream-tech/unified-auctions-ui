@@ -149,10 +149,8 @@ export const generateFakeVaultTransactions = function (
     liquidatedVaultsAmount = random(1, 5),
     notLiquidatedVaultsAmount = random(5, 15)
 ) {
-    let vaults: VaultTransaction[] = [];
-    vaults = [...Array(liquidatedVaultsAmount).fill(null).map(generateFakeVaultLiquidatedTransaction)];
-    vaults = [
-        ...vaults,
+    const vaults: VaultTransaction[] = [
+        ...Array(liquidatedVaultsAmount).fill(null).map(generateFakeVaultLiquidatedTransaction),
         ...Array(notLiquidatedVaultsAmount).fill(null).map(generateFakeVaultNotLiquidatedTransaction),
     ];
     return faker.helpers.shuffle(vaults);
