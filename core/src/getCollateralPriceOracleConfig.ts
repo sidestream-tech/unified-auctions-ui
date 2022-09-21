@@ -3,13 +3,16 @@ import { getContractAddressByName } from './contracts';
 import contractCollateralToOracleInterface from './abis/MCD_SPOT.json';
 import contractOracleInterface from './abis/OSM.json';
 import { ethers } from 'ethers';
-import { generateMappingSlotAddress, overwriteUintValueInAddress, resetNetworkAndSetupWallet } from '../helpers/hardhat';
-import { EthereumProvider } from 'hardhat/types';
+import {
+    generateMappingSlotAddress,
+    overwriteUintValueInAddress,
+    resetNetworkAndSetupWallet,
+} from '../helpers/hardhat';
 import BigNumber from './bignumber';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../helpers/constants';
 import { CollateralType } from './types';
-import hre from 'hardhat';
 import getSigner from './signer';
+import getProvider from './provider';
 
 const choicesYesNo = [
     { title: 'yes', value: true },
@@ -24,8 +27,8 @@ const HOW_TO_GUESS_SLOT_NUMBER = `
     4. If the variable is less than 32B (e.g. uint256) provide the offset and length to indicate the start of the variable.
 
     Example for point (4):
-        boolean takes up less than 32B of memory, the let's assume the returned value from slot address looks like '0x0000000000000000000000000000000000000010'.
-        The offset is 38, length is 1.
+        boolean takes up less than 32B of memory, the let's assume the returned value from slot address looks like '0x1000000000000000000000000000000000000000000000000000000000000000'.
+        The offset is 3, length is 1.
 
 `;
 const promptCollateralType = async () => {
@@ -105,7 +108,7 @@ const promptOffsetAndLength = async () => {
         length,
     };
 };
-const promptWhitelistSlot = async () => {
+const promptWhitelistSlotAndFunction = async () => {
     console.info(HOW_TO_GUESS_SLOT_NUMBER);
     const { whitelistSlot, whitelistFunction }: { whitelistSlot: string; whitelistFunction: string } = await prompts([
         {
@@ -116,21 +119,21 @@ const promptWhitelistSlot = async () => {
         {
             type: 'text',
             message: 'What is the function to check the whitelist?',
-            name: 'whitelistFunction'
-        }
+            name: 'whitelistFunction',
+        },
     ]);
-    return {whitelistSlot, whitelistFunction};
+    return { whitelistSlot, whitelistFunction };
 };
 const promptTimeoutFunctionName = async () => {
-    const { timeoutFunctionName }: {timeoutFunctionName : string} = await prompts([
+    const { timeoutFunctionName }: { timeoutFunctionName: string } = await prompts([
         {
             type: 'text',
             message: 'What is the function name that provides timeout?',
-            name: 'timeoutFunctionName'
-        }
-    ])
+            name: 'timeoutFunctionName',
+        },
+    ]);
     return timeoutFunctionName;
-}
+};
 const getOracleAddressAndContract = async (collateralType: string) => {
     const signer = await getSigner(TEST_NETWORK);
     const contractOracleMapAdderss = await getContractAddressByName(TEST_NETWORK, 'MCD_SPOT');
@@ -143,29 +146,24 @@ const getOracleAddressAndContract = async (collateralType: string) => {
     const contract = new ethers.Contract(address, contractOracleInterface, signer);
     return { contract, address };
 };
-const overwriteValue = async (
-    provider: EthereumProvider,
-    contractAddress: string,
-    newValue: BigNumber,
-    slot: number
-) => {
-    overwriteUintValueInAddress(contractAddress, ethers.utils.hexlify(slot), newValue, provider);
+const overwriteValue = async (contractAddress: string, newValue: BigNumber, slot: number) => {
+    overwriteUintValueInAddress(contractAddress, ethers.utils.hexlify(slot), newValue);
 };
 const callContractFunctionOrThrow = async (contract: ethers.Contract, functionName: string, ...args: any[]) => {
+    console.log(...args);
     return await contract[functionName](...args);
 };
 const callFunction = async (contract: ethers.Contract, functionName: string, ...args: any[]): Promise<string> => {
     const returnedValueHex = await callContractFunctionOrThrow(contract, functionName, ...args);
     return returnedValueHex._hex;
 };
-const addToWhitelist = async (contractAddress: string, whitelistSlot: number, provider: EthereumProvider) => {
+const addToWhitelist = async (contractAddress: string, whitelistSlot: number) => {
     const slotAddress = generateMappingSlotAddress(`0x${whitelistSlot.toString(16)}`, HARDHAT_PUBLIC_KEY);
-    await overwriteUintValueInAddress(contractAddress, slotAddress, new BigNumber(1), provider);
+    await overwriteUintValueInAddress(contractAddress, slotAddress, new BigNumber(1));
 };
 const runOverwriteStep = async (
     contract: ethers.Contract,
     address: string,
-    provider: EthereumProvider,
     functionName: string,
     offset?: number,
     length?: number
@@ -175,7 +173,7 @@ const runOverwriteStep = async (
         offset && length ? previousValueRaw.substring(offset, offset + length) : previousValueRaw
     );
     const { slot, newValue } = await promptSlotNumberAndNewValue();
-    await overwriteValue(provider, address, new BigNumber(newValue), slot);
+    await overwriteValue(address, new BigNumber(newValue), slot);
     const currentPriceRaw = await callFunction(contract, functionName);
     const currentPrice = new BigNumber(
         offset && length ? currentPriceRaw.substring(offset, offset + length) : currentPriceRaw
@@ -186,27 +184,27 @@ const run = async () => {
     await resetNetworkAndSetupWallet(undefined, HARDHAT_PRIVATE_KEY);
     const basicInfo = await promptBasicInformation();
     const collateralType = await promptCollateralType();
-    const {contract, address} = await getOracleAddressAndContract(collateralType);
-    console.info(`Contract address: ${address}`)
-    const provider = hre.network.provider;
+    const { contract, address } = await getOracleAddressAndContract(collateralType);
+    console.info(`Contract address: ${address}`);
     if (basicInfo.hasWhitelist) {
-        const {whitelistSlot, whitelistFunction } = await promptWhitelistSlot();
-        await addToWhitelist(address, parseInt(whitelistSlot), provider);
-        const isWhitelisted = await callFunction(contract, whitelistFunction, HARDHAT_PUBLIC_KEY)
+        const { whitelistSlot, whitelistFunction } = await promptWhitelistSlotAndFunction();
+        await addToWhitelist(address, parseInt(whitelistSlot));
+        const isWhitelisted = await callFunction(contract, whitelistFunction, HARDHAT_PUBLIC_KEY);
         if (isWhitelisted === '0x00') {
-            throw new Error('Whitelisting failed')
+            throw new Error('Failed to whitelist the wallet on the fork');
         }
     }
-    const { isCompleteSlot, currentPriceFunctionName, nextPriceFunctionName, offset, length } = await promptPriceSourceConfig();
-    console.info('Running current price overwrite')
-    await runOverwriteStep(contract, address, provider, currentPriceFunctionName, offset, length);
+    const { isCompleteSlot, currentPriceFunctionName, nextPriceFunctionName, offset, length } =
+        await promptPriceSourceConfig();
+    console.info('Running current price overwrite');
+    await runOverwriteStep(contract, address, currentPriceFunctionName, offset, length);
     if (isCompleteSlot && nextPriceFunctionName) {
-        console.info('Determine the slot address of the timeout variable.')
+        console.info('Determine the slot address of the timeout variable.');
         const timeoutFunctionName = await promptTimeoutFunctionName();
-        console.info('Running timeout overwrite')
-        await runOverwriteStep(contract, address, provider, timeoutFunctionName)
-        console.info('Running next price overwrite')
-        await runOverwriteStep(contract, address, provider, nextPriceFunctionName, offset, length)
+        console.info('Running timeout overwrite');
+        await runOverwriteStep(contract, address, timeoutFunctionName);
+        console.info('Running next price overwrite');
+        await runOverwriteStep(contract, address, nextPriceFunctionName, offset, length);
     }
 };
 run();
