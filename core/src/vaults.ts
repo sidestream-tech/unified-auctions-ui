@@ -356,6 +356,8 @@ export const liquidateVault = async (
     const sendIncentiveTo = incentiveBeneficiaryAddress
         ? incentiveBeneficiaryAddress
         : await (await getSigner(network)).getAddress();
+    console.log(network, collateralType, vaultAddress, incentiveBeneficiaryAddress)
     const typeHex = ethers.utils.formatBytes32String(collateralType);
+    console.log(typeHex, vaultAddress, sendIncentiveTo)
     return await executeTransaction(network, 'MCD_DOG', 'bark', [typeHex, vaultAddress, sendIncentiveTo]);
 };

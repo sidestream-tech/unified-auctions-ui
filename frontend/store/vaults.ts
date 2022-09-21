@@ -1,6 +1,6 @@
 import { Vault, VaultTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
-import { fetchVault, liquidateVault } from 'auctions-core/src/vaults';
+import { getVaultTransaction, fetchVault, liquidateVault } from 'auctions-core/src/vaults';
 import { ActionContext } from 'vuex';
 
 interface State {
@@ -21,10 +21,13 @@ export const getters = {
     vaultTransactions(state: State) {
         return state.vaultTransactions;
     },
+    getVaultById: (state: State) => (id: number) => {
+        return state.vaultTransactions[id];
+    },
 };
 export const mutations = {
     setVault(state: State, vaultTransaction: VaultTransaction) {
-        Vue.set(state, 'vaults', vaultTransaction);
+        Vue.set(state.vaultTransactions, vaultTransaction.id, vaultTransaction);
     },
     setIsVaultLoading(state: State, isLoading: boolean) {
         state.isVaultLoading = isLoading;
@@ -38,7 +41,8 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         commit('setIsVaultLoading', true);
         try {
-            const vaultTransaction = await fetchVault(network, vaultId);
+            const vault = await fetchVault(network, vaultId);
+            const vaultTransaction = await getVaultTransaction(network, vault);
             commit('setVault', vaultTransaction);
         } catch (e) {
             console.error(`Failed to fetch vault ${vaultId}: ${e}`);
@@ -49,10 +53,11 @@ export const actions = {
     async liquidateVault({ rootGetters, commit, getters }: ActionContext<State, State>, vaultId: number) {
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
-        const vaultTransaction = getters.vaultTransactions[vaultId];
+        const vaultTransaction: VaultTransaction = getters.getVaultById( vaultId );
+        console.log(vaultTransaction, 'kek')
         commit('setIsVaultBeingLiquidated', true);
         try {
-            await liquidateVault(network, vaultTransaction, walletAddress);
+            await liquidateVault(network, vaultTransaction.collateralType, vaultTransaction.address, walletAddress);
         } catch (e) {
             console.error(`Failed to liquidate vault ${vaultId}: ${e}`);
         } finally {
