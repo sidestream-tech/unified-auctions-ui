@@ -1,16 +1,5 @@
 <template>
     <div class="flex flex-col space-y-8 py-8">
-        <Alert type="error" show-icon>
-            <div slot="message" class="font-bold">UnifiedAuction Vaults is currently still in development!</div>
-            <template slot="description"
-                >A list of at risk vaults can currenlty not be fetched. If you wish to liqudate a specific vault,
-                please navigate to
-                <Explain :text="demoURL">
-                    You can find a list of all vaults that are at risk
-                    <a href="https://maker.blockanalitica.com/vaults-at-risk/" target="_blank">here</a>.
-                </Explain>
-            </template>
-        </Alert>
         <WhatIsMakerProtocol v-if="isExplanationsShown" class="TextBlock"></WhatIsMakerProtocol>
         <template v-if="isExplanationsShown">
             <TextBlock title="What are vaults?" class="TextBlock">
@@ -35,36 +24,62 @@
                 There {{ vaultTransactions.length === 1 ? 'is' : 'are' }} currently
                 {{ vaultTransactions.length }} vault<span v-if="vaultTransactions.length !== 1">s</span>,
                 {{ vaultsReadyToBeLiquidated }} of which {{ vaultsReadyToBeLiquidated === 1 ? 'is' : 'are' }} ready to
-                be liquidated. {{ liquidatedVaults }} vault<span v-if="liquidatedVaults !== 1">s</span>
-                {{ liquidatedVaults === 1 ? 'has' : 'have' }} already been liquidated.
+                be liquidated.
             </TextBlock>
+            <!--
+            TODO: Add back when we can correctly fetch vaults
             <TextBlock v-else title="No at risk vaults" class="TextBlock">
                 There are currently not vaults at risk. You can check <nuxt-link to="/collateral">here</nuxt-link> to
                 see if there are any ongoing collateral auctions.
             </TextBlock>
+            -->
         </template>
         <div
             class="w-full self-center"
             :class="{ 'max-w-4xl': isExplanationsShown, 'md:px-10': !isExplanationsShown }"
         >
-            <!-- Add VaultsTable -->
+            <Alert type="error" show-icon class="mb-4">
+                <div slot="message" class="font-bold">UnifiedAuction Vaults is currently still in development!</div>
+                <template slot="description">
+                    <TextBlock>
+                        A list of at risk vaults can currently not be fetched. If you wish to liqudate a specific
+                        vault, please enter the vault id in the input field below. If you wish to find a list of all
+                        at-risk vaults we recommend to use
+                        <a href="https://maker.blockanalitica.com/vaults-at-risk/" target="_blank">Blockanalitica</a>.
+                    </TextBlock>
+                </template>
+            </Alert>
+            <div>
+                <div style="margin-bottom: 16px">
+                    <Input v-model="inputVaultId" type="number" size="large" placeholder="Enter a vault id">
+                        <nuxt-link slot="addonAfter" :to="vaultInputLink"> View vault </nuxt-link>
+                    </Input>
+                </div>
+            </div>
+            <VaultsTable
+                :vault-transactions="vaultTransactions"
+                :show-more-rows="isExplanationsShown"
+                :selected-vault-id="selectedVaultId"
+                :last-updated="lastUpdated"
+            />
         </div>
     </div>
 </template>
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import type { VaultTransaction } from 'auctions-core/src/types';
-import { Alert } from 'ant-design-vue';
+import { Alert, Input } from 'ant-design-vue';
+import VaultsTable from './VaultsTable.vue';
 import WhatIsMakerProtocol from '~/components/common/other/WhatIsMakerProtocol.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
-import Explain from '~/components/common/other/Explain.vue';
 
 export default Vue.extend({
     components: {
+        VaultsTable,
         TextBlock,
         WhatIsMakerProtocol,
         Alert,
-        Explain,
+        Input,
     },
     props: {
         vaultTransactions: {
@@ -80,7 +95,7 @@ export default Vue.extend({
             default: null,
         },
         selectedVaultId: {
-            type: String,
+            type: Number,
             default: null,
         },
         isExplanationsShown: {
@@ -92,27 +107,19 @@ export default Vue.extend({
             default: null,
         },
     },
+    data() {
+        return {
+            inputVaultId: 28187,
+        };
+    },
     computed: {
-        demoURL(): string {
-            return `${process.env.FRONTEND_ORIGIN || ''}/vaults?vault=COLLATERAL_ILK:VAULT_ID`;
-        },
-        liquidatedVaults(): number {
-            let liquidatedVaults = 0;
-            this.vaultTransactions.forEach(vault => {
-                if (vault.state === 'liquidated') {
-                    liquidatedVaults++;
-                }
-            });
-            return liquidatedVaults;
+        vaultInputLink(): string {
+            return `/vaults?vault=${this.inputVaultId}`;
         },
         vaultsReadyToBeLiquidated(): number {
-            let vaultsReadyToBeLiquidated = 0;
-            this.vaultTransactions.forEach(vault => {
-                if (vault.state === 'liquidatable') {
-                    vaultsReadyToBeLiquidated++;
-                }
-            });
-            return vaultsReadyToBeLiquidated;
+            return this.vaultTransactions.filter(vault => {
+                return vault.state === 'liquidatable';
+            }).length;
         },
     },
 });

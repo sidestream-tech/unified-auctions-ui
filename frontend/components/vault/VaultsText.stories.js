@@ -10,21 +10,25 @@ const common = {
     components: { VaultsText },
     data: () => ({
         vaultTransactions: fakeVaults,
-        selectedVaultId: randomSelectedVault.id.toString(),
+        selectedVaultId: randomSelectedVault.id,
     }),
 };
 
 storiesOf('Vault/VaultsText', module)
-    .add('Plain', () => ({
+    .add('No vaults', () => ({
+        ...common,
+        template: '<VaultsText />',
+    }))
+    .add('With vaults', () => ({
         ...common,
         template: '<VaultsText :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" />',
     }))
-    .add('Fetching with Auctions', () => ({
+    .add('Fetching with Vaults', () => ({
         ...common,
         template:
             '<VaultsText :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" :isVaultsLoading="true" />',
     }))
-    .add('Fetching without Auctions', () => ({
+    .add('Fetching without Vaults', () => ({
         ...common,
         template: '<VaultsText :isVaultsLoading="true" />',
     }))
