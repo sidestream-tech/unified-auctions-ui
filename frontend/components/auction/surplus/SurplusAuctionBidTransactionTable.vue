@@ -84,7 +84,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import type { SurplusAuction } from 'auctions-core/src/types';
+import type { SurplusAuctionTransaction } from 'auctions-core/src/types';
 import SurplusAuctionState from '~/components/auction/surplus/SurplusAuctionState.vue';
 import BidInput from '~/components/common/inputs/BidInput.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
@@ -97,7 +97,7 @@ export default Vue.extend({
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<SurplusAuction>,
+            type: Object as Vue.PropType<SurplusAuctionTransaction>,
             required: true,
         },
     },
