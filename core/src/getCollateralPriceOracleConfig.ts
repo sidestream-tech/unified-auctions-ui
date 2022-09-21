@@ -149,7 +149,6 @@ const overwriteValue = async (contractAddress: string, newValue: BigNumber, slot
     overwriteUintValueInAddress(contractAddress, ethers.utils.hexlify(slot), newValue);
 };
 const callContractFunctionOrThrow = async (contract: ethers.Contract, functionName: string, ...args: any[]) => {
-    console.log(...args);
     return await contract[functionName](...args);
 };
 const callFunction = async (contract: ethers.Contract, functionName: string, ...args: any[]): Promise<string> => {
