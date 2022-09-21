@@ -188,7 +188,7 @@ export default Vue.extend({
             default: null,
         },
         vaultId: {
-            type: Number,
+            type: String,
             required: true,
         },
         error: {

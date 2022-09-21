@@ -16,7 +16,7 @@ const common = {
     data() {
         return {
             vault: fakeVaultNotLiquidatedTransaction,
-            vaultId: fakeVaultLiquidatedTransaction.id,
+            vaultId: fakeVaultLiquidatedTransaction.id.toString(),
         };
     },
     methods: {
@@ -34,7 +34,7 @@ storiesOf('Vault/Vault', module)
         data() {
             return {
                 vault: fakeVaultLiquidatedTransaction,
-                vaultId: fakeVaultLiquidatedTransaction.id,
+                vaultId: fakeVaultLiquidatedTransaction.id.toString(),
             };
         },
         template: `<Vault :vaultTransaction="vault" :vaultId='vaultId' @liquidate="liquidate" />`,
