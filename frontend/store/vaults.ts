@@ -53,7 +53,7 @@ export const actions = {
     async liquidateVault({ rootGetters, commit, getters }: ActionContext<State, State>, vaultId: number) {
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
-        const vaultTransaction: VaultTransaction = getters.getVaultById( vaultId );
+        const vaultTransaction: VaultTransaction = getters.getVaultById(vaultId);
         commit('setIsVaultBeingLiquidated', true);
         try {
             await liquidateVault(network, vaultTransaction.collateralType, vaultTransaction.address, walletAddress);

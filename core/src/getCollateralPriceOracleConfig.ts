@@ -136,7 +136,6 @@ const validateConfigWithoutNextPriceIsValid = async (contract: ethers.Contract, 
         address,
         CONFIG_WITHOUT_NEXT_PRICE.currentPriceValiditySlotAndOffset.slot
     );
-    console.log(valueAtSlot);
     if (valueAtSlot[CONFIG_WITHOUT_NEXT_PRICE.currentPriceValiditySlotAndOffset.offset] !== '1') {
         throw new Error('Failed to discover the price validity boolean position');
     }
@@ -150,11 +149,12 @@ const validateConfigWithoutNextPriceIsValid = async (contract: ethers.Contract, 
 };
 
 const run = async () => {
-    let config: CollateralPriceSourceConfig;
-    await keypress('Press enter to start collateral config generation')
+    await keypress('Press enter to start collateral config generation');
     await resetNetworkAndSetupWallet(undefined, HARDHAT_PRIVATE_KEY);
     const basicInfo = await promptBasicInformation();
-    config = basicInfo.hasNextPrice ? CONFIG_WITH_NEXT_PRICE : CONFIG_WITHOUT_NEXT_PRICE;
+    const config: CollateralPriceSourceConfig = basicInfo.hasNextPrice
+        ? CONFIG_WITH_NEXT_PRICE
+        : CONFIG_WITHOUT_NEXT_PRICE;
     const collateralType = await promptCollateralType();
     const { contract, address } = await getOracleAddressAndContract(collateralType);
     console.info(`Contract address: ${address}`);

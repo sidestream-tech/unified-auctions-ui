@@ -1,8 +1,7 @@
 import prompts, { PromptObject } from 'prompts';
 import { SIMULATIONS } from './config';
 import readline from 'readline';
-import keypress from '../helpers/keypress'
-
+import keypress from '../helpers/keypress';
 
 const selectAndRunSimulation = async () => {
     readline.emitKeypressEvents(process.stdin);

@@ -24,7 +24,7 @@ export const overwriteUintValueInAddress = async (
     const hexValue = formatToHex(newValue, 32);
     const storageToWrite = [address, slotAddress, hexValue];
     await provider.send('hardhat_setStorageAt', storageToWrite);
-}
+};
 
 export const overwriteUintValue = async (
     contractName: string,
