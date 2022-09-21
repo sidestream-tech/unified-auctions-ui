@@ -12,7 +12,6 @@ import BigNumber from './bignumber';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../helpers/constants';
 import { CollateralType } from './types';
 import getSigner from './signer';
-import getProvider from './provider';
 
 const choicesYesNo = [
     { title: 'yes', value: true },
