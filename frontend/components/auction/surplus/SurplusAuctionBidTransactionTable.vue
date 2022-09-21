@@ -3,7 +3,7 @@
         <div class="flex justify-between">
             <div>Auction State</div>
             <div>
-                <SurplusAuctionState :state="auction.state" :end-date="auction.auctionEndDate" />
+                <SurplusAuctionState :state="auction.state" :end-date="auction.earliestEndDate" />
             </div>
         </div>
         <div class="flex justify-between">
