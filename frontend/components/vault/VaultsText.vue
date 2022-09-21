@@ -4,16 +4,17 @@
         <template v-if="isExplanationsShown">
             <TextBlock title="What are vaults?" class="TextBlock">
                 A vault is a main source of DAI in the MakerDAO protocol: anyone is able to deposit supported
-                collateral into the system to get stablecoin in return and receive fees for the provided liquidity. The
-                place where the collateral is deposited is called the vault and is solely managed by the person who
-                deposited it, unless the deposited collateral amount no longer covers the withdrawn DAI.</TextBlock
+                collateral into the system to get stablecoin in return and has to pay stability fees associated with
+                the collateral type. The place where the collateral is deposited is called the vault and is solely
+                managed by the person who deposited it, unless the deposited collateral amount no longer covers the
+                withdrawn DAI.</TextBlock
             >
             <TextBlock title="When are vaults at risk?" class="TextBlock">
-                Vaults become at risk when the amount of DAI withdrawn from the vault is getting too close to the true
-                value of the collateral in the vault. When market conditions change and the value of a deposited token
-                becomes less, users have to either return part of the withdrawn DAI or add collateral. If the original
-                owner of the vault is inactive, part of the vault can be liquidated after a certain threshold by anyone
-                else to cover missing DAI.
+                Vaults become at risk when true value of the collateral in the vault is getting too close to the value
+                of DAI withdrawn from the vault and hence the vault is no longer over collateralised enough. When
+                market conditions change and the value of a deposited token decreases, users have to either return part
+                of the withdrawn DAI or add collateral. If the original owner of the vault doesn't act in this
+                situation, the vault can be liquidated by anyone to cover the missing DAI.
             </TextBlock>
             <TextBlock title="Why should I participate?" class="TextBlock">
                 The user who liquidates a vault gets rewarded by two incentives: one is dependent on the collateral
@@ -51,7 +52,13 @@
             </Alert>
             <div>
                 <div style="margin-bottom: 16px">
-                    <Input v-model="inputVaultId" type="number" size="large" placeholder="Enter a vault id">
+                    <Input
+                        v-model="inputVaultId"
+                        type="number"
+                        size="large"
+                        placeholder="Enter a vault id"
+                        onkeydown="return event.keyCode !== 69 && event.keyCode !== 188"
+                    >
                         <nuxt-link slot="addonAfter" :to="vaultInputLink"> View vault </nuxt-link>
                     </Input>
                 </div>
