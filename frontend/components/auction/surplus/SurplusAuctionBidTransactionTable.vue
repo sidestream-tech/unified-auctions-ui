@@ -3,7 +3,7 @@
         <div class="flex justify-between">
             <div>Auction State</div>
             <div>
-                <time-till :date="auction.auctionEndDate" />
+                <SurplusAuctionState :state="auction.state" :end-date="auction.auctionEndDate" />
             </div>
         </div>
         <div class="flex justify-between">
@@ -82,16 +82,16 @@
 </template>
 
 <script lang="ts">
-import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import BidInput from '../../common/inputs/BidInput.vue';
-import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import type { SurplusAuction } from 'auctions-core/src/types';
+import SurplusAuctionState from '~/components/auction/surplus/SurplusAuctionState.vue';
+import BidInput from '~/components/common/inputs/BidInput.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
     components: {
-        TimeTill,
+        SurplusAuctionState,
         FormatCurrency,
         BidInput,
     },
