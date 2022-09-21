@@ -17,6 +17,7 @@ import {
     OracleCurrentPriceOnly,
 } from './types';
 import getSigner from './signer';
+import keypress from '../helpers/keypress';
 
 const choicesYesNo = [
     { title: 'yes', value: true },
@@ -150,6 +151,7 @@ const validateConfigWithoutNextPriceIsValid = async (contract: ethers.Contract, 
 
 const run = async () => {
     let config: CollateralPriceSourceConfig;
+    await keypress('Press enter to start collateral config generation')
     await resetNetworkAndSetupWallet(undefined, HARDHAT_PRIVATE_KEY);
     const basicInfo = await promptBasicInformation();
     config = basicInfo.hasNextPrice ? CONFIG_WITH_NEXT_PRICE : CONFIG_WITHOUT_NEXT_PRICE;

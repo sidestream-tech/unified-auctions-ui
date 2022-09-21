@@ -1,17 +1,8 @@
 import prompts, { PromptObject } from 'prompts';
 import { SIMULATIONS } from './config';
 import readline from 'readline';
+import keypress from '../helpers/keypress'
 
-const keypress = async (message: string) => {
-    const userInput = await prompts({
-        type: 'invisible',
-        name: 'value',
-        message,
-    });
-    if (userInput.value === undefined) {
-        throw new Error('Simulation is terminated');
-    }
-};
 
 const selectAndRunSimulation = async () => {
     readline.emitKeypressEvents(process.stdin);
