@@ -38,14 +38,14 @@
             class="w-full self-center"
             :class="{ 'max-w-4xl': isExplanationsShown, 'md:px-10': !isExplanationsShown }"
         >
-            <Alert type="error" show-icon class="mb-4">
-                <div slot="message" class="font-bold">UnifiedAuction Vaults is currently still in development!</div>
+            <Alert type="info" show-icon class="mb-4">
+                <div slot="message" class="font-bold">Specific vault id is required</div>
                 <template slot="description">
                     <TextBlock>
-                        A list of at risk vaults can currently not be fetched. If you wish to liqudate a specific
-                        vault, please enter the vault id in the input field below. If you wish to find a list of all
-                        at-risk vaults we recommend to use
-                        <a href="https://maker.blockanalitica.com/vaults-at-risk/" target="_blank">Blockanalitica</a>.
+                        Please provide a specific vault id to see its state. To find vaults that are currently at risk
+                        and can be liquidated, please follow to the
+                        <a href="https://maker.blockanalitica.com/vaults-at-risk/" target="_blank">blockanalitica</a>
+                        page.
                     </TextBlock>
                 </template>
             </Alert>
@@ -57,6 +57,7 @@
                 </div>
             </div>
             <VaultsTable
+                v-if="vaultTransactions && vaultTransactions.length !== 0"
                 :vault-transactions="vaultTransactions"
                 :show-more-rows="isExplanationsShown"
                 :selected-vault-id="selectedVaultId"
