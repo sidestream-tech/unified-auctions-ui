@@ -54,7 +54,6 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const walletAddress = rootGetters['wallet/getAddress'];
         const vaultTransaction: VaultTransaction = getters.getVaultById( vaultId );
-        console.log(vaultTransaction, 'kek')
         commit('setIsVaultBeingLiquidated', true);
         try {
             await liquidateVault(network, vaultTransaction.collateralType, vaultTransaction.address, walletAddress);
