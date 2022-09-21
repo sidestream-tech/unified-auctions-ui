@@ -24,8 +24,8 @@ export default Vue.extend({
             required: true,
         },
         endDate: {
-            type: Date,
-            required: true,
+            type: [String, Number, Date],
+            default: '',
         },
     },
 });
