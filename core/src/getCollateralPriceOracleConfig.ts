@@ -107,14 +107,19 @@ const promptOffsetAndLength = async () => {
 };
 const promptWhitelistSlot = async () => {
     console.info(HOW_TO_GUESS_SLOT_NUMBER);
-    const { whitelistSlot }: { whitelistSlot: string } = await prompts([
+    const { whitelistSlot, whitelistFunction }: { whitelistSlot: string; whitelistFunction: string } = await prompts([
         {
             type: 'number',
             message: 'What is the slot of the whitelist mapping?',
             name: 'whitelistSlot',
         },
+        {
+            type: 'text',
+            message: 'What is the function to check the whitelist?',
+            name: 'whitelistFunction'
+        }
     ]);
-    return whitelistSlot;
+    return {whitelistSlot, whitelistFunction};
 };
 const promptTimeoutFunctionName = async () => {
     const { timeoutFunctionName }: {timeoutFunctionName : string} = await prompts([
@@ -146,16 +151,16 @@ const overwriteValue = async (
 ) => {
     overwriteUintValueInAddress(contractAddress, ethers.utils.hexlify(slot), newValue, provider);
 };
-const callContractFunctionOrThrow = async (contract: ethers.Contract, functionName: string) => {
-    return await contract[functionName]();
+const callContractFunctionOrThrow = async (contract: ethers.Contract, functionName: string, ...args: any[]) => {
+    return await contract[functionName](...args);
 };
-const callFunction = async (contract: ethers.Contract, functionName: string): Promise<string> => {
-    const returnedValueHex = await callContractFunctionOrThrow(contract, functionName);
+const callFunction = async (contract: ethers.Contract, functionName: string, ...args: any[]): Promise<string> => {
+    const returnedValueHex = await callContractFunctionOrThrow(contract, functionName, ...args);
     return returnedValueHex._hex;
 };
 const addToWhitelist = async (contractAddress: string, whitelistSlot: number, provider: EthereumProvider) => {
-    const slotAddress = generateMappingSlotAddress(ethers.utils.hexlify(whitelistSlot), HARDHAT_PUBLIC_KEY);
-    await overwriteUintValueInAddress(contractAddress, slotAddress, new BigNumber('0x1'), provider);
+    const slotAddress = generateMappingSlotAddress(`0x${whitelistSlot.toString(16)}`, HARDHAT_PUBLIC_KEY);
+    await overwriteUintValueInAddress(contractAddress, slotAddress, new BigNumber(1), provider);
 };
 const runOverwriteStep = async (
     contract: ethers.Contract,
@@ -185,8 +190,12 @@ const run = async () => {
     console.info(`Contract address: ${address}`)
     const provider = hre.network.provider;
     if (basicInfo.hasWhitelist) {
-        const whitelistSlot = await promptWhitelistSlot();
+        const {whitelistSlot, whitelistFunction } = await promptWhitelistSlot();
         await addToWhitelist(address, parseInt(whitelistSlot), provider);
+        const isWhitelisted = await callFunction(contract, whitelistFunction, HARDHAT_PUBLIC_KEY)
+        if (isWhitelisted === '0x00') {
+            throw new Error('Whitelisting failed')
+        }
     }
     const { isCompleteSlot, currentPriceFunctionName, nextPriceFunctionName, offset, length } = await promptPriceSourceConfig();
     console.info('Running current price overwrite')
