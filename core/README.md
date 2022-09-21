@@ -41,23 +41,22 @@ The process of adding new collaterals depends on the token type used. This is du
        - Experimenting with blockchain fork (e.g. hardhat) helps: try to fetch the value you're looking for / overwrite it / ... and validate that it's correct via some public method or comparing against your expectation. See section [Overwriting values of price oracles](./README.md#overwriting-values-of-price-oracles)
     3. Extend collateral config with the proper slot addresses.
     4. If needed, add the oracle type to `types` file if the existing types are not sufficient to cover for the set of values you need.
+4. Run `npm run collateral:onboard` to run the script that helps to choose the oracle config.
+    - when the script outputs the json with the config, add it to the `oracle` key of the collateral configuration in `COLLATERALS.ts`
+    - if the script terminates with an error, please submit the report to the repository at https://github.com/sidestream-tech/unified-auctions-ui via an issue so that the support could be added.
+    - Read more about the collateral oracle configurations at `./README.md#collateral-oracle-configs`
 
-### Overwriting values of price oracles
+### Collateral oracle configs
 
-Beforehand: count the variables in contract from top to bottom of the contract (__not__ the file). Skip `struct` defenitions. The order number of your variable is __approximately__ the slot address of it.
+Each collateral has the source where its price is fetched from. These values are stored on the blockchain, however they are not exposed via public access methods.
+This forces the tool to use direct access to the contract's memory in order to fetch the price. Sadly, there is no 100% certain way to tell wether the fetched value is the
+one that is being looked for. Therefore this functionality has to be configured direcly by the development team.
 
-1. The main function that is used in the process is [`hardhat_setStorageAt`](https://hardhat.org/hardhat-network/docs/reference#hardhat_setstorageat). You can use it to overwrite values. But for that you have to have the fork running:
-    - `npm run hardhat`
-2. Find the way to validate the price. Usually it's possible to read it via some method. For example contract https://etherscan.io/address/0xFe7a2aC0B945f12089aEEB6eCebf4F384D9f043F#code has `peek` function that returns the current price.
-3. Ensure that you're authorized to do call your validation function (or the function is publicly available and can be called by anyone)
-  3.1. If you're not authorized - you have to overwrite the mapping that stores the authorizations before reading or calling any of the functions. The process is no different from overwriting any other value.
-4. Overwrite the value on the running hardhat fork, write your script that does the following:
-   - get the provider object. (e.g. call `getProvider` from `provider.ts`)
-   - determine the contract name (or add it). Use `contract.ts` file.
-   - Call the overwrite function, most likely `/helpers/hardhat` package might be of help here since it already has some funcitonality for overwrites defined.
-   - validate that the overwrite was successful:
-       - if you were whitelisting yourself (giving auth to your wallet) - call a function of the contract that requires this auth:
-           - `overwriteUIntMapping`
-           - `overwriteUIntValue`
-       - if you are whitelisted, call the function of the contract (`await contract.function_name(...params)`) that returns the price. Compare it with the value you have submitted.
-5. If the result is expected - you have overwritten your value and found its slot address. Otherwise - find another value and repeat the process. __Important__: depending on the datatype of your value it might share the slot with some value. Therefore check the differences in returns before and after overwrites carefully.
+Configurations include the following information:
+
+  - wether price oracle records the future price and waits for some time before updating the current price with the next one. This allows the keepers to have time to react to the market condition changes. For example, one is able to catch a moment and reduce the vault's debt and prevent it from being liquidated after the collateral price has gone down dramatically.
+  - where in the memory the price (next or current) is stored. The contract's memory is split into "blocks" that are called _slots_.
+  - Value offsets: since the slots are of fixed size (in Bytes), some variables that contract uses might occupy not all the provided by the slot memory. To be more efficient, solidity contracts can store
+    several variables in the single slot. Therefore offsets are needed in some cases so that it is possible to tell where exactly to look for the variable value. In other words: slot number and offset in bytes specifies the variable location precisely.
+
+As of the state of `mainnet` on block `15582667`: there're two possible configurations and therefore two possible ways to extract the collateral prices from the contract.
