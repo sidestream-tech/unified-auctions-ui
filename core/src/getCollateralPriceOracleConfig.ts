@@ -138,7 +138,7 @@ const run = async () => {
     const config: CollateralPriceSourceConfig = basicInfo.hasNextPrice
         ? CONFIG_WITH_NEXT_PRICE
         : CONFIG_WITHOUT_NEXT_PRICE;
-    console.log(`Config ${basicInfo.hasNextPrice ? 'with' : 'without'} next price is chosen.`);
+    console.info(`Config ${basicInfo.hasNextPrice ? 'with' : 'without'} next price is chosen.`);
     const collateralType = await promptCollateralType();
     const { contract, address } = await getOracleAddressAndContract(collateralType);
     console.info(`Price oracle contract address: ${address}`);
