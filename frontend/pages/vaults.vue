@@ -1,5 +1,5 @@
 <template>
-    <VaultsContainer />
+    <VaultsContainer :network="network" />
 </template>
 
 <script lang="ts">
@@ -11,5 +11,10 @@ export default Vue.extend({
         VaultsContainer,
     },
     layout: process.env.DEMO_MODE ? 'demoMode' : 'default',
+    computed: {
+        network() {
+            return this.$store.getters['network/getPageNetwork'];
+        },
+    },
 });
 </script>

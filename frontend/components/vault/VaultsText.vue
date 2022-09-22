@@ -114,6 +114,10 @@ export default Vue.extend({
             type: Date,
             default: null,
         },
+        network: {
+            type: String,
+            default: 'mainnet',
+        },
     },
     data() {
         return {
@@ -122,7 +126,8 @@ export default Vue.extend({
     },
     computed: {
         vaultInputLink(): string {
-            return `/vaults?vault=${this.inputVaultId}`;
+            const searchParams = new URLSearchParams({ network: this.network, vault: this.inputVaultId.toString() });
+            return `/vaults?${searchParams.toString()}`;
         },
         vaultsReadyToBeLiquidated(): number {
             return this.vaultTransactions.filter(vault => {

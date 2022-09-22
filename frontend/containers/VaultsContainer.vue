@@ -1,7 +1,7 @@
 <template>
     <div>
         <VaultFlow
-            :vault-transactions="vaultTransactions"
+            :vault-transactions="Object.values(vaultTransactions)"
             :are-vaults-fetching="areVaultsLoading"
             :is-liquidating="isVaultBeingLiquidated"
             :selected-vault-id="selectedVaultId"
@@ -67,7 +67,9 @@ export default Vue.extend({
         selectedVaultId: {
             immediate: true,
             handler(vaultId): void {
-                this.$store.dispatch('vaults/fetchVault', vaultId);
+                if (vaultId) {
+                    this.$store.dispatch('vaults/fetchVault', vaultId);
+                }
                 this.fetchRelatedData();
             },
         },
