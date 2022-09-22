@@ -135,7 +135,7 @@ const validateConfigWithoutNextPriceIsValid = async (contract: ethers.Contract, 
 
 const run = async () => {
     await keypress('Press enter to start collateral config generation');
-    await resetNetworkAndSetupWallet(undefined, HARDHAT_PRIVATE_KEY);
+    await resetNetworkAndSetupWallet();
     const basicInfo = await promptBasicInformation();
     const config: CollateralPriceSourceConfig = basicInfo.hasNextPrice
         ? CONFIG_WITH_NEXT_PRICE

@@ -88,7 +88,7 @@ export const warpTime = async function (blocks = 20000, secondsBetweenBlocks = 2
 };
 
 export const resetNetworkAndSetupWallet = async function (
-    blockNumber: number | undefined,
+    blockNumber?: number,
     walletPrivateKey: string = HARDHAT_PRIVATE_KEY
 ) {
     await resetNetwork(blockNumber);
