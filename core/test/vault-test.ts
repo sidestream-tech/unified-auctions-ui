@@ -173,7 +173,9 @@ describe('Vaults', () => {
             collateralType,
             parseInt(auctionId)
         );
-        expect(liquidationAuction.collateralAmount).to.deep.equalInAnyOrder(expectedObject.collateralAmount);
+        expect(liquidationAuction.collateralAmount).to.deep.equalInAnyOrder(
+            vaultTransactionNotLiquidated.collateralAmount
+        );
         expect(liquidationAuction.debtDAI.toPrecision(8)).to.deep.equalInAnyOrder(
             expectedObject.debtDai.multipliedBy(expectedObject.liquidationPenaltyRatio).toPrecision(8)
         );
