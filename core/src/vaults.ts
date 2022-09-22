@@ -262,7 +262,7 @@ const enrichVaultWithTransactonInformation = async (
     vault: Vault
 ): Promise<VaultTransactionNotLiquidated> => {
     const debtDai = vault.initialDebtDai.multipliedBy(vault.stabilityFeeRate);
-    const { liquidatiorContractAddress } = await fetchCollateralLiquidationLimitsAndLiquidatorAddress(
+    const { liquidatiorContractAddress, liquidationPenaltyRatio } = await fetchCollateralLiquidationLimitsAndLiquidatorAddress(
         network,
         vault.collateralType
     );
@@ -288,7 +288,8 @@ const enrichVaultWithTransactonInformation = async (
     const { incentiveCombinedDai, incentiveConstantDai, incentiveRelativeDai } = await fetchVaultLiquidationIncentive(
         network,
         liquidatiorContractAddress,
-        auctionedAmountDai
+        auctionedAmountDai,
+        liquidationPenaltyRatio
     );
 
     return {
