@@ -207,11 +207,14 @@ export const enrichSurplusAuction = async (
 ): Promise<SurplusAuctionTransaction> => {
     let nextMinimumBid = await getNextMinimumBid(network, auction);
     const unitPrice = auction.bidAmountMKR.div(auction.receiveAmountDAI);
-    const marketUnitPrice = await getMarketPriceMkr(network, auction.bidAmountMKR);
+    let marketUnitPrice = await getMarketPriceMkr(network, auction.bidAmountMKR);
     const marketUnitPriceToUnitPriceRatio = unitPrice.minus(marketUnitPrice).dividedBy(marketUnitPrice);
     const fees = await getSurplusTransactionFees(network);
     if (nextMinimumBid.isZero()) {
         nextMinimumBid = new BigNumber(1000).plus(fees.combinedBidFeesDai).div(marketUnitPrice);
+    }
+    if (marketUnitPrice.isNaN()) {
+        marketUnitPrice = await convertMkrToDai(network, new BigNumber(1));
     }
     return {
         ...auction,
