@@ -165,7 +165,8 @@ export const fetchLiquidationRatioAndOracleAddress = memoizee(_fetchLiquidationR
 const _fetchVaultLiquidationIncentive = async (
     network: string,
     liquidatiorContractAddress: string,
-    debtDai: BigNumber
+    debtDai: BigNumber,
+    liquidationPenaltyRatio: BigNumber
 ) => {
     const liquidatorContractInterface = await getContractInterfaceByName('MCD_CLIP_');
     const provider = await getProvider(network);
@@ -174,7 +175,8 @@ const _fetchVaultLiquidationIncentive = async (
     const incentiveRelativeDaiHex = await liquidatorContract.chip();
     const incentiveRelativeDai = new BigNumber(incentiveRelativeDaiHex._hex)
         .shiftedBy(-WAD_NUMBER_OF_DIGITS)
-        .multipliedBy(debtDai);
+        .multipliedBy(debtDai)
+        .multipliedBy(liquidationPenaltyRatio);
     const incentiveConstantDai = new BigNumber(incentiveConstantDaiHex._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
     const incentiveCombinedDai = incentiveRelativeDai.plus(incentiveConstantDai);
     return {
