@@ -10,9 +10,9 @@ import {
 } from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
-import { WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 import memoizee from 'memoizee';
-import COLLATERALS from './constants/COLLATERALS';
+import { getCollateralConfigByType } from './constants/COLLATERALS';
 
 const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
@@ -31,7 +31,7 @@ const getOraclePriceSameSlotValidity = async (
     const priceAndValidityHex = await provider.getStorageAt(oracleAddress, slot);
     const isPriceValid = priceAndValidityHex.substring(0, slotPriceValueBeginsAtPosition);
     if (parseInt(isPriceValid, 16) === 1) {
-        return new BigNumber(`0x${priceAndValidityHex.substring(slotPriceValueBeginsAtPosition)}`);
+        return new BigNumber(`0x${priceAndValidityHex.substring(slotPriceValueBeginsAtPosition)}`).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     }
     return new BigNumber(NaN);
 };
@@ -122,14 +122,11 @@ const _getOsmPrices = async (
     collateralType: CollateralType
 ): Promise<OraclePrices> => {
     const provider = await getProvider(network);
-    const collateralConfig = COLLATERALS[collateralType];
+    const collateralConfig = getCollateralConfigByType(collateralType);
 
-    const nextPrice = await getNextOraclePrice(collateralConfig.oracle, provider, oracleAddress);
-    const currentPrice = await getCurrentOraclePrice(collateralConfig.oracle, provider, oracleAddress);
+    const nextUnitCollateralPrice = await getNextOraclePrice(collateralConfig.oracle, provider, oracleAddress);
+    const currentUnitCollateralPrice = await getCurrentOraclePrice(collateralConfig.oracle, provider, oracleAddress);
     const nextPriceChange = await getNextOraclePriceChange(collateralConfig, provider, oracleAddress);
-
-    const currentUnitCollateralPrice = new BigNumber(currentPrice).shiftedBy(-WAD_NUMBER_OF_DIGITS);
-    const nextUnitCollateralPrice = new BigNumber(nextPrice).shiftedBy(-WAD_NUMBER_OF_DIGITS);
 
     return {
         currentUnitPrice: currentUnitCollateralPrice,
