@@ -31,7 +31,9 @@ const getOraclePriceSameSlotValidity = async (
     const priceAndValidityHex = await provider.getStorageAt(oracleAddress, slot);
     const isPriceValid = priceAndValidityHex.substring(0, slotPriceValueBeginsAtPosition);
     if (parseInt(isPriceValid, 16) === 1) {
-        return new BigNumber(`0x${priceAndValidityHex.substring(slotPriceValueBeginsAtPosition)}`).shiftedBy(-DAI_NUMBER_OF_DIGITS);
+        return new BigNumber(`0x${priceAndValidityHex.substring(slotPriceValueBeginsAtPosition)}`).shiftedBy(
+            -DAI_NUMBER_OF_DIGITS
+        );
     }
     return new BigNumber(NaN);
 };
@@ -75,7 +77,9 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Callab
         const isPriceValid =
             parseInt(priceValiditySlotValue[oracle.currentPriceValiditySlotAndOffset.offset], 16) === 1;
         return isPriceValid
-            ? new BigNumber(`0x${currentPriceFeed.substring(slotPriceValueBeginsAtPosition)}`).shiftedBy(-DAI_NUMBER_OF_DIGITS)
+            ? new BigNumber(`0x${currentPriceFeed.substring(slotPriceValueBeginsAtPosition)}`).shiftedBy(
+                  -DAI_NUMBER_OF_DIGITS
+              )
             : new BigNumber(NaN);
     },
     CurrentAndNextPrice: async (

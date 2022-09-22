@@ -81,9 +81,8 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: [],
         },
 
-
         oracle: CONFIG_WITH_NEXT_PRICE,
-            },
+    },
     'ETH-C': {
         title: 'Ether',
         ilk: 'ETH-C',
