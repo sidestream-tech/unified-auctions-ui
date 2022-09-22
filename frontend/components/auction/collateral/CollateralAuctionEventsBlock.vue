@@ -5,8 +5,8 @@
             at {{ takeEvents[takeEvents.length - 1].transactionDate.toUTCString() }}.
         </p>
         <ul class="list-disc list-inside">
-            <li v-for="event of takeEvents" :key="event.pastLiquidations[0].transactionHash">
-                Transaction <FormatAddress :value="event.pastLiquidations[0].transactionHash" :shorten="true" />
+            <li v-for="event of takeEvents" :key="event.transactionHash">
+                Transaction <FormatAddress :value="event.transactionHash" :shorten="true" />
                 <span v-if="event.transactionDate"> executed <TimeTill :date="event.transactionDate" /> </span>
             </li>
         </ul>
