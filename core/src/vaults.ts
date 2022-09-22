@@ -199,17 +199,17 @@ const _fetchLiquidatedParameters = async (network: string, vault: Vault) => {
     const eventFilter = contract.filters.Bark(typeHex, vault.address, null, null, null, null, null);
     const liquidationEvents = await contract.queryFilter(eventFilter);
     if (liquidationEvents.length === 0) {
-        // there was a liquidation and the vault was not used again
-        const liquidations = await Promise.all(
-            liquidationEvents.map(async event => ({
-                liquidationDate: await fetchDateByBlockNumber(network, event.blockNumber),
-                transactionHash: event.transactionHash,
-                auctionId: `${vault.collateralType}:${new BigNumber(event.args?.id._hex).toFixed(0)}`,
-            }))
-        );
-        return liquidations.reverse();
+        return;
     }
-    return undefined;
+    // there was a liquidation and the vault was not used again
+    const liquidations = await Promise.all(
+        liquidationEvents.map(async event => ({
+            liquidationDate: await fetchDateByBlockNumber(network, event.blockNumber),
+            transactionHash: event.transactionHash,
+            auctionId: `${vault.collateralType}:${new BigNumber(event.args?.id._hex).toFixed(0)}`,
+        }))
+    );
+    return liquidations.reverse();
 };
 export const fetchLiquidatedParameters = memoizee(_fetchLiquidatedParameters, {
     maxAge: CACHE_EXPIRY_MS,
