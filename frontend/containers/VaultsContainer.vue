@@ -1,7 +1,7 @@
 <template>
     <div>
         <VaultFlow
-            :vault-transactions="Object.values(vaultTransactions)"
+            :vault-transactions="vaultTransactions"
             :are-vaults-fetching="areVaultsLoading"
             :is-liquidating="isVaultBeingLiquidated"
             :selected-vault-id="selectedVaultId"
@@ -9,6 +9,7 @@
             :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
             :is-refreshing-limits="false"
+            :network="network"
             @connectWallet="openSelectWalletModal"
             @disconnectWallet="disconnect"
             @liquidate="liquidate"
@@ -25,13 +26,19 @@ export default Vue.extend({
     components: {
         VaultFlow,
     },
+    props: {
+        network: {
+            type: String,
+            default: 'mainnet',
+        },
+    },
     computed: {
         ...mapGetters('wallet', {
             isWalletLoading: 'isLoading',
             walletAddress: 'getAddress',
         }),
         ...mapGetters('vaults', {
-            vaultTransactions: 'vaultTransactions',
+            vaultTransactions: 'listVaultTransactions',
             areVaultsLoading: 'isVaultLoading',
             isVaultBeingLiquidated: 'isVaultBeingLiquidated',
         }),

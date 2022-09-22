@@ -21,6 +21,15 @@ export const getters = {
     vaultTransactions(state: State) {
         return state.vaultTransactions;
     },
+    listVaultTransactions(state: State) {
+        return Object.values(state.vaultTransactions);
+    },
+    isVaultLoading(state: State) {
+        return state.isVaultLoading;
+    },
+    isVaultBeingLiquidated(state: State) {
+        return state.isVaultBeingLiquidated;
+    },
     getVaultById: (state: State) => (id: number) => {
         return state.vaultTransactions[id];
     },

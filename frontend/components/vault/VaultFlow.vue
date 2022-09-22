@@ -6,7 +6,7 @@
                     <LandingBlock title="Vault liquidation" @explanations="explanationsTrigger" />
                 </div>
                 <div class="mx-4 md:mx-0 MainTextContainer">
-                    <VaultsText :is-explanations-shown="isExplanationsShown" />
+                    <VaultsText :is-explanations-shown="isExplanationsShown" :network="network" />
                 </div>
             </template>
             <template #step1>
@@ -99,6 +99,10 @@ export default Vue.extend({
         lastUpdated: {
             type: Date,
             default: null,
+        },
+        network: {
+            type: String,
+            default: 'mainnet',
         },
     },
     data: () => ({
