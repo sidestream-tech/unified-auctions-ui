@@ -1,9 +1,7 @@
 import {
     fetchLiquidationRatioAndOracleAddress,
     fetchVault,
-    fetchVaultAmount,
     getVaultTransaction,
-    fetchLiquidatedParameters,
     liquidateVault,
 } from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
@@ -162,10 +160,6 @@ describe('Vaults', () => {
             vaultTransactionNotLiquidated.address,
             HARDHAT_PUBLIC_KEY
         );
-        getVaultTransaction.clear();
-        fetchLiquidatedParameters.clear();
-        fetchVault.clear();
-        fetchVaultAmount.clear();
         const updatedVault = (await fetchVault(TEST_NETWORK, 27435)) as Vault;
         expect(updatedVault.collateralAmount.toFixed()).to.eq('0');
         expect(updatedVault.initialDebtDai.toFixed()).to.eq('0');
