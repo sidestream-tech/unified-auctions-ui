@@ -1,20 +1,16 @@
 <template>
     <div>
         <VaultFlow
-            :vault-transactions="[]"
-            :liquidation-limits="undefined"
-            :are-vaults-fetching="false"
-            :vaults-error="undefined"
-            :is-refreshing-limits="false"
-            :is-liquidating="false"
-            :last-updated="undefined"
+            :vault-transactions="vaultTransactions"
+            :are-vaults-fetching="areVaultsLoading"
+            :is-liquidating="isVaultBeingLiquidated"
             :selected-vault-id="selectedVaultId"
             :is-connecting-wallet="isWalletLoading"
             :wallet-address="walletAddress"
             :is-explanations-shown="isExplanationsShown"
+            :is-refreshing-limits="false"
             @connectWallet="openSelectWalletModal"
             @disconnectWallet="disconnect"
-            @refreshLimits="refreshLimits"
             @liquidate="liquidate"
         />
     </div>
@@ -33,10 +29,11 @@ export default Vue.extend({
         ...mapGetters('wallet', {
             isWalletLoading: 'isLoading',
             walletAddress: 'getAddress',
-            walletBalances: 'walletBalances',
-            isDepositingOrWithdrawing: 'isDepositingOrWithdrawing',
-            isFetchingCollateralVatBalance: 'isFetchingCollateralVatBalance',
-            collateralVatBalanceStore: 'collateralVatBalanceStore',
+        }),
+        ...mapGetters('vaults', {
+            vaultTransactions: 'vaultTransactions',
+            areVaultsLoading: 'isVaultLoading',
+            isVaultBeingLiquidated: 'isVaultBeingLiquidated',
         }),
         selectedVaultId: {
             get(): string | null {
@@ -69,8 +66,8 @@ export default Vue.extend({
     watch: {
         selectedVaultId: {
             immediate: true,
-            handler(): void {
-                // fetch vault with new ID
+            handler(vaultId): void {
+                this.$store.dispatch('vaults/fetchVault', vaultId);
                 this.fetchRelatedData();
             },
         },
@@ -79,10 +76,12 @@ export default Vue.extend({
         },
     },
     methods: {
-        liquidate(walletAddress): void {
-            console.info(`Liquidating ${this.selectedVaultId} with wallet ${walletAddress}`);
+        liquidate(walletAddress: string): void {
+            this.$store.dispatch('vaults/liquidateVault', {
+                vaultId: this.selectedVaultId,
+                walletAddress,
+            });
         },
-        refreshLimits(): void {},
         openSelectWalletModal(): void {
             if (!this.hasAcceptedTerms) {
                 this.$store.commit('modals/setTermsModal', true);

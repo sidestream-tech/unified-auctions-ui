@@ -50,13 +50,21 @@ export const actions = {
             commit('setIsVaultLoading', false);
         }
     },
-    async liquidateVault({ rootGetters, commit, getters, dispatch }: ActionContext<State, State>, vaultId: number) {
+    async liquidateVault(
+        { rootGetters, commit, getters, dispatch }: ActionContext<State, State>,
+        { vaultId, walletAddress }: { vaultId: number; walletAddress?: string }
+    ) {
         const network = rootGetters['network/getMakerNetwork'];
-        const walletAddress = rootGetters['wallet/getAddress'];
+        const executeWalletAddress = walletAddress || rootGetters['wallet/getAddress'];
         const vaultTransaction: VaultTransaction = getters.getVaultById(vaultId);
         commit('setIsVaultBeingLiquidated', true);
         try {
-            await liquidateVault(network, vaultTransaction.collateralType, vaultTransaction.address, walletAddress);
+            await liquidateVault(
+                network,
+                vaultTransaction.collateralType,
+                vaultTransaction.address,
+                executeWalletAddress
+            );
             await dispatch('fetchVault', vaultId);
         } catch (e) {
             console.error(`Failed to liquidate vault ${vaultId}: ${e}`);

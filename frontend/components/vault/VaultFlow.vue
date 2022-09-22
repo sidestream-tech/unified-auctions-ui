@@ -28,7 +28,6 @@
                     v-if="selectedVaultTransaction"
                     class="mt-6 mb-8 mx-8"
                     :vault-transaction="selectedVaultTransaction"
-                    :liquidation-limits="liquidationLimits"
                     :wallet-address="walletAddress"
                     :is-connecting-wallet="isConnectingWallet"
                     :is-refreshing-limits="isRefreshingLimits"
@@ -45,7 +44,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import { LiquidationLimits, VaultTransaction } from 'auctions-core/src/types';
+import { VaultTransaction } from 'auctions-core/src/types';
 import VaultsText from './VaultsText.vue';
 import Vault from './Vault.vue';
 import VaultLiquidationTransactionFlow from './VaultLiquidationTransactionFlow.vue';
@@ -64,10 +63,6 @@ export default Vue.extend({
         vaultTransactions: {
             type: Array as Vue.PropType<VaultTransaction[]>,
             default: () => [],
-        },
-        liquidationLimits: {
-            type: Object as Vue.PropType<LiquidationLimits>,
-            default: () => undefined,
         },
         areVaultsFetching: {
             type: Boolean,

@@ -100,10 +100,6 @@ export default Vue.extend({
             type: Object as Vue.PropType<VaultTransaction>,
             required: true,
         },
-        liquidationLimits: {
-            type: Object as Vue.PropType<LiquidationLimits>,
-            required: true,
-        },
         walletAddress: {
             type: String,
             default: null,
@@ -145,6 +141,16 @@ export default Vue.extend({
         },
         wasLiquidated(): boolean {
             return this.vaultTransaction.state === 'liquidated';
+        },
+        liquidationLimits(): LiquidationLimits {
+            return {
+                maximumProtocolDebtDai: this.vaultTransaction.maximumProtocolDebtDai,
+                currentProtocolDebtDai: this.vaultTransaction.currentProtocolDebtDai,
+                currentCollateralDebtDai: this.vaultTransaction.currentCollateralDebtDai,
+                maximumCollateralDebtDai: this.vaultTransaction.maximumCollateralDebtDai,
+                liquidationPenaltyRatio: this.vaultTransaction.liquidationPenaltyRatio,
+                minimalAuctionedDai: this.vaultTransaction.minimalAuctionedDai,
+            };
         },
     },
 });
