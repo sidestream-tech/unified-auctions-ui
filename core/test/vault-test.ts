@@ -167,10 +167,16 @@ describe('Vaults', () => {
             updatedVault
         )) as VaultTransactionLiquidated;
         expect(updatedVaultTransaction.state).to.eq('liquidated');
-        const [collateralType, auctionId] = updatedVaultTransaction.pastLiquidations[0].auctionId.split(':')
-        const liquidationAuction = await fetchAuctionByCollateralTypeAndAuctionIndex(TEST_NETWORK, collateralType, parseInt(auctionId));
+        const [collateralType, auctionId] = updatedVaultTransaction.pastLiquidations[0].auctionId.split(':');
+        const liquidationAuction = await fetchAuctionByCollateralTypeAndAuctionIndex(
+            TEST_NETWORK,
+            collateralType,
+            parseInt(auctionId)
+        );
         expect(liquidationAuction.collateralAmount).to.deep.equalInAnyOrder(expectedObject.collateralAmount);
-        expect(liquidationAuction.debtDAI.toPrecision(8)).to.deep.equalInAnyOrder(expectedObject.debtDai.multipliedBy(expectedObject.liquidationPenaltyRatio).toPrecision(8));
+        expect(liquidationAuction.debtDAI.toPrecision(8)).to.deep.equalInAnyOrder(
+            expectedObject.debtDai.multipliedBy(expectedObject.liquidationPenaltyRatio).toPrecision(8)
+        );
     });
 });
 describe('Sound values are extracted', () => {
