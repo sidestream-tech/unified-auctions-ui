@@ -43,7 +43,6 @@ const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> 
 };
 
 export const fetchVaultBase = memoizee(_fetchVaultBase, {
-    maxAge: CACHE_EXPIRY_MS,
     promise: true,
     length: 2,
 });
