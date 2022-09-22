@@ -198,7 +198,7 @@ const _fetchLiquidatedParameters = async (network: string, vault: Vault) => {
     }
     const eventFilter = contract.filters.Bark(typeHex, vault.address, null, null, null, null, null);
     const liquidationEvents = await contract.queryFilter(eventFilter);
-    if (liquidationEvents.length !== 0) {
+    if (liquidationEvents.length === 0) {
         // there was a liquidation and the vault was not used again
         const liquidations = await Promise.all(
             liquidationEvents.map(async event => ({
