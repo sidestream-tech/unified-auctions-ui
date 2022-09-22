@@ -38,7 +38,6 @@ const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> 
         id,
         address,
         collateralType,
-        lastSyncedAt: new Date(),
         network,
     };
 };
@@ -139,6 +138,7 @@ export const fetchVault = async (network: string, index: number): Promise<Vault>
         ...vaultCollateralParameters,
         ...vaultAmount,
         ...globalLiquidationLimits,
+        lastSyncedAt: new Date(),
         currentCollateralDebtDai,
         maximumCollateralDebtDai,
         liquidationPenaltyRatio,
