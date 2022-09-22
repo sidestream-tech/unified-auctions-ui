@@ -6,7 +6,7 @@
                 <p>This vault has been liquidated into a collateral auction</p>
                 <div class="flex justify-end mt-2">
                     <nuxt-link :to="auctionLink">
-                        <Button> View collateral auction {{ vaultTransaction.auctionId }} </Button>
+                        <Button> View collateral auction {{ vaultTransaction.pastLiquidations[0].auctionId }} </Button>
                     </nuxt-link>
                 </div>
             </div>
@@ -14,8 +14,8 @@
         <VaultLiquidationTransactionTable v-if="!wasLiquidated" class="my-4" :vault-transaction="vaultTransaction" />
         <TextBlock class="mt-4">
             <template v-if="wasLiquidated">
-                This vault was liquidated <TimeTill :date="vaultTransaction.liqudiationDate" /> in the transaction
-                <FormatAddress :value="vaultTransaction.transactionHash" />.
+                This vault was liquidated <TimeTill :date="vaultTransaction.pastLiquidations[0].liquidationDate" /> in
+                the transaction <FormatAddress :value="vaultTransaction.pastLiquidations[0].transactionHash" />.
             </template>
             <template v-else>
                 Please note, the
@@ -133,11 +133,15 @@ export default Vue.extend({
     },
     computed: {
         auctionLink(): string | undefined {
-            if (!this.vaultTransaction || !this.vaultTransaction.auctionId) {
+            if (
+                !this.vaultTransaction ||
+                this.vaultTransaction.state !== 'liquidated' ||
+                !this.vaultTransaction.pastLiquidations
+            ) {
                 return undefined;
             }
             const link = generateLink(this.vaultTransaction.network, 'collateral');
-            return `${link}&auction=${encodeURIComponent(this.vaultTransaction.auctionId)}`;
+            return `${link}&auction=${encodeURIComponent(this.vaultTransaction.pastLiquidations[0].auctionId)}`;
         },
         wasLiquidated(): boolean {
             return this.vaultTransaction.state === 'liquidated';

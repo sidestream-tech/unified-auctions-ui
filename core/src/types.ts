@@ -84,13 +84,37 @@ export declare interface UniswapV2LpTokenCalleeConfig {
     token1: string;
 }
 
+export declare interface ValueSlotAddressAndOffset {
+    slot: string;
+    offset: number;
+}
+
 export declare interface CollateralConfig {
     title: string;
     ilk: string;
     symbol: string;
     decimals: number;
     exchange: RegularCalleeConfig | UniswapV2LpTokenCalleeConfig;
+    oracle: CollateralPriceSourceConfig;
 }
+
+interface OracleConfigBase {
+    hasDelay: boolean;
+    slotPriceValueBeginsAtPosition: number;
+    currentPriceSlotAddress: string;
+}
+
+export declare interface OracleCurrentAndNextPrices extends OracleConfigBase {
+    type: 'CurrentAndNextPrice';
+    nextPriceSlotAddress: string;
+}
+
+export declare interface OracleCurrentPriceOnly extends OracleConfigBase {
+    type: 'CurrentPriceOnly';
+    currentPriceValiditySlotAndOffset: ValueSlotAddressAndOffset;
+}
+
+export type CollateralPriceSourceConfig = OracleCurrentAndNextPrices | OracleCurrentPriceOnly;
 
 export declare interface NetworkConfig {
     chainId: string;
@@ -267,13 +291,15 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
 
-type CollateralType = CollateralConfig['title'];
+export type CollateralType = CollateralConfig['title'];
 
 export declare interface LiquidationLimits {
     maximumProtocolDebtDai: BigNumber;
     currentProtocolDebtDai: BigNumber;
     currentCollateralDebtDai: BigNumber;
     maximumCollateralDebtDai: BigNumber;
+    liquidationPenaltyRatio: BigNumber;
+    minimalAuctionedDai: BigNumber;
 }
 
 export declare interface VaultCollateralParameters {
@@ -286,7 +312,6 @@ export declare interface VaultBase {
     address: string;
     collateralType: CollateralType;
     network: string;
-    lastSyncedAt: Date;
 }
 
 export declare interface VaultAmount {
@@ -299,24 +324,30 @@ export declare interface VaultTransactionFees {
     transactionFeeLiquidationDai: BigNumber;
 }
 
-export declare interface Vault extends VaultBase, VaultAmount, LiquidationLimits {}
+export declare interface Vault extends VaultBase, VaultAmount, VaultCollateralParameters, LiquidationLimits {
+    lastSyncedAt: Date;
+}
+
 export declare interface OraclePrices {
     currentUnitPrice: BigNumber;
     nextUnitPrice: BigNumber;
     nextPriceChange: Date;
 }
 
-export declare interface VaultTransactionLiquidated extends VaultBase {
-    state: 'liquidated';
-    liqudiationDate: Date;
+interface LiquidationEvent {
+    liquidationDate: Date;
     transactionHash: string;
     auctionId: string;
 }
+export declare interface VaultTransactionLiquidated extends VaultBase {
+    state: 'liquidated';
+    pastLiquidations: LiquidationEvent[];
+}
 
 export declare interface VaultTransactionBase extends Vault, VaultTransactionFees, OraclePrices {
-    liquidationRatio: number;
-    collateralizationRatio: number;
-    proximityToLiquidation: number;
+    liquidationRatio: BigNumber;
+    collateralizationRatio: BigNumber;
+    proximityToLiquidation: BigNumber;
     incentiveRelativeDai: BigNumber;
     incentiveConstantDai: BigNumber;
     incentiveCombinedDai: BigNumber;
