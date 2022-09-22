@@ -135,15 +135,18 @@ const validateConfigWithoutNextPriceIsValid = async (contract: ethers.Contract, 
 
 const run = async () => {
     await keypress('Press enter to start collateral config generation');
+    console.info('Resetting network and setting the wallet up...')
     await resetNetworkAndSetupWallet();
     const basicInfo = await promptBasicInformation();
     const config: CollateralPriceSourceConfig = basicInfo.hasNextPrice
         ? CONFIG_WITH_NEXT_PRICE
         : CONFIG_WITHOUT_NEXT_PRICE;
+    console.log(`Config ${basicInfo.hasNextPrice ? "with" : "without"} next price is chosen.`)
     const collateralType = await promptCollateralType();
     const { contract, address } = await getOracleAddressAndContract(collateralType);
     console.info(`Price oracle contract address: ${address}`);
     if (basicInfo.hasNextPrice) {
+        console.info("Whitelisting the wallet address...")
         const whitelistSlot = 5;
         const whitelistFunction = 'bud';
         await addToWhitelist(address, whitelistSlot);
@@ -152,6 +155,7 @@ const run = async () => {
             throw new Error('Failed to whitelist the wallet on the fork');
         }
     }
+    console.info('Validating the correctness of the config...')
     if (basicInfo.hasNextPrice) {
         await validateConfigWithNextPriceIsValid(contract, address);
     } else {
