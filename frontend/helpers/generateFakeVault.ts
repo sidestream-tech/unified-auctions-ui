@@ -27,7 +27,6 @@ const generateFakeVaultBase = function (): VaultBase {
         address,
         collateralType,
         network,
-        lastSyncedAt,
     };
 };
 
