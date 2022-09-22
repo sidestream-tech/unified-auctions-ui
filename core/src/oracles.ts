@@ -75,7 +75,7 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Callab
         const isPriceValid =
             parseInt(priceValiditySlotValue[oracle.currentPriceValiditySlotAndOffset.offset], 16) === 1;
         return isPriceValid
-            ? new BigNumber(`0x${currentPriceFeed.substring(slotPriceValueBeginsAtPosition)}`)
+            ? new BigNumber(`0x${currentPriceFeed.substring(slotPriceValueBeginsAtPosition)}`).shiftedBy(-DAI_NUMBER_OF_DIGITS)
             : new BigNumber(NaN);
     },
     CurrentAndNextPrice: async (
