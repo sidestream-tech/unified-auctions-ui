@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import type { SurplusAuction } from 'auctions-core/src/types';
+import type { SurplusAuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
 import BigNumber from 'bignumber.js';
@@ -112,7 +112,7 @@ export default Vue.extend({
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<SurplusAuction>,
+            type: Object as Vue.PropType<SurplusAuctionTransaction>,
             required: true,
         },
         auctionActionState: {

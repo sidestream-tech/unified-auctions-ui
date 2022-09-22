@@ -3,7 +3,7 @@
         <span v-if="state === 'collected'"> Collected </span>
         <span v-else-if="state === 'requires-restart'"> Requires Restart </span>
         <span v-else-if="state === 'ready-for-collection'"> Collectable since </span>
-        <span v-else> Expires in </span>
+        <span v-else> Ends in </span>
         <TimeTill v-if="state !== 'requires-restart'" :date="endDate" />
     </div>
 </template>

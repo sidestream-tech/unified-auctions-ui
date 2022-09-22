@@ -57,7 +57,7 @@
         <div class="flex justify-between">
             <div>Price on Uniswap</div>
             <div>
-                <format-currency
+                <FormatCurrency
                     v-if="auction.marketUnitPrice && isActive"
                     :value="auction.marketUnitPrice"
                     :decimal-places="6"
@@ -69,7 +69,7 @@
         <div class="flex justify-between font-bold">
             <div>Price after the bid</div>
             <div>
-                <format-currency
+                <FormatCurrency
                     v-if="unitPriceAfterBid && isActive && !isBidAmountNaN"
                     :value="unitPriceAfterBid"
                     :decimal-places="6"
