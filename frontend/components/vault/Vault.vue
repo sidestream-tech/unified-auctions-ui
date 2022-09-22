@@ -183,13 +183,13 @@ export default Vue.extend({
         Tooltip,
     },
     props: {
-        vaultTransaction: {
-            type: Object as Vue.PropType<VaultTransaction>,
-            default: null,
-        },
         vaultId: {
             type: String,
             required: true,
+        },
+        vaultTransaction: {
+            type: Object as Vue.PropType<VaultTransaction>,
+            default: null,
         },
         error: {
             type: String,
@@ -202,10 +202,6 @@ export default Vue.extend({
         areVaultsFetching: {
             type: Boolean,
             default: false,
-        },
-        network: {
-            type: String,
-            default: 'mainnet',
         },
     },
     data() {
