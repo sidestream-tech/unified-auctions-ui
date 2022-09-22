@@ -1,9 +1,4 @@
-import {
-    fetchLiquidationRatioAndOracleAddress,
-    fetchVault,
-    getVaultTransaction,
-    liquidateVault,
-} from '../src/vaults';
+import { fetchLiquidationRatioAndOracleAddress, fetchVault, getVaultTransaction, liquidateVault } from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
 import { resetNetwork } from '../helpers/hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
