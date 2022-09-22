@@ -1,4 +1,4 @@
-import type { Auction, AuctionTransaction, TransactionFees } from './types';
+import type { Auction, AuctionTransaction, TransactionFees, VaultTransactionFees } from './types';
 import BigNumber from './bignumber';
 import { getMarketPrice } from './calleeFunctions';
 import { getGasPriceForUI } from './gas';
@@ -29,6 +29,15 @@ export const getApproximateTransactionFees = async function (network: string): P
         authTransactionFeeDAI: await convertETHtoDAI(network, authTransactionFeeETH),
         restartTransactionFeeETH,
         restartTransactionFeeDAI: await convertETHtoDAI(network, restartTransactionFeeETH),
+    };
+};
+
+export const getApproximateLiquidationFees = async function (network: string): Promise<VaultTransactionFees> {
+    const gasPrice = await getGasPriceForUI(network);
+    const transactionFeeLiquidationEth = gasPrice.multipliedBy(446658);
+    return {
+        transactionFeeLiquidationEth,
+        transactionFeeLiquidationDai: await convertETHtoDAI(network, transactionFeeLiquidationEth),
     };
 };
 

@@ -15,16 +15,25 @@ export const generateMappingSlotAddress = (mappingStartSlot: string, key: string
     return stripZeros(ethers.utils.keccak256(concat(pad32(key), pad32(mappingStartSlot))));
 };
 
+export const overwriteUintValueInAddress = async (
+    address: string,
+    slotAddress: string,
+    newValue: BigNumber,
+    provider: EthereumProvider = hre.network.provider
+) => {
+    const hexValue = formatToHex(newValue, 32);
+    const storageToWrite = [address, slotAddress, hexValue];
+    await provider.send('hardhat_setStorageAt', storageToWrite);
+};
+
 export const overwriteUintValue = async (
     contractName: string,
     slotAddress: string,
     newValue: BigNumber,
     provider: EthereumProvider = hre.network.provider
 ) => {
-    const hexValue = formatToHex(newValue, 32);
     const contractAddress = await getContractAddressByName(TEST_NETWORK, contractName);
-    const storageToWrite = [contractAddress, slotAddress, hexValue];
-    await provider.send('hardhat_setStorageAt', storageToWrite);
+    await overwriteUintValueInAddress(contractAddress, slotAddress, newValue, provider);
 };
 
 export const overwriteUintMapping = async (
@@ -79,7 +88,7 @@ export const warpTime = async function (blocks = 20000, secondsBetweenBlocks = 2
 };
 
 export const resetNetworkAndSetupWallet = async function (
-    blockNumber: number | undefined,
+    blockNumber?: number,
     walletPrivateKey: string = HARDHAT_PRIVATE_KEY
 ) {
     await resetNetwork(blockNumber);
