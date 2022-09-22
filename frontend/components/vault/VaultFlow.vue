@@ -3,7 +3,7 @@
         <SplitLayout :step.sync="step">
             <template #step0>
                 <div v-if="isExplanationsShown" class="h-1/2">
-                    <LandingBlock @explanations="explanationsTrigger" />
+                    <LandingBlock title="Vault liquidation" @explanations="explanationsTrigger" />
                 </div>
                 <div class="mx-4 md:mx-0 MainTextContainer">
                     <VaultsText :is-explanations-shown="isExplanationsShown" />
