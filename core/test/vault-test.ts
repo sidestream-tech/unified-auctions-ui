@@ -8,10 +8,10 @@ import { VaultTransactionLiquidated, VaultTransactionNotLiquidated, Vault, Colla
 import BigNumber from '../src/bignumber';
 import { createWalletFromPrivateKey } from '../src/signer';
 import COLLATERALS from '../src/constants/COLLATERALS';
-import deepEqualInAnyOrder from 'deep-equal-in-any-order'
-import chai from 'chai'
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
+import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
-chai.use(deepEqualInAnyOrder)
+chai.use(deepEqualInAnyOrder);
 
 const compareVaultTransactionsNotLiquidated = (
     expected: VaultTransactionNotLiquidated,
@@ -162,10 +162,13 @@ describe('Vaults', () => {
         const updatedVault = (await fetchVault(TEST_NETWORK, 27435)) as Vault;
         expect(updatedVault.collateralAmount.toFixed()).to.eq('0');
         expect(updatedVault.initialDebtDai.toFixed()).to.eq('0');
-        const updatedVaultTransaction = await getVaultTransaction(TEST_NETWORK, updatedVault) as VaultTransactionLiquidated;
+        const updatedVaultTransaction = (await getVaultTransaction(
+            TEST_NETWORK,
+            updatedVault
+        )) as VaultTransactionLiquidated;
         expect(updatedVaultTransaction.state).to.eq('liquidated');
-        const liquidationAuction = await fetchAuctionByCollateralTypeAndAuctionIndex(TEST_NETWORK, 'ETH-C', 191)
-        expect(liquidationAuction.collateralAmount).to.deep.equalInAnyOrder(expectedObject.collateralAmount)
+        const liquidationAuction = await fetchAuctionByCollateralTypeAndAuctionIndex(TEST_NETWORK, 'ETH-C', 191);
+        expect(liquidationAuction.collateralAmount).to.deep.equalInAnyOrder(expectedObject.collateralAmount);
     });
 });
 describe('Sound values are extracted', () => {
