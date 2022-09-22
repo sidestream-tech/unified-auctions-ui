@@ -10,7 +10,7 @@ import {
 } from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
-import { DAI_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS } from './constants/UNITS';
 import memoizee from 'memoizee';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 
