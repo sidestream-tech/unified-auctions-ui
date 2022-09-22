@@ -10,11 +10,10 @@ import {
 } from '../helpers/hardhat';
 import BigNumber from './bignumber';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../helpers/constants';
+import { CONFIG_WITH_NEXT_PRICE, CONFIG_WITHOUT_NEXT_PRICE } from './constants/COLLATERALS';
 import {
     CollateralPriceSourceConfig,
     CollateralType,
-    OracleCurrentAndNextPrices,
-    OracleCurrentPriceOnly,
 } from './types';
 import getSigner from './signer';
 import keypress from '../helpers/keypress';
@@ -24,20 +23,6 @@ const choicesYesNo = [
     { title: 'no', value: false },
 ];
 const choicesNetwork = [{ title: 'custom', value: 'custom' }];
-const CONFIG_WITH_NEXT_PRICE: OracleCurrentAndNextPrices = {
-    type: 'CurrentAndNextPrice',
-    currentPriceSlotAddress: '0x3',
-    nextPriceSlotAddress: '0x4',
-    hasDelay: true,
-    slotPriceValueBeginsAtPosition: 34,
-};
-const CONFIG_WITHOUT_NEXT_PRICE: OracleCurrentPriceOnly = {
-    type: 'CurrentPriceOnly',
-    currentPriceSlotAddress: '0x2',
-    hasDelay: false,
-    currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
-    slotPriceValueBeginsAtPosition: 0,
-};
 
 const promptCollateralType = async () => {
     const { collateralType }: { collateralType: CollateralType } = await prompts([
