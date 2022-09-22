@@ -11,6 +11,7 @@ import COLLATERALS from '../src/constants/COLLATERALS';
 import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
+import { fetchVATbalanceDAI } from '../src/wallet';
 chai.use(deepEqualInAnyOrder);
 
 const compareVaultTransactionsNotLiquidated = (
@@ -31,6 +32,7 @@ const compareVaultTransactionsNotLiquidated = (
     expect(expected.incentiveRelativeDai).to.deep.equalInAnyOrder(actual.incentiveRelativeDai);
     expect(expected.incentiveConstantDai).to.deep.equalInAnyOrder(actual.incentiveConstantDai);
     expect(expected.grossProfitDai).to.deep.equalInAnyOrder(actual.grossProfitDai);
+    expect(expected.netProfitDai).to.deep.equalInAnyOrder(actual.netProfitDai);
     expect(expected.stabilityFeeRate).to.deep.equalInAnyOrder(actual.stabilityFeeRate);
     expect(expected.minUnitPrice).to.deep.equalInAnyOrder(actual.minUnitPrice);
     expect(expected.maximumProtocolDebtDai).to.deep.equalInAnyOrder(actual.maximumProtocolDebtDai);
@@ -78,7 +80,7 @@ describe('Vaults', () => {
             incentiveRelativeDai: new BigNumber('33751.78882788199615657274955'),
             incentiveConstantDai: new BigNumber('300'),
             grossProfitDai: new BigNumber('34051.78882788199615657274955'),
-            netProfitDai: new BigNumber('32497.18533829802106158776170392239838650993987481484'),
+            netProfitDai: new BigNumber('34050.658282683546927424640855005903328826'),
             stabilityFeeRate: new BigNumber('1.077990181020998014318011624'),
             minUnitPrice: new BigNumber('1180.834957655172413793103448275'),
             maximumProtocolDebtDai: new BigNumber('100000000'),
@@ -137,7 +139,7 @@ describe('Vaults', () => {
             incentiveRelativeDai: new BigNumber('10.00197961786050681518163'),
             incentiveConstantDai: new BigNumber('300'),
             grossProfitDai: new BigNumber('310.00197961786050681518163'),
-            netProfitDai: new BigNumber('307.843172251262360274006580599088120101895341629034'),
+            netProfitDai: new BigNumber('308.871434419411277667072935005903328826'),
             stabilityFeeRate: new BigNumber('1.013829372344109723319869134'),
             minUnitPrice: new BigNumber('721.804640220588235294117647058'),
             maximumProtocolDebtDai: new BigNumber('100000000'),
@@ -153,6 +155,7 @@ describe('Vaults', () => {
             initialDebtDai: new BigNumber('8851.309396336731694851'),
         };
         compareVaultTransactionsNotLiquidated(expectedObject, vaultTransactionNotLiquidated);
+        const vatBalanceBefore = await fetchVATbalanceDAI(TEST_NETWORK, HARDHAT_PUBLIC_KEY);
         await liquidateVault(
             TEST_NETWORK,
             vaultTransactionNotLiquidated.collateralType,
@@ -178,6 +181,11 @@ describe('Vaults', () => {
         );
         expect(liquidationAuction.debtDAI.toPrecision(8)).to.deep.equalInAnyOrder(
             expectedObject.debtDai.multipliedBy(expectedObject.liquidationPenaltyRatio).toPrecision(8)
+        );
+        const vatBalanceAfter = await fetchVATbalanceDAI(TEST_NETWORK, HARDHAT_PUBLIC_KEY);
+        // compare with gross proit because the fees are deducted from the wallet and the incentive is sent to VAT
+        expect(vatBalanceAfter.minus(vatBalanceBefore).toPrecision(3)).to.deep.equalInAnyOrder(
+            vaultTransactionNotLiquidated.grossProfitDai.toPrecision(3)
         );
     });
 });
