@@ -14,7 +14,7 @@ import { DAI_NUMBER_OF_DIGITS } from './constants/UNITS';
 import memoizee from 'memoizee';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 
-const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
+const CACHE_EXPIRY_MS = 60 * 1000;
 
 const getOraclePriceSameSlotValidity = async (
     slot: string,

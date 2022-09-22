@@ -24,7 +24,7 @@ import getSigner from './signer';
 import executeTransaction from './execute';
 import { getOsmPrices } from './oracles';
 
-const CACHE_EXPIRY_MS = 24 * 60 * 60 * 1000;
+const CACHE_EXPIRY_MS = 60 * 1000;
 
 const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
     const contract = await getContract(network, 'CDP_MANAGER');
