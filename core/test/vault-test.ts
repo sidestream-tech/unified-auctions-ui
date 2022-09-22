@@ -8,6 +8,9 @@ import { VaultTransactionLiquidated, VaultTransactionNotLiquidated, Vault, Colla
 import BigNumber from '../src/bignumber';
 import { createWalletFromPrivateKey } from '../src/signer';
 import COLLATERALS from '../src/constants/COLLATERALS';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order'
+import chai from 'chai'
+chai.use(deepEqualInAnyOrder)
 
 const compareVaultTransactionsNotLiquidated = (
     expected: VaultTransactionNotLiquidated,
@@ -17,29 +20,29 @@ const compareVaultTransactionsNotLiquidated = (
     expect(expected.collateralType).to.eq(actual.collateralType);
     expect(expected.address).to.eq(actual.address);
     expect(expected.network).to.eq(actual.network);
-    expect(expected.nextPriceChange?.toISOString()).to.eq(actual.nextPriceChange?.toISOString());
+    expect(expected.nextPriceChange).to.deep.equalInAnyOrder(actual.nextPriceChange);
 
-    expect(expected.liquidationRatio.toFixed()).to.eq(actual.liquidationRatio.toFixed());
-    expect(expected.collateralizationRatio.toFixed()).to.eq(actual.collateralizationRatio.toFixed());
-    expect(expected.proximityToLiquidation.toFixed()).to.eq(actual.proximityToLiquidation.toFixed());
-    expect(expected.id).to.eq(actual.id),
-        expect(expected.incentiveCombinedDai.toFixed()).to.eq(actual.incentiveCombinedDai.toFixed());
-    expect(expected.incentiveRelativeDai.toFixed()).to.eq(actual.incentiveRelativeDai.toFixed());
-    expect(expected.incentiveConstantDai.toFixed()).to.eq(actual.incentiveConstantDai.toFixed());
-    expect(expected.grossProfitDai.toFixed()).to.eq(actual.grossProfitDai.toFixed());
-    expect(expected.stabilityFeeRate.toFixed()).to.eq(actual.stabilityFeeRate.toFixed());
-    expect(expected.minUnitPrice.toFixed()).to.eq(actual.minUnitPrice.toFixed());
-    expect(expected.maximumProtocolDebtDai.toFixed()).to.eq(actual.maximumProtocolDebtDai.toFixed());
-    expect(expected.currentProtocolDebtDai.toFixed()).to.eq(actual.currentProtocolDebtDai.toFixed());
-    expect(expected.currentCollateralDebtDai.toFixed()).to.eq(actual.currentCollateralDebtDai.toFixed());
-    expect(expected.maximumCollateralDebtDai.toFixed()).to.eq(actual.maximumCollateralDebtDai.toFixed());
-    expect(expected.debtDai.toFixed()).to.eq(actual.debtDai.toFixed());
-    expect(expected.collateralAmount.toFixed()).to.eq(actual.collateralAmount.toFixed());
-    expect(expected.currentUnitPrice?.toFixed()).to.eq(actual.currentUnitPrice?.toFixed());
-    expect(expected.nextUnitPrice?.toFixed()).to.eq(actual.nextUnitPrice?.toFixed());
-    expect(expected.initialDebtDai.toFixed()).to.eq(actual.initialDebtDai.toFixed());
-    expect(expected.liquidationPenaltyRatio.toFixed()).to.eq(actual.liquidationPenaltyRatio.toFixed());
-    expect(expected.minimalAuctionedDai.toFixed()).to.eq(actual.minimalAuctionedDai.toFixed());
+    expect(expected.liquidationRatio).to.deep.equalInAnyOrder(actual.liquidationRatio);
+    expect(expected.collateralizationRatio).to.deep.equalInAnyOrder(actual.collateralizationRatio);
+    expect(expected.proximityToLiquidation).to.deep.equalInAnyOrder(actual.proximityToLiquidation);
+    expect(expected.id).to.eq(actual.id);
+    expect(expected.incentiveCombinedDai).to.deep.equalInAnyOrder(actual.incentiveCombinedDai);
+    expect(expected.incentiveRelativeDai).to.deep.equalInAnyOrder(actual.incentiveRelativeDai);
+    expect(expected.incentiveConstantDai).to.deep.equalInAnyOrder(actual.incentiveConstantDai);
+    expect(expected.grossProfitDai).to.deep.equalInAnyOrder(actual.grossProfitDai);
+    expect(expected.stabilityFeeRate).to.deep.equalInAnyOrder(actual.stabilityFeeRate);
+    expect(expected.minUnitPrice).to.deep.equalInAnyOrder(actual.minUnitPrice);
+    expect(expected.maximumProtocolDebtDai).to.deep.equalInAnyOrder(actual.maximumProtocolDebtDai);
+    expect(expected.currentProtocolDebtDai).to.deep.equalInAnyOrder(actual.currentProtocolDebtDai);
+    expect(expected.currentCollateralDebtDai).to.deep.equalInAnyOrder(actual.currentCollateralDebtDai);
+    expect(expected.maximumCollateralDebtDai).to.deep.equalInAnyOrder(actual.maximumCollateralDebtDai);
+    expect(expected.debtDai).to.deep.equalInAnyOrder(actual.debtDai);
+    expect(expected.collateralAmount).to.deep.equalInAnyOrder(actual.collateralAmount);
+    expect(expected.currentUnitPrice).to.deep.equalInAnyOrder(actual.currentUnitPrice);
+    expect(expected.nextUnitPrice).to.deep.equalInAnyOrder(actual.nextUnitPrice);
+    expect(expected.initialDebtDai).to.deep.equalInAnyOrder(actual.initialDebtDai);
+    expect(expected.liquidationPenaltyRatio).to.deep.equalInAnyOrder(actual.liquidationPenaltyRatio);
+    expect(expected.minimalAuctionedDai).to.deep.equalInAnyOrder(actual.minimalAuctionedDai);
 };
 
 describe('Vaults', () => {
