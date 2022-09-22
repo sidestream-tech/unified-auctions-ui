@@ -3,7 +3,7 @@
         <div class="flex justify-between">
             <div>Auction State</div>
             <div>
-                <time-till :date="auction.auctionEndDate" />
+                <SurplusAuctionState :state="auction.state" :end-date="auction.earliestEndDate" />
             </div>
         </div>
         <div class="flex justify-between">
@@ -57,7 +57,7 @@
         <div class="flex justify-between">
             <div>Price on Uniswap</div>
             <div>
-                <format-currency
+                <FormatCurrency
                     v-if="auction.marketUnitPrice && isActive"
                     :value="auction.marketUnitPrice"
                     :decimal-places="6"
@@ -69,7 +69,7 @@
         <div class="flex justify-between font-bold">
             <div>Price after the bid</div>
             <div>
-                <format-currency
+                <FormatCurrency
                     v-if="unitPriceAfterBid && isActive && !isBidAmountNaN"
                     :value="unitPriceAfterBid"
                     :decimal-places="6"
@@ -82,22 +82,22 @@
 </template>
 
 <script lang="ts">
-import type { SurplusAuction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import BidInput from '../../common/inputs/BidInput.vue';
-import TimeTill from '~/components/common/formatters/TimeTill.vue';
+import type { SurplusAuctionTransaction } from 'auctions-core/src/types';
+import SurplusAuctionState from '~/components/auction/surplus/SurplusAuctionState.vue';
+import BidInput from '~/components/common/inputs/BidInput.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
     components: {
-        TimeTill,
+        SurplusAuctionState,
         FormatCurrency,
         BidInput,
     },
     props: {
         auction: {
-            type: Object as Vue.PropType<SurplusAuction>,
+            type: Object as Vue.PropType<SurplusAuctionTransaction>,
             required: true,
         },
     },

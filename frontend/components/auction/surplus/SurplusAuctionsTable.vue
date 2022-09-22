@@ -41,11 +41,7 @@
                 <span v-else class="opacity-50">Unknown</span>
             </div>
             <div slot="state" slot-scope="state, record">
-                <span v-if="state === 'collected'"> Collected </span>
-                <span v-else-if="state === 'requires-restart'"> Requires Restart </span>
-                <span v-else-if="state === 'ready-for-collection'"> Collectable since </span>
-                <span v-else> Expires in </span>
-                <time-till v-if="state !== 'requires-restart'" :date="record.earliestEndDate" />
+                <SurplusAuctionState :state="state" :end-date="record.earliestEndDate" />
             </div>
             <div slot="updatingStatus" class="opacity-50 font-normal">
                 <div v-if="isLoading" class="flex items-center space-x-2">
@@ -76,13 +72,14 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
-import { SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { compareAsc } from 'date-fns';
+import { SurplusAuctionTransaction } from 'auctions-core/src/types';
+import LoadingIcon from '~/assets/icons/loading.svg';
+import SurplusAuctionState from '~/components/auction/surplus/SurplusAuctionState.vue';
 import Loading from '~/components/common/other/Loading.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 import FormatMarketValue from '~/components/common/formatters/FormatMarketValue.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
-import LoadingIcon from '~/assets/icons/loading.svg';
 
 const compareBy = function (field: string, cmp: Function = (a: number, b: number): number => a - b): Function {
     return (aAuction: any, bAuction: any, sortOrder: string) => {
@@ -145,6 +142,7 @@ const STATES_FILTERS: { text: string; value: string }[] = [
 export default Vue.extend({
     name: 'SurplusAuctionsTable',
     components: {
+        SurplusAuctionState,
         Loading,
         Table,
         TimeTill,
