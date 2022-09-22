@@ -21,7 +21,6 @@ const generateFakeVaultBase = function (): VaultBase {
     const address = faker.finance.ethereumAddress();
     const collateralType = faker.helpers.randomize(Object.keys(COLLATERALS));
     const network = 'mainnet';
-    const lastSyncedAt = faker.date.recent();
 
     return {
         id,
@@ -74,8 +73,10 @@ export const generateFakeVault = function (): Vault {
     const vaultAmount = generateFakeVaultAmount();
     const liquidationLimits = generateFakeLiquidationLimits();
     const vaultCollateralParameters = generateFakeVaultCollateralParameters();
+    const lastSyncedAt = faker.date.recent();
 
     return {
+        lastSyncedAt,
         ...vaultBase,
         ...vaultAmount,
         ...liquidationLimits,
