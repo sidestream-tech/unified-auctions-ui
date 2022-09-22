@@ -9,7 +9,7 @@ import {
     resetNetworkAndSetupWallet,
 } from '../helpers/hardhat';
 import BigNumber from './bignumber';
-import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../helpers/constants';
+import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../helpers/constants';
 import { CONFIG_WITH_NEXT_PRICE, CONFIG_WITHOUT_NEXT_PRICE } from './constants/COLLATERALS';
 import {
     CollateralPriceSourceConfig,
@@ -142,7 +142,7 @@ const run = async () => {
         : CONFIG_WITHOUT_NEXT_PRICE;
     const collateralType = await promptCollateralType();
     const { contract, address } = await getOracleAddressAndContract(collateralType);
-    console.info(`Contract address: ${address}`);
+    console.info(`Price oracle contract address: ${address}`);
     if (basicInfo.hasNextPrice) {
         const whitelistSlot = 5;
         const whitelistFunction = 'bud';
