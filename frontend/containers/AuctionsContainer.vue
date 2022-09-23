@@ -116,6 +116,7 @@ export default Vue.extend({
         fetchedSelectedAuctionId: {
             immediate: true,
             handler(): void {
+                this.updateAllAuctions();
                 this.fetchRelatedData();
             },
         },

@@ -1,12 +1,14 @@
 <template>
     <div>
         <TextBlock title="Vault Liquidation transaction" />
-        <Alert v-if="wasLiquidated" show-icon type="warning">
+        <Alert v-if="wasLiquidated" show-icon type="info">
             <div slot="message">
                 <p>This vault has been liquidated into a collateral auction</p>
                 <div class="flex justify-end mt-2">
                     <nuxt-link :to="auctionLink">
-                        <Button> View collateral auction {{ vaultTransaction.pastLiquidations[0].auctionId }} </Button>
+                        <Button type="primary">
+                            View collateral auction {{ vaultTransaction.pastLiquidations[0].auctionId }}
+                        </Button>
                     </nuxt-link>
                 </div>
             </div>
@@ -42,11 +44,7 @@
                 @disconnectWallet="$emit('disconnectWallet')"
             />
             <VaultLiquidationLimitsCheckPanel
-                :liquidation-limits="liquidationLimits"
-                :collateral-type="vaultTransaction.collateralType"
-                :debt-dai="vaultTransaction.debtDai"
-                :incentive-relative-dai="vaultTransaction.incentiveRelativeDai"
-                :incentive-constant-dai="vaultTransaction.incentiveConstantDai"
+                :vault-transaction="vaultTransaction"
                 :is-refreshing="isRefreshingLimits"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="areLimitsNotReached"
@@ -100,10 +98,6 @@ export default Vue.extend({
             type: Object as Vue.PropType<VaultTransaction>,
             required: true,
         },
-        liquidationLimits: {
-            type: Object as Vue.PropType<LiquidationLimits>,
-            required: true,
-        },
         walletAddress: {
             type: String,
             default: null,
@@ -145,6 +139,16 @@ export default Vue.extend({
         },
         wasLiquidated(): boolean {
             return this.vaultTransaction.state === 'liquidated';
+        },
+        liquidationLimits(): LiquidationLimits {
+            return {
+                maximumProtocolDebtDai: this.vaultTransaction.maximumProtocolDebtDai,
+                currentProtocolDebtDai: this.vaultTransaction.currentProtocolDebtDai,
+                currentCollateralDebtDai: this.vaultTransaction.currentCollateralDebtDai,
+                maximumCollateralDebtDai: this.vaultTransaction.maximumCollateralDebtDai,
+                liquidationPenaltyRatio: this.vaultTransaction.liquidationPenaltyRatio,
+                minimalAuctionedDai: this.vaultTransaction.minimalAuctionedDai,
+            };
         },
     },
 });

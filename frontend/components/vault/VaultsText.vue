@@ -39,7 +39,7 @@
             class="w-full self-center"
             :class="{ 'max-w-4xl': isExplanationsShown, 'md:px-10': !isExplanationsShown }"
         >
-            <Alert type="info" show-icon class="mb-4">
+            <Alert type="info" show-icon>
                 <div slot="message" class="font-bold">Specific vault id is required</div>
                 <template slot="description">
                     <TextBlock>
@@ -51,7 +51,7 @@
                 </template>
             </Alert>
             <div>
-                <div style="margin-bottom: 16px">
+                <div style="margin-bottom: 16px" class="mt-4">
                     <Input
                         v-model="inputVaultId"
                         type="number"
@@ -114,6 +114,10 @@ export default Vue.extend({
             type: Date,
             default: null,
         },
+        network: {
+            type: String,
+            default: 'mainnet',
+        },
     },
     data() {
         return {
@@ -122,7 +126,8 @@ export default Vue.extend({
     },
     computed: {
         vaultInputLink(): string {
-            return `/vaults?vault=${this.inputVaultId}`;
+            const searchParams = new URLSearchParams({ network: this.network, vault: this.inputVaultId.toString() });
+            return `/vaults?${searchParams.toString()}`;
         },
         vaultsReadyToBeLiquidated(): number {
             return this.vaultTransactions.filter(vault => {

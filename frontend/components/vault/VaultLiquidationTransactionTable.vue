@@ -6,7 +6,7 @@
                 <span v-if="vaultTransaction.proximityToLiquidation < 0" class="text-green-500 mr-1">
                     (Ready for liquidation)
                 </span>
-                {{ vaultTransaction.proximityToLiquidation }}%
+                <FormatPercentage :value="vaultTransaction.proximityToLiquidation" />
             </div>
         </div>
         <div class="flex justify-between">
