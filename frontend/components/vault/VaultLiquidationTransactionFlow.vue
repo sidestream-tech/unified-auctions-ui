@@ -1,12 +1,14 @@
 <template>
     <div>
         <TextBlock title="Vault Liquidation transaction" />
-        <Alert v-if="wasLiquidated" show-icon type="warning">
+        <Alert v-if="wasLiquidated" show-icon type="info">
             <div slot="message">
                 <p>This vault has been liquidated into a collateral auction</p>
                 <div class="flex justify-end mt-2">
                     <nuxt-link :to="auctionLink">
-                        <Button> View collateral auction {{ vaultTransaction.pastLiquidations[0].auctionId }} </Button>
+                        <Button type="primary">
+                            View collateral auction {{ vaultTransaction.pastLiquidations[0].auctionId }}
+                        </Button>
                     </nuxt-link>
                 </div>
             </div>
