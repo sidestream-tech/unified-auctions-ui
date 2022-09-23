@@ -2,6 +2,7 @@ import { Vault, VaultTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { getVaultTransaction, fetchVault, liquidateVault } from 'auctions-core/src/vaults';
 import { ActionContext } from 'vuex';
+import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
@@ -99,7 +100,13 @@ export const actions = {
         const vaultTransaction: VaultTransaction = getters.getVaultById(vaultId);
         commit('setIsVaultBeingLiquidated', true);
         try {
-            await liquidateVault(network, vaultTransaction.collateralType, vaultTransaction.address, walletAddress);
+            await liquidateVault(
+                network,
+                vaultTransaction.collateralType,
+                vaultTransaction.address,
+                walletAddress,
+                notifier
+            );
             await dispatch('fetchVault', vaultId);
         } catch (e) {
             console.error(`Failed to liquidate vault ${vaultId}: ${e}`);

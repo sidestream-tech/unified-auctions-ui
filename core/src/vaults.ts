@@ -8,6 +8,7 @@ import {
     Vault,
     VaultTransactionNotLiquidated,
     VaultTransaction,
+    Notifier,
 } from './types';
 import BigNumber from './bignumber';
 import { ethers } from 'ethers';
@@ -325,11 +326,15 @@ export const liquidateVault = async (
     network: string,
     collateralType: CollateralType,
     vaultAddress: string,
-    incentiveBeneficiaryAddress?: string
+    incentiveBeneficiaryAddress?: string,
+    notifier?: Notifier
 ) => {
     const sendIncentiveTo = incentiveBeneficiaryAddress
         ? incentiveBeneficiaryAddress
         : await (await getSigner(network)).getAddress();
     const typeHex = ethers.utils.formatBytes32String(collateralType);
-    return await executeTransaction(network, 'MCD_DOG', 'bark', [typeHex, vaultAddress, sendIncentiveTo]);
+    const contractParameters = [typeHex, vaultAddress, sendIncentiveTo];
+    return await executeTransaction(network, 'MCD_DOG', 'bark', contractParameters, {
+        notifier,
+    });
 };
