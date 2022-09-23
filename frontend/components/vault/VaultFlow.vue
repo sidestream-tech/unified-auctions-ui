@@ -19,7 +19,7 @@
                         :error="vaultsError"
                         :are-vaults-fetching="areVaultsFetching"
                         :is-explanations-shown="isExplanationsShown"
-                        @liquidate="liquidate"
+                        @participate="participate"
                     />
                 </div>
             </template>
@@ -147,7 +147,7 @@ export default Vue.extend({
             }
             this.$emit('update:isExplanationsShown', event);
         },
-        liquidate() {
+        participate() {
             this.step = 2;
         },
     },

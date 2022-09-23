@@ -1,22 +1,16 @@
 import { storiesOf } from '@storybook/vue';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
-import { getAllCollateralTypes } from 'auctions-core/src/constants/COLLATERALS.ts';
 import VaultLiquidationLimitsCheckPanel from './VaultLiquidationLimitsCheckPanel';
-import { generateFakeLiquidationLimits } from '~/helpers/generateFakeVault';
+import { generateFakeVaultNotLiquidatedTransaction } from '~/helpers/generateFakeVault';
 
-const COLLATERALS = getAllCollateralTypes();
-const liquidationLimits = generateFakeLiquidationLimits();
+const vaultTransaction = generateFakeVaultNotLiquidatedTransaction();
 
 const common = {
     components: { VaultLiquidationLimitsCheckPanel },
     data() {
         return {
-            collateralType: faker.helpers.randomize(COLLATERALS),
-            debtDai: new BigNumber(0),
-            incentiveRelativeDai: new BigNumber(0),
-            incentiveConstantDai: new BigNumber(0),
-            liquidationLimits,
+            vaultTransaction,
             isExplanationsShown: true,
             isRefreshing: false,
         };
@@ -50,9 +44,12 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
         data() {
             return {
                 ...common.data(),
-                debtDai: new BigNumber(faker.datatype.float({ min: 1000 })),
-                incentiveRelativeDai: new BigNumber(faker.finance.amount()),
-                incentiveConstantDai: new BigNumber(faker.finance.amount()),
+                vaultTransaction: {
+                    ...vaultTransaction,
+                    debtDai: new BigNumber(faker.datatype.float({ min: 1000 })),
+                    incentiveRelativeDai: new BigNumber(faker.finance.amount()),
+                    incentiveConstantDai: new BigNumber(faker.finance.amount()),
+                },
             };
         },
     }))
@@ -61,13 +58,12 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
         data() {
             return {
                 ...common.data(),
-                liquidationLimits: {
-                    ...liquidationLimits,
-                    maximumProtocolDebtDai: new BigNumber(faker.datatype.float({ min: 5000 })),
+                vaultTransaction: {
+                    ...vaultTransaction,
+                    debtDai: new BigNumber(faker.datatype.float({ min: 1000 })),
+                    incentiveRelativeDai: new BigNumber(faker.finance.amount()),
+                    incentiveConstantDai: new BigNumber(faker.finance.amount()),
                 },
-                debtDai: new BigNumber(faker.datatype.float({ min: 1000, max: 2000 })),
-                incentiveRelativeDai: new BigNumber(faker.finance.amount()),
-                incentiveConstantDai: new BigNumber(faker.finance.amount()),
             };
         },
     }))
@@ -76,7 +72,7 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
         data() {
             return {
                 ...common.data(),
-                liquidationLimits: {},
+                vaultTransaction: {},
             };
         },
     }))

@@ -42,11 +42,7 @@
                 @disconnectWallet="$emit('disconnectWallet')"
             />
             <VaultLiquidationLimitsCheckPanel
-                :liquidation-limits="liquidationLimits"
-                :collateral-type="vaultTransaction.collateralType"
-                :debt-dai="vaultTransaction.debtDai"
-                :incentive-relative-dai="vaultTransaction.incentiveRelativeDai"
-                :incentive-constant-dai="vaultTransaction.incentiveConstantDai"
+                :vault-transaction="vaultTransaction"
                 :is-refreshing="isRefreshingLimits"
                 :is-explanations-shown="isExplanationsShown"
                 :is-correct.sync="areLimitsNotReached"

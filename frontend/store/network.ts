@@ -108,8 +108,9 @@ export const actions = {
         await dispatch('setupNetworks', isDev);
         await dispatch('wallet/setup', undefined, { root: true });
         await dispatch('gas/setup', undefined, { root: true });
-        await dispatch('auctions/setup', undefined, { root: true });
         await dispatch('authorizations/setup', undefined, { root: true });
+        await dispatch('vaults/setup', undefined, { root: true });
+        await dispatch('auctions/setup', undefined, { root: true });
         await dispatch('surplus/setup', undefined, { root: true });
         await dispatch('debt/setup', undefined, { root: true });
     },

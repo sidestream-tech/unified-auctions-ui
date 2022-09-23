@@ -4,14 +4,15 @@
             :vault-transactions="vaultTransactions"
             :are-vaults-fetching="areVaultsLoading"
             :is-liquidating="isVaultBeingLiquidated"
-            :selected-vault-id="selectedVaultId"
+            :selected-vault-id.sync="selectedVaultId"
             :is-connecting-wallet="isWalletLoading"
             :wallet-address="walletAddress"
-            :is-explanations-shown="isExplanationsShown"
-            :is-refreshing-limits="false"
+            :is-explanations-shown.sync="isExplanationsShown"
+            :is-refreshing-limits="areVaultsLoading"
             :network="network"
             @connectWallet="openSelectWalletModal"
             @disconnectWallet="disconnect"
+            @refreshLimits="fetchSelectedVault"
             @liquidate="liquidate"
         />
     </div>
@@ -39,8 +40,10 @@ export default Vue.extend({
         }),
         ...mapGetters('vaults', {
             vaultTransactions: 'listVaultTransactions',
-            areVaultsLoading: 'isVaultLoading',
+            vaultErrors: 'getVaultErrors',
+            areVaultsLoading: 'areVaultsLoading',
             isVaultBeingLiquidated: 'isVaultBeingLiquidated',
+            lastUpdated: 'getLastUpdated',
         }),
         selectedVaultId: {
             get(): string | null {
@@ -73,11 +76,8 @@ export default Vue.extend({
     watch: {
         selectedVaultId: {
             immediate: true,
-            handler(vaultId): void {
-                if (vaultId) {
-                    this.$store.dispatch('vaults/fetchVault', vaultId);
-                }
-                this.fetchRelatedData();
+            handler(): void {
+                this.fetchSelectedVault();
             },
         },
         walletAddress(): void {
@@ -85,6 +85,9 @@ export default Vue.extend({
         },
     },
     methods: {
+        fetchSelectedVault(): void {
+            this.$store.dispatch('vaults/updateSelectedVault');
+        },
         liquidate(walletAddress: string): void {
             this.$store.dispatch('vaults/liquidateVault', {
                 vaultId: this.selectedVaultId,

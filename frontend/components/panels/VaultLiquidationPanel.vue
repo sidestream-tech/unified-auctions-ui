@@ -51,7 +51,7 @@ export default Vue.extend({
     },
     props: {
         vaultId: {
-            type: Number,
+            type: [Number, String],
             required: true,
         },
         network: {

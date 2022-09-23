@@ -22,7 +22,7 @@
                             <td>Proximity to liquidation threshold</td>
                             <td>
                                 <template v-if="vaultTransaction.proximityToLiquidation">
-                                    <AnimatedNumber :value="vaultTransaction.proximityToLiquidation" />%
+                                    <FormatPercentage :value="vaultTransaction.proximityToLiquidation" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
@@ -43,7 +43,16 @@
                         <tr>
                             <td>Last fetched</td>
                             <td>
-                                <TimeTill v-if="vaultTransaction.lastSyncedAt" :date="vaultTransaction.lastSyncedAt" />
+                                <div v-if="areVaultsFetching" class="flex items-center space-x-2">
+                                    <LoadingIcon
+                                        class="h-4 w-4 animate animate-spin fill-current dark:text-gray-300"
+                                    />
+                                    <span>Updating...</span>
+                                </div>
+                                <TimeTill
+                                    v-else-if="vaultTransaction.lastSyncedAt"
+                                    :date="vaultTransaction.lastSyncedAt"
+                                />
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
@@ -117,8 +126,8 @@
                         />. The initial debt taken by the vault is
                         <format-currency :value="vaultTransaction.initialDebtDai" currency="DAI" />. The current
                         proximity to liquidation is
-                        <AnimatedNumber :value="vaultTransaction.proximityToLiquidation" />. The next price update will
-                        happen in <TimeTill :date="vaultTransaction.nextPriceChange" />.
+                        <FormatPercentage :value="vaultTransaction.proximityToLiquidation" />. The next price update
+                        will happen in <TimeTill :date="vaultTransaction.nextPriceChange" />.
                     </template>
                 </TextBlock>
             </template>
@@ -126,7 +135,7 @@
                 <div class="flex w-full justify-end flex-wrap mt-4">
                     <Tooltip :title="error" placement="bottom">
                         <div>
-                            <Button :disabled="!!error" type="primary" class="w-60 ml-4" @click="$emit('liquidate')">
+                            <Button :disabled="!!error" type="primary" class="w-60 ml-4" @click="$emit('participate')">
                                 Liquidate
                             </Button>
                         </div>
@@ -160,6 +169,7 @@
 import type { VaultTransaction, VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert, Tooltip } from 'ant-design-vue';
+import FormatPercentage from '../common/formatters/FormatPercentage.vue';
 import { generateLink } from '~/helpers/generateLink';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 import AnimatedArrow from '~/components/common/other/AnimatedArrow.vue';
@@ -169,10 +179,12 @@ import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import Loading from '~/components/common/other/Loading.vue';
 import AnimatedNumber from '~/components/common/formatters/AnimatedNumber.vue';
+import LoadingIcon from '~/assets/icons/loading.svg';
 
 export default Vue.extend({
     name: 'Vault',
     components: {
+        FormatPercentage,
         AnimatedArrow,
         TimeTill,
         Loading,
@@ -183,6 +195,7 @@ export default Vue.extend({
         AnimatedNumber,
         Alert,
         Tooltip,
+        LoadingIcon,
     },
     props: {
         vaultId: {

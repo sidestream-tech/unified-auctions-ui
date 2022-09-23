@@ -3,29 +3,39 @@ import Vue from 'vue';
 import { getVaultTransaction, fetchVault, liquidateVault } from 'auctions-core/src/vaults';
 import { ActionContext } from 'vuex';
 
+const REFETCH_INTERVAL = 30 * 1000;
+let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
+
 interface State {
     vaultTransactions: Record<Vault['id'], VaultTransaction>;
-    isVaultLoading: boolean;
+    vaultErrors: Record<string, string | undefined>;
+    areVaultsLoading: boolean;
     isVaultBeingLiquidated: boolean;
+    lastUpdated: Date | undefined;
 }
 
 const getInitialState = (): State => ({
     vaultTransactions: {},
-    isVaultLoading: false,
+    vaultErrors: {},
+    areVaultsLoading: false,
     isVaultBeingLiquidated: false,
+    lastUpdated: undefined,
 });
 
 export const state = (): State => getInitialState();
 
 export const getters = {
-    vaultTransactions(state: State) {
-        return state.vaultTransactions;
-    },
     listVaultTransactions(state: State) {
         return Object.values(state.vaultTransactions);
     },
-    isVaultLoading(state: State) {
-        return state.isVaultLoading;
+    getLastUpdated(state: State) {
+        return state.lastUpdated;
+    },
+    getVaultErrors(state: State) {
+        return state.vaultErrors;
+    },
+    areVaultsLoading(state: State) {
+        return state.areVaultsLoading;
     },
     isVaultBeingLiquidated(state: State) {
         return state.isVaultBeingLiquidated;
@@ -36,27 +46,49 @@ export const getters = {
 };
 export const mutations = {
     setVault(state: State, vaultTransaction: VaultTransaction) {
+        state.lastUpdated = new Date();
         Vue.set(state.vaultTransactions, vaultTransaction.id, vaultTransaction);
     },
-    setIsVaultLoading(state: State, isLoading: boolean) {
-        state.isVaultLoading = isLoading;
+    setAreVaultsLoading(state: State, isLoading: boolean) {
+        state.areVaultsLoading = isLoading;
+    },
+    setVaultError(state: State, { vaultId, error }: { vaultId: string; error: string }) {
+        Vue.set(state.vaultErrors, vaultId, error);
     },
     setIsVaultBeingLiquidated(state: State, isLoading: boolean) {
         state.isVaultBeingLiquidated = isLoading;
     },
+    reset(state: State) {
+        Object.assign(state, getInitialState());
+    },
 };
 export const actions = {
+    async setup({ dispatch, commit }: ActionContext<State, State>) {
+        commit('reset');
+        if (refetchIntervalId) {
+            clearInterval(refetchIntervalId);
+        }
+        await dispatch('updateSelectedVault');
+        refetchIntervalId = setInterval(() => dispatch('updateSelectedVault'), REFETCH_INTERVAL);
+    },
+    async updateSelectedVault({ rootState, dispatch }: ActionContext<State, any>) {
+        const selectedVaultId = rootState.route.query.vault;
+        if (selectedVaultId) {
+            await dispatch('fetchVault', selectedVaultId);
+        }
+    },
     async fetchVault({ commit, rootGetters }: ActionContext<State, State>, vaultId: number) {
         const network = rootGetters['network/getMakerNetwork'];
-        commit('setIsVaultLoading', true);
+        commit('setAreVaultsLoading', true);
         try {
             const vault = await fetchVault(network, vaultId);
             const vaultTransaction = await getVaultTransaction(network, vault);
             commit('setVault', vaultTransaction);
         } catch (e) {
             console.error(`Failed to fetch vault ${vaultId}: ${e}`);
+            commit('setVaultError', { vaultId, error: e });
         } finally {
-            commit('setIsVaultLoading', false);
+            commit('setAreVaultsLoading', false);
         }
     },
     async liquidateVault(
@@ -64,16 +96,10 @@ export const actions = {
         { vaultId, walletAddress }: { vaultId: number; walletAddress?: string }
     ) {
         const network = rootGetters['network/getMakerNetwork'];
-        const executeWalletAddress = walletAddress || rootGetters['wallet/getAddress'];
         const vaultTransaction: VaultTransaction = getters.getVaultById(vaultId);
         commit('setIsVaultBeingLiquidated', true);
         try {
-            await liquidateVault(
-                network,
-                vaultTransaction.collateralType,
-                vaultTransaction.address,
-                executeWalletAddress
-            );
+            await liquidateVault(network, vaultTransaction.collateralType, vaultTransaction.address, walletAddress);
             await dispatch('fetchVault', vaultId);
         } catch (e) {
             console.error(`Failed to liquidate vault ${vaultId}: ${e}`);
