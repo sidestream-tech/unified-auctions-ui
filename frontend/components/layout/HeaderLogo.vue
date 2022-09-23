@@ -40,6 +40,7 @@ export default Vue.extend({
                 { label: 'Collateral auctions', value: 'collateral', href: generateLink(this.network, 'collateral') },
                 { label: 'Surplus auctions', value: 'surplus', href: generateLink(this.network, 'surplus') },
                 { label: 'Debt auctions', value: 'debt', href: generateLink(this.network, 'debt') },
+                { label: 'Vault liquidations', value: 'vaults', href: generateLink(this.network, 'vaults') },
             ];
         },
     },
