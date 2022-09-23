@@ -144,7 +144,7 @@
             </TextBlock>
         </div>
         <div v-else-if="vaultTransaction && vaultTransaction.state === 'liquidated'">
-            <Alert show-icon type="warning">
+            <Alert show-icon type="info">
                 <div slot="message">
                     <p>This vault has been liquidated into a collateral auction</p>
                     <div class="flex justify-end mt-2">

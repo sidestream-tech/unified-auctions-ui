@@ -1,5 +1,5 @@
 <template>
-    <UpArrow :style="style" />
+    <UpArrow :style="style" class="dark:text-white fill-current" />
 </template>
 
 <script lang="ts">
