@@ -10,9 +10,6 @@ import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import { isCollateralTypeSupported } from 'auctions-core/src/addresses';
 
-const REFETCH_INTERVAL = 30 * 1000;
-let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
-
 interface State {
     collaterals: CollateralRow[];
     collateralStatusesStorage: Record<string, CollateralStatus>;
@@ -164,13 +161,5 @@ export const actions = {
 
         await dispatch('fetchCoreValues');
         await dispatch('fetchCollateralStatuses');
-
-        if (refetchIntervalId) {
-            clearInterval(refetchIntervalId);
-        }
-        refetchIntervalId = setInterval(async () => {
-            await dispatch('fetchCoreValues');
-            await dispatch('fetchCollateralStatuses');
-        }, REFETCH_INTERVAL);
     },
 };
