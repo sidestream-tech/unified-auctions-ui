@@ -21,12 +21,6 @@ export default Vue.extend({
     components: {
         DashboardAuctionsView,
     },
-    props: {
-        network: {
-            type: String,
-            default: undefined,
-        },
-    },
     computed: {
         ...mapGetters('collaterals', {
             collaterals: 'collaterals',
@@ -36,6 +30,9 @@ export default Vue.extend({
             gasParameters: 'getGasParameters',
             transactionFees: 'getTransactionFees',
         }),
+        network(): string | undefined {
+            return this.$store.getters['network/getMakerNetwork'];
+        },
         isExplanationsShown: {
             get(): boolean {
                 return this.$store.getters['preferences/getIsExplanationsShown'];
