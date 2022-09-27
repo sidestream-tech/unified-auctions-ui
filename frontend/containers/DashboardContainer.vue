@@ -53,10 +53,10 @@ export default Vue.extend({
         },
     },
     watch: {
-        async network() {
+        network() {
             if (this.network) {
-                await this.$store.dispatch('gas/setup');
-                await this.$store.dispatch('collaterals/setup');
+                this.$store.dispatch('gas/setup');
+                this.$store.dispatch('collaterals/setup');
             }
         },
     },
