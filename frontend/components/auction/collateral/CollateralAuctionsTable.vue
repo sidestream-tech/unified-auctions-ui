@@ -154,6 +154,7 @@ export default Vue.extend({
                     title: 'Index',
                     dataIndex: 'index',
                     sorter: compareBy('index'),
+                    width: 75,
                 },
                 {
                     title: 'Auction Amount',
@@ -164,12 +165,14 @@ export default Vue.extend({
                     onFilter: (selectedCurrency: string, auction: Auction) => {
                         return auction.collateralSymbol.includes(selectedCurrency);
                     },
+                    width: 150,
                 },
                 {
                     title: 'Auction Price',
                     dataIndex: 'approximateUnitPrice',
                     scopedSlots: { customRender: 'approximateUnitPrice' },
                     sorter: compareBy('approximateUnitPrice'),
+                    width: 150,
                 },
                 {
                     title: 'Market Difference',
@@ -177,16 +180,19 @@ export default Vue.extend({
                     scopedSlots: { customRender: 'marketUnitPriceToUnitPriceRatio' },
                     sorter: compareBy('marketUnitPriceToUnitPriceRatio'),
                     defaultSortOrder: 'ascend',
+                    width: 150,
                 },
                 {
                     title: 'Auction Ends',
                     dataIndex: 'endDate',
                     scopedSlots: { customRender: 'endDate' },
                     sorter: compareBy('endDate', (a: Date, b: Date) => compareAsc(a, b)),
+                    width: 150,
                 },
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
                     scopedSlots: { customRender: 'action' },
+                    width: 150,
                 },
             ];
         },
