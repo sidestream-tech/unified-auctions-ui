@@ -21,6 +21,12 @@ export default Vue.extend({
     components: {
         DashboardAuctionsView,
     },
+    props: {
+        network: {
+            type: String,
+            default: undefined,
+        },
+    },
     computed: {
         ...mapGetters('collaterals', {
             collaterals: 'collaterals',
@@ -46,9 +52,13 @@ export default Vue.extend({
             return getCalleesByNetworkType(network);
         },
     },
-    async mounted() {
-        await this.$store.dispatch('gas/setup');
-        await this.$store.dispatch('collaterals/setup');
+    watch: {
+        async network() {
+            if (this.network) {
+                await this.$store.dispatch('gas/setup');
+                await this.$store.dispatch('collaterals/setup');
+            }
+        },
     },
 });
 </script>

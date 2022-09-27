@@ -1,6 +1,6 @@
 <template>
     <div>
-        <DashboardContainer />
+        <DashboardContainer :network="network" />
         <Footer type="unified" />
     </div>
 </template>
@@ -16,5 +16,10 @@ export default Vue.extend({
         Footer,
     },
     layout: process.env.DEMO_MODE ? 'demoMode' : 'default',
+    computed: {
+        network() {
+            return this.$store.getters['network/getMakerNetwork'];
+        },
+    },
 });
 </script>
