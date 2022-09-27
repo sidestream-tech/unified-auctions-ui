@@ -21,6 +21,8 @@ import OSM_MOM from './abis/OSM_MOM.json';
 import OSM from './abis/OSM.json';
 import MEDIAN_PRICE_FEED from './abis/MEDIAN_PRICE_FEED.json';
 import MCD_SPOT from './abis/MCD_SPOT.json';
+import MCD_JUG from './abis/MCD_JUG.json';
+import ERC20 from './abis/ERC20.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
@@ -96,6 +98,9 @@ export const getContractInterfaceByName = async function (contractName: string):
     if (contractName === 'MCD_SPOT') {
         return MCD_SPOT;
     }
+    if (contractName === 'MCD_JUG') {
+        return MCD_JUG;
+    }
     throw new Error(`No contract interface found for "${contractName}"`);
 };
 
@@ -104,6 +109,12 @@ const _getContract = async function (network: string, contractName: string, useS
     const contractInterface = await getContractInterfaceByName(contractName);
     const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
     const contract = await new ethers.Contract(contractAddress, contractInterface, signerOrProvider);
+    return contract;
+};
+
+export const getErc20Contract = async function (network: string, contractAddress: string, useSigner = false) {
+    const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
+    const contract = await new ethers.Contract(contractAddress, ERC20, signerOrProvider);
     return contract;
 };
 

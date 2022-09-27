@@ -333,3 +333,40 @@ export const liquidateVault = async (
     const typeHex = ethers.utils.formatBytes32String(collateralType);
     return await executeTransaction(network, 'MCD_DOG', 'bark', [typeHex, vaultAddress, sendIncentiveTo]);
 };
+
+export const openVault = async (network: string, ownerAddress: string, collateralType: CollateralType) => {
+    const argumentList = [ethers.utils.formatBytes32String(collateralType), ownerAddress];
+    return await executeTransaction(network, 'CDP_MANAGER', 'open', argumentList);
+};
+
+export const changeVaultContents = async (
+    network: string,
+    vaultId: number,
+    differenceDebtDai: BigNumber,
+    differenceCollateral: BigNumber
+) => {
+    const argumentList = [
+        new BigNumber(vaultId).toFixed(0),
+        differenceCollateral.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        differenceDebtDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0),
+    ];
+    await executeTransaction(network, 'CDP_MANAGER', 'frob', argumentList);
+};
+
+export const collectStabilityFees = async (network: string, collateralType: CollateralType) => {
+    return await executeTransaction(network, 'MCD_JUG', 'drip', [ethers.utils.formatBytes32String(collateralType)]);
+};
+
+export const changeCollateralInVault = async (
+    network: string,
+    vaultId: number,
+    differenceCollateral: BigNumber,
+    transferTargetAddress: string
+) => {
+    const argumentList = [
+        new BigNumber(vaultId).toFixed(0),
+        transferTargetAddress,
+        differenceCollateral.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+    ];
+    await executeTransaction(network, 'CDP_MANAGER', 'flux(uint256,address,uint256)', argumentList);
+};

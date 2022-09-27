@@ -7,9 +7,16 @@ import { formatToHex, formatToHexWithoutPad } from './format';
 import { pad32, concat, stripZeros } from './hex';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { createWalletFromPrivateKey } from '../src/signer';
-import { HARDHAT_PRIVATE_KEY, LOCAL_RPC_URL, TEST_NETWORK, REMOTE_RPC_URL } from '../helpers/constants';
+import {
+    HARDHAT_PRIVATE_KEY,
+    LOCAL_RPC_URL,
+    TEST_NETWORK,
+    REMOTE_RPC_URL,
+    HARDHAT_PUBLIC_KEY,
+} from '../helpers/constants';
 import getProvider from '../src/provider';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
+import { CollateralType } from '../src/types';
 
 export const generateMappingSlotAddress = (mappingStartSlot: string, key: string) => {
     return stripZeros(ethers.utils.keccak256(concat(pad32(key), pad32(mappingStartSlot))));
@@ -45,6 +52,18 @@ export const overwriteUintMapping = async (
 ) => {
     const slotAddress = generateMappingSlotAddress(mappingSlotAddress, mappingKey);
     await overwriteUintValue(contractName, slotAddress, newValue, provider);
+};
+
+export const overwriteUintTable = async (
+    contractName: string,
+    mappingSlotAddress: string,
+    tableRowKey: string,
+    tableColumnKey: string,
+    newValue: BigNumber,
+    provider: EthereumProvider = hre.network.provider
+) => {
+    const rowAddress = generateMappingSlotAddress(mappingSlotAddress, tableRowKey);
+    overwriteUintMapping(contractName, rowAddress, tableColumnKey, newValue, provider);
 };
 
 export const resetNetwork = async (
@@ -110,4 +129,13 @@ export const addMkrToBalance = async (mkrAmount: BigNumber, walletAddress: strin
     const mkrBalanceHex = await mkrContract.balanceOf(walletAddress);
     const mkrBalance = new BigNumber(mkrBalanceHex._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
     console.info(`New MKR balance: ${mkrBalance}`);
+};
+
+export const setCollateralInVat = async (
+    collateralType: CollateralType,
+    collateralAmount: BigNumber,
+    provider?: EthereumProvider
+) => {
+    const collateralTypeHex = ethers.utils.formatBytes32String(collateralType);
+    await overwriteUintTable('MCD_VAT', '0x4', collateralTypeHex, HARDHAT_PUBLIC_KEY, collateralAmount, provider);
 };

@@ -101,3 +101,18 @@ export const withdrawCollateralFromVat = async function (
         confirmTransaction: true,
     });
 };
+
+export const depositCollateralToVat = async function (
+    network: string,
+    walletAddress: string,
+    collateralType: string,
+    amount: BigNumber,
+    notifier?: Notifier
+): Promise<void> {
+    const depositWad = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
+    const contractName = getJoinNameByCollateralType(collateralType);
+    await executeTransaction(network, contractName, 'join', [walletAddress, depositWad], {
+        notifier,
+        confirmTransaction: true,
+    });
+};
