@@ -58,6 +58,10 @@ function limitedValue(value: number | BigNumber): number | BigNumber {
     return value;
 }
 
+export function formatWithThousandSeparators(value: string): string {
+    return value.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+}
+
 export function formatToAutomaticDecimalPoints(
     value: number | BigNumber,
     decimalPlaces: number = DECIMAL_PLACES_DEFAULT

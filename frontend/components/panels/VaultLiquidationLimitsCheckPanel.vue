@@ -35,7 +35,7 @@
                     The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
                     of this auction
                 </Explain>
-                = <FormatCurrency :value="globalDifference" currency="DAI"
+                = <FormatCurrency :value="globalDifference" currency="DAI" :formatted="true"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -69,7 +69,7 @@
                     The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
                     of this auction
                 </Explain>
-                = <FormatCurrency :value="collateralDifference" currency="DAI"
+                = <FormatCurrency :value="collateralDifference" currency="DAI" :formatted="true"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -93,7 +93,10 @@
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { VaultTransaction } from 'auctions-core/src/types';
-import { formatToAutomaticDecimalPoints } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
+import {
+    formatToAutomaticDecimalPoints,
+    formatWithThousandSeparators,
+} from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Explain from '~/components/common/other/Explain.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
@@ -180,7 +183,7 @@ export default Vue.extend({
     },
     methods: {
         format(value: BigNumber): string {
-            return formatToAutomaticDecimalPoints(value);
+            return formatWithThousandSeparators(formatToAutomaticDecimalPoints(value));
         },
     },
 });

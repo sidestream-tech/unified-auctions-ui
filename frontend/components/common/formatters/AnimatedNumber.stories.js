@@ -24,6 +24,10 @@ storiesOf('Common/Formatters/AnimatedNumber', module)
         ...common,
         template: `<AnimatedNumber :value="num"/>`,
     }))
+    .add('Formatted', () => ({
+        ...common,
+        template: `<AnimatedNumber :value="2220309349.12" :formatted="true" />`,
+    }))
     .add('Long Duration', () => ({
         ...common,
         template: `<AnimatedNumber :value="num" :duration="5000"/>`,

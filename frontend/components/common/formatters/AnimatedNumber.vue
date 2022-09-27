@@ -1,7 +1,7 @@
 <template>
     <span v-if="isValidNumber"
         ><span v-if="isValueSmallButNotZero">under </span
-        ><animated-number :value="format(value)" :format-value="format" :duration="duration"
+        ><animated-number :value="safeValue" :format-value="format" :duration="duration"
     /></span>
 </template>
 
@@ -13,6 +13,7 @@ import {
     isValidNumber,
     isValueSmallButNotZero,
     formatToAutomaticDecimalPoints,
+    formatWithThousandSeparators,
 } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 
 export default Vue.extend({
@@ -32,8 +33,18 @@ export default Vue.extend({
             type: Number,
             default: undefined,
         },
+        formatted: {
+            type: Boolean,
+            default: false,
+        },
     },
     computed: {
+        safeValue(): number {
+            if (BigNumber.isBigNumber(this.value)) {
+                return this.value.toNumber();
+            }
+            return this.value;
+        },
         isValidNumber(): boolean {
             return isValidNumber(this.value);
         },
@@ -43,6 +54,9 @@ export default Vue.extend({
     },
     methods: {
         format(value: number | BigNumber): string {
+            if (this.formatted) {
+                return formatWithThousandSeparators(formatToAutomaticDecimalPoints(value, this.decimalPlaces));
+            }
             return formatToAutomaticDecimalPoints(value, this.decimalPlaces);
         },
     },
