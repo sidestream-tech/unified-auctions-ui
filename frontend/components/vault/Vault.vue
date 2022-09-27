@@ -157,8 +157,28 @@
                 </div>
             </Alert>
             <TextBlock class="mt-4">
-                This vault was liquidated <TimeTill :date="vaultTransaction.pastLiquidations[0].liquidationDate" /> in
-                the transaction <FormatAddress :value="vaultTransaction.pastLiquidations[0].transactionHash" />.
+                This vault was liquidated in the following transactions:
+                <table class="table-auto mt-4">
+                    <thead>
+                        <tr>
+                            <th>Transaction hash</th>
+                            <th>Liquidated since</th>
+                            <th>Auction link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="liquidation in vaultTransaction.pastLiquidations"
+                            :key="liquidation.transactionHash"
+                        >
+                            <td><FormatAddress :value="liquidation.transactionHash" /></td>
+                            <td><TimeTill :date="liquidation.liquidationDate" /></td>
+                            <td>
+                                <nuxt-link :to="createAuctionLink(liquidation)">{{ liquidation.auctionId }}</nuxt-link>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </TextBlock>
         </div>
         <Loading v-else-if="areVaultsFetching" is-loading class="w-full self-center Loading h-48" />
@@ -166,7 +186,7 @@
 </template>
 
 <script lang="ts">
-import type { VaultTransaction, VaultTransactionNotLiquidated } from 'auctions-core/src/types';
+import type { VaultTransaction, VaultTransactionNotLiquidated, LiquidationEvent } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert, Tooltip } from 'ant-design-vue';
 import FormatPercentage from '../common/formatters/FormatPercentage.vue';
@@ -271,6 +291,13 @@ export default Vue.extend({
                 return 'up';
             }
             return 'down';
+        },
+        createAuctionLink(liquidation: LiquidationEvent): string | undefined {
+            if (this.vaultTransaction.state !== 'liquidated' || !liquidation.auctionId) {
+                return undefined;
+            }
+            const link = generateLink(this.vaultTransaction.network, 'collateral');
+            return `${link}&auction=${encodeURIComponent(liquidation.auctionId)}`;
         },
     },
 });

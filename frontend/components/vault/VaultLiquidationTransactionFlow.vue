@@ -16,8 +16,22 @@
         <VaultLiquidationTransactionTable v-if="!wasLiquidated" class="my-4" :vault-transaction="vaultTransaction" />
         <TextBlock class="mt-4">
             <template v-if="wasLiquidated">
-                This vault was liquidated <TimeTill :date="vaultTransaction.pastLiquidations[0].liquidationDate" /> in
-                the transaction <FormatAddress :value="vaultTransaction.pastLiquidations[0].transactionHash" />.
+                This vault was last liquidated
+                <TimeTill :date="vaultTransaction.pastLiquidations[0].liquidationDate" /> in the transaction
+                <FormatAddress :value="vaultTransaction.pastLiquidations[0].transactionHash" />.
+                <WithdrawDaiFromVat
+                    class="mt-4"
+                    :wallet-address="walletAddress"
+                    :dai-vat-balance="daiVatBalance"
+                    :is-authorizing="isAuthorizing"
+                    :is-wallet-authorized="isWalletAuthorized"
+                    :is-withdrawing="isWithdrawing"
+                    :is-explanations-shown="isExplanationsShown"
+                    :vault-state="vaultTransaction.state"
+                    @manageVat="$emit('manageVat')"
+                    @authorizeWallet="$emit('authorizeWallet')"
+                    @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
+                />
             </template>
             <template v-else>
                 Please note, the
@@ -66,6 +80,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import { Alert, Button } from 'ant-design-vue';
 import { LiquidationLimits, VaultTransaction } from 'auctions-core/dist/src/types';
 import TransactionFeesTable from '../auction/TransactionFeesTable.vue';
@@ -76,6 +91,7 @@ import VaultLiquidationLimitsCheckPanel from '../panels/VaultLiquidationLimitsCh
 import VaultLiquidationPanel from '../panels/VaultLiquidationPanel.vue';
 import VaultLiquidationTransactionTable from './VaultLiquidationTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
+import WithdrawDaiFromVat from '~/components/vault/WithdrawDaiFromVat.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Explain from '~/components/common/other/Explain.vue';
 
@@ -91,6 +107,7 @@ export default Vue.extend({
         Alert,
         Button,
         WalletConnectionCheckPanel,
+        WithdrawDaiFromVat,
         Explain,
     },
     props: {
@@ -103,6 +120,22 @@ export default Vue.extend({
             default: null,
         },
         isConnectingWallet: {
+            type: Boolean,
+            default: false,
+        },
+        daiVatBalance: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        isAuthorizing: {
+            type: Boolean,
+            default: false,
+        },
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isWithdrawing: {
             type: Boolean,
             default: false,
         },

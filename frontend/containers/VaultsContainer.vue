@@ -6,6 +6,10 @@
             :is-liquidating="isVaultBeingLiquidated"
             :selected-vault-id.sync="selectedVaultId"
             :is-connecting-wallet="isWalletLoading"
+            :dai-vat-balance="daiVatBalance"
+            :is-authorizing="isAuthorizing"
+            :is-wallet-authorized="isWalletAuthorized"
+            :is-withdrawing="isWithdrawing"
             :wallet-address="walletAddress"
             :is-explanations-shown.sync="isExplanationsShown"
             :is-refreshing-limits="areVaultsLoading"
@@ -14,12 +18,16 @@
             @disconnectWallet="disconnect"
             @refreshLimits="fetchSelectedVault"
             @liquidate="liquidate"
+            @manageVat="openWalletModal"
+            @authorizeWallet="authorizeWallet"
+            @withdrawAllDaiFromVat="withdrawAllDaiFromVat"
         />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import { mapGetters } from 'vuex';
 import VaultFlow from '~/components/vault/VaultFlow.vue';
 
@@ -37,7 +45,16 @@ export default Vue.extend({
         ...mapGetters('wallet', {
             isWalletLoading: 'isLoading',
             walletAddress: 'getAddress',
+            walletBalances: 'walletBalances',
+            isWithdrawing: 'isDepositingOrWithdrawing',
         }),
+        ...mapGetters('authorizations', {
+            isAuthorizing: 'isWalletAuthorizationLoading',
+            isWalletAuthorized: 'isWalletAuthorizationDone',
+        }),
+        daiVatBalance(): BigNumber | undefined {
+            return this.walletBalances?.walletVatDAI;
+        },
         ...mapGetters('vaults', {
             vaultTransactions: 'listVaultTransactions',
             vaultErrors: 'getVaultErrors',
@@ -112,6 +129,12 @@ export default Vue.extend({
                 return;
             }
             this.$store.dispatch('wallet/setup');
+        },
+        authorizeWallet() {
+            this.$store.dispatch('authorizations/authorizeWallet');
+        },
+        withdrawAllDaiFromVat() {
+            this.$store.dispatch('wallet/withdrawFromVAT', this.daiVatBalance);
         },
     },
 });

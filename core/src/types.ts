@@ -334,7 +334,7 @@ export declare interface OraclePrices {
     nextPriceChange: Date;
 }
 
-interface LiquidationEvent {
+export declare interface LiquidationEvent {
     liquidationDate: Date;
     transactionHash: string;
     auctionId: string;
