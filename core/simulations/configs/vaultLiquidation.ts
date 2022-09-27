@@ -19,9 +19,10 @@ import getContract, {
     getJoinNameByCollateralType,
 } from '../../src/contracts';
 import { depositCollateralToVat, withdrawCollateralFromVat } from '../../src/wallet';
-import { WAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
+import { MAX } from '../../src/constants/UNITS';
+import { assertBalance, assertVatCollateralBalance } from '../../helpers/assertions';
 
-const COLLATARAL_OWNED = new BigNumber(2000).shiftedBy(WAD_NUMBER_OF_DIGITS);
+const COLLATARAL_OWNED_WAD = new BigNumber(20000);
 
 const _getCollateralType = async () => {
     const { collateralType } = await prompts([
@@ -61,13 +62,21 @@ const simulation: Simulation = {
             // https://etherscan.io/address/0x49a33a28c4c7d9576ab28898f4c9ac7e52ea457at
             entry: async () => {
                 await resetNetworkAndSetupWallet(14052140);
+                getLatestVaultIndex.clear();
+                getCollateralType.clear();
             },
         },
         {
             title: 'Set collateral in VAT',
             entry: async () => {
                 const collateralType = await getCollateralType();
-                await setCollateralInVat(collateralType, COLLATARAL_OWNED);
+                await setCollateralInVat(collateralType, COLLATARAL_OWNED_WAD);
+                await assertVatCollateralBalance(
+                    TEST_NETWORK,
+                    HARDHAT_PUBLIC_KEY,
+                    collateralType,
+                    COLLATARAL_OWNED_WAD
+                );
             },
         },
         {
@@ -88,8 +97,9 @@ const simulation: Simulation = {
                 const collateralConfig = getCollateralConfigByType(collateralType);
                 const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
                 const contract = await getErc20Contract(TEST_NETWORK, tokenContractAddress, true);
-                await contract.approve(addressJoin, COLLATARAL_OWNED.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0));
+                await contract.approve(addressJoin, MAX.toFixed(0));
                 await withdrawCollateralFromVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType, undefined);
+                await assertBalance(TEST_NETWORK, tokenContractAddress, HARDHAT_PUBLIC_KEY, COLLATARAL_OWNED_WAD);
             },
         },
         {
@@ -97,11 +107,12 @@ const simulation: Simulation = {
             entry: async () => {
                 const latestVaultId = await getLatestVaultIndex();
                 const vault = await fetchVaultBase(TEST_NETWORK, latestVaultId);
-                await depositCollateralToVat(
+                await depositCollateralToVat(TEST_NETWORK, vault.address, vault.collateralType, COLLATARAL_OWNED_WAD);
+                await assertVatCollateralBalance(
                     TEST_NETWORK,
                     vault.address,
                     vault.collateralType,
-                    COLLATARAL_OWNED.dividedBy(1.2)
+                    COLLATARAL_OWNED_WAD
                 );
             },
         },
@@ -109,7 +120,21 @@ const simulation: Simulation = {
             title: 'Add collateral to Vault',
             entry: async () => {
                 const latestVaultId = await getLatestVaultIndex();
-                await changeVaultContents(TEST_NETWORK, latestVaultId, new BigNumber(0), COLLATARAL_OWNED);
+                const vault = await fetchVault(TEST_NETWORK, latestVaultId);
+                const drawnDebtExact = COLLATARAL_OWNED_WAD.multipliedBy(vault.minUnitPrice).dividedBy(
+                    vault.stabilityFeeRate
+                );
+                const drawnDebt = new BigNumber(
+                    drawnDebtExact.toPrecision(drawnDebtExact.e || 0 + 1, BigNumber.ROUND_DOWN)
+                );
+                console.info(drawnDebt.toFixed(), vault.minUnitPrice.toFixed(), drawnDebtExact.toFixed());
+                await changeVaultContents(TEST_NETWORK, latestVaultId, drawnDebt, COLLATARAL_OWNED_WAD);
+                const vaultWithContents = await fetchVault(TEST_NETWORK, latestVaultId);
+                console.info(
+                    `Vault's contents: ${vaultWithContents.collateralAmount.toFixed()} of collateral, ${
+                        vaultWithContents.initialDebtDai
+                    } of debt`
+                );
             },
         },
         {
@@ -120,7 +145,12 @@ const simulation: Simulation = {
             title: 'Collect stability fees',
             entry: async () => {
                 const collateralType = await getCollateralType();
-                collectStabilityFees(TEST_NETWORK, collateralType);
+                const latestVaultId = await getLatestVaultIndex();
+                const vaultBefore = await fetchVault(TEST_NETWORK, latestVaultId);
+                console.info(`stability fees after ${vaultBefore.stabilityFeeRate}`);
+                await collectStabilityFees(TEST_NETWORK, collateralType);
+                const vaultAfter = await fetchVault(TEST_NETWORK, latestVaultId);
+                console.info(`stability fees after ${vaultAfter.stabilityFeeRate}`);
             },
         },
         {

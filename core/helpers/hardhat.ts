@@ -15,7 +15,7 @@ import {
     HARDHAT_PUBLIC_KEY,
 } from '../helpers/constants';
 import getProvider from '../src/provider';
-import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 import { CollateralType } from '../src/types';
 
 export const generateMappingSlotAddress = (mappingStartSlot: string, key: string) => {
@@ -137,5 +137,12 @@ export const setCollateralInVat = async (
     provider?: EthereumProvider
 ) => {
     const collateralTypeHex = ethers.utils.formatBytes32String(collateralType);
-    await overwriteUintTable('MCD_VAT', '0x4', collateralTypeHex, HARDHAT_PUBLIC_KEY, collateralAmount, provider);
+    await overwriteUintTable(
+        'MCD_VAT',
+        '0x4',
+        collateralTypeHex,
+        HARDHAT_PUBLIC_KEY,
+        collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS),
+        provider
+    );
 };
