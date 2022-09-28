@@ -89,12 +89,10 @@ export const fetchCollateralInVat = async (
 export const withdrawFromVAT = async function (
     network: string,
     walletAddress: string,
-    collateralType: CollateralType,
     amount: BigNumber,
     notifier?: Notifier
 ): Promise<void> {
-    const decimals = COLLATERALS[collateralType].decimals;
-    const wadAmount = amount.shiftedBy(decimals).toFixed(0, BigNumber.ROUND_DOWN);
+    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
     await executeTransaction(network, 'MCD_JOIN_DAI', 'exit', [walletAddress, wadAmount], {
         notifier,
         confirmTransaction: true,
