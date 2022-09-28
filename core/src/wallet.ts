@@ -75,6 +75,17 @@ export const depositToVAT = async function (
     });
 };
 
+export const fetchCollateralInVat = async (
+    network: string,
+    walletAddress: string,
+    collateralType: CollateralType,
+    decimals: number
+) => {
+    const vat = await getContract(network, 'MCD_VAT');
+    const balanceHex = await vat.gem(ethers.utils.formatBytes32String(collateralType), walletAddress);
+    return new BigNumber(balanceHex._hex).shiftedBy(-decimals);
+};
+
 export const withdrawFromVAT = async function (
     network: string,
     walletAddress: string,

@@ -1,8 +1,8 @@
 import BigNumber from '../src/bignumber';
 import getContract, { getErc20Contract } from '../src/contracts';
 import { CollateralType } from '../src/types';
-import { ethers } from 'ethers';
 import { featchAllowanceAmount } from '../src/authorizations';
+import { fetchCollateralInVat } from '../src/wallet';
 
 export const assertVatCollateralBalance = async (
     network: string,
@@ -11,9 +11,7 @@ export const assertVatCollateralBalance = async (
     expectedBalance: BigNumber,
     decimals: number
 ) => {
-    const vat = await getContract(network, 'MCD_VAT');
-    const balanceHex = await vat.gem(ethers.utils.formatBytes32String(collateralType), walletAddress);
-    const balance = new BigNumber(balanceHex._hex).shiftedBy(-decimals);
+    const balance = await fetchCollateralInVat(network, walletAddress, collateralType, decimals);
     if (!balance.eq(expectedBalance)) {
         throw new Error(
             `Unexpected vat balance. Expected: ${expectedBalance.toFixed()}, Actual: ${balance.toFixed()}`
