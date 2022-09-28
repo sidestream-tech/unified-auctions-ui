@@ -20,7 +20,7 @@
                 :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw || isWithdrawing"
                 @click="$emit('manageVat')"
             >
-                Withdraw DAI partially
+                Manage DAI in VAT
             </BaseButton>
             <BaseButton
                 type="primary"
@@ -83,7 +83,7 @@ export default Vue.extend({
         },
         vaultState: {
             type: String as Vue.PropType<VaultTransactionState>,
-            default: 'liquidatable',
+            required: true,
         },
     },
     computed: {

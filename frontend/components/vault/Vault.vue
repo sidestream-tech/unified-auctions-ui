@@ -158,7 +158,7 @@
             </Alert>
             <TextBlock class="mt-4">
                 This vault was liquidated in the following transactions:
-                <table class="table-auto mt-4">
+                <table class="w-full table-fixed border-collapse border">
                     <thead>
                         <tr>
                             <th>Transaction hash</th>
@@ -171,7 +171,7 @@
                             v-for="liquidation in vaultTransaction.pastLiquidations"
                             :key="liquidation.transactionHash"
                         >
-                            <td><FormatAddress :value="liquidation.transactionHash" /></td>
+                            <td><FormatAddress :value="liquidation.transactionHash" :shorten="true" /></td>
                             <td><TimeTill :date="liquidation.liquidationDate" /></td>
                             <td>
                                 <nuxt-link :to="createAuctionLink(liquidation)">{{ liquidation.auctionId }}</nuxt-link>
