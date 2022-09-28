@@ -7,7 +7,6 @@
         </TextBlock>
         <div class="my-4">
             <WalletAuthorizationCheckPanel
-                :disabled="!isWalletConnected"
                 :wallet-address="walletAddress"
                 :is-wallet-authorized="isWalletAuthorized"
                 :is-explanations-shown="isExplanationsShown"
@@ -17,14 +16,14 @@
         </div>
         <div class="flex justify-end mt-2 gap-5">
             <BaseButton
-                :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw || isWithdrawing"
+                :disabled="!isWalletAuthorized || !hasDaiToWithdraw || isWithdrawing"
                 @click="$emit('manageVat')"
             >
                 Manage DAI in VAT
             </BaseButton>
             <BaseButton
                 type="primary"
-                :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw"
+                :disabled="!isWalletAuthorized || !hasDaiToWithdraw"
                 :is-loading="isWithdrawing"
                 @click="$emit('withdrawAllDaiFromVat')"
             >
@@ -104,9 +103,6 @@ export default Vue.extend({
                 name: 'notice',
                 title: `Withdraw DAI from VAT`,
             };
-        },
-        isWalletConnected(): boolean {
-            return !!this.walletAddress;
         },
         hasDaiToWithdraw(): boolean {
             return this.daiVatBalance?.isGreaterThan(0) ?? false;

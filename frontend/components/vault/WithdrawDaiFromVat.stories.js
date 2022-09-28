@@ -56,13 +56,6 @@ storiesOf('Vault/WithdrawDaiFromVat', module)
             daiVatBalance: new BigNumber(0),
         }),
     }))
-    .add('No Wallet', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            walletAddress: '',
-        }),
-    }))
     .add('No Authorization', () => ({
         ...common,
     }))
