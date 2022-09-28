@@ -2,8 +2,7 @@ import { warpTime, resetNetworkAndSetupWallet, setCollateralInVat } from '../../
 import { Simulation } from '../types';
 import prompts from 'prompts';
 import COLLATERALS, { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
-import BigNumber from 'bignumber.js';
-import memoizee from 'memoizee';
+import BigNumber from '../../src/bignumber';
 import {
     changeVaultContents,
     collectStabilityFees,
@@ -11,6 +10,7 @@ import {
     openVault,
     liquidateVault,
     fetchVaultBase,
+    fetchVaultCollateralParameters,
 } from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
 import getContract, {
@@ -19,12 +19,13 @@ import getContract, {
     getJoinNameByCollateralType,
 } from '../../src/contracts';
 import { depositCollateralToVat, withdrawCollateralFromVat } from '../../src/wallet';
-import { MAX } from '../../src/constants/UNITS';
+import { MAX, RAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
 import { assertBalance, assertVatCollateralBalance } from '../../helpers/assertions';
+import { CollateralType } from '../../src/types';
+import { ethers } from 'ethers';
+import { randomBigNumber } from '../../helpers/hex';
 
-const COLLATARAL_OWNED_WAD = new BigNumber(20000);
-
-const _getCollateralType = async () => {
+const getCollateralType = async () => {
     const { collateralType } = await prompts([
         {
             type: 'select',
@@ -41,17 +42,41 @@ const _getCollateralType = async () => {
     return collateralType;
 };
 
-const getCollateralType = memoizee(_getCollateralType, {
-    promise: true,
-});
-
-const _getLatestVault = async () => {
+const getLatestVault = async () => {
     const cdpManager = await getContract(TEST_NETWORK, 'CDP_MANAGER', true);
     const lastHex = await cdpManager.last(HARDHAT_PUBLIC_KEY);
     return new BigNumber(lastHex._hex).toNumber();
 };
 
-const getLatestVaultIndex = memoizee(_getLatestVault, { promise: true });
+const getVaultLimits = async (collateralType: CollateralType) => {
+    const contract = await getContract(TEST_NETWORK, 'MCD_VAT');
+    const typeHex = ethers.utils.formatBytes32String(collateralType);
+    const { dust, line } = await contract.ilks(typeHex);
+    const { minUnitPrice } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
+    return {
+        minCollateralInVault: new BigNumber(dust._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS).div(minUnitPrice),
+        maxCollateralInVault: new BigNumber(line._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS).div(minUnitPrice),
+    };
+};
+
+const getBaseContext = async () => {
+    const collateralType = await getCollateralType();
+    const vaultLimits = await getVaultLimits(collateralType);
+    const decimals = COLLATERALS[collateralType].decimals;
+    const collateralOwned = new BigNumber(
+        randomBigNumber(
+            vaultLimits.minCollateralInVault,
+            BigNumber.min(vaultLimits.maxCollateralInVault, vaultLimits.minCollateralInVault.multipliedBy(100))
+        ).toFixed(0)
+    );
+    console.info(`Collateral in the VAT initially: ${collateralOwned.toFixed()}`);
+    return {
+        collateralType,
+        decimals,
+        collateralOwned,
+        ...vaultLimits,
+    };
+};
 
 const simulation: Simulation = {
     title: 'Simulate liquidation Auctions',
@@ -62,101 +87,124 @@ const simulation: Simulation = {
             // https://etherscan.io/address/0x49a33a28c4c7d9576ab28898f4c9ac7e52ea457at
             entry: async () => {
                 await resetNetworkAndSetupWallet(14052140);
-                getLatestVaultIndex.clear();
-                getCollateralType.clear();
+                return getBaseContext();
             },
         },
         {
             title: 'Set collateral in VAT',
-            entry: async () => {
-                const collateralType = await getCollateralType();
-                await setCollateralInVat(collateralType, COLLATARAL_OWNED_WAD);
+            entry: async context => {
+                const collateralType = context.collateralType;
+                await setCollateralInVat(collateralType, context.collateralOwned);
                 await assertVatCollateralBalance(
                     TEST_NETWORK,
                     HARDHAT_PUBLIC_KEY,
                     collateralType,
-                    COLLATARAL_OWNED_WAD
+                    context.collateralOwned,
+                    context.decimals
                 );
+                return context;
             },
         },
         {
             title: 'Open the vault',
-            entry: async () => {
-                const collateralType = await getCollateralType();
-                await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
+            entry: async context => {
+                await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, context.collateralType);
+                return context;
             },
         },
         {
             title: 'Extract collateral',
-            entry: async () => {
-                const collateralType = await getCollateralType();
+            entry: async context => {
                 const addressJoin = await getContractAddressByName(
                     TEST_NETWORK,
-                    getJoinNameByCollateralType(collateralType)
+                    getJoinNameByCollateralType(context.collateralType)
                 );
-                const collateralConfig = getCollateralConfigByType(collateralType);
+                const collateralConfig = getCollateralConfigByType(context.collateralType);
                 const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
                 const contract = await getErc20Contract(TEST_NETWORK, tokenContractAddress, true);
                 await contract.approve(addressJoin, MAX.toFixed(0));
-                await withdrawCollateralFromVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType, undefined);
-                await assertBalance(TEST_NETWORK, tokenContractAddress, HARDHAT_PUBLIC_KEY, COLLATARAL_OWNED_WAD);
+                console.info('Max allowance given out');
+                await withdrawCollateralFromVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, context.collateralType, undefined);
+                await assertBalance(
+                    TEST_NETWORK,
+                    tokenContractAddress,
+                    HARDHAT_PUBLIC_KEY,
+                    context.collateralOwned,
+                    context.decimals
+                );
+                return context;
             },
         },
         {
             title: 'Deposit Collateral to vault',
-            entry: async () => {
-                const latestVaultId = await getLatestVaultIndex();
+            entry: async context => {
+                const latestVaultId = await getLatestVault();
                 const vault = await fetchVaultBase(TEST_NETWORK, latestVaultId);
-                await depositCollateralToVat(TEST_NETWORK, vault.address, vault.collateralType, COLLATARAL_OWNED_WAD);
+                await depositCollateralToVat(
+                    TEST_NETWORK,
+                    vault.address,
+                    vault.collateralType,
+                    context.collateralOwned
+                );
                 await assertVatCollateralBalance(
                     TEST_NETWORK,
                     vault.address,
                     vault.collateralType,
-                    COLLATARAL_OWNED_WAD
+                    context.collateralOwned,
+                    context.decimals
                 );
+                return {
+                    ...context,
+                    latestVaultId,
+                };
             },
         },
         {
             title: 'Add collateral to Vault',
-            entry: async () => {
-                const latestVaultId = await getLatestVaultIndex();
+            entry: async context => {
+                const latestVaultId = context.latestVaultId;
                 const vault = await fetchVault(TEST_NETWORK, latestVaultId);
-                const drawnDebtExact = COLLATARAL_OWNED_WAD.multipliedBy(vault.minUnitPrice).dividedBy(
-                    vault.stabilityFeeRate
-                );
+                const drawnDebtExact = context.collateralOwned
+                    .multipliedBy(vault.minUnitPrice)
+                    .dividedBy(vault.stabilityFeeRate);
                 const drawnDebt = new BigNumber(
                     drawnDebtExact.toPrecision(drawnDebtExact.e || 0 + 1, BigNumber.ROUND_DOWN)
                 );
                 console.info(drawnDebt.toFixed(), vault.minUnitPrice.toFixed(), drawnDebtExact.toFixed());
-                await changeVaultContents(TEST_NETWORK, latestVaultId, drawnDebt, COLLATARAL_OWNED_WAD);
+                await changeVaultContents(TEST_NETWORK, latestVaultId, drawnDebt, context.collateralOwned);
                 const vaultWithContents = await fetchVault(TEST_NETWORK, latestVaultId);
                 console.info(
                     `Vault's contents: ${vaultWithContents.collateralAmount.toFixed()} of collateral, ${
                         vaultWithContents.initialDebtDai
                     } of debt`
                 );
+                return context;
             },
         },
         {
             title: 'Skip time',
-            entry: async () => await warpTime(),
+            entry: async context => {
+                await warpTime();
+                return context;
+            },
         },
         {
             title: 'Collect stability fees',
-            entry: async () => {
-                const collateralType = await getCollateralType();
-                const latestVaultId = await getLatestVaultIndex();
+            entry: async context => {
+                const collateralType = context.collateralType;
+                const latestVaultId = context.latestVaultId;
                 const vaultBefore = await fetchVault(TEST_NETWORK, latestVaultId);
                 console.info(`stability fees after ${vaultBefore.stabilityFeeRate}`);
                 await collectStabilityFees(TEST_NETWORK, collateralType);
                 const vaultAfter = await fetchVault(TEST_NETWORK, latestVaultId);
                 console.info(`stability fees after ${vaultAfter.stabilityFeeRate}`);
+                return context;
             },
         },
         {
             title: 'Bark',
-            entry: async () => {
-                const liquidatedId = await getLatestVaultIndex();
+            entry: async context => {
+                const liquidatedId = context.latestVaultId;
                 const vault = await fetchVault(TEST_NETWORK, liquidatedId);
                 await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
             },

@@ -1,4 +1,4 @@
-import type { Notifier, WalletBalances } from './types';
+import type { CollateralType, Notifier, WalletBalances } from './types';
 import { ethers } from 'ethers';
 import getProvider from './provider';
 import BigNumber from './bignumber';
@@ -11,6 +11,7 @@ import {
     WAD_NUMBER_OF_DIGITS,
     MKR_NUMBER_OF_DIGITS,
 } from './constants/UNITS';
+import COLLATERALS from './constants/COLLATERALS';
 
 export const fetchBalanceETH = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const provider = await getProvider(network);
@@ -47,7 +48,8 @@ export const fetchCollateralVatBalance = async function (
     const contract = await getContract(network, 'MCD_VAT');
     const encodedCollateralType = ethers.utils.formatBytes32String(collateralType);
     const wadAmount = await contract.gem(encodedCollateralType, walletAddress);
-    return new BigNumber(wadAmount._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    const decimals = COLLATERALS[collateralType].decimals
+    return new BigNumber(wadAmount._hex).shiftedBy(-decimals);
 };
 
 export const fetchWalletBalances = async function (network: string, walletAddress: string): Promise<WalletBalances> {
@@ -76,10 +78,12 @@ export const depositToVAT = async function (
 export const withdrawFromVAT = async function (
     network: string,
     walletAddress: string,
+    collateralType: CollateralType,
     amount: BigNumber,
     notifier?: Notifier
 ): Promise<void> {
-    const wadAmount = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
+    const decimals = COLLATERALS[collateralType].decimals;
+    const wadAmount = amount.shiftedBy(decimals).toFixed(0, BigNumber.ROUND_DOWN);
     await executeTransaction(network, 'MCD_JOIN_DAI', 'exit', [walletAddress, wadAmount], {
         notifier,
         confirmTransaction: true,
@@ -89,12 +93,13 @@ export const withdrawFromVAT = async function (
 export const withdrawCollateralFromVat = async function (
     network: string,
     walletAddress: string,
-    collateralType: string,
+    collateralType: CollateralType,
     amount: BigNumber | undefined,
     notifier?: Notifier
 ): Promise<void> {
     const withdrawalAmount = amount || (await fetchCollateralVatBalance(network, walletAddress, collateralType));
-    const withdrawalAmountWad = withdrawalAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
+    const decimals = COLLATERALS[collateralType].decimals;
+    const withdrawalAmountWad = withdrawalAmount.shiftedBy(decimals).toFixed(0, BigNumber.ROUND_DOWN);
     const contractName = getJoinNameByCollateralType(collateralType);
     await executeTransaction(network, contractName, 'exit', [walletAddress, withdrawalAmountWad], {
         notifier,

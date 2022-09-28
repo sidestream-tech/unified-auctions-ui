@@ -15,8 +15,9 @@ import {
     HARDHAT_PUBLIC_KEY,
 } from '../helpers/constants';
 import getProvider from '../src/provider';
-import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 import { CollateralType } from '../src/types';
+import COLLATERALS from '../src/constants/COLLATERALS';
 
 export const generateMappingSlotAddress = (mappingStartSlot: string, key: string) => {
     return stripZeros(ethers.utils.keccak256(concat(pad32(key), pad32(mappingStartSlot))));
@@ -136,13 +137,14 @@ export const setCollateralInVat = async (
     collateralAmount: BigNumber,
     provider?: EthereumProvider
 ) => {
+    const decimals = COLLATERALS[collateralType].decimals
     const collateralTypeHex = ethers.utils.formatBytes32String(collateralType);
     await overwriteUintTable(
         'MCD_VAT',
         '0x4',
         collateralTypeHex,
         HARDHAT_PUBLIC_KEY,
-        collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS),
+        collateralAmount.shiftedBy(decimals),
         provider
     );
 };

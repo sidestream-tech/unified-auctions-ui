@@ -2,17 +2,17 @@ import BigNumber from '../src/bignumber';
 import getContract, { getErc20Contract } from '../src/contracts';
 import { CollateralType } from '../src/types';
 import { ethers } from 'ethers';
-import { WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 
 export const assertVatCollateralBalance = async (
     network: string,
     walletAddress: string,
     collateralType: CollateralType,
-    expectedBalance: BigNumber
+    expectedBalance: BigNumber,
+    decimals: number
 ) => {
     const vat = await getContract(network, 'MCD_VAT');
     const balanceHex = await vat.gem(ethers.utils.formatBytes32String(collateralType), walletAddress);
-    const balance = new BigNumber(balanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    const balance = new BigNumber(balanceHex._hex).shiftedBy(-decimals);
     if (!balance.eq(expectedBalance)) {
         throw new Error(
             `Unexpected vat balance. Expected: ${expectedBalance.toFixed()}, Actual: ${balance.toFixed()}`
@@ -26,11 +26,12 @@ export const assertAllowance = async (
     walletAddress: string,
     authenticatedAddress: string,
     erc20TokenAddress: string,
-    expectedAllowance: BigNumber
+    expectedAllowance: BigNumber,
+    decimals: number,
 ) => {
     const token = await getErc20Contract(network, erc20TokenAddress);
     const allowanceHex = await token.allowance(walletAddress, authenticatedAddress);
-    const allowance = new BigNumber(allowanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    const allowance = new BigNumber(allowanceHex._hex).shiftedBy(-decimals);
     if (allowance.toFixed(0) !== expectedAllowance.toFixed(0)) {
         throw new Error(
             `Unexpected allowance: Expected ${expectedAllowance.toFixed()}, actual: ${allowance.toFixed()}`
@@ -53,11 +54,12 @@ export const assertBalance = async (
     network: string,
     erc20TokenAddress: string,
     walletAddress: string,
-    expectedBalance: BigNumber
+    expectedBalance: BigNumber,
+    decimals: number
 ) => {
     const token = await getErc20Contract(network, erc20TokenAddress);
     const balanceHex = await token.balanceOf(walletAddress);
-    const balance = new BigNumber(balanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    const balance = new BigNumber(balanceHex._hex).shiftedBy(-decimals);
     if (!balance.eq(expectedBalance)) {
         throw new Error(
             `Unexpected wallet balance. Expected ${expectedBalance.toFixed()}, Actual ${balance.toFixed()}`

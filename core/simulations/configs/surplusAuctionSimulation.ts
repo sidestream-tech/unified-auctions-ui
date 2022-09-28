@@ -24,7 +24,10 @@ const simulation: Simulation = {
         },
         {
             title: 'Skip time',
-            entry: async () => await warpTime(),
+            entry: async () => {
+                await warpTime();
+                return;
+            },
         },
     ],
 };
