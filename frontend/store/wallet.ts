@@ -13,6 +13,7 @@ import {
 import getWallet, { WALLETS } from '~/lib/wallet';
 import notifier from '~/lib/notifier';
 import { getContractAddressByName } from '~/../core/src/contracts';
+import { DAI_NUMBER_OF_DIGITS } from '~/../core/src/constants/UNITS';
 
 interface State {
     walletType?: string;
@@ -227,7 +228,7 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         commit('setIsDepositingOrWithdrawing', true);
         try {
-            await withdrawFromVAT(network, getters.getAddress, new BigNumber(amount), notifier);
+            await withdrawFromVAT(network, getters.getAddress, DAI_NUMBER_OF_DIGITS, new BigNumber(amount), notifier);
             await dispatch('fetchWalletBalances');
         } catch (error) {
             message.error(`Error while withdrawing from VAT: ${error.message}`);
