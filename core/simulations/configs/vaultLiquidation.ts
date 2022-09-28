@@ -1,4 +1,10 @@
-import { warpTime, resetNetworkAndSetupWallet, setCollateralInVat } from '../../helpers/hardhat';
+import {
+    warpTime,
+    resetNetworkAndSetupWallet,
+    setCollateralInVat,
+    addDaiToBalance,
+    addMkrToBalance,
+} from '../../helpers/hardhat';
 import { Simulation } from '../types';
 import prompts from 'prompts';
 import COLLATERALS, { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
@@ -9,7 +15,6 @@ import {
     fetchVault,
     openVault,
     liquidateVault,
-    fetchVaultBase,
     fetchVaultCollateralParameters,
 } from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
@@ -65,7 +70,10 @@ const getBaseContext = async () => {
     const collateralOwned = new BigNumber(
         randomBigNumber(
             vaultLimits.minCollateralInVault,
-            BigNumber.min(vaultLimits.maxCollateralInVault, vaultLimits.minCollateralInVault.multipliedBy(100))
+            BigNumber.min(
+                vaultLimits.maxCollateralInVault.dividedBy(1.2),
+                vaultLimits.minCollateralInVault.multipliedBy(1.2)
+            )
         ).toFixed(0)
     );
     console.info(`Collateral in the VAT initially: ${collateralOwned.toFixed()}`);
@@ -90,11 +98,12 @@ const simulation: Simulation = {
             },
         },
         {
-            title: 'Set collateral in VAT',
+            title: 'Create the auction',
             entry: async context => {
+                console.info('Setting collateral in VAT...');
                 const collateralType = context.collateralType;
                 await setCollateralInVat(collateralType, context.collateralOwned);
-                const balance = await fetchCollateralInVat(
+                let balance = await fetchCollateralInVat(
                     TEST_NETWORK,
                     HARDHAT_PUBLIC_KEY,
                     collateralType,
@@ -108,19 +117,9 @@ const simulation: Simulation = {
                 console.info(
                     `Vat Collateral ${collateralType} balance of ${HARDHAT_PUBLIC_KEY} is ${context.collateralOwned.toFixed()}`
                 );
-                return context;
-            },
-        },
-        {
-            title: 'Open the vault',
-            entry: async context => {
+                console.info('Opening the vault');
                 await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, context.collateralType);
-                return context;
-            },
-        },
-        {
-            title: 'Extract collateral',
-            entry: async context => {
+                console.info('Extracting collateral');
                 const addressJoin = await getContractAddressByName(
                     TEST_NETWORK,
                     getJoinNameByCollateralType(context.collateralType)
@@ -133,7 +132,7 @@ const simulation: Simulation = {
                 await withdrawCollateralFromVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, context.collateralType, undefined);
                 const token = await getErc20Contract(TEST_NETWORK, tokenContractAddress);
                 const balanceHex = await token.balanceOf(HARDHAT_PUBLIC_KEY);
-                const balance = new BigNumber(balanceHex._hex).shiftedBy(-context.decimals);
+                balance = new BigNumber(balanceHex._hex).shiftedBy(-context.decimals);
                 if (!balance.eq(context.collateralOwned)) {
                     throw new Error(
                         `Unexpected wallet balance. Expected ${context.collateralOwned.toFixed()}, Actual ${balance.toFixed()}`
@@ -142,47 +141,17 @@ const simulation: Simulation = {
                 console.info(
                     `Wallet ${HARDHAT_PUBLIC_KEY} has ${context.collateralOwned.toFixed()} of token ${tokenContractAddress}`
                 );
-                return context;
-            },
-        },
-        {
-            title: 'Deposit Collateral to vault',
-            entry: async context => {
+                console.info('Depositing Collateral to vault');
                 const latestVaultId = await getLatestVault();
-                const vault = await fetchVaultBase(TEST_NETWORK, latestVaultId);
+                let vault = await fetchVault(TEST_NETWORK, latestVaultId);
                 await depositCollateralToVat(
                     TEST_NETWORK,
                     vault.address,
                     vault.collateralType,
                     context.collateralOwned
                 );
-                const balance = await fetchCollateralInVat(
-                    TEST_NETWORK,
-                    HARDHAT_PUBLIC_KEY,
-                    context.collateralType,
-                    context.decimals
-                );
-                if (!balance.eq(context.collateralOwned)) {
-                    throw new Error(
-                        `Unexpected vat balance. Expected: ${context.collateralOwned.toFixed()}, Actual: ${balance.toFixed()}`
-                    );
-                }
-                console.info(
-                    `Vat Collateral ${
-                        context.collateralType
-                    } balance of ${HARDHAT_PUBLIC_KEY} is ${context.collateralOwned.toFixed()} WAD`
-                );
-                return {
-                    ...context,
-                    latestVaultId,
-                };
-            },
-        },
-        {
-            title: 'Add collateral to Vault',
-            entry: async context => {
-                const latestVaultId = context.latestVaultId;
-                const vault = await fetchVault(TEST_NETWORK, latestVaultId);
+                console.info('Adding collateral to Vault');
+                vault = await fetchVault(TEST_NETWORK, latestVaultId);
                 const drawnDebtExact = context.collateralOwned
                     .multipliedBy(vault.minUnitPrice)
                     .dividedBy(vault.stabilityFeeRate);
@@ -197,7 +166,7 @@ const simulation: Simulation = {
                         vaultWithContents.initialDebtDai
                     } of debt`
                 );
-                return context;
+                return { ...context, latestVaultId };
             },
         },
         {
@@ -221,11 +190,18 @@ const simulation: Simulation = {
             },
         },
         {
-            title: 'Bark',
+            title: 'Open the auction',
             entry: async context => {
                 const liquidatedId = context.latestVaultId;
                 const vault = await fetchVault(TEST_NETWORK, liquidatedId);
                 await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
+            },
+        },
+        {
+            title: 'Add DAI and MKR to the wallet',
+            entry: async () => {
+                await addDaiToBalance(new BigNumber(100000), HARDHAT_PUBLIC_KEY);
+                await addMkrToBalance(new BigNumber(100000), HARDHAT_PUBLIC_KEY);
             },
         },
     ],
