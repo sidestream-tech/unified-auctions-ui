@@ -137,7 +137,7 @@ export const setCollateralInVat = async (
     collateralAmount: BigNumber,
     provider?: EthereumProvider
 ) => {
-    const decimals = COLLATERALS[collateralType].decimals
+    const decimals = COLLATERALS[collateralType].decimals;
     const collateralTypeHex = ethers.utils.formatBytes32String(collateralType);
     await overwriteUintTable(
         'MCD_VAT',

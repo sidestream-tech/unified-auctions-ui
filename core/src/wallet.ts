@@ -48,7 +48,7 @@ export const fetchCollateralVatBalance = async function (
     const contract = await getContract(network, 'MCD_VAT');
     const encodedCollateralType = ethers.utils.formatBytes32String(collateralType);
     const wadAmount = await contract.gem(encodedCollateralType, walletAddress);
-    const decimals = COLLATERALS[collateralType].decimals
+    const decimals = COLLATERALS[collateralType].decimals;
     return new BigNumber(wadAmount._hex).shiftedBy(-decimals);
 };
 

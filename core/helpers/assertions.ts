@@ -2,6 +2,7 @@ import BigNumber from '../src/bignumber';
 import getContract, { getErc20Contract } from '../src/contracts';
 import { CollateralType } from '../src/types';
 import { ethers } from 'ethers';
+import { featchAllowanceAmount } from '../src/authorizations';
 
 export const assertVatCollateralBalance = async (
     network: string,
@@ -27,11 +28,15 @@ export const assertAllowance = async (
     authenticatedAddress: string,
     erc20TokenAddress: string,
     expectedAllowance: BigNumber,
-    decimals: number,
+    decimals: number
 ) => {
-    const token = await getErc20Contract(network, erc20TokenAddress);
-    const allowanceHex = await token.allowance(walletAddress, authenticatedAddress);
-    const allowance = new BigNumber(allowanceHex._hex).shiftedBy(-decimals);
+    const allowance = await featchAllowanceAmount(
+        network,
+        erc20TokenAddress,
+        authenticatedAddress,
+        walletAddress,
+        decimals
+    );
     if (allowance.toFixed(0) !== expectedAllowance.toFixed(0)) {
         throw new Error(
             `Unexpected allowance: Expected ${expectedAllowance.toFixed()}, actual: ${allowance.toFixed()}`
