@@ -18,9 +18,8 @@ import getContract, {
     getErc20Contract,
     getJoinNameByCollateralType,
 } from '../../src/contracts';
-import { depositCollateralToVat, withdrawCollateralFromVat } from '../../src/wallet';
+import { depositCollateralToVat, fetchCollateralInVat, withdrawCollateralFromVat } from '../../src/wallet';
 import { MAX, RAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
-import { assertBalance, assertVatCollateralBalance } from '../../helpers/assertions';
 import { CollateralType } from '../../src/types';
 import { ethers } from 'ethers';
 import { randomBigNumber } from '../../helpers/hex';
@@ -95,12 +94,19 @@ const simulation: Simulation = {
             entry: async context => {
                 const collateralType = context.collateralType;
                 await setCollateralInVat(collateralType, context.collateralOwned);
-                await assertVatCollateralBalance(
+                const balance = await fetchCollateralInVat(
                     TEST_NETWORK,
                     HARDHAT_PUBLIC_KEY,
                     collateralType,
-                    context.collateralOwned,
                     context.decimals
+                );
+                if (!balance.eq(context.collateralOwned)) {
+                    throw new Error(
+                        `Unexpected vat balance. Expected: ${context.collateralOwned.toFixed()}, Actual: ${balance.toFixed()}`
+                    );
+                }
+                console.info(
+                    `Vat Collateral ${collateralType} balance of ${HARDHAT_PUBLIC_KEY} is ${context.collateralOwned.toFixed()}`
                 );
                 return context;
             },
@@ -125,12 +131,16 @@ const simulation: Simulation = {
                 await contract.approve(addressJoin, MAX.toFixed(0));
                 console.info('Max allowance given out');
                 await withdrawCollateralFromVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, context.collateralType, undefined);
-                await assertBalance(
-                    TEST_NETWORK,
-                    tokenContractAddress,
-                    HARDHAT_PUBLIC_KEY,
-                    context.collateralOwned,
-                    context.decimals
+                const token = await getErc20Contract(TEST_NETWORK, tokenContractAddress);
+                const balanceHex = await token.balanceOf(HARDHAT_PUBLIC_KEY);
+                const balance = new BigNumber(balanceHex._hex).shiftedBy(-context.decimals);
+                if (!balance.eq(context.collateralOwned)) {
+                    throw new Error(
+                        `Unexpected wallet balance. Expected ${context.collateralOwned.toFixed()}, Actual ${balance.toFixed()}`
+                    );
+                }
+                console.info(
+                    `Wallet ${HARDHAT_PUBLIC_KEY} has ${context.collateralOwned.toFixed()} of token ${tokenContractAddress}`
                 );
                 return context;
             },
@@ -146,12 +156,21 @@ const simulation: Simulation = {
                     vault.collateralType,
                     context.collateralOwned
                 );
-                await assertVatCollateralBalance(
+                const balance = await fetchCollateralInVat(
                     TEST_NETWORK,
-                    vault.address,
-                    vault.collateralType,
-                    context.collateralOwned,
+                    HARDHAT_PUBLIC_KEY,
+                    context.collateralType,
                     context.decimals
+                );
+                if (!balance.eq(context.collateralOwned)) {
+                    throw new Error(
+                        `Unexpected vat balance. Expected: ${context.collateralOwned.toFixed()}, Actual: ${balance.toFixed()}`
+                    );
+                }
+                console.info(
+                    `Vat Collateral ${
+                        context.collateralType
+                    } balance of ${HARDHAT_PUBLIC_KEY} is ${context.collateralOwned.toFixed()} WAD`
                 );
                 return {
                     ...context,
