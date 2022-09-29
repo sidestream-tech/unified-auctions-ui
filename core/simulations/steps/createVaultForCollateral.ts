@@ -117,12 +117,14 @@ export const checkAvailableDebtForAmountAndMinUnitPrice = async (
     const debt = new BigNumber(debtHex._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
     const potentialDebt = minUnitPrice.multipliedBy(collateralAmount);
 
+    const availableGlobalDebt = overallDebt.minus(debt);
+    const availableCollateralDebt = maxCollateralDebt.minus(currentCollateralDebt);
+
     if (
-        minUnitPrice.isZero() ||
-        maxCollateralDebt.minus(currentCollateralDebt).lt(potentialDebt) ||
-        overallDebt.minus(debt).lt(potentialDebt)
+        availableCollateralDebt.lt(potentialDebt) ||
+        availableGlobalDebt.lt(potentialDebt)
     ) {
-        throw new Error(`Cannot borrow more dai with the collateral ${collateralType}`);
+        throw new Error(`Cannot borrow more dai with the collateral ${collateralType}: \n debt intended to have: ${potentialDebt} \n available global debt: ${availableGlobalDebt} \n available collateral debt: ${availableCollateralDebt}`);
     }
 };
 

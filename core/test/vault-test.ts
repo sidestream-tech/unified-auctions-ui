@@ -18,7 +18,9 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
-import createVaultForCollateral, { minimumAmountOfCollateralToOpenVault } from '../simulations/steps/createVaultForCollateral';
+import createVaultForCollateral, {
+    minimumAmountOfCollateralToOpenVault,
+} from '../simulations/steps/createVaultForCollateral';
 import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
 chai.use(deepEqualInAnyOrder);
 const MONTH = 60 * 60 * 24 * 30;
@@ -447,10 +449,11 @@ getLiquidatableCollateralTypes().forEach(collateralType => {
             await warpTime(24, MONTH);
             const previousStabilityFee = vault.stabilityFeeRate;
             await collectStabilityFees(TEST_NETWORK, vault.collateralType);
-            const currentStabilityFee = ( await fetchVault(TEST_NETWORK, vaultId) ).stabilityFeeRate
+            const currentStabilityFee = (await fetchVault(TEST_NETWORK, vaultId)).stabilityFeeRate;
             if (!currentStabilityFee.gt(previousStabilityFee)) {
-                console.warn('Successful vault creation, but stability fees did not change within reasonable time.')
-                return
+                throw new Error(
+                    'Successful vault creation, but stability fees did not change within reasonable time.'
+                );
             }
             await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
         });
