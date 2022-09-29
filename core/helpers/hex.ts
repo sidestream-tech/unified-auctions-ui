@@ -14,7 +14,6 @@ export const stripZeros = (val: string) => {
 };
 
 export const randomBigNumber = (min: BigNumber, max: BigNumber) => {
-    const generatedBytes = ethers.utils.hexlify(ethers.utils.randomBytes(32));
-    const offset = new BigNumber(generatedBytes).mod(max.minus(min));
+    const offset = BigNumber.random().multipliedBy(max.minus(min))
     return offset.plus(min);
 };
