@@ -12,6 +12,8 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
+import createVaultForCollateral, { getCollateralAmountInVat } from '../simulations/steps/createVaultForCollateral';
+import { SUPPORTED_COLLATERALS } from '../simulations/configs/vaultLiquidation';
 chai.use(deepEqualInAnyOrder);
 
 const compareVaultTransactionsNotLiquidated = (
@@ -404,6 +406,28 @@ describe('Sound values are extracted', () => {
                 expect(prices.nextPriceChange.getTime()).to.be.NaN;
             }
             expect(expectedReturn[type].nextUnitPrice).to.eq(prices.nextUnitPrice.toFixed());
+        }
+    });
+    it('can simulate every auction without fail', async () => {
+        for (const [collateralType, collateralConfig] of Object.entries(SUPPORTED_COLLATERALS)) {
+            console.info(`Running for ${collateralType}`);
+            let collateralOwned: BigNumber;
+            try {
+                collateralOwned = await getCollateralAmountInVat(collateralType);
+            } catch (e) {
+                if (e instanceof Error && e.message.startsWith('Cannot borrow more dai with the collateral')) {
+                    continue;
+                }
+                throw e;
+            }
+            try {
+                await createVaultForCollateral(collateralType, collateralOwned, collateralConfig.decimals);
+            } catch (e) {
+                if (e instanceof Error && e.message.startsWith('Join contract does not have sufficient funds')) {
+                    continue;
+                }
+                throw e;
+            }
         }
     });
 });

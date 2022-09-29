@@ -138,13 +138,7 @@ export const setCollateralInVat = async (
     provider?: EthereumProvider
 ) => {
     const decimals = COLLATERALS[collateralType].decimals;
+    const value = collateralAmount.shiftedBy(decimals);
     const collateralTypeHex = ethers.utils.formatBytes32String(collateralType);
-    await overwriteUintTable(
-        'MCD_VAT',
-        '0x4',
-        collateralTypeHex,
-        HARDHAT_PUBLIC_KEY,
-        collateralAmount.shiftedBy(decimals),
-        provider
-    );
+    await overwriteUintTable('MCD_VAT', '0x4', collateralTypeHex, HARDHAT_PUBLIC_KEY, value, provider);
 };

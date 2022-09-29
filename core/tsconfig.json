@@ -34,6 +34,8 @@
         "src/**/*.json",
         "./test/**/*.ts",
         "./test/**/*.json",
+        "./simulations/**/*.ts",
+        "./simulations/**/*.json",
         "./helpers/**/*.ts"
     ],
     "exclude": [

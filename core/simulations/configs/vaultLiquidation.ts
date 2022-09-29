@@ -1,16 +1,20 @@
 import { warpTime, resetNetworkAndSetupWallet, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
 import { Simulation } from '../types';
+import { CollateralConfig } from '../../src/types';
 import prompts from 'prompts';
 import COLLATERALS from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
-import { collectStabilityFees, fetchVault, liquidateVault, fetchVaultCollateralParameters } from '../../src/vaults';
+import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
-import getContract from '../../src/contracts';
-import { RAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
-import { CollateralType } from '../../src/types';
-import { ethers } from 'ethers';
-import { randomBigNumber } from '../../helpers/hex';
-import createVaultForCollateral from '../steps/createVaultForCollateral';
+import createVaultForCollateral, { getCollateralAmountInVat } from '../steps/createVaultForCollateral';
+
+const getSupportedCollaterals = () => {
+    const supportedCollaterals: Record<string, CollateralConfig> = JSON.parse(JSON.stringify(COLLATERALS));
+    delete supportedCollaterals['CRVV1ETHSTETH-A'];
+    return supportedCollaterals;
+};
+
+export const SUPPORTED_COLLATERALS = getSupportedCollaterals();
 
 const getCollateralType = async () => {
     const { collateralType } = await prompts([
@@ -18,7 +22,7 @@ const getCollateralType = async () => {
             type: 'select',
             name: 'collateralType',
             message: 'Select the collateral symbol to add to the VAT.',
-            choices: Object.keys(COLLATERALS)
+            choices: Object.keys(SUPPORTED_COLLATERALS)
                 .sort()
                 .map(collateral => ({
                     title: collateral,
@@ -29,30 +33,12 @@ const getCollateralType = async () => {
     return collateralType;
 };
 
-const getVaultLimits = async (collateralType: CollateralType) => {
-    const contract = await getContract(TEST_NETWORK, 'MCD_VAT');
-    const typeHex = ethers.utils.formatBytes32String(collateralType);
-    const { dust, line } = await contract.ilks(typeHex);
-    const { minUnitPrice } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
-    return {
-        minCollateralInVault: new BigNumber(dust._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS).div(minUnitPrice),
-        maxCollateralInVault: new BigNumber(line._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS).div(minUnitPrice),
-    };
-};
-
 const getBaseContext = async () => {
     const collateralType = await getCollateralType();
-    const vaultLimits = await getVaultLimits(collateralType);
+    const vaultLimits = await getCollateralAmountInVat(collateralType);
     const decimals = COLLATERALS[collateralType].decimals;
-    const collateralOwned = new BigNumber(
-        randomBigNumber(
-            vaultLimits.minCollateralInVault,
-            BigNumber.min(
-                vaultLimits.maxCollateralInVault.dividedBy(1.2),
-                vaultLimits.minCollateralInVault.multipliedBy(1.2)
-            )
-        ).toFixed(0)
-    );
+    const collateralOwned = await getCollateralAmountInVat(collateralType);
+
     console.info(`Collateral in the VAT initially: ${collateralOwned.toFixed()}`);
     return {
         collateralType,
