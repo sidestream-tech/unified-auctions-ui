@@ -334,9 +334,16 @@ export const liquidateVault = async (
     return await executeTransaction(network, 'MCD_DOG', 'bark', [typeHex, vaultAddress, sendIncentiveTo]);
 };
 
+const getLatestVault = async (network: string, walletAddress: string) => {
+    const cdpManager = await getContract(network, 'CDP_MANAGER', true);
+    const lastHex = await cdpManager.last(walletAddress);
+    return new BigNumber(lastHex._hex).toNumber();
+};
+
 export const openVault = async (network: string, ownerAddress: string, collateralType: CollateralType) => {
     const argumentList = [ethers.utils.formatBytes32String(collateralType), ownerAddress];
-    return await executeTransaction(network, 'CDP_MANAGER', 'open', argumentList);
+    await executeTransaction(network, 'CDP_MANAGER', 'open', argumentList);
+    return await getLatestVault(network, ownerAddress);
 };
 
 export const changeVaultContents = async (

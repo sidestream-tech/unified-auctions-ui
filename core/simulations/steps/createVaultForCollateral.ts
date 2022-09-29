@@ -14,12 +14,6 @@ import { MAX } from '../../src/constants/UNITS';
 import { CollateralType } from '../../src/types';
 import { ethers } from 'ethers';
 
-const getLatestVault = async () => {
-    const cdpManager = await getContract(TEST_NETWORK, 'CDP_MANAGER', true);
-    const lastHex = await cdpManager.last(HARDHAT_PUBLIC_KEY);
-    return new BigNumber(lastHex._hex).toNumber();
-};
-
 const setupCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     console.info('Setting collateral in VAT...');
     await setCollateralInVat(collateralType, collateralOwned);
@@ -138,8 +132,7 @@ const createVaultForCollateral = async (
 ) => {
     await setupCollateralInVat(collateralType, collateralOwned);
 
-    console.info('Opening the vault');
-    await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
+    const latestVaultId = await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
 
     const collateralConfig = getCollateralConfigByType(collateralType);
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
@@ -149,7 +142,6 @@ const createVaultForCollateral = async (
 
     await ensureBalance(tokenContractAddress, decimals, collateralOwned);
 
-    const latestVaultId = await getLatestVault();
     const vault = await fetchVault(TEST_NETWORK, latestVaultId);
     await depositCollateralToVat(TEST_NETWORK, vault.address, vault.collateralType, collateralOwned);
 
