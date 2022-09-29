@@ -371,7 +371,7 @@ export const changeCollateralInVault = async (
     transferTargetAddress: string
 ) => {
     const argumentList = [
-        new BigNumber(vaultId).toFixed(0),
+        vaultId.toString(0),
         transferTargetAddress,
         differenceCollateral.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
     ];
