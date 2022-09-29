@@ -5,7 +5,7 @@ import COLLATERALS from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
-import createVaultForCollateral, { getCollateralAmountInVat } from '../steps/createVaultForCollateral';
+import createVaultForCollateral, { minimumAmountOfCollateralToOpenVault } from '../steps/createVaultForCollateral';
 
 const UNSUPPORTED_COLLATERAL_TYPES = ['CRVV1ETHSTETH-A'];
 
@@ -19,7 +19,7 @@ const getCollateralType = async () => {
             type: 'select',
             name: 'collateralType',
             message: 'Select the collateral symbol to add to the VAT.',
-            choices: Object.keys(getLiquidatableCollateralTypes())
+            choices: getLiquidatableCollateralTypes()
                 .sort()
                 .map(collateral => ({
                     title: collateral,
@@ -32,16 +32,14 @@ const getCollateralType = async () => {
 
 const getBaseContext = async () => {
     const collateralType = await getCollateralType();
-    const vaultLimits = await getCollateralAmountInVat(collateralType);
     const decimals = COLLATERALS[collateralType].decimals;
-    const collateralOwned = await getCollateralAmountInVat(collateralType);
+    const collateralOwned = await minimumAmountOfCollateralToOpenVault(collateralType);
 
     console.info(`Collateral in the VAT initially: ${collateralOwned.toFixed()}`);
     return {
         collateralType,
         decimals,
         collateralOwned,
-        ...vaultLimits,
     };
 };
 

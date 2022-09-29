@@ -18,6 +18,7 @@ import {
 import { MAX } from '../../src/constants/UNITS';
 import { CollateralType } from '../../src/types';
 import { ethers } from 'ethers';
+import { roundUpToFirstSignificantDecimal } from '../../helpers/hex';
 
 const setupCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     console.info('Setting collateral in VAT...');
@@ -72,7 +73,8 @@ const addCollateralToVault = async (vaultId: number, collateralOwned: BigNumber)
     console.info('Adding collateral to Vault');
     const vault = await fetchVault(TEST_NETWORK, vaultId);
     const drawnDebtExact = collateralOwned.multipliedBy(vault.minUnitPrice).dividedBy(vault.stabilityFeeRate);
-    const drawnDebt = new BigNumber(drawnDebtExact.toFixed(0));
+    const drawnDebt = new BigNumber(drawnDebtExact.toFixed(0, BigNumber.ROUND_DOWN));
+    console.info(`Drawing ${drawnDebt.toFixed()} of dai`);
     await changeVaultContents(TEST_NETWORK, vaultId, drawnDebt, collateralOwned);
     const vaultWithContents = await fetchVault(TEST_NETWORK, vaultId);
     console.info(
@@ -82,17 +84,20 @@ const addCollateralToVault = async (vaultId: number, collateralOwned: BigNumber)
     );
 };
 
-export const getCollateralAmountInVat = async (collateralType: CollateralType) => {
+export const minimumAmountOfCollateralToOpenVault = async (collateralType: CollateralType) => {
     const contract = await getContract(TEST_NETWORK, 'MCD_VAT');
     const typeHex = ethers.utils.formatBytes32String(collateralType);
     const { dust } = await contract.ilks(typeHex);
     const { minUnitPrice } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
-    const minCollateralInVault = new BigNumber(new BigNumber(dust._hex).toFixed(0))
-        .shiftedBy(-RAD_NUMBER_OF_DIGITS)
-        .div(minUnitPrice);
+    const minDebtDai = new BigNumber(dust._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS)
+    const debt = !minDebtDai.isZero() ? minDebtDai : new BigNumber(1)
+    const minCollateralInVault = roundUpToFirstSignificantDecimal(
+        debt.div(minUnitPrice)
+    ).multipliedBy(1.1);
+    console.log(minCollateralInVault.toFixed())
 
     await checkAvailableDebtForAmountAndMinUnitPrice(collateralType, minCollateralInVault, minUnitPrice);
-    return new BigNumber(minCollateralInVault.multipliedBy(1.1).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed());
+    return minCollateralInVault;
 };
 
 export const checkAvailableDebtForAmountAndMinUnitPrice = async (
@@ -114,6 +119,7 @@ export const checkAvailableDebtForAmountAndMinUnitPrice = async (
     const potentialDebt = minUnitPrice.multipliedBy(collateralAmount);
 
     if (
+        minUnitPrice.isZero() ||
         maxCollateralDebt.minus(currentCollateralDebt).lt(potentialDebt) ||
         overallDebt.minus(debt).lt(potentialDebt)
     ) {

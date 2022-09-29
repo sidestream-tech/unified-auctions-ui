@@ -18,7 +18,7 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
-import createVaultForCollateral, { getCollateralAmountInVat } from '../simulations/steps/createVaultForCollateral';
+import createVaultForCollateral, { minimumAmountOfCollateralToOpenVault } from '../simulations/steps/createVaultForCollateral';
 import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
 chai.use(deepEqualInAnyOrder);
 const MONTH = 60 * 60 * 24 * 30;
@@ -422,10 +422,11 @@ getLiquidatableCollateralTypes().forEach(collateralType => {
             await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
         });
         it('runs the simulaton', async () => {
+            await resetNetwork(14052140);
             let collateralOwned: BigNumber;
             let vaultId: number;
             try {
-                collateralOwned = await getCollateralAmountInVat(collateralType);
+                collateralOwned = await minimumAmountOfCollateralToOpenVault(collateralType);
             } catch (e) {
                 if (e instanceof Error && e.message.startsWith('Cannot borrow more dai with the collateral')) {
                     return;
@@ -444,10 +445,14 @@ getLiquidatableCollateralTypes().forEach(collateralType => {
             const vault = await fetchVault(TEST_NETWORK, vaultId);
             expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));
             await warpTime(24, MONTH);
+            const previousStabilityFee = vault.stabilityFeeRate;
             await collectStabilityFees(TEST_NETWORK, vault.collateralType);
+            const currentStabilityFee = ( await fetchVault(TEST_NETWORK, vaultId) ).stabilityFeeRate
+            if (!currentStabilityFee.gt(previousStabilityFee)) {
+                console.warn('Successful vault creation, but stability fees did not change within reasonable time.')
+                return
+            }
             await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
-            const vaultTransaction = await getVaultTransaction(TEST_NETWORK, vault);
-            expect(vaultTransaction.state).to.eq('liquidated');
         });
     });
 });
