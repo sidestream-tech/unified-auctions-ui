@@ -87,7 +87,7 @@ export const getCollateralAmountInVat = async (collateralType: CollateralType) =
         .div(minUnitPrice);
 
     await checkAvailableDebtForAmountAndMinUnitPrice(collateralType, minCollateralInVault, minUnitPrice);
-    return new BigNumber(minCollateralInVault.multipliedBy(1.1).toFixed(0));
+    return new BigNumber(minCollateralInVault.toFixed(0));
 };
 
 export const checkAvailableDebtForAmountAndMinUnitPrice = async (
