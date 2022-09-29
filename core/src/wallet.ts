@@ -118,9 +118,9 @@ export const depositCollateralToVat = async function (
     notifier?: Notifier
 ): Promise<void> {
     console.info('Depositing Collateral to vault');
-    const depositWad = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
+    const depositRounded = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
     const contractName = getJoinNameByCollateralType(collateralType);
-    await executeTransaction(network, contractName, 'join', [walletAddress, depositWad], {
+    await executeTransaction(network, contractName, 'join', [walletAddress, depositRounded], {
         notifier,
         confirmTransaction: true,
     });
