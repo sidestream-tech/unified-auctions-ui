@@ -68,7 +68,7 @@ const addCollateralToVault = async (vaultId: number, collateralOwned: BigNumber)
     console.info('Adding collateral to Vault');
     const vault = await fetchVault(TEST_NETWORK, vaultId);
     const drawnDebtExact = collateralOwned.multipliedBy(vault.minUnitPrice).dividedBy(vault.stabilityFeeRate);
-    const drawnDebt = new BigNumber(drawnDebtExact.toFixed(0))
+    const drawnDebt = new BigNumber(drawnDebtExact.toFixed(0));
     await changeVaultContents(TEST_NETWORK, vaultId, drawnDebt, collateralOwned);
     const vaultWithContents = await fetchVault(TEST_NETWORK, vaultId);
     console.info(
@@ -87,7 +87,7 @@ export const getCollateralAmountInVat = async (collateralType: CollateralType) =
         .div(minUnitPrice);
 
     await checkAvailableDebtForAmountAndMinUnitPrice(collateralType, minCollateralInVault, minUnitPrice);
-    return new BigNumber(minCollateralInVault.multipliedBy(1.1).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed())
+    return new BigNumber(minCollateralInVault.multipliedBy(1.1).shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed());
 };
 
 export const checkAvailableDebtForAmountAndMinUnitPrice = async (
@@ -120,9 +120,9 @@ const isBalanceGreaterThan = async (
     network: string,
     tokenContractAddress: string,
     address: string,
-    balanceMin: BigNumber,
+    balanceMin: BigNumber
 ) => {
-    const balance = await fetchERC20TokenBalance(network, tokenContractAddress, address, WAD_NUMBER_OF_DIGITS)
+    const balance = await fetchERC20TokenBalance(network, tokenContractAddress, address, WAD_NUMBER_OF_DIGITS);
     return balanceMin.lt(balance);
 };
 

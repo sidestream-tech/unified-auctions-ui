@@ -26,8 +26,8 @@ const selectAndRunSimulation = async () => {
             if (i !== 0) {
                 await keypress(`Press Enter to proceed to the next step "${step.title}"`);
             }
-            const returnedValues = await step.entry(context)
-            context = { ...context, ...returnedValues ?? {} };
+            const returnedValues = await step.entry(context);
+            context = { ...context, ...(returnedValues ?? {}) };
             console.info(`Step "${step.title}" is successfully completed\n`);
         }
         console.info(`Simulation "${selectedSimulation.value}" is completed`);

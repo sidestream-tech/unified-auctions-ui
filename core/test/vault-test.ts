@@ -1,4 +1,10 @@
-import { collectStabilityFees, fetchLiquidationRatioAndOracleAddress, fetchVault, getVaultTransaction, liquidateVault } from '../src/vaults';
+import {
+    collectStabilityFees,
+    fetchLiquidationRatioAndOracleAddress,
+    fetchVault,
+    getVaultTransaction,
+    liquidateVault,
+} from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
 import { resetNetwork, warpTime } from '../helpers/hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
@@ -15,7 +21,7 @@ import { fetchVATbalanceDAI } from '../src/wallet';
 import createVaultForCollateral, { getCollateralAmountInVat } from '../simulations/steps/createVaultForCollateral';
 import { SUPPORTED_COLLATERALS } from '../simulations/configs/vaultLiquidation';
 chai.use(deepEqualInAnyOrder);
-const MONTH = 60*60*24*30;
+const MONTH = 60 * 60 * 24 * 30;
 
 const compareVaultTransactionsNotLiquidated = (
     expected: VaultTransactionNotLiquidated,
@@ -438,10 +444,10 @@ Object.entries(SUPPORTED_COLLATERALS).forEach(([collateralType, collateralConfig
             const vault = await fetchVault(TEST_NETWORK, vaultId);
             expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));
             await warpTime(24, MONTH);
-            await collectStabilityFees(TEST_NETWORK, vault.collateralType)
+            await collectStabilityFees(TEST_NETWORK, vault.collateralType);
             await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
             const vaultTransaction = await getVaultTransaction(TEST_NETWORK, vault);
-            expect(vaultTransaction.state).to.eq('liquidated')
+            expect(vaultTransaction.state).to.eq('liquidated');
         });
     });
 });
