@@ -13,7 +13,6 @@ import {
     isValidNumber,
     isValueSmallButNotZero,
     formatToAutomaticDecimalPoints,
-    formatWithThousandSeparators,
 } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 
 export default Vue.extend({
@@ -33,7 +32,7 @@ export default Vue.extend({
             type: Number,
             default: undefined,
         },
-        formatted: {
+        disableThousandSeparators: {
             type: Boolean,
             default: false,
         },
@@ -54,10 +53,9 @@ export default Vue.extend({
     },
     methods: {
         format(value: number | BigNumber): string {
-            if (this.formatted) {
-                return formatWithThousandSeparators(formatToAutomaticDecimalPoints(value, this.decimalPlaces));
-            }
-            return formatToAutomaticDecimalPoints(value, this.decimalPlaces);
+            return formatToAutomaticDecimalPoints(value, this.decimalPlaces, {
+                formatWithThousandSeparators: !this.disableThousandSeparators,
+            });
         },
     },
 });

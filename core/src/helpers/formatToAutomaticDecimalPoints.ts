@@ -62,11 +62,20 @@ export function formatWithThousandSeparators(value: string): string {
     return value.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 }
 
+interface formatToAutomaticDecimalPointsOptions {
+    formatWithThousandSeparators: boolean;
+}
+
 export function formatToAutomaticDecimalPoints(
     value: number | BigNumber,
-    decimalPlaces: number = DECIMAL_PLACES_DEFAULT
+    decimalPlaces: number = DECIMAL_PLACES_DEFAULT,
+    options?: formatToAutomaticDecimalPointsOptions
 ): string {
-    return limitedValue(value).toFixed(dynamicDecimalPlaces(value, decimalPlaces));
+    const formattedValue = limitedValue(value).toFixed(dynamicDecimalPlaces(value, decimalPlaces));
+    if (options?.formatWithThousandSeparators) {
+        return formatWithThousandSeparators(formattedValue);
+    }
+    return formattedValue;
 }
 
 export function formatToAutomaticDecimalPointsString(value: number | BigNumber, decimalPlaces?: number) {
