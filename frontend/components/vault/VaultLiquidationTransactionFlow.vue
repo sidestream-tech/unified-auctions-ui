@@ -20,7 +20,7 @@
                 <TimeTill :date="vaultTransaction.pastLiquidations[0].liquidationDate" /> in the transaction
                 <FormatAddress :value="vaultTransaction.pastLiquidations[0].transactionHash" />.
                 <WithdrawDaiFromVat
-                    v-if="isWalletConnected"
+                    v-if="walletAddress"
                     class="mt-4"
                     :wallet-address="walletAddress"
                     :dai-vat-balance="daiVatBalance"
