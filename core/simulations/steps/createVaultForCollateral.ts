@@ -72,7 +72,6 @@ const addCollateralToVault = async (vaultId: number, collateralOwned: BigNumber)
     const vault = await fetchVault(TEST_NETWORK, vaultId);
     const drawnDebtExact = collateralOwned.multipliedBy(vault.minUnitPrice).dividedBy(vault.stabilityFeeRate);
     const drawnDebt = new BigNumber(drawnDebtExact.toPrecision(drawnDebtExact.e || 0 + 1, BigNumber.ROUND_DOWN));
-    console.info(drawnDebt.toFixed(), vault.minUnitPrice.toFixed(), drawnDebtExact.toFixed());
     await changeVaultContents(TEST_NETWORK, vaultId, drawnDebt, collateralOwned);
     const vaultWithContents = await fetchVault(TEST_NETWORK, vaultId);
     console.info(

@@ -412,6 +412,7 @@ describe('Sound values are extracted', () => {
         for (const [collateralType, collateralConfig] of Object.entries(SUPPORTED_COLLATERALS)) {
             console.info(`Running for ${collateralType}`);
             let collateralOwned: BigNumber;
+            let vaultId: number;
             try {
                 collateralOwned = await getCollateralAmountInVat(collateralType);
             } catch (e) {
@@ -421,13 +422,16 @@ describe('Sound values are extracted', () => {
                 throw e;
             }
             try {
-                await createVaultForCollateral(collateralType, collateralOwned, collateralConfig.decimals);
+                vaultId = await createVaultForCollateral(collateralType, collateralOwned, collateralConfig.decimals);
             } catch (e) {
                 if (e instanceof Error && e.message.startsWith('Join contract does not have sufficient funds')) {
                     continue;
                 }
                 throw e;
             }
+
+            const vault = await fetchVault(TEST_NETWORK, vaultId)
+            expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0))
         }
     });
 });
