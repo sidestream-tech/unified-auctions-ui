@@ -31,11 +31,13 @@ const setupCollateralInVat = async (collateralType: CollateralType, collateralOw
     console.info(`Vat Collateral ${collateralType} balance of ${HARDHAT_PUBLIC_KEY} is ${collateralOwned.toFixed()}`);
     return balance;
 };
+
 const giveMaxAllowance = async (addressJoin: string, tokenContractAddress: string) => {
     const contract = await getErc20Contract(TEST_NETWORK, tokenContractAddress, true);
     await contract.approve(addressJoin, MAX.toFixed(0));
     console.info('Max allowance given out');
 };
+
 const extractCollateralFromVat = async (
     collateralType: CollateralType,
     collateralOwned: BigNumber,
@@ -55,6 +57,7 @@ const extractCollateralFromVat = async (
     await withdrawCollateralFromVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType, undefined);
     return tokenContractAddress;
 };
+
 const ensureBalance = async (tokenContractAddress: string, decimals: number, collateralOwned: BigNumber) => {
     const balance = await fetchERC20TokenBalance(TEST_NETWORK, tokenContractAddress, HARDHAT_PUBLIC_KEY, decimals);
     if (!balance.eq(collateralOwned)) {
@@ -64,6 +67,7 @@ const ensureBalance = async (tokenContractAddress: string, decimals: number, col
     }
     console.info(`Wallet ${HARDHAT_PUBLIC_KEY} has ${collateralOwned.toFixed()} of token ${tokenContractAddress}`);
 };
+
 const addCollateralToVault = async (vaultId: number, collateralOwned: BigNumber) => {
     console.info('Adding collateral to Vault');
     const vault = await fetchVault(TEST_NETWORK, vaultId);
@@ -77,6 +81,7 @@ const addCollateralToVault = async (vaultId: number, collateralOwned: BigNumber)
         } of debt`
     );
 };
+
 export const getCollateralAmountInVat = async (collateralType: CollateralType) => {
     const contract = await getContract(TEST_NETWORK, 'MCD_VAT');
     const typeHex = ethers.utils.formatBytes32String(collateralType);
