@@ -60,10 +60,7 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
-                const latestVaultId = await createVaultForCollateral(
-                    context.collateralType,
-                    context.collateralOwned,
-                );
+                const latestVaultId = await createVaultForCollateral(context.collateralType, context.collateralOwned);
                 return { ...context, latestVaultId };
             },
         },
