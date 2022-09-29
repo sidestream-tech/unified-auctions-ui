@@ -131,11 +131,8 @@ const isBalanceGreaterThan = async (
     return balanceMin.lt(balance);
 };
 
-const createVaultForCollateral = async (
-    collateralType: CollateralType,
-    collateralOwned: BigNumber,
-    decimals: number
-) => {
+const createVaultForCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    const decimals = getCollateralConfigByType(collateralType).decimals;
     await setupCollateralInVat(collateralType, collateralOwned);
 
     const latestVaultId = await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);

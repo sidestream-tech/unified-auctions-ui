@@ -66,7 +66,6 @@ const simulation: Simulation = {
                 const latestVaultId = await createVaultForCollateral(
                     context.collateralType,
                     context.collateralOwned,
-                    context.decimals
                 );
                 return { ...context, latestVaultId };
             },

@@ -416,7 +416,7 @@ describe('Sound values are extracted', () => {
         }
     });
 });
-Object.entries(SUPPORTED_COLLATERALS).forEach(([collateralType, collateralConfig]) => {
+Object.keys(SUPPORTED_COLLATERALS).forEach(collateralType => {
     describe(`Collateral vault simulation liquidation ${collateralType}`, () => {
         before(async () => {
             await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
@@ -433,7 +433,7 @@ Object.entries(SUPPORTED_COLLATERALS).forEach(([collateralType, collateralConfig
                 throw e;
             }
             try {
-                vaultId = await createVaultForCollateral(collateralType, collateralOwned, collateralConfig.decimals);
+                vaultId = await createVaultForCollateral(collateralType, collateralOwned);
             } catch (e) {
                 if (e instanceof Error && e.message.startsWith('Join contract does not have sufficient funds')) {
                     return;
