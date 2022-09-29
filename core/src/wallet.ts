@@ -102,9 +102,9 @@ export const withdrawCollateralFromVat = async function (
 ): Promise<void> {
     const withdrawalAmount = amount || (await fetchCollateralVatBalance(network, walletAddress, collateralType));
     const decimals = COLLATERALS[collateralType].decimals;
-    const withdrawalAmountWad = withdrawalAmount.shiftedBy(decimals).toFixed(0, BigNumber.ROUND_DOWN);
+    const withdrawalAmountRounded = withdrawalAmount.shiftedBy(decimals).toFixed(0, BigNumber.ROUND_DOWN);
     const contractName = getJoinNameByCollateralType(collateralType);
-    await executeTransaction(network, contractName, 'exit', [walletAddress, withdrawalAmountWad], {
+    await executeTransaction(network, contractName, 'exit', [walletAddress, withdrawalAmountRounded], {
         notifier,
         confirmTransaction: true,
     });
