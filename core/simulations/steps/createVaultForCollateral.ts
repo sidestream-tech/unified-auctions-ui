@@ -9,7 +9,12 @@ import getContract, {
     getErc20Contract,
     getJoinNameByCollateralType,
 } from '../../src/contracts';
-import { depositCollateralToVat, fetchCollateralInVat, withdrawCollateralFromVat } from '../../src/wallet';
+import {
+    depositCollateralToVat,
+    fetchCollateralInVat,
+    fetchERC20TokenBalance,
+    withdrawCollateralFromVat,
+} from '../../src/wallet';
 import { MAX } from '../../src/constants/UNITS';
 import { CollateralType } from '../../src/types';
 import { ethers } from 'ethers';
@@ -51,9 +56,7 @@ const extractCollateralFromVat = async (
     return tokenContractAddress;
 };
 const ensureBalance = async (tokenContractAddress: string, decimals: number, collateralOwned: BigNumber) => {
-    const token = await getErc20Contract(TEST_NETWORK, tokenContractAddress);
-    const balanceHex = await token.balanceOf(HARDHAT_PUBLIC_KEY);
-    const balance = new BigNumber(balanceHex._hex).shiftedBy(-decimals);
+    const balance = await fetchERC20TokenBalance(TEST_NETWORK, tokenContractAddress, HARDHAT_PUBLIC_KEY, decimals);
     if (!balance.eq(collateralOwned)) {
         throw new Error(
             `Unexpected wallet balance. Expected ${collateralOwned.toFixed()}, Actual ${balance.toFixed()}`
@@ -65,7 +68,7 @@ const addCollateralToVault = async (vaultId: number, collateralOwned: BigNumber)
     console.info('Adding collateral to Vault');
     const vault = await fetchVault(TEST_NETWORK, vaultId);
     const drawnDebtExact = collateralOwned.multipliedBy(vault.minUnitPrice).dividedBy(vault.stabilityFeeRate);
-    const drawnDebt = new BigNumber(drawnDebtExact.toPrecision(drawnDebtExact.e || 0 + 1, BigNumber.ROUND_DOWN));
+    const drawnDebt = new BigNumber(drawnDebtExact.toFixed(0));
     await changeVaultContents(TEST_NETWORK, vaultId, drawnDebt, collateralOwned);
     const vaultWithContents = await fetchVault(TEST_NETWORK, vaultId);
     console.info(

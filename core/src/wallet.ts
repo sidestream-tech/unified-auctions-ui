@@ -2,7 +2,7 @@ import type { CollateralType, Notifier, WalletBalances } from './types';
 import { ethers } from 'ethers';
 import getProvider from './provider';
 import BigNumber from './bignumber';
-import getContract, { getJoinNameByCollateralType } from './contracts';
+import getContract, { getErc20Contract, getJoinNameByCollateralType } from './contracts';
 import executeTransaction from './execute';
 import {
     DAI_NUMBER_OF_DIGITS,
@@ -124,4 +124,15 @@ export const depositCollateralToVat = async function (
         notifier,
         confirmTransaction: true,
     });
+};
+
+export const fetchERC20TokenBalance = async (
+    network: string,
+    tokenContractAddress: string,
+    walletAddress: string,
+    decimals: number
+) => {
+    const token = await getErc20Contract(network, tokenContractAddress);
+    const balanceHex = await token.balanceOf(walletAddress);
+    return new BigNumber(balanceHex._hex).shiftedBy(-decimals);
 };
