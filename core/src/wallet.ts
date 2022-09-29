@@ -48,8 +48,7 @@ export const fetchCollateralVatBalance = async function (
     const contract = await getContract(network, 'MCD_VAT');
     const encodedCollateralType = ethers.utils.formatBytes32String(collateralType);
     const wadAmount = await contract.gem(encodedCollateralType, walletAddress);
-    const decimals = COLLATERALS[collateralType].decimals;
-    return new BigNumber(wadAmount._hex).shiftedBy(-decimals);
+    return new BigNumber(wadAmount._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
 };
 
 export const fetchWalletBalances = async function (network: string, walletAddress: string): Promise<WalletBalances> {
@@ -75,15 +74,10 @@ export const depositToVAT = async function (
     });
 };
 
-export const fetchCollateralInVat = async (
-    network: string,
-    walletAddress: string,
-    collateralType: CollateralType,
-    decimals: number
-) => {
+export const fetchCollateralInVat = async (network: string, walletAddress: string, collateralType: CollateralType) => {
     const vat = await getContract(network, 'MCD_VAT');
     const balanceHex = await vat.gem(ethers.utils.formatBytes32String(collateralType), walletAddress);
-    return new BigNumber(balanceHex._hex).shiftedBy(-decimals);
+    return new BigNumber(balanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
 };
 
 export const withdrawFromVAT = async function (

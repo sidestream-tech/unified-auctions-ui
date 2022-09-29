@@ -3,7 +3,7 @@ import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
 import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
-import { RAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
+import { RAD_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
 import getContract, {
     getContractAddressByName,
     getErc20Contract,
@@ -20,10 +20,10 @@ const getLatestVault = async () => {
     return new BigNumber(lastHex._hex).toNumber();
 };
 
-const setupCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber, decimals: number) => {
+const setupCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     console.info('Setting collateral in VAT...');
     await setCollateralInVat(collateralType, collateralOwned);
-    const balance = await fetchCollateralInVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType, decimals);
+    const balance = await fetchCollateralInVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
     if (!balance.eq(collateralOwned)) {
         throw new Error(
             `Unexpected vat balance. Expected: ${collateralOwned.toFixed()}, Actual: ${balance.toFixed()}`
@@ -32,23 +32,23 @@ const setupCollateralInVat = async (collateralType: CollateralType, collateralOw
     console.info(`Vat Collateral ${collateralType} balance of ${HARDHAT_PUBLIC_KEY} is ${collateralOwned.toFixed()}`);
     return balance;
 };
+const giveMaxAllowance = async (addressJoin: string, tokenContractAddress: string) => {
+    const contract = await getErc20Contract(TEST_NETWORK, tokenContractAddress, true);
+    await contract.approve(addressJoin, MAX.toFixed(0));
+    console.info('Max allowance given out');
+};
 const extractCollateralFromVat = async (
     collateralType: CollateralType,
     collateralOwned: BigNumber,
-    decimals: number,
     tokenContractAddress: string
 ) => {
     console.info('Extracting collateral');
     const addressJoin = await getContractAddressByName(TEST_NETWORK, getJoinNameByCollateralType(collateralType));
-    const contract = await getErc20Contract(TEST_NETWORK, tokenContractAddress, true);
-    await contract.approve(addressJoin, MAX.toFixed(0));
-    console.info('Max allowance given out');
     const joinContractHasSufficientFunds = await isBalanceGreaterThan(
         TEST_NETWORK,
         tokenContractAddress,
         addressJoin,
-        collateralOwned,
-        decimals
+        collateralOwned
     );
     if (!joinContractHasSufficientFunds) {
         throw new Error('Join contract does not have sufficient funds');
@@ -124,12 +124,11 @@ const isBalanceGreaterThan = async (
     network: string,
     tokenContractAddress: string,
     address: string,
-    balanceMin: BigNumber,
-    decimals: number
+    balanceMin: BigNumber
 ) => {
     const contract = await getErc20Contract(network, tokenContractAddress);
     const balanceHex = await contract.balanceOf(address);
-    const balance = new BigNumber(balanceHex._hex).shiftedBy(-decimals);
+    const balance = new BigNumber(balanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
     return balanceMin.lt(balance);
 };
 
@@ -138,14 +137,16 @@ const createVaultForCollateral = async (
     collateralOwned: BigNumber,
     decimals: number
 ) => {
-    await setupCollateralInVat(collateralType, collateralOwned, decimals);
+    await setupCollateralInVat(collateralType, collateralOwned);
 
     console.info('Opening the vault');
     await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
 
     const collateralConfig = getCollateralConfigByType(collateralType);
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
-    await extractCollateralFromVat(collateralType, collateralOwned, decimals, tokenContractAddress);
+    const addressJoin = await getContractAddressByName(TEST_NETWORK, getJoinNameByCollateralType(collateralType));
+    await giveMaxAllowance(addressJoin, tokenContractAddress);
+    await extractCollateralFromVat(collateralType, collateralOwned, tokenContractAddress);
 
     await ensureBalance(tokenContractAddress, decimals, collateralOwned);
 
