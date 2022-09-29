@@ -94,7 +94,6 @@ export const minimumAmountOfCollateralToOpenVault = async (collateralType: Colla
     const minCollateralInVault = roundUpToFirstSignificantDecimal(
         debt.div(minUnitPrice)
     ).multipliedBy(1.1);
-    console.log(minCollateralInVault.toFixed())
 
     await checkAvailableDebtForAmountAndMinUnitPrice(collateralType, minCollateralInVault, minUnitPrice);
     return minCollateralInVault;
