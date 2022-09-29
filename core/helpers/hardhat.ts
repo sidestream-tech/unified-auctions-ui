@@ -63,7 +63,7 @@ export const overwriteUintTable = async (
     provider: EthereumProvider = hre.network.provider
 ) => {
     const rowAddress = generateMappingSlotAddress(mappingSlotAddress, tableRowKey);
-    overwriteUintMapping(contractName, rowAddress, tableColumnKey, newValue, provider);
+    await overwriteUintMapping(contractName, rowAddress, tableColumnKey, newValue, provider);
 };
 
 export const resetNetwork = async (

@@ -17,3 +17,8 @@ export const roundUpToFirstSignificantDecimal = (number: BigNumber) => {
     const power = Math.abs(number.e || 0);
     return new BigNumber(number.toFixed(power + 1, BigNumber.ROUND_UP));
 };
+
+export const roundDownToFirstSignificantDecimal = (number: BigNumber) => {
+    const power = Math.abs(number.e || 0);
+    return new BigNumber(number.toFixed(power + 1, BigNumber.ROUND_DOWN));
+};

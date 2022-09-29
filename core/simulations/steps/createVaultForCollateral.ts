@@ -18,7 +18,7 @@ import {
 import { MAX } from '../../src/constants/UNITS';
 import { CollateralType } from '../../src/types';
 import { ethers } from 'ethers';
-import { roundUpToFirstSignificantDecimal } from '../../helpers/hex';
+import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
 
 const setupCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     console.info('Setting collateral in VAT...');
@@ -73,7 +73,7 @@ const addCollateralToVault = async (vaultId: number, collateralOwned: BigNumber)
     console.info('Adding collateral to Vault');
     const vault = await fetchVault(TEST_NETWORK, vaultId);
     const drawnDebtExact = collateralOwned.multipliedBy(vault.minUnitPrice).dividedBy(vault.stabilityFeeRate);
-    const drawnDebt = new BigNumber(drawnDebtExact.toFixed(0, BigNumber.ROUND_DOWN));
+    const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact)
     console.info(`Drawing ${drawnDebt.toFixed()} of dai`);
     await changeVaultContents(TEST_NETWORK, vaultId, drawnDebt, collateralOwned);
     const vaultWithContents = await fetchVault(TEST_NETWORK, vaultId);
