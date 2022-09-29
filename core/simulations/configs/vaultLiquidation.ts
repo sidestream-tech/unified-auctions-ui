@@ -61,7 +61,7 @@ const simulation: Simulation = {
             },
         },
         {
-            title: 'Create the auction',
+            title: 'Create the vault',
             entry: async context => {
                 const latestVaultId = await createVaultForCollateral(
                     context.collateralType,
@@ -92,7 +92,7 @@ const simulation: Simulation = {
             },
         },
         {
-            title: 'Open the auction',
+            title: 'Liquidate the vault',
             entry: async context => {
                 const liquidatedId = context.latestVaultId;
                 const vault = await fetchVault(TEST_NETWORK, liquidatedId);
