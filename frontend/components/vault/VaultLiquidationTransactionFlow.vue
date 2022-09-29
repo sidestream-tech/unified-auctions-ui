@@ -47,7 +47,7 @@
                 :vault-transaction="vaultTransaction"
                 :is-refreshing="isRefreshingLimits"
                 :is-explanations-shown="isExplanationsShown"
-                :is-correct.sync="areLimitsNotReached"
+                :is-correct.sync="isAnyLiquidationPossible"
                 @refreshLimits="$emit('refreshLimits')"
             />
             <VaultLiquidationPanel
@@ -55,7 +55,7 @@
                 :network="vaultTransaction.network"
                 :vault-state="vaultTransaction.state"
                 :wallet-address="walletAddress"
-                :disabled="!isWalletConnected || !areLimitsNotReached"
+                :disabled="!isWalletConnected || !isAnyLiquidationPossible"
                 :is-liquidating="isLiquidating"
                 :is-explanations-shown="isExplanationsShown"
                 @liquidate="$emit('liquidate', $event)"
@@ -122,7 +122,7 @@ export default Vue.extend({
     data() {
         return {
             isWalletConnected: false,
-            areLimitsNotReached: false,
+            isAnyLiquidationPossible: false,
         };
     },
     computed: {

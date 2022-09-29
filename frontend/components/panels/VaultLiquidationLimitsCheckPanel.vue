@@ -31,11 +31,11 @@
                     >
                 </Explain>
                 -
-                <Explain :text="format(debtAndIncentives)">
-                    The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
-                    of this auction
+                <Explain :text="format(debtTimesPenaltyRatio)">
+                    The vault's debt plus a liquidation penalty (including the liquidation incentives) relative to the
+                    amount of debt
                 </Explain>
-                = <FormatCurrency :value="globalDifference" currency="DAI"
+                = <FormatCurrency :class="globalLimitColor" :value="globalDifference" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -65,11 +65,11 @@
                     >
                 </Explain>
                 -
-                <Explain :text="format(debtAndIncentives)">
-                    The amount of DAI that will be auctioned after the current liquidation plus liquidation incentives
-                    of this auction
+                <Explain :text="format(debtTimesPenaltyRatio)">
+                    The vault's debt plus a liquidation penalty (including the liquidation incentives) relative to the
+                    amount of debt
                 </Explain>
-                = <FormatCurrency :value="collateralDifference" currency="DAI"
+                = <FormatCurrency :class="collateralLimitColor" :value="collateralDifference" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -92,7 +92,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
-import { VaultTransaction } from 'auctions-core/src/types';
+import { VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import { formatToAutomaticDecimalPoints } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Explain from '~/components/common/other/Explain.vue';
@@ -111,7 +111,7 @@ export default Vue.extend({
     },
     props: {
         vaultTransaction: {
-            type: Object as Vue.PropType<VaultTransaction>,
+            type: Object as Vue.PropType<VaultTransactionNotLiquidated>,
             required: true,
         },
         isRefreshing: {
@@ -124,41 +124,69 @@ export default Vue.extend({
         },
     },
     computed: {
-        debtAndIncentives(): BigNumber {
-            return this.vaultTransaction.debtDai
-                .plus(this.vaultTransaction.incentiveRelativeDai)
-                .plus(this.vaultTransaction.incentiveConstantDai);
-        },
-        globalDifference(): BigNumber {
-            return this.vaultTransaction.maximumProtocolDebtDai
-                .minus(this.vaultTransaction.currentProtocolDebtDai)
-                .minus(this.debtAndIncentives);
-        },
-        collateralDifference(): BigNumber {
-            return this.vaultTransaction.maximumCollateralDebtDai
-                .minus(this.vaultTransaction.currentCollateralDebtDai)
-                .minus(this.debtAndIncentives);
-        },
         isGlobalLimitMissing(): boolean {
             return !this.vaultTransaction.maximumProtocolDebtDai || !this.vaultTransaction.currentProtocolDebtDai;
         },
         isCollateralLimitMissing(): boolean {
             return !this.vaultTransaction.maximumCollateralDebtDai || !this.vaultTransaction.currentCollateralDebtDai;
         },
+        debtTimesPenaltyRatio(): BigNumber {
+            return this.vaultTransaction.debtDai.times(this.vaultTransaction.liquidationPenaltyRatio);
+        },
+        globalDifference(): BigNumber {
+            return this.vaultTransaction.maximumProtocolDebtDai
+                .minus(this.vaultTransaction.currentProtocolDebtDai)
+                .minus(this.debtTimesPenaltyRatio);
+        },
+        collateralDifference(): BigNumber {
+            return this.vaultTransaction.maximumCollateralDebtDai
+                .minus(this.vaultTransaction.currentCollateralDebtDai)
+                .minus(this.debtTimesPenaltyRatio);
+        },
+        globalLimitColor(): string {
+            if (this.globalDifference.isNegative()) {
+                if (this.vaultTransaction.state === 'liquidatable') {
+                    return 'text-orange-500';
+                }
+                return 'text-red-500';
+            }
+            return 'text-current';
+        },
+        collateralLimitColor(): string {
+            if (this.collateralDifference.isNegative()) {
+                if (this.vaultTransaction.state === 'liquidatable') {
+                    return 'text-orange-500';
+                }
+                return 'text-red-500';
+            }
+            return 'text-current';
+        },
         currentStateAndTitle(): PanelProps {
-            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing || !this.debtAndIncentives) {
+            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing || !this.debtTimesPenaltyRatio) {
                 return {
                     name: 'inactive',
                     title: 'Current liquidation limits are unknown',
                 };
             }
             if (this.globalDifference.isNegative()) {
+                if (this.vaultTransaction.state === 'liquidatable') {
+                    return {
+                        name: 'partlyIncorrect',
+                        title: 'Current global liquidation limits are reached',
+                    };
+                }
                 return {
                     name: 'incorrect',
                     title: 'Current global liquidation limits are reached',
                 };
             }
             if (this.collateralDifference.isNegative()) {
+                if (this.vaultTransaction.state === 'liquidatable') {
+                    return {
+                        name: 'partlyIncorrect',
+                        title: `Current ${this.vaultTransaction.collateralType} liquidation limits are reached`,
+                    };
+                }
                 return {
                     name: 'incorrect',
                     title: `Current ${this.vaultTransaction.collateralType} liquidation limits are reached`,
@@ -174,7 +202,10 @@ export default Vue.extend({
         currentStateAndTitle: {
             immediate: true,
             handler(newCurrentStateAndTitle) {
-                this.$emit('update:isCorrect', newCurrentStateAndTitle.name === 'correct');
+                this.$emit(
+                    'update:isCorrect',
+                    newCurrentStateAndTitle.name === 'correct' || newCurrentStateAndTitle.name === 'partlyIncorrect'
+                );
             },
         },
     },

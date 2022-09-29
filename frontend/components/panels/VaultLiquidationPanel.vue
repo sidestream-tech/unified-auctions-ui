@@ -15,7 +15,7 @@
                 @execute="executeWithOtherWallet"
             />
             <BaseButton
-                :disabled="!isLiquidatable || disabled"
+                :disabled="disabled"
                 :is-loading="isLiquidating"
                 @click="isExecuteToAnotherWalletModalShown = true"
             >
@@ -23,7 +23,7 @@
             </BaseButton>
             <BaseButton
                 type="primary"
-                :disabled="!isLiquidatable || disabled"
+                :disabled="disabled"
                 :is-loading="isLiquidating"
                 @click="$emit('liquidate', walletAddress)"
             >

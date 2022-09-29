@@ -39,30 +39,28 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
             };
         },
     }))
-    .add('Global Limits Reached', () => ({
+    .add('Partial Liquidation Possible', () => ({
         ...common,
         data() {
             return {
                 ...common.data(),
                 vaultTransaction: {
                     ...vaultTransaction,
-                    debtDai: new BigNumber(faker.datatype.float({ min: 1000 })),
-                    incentiveRelativeDai: new BigNumber(faker.finance.amount()),
-                    incentiveConstantDai: new BigNumber(faker.finance.amount()),
+                    state: 'liquidatable',
+                    debtDai: new BigNumber(faker.datatype.float({ min: 10000 })),
                 },
             };
         },
     }))
-    .add('Collateral Limits Reached', () => ({
+    .add('No Liquidation Possible', () => ({
         ...common,
         data() {
             return {
                 ...common.data(),
                 vaultTransaction: {
                     ...vaultTransaction,
-                    debtDai: new BigNumber(faker.datatype.float({ min: 1000 })),
-                    incentiveRelativeDai: new BigNumber(faker.finance.amount()),
-                    incentiveConstantDai: new BigNumber(faker.finance.amount()),
+                    state: 'not-liquidatable',
+                    debtDai: new BigNumber(faker.datatype.float({ min: 10000 })),
                 },
             };
         },
