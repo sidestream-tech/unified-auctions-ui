@@ -19,7 +19,7 @@ import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
 import createVaultForCollateral, { getCollateralAmountInVat } from '../simulations/steps/createVaultForCollateral';
-import { SUPPORTED_COLLATERALS } from '../simulations/configs/vaultLiquidation';
+import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
 chai.use(deepEqualInAnyOrder);
 const MONTH = 60 * 60 * 24 * 30;
 
@@ -416,7 +416,7 @@ describe('Sound values are extracted', () => {
         }
     });
 });
-Object.keys(SUPPORTED_COLLATERALS).forEach(collateralType => {
+getLiquidatableCollateralTypes().forEach(collateralType => {
     describe(`Collateral vault simulation liquidation ${collateralType}`, () => {
         before(async () => {
             await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);

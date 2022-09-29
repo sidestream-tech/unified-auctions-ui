@@ -1,6 +1,5 @@
 import { warpTime, resetNetworkAndSetupWallet, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
 import { Simulation } from '../types';
-import { CollateralConfig } from '../../src/types';
 import prompts from 'prompts';
 import COLLATERALS from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
@@ -8,13 +7,11 @@ import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaul
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
 import createVaultForCollateral, { getCollateralAmountInVat } from '../steps/createVaultForCollateral';
 
-const getSupportedCollaterals = () => {
-    const supportedCollaterals: Record<string, CollateralConfig> = JSON.parse(JSON.stringify(COLLATERALS));
-    delete supportedCollaterals['CRVV1ETHSTETH-A'];
-    return supportedCollaterals;
-};
+const UNSUPPORTED_COLLATERAL_TYPES = ['CRVV1ETHSTETH-A'];
 
-export const SUPPORTED_COLLATERALS = getSupportedCollaterals();
+export const getLiquidatableCollateralTypes = () => {
+    return Object.keys(COLLATERALS).filter(collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType));
+};
 
 const getCollateralType = async () => {
     const { collateralType } = await prompts([
@@ -22,7 +19,7 @@ const getCollateralType = async () => {
             type: 'select',
             name: 'collateralType',
             message: 'Select the collateral symbol to add to the VAT.',
-            choices: Object.keys(SUPPORTED_COLLATERALS)
+            choices: Object.keys(getLiquidatableCollateralTypes())
                 .sort()
                 .map(collateral => ({
                     title: collateral,
