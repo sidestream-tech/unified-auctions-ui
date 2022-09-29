@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import BigNumber from '../src/bignumber'
+import BigNumber from '../src/bignumber';
 
 export const pad32 = (val: string) => {
     return ethers.utils.hexZeroPad(val, 32);
@@ -15,5 +15,5 @@ export const stripZeros = (val: string) => {
 
 export const roundUpToFirstSignificantDecimal = (number: BigNumber) => {
     const power = Math.abs(number.e || 0);
-    return new BigNumber(number.toFixed(power + 1, BigNumber.ROUND_UP))
-}
+    return new BigNumber(number.toFixed(power + 1, BigNumber.ROUND_UP));
+};

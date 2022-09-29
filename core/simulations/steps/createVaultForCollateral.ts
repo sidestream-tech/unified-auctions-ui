@@ -89,11 +89,9 @@ export const minimumAmountOfCollateralToOpenVault = async (collateralType: Colla
     const typeHex = ethers.utils.formatBytes32String(collateralType);
     const { dust } = await contract.ilks(typeHex);
     const { minUnitPrice } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
-    const minDebtDai = new BigNumber(dust._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS)
-    const debt = !minDebtDai.isZero() ? minDebtDai : new BigNumber(1)
-    const minCollateralInVault = roundUpToFirstSignificantDecimal(
-        debt.div(minUnitPrice)
-    ).multipliedBy(1.1);
+    const minDebtDai = new BigNumber(dust._hex).shiftedBy(-RAD_NUMBER_OF_DIGITS);
+    const debt = !minDebtDai.isZero() ? minDebtDai : new BigNumber(1);
+    const minCollateralInVault = roundUpToFirstSignificantDecimal(debt.div(minUnitPrice)).multipliedBy(1.1);
 
     await checkAvailableDebtForAmountAndMinUnitPrice(collateralType, minCollateralInVault, minUnitPrice);
     return minCollateralInVault;
@@ -120,11 +118,10 @@ export const checkAvailableDebtForAmountAndMinUnitPrice = async (
     const availableGlobalDebt = overallDebt.minus(debt);
     const availableCollateralDebt = maxCollateralDebt.minus(currentCollateralDebt);
 
-    if (
-        availableCollateralDebt.lt(potentialDebt) ||
-        availableGlobalDebt.lt(potentialDebt)
-    ) {
-        throw new Error(`Cannot borrow more dai with the collateral ${collateralType}: \n debt intended to have: ${potentialDebt} \n available global debt: ${availableGlobalDebt} \n available collateral debt: ${availableCollateralDebt}`);
+    if (availableCollateralDebt.lt(potentialDebt) || availableGlobalDebt.lt(potentialDebt)) {
+        throw new Error(
+            `Cannot borrow more dai with the collateral ${collateralType}: \n debt intended to have: ${potentialDebt} \n available global debt: ${availableGlobalDebt} \n available collateral debt: ${availableCollateralDebt}`
+        );
     }
 };
 
