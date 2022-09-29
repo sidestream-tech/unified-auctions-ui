@@ -84,7 +84,7 @@ const simulation: Simulation = {
                 const collateralType = context.collateralType;
                 const latestVaultId = context.latestVaultId;
                 const vaultBefore = await fetchVault(TEST_NETWORK, latestVaultId);
-                console.info(`stability fees after ${vaultBefore.stabilityFeeRate}`);
+                console.info(`stability fees before ${vaultBefore.stabilityFeeRate}`);
                 await collectStabilityFees(TEST_NETWORK, collateralType);
                 const vaultAfter = await fetchVault(TEST_NETWORK, latestVaultId);
                 console.info(`stability fees after ${vaultAfter.stabilityFeeRate}`);
