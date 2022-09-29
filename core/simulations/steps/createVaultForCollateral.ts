@@ -120,11 +120,9 @@ const isBalanceGreaterThan = async (
     network: string,
     tokenContractAddress: string,
     address: string,
-    balanceMin: BigNumber
+    balanceMin: BigNumber,
 ) => {
-    const contract = await getErc20Contract(network, tokenContractAddress);
-    const balanceHex = await contract.balanceOf(address);
-    const balance = new BigNumber(balanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    const balance = await fetchERC20TokenBalance(network, tokenContractAddress, address, WAD_NUMBER_OF_DIGITS)
     return balanceMin.lt(balance);
 };
 
