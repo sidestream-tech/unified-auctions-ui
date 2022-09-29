@@ -353,7 +353,7 @@ export const changeVaultContents = async (
     differenceCollateral: BigNumber
 ) => {
     const argumentList = [
-        new BigNumber(vaultId).toFixed(0),
+        vaultId.toString(),
         differenceCollateral.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
         differenceDebtDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0),
     ];
