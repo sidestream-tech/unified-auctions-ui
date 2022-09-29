@@ -408,16 +408,20 @@ describe('Sound values are extracted', () => {
             expect(expectedReturn[type].nextUnitPrice).to.eq(prices.nextUnitPrice.toFixed());
         }
     });
-    it('can simulate every auction without fail', async () => {
-        for (const [collateralType, collateralConfig] of Object.entries(SUPPORTED_COLLATERALS)) {
-            console.info(`Running for ${collateralType}`);
+});
+Object.entries(SUPPORTED_COLLATERALS).forEach(([collateralType, collateralConfig]) => {
+    describe(`Collateral vault simulation liquidation ${collateralType}`, () => {
+        before(async () => {
+            await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
+        });
+        it('runs the simulaton', async () => {
             let collateralOwned: BigNumber;
             let vaultId: number;
             try {
                 collateralOwned = await getCollateralAmountInVat(collateralType);
             } catch (e) {
                 if (e instanceof Error && e.message.startsWith('Cannot borrow more dai with the collateral')) {
-                    continue;
+                    return;
                 }
                 throw e;
             }
@@ -425,13 +429,13 @@ describe('Sound values are extracted', () => {
                 vaultId = await createVaultForCollateral(collateralType, collateralOwned, collateralConfig.decimals);
             } catch (e) {
                 if (e instanceof Error && e.message.startsWith('Join contract does not have sufficient funds')) {
-                    continue;
+                    return;
                 }
                 throw e;
             }
 
-            const vault = await fetchVault(TEST_NETWORK, vaultId)
-            expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0))
-        }
+            const vault = await fetchVault(TEST_NETWORK, vaultId);
+            expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));
+        });
     });
 });
