@@ -58,11 +58,11 @@ export default Vue.extend({
     props: {
         walletAddress: {
             type: String,
-            default: undefined,
+            required: true,
         },
         daiVatBalance: {
             type: Object as Vue.PropType<BigNumber>,
-            default: undefined,
+            required: true,
         },
         isAuthorizing: {
             type: Boolean,
