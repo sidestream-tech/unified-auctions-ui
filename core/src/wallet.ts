@@ -124,7 +124,7 @@ export const depositCollateralToVat = async function (
         notifier,
         confirmTransaction: true,
     });
-    return new BigNumber( depositRounded ).shiftedBy(-WAD_NUMBER_OF_DIGITS)
+    return new BigNumber(depositRounded).shiftedBy(-WAD_NUMBER_OF_DIGITS);
 };
 
 export const fetchERC20TokenBalance = async (

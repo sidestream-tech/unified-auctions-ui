@@ -73,7 +73,7 @@ const addCollateralToVault = async (vaultId: number, collateralOwned: BigNumber)
     console.info('Adding collateral to Vault');
     const vault = await fetchVault(TEST_NETWORK, vaultId);
     const drawnDebtExact = collateralOwned.multipliedBy(vault.minUnitPrice).dividedBy(vault.stabilityFeeRate);
-    const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact)
+    const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
     console.info(`Drawing ${drawnDebt.toFixed()} of dai`);
     await changeVaultContents(TEST_NETWORK, vaultId, drawnDebt, collateralOwned);
     const vaultWithContents = await fetchVault(TEST_NETWORK, vaultId);
@@ -150,7 +150,12 @@ const createVaultForCollateral = async (collateralType: CollateralType, collater
     await ensureBalance(tokenContractAddress, decimals, collateralOwned);
 
     const vault = await fetchVault(TEST_NETWORK, latestVaultId);
-    const depositedAmount = await depositCollateralToVat(TEST_NETWORK, vault.address, vault.collateralType, collateralOwned);
+    const depositedAmount = await depositCollateralToVat(
+        TEST_NETWORK,
+        vault.address,
+        vault.collateralType,
+        collateralOwned
+    );
 
     await addCollateralToVault(latestVaultId, depositedAmount);
     return latestVaultId;

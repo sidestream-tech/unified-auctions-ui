@@ -423,7 +423,7 @@ describe(`Collateral vault simulation liquidation `, () => {
     before(async () => {
         await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
         // set max global liquidation limit - `Hole` of dog.sol contract
-        await overwriteUintValue('MCD_DOG', '0x4', MAX)
+        await overwriteUintValue('MCD_DOG', '0x4', MAX);
     });
     getLiquidatableCollateralTypes().forEach(collateralType => {
         it(`runs the simulaton for ${collateralType}`, async () => {
