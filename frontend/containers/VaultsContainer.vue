@@ -60,6 +60,7 @@ export default Vue.extend({
             vaultErrors: 'getVaultErrors',
             areVaultsLoading: 'areVaultsLoading',
             isVaultBeingLiquidated: 'isVaultBeingLiquidated',
+            isLiquidated: 'isVaultLiquidationDone',
             lastUpdated: 'getLastUpdated',
         }),
         selectedVaultId: {
@@ -98,6 +99,9 @@ export default Vue.extend({
             },
         },
         walletAddress(): void {
+            this.fetchRelatedData();
+        },
+        isLiquidated(): void {
             this.fetchRelatedData();
         },
     },

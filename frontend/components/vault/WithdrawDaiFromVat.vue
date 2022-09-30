@@ -47,7 +47,7 @@ import BasePanel from '~/components/common/other/BasePanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
 
 export default Vue.extend({
-    name: 'WithdrawDAIPanel',
+    name: 'WithdrawDaiFromVat',
     components: {
         BaseButton,
         BasePanel,
