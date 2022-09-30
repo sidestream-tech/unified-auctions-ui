@@ -150,9 +150,9 @@ const createVaultForCollateral = async (collateralType: CollateralType, collater
     await ensureBalance(tokenContractAddress, decimals, collateralOwned);
 
     const vault = await fetchVault(TEST_NETWORK, latestVaultId);
-    await depositCollateralToVat(TEST_NETWORK, vault.address, vault.collateralType, collateralOwned);
+    const depositedAmount = await depositCollateralToVat(TEST_NETWORK, vault.address, vault.collateralType, collateralOwned);
 
-    await addCollateralToVault(latestVaultId, collateralOwned);
+    await addCollateralToVault(latestVaultId, depositedAmount);
     return latestVaultId;
 };
 

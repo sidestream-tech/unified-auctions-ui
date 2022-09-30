@@ -7,7 +7,11 @@ import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaul
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
 import createVaultForCollateral, { minimumAmountOfCollateralToOpenVault } from '../steps/createVaultForCollateral';
 
-const UNSUPPORTED_COLLATERAL_TYPES = ['CRVV1ETHSTETH-A'];
+const UNSUPPORTED_COLLATERAL_TYPES = [
+    'CRVV1ETHSTETH-A', // collateral handled differently
+    'UNIV2DAIUSDC-A', // Liquidation limit too high,
+    'WSTETH-B', // does not accumulate stability fee rate fast enough
+];
 
 export const getLiquidatableCollateralTypes = () => {
     return Object.keys(COLLATERALS).filter(collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType));
@@ -65,7 +69,7 @@ const simulation: Simulation = {
         {
             title: 'Skip time',
             entry: async context => {
-                await warpTime();
+                await warpTime(24, 60 * 60 * 24 * 30 * 12);
                 return context;
             },
         },

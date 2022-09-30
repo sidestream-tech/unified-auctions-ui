@@ -116,7 +116,7 @@ export const depositCollateralToVat = async function (
     collateralType: string,
     amount: BigNumber,
     notifier?: Notifier
-): Promise<void> {
+): Promise<BigNumber> {
     console.info('Depositing Collateral to vault');
     const depositRounded = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
     const contractName = getJoinNameByCollateralType(collateralType);
@@ -124,6 +124,7 @@ export const depositCollateralToVat = async function (
         notifier,
         confirmTransaction: true,
     });
+    return new BigNumber( depositRounded ).shiftedBy(-WAD_NUMBER_OF_DIGITS)
 };
 
 export const fetchERC20TokenBalance = async (

@@ -6,7 +6,7 @@ import {
     liquidateVault,
 } from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
-import { resetNetwork, warpTime } from '../helpers/hardhat';
+import { overwriteUintValue, resetNetwork, warpTime } from '../helpers/hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
 import { expect } from 'chai';
@@ -22,6 +22,7 @@ import createVaultForCollateral, {
     minimumAmountOfCollateralToOpenVault,
 } from '../simulations/steps/createVaultForCollateral';
 import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
+import { MAX } from '../src/constants/UNITS';
 chai.use(deepEqualInAnyOrder);
 const MONTH = 60 * 60 * 24 * 30;
 
@@ -418,13 +419,14 @@ describe('Sound values are extracted', () => {
         }
     });
 });
-getLiquidatableCollateralTypes().forEach(collateralType => {
-    describe(`Collateral vault simulation liquidation ${collateralType}`, () => {
-        before(async () => {
-            await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
-        });
-        it('runs the simulaton', async () => {
-            await resetNetwork(14052140);
+describe(`Collateral vault simulation liquidation `, () => {
+    before(async () => {
+        await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
+        // set max global liquidation limit - `Hole` of dog.sol contract
+        await overwriteUintValue('MCD_DOG', '0x4', MAX)
+    });
+    getLiquidatableCollateralTypes().forEach(collateralType => {
+        it(`runs the simulaton for ${collateralType}`, async () => {
             let collateralOwned: BigNumber;
             let vaultId: number;
             try {
