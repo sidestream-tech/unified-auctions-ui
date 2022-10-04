@@ -151,6 +151,9 @@ export default Vue.extend({
                 .minus(this.debtTimesPenaltyRatio);
         },
         maximumLiquidationAmount(): BigNumber | undefined {
+            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
+                return undefined;
+            }
             if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
                 if (this.globalDifference.isLessThanOrEqualTo(this.collateralDifference)) {
                     return this.vaultTransaction.debtDai.minus(this.globalDifference.absoluteValue());
