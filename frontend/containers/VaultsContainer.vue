@@ -1,0 +1,118 @@
+<template>
+    <div>
+        <VaultFlow
+            :vault-transactions="vaultTransactions"
+            :are-vaults-fetching="areVaultsLoading"
+            :is-liquidating="isVaultBeingLiquidated"
+            :selected-vault-id.sync="selectedVaultId"
+            :is-connecting-wallet="isWalletLoading"
+            :wallet-address="walletAddress"
+            :is-explanations-shown.sync="isExplanationsShown"
+            :is-refreshing-limits="areVaultsLoading"
+            :network="network"
+            @connectWallet="openSelectWalletModal"
+            @disconnectWallet="disconnect"
+            @refreshLimits="fetchSelectedVault"
+            @liquidate="liquidate"
+        />
+    </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import { mapGetters } from 'vuex';
+import VaultFlow from '~/components/vault/VaultFlow.vue';
+
+export default Vue.extend({
+    components: {
+        VaultFlow,
+    },
+    props: {
+        network: {
+            type: String,
+            default: 'mainnet',
+        },
+    },
+    computed: {
+        ...mapGetters('wallet', {
+            isWalletLoading: 'isLoading',
+            walletAddress: 'getAddress',
+        }),
+        ...mapGetters('vaults', {
+            vaultTransactions: 'listVaultTransactions',
+            vaultErrors: 'getVaultErrors',
+            areVaultsLoading: 'areVaultsLoading',
+            isVaultBeingLiquidated: 'isVaultBeingLiquidated',
+            lastUpdated: 'getLastUpdated',
+        }),
+        selectedVaultId: {
+            get(): string | null {
+                const vaultsGetParameter = this.$route.query.vault;
+                if (Array.isArray(vaultsGetParameter)) {
+                    return vaultsGetParameter[0];
+                } else {
+                    return vaultsGetParameter;
+                }
+            },
+            set(newVaultId: string): void {
+                if (!newVaultId) {
+                    const network = this.$route.query.network;
+                    this.$router.push({ query: { network } });
+                }
+            },
+        },
+        isExplanationsShown: {
+            get(): boolean {
+                return this.$store.getters['preferences/getIsExplanationsShown'];
+            },
+            set(newIsExplanationsShown): void {
+                this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
+            },
+        },
+        hasAcceptedTerms(): boolean {
+            return this.$store.getters['cookies/hasAcceptedTerms'];
+        },
+    },
+    watch: {
+        selectedVaultId: {
+            immediate: true,
+            handler(): void {
+                this.fetchSelectedVault();
+            },
+        },
+        walletAddress(): void {
+            this.fetchRelatedData();
+        },
+    },
+    methods: {
+        fetchSelectedVault(): void {
+            this.$store.dispatch('vaults/updateSelectedVault');
+        },
+        liquidate(walletAddress: string): void {
+            this.$store.dispatch('vaults/liquidateVault', {
+                vaultId: this.selectedVaultId,
+                walletAddress,
+            });
+        },
+        openSelectWalletModal(): void {
+            if (!this.hasAcceptedTerms) {
+                this.$store.commit('modals/setTermsModal', true);
+                return;
+            }
+            this.$store.commit('modals/setSelectWalletModal', true);
+        },
+        openWalletModal(): void {
+            this.$store.commit('modals/setWalletModal', true);
+        },
+        disconnect(): void {
+            this.$store.dispatch('wallet/disconnect');
+        },
+        fetchRelatedData(): void {
+            if (!this.walletAddress) {
+                return;
+            }
+            this.$store.dispatch('wallet/setup');
+        },
+    },
+});
+</script>

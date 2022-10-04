@@ -27,14 +27,7 @@
                         <tr>
                             <td>Auction State</td>
                             <td>
-                                <span v-if="isActive">Ends in </span>
-                                <span v-else-if="requiresRestart">Requires restart</span>
-                                <span v-else-if="auction.state === 'ready-for-collection'">Ended </span>
-                                <span v-else>Collected </span>
-                                <time-till
-                                    v-if="auction.earliestEndDate && !requiresRestart"
-                                    :date="auction.earliestEndDate"
-                                />
+                                <SurplusAuctionState :state="auction.state" :end-date="auction.earliestEndDate" />
                             </td>
                         </tr>
                         <tr>
@@ -148,6 +141,7 @@
 import Vue from 'vue';
 import type { CompensationAuctionActionStates, SurplusAuctionTransaction } from 'auctions-core/src/types';
 import { Alert, Tooltip } from 'ant-design-vue';
+import SurplusAuctionState from '~/components/auction/surplus/SurplusAuctionState.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 import Button from '~/components/common/inputs/BaseButton.vue';
@@ -161,6 +155,7 @@ export default Vue.extend({
     name: 'SurplusAuction',
     components: {
         AuctionRestartPanel,
+        SurplusAuctionState,
         FormatCurrency,
         TextBlock,
         TimeTill,

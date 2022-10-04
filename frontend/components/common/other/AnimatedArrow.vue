@@ -1,12 +1,12 @@
 <template>
-    <UpArrow :style="style" />
+    <UpArrow :style="style" class="dark:text-white fill-current" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import UpArrow from '~/assets/icons/uparrow.svg';
 
-type ArrowDirections = 'up' | 'down' | 'left' | 'right';
+export type ArrowDirections = 'up' | 'down' | 'left' | 'right';
 
 export default Vue.extend({
     components: {
