@@ -7,7 +7,7 @@ const common = {
     data: () => ({
         inactive: `This is the inactive title`,
         incorrect: `This is the incorrect title`,
-        partlyIncorrect: `This is the partly incorrect title`,
+        attention: `This is the attention title`,
         correct: `This is the correct title`,
         notice: `This is the notice`,
     }),
@@ -18,7 +18,7 @@ storiesOf('Common/Other/BasePanel', module)
         ...common,
         template: `<div>
             <BasePanel currentState="incorrect"><template #title>{{ incorrect }}</template>Error content</BasePanel>
-            <BasePanel currentState="partlyIncorrect"><template #title>{{ partlyIncorrect }}</template>Partly incorrect content</BasePanel>
+            <BasePanel currentState="attention"><template #title>{{ attention }}</template>Attention content</BasePanel>
             <BasePanel currentState="notice"><template #title>{{ notice }}</template>Notice content</BasePanel>
             <BasePanel currentState="correct"><template #title>{{ correct }}</template>Correct content</BasePanel>
             <BasePanel currentState="inactive"><template #title>{{ inactive }}</template>Inactive content</BasePanel>
@@ -34,10 +34,10 @@ storiesOf('Common/Other/BasePanel', module)
         template:
             '<BasePanel currentState="incorrect"><template #title>{{ incorrect }}</template>Incorrect content</BasePanel>',
     }))
-    .add('Partly Incorrect', () => ({
+    .add('Attention', () => ({
         ...common,
         template:
-            '<BasePanel currentState="partlyIncorrect"><template #title>{{ partlyIncorrect }}</template>Partly incorrect content</BasePanel>',
+            '<BasePanel currentState="attention"><template #title>{{ attention }}</template>Attention content</BasePanel>',
     }))
     .add('Correct', () => ({
         ...common,

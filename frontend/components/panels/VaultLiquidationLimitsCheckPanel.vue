@@ -171,7 +171,7 @@ export default Vue.extend({
             if (this.globalDifference.isNegative()) {
                 if (this.vaultTransaction.state === 'liquidatable') {
                     return {
-                        name: 'partlyIncorrect',
+                        name: 'attention',
                         title: 'Current global liquidation limits are partially reached',
                     };
                 }
@@ -183,7 +183,7 @@ export default Vue.extend({
             if (this.collateralDifference.isNegative()) {
                 if (this.vaultTransaction.state === 'liquidatable') {
                     return {
-                        name: 'partlyIncorrect',
+                        name: 'attention',
                         title: `Current ${this.vaultTransaction.collateralType} liquidation limits are partially reached`,
                     };
                 }
