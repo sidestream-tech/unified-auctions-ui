@@ -2,7 +2,6 @@ import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
 import { getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
-import { getTestQuote } from 'auctions-core/src/calleeFunctions/helpers/uniswapAutoRouter';
 import { NetworkConfig } from 'auctions-core/src/types';
 import getWallet from '~/lib/wallet';
 
@@ -182,8 +181,5 @@ export const actions = {
         } catch (error) {
             message.error(`Network switch error: ${error.message}`);
         }
-    },
-    async getTestQuote({ getters, rootGetters }: ActionContext<State, State>): Promise<void> {
-        await getTestQuote(getters.getMakerNetwork, rootGetters['wallet/getAddress']);
     },
 };
