@@ -76,6 +76,13 @@
                 <span>DAI</span>
             </div>
         </div>
+        <template v-if="maximumLiquidationAmount && vaultTransaction.state === 'liquidatable'">
+            <hr class="mt-2 mb-1" />
+            <div class="flex justify-between">
+                <span class="font-bold">Will be liquidated</span>
+                <FormatCurrency :value="maximumLiquidationAmount" currency="DAI" />
+            </div>
+        </template>
         <div class="flex justify-end mt-4">
             <BaseButton
                 type="primary"
@@ -142,6 +149,16 @@ export default Vue.extend({
             return this.vaultTransaction.maximumCollateralDebtDai
                 .minus(this.vaultTransaction.currentCollateralDebtDai)
                 .minus(this.debtTimesPenaltyRatio);
+        },
+        maximumLiquidationAmount(): BigNumber | undefined {
+            if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
+                if (this.globalDifference.isLessThanOrEqualTo(this.collateralDifference)) {
+                    return this.vaultTransaction.debtDai.minus(this.globalDifference.absoluteValue());
+                } else {
+                    return this.vaultTransaction.debtDai.minus(this.collateralDifference.absoluteValue());
+                }
+            }
+            return undefined;
         },
         globalLimitColor(): string {
             if (this.globalDifference.isNegative()) {
