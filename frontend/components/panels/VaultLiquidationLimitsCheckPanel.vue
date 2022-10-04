@@ -184,7 +184,7 @@ export default Vue.extend({
                 if (this.vaultTransaction.state === 'liquidatable') {
                     return {
                         name: 'partlyIncorrect',
-                        title: `Current ${this.vaultTransaction.collateralType} liquidation limits are reached`,
+                        title: `Current ${this.vaultTransaction.collateralType} liquidation limits are partially reached`,
                     };
                 }
                 return {
