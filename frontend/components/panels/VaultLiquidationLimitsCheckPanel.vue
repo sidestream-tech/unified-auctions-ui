@@ -172,7 +172,7 @@ export default Vue.extend({
                 if (this.vaultTransaction.state === 'liquidatable') {
                     return {
                         name: 'partlyIncorrect',
-                        title: 'Current global liquidation limits are reached',
+                        title: 'Current global liquidation limits are partially reached',
                     };
                 }
                 return {
