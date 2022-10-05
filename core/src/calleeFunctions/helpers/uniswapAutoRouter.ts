@@ -5,6 +5,7 @@ import getProvider from '../../provider';
 import { ETH_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { getDecimalChainIdByNetworkType } from '../../network';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
+import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 
 const getUniswapTokenBySymbol = async function (network: string, symbol: string): Promise<Token> {
     const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, symbol);
@@ -19,13 +20,13 @@ export const getUniswapAutoRoute = async function (
     inputAmount: string | number = 1,
     walletAddress?: string
 ) {
+    const collateralConfig = getCollateralConfigBySymbol(collateralSymbol);
     const provider = await getProvider(network);
     const router = new AlphaRouter({ chainId: 1, provider });
-    const inputToken = await getUniswapTokenBySymbol(network, collateralSymbol);
+    const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol);
     const outputToken = await getUniswapTokenBySymbol(network, 'DAI');
 
-    // how do we shift the numbers based on the currency?
-    const inputAmountInteger = new BigNumber(inputAmount).shiftedBy(ETH_NUMBER_OF_DIGITS).toFixed(0);
+    const inputAmountInteger = new BigNumber(inputAmount).shiftedBy(collateralConfig.decimals).toFixed(0);
     const inputAmountWithCurrency = CurrencyAmount.fromRawAmount(inputToken, inputAmountInteger);
 
     // get auto route
