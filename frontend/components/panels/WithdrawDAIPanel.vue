@@ -2,8 +2,7 @@
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
-            After the auction is collected, DAI will end up in the highest bidder's VAT account. One more transaction
-            is required to move DAI from VAT to the wallet.
+            {{ explanationText }}
         </TextBlock>
         <div class="my-4">
             <WalletAuthorizationCheckPanel
@@ -16,8 +15,8 @@
             />
         </div>
         <div class="flex justify-end mt-2 gap-5">
-            <BaseButton :disabled="isWithdrawing" :is-loading="isRefreshing" @click="$emit('refreshWallet')">
-                Refresh DAI balance in VAT
+            <BaseButton :disabled="isWithdrawing" :is-loading="isRefreshing" @click="$emit('refreshOrManage')">
+                {{ secondaryButtonText }}
             </BaseButton>
             <BaseButton
                 type="primary"
@@ -37,12 +36,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
+import { SurplusAuctionStates, VaultTransactionState } from 'auctions-core/src/types';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import BasePanel from '~/components/common/other/BasePanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
-import { SurplusAuctionStates } from '~/../core/src/types';
+
+type surplusOrVaultState = SurplusAuctionStates | VaultTransactionState;
 
 export default Vue.extend({
     name: 'WithdrawDAIPanel',
@@ -82,9 +83,17 @@ export default Vue.extend({
             type: Boolean,
             default: true,
         },
-        auctionState: {
-            type: String as Vue.PropType<SurplusAuctionStates>,
-            default: 'just-started',
+        state: {
+            type: String as Vue.PropType<surplusOrVaultState>,
+            required: true,
+        },
+        secondaryButtonText: {
+            type: String,
+            required: true,
+        },
+        explanationText: {
+            type: String,
+            required: true,
         },
     },
     computed: {
@@ -95,7 +104,7 @@ export default Vue.extend({
                     title: `No DAI to withdraw yet`,
                 };
             }
-            if (this.hasDaiToWithdraw && this.auctionState !== 'collected') {
+            if (this.hasDaiToWithdraw && this.state !== 'collected' && this.state !== 'liquidated') {
                 return {
                     name: 'correct',
                     title: `There is DAI to collect from VAT`,

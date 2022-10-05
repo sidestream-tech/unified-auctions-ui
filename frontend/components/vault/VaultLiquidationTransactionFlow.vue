@@ -19,20 +19,22 @@
                 This vault was last liquidated
                 <TimeTill :date="vaultTransaction.pastLiquidations[0].liquidationDate" /> in the transaction
                 <FormatAddress :value="vaultTransaction.pastLiquidations[0].transactionHash" />.
-                <WithdrawDaiFromVat
-                    v-if="walletAddress"
-                    class="mt-4"
-                    :wallet-address="walletAddress"
-                    :dai-vat-balance="daiVatBalance"
-                    :is-authorizing="isAuthorizing"
-                    :is-wallet-authorized="isWalletAuthorized"
-                    :is-withdrawing="isWithdrawing"
-                    :is-explanations-shown="isExplanationsShown"
-                    :vault-state="vaultTransaction.state"
-                    @manageVat="$emit('manageVat')"
-                    @authorizeWallet="$emit('authorizeWallet')"
-                    @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
-                />
+                <div v-if="walletAddress" class="mt-4">
+                    <WithdrawDAIPanel
+                        :wallet-address="walletAddress"
+                        :dai-vat-balance="daiVatBalance"
+                        :is-authorizing="isAuthorizing"
+                        :is-wallet-authorized="isWalletAuthorized"
+                        :is-withdrawing="isWithdrawing"
+                        :is-explanations-shown="isExplanationsShown"
+                        :state="vaultTransaction.state"
+                        :secondary-button-text="secondaryButtonText"
+                        :explanation-text="explanationText"
+                        @refreshOrManage="$emit('manageVat')"
+                        @authorizeWallet="$emit('authorizeWallet')"
+                        @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
+                    />
+                </div>
             </template>
             <template v-else>
                 Please note, the
@@ -92,7 +94,7 @@ import VaultLiquidationLimitsCheckPanel from '../panels/VaultLiquidationLimitsCh
 import VaultLiquidationPanel from '../panels/VaultLiquidationPanel.vue';
 import VaultLiquidationTransactionTable from './VaultLiquidationTransactionTable.vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
-import WithdrawDaiFromVat from '~/components/vault/WithdrawDaiFromVat.vue';
+import WithdrawDAIPanel from '~/components/panels/WithdrawDAIPanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Explain from '~/components/common/other/Explain.vue';
 
@@ -108,7 +110,7 @@ export default Vue.extend({
         Alert,
         Button,
         WalletConnectionCheckPanel,
-        WithdrawDaiFromVat,
+        WithdrawDAIPanel,
         Explain,
     },
     props: {
@@ -157,6 +159,9 @@ export default Vue.extend({
         return {
             isWalletConnected: false,
             areLimitsNotReached: false,
+            secondaryButtonText: 'Manage DAI in VAT',
+            explanationText: `After liquidating a vault, the DAI-based liquidation incentive will end up in your VAT account. One more
+            transaction is required to move that DAI to your wallet.`,
         };
     },
     computed: {

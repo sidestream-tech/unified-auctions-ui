@@ -74,8 +74,10 @@
                 :is-refreshing="isRefreshingWallet"
                 :is-withdrawing="isWithdrawing"
                 :dai-vat-balance="daiVatBalance"
-                :auction-state="auctionState"
-                @refreshWallet="$emit('refreshWallet')"
+                :state="auctionState"
+                :secondary-button-text="secondaryButtonText"
+                :explanation-text="explanationText"
+                @refreshOrManage="$emit('refreshWallet')"
                 @authorizeWallet="$emit('authorizeWallet')"
                 @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
             />
@@ -183,6 +185,9 @@ export default Vue.extend({
             isAllowanceAmountCheckPassed: false,
             isHighestBidder: false,
             inputBidAmount: undefined as BigNumber | undefined,
+            secondaryButtonText: 'Refresh DAI balance in VAT',
+            explanationText: `After the auction is collected, DAI will end up in the highest bidder's VAT account. One more transaction
+            is required to move DAI from VAT to the wallet.`,
         };
     },
     computed: {
