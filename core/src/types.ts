@@ -63,6 +63,8 @@ export declare interface CollateralRow extends CollateralConfig, Partial<MakerPa
     marketUnitPrice?: BigNumber | string;
     tokenAddress?: string;
     tokenAddressError?: string;
+    autoRouteQuote?: BigNumber;
+    autoRouteExchanges?: string | undefined[];
 }
 
 export declare interface AuctionTransaction extends Auction, TransactionFees {

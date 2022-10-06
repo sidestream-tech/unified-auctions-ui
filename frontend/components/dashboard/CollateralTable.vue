@@ -44,6 +44,16 @@
             </div>
         </div>
         <div
+            slot="autoRouteExchanges"
+            slot-scope="autoRouteExchanges, record"
+            class="Element"
+            :class="{ Loading: isLoading(record) }"
+        >
+            <div v-if="autoRouteExchanges">
+                {{ autoRouteExchanges.toString() }}
+            </div>
+        </div>
+        <div
             slot="secondsBetweenPriceDrops"
             slot-scope="secondsBetweenPriceDrops, record"
             class="Element"
@@ -131,6 +141,16 @@ export default Vue.extend({
                     title: 'Uniswap Market Value',
                     dataIndex: 'marketUnitPrice',
                     scopedSlots: { customRender: 'marketUnitPrice' },
+                },
+                {
+                    title: 'Auto Route Quote',
+                    dataIndex: 'autoRouteQuote',
+                    scopedSlots: { customRender: 'marketUnitPrice' },
+                },
+                {
+                    title: 'Auto Route Exchanges',
+                    dataIndex: 'autoRouteExchanges',
+                    scopedSlots: { customRender: 'autoRouteExchanges' },
                 },
                 {
                     title: 'Step',

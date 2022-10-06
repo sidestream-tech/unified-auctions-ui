@@ -2,7 +2,6 @@ import { AlphaRouter } from '@uniswap/smart-order-router';
 import { Token, Percent, TradeType, CurrencyAmount } from '@uniswap/sdk-core';
 import BigNumber from '../../bignumber';
 import getProvider from '../../provider';
-import { ETH_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { getDecimalChainIdByNetworkType } from '../../network';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
@@ -46,6 +45,5 @@ export const getUniswapAutoRoute = async function (
     if (!route) {
         throw new Error(`Could not get auto route for collateral "${collateralSymbol}".`);
     }
-    console.log(`autoroute for ${collateralSymbol}`, route);
     return route;
 };

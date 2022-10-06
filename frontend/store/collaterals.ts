@@ -9,7 +9,8 @@ import { getMarketPrice } from 'auctions-core/src/calleeFunctions';
 import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import { isCollateralTypeSupported } from 'auctions-core/src/addresses';
-import { getUniswapAutoRoute } from 'auctions-core/dist/src/calleeFunctions/helpers/uniswapAutoRouter';
+import { getUniswapAutoRoute } from 'auctions-core/src/calleeFunctions/helpers/uniswapAutoRouter';
+import BigNumber from 'bignumber.js';
 
 interface State {
     collaterals: CollateralRow[];
@@ -99,13 +100,17 @@ export const actions = {
                     priceDropRatio: error.toString(),
                 };
             });
-            const autoRouteData = getUniswapAutoRoute(network, collateral.symbol);
+            const autoRouteData = await getUniswapAutoRoute(network, collateral.symbol);
+            const autoRouteExchanges = autoRouteData.route[0].tokenPath.map(p => p.symbol);
+
             const updated = {
                 ilk: collateral.ilk,
                 marketUnitPrice,
                 secondsBetweenPriceDrops: calcParameters.secondsBetweenPriceDrops,
                 priceDropRatio: calcParameters.priceDropRatio,
                 tokenAddress,
+                autoRouteQuote: new BigNumber(autoRouteData.quote.toFixed(2)),
+                autoRouteExchanges,
             };
             commit('updateCollateral', updated);
         }
