@@ -69,11 +69,24 @@
         <div class="mt-2">
             <hr class="mb-1" />
             <div class="flex justify-between">
-                <span class="font-bold">Will be liquidated</span>
+                <span class="font-bold">Maximum liquidation amount</span>
                 <FormatCurrency
                     v-if="maximumLiquidationAmount"
                     :class="maximumLiquidationColor"
                     :value="maximumLiquidationAmount"
+                    currency="DAI"
+                />
+                <div v-else>
+                    <span class="opacity-50">Unknown</span>
+                    <span>DAI</span>
+                </div>
+            </div>
+            <div class="flex justify-between">
+                <span class="font-bold">Will be liquidated</span>
+                <FormatCurrency
+                    v-if="willBeLiquidated"
+                    :class="maximumLiquidationColor"
+                    :value="willBeLiquidated"
                     currency="DAI"
                 />
                 <div v-else>
@@ -154,6 +167,22 @@ export default Vue.extend({
             return this.collateralLimit.minus(this.debtTimesPenaltyRatio);
         },
         maximumLiquidationAmount(): BigNumber | undefined {
+            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
+                return undefined;
+            }
+            if (
+                this.globalDifference.isGreaterThanOrEqualTo(0) &&
+                this.collateralDifference.isGreaterThanOrEqualTo(0)
+            ) {
+                return this.vaultTransaction.debtDai;
+            }
+            if (this.globalLimit.isLessThanOrEqualTo(this.collateralLimit)) {
+                return this.globalLimit;
+            } else {
+                return this.collateralLimit;
+            }
+        },
+        willBeLiquidated(): BigNumber | undefined {
             if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
                 return undefined;
             }
