@@ -19,7 +19,7 @@
             <BaseButton :disabled="isWithdrawing" @click="$emit('manageVat')"> Manage DAI in VAT </BaseButton>
             <BaseButton
                 type="primary"
-                :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw || isRefreshing"
+                :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw"
                 :is-loading="isWithdrawing"
                 @click="$emit('withdrawAllDaiFromVat')"
             >
