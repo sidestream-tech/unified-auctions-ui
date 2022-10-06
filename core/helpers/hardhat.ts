@@ -115,7 +115,10 @@ export const resetNetworkAndSetupWallet = async function (
     return provider;
 };
 
-export const addDaiToBalance = async (daiAmount: BigNumber, walletAddress: string) => {
+export const addDaiToBalance = async (
+    daiAmount: BigNumber = new BigNumber(100000),
+    walletAddress: string = HARDHAT_PUBLIC_KEY
+) => {
     const daiContract = await getContract(TEST_NETWORK, 'MCD_DAI', false);
     await overwriteUintMapping('MCD_DAI', '0x2', walletAddress, daiAmount.shiftedBy(DAI_NUMBER_OF_DIGITS));
     const daiBalanceHex = await daiContract.balanceOf(walletAddress);
@@ -123,7 +126,10 @@ export const addDaiToBalance = async (daiAmount: BigNumber, walletAddress: strin
     console.info(`New DAI balance: ${daiBalance}`);
 };
 
-export const addMkrToBalance = async (mkrAmount: BigNumber, walletAddress: string) => {
+export const addMkrToBalance = async (
+    mkrAmount: BigNumber = new BigNumber(100000),
+    walletAddress: string = HARDHAT_PUBLIC_KEY
+) => {
     const mkrContract = await getContract(TEST_NETWORK, 'MCD_GOV', false);
     await overwriteUintMapping('MCD_GOV', '0x1', walletAddress, mkrAmount.shiftedBy(MKR_NUMBER_OF_DIGITS));
     const mkrBalanceHex = await mkrContract.balanceOf(walletAddress);

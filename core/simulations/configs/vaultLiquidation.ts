@@ -2,9 +2,8 @@ import { warpTime, resetNetworkAndSetupWallet, addDaiToBalance, addMkrToBalance 
 import { Simulation } from '../types';
 import prompts from 'prompts';
 import COLLATERALS from '../../src/constants/COLLATERALS';
-import BigNumber from '../../src/bignumber';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
-import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
+import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
@@ -54,10 +53,8 @@ const simulation: Simulation = {
     steps: [
         {
             title: 'Reset blockchain fork',
-            // Few blocks before WSTETH-A is taken at 14052147,
-            // https://etherscan.io/address/0x49a33a28c4c7d9576ab28898f4c9ac7e52ea457at
             entry: async () => {
-                await resetNetworkAndSetupWallet(14052140);
+                await resetNetworkAndSetupWallet();
                 return getBaseContext();
             },
         },
@@ -71,7 +68,7 @@ const simulation: Simulation = {
         {
             title: 'Skip time',
             entry: async context => {
-                await warpTime(24, 60 * 60 * 24 * 30 * 12);
+                await warpTime(60 * 24 * 30, 60);
                 return context;
             },
         },
@@ -97,10 +94,17 @@ const simulation: Simulation = {
             },
         },
         {
+            title: 'Skip time',
+            entry: async context => {
+                await warpTime(60, 60);
+                return context;
+            },
+        },
+        {
             title: 'Add DAI and MKR to the wallet',
             entry: async () => {
-                await addDaiToBalance(new BigNumber(100000), HARDHAT_PUBLIC_KEY);
-                await addMkrToBalance(new BigNumber(100000), HARDHAT_PUBLIC_KEY);
+                await addDaiToBalance();
+                await addMkrToBalance();
             },
         },
     ],
