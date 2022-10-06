@@ -28,9 +28,7 @@
                         :is-withdrawing="isWithdrawing"
                         :is-explanations-shown="isExplanationsShown"
                         :state="vaultTransaction.state"
-                        :secondary-button-text="secondaryButtonText"
-                        :explanation-text="explanationText"
-                        @refreshOrManage="$emit('manageVat')"
+                        @manageVat="$emit('manageVat')"
                         @authorizeWallet="$emit('authorizeWallet')"
                         @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
                     />
@@ -159,9 +157,6 @@ export default Vue.extend({
         return {
             isWalletConnected: false,
             areLimitsNotReached: false,
-            secondaryButtonText: 'Manage DAI in VAT',
-            explanationText: `After liquidating a vault, the DAI-based liquidation incentive will end up in your VAT account. One more
-            transaction is required to move that DAI to your wallet.`,
         };
     },
     computed: {

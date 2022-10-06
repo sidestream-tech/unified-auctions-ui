@@ -2,7 +2,8 @@
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
-            {{ explanationText }}
+            The received profit ended up in the VAT account, not yet in your wallet. One more transaction is required
+            to move that DAI to your wallet.
         </TextBlock>
         <div class="my-4">
             <WalletAuthorizationCheckPanel
@@ -15,9 +16,7 @@
             />
         </div>
         <div class="flex justify-end mt-2 gap-5">
-            <BaseButton :disabled="isWithdrawing" :is-loading="isRefreshing" @click="$emit('refreshOrManage')">
-                {{ secondaryButtonText }}
-            </BaseButton>
+            <BaseButton :disabled="isWithdrawing" @click="$emit('manageVat')"> Manage DAI in VAT </BaseButton>
             <BaseButton
                 type="primary"
                 :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw || isRefreshing"
@@ -75,24 +74,12 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isRefreshing: {
-            type: Boolean,
-            default: false,
-        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
         },
         state: {
             type: String as Vue.PropType<surplusOrVaultState>,
-            required: true,
-        },
-        secondaryButtonText: {
-            type: String,
-            required: true,
-        },
-        explanationText: {
-            type: String,
             required: true,
         },
     },

@@ -59,6 +59,7 @@
                     @connectWallet="$emit('connectWallet')"
                     @disconnectWallet="$emit('disconnectWallet')"
                     @refreshWallet="$emit('refreshWallet')"
+                    @manageVat="$emit('manageVat')"
                     @setAllowanceAmount="$emit('setAllowanceAmount', $event)"
                     @bid="$emit('bid', $event)"
                     @collect="$emit('collect', selectedAuction.id)"

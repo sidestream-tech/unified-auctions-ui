@@ -10,14 +10,10 @@ const common = {
         daiVatBalance: new BigNumber(faker.finance.amount()),
         walletAddress: faker.finance.ethereumAddress(),
         isWithdrawing: false,
-        isRefreshing: false,
         isAuthorizing: false,
         isWalletAuthorized: false,
         isExplanationsShown: true,
         state: 'just-started',
-        secondaryButtonText: 'Refresh DAI balance in VAT',
-        explanationText: `After the auction is collected, DAI will end up in the highest bidder's VAT account. One more transaction
-            is required to move DAI from VAT to the wallet.`,
     }),
     methods: {
         withdraw() {
@@ -25,13 +21,6 @@ const common = {
             setTimeout(() => {
                 this.daiVatBalance = new BigNumber(0);
                 this.isWithdrawing = false;
-            }, 1000);
-        },
-        refresh() {
-            this.isRefreshing = true;
-            setTimeout(() => {
-                this.daiVatBalance = new BigNumber(faker.finance.amount());
-                this.isRefreshing = false;
             }, 1000);
         },
         manage: action('openWalletModal'),
@@ -47,31 +36,14 @@ const common = {
     <WithdrawDAIPanel
         v-bind="$data"
         @withdrawAllDaiFromVat="withdraw"
-        @refreshOrManage="refresh"
+        @manageVat="manage"
         @authorizeWallet="authorize"
     />`,
 };
 
 storiesOf('Panels/WithdrawDAIPanel', module)
-    .add('Surplus Auction', () => ({
+    .add('Default', () => ({
         ...common,
-    }))
-    .add('Vault Liquidation', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            state: 'not-liquidatable',
-            secondaryButtonText: 'Manage DAI in VAT',
-            explanationText: `After liquidating a vault, the DAI-based liquidation incentive will end up in your VAT account. One more
-            transaction is required to move that DAI to your wallet.`,
-        }),
-        template: `
-        <WithdrawDAIPanel
-            v-bind="$data"
-            @withdrawAllDaiFromVat="withdraw"
-            @refreshOrManage="manage"
-            @authorizeWallet="authorize"
-        />`,
     }))
     .add('Collected State', () => ({
         ...common,
@@ -85,17 +57,7 @@ storiesOf('Panels/WithdrawDAIPanel', module)
         data: () => ({
             ...common.data(),
             state: 'liquidated',
-            secondaryButtonText: 'Manage DAI in VAT',
-            explanationText: `After liquidating a vault, the DAI-based liquidation incentive will end up in your VAT account. One more
-            transaction is required to move that DAI to your wallet.`,
         }),
-        template: `
-        <WithdrawDAIPanel
-            v-bind="$data"
-            @withdrawAllDaiFromVat="withdraw"
-            @refreshOrManage="manage"
-            @authorizeWallet="authorize"
-        />`,
     }))
     .add('No DAI In VAT', () => ({
         ...common,
@@ -126,13 +88,6 @@ storiesOf('Panels/WithdrawDAIPanel', module)
         data: () => ({
             ...common.data(),
             isAuthorizing: true,
-        }),
-    }))
-    .add('Refreshing', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            isRefreshing: true,
         }),
     }))
     .add('Withdrawing', () => ({
