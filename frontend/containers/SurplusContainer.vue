@@ -24,6 +24,7 @@
             @connectWallet="openSelectWalletModal"
             @disconnectWallet="disconnectWallet"
             @refreshWallet="refreshWallet"
+            @manageVat="openWalletModal"
             @authorizeWallet="authorizeWallet"
             @withdrawAllDaiFromVat="withdrawAllDaiFromVat"
             @restart="restartAuction"
@@ -129,6 +130,9 @@ export default Vue.extend({
                 return;
             }
             this.$store.commit('modals/setSelectWalletModal', true);
+        },
+        openWalletModal(): void {
+            this.$store.commit('modals/setWalletModal', true);
         },
     },
 });

@@ -12,6 +12,7 @@ interface State {
     vaultErrors: Record<string, string | undefined>;
     areVaultsLoading: boolean;
     isVaultBeingLiquidated: boolean;
+    isVaultLiquidationDone: boolean;
     lastUpdated: Date | undefined;
 }
 
@@ -20,6 +21,7 @@ const getInitialState = (): State => ({
     vaultErrors: {},
     areVaultsLoading: false,
     isVaultBeingLiquidated: false,
+    isVaultLiquidationDone: false,
     lastUpdated: undefined,
 });
 
@@ -41,6 +43,9 @@ export const getters = {
     isVaultBeingLiquidated(state: State) {
         return state.isVaultBeingLiquidated;
     },
+    isVaultLiquidationDone(state: State) {
+        return state.isVaultLiquidationDone;
+    },
     getVaultById: (state: State) => (id: number) => {
         return state.vaultTransactions[id];
     },
@@ -58,6 +63,9 @@ export const mutations = {
     },
     setIsVaultBeingLiquidated(state: State, isLoading: boolean) {
         state.isVaultBeingLiquidated = isLoading;
+    },
+    setIsVaultLiquidationDone(state: State, isLiquidated: boolean) {
+        state.isVaultLiquidationDone = isLiquidated;
     },
     reset(state: State) {
         Object.assign(state, getInitialState());
@@ -108,7 +116,9 @@ export const actions = {
                 notifier
             );
             await dispatch('fetchVault', vaultId);
+            commit('setIsVaultLiquidationDone', true);
         } catch (e) {
+            commit('setIsVaultLiquidationDone', false);
             console.error(`Failed to liquidate vault ${vaultId}: ${e}`);
         } finally {
             commit('setIsVaultBeingLiquidated', false);

@@ -71,11 +71,10 @@
                 :wallet-address="walletAddress"
                 :is-authorizing="isAuthorizing"
                 :is-wallet-authorized="isWalletAuthorized"
-                :is-refreshing="isRefreshingWallet"
                 :is-withdrawing="isWithdrawing"
                 :dai-vat-balance="daiVatBalance"
-                :auction-state="auctionState"
-                @refreshWallet="$emit('refreshWallet')"
+                :state="auctionState"
+                @manageVat="$emit('manageVat')"
                 @authorizeWallet="$emit('authorizeWallet')"
                 @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
             />
