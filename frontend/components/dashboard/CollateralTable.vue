@@ -143,12 +143,12 @@ export default Vue.extend({
                     scopedSlots: { customRender: 'marketUnitPrice' },
                 },
                 {
-                    title: 'Auto Route Quote',
+                    title: 'UniV3 Auto Route Quote',
                     dataIndex: 'autoRouteQuote',
                     scopedSlots: { customRender: 'marketUnitPrice' },
                 },
                 {
-                    title: 'Auto Route Exchanges',
+                    title: 'UniV3 Auto Route Exchanges',
                     dataIndex: 'autoRouteExchanges',
                     scopedSlots: { customRender: 'autoRouteExchanges' },
                 },
