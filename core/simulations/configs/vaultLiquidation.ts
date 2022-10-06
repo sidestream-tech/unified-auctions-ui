@@ -5,11 +5,13 @@ import COLLATERALS from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
-import createVaultForCollateral, { minimumAmountOfCollateralToOpenVault } from '../steps/createVaultForCollateral';
+import createVaultWithCollateral, {
+    calculateMinCollateralAmountToOpenVault,
+} from '../helpers/createVaultWithCollateral';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
     'CRVV1ETHSTETH-A', // collateral handled differently
-    'UNIV2DAIUSDC-A', // Liquidation limit too high,
+    'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
     'WSTETH-B', // does not accumulate stability fee rate fast enough
 ];
 
@@ -37,7 +39,7 @@ const getCollateralType = async () => {
 const getBaseContext = async () => {
     const collateralType = await getCollateralType();
     const decimals = COLLATERALS[collateralType].decimals;
-    const collateralOwned = await minimumAmountOfCollateralToOpenVault(collateralType);
+    const collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
 
     console.info(`Collateral in the VAT initially: ${collateralOwned.toFixed()}`);
     return {
@@ -62,7 +64,7 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
-                const latestVaultId = await createVaultForCollateral(context.collateralType, context.collateralOwned);
+                const latestVaultId = await createVaultWithCollateral(context.collateralType, context.collateralOwned);
                 return { ...context, latestVaultId };
             },
         },

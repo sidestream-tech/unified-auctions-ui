@@ -11,7 +11,7 @@ import {
     WAD_NUMBER_OF_DIGITS,
     MKR_NUMBER_OF_DIGITS,
 } from './constants/UNITS';
-import COLLATERALS from './constants/COLLATERALS';
+import COLLATERALS, { getCollateralConfigByType } from './constants/COLLATERALS';
 
 export const fetchBalanceETH = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const provider = await getProvider(network);
@@ -117,14 +117,15 @@ export const depositCollateralToVat = async function (
     amount: BigNumber,
     notifier?: Notifier
 ): Promise<BigNumber> {
-    console.info('Depositing Collateral to vault');
-    const depositRounded = amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
+    console.info(`Deposit ${amount.toFixed(2)} ${collateralType} to the VAT`);
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    const depositRounded = amount.shiftedBy(collateralConfig.decimals).toFixed(0, BigNumber.ROUND_DOWN);
     const contractName = getJoinNameByCollateralType(collateralType);
     await executeTransaction(network, contractName, 'join', [walletAddress, depositRounded], {
         notifier,
         confirmTransaction: true,
     });
-    return new BigNumber(depositRounded).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+    return new BigNumber(depositRounded).shiftedBy(-collateralConfig.decimals);
 };
 
 export const fetchERC20TokenBalance = async (

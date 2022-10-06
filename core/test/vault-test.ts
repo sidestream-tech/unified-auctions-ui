@@ -6,7 +6,7 @@ import {
     liquidateVault,
 } from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
-import { overwriteUintValue, resetNetwork, warpTime } from '../helpers/hardhat';
+import { createWalletForRpc, overwriteUintValue, resetNetwork, warpTime } from '../helpers/hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
 import { expect } from 'chai';
@@ -18,9 +18,9 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
-import createVaultForCollateral, {
-    minimumAmountOfCollateralToOpenVault,
-} from '../simulations/steps/createVaultForCollateral';
+import createVaultWithCollateral, {
+    calculateMinCollateralAmountToOpenVault,
+} from '../simulations/helpers/createVaultWithCollateral';
 import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
 import { MAX } from '../src/constants/UNITS';
 chai.use(deepEqualInAnyOrder);
@@ -421,42 +421,35 @@ describe('Sound values are extracted', () => {
 });
 describe(`Collateral vault simulation liquidation `, () => {
     before(async () => {
-        await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
+        await createWalletForRpc();
+        await resetNetwork();
         // set max global liquidation limit - `Hole` of dog.sol contract
         await overwriteUintValue('MCD_DOG', '0x4', MAX);
     });
     getLiquidatableCollateralTypes().forEach(collateralType => {
         it(`runs the simulaton for ${collateralType}`, async () => {
             let collateralOwned: BigNumber;
-            let vaultId: number;
             try {
-                collateralOwned = await minimumAmountOfCollateralToOpenVault(collateralType);
+                collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
             } catch (e) {
-                if (e instanceof Error && e.message.startsWith('Cannot borrow more dai with the collateral')) {
+                if (e instanceof Error && e.message.endsWith('max debt set to zero')) {
                     return;
                 }
                 throw e;
             }
-            try {
-                vaultId = await createVaultForCollateral(collateralType, collateralOwned);
-            } catch (e) {
-                if (e instanceof Error && e.message.startsWith('Join contract does not have sufficient funds')) {
-                    return;
-                }
-                throw e;
-            }
+            const vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
 
             const vault = await fetchVault(TEST_NETWORK, vaultId);
             expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));
-            await warpTime(24, MONTH);
+
             const previousStabilityFee = vault.stabilityFeeRate;
+            await warpTime(24, MONTH);
             await collectStabilityFees(TEST_NETWORK, vault.collateralType);
             const currentStabilityFee = (await fetchVault(TEST_NETWORK, vaultId)).stabilityFeeRate;
             if (!currentStabilityFee.gt(previousStabilityFee)) {
-                throw new Error(
-                    'Successful vault creation, but stability fees did not change within reasonable time.'
-                );
+                throw new Error('Successful vault creation, but stability fees did not change after time warp');
             }
+
             await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
         });
     });
