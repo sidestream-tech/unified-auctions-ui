@@ -69,7 +69,12 @@
         <hr class="mt-2 mb-1" />
         <div class="flex justify-between">
             <span class="font-bold">Maximum liquidation amount</span>
-            <FormatCurrency v-if="maximumLiquidationAmount" :value="maximumLiquidationAmount" currency="DAI" />
+            <FormatCurrency
+                v-if="maximumLiquidationAmount"
+                :class="maximumLiquidationColor"
+                :value="maximumLiquidationAmount"
+                currency="DAI"
+            />
             <div v-else>
                 <span class="opacity-50">Unknown</span>
                 <span>DAI</span>
@@ -167,6 +172,15 @@ export default Vue.extend({
         },
         collateralLimitColor(): string {
             if (this.collateralDifference.isNegative()) {
+                if (this.vaultTransaction.state === 'liquidatable') {
+                    return 'text-orange-500';
+                }
+                return 'text-red-500';
+            }
+            return 'text-current';
+        },
+        maximumLiquidationColor(): string {
+            if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
                 if (this.vaultTransaction.state === 'liquidatable') {
                     return 'text-orange-500';
                 }
