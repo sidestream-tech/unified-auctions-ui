@@ -72,6 +72,7 @@
                 :is-authorizing="isAuthorizing"
                 :is-wallet-authorized="isWalletAuthorized"
                 :is-withdrawing="isWithdrawing"
+                :is-refreshing="isRefreshingWallet"
                 :dai-vat-balance="daiVatBalance"
                 :state="auctionState"
                 @manageVat="$emit('manageVat')"

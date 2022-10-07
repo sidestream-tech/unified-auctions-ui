@@ -74,6 +74,10 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
+        isRefreshing: {
+            type: Boolean,
+            default: false,
+        },
         isExplanationsShown: {
             type: Boolean,
             default: true,
