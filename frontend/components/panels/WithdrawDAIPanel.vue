@@ -19,7 +19,7 @@
             <BaseButton :disabled="isWithdrawing" @click="$emit('manageVat')"> Manage DAI in VAT </BaseButton>
             <BaseButton
                 type="primary"
-                :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw || isRefreshing"
+                :disabled="!isWalletConnected || !isWalletAuthorized || !hasDaiToWithdraw || disabled"
                 :is-loading="isWithdrawing"
                 @click="$emit('withdrawAllDaiFromVat')"
             >
@@ -74,7 +74,7 @@ export default Vue.extend({
             type: Boolean,
             default: false,
         },
-        isRefreshing: {
+        disabled: {
             type: Boolean,
             default: false,
         },
