@@ -61,7 +61,7 @@ const getOracleAddressAndContract = async (collateralType: string) => {
 };
 
 const overwriteValue = async (contractAddress: string, newValue: BigNumber, slot: string) => {
-    overwriteUintValueInAddress(contractAddress, slot, newValue);
+    await overwriteUintValueInAddress(contractAddress, slot, newValue);
 };
 
 const callContractFunctionOrThrow = async (contract: ethers.Contract, functionName: string, ...args: any[]) => {

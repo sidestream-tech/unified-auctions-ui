@@ -338,3 +338,47 @@ export const liquidateVault = async (
         notifier,
     });
 };
+
+const getLatestVault = async (network: string, walletAddress: string) => {
+    const cdpManager = await getContract(network, 'CDP_MANAGER', true);
+    const lastHex = await cdpManager.last(walletAddress);
+    return new BigNumber(lastHex._hex).toNumber();
+};
+
+export const openVault = async (network: string, ownerAddress: string, collateralType: CollateralType) => {
+    const argumentList = [ethers.utils.formatBytes32String(collateralType), ownerAddress];
+    await executeTransaction(network, 'CDP_MANAGER', 'open', argumentList);
+    return await getLatestVault(network, ownerAddress);
+};
+
+export const changeVaultContents = async (
+    network: string,
+    vaultId: number,
+    differenceDebtDai: BigNumber,
+    differenceCollateral: BigNumber
+) => {
+    const argumentList = [
+        vaultId.toString(),
+        differenceCollateral.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        differenceDebtDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0),
+    ];
+    await executeTransaction(network, 'CDP_MANAGER', 'frob', argumentList);
+};
+
+export const collectStabilityFees = async (network: string, collateralType: CollateralType) => {
+    return await executeTransaction(network, 'MCD_JUG', 'drip', [ethers.utils.formatBytes32String(collateralType)]);
+};
+
+export const changeCollateralInVault = async (
+    network: string,
+    vaultId: number,
+    differenceCollateral: BigNumber,
+    transferTargetAddress: string
+) => {
+    const argumentList = [
+        vaultId.toString(0),
+        transferTargetAddress,
+        differenceCollateral.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+    ];
+    await executeTransaction(network, 'CDP_MANAGER', 'flux(uint256,address,uint256)', argumentList);
+};
