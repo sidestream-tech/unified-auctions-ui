@@ -19,6 +19,8 @@ import WETH from './abis/WETH.json';
 import UNISWAP from './abis/UNISWAP_V2_ROUTER_02.json';
 import MCD_VOW from './abis/MCD_VOW.json';
 import CDP_MANAGER from './abis/CDP_MANAGER.json';
+import CDP_REGISTRY from './abis/CDP_REGISTRY.json';
+import MCD_CROPPER from './abis/MCD_CROPPER.json';
 import OSM_MOM from './abis/OSM_MOM.json';
 import OSM from './abis/OSM.json';
 import MEDIAN_PRICE_FEED from './abis/MEDIAN_PRICE_FEED.json';
@@ -61,6 +63,8 @@ export const getContractInterfaceByName = async function (contractName: string):
         MEDIAN_PRICE_FEED,
         MCD_SPOT,
         MCD_JUG,
+        CDP_REGISTRY,
+        MCD_CROPPER,
     };
     if (Object.keys(ABIs).includes(contractName)) {
         return ABIs[contractName];
