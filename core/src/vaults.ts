@@ -48,15 +48,6 @@ export const fetchVaultBase = memoizee(_fetchVaultBase, {
     length: 2,
 });
 
-const _fetchCdpRegistryContractAddress = async (network: string) => {
-    return await getContract(network, 'CDP_REGISTRY');
-};
-
-const fetchCdpRegistryContractAddress = memoizee(_fetchCdpRegistryContractAddress, {
-    promise: true,
-    length: 1,
-});
-
 export const fetchVaultsCount = async (network: string): Promise<number> => {
     const contract = await getContract(network, 'CDP_MANAGER');
     const countHex = contract.count();
@@ -77,26 +68,24 @@ export const fetchVaultCollateralParameters = async (
 };
 export const fetchProxiedVaultBalance = async (network: string, vaultBase: VaultBase, proxyOwnerAddress: string) => {
     const contract = await getContract(network, 'MCD_CROPPER');
-    const eventFilter: ethers.EventFilter = {
+    const eventFilter = {
         address: contract.address,
-        // @ts-ignore
-        topics: [ethers.utils.id("NewProxy(address,address)"), ethers.utils.hexZeroPad(proxyOwnerAddress, 32), null],
-    };
+        topics: [ethers.utils.id('NewProxy(address,address)'), ethers.utils.hexZeroPad(proxyOwnerAddress, 32), null],
+    } as ethers.EventFilter; // type defined so that it does not allow null as topic, although documentation allows it https://docs.ethers.io/v5/concepts/events/#events-solidity
     const events = await contract.queryFilter(eventFilter);
-    console.log(events)
     if (events.length === 0) {
         throw new Error(`Failed to extract the event 'NewProxy' for vault ${vaultBase.id}`);
     }
     const vaultAddressHex32 = events[0].topics[2];
-    const vaultAddress = ethers.utils.hexValue(vaultAddressHex32)
+    const vaultAddress = ethers.utils.hexValue(vaultAddressHex32);
     return await fetchVaultAmount(network, vaultBase.collateralType, vaultAddress);
 };
 export const fetchVaultBalance = async (network: string, vaultBase: VaultBase): Promise<VaultAmount> => {
     const contractCdpManager = await getContract(network, 'CDP_MANAGER');
     const registryAddress = await contractCdpManager.owns(vaultBase.id);
-    const cdpRegistry = await getContract(network, 'CDP_REGISTRY');;
+    const cdpRegistry = await getContract(network, 'CDP_REGISTRY');
     if (registryAddress === cdpRegistry.address) {
-        const proxyOwnerAddress = await cdpRegistry.owns(vaultBase.id)
+        const proxyOwnerAddress = await cdpRegistry.owns(vaultBase.id);
         return await fetchProxiedVaultBalance(network, vaultBase, proxyOwnerAddress);
     }
     return fetchVaultAmount(network, vaultBase.collateralType, vaultBase.collateralType);
@@ -163,7 +152,6 @@ export const fetchCollateralLiquidationLimitsAndLiquidatorAddress = memoizee(
 
 export const fetchVault = async (network: string, index: number): Promise<Vault> => {
     const vaultBase = await fetchVaultBase(network, index);
-    console.log(vaultBase);
     const vaultCollateralParameters = await fetchVaultCollateralParameters(network, vaultBase.collateralType);
     const vaultAmount = await fetchVaultBalance(network, vaultBase);
     const globalLiquidationLimits = await fetchGlobalLiquidationLimits(network);
