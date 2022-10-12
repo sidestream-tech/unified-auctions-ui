@@ -15,16 +15,14 @@
         <CollapseTransition>
             <div v-show="isExpanded" class="Content">
                 <div v-for="(value, key) in auctionTransaction.marketData" :key="key" class="flex justify-between">
-                    <table>
-                        <tr class="flex space-x-2">
-                            <td>{{ key }}</td>
-                            <td>
-                                <span v-for="currency in value.route" :key="currency">{{ currency }} &#8594; </span>
-                                DAI
-                            </td>
-                        </tr>
-                    </table>
-                    <div v-if="value.unitPrice && !value.unitPrice.isNaN()" class="flex space-x-2">
+                    <div class="flex flex-row space-x-1">
+                        <div>{{ key }}</div>
+                        <div>
+                            (<span v-for="currency in value.route" :key="currency">{{ currency }} &#8594; </span>
+                            DAI)
+                        </div>
+                    </div>
+                    <div v-if="value.unitPrice && !value.unitPrice.isNaN()" class="flex flex-row space-x-1">
                         <button type="button" @click="$emit('update:marketId', key)">
                             <span v-if="marketId === key" class="opacity-50">Selected</span>
                             <span v-else class="text-green-500">Select</span>
@@ -34,7 +32,7 @@
                             <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
                         </div>
                     </div>
-                    <div v-else class="opacity-50">Unknown</div>
+                    <div v-else class="justify-self-end opacity-50">Unknown</div>
                 </div>
             </div>
         </CollapseTransition>
@@ -71,11 +69,14 @@ export default Vue.extend({
         };
     },
     computed: {
-        suggestionOrSelection(): string {
-            return this.marketId ? this.marketId : this.auctionTransaction.suggestedMarketId;
+        suggestionOrSelection(): string | undefined {
+            return this.marketId || this.auctionTransaction.suggestedMarketId;
         },
-        marketUnitPrice(): BigNumber {
-            return this.auctionTransaction.marketData[this.suggestionOrSelection].unitPrice;
+        marketUnitPrice(): BigNumber | undefined {
+            if (this.auctionTransaction.marketData && this.suggestionOrSelection) {
+                return this.auctionTransaction.marketData[this.suggestionOrSelection].unitPrice;
+            }
+            return undefined;
         },
     },
 });

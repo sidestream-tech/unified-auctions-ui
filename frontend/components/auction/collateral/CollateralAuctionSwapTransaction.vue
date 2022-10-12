@@ -7,7 +7,11 @@
             type="error"
         />
         <Alert v-if="auctionTransaction.isFinished" message="This auction is finished" type="error" />
-        <CollateralAuctionSwapTransactionTable :auction-transaction="auctionTransaction" class="mt-4" />
+        <CollateralAuctionSwapTransactionTable
+            :auction-transaction="auctionTransaction"
+            :market-id.sync="marketId"
+            class="mt-4"
+        />
         <TextBlock class="TextBlock mt-4 mb-8">
             Please note, the transaction fee is a suggested value based on the current gas prices on the market; the
             Transaction Net Profit is also approximate, since it is extrapolated from the exchange rates and may change
@@ -151,6 +155,7 @@ export default Vue.extend({
     },
     data() {
         return {
+            marketId: '',
             isWalletConnectedCheck: false,
             isWalletDAIAuthorizationCheckPassed: false,
             isWalletCollateralAuthorizationCheckPassed: false,

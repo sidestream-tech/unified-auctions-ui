@@ -21,16 +21,7 @@
                 <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
             </div>
         </div>
-        <div class="flex w-full justify-between">
-            <div>Price On Uniswap</div>
-            <div class="RightInfo">
-                <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPrice">
-                    <FormatCurrency :value="auctionTransaction.marketUnitPrice" currency="DAI" /> per
-                    <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
-                </template>
-                <span v-else class="opacity-50">Unknown</span>
-            </div>
-        </div>
+        <MarketPriceSelection :auction-transaction="auctionTransaction" :market-id.sync="marketId" />
         <div class="flex w-full justify-between">
             <div>Market Difference</div>
             <div class="RightInfo">
@@ -98,9 +89,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import PriceDropAnimation from '~/components/auction/collateral/PriceDropAnimation.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import MarketPriceSelection from '~/components/auction/collateral/MarketPriceSelection.vue';
 import TimeTillProfitable from '~/components/auction/collateral/TimeTillProfitable.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
-import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import FormatMarketValue from '~/components/common/formatters/FormatMarketValue.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import { AuctionTransaction } from '~/../core/src/types';
@@ -108,9 +100,10 @@ import { AuctionTransaction } from '~/../core/src/types';
 export default Vue.extend({
     components: {
         PriceDropAnimation,
+        FormatCurrency,
+        MarketPriceSelection,
         TextBlock,
         TimeTill,
-        FormatCurrency,
         FormatMarketValue,
         TimeTillProfitable,
     },
@@ -118,6 +111,10 @@ export default Vue.extend({
         auctionTransaction: {
             type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
+        },
+        marketId: {
+            type: String,
+            default: '',
         },
     },
 });

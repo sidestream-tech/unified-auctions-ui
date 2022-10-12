@@ -28,6 +28,10 @@ export const generateFakeAuction = function () {
             route: [collateralObject.symbol, 'USDC'],
         },
         'Uniswap v2': {
+            unitPrice: new BigNumber(NaN),
+            route: [collateralObject.symbol],
+        },
+        '1inch': {
             unitPrice: marketUnitPrice.multipliedBy(
                 new BigNumber(faker.datatype.float({ min: 1.1, max: 1.5, precision: 0.001 }))
             ),

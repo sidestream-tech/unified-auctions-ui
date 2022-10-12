@@ -4,12 +4,15 @@ import { generateFakeAuctionTransaction } from '~/helpers/generateFakeAuction.ts
 
 const fakeAuctionTransaction = generateFakeAuctionTransaction();
 
-storiesOf('Auction/Collateral/MarketPriceSelection', module).add('Default', () => ({
+const common = {
     components: {
         MarketPriceSelection,
     },
     data: () => ({
         auctionTransaction: fakeAuctionTransaction,
+        marketId: '',
     }),
-    template: '<MarketPriceSelection :auction-transaction="auctionTransaction"/>',
-}));
+    template: `<MarketPriceSelection :auction-transaction="auctionTransaction" :market-id.sync="marketId" />`,
+};
+
+storiesOf('Auction/Collateral/MarketPriceSelection', module).add('Default', () => ({ ...common }));
