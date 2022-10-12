@@ -19,6 +19,21 @@ export const generateFakeAuction = function () {
     const marketUnitPrice = approximateUnitPrice.multipliedBy(
         new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio || 0)
     );
+    const suggestedMarketId = 'Uniswap v3';
+    const marketData = {
+        'Uniswap v3': {
+            unitPrice: marketUnitPrice.multipliedBy(
+                new BigNumber(faker.datatype.float({ min: 1.1, max: 1.5, precision: 0.001 }))
+            ),
+            route: [collateralObject.symbol, 'USDC'],
+        },
+        'Uniswap v2': {
+            unitPrice: marketUnitPrice.multipliedBy(
+                new BigNumber(faker.datatype.float({ min: 1.1, max: 1.5, precision: 0.001 }))
+            ),
+            route: [collateralObject.symbol],
+        },
+    };
     const transactionGrossProfit = marketUnitPrice
         .multipliedBy(collateralAmount)
         .minus(approximateUnitPrice.multipliedBy(collateralAmount));
@@ -40,6 +55,8 @@ export const generateFakeAuction = function () {
         approximateUnitPrice,
         unitPrice: approximateUnitPrice,
         marketUnitPrice,
+        marketData,
+        suggestedMarketId,
         isActive,
         transactionGrossProfit,
         isFinished,
