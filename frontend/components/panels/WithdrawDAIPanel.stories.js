@@ -12,6 +12,7 @@ const common = {
         isWithdrawing: false,
         isAuthorizing: false,
         isWalletAuthorized: false,
+        disabled: false,
         isExplanationsShown: true,
         state: 'just-started',
     }),
@@ -95,6 +96,13 @@ storiesOf('Panels/WithdrawDAIPanel', module)
         data: () => ({
             ...common.data(),
             isWithdrawing: true,
+        }),
+    }))
+    .add('Disabled', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            disabled: true,
         }),
     }))
     .add('Expert Mode', () => ({
