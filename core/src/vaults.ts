@@ -88,7 +88,7 @@ export const fetchVaultBalance = async (network: string, vaultBase: VaultBase): 
         const proxyOwnerAddress = await cdpRegistry.owns(vaultBase.id);
         return await fetchProxiedVaultBalance(network, vaultBase, proxyOwnerAddress);
     }
-    return fetchVaultAmount(network, vaultBase.collateralType, vaultBase.collateralType);
+    return fetchVaultAmount(network, vaultBase.collateralType, vaultBase.address);
 };
 
 export const fetchVaultAmount = async (
