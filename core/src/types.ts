@@ -21,6 +21,8 @@ export declare interface AuctionInitialInfo {
     isFinished: boolean;
     isRestarting: boolean;
     marketUnitPrice?: BigNumber;
+    suggestedMarketId?: string;
+    marketData?: Record<string, any>;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
     transactionGrossProfit?: BigNumber;
     transactionAddress?: string;
