@@ -2,8 +2,10 @@
     <div>
         <div class="flex justify-between">
             <button class="Title" type="button" @click="isExpanded = !isExpanded">
-                <Icon v-if="!isExpanded" type="caret-right" /> <Icon v-else type="caret-down" /> Market Unit Price
-                <span class="text-black opacity-50">({{ suggestionOrSelection }})</span>
+                <Icon v-if="!isExpanded" type="caret-right" class="Icon" />
+                <Icon v-else type="caret-down" class="Icon" />
+                Market Unit Price
+                <span class="text-gray-300">({{ suggestionOrSelection }})</span>
             </button>
             <div v-show="!isExpanded">
                 <FormatCurrency :value="marketUnitPrice" currency="DAI" /> per
@@ -23,7 +25,7 @@
                         </tr>
                     </table>
                     <div v-if="value.unitPrice && !value.unitPrice.isNaN()" class="flex space-x-2">
-                        <button type="button" @click="marketId = key">
+                        <button type="button" @click="$emit('update:marketId', key)">
                             <span v-if="marketId === key" class="opacity-50">Selected</span>
                             <span v-else class="text-green-500">Select</span>
                         </button>
@@ -58,11 +60,14 @@ export default Vue.extend({
             type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
         },
+        marketId: {
+            type: String,
+            default: '',
+        },
     },
     data() {
         return {
             isExpanded: false,
-            marketId: '',
         };
     },
     computed: {
@@ -78,9 +83,12 @@ export default Vue.extend({
 
 <style scoped>
 .Title {
-    @apply px-2 py-1 text-left text-green-500;
+    @apply text-left text-green-500;
+}
+.Icon {
+    @apply inline;
 }
 .Content {
-    @apply px-3 pt-1 pb-3;
+    @apply pl-4;
 }
 </style>
