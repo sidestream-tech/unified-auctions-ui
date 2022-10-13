@@ -70,7 +70,7 @@ interface formatToAutomaticDecimalPointsOptions {
 export function formatToAutomaticDecimalPoints(
     value: number | BigNumber,
     decimalPlaces: number = DECIMAL_PLACES_DEFAULT,
-    options?: formatToAutomaticDecimalPointsOptions
+    options: formatToAutomaticDecimalPointsOptions = { formatWithThousandSeparators: true }
 ): string {
     const formattedValue = limitedValue(value).toFixed(dynamicDecimalPlaces(value, decimalPlaces));
     if (options?.formatWithThousandSeparators) {
