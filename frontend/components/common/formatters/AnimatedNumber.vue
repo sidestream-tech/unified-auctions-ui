@@ -40,7 +40,7 @@ export default Vue.extend({
     computed: {
         safeValue(): number {
             if (BigNumber.isBigNumber(this.value)) {
-                return this.value.toNumber();
+                return this.value.toString();
             }
             return this.value;
         },
