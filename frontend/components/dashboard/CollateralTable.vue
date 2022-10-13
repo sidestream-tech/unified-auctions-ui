@@ -14,6 +14,20 @@
             {{ ilk }}
         </div>
         <div slot="symbol" slot-scope="symbol" class="Element">{{ symbol }}</div>
+        <div slot="token" slot-scope="tokenAddress, record" class="Element" :class="{ Loading: isLoading(record) }">
+            <div v-if="isLoading(record)" class="flex items-center">
+                <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
+                <span>Loading...</span>
+            </div>
+            <div v-else>
+                <format-address v-if="tokenAddress" :value="tokenAddress" shorten type="address" />
+                <Popover v-else placement="top" :content="record.tokenAddressError" trigger="hover">
+                    <p class="inline-block w-20 text-red-500 truncate">
+                        <span>{{ record.tokenAddressError }}</span>
+                    </p>
+                </Popover>
+            </div>
+        </div>
         <div
             slot="marketUnitPrice"
             slot-scope="marketUnitPrice, record"
@@ -59,23 +73,6 @@
                 {{ priceDropRatio.multipliedBy(100).toFixed(2) }}
                 %
             </span>
-        </div>
-        <div slot="icon" slot-scope="record" class="Element">
-            <CurrencyIcon :currency-symbol="record.symbol" />
-        </div>
-        <div slot="token" slot-scope="tokenAddress, record" class="Element" :class="{ Loading: isLoading(record) }">
-            <div v-if="isLoading(record)" class="flex items-center">
-                <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
-                <span>Loading...</span>
-            </div>
-            <div v-else>
-                <format-address v-if="tokenAddress" :value="tokenAddress" shorten type="address" />
-                <Popover v-else placement="top" :content="record.tokenAddressError" trigger="hover">
-                    <p class="inline-block w-20 text-red-500 truncate">
-                        <span>{{ record.tokenAddressError }}</span>
-                    </p>
-                </Popover>
-            </div>
         </div>
     </Table>
 </template>

@@ -1,8 +1,8 @@
-import type { Notifier, WalletBalances } from './types';
+import type { CollateralType, Notifier, WalletBalances } from './types';
 import { ethers } from 'ethers';
 import getProvider from './provider';
 import BigNumber from './bignumber';
-import getContract, { getJoinNameByCollateralType } from './contracts';
+import getContract, { getErc20Contract, getJoinNameByCollateralType } from './contracts';
 import executeTransaction from './execute';
 import {
     DAI_NUMBER_OF_DIGITS,
@@ -11,6 +11,7 @@ import {
     WAD_NUMBER_OF_DIGITS,
     MKR_NUMBER_OF_DIGITS,
 } from './constants/UNITS';
+import COLLATERALS, { getCollateralConfigByType } from './constants/COLLATERALS';
 
 export const fetchBalanceETH = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const provider = await getProvider(network);
@@ -73,6 +74,12 @@ export const depositToVAT = async function (
     });
 };
 
+export const fetchCollateralInVat = async (network: string, walletAddress: string, collateralType: CollateralType) => {
+    const vat = await getContract(network, 'MCD_VAT');
+    const balanceHex = await vat.gem(ethers.utils.formatBytes32String(collateralType), walletAddress);
+    return new BigNumber(balanceHex._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS);
+};
+
 export const withdrawFromVAT = async function (
     network: string,
     walletAddress: string,
@@ -89,15 +96,45 @@ export const withdrawFromVAT = async function (
 export const withdrawCollateralFromVat = async function (
     network: string,
     walletAddress: string,
-    collateralType: string,
+    collateralType: CollateralType,
     amount: BigNumber | undefined,
     notifier?: Notifier
 ): Promise<void> {
     const withdrawalAmount = amount || (await fetchCollateralVatBalance(network, walletAddress, collateralType));
-    const withdrawalAmountWad = withdrawalAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0, BigNumber.ROUND_DOWN);
+    const decimals = COLLATERALS[collateralType].decimals;
+    const withdrawalAmountRounded = withdrawalAmount.shiftedBy(decimals).toFixed(0, BigNumber.ROUND_DOWN);
     const contractName = getJoinNameByCollateralType(collateralType);
-    await executeTransaction(network, contractName, 'exit', [walletAddress, withdrawalAmountWad], {
+    await executeTransaction(network, contractName, 'exit', [walletAddress, withdrawalAmountRounded], {
         notifier,
         confirmTransaction: true,
     });
+};
+
+export const depositCollateralToVat = async function (
+    network: string,
+    walletAddress: string,
+    collateralType: string,
+    amount: BigNumber,
+    notifier?: Notifier
+): Promise<BigNumber> {
+    console.info(`Deposit ${amount.toFixed(2)} ${collateralType} to the VAT`);
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    const depositRounded = amount.shiftedBy(collateralConfig.decimals).toFixed(0, BigNumber.ROUND_DOWN);
+    const contractName = getJoinNameByCollateralType(collateralType);
+    await executeTransaction(network, contractName, 'join', [walletAddress, depositRounded], {
+        notifier,
+        confirmTransaction: true,
+    });
+    return new BigNumber(depositRounded).shiftedBy(-collateralConfig.decimals);
+};
+
+export const fetchERC20TokenBalance = async (
+    network: string,
+    tokenContractAddress: string,
+    walletAddress: string,
+    decimals: number
+) => {
+    const token = await getErc20Contract(network, tokenContractAddress);
+    const balanceHex = await token.balanceOf(walletAddress);
+    return new BigNumber(balanceHex._hex).shiftedBy(-decimals);
 };

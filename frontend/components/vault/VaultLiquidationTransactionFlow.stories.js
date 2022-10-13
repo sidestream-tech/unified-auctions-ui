@@ -73,6 +73,7 @@ storiesOf('Vault/VaultLiquidationTransactionFlow', module)
         ...common,
         data: () => ({
             ...common.data(),
+            walletAddress: faker.finance.ethereumAddress(),
             vaultTransaction: generateFakeVaultLiquidatedTransaction(),
         }),
     }));

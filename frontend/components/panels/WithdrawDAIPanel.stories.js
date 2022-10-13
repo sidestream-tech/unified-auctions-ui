@@ -1,4 +1,5 @@
 import { storiesOf } from '@storybook/vue';
+import { action } from '@storybook/addon-actions';
 import faker from 'faker';
 import BigNumber from 'bignumber.js';
 import WithdrawDAIPanel from './WithdrawDAIPanel';
@@ -9,10 +10,11 @@ const common = {
         daiVatBalance: new BigNumber(faker.finance.amount()),
         walletAddress: faker.finance.ethereumAddress(),
         isWithdrawing: false,
-        isRefreshing: false,
         isAuthorizing: false,
         isWalletAuthorized: false,
+        disabled: false,
         isExplanationsShown: true,
+        state: 'just-started',
     }),
     methods: {
         withdraw() {
@@ -22,13 +24,7 @@ const common = {
                 this.isWithdrawing = false;
             }, 1000);
         },
-        refresh() {
-            this.isRefreshing = true;
-            setTimeout(() => {
-                this.daiVatBalance = new BigNumber(faker.finance.amount());
-                this.isRefreshing = false;
-            }, 1000);
-        },
+        manage: action('openWalletModal'),
         authorize() {
             this.isAuthorizing = true;
             setTimeout(() => {
@@ -41,12 +37,29 @@ const common = {
     <WithdrawDAIPanel
         v-bind="$data"
         @withdrawAllDaiFromVat="withdraw"
-        @refreshWallet="refresh"
+        @manageVat="manage"
         @authorizeWallet="authorize"
     />`,
 };
 
 storiesOf('Panels/WithdrawDAIPanel', module)
+    .add('Default', () => ({
+        ...common,
+    }))
+    .add('Collected State', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            state: 'collected',
+        }),
+    }))
+    .add('Liquidated State', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            state: 'liquidated',
+        }),
+    }))
     .add('No DAI In VAT', () => ({
         ...common,
         data: () => ({
@@ -78,18 +91,18 @@ storiesOf('Panels/WithdrawDAIPanel', module)
             isAuthorizing: true,
         }),
     }))
-    .add('Refreshing', () => ({
-        ...common,
-        data: () => ({
-            ...common.data(),
-            isRefreshing: true,
-        }),
-    }))
     .add('Withdrawing', () => ({
         ...common,
         data: () => ({
             ...common.data(),
             isWithdrawing: true,
+        }),
+    }))
+    .add('Disabled', () => ({
+        ...common,
+        data: () => ({
+            ...common.data(),
+            disabled: true,
         }),
     }))
     .add('Expert Mode', () => ({

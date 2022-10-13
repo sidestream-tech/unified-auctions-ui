@@ -21,11 +21,13 @@ const selectAndRunSimulation = async () => {
         if (!simulationConfig) {
             throw new Error(`Simulation config not found for "${selectedSimulation?.value}"`);
         }
+        let context: Record<string, any> = {};
         for (const [i, step] of simulationConfig.steps.entries()) {
             if (i !== 0) {
                 await keypress(`Press Enter to proceed to the next step "${step.title}"`);
             }
-            await step.entry();
+            const returnedValues = await step.entry(context);
+            context = { ...context, ...(returnedValues ?? {}) };
             console.info(`Step "${step.title}" is successfully completed\n`);
         }
         console.info(`Simulation "${selectedSimulation.value}" is completed`);

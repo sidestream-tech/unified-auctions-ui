@@ -122,7 +122,8 @@ export const actions = {
         if (
             rootState.route.name !== 'collateral' &&
             rootState.route.name !== 'surplus' &&
-            rootState.route.name !== 'debt'
+            rootState.route.name !== 'debt' &&
+            rootState.route.name !== 'vaults'
         ) {
             return;
         }
