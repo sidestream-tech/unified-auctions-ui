@@ -88,7 +88,13 @@
             :is-collateral-authed="isWalletCollateralAuthorizationCheckPassed"
             :fees="fees"
             :transaction-gross-profit="auctionTransaction.transactionGrossProfit"
-            @execute="$emit('execute', { id: auctionTransaction.id, alternativeDestinationAddress: $event })"
+            @execute="
+                $emit('execute', {
+                    id: auctionTransaction.id,
+                    marketId: marketSuggestionOrSelection,
+                    alternativeDestinationAddress: $event,
+                })
+            "
         />
     </div>
 </template>
@@ -181,6 +187,9 @@ export default Vue.extend({
                 fees['Collateral Authorization Fee'] = this.auctionTransaction.authTransactionFeeETH;
             }
             return fees;
+        },
+        marketSuggestionOrSelection(): string | undefined {
+            return this.marketId || this.auctionTransaction.suggestedMarketId;
         },
     },
 });

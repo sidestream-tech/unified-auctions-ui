@@ -233,8 +233,13 @@ export const actions = {
     },
     async bidWithCallee(
         { getters, commit, rootGetters }: ActionContext<State, State>,
-        { id, alternativeDestinationAddress }: { id: string; alternativeDestinationAddress: string | undefined }
+        {
+            id,
+            marketId,
+            alternativeDestinationAddress,
+        }: { id: string; marketId: string; alternativeDestinationAddress: string | undefined }
     ) {
+        console.log(marketId); // to be removed after core implementation
         const auction = getters.getAuctionById(id);
         if (!auction) {
             message.error(`Bidding error: can not find auction with id "${id}"`);
