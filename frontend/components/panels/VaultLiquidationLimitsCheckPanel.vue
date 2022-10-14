@@ -30,7 +30,7 @@
                         >dog.Dirt</a
                     >
                 </Explain>
-                = <FormatCurrency :class="globalLimitColor" :value="globalLimit" currency="DAI"
+                = <FormatCurrency :class="limitColor(globalDifference)" :value="globalLimit" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -59,7 +59,7 @@
                         >ilk.dirt</a
                     >
                 </Explain>
-                = <FormatCurrency :class="collateralLimitColor" :value="collateralLimit" currency="DAI"
+                = <FormatCurrency :class="limitColor(collateralDifference)" :value="collateralLimit" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -70,12 +70,7 @@
             <hr class="mb-1" />
             <div class="flex justify-between">
                 <span class="font-bold">Maximum liquidation amount</span>
-                <FormatCurrency
-                    v-if="maximumLiquidationAmount"
-                    :class="maximumLiquidationColor"
-                    :value="maximumLiquidationAmount"
-                    currency="DAI"
-                />
+                <FormatCurrency v-if="maximumLiquidationAmount" :value="maximumLiquidationAmount" currency="DAI" />
                 <div v-else>
                     <span class="opacity-50">Unknown</span>
                     <span>DAI</span>
@@ -85,7 +80,7 @@
                 <span class="font-bold">Will be liquidated</span>
                 <FormatCurrency
                     v-if="willBeLiquidated"
-                    :class="maximumLiquidationColor"
+                    :class="willBeLiquidatedColor"
                     :value="willBeLiquidated"
                     currency="DAI"
                 />
@@ -167,7 +162,11 @@ export default Vue.extend({
             return this.collateralLimit.minus(this.debtTimesPenaltyRatio);
         },
         maximumLiquidationAmount(): BigNumber | undefined {
-            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
+            if (
+                this.isGlobalLimitMissing ||
+                this.isCollateralLimitMissing ||
+                !this.vaultTransaction.liquidationPenaltyRatio
+            ) {
                 return undefined;
             }
             if (
@@ -186,9 +185,6 @@ export default Vue.extend({
             if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
                 return undefined;
             }
-            if (this.vaultTransaction.state !== 'liquidatable') {
-                return new BigNumber(0);
-            }
             if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
                 if (this.globalLimit.isLessThanOrEqualTo(this.collateralLimit)) {
                     return this.globalLimit.div(this.vaultTransaction.liquidationPenaltyRatio);
@@ -198,25 +194,10 @@ export default Vue.extend({
             }
             return this.vaultTransaction.debtDai;
         },
-        globalLimitColor(): string {
-            if (this.globalDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
-                    return 'text-orange-500';
-                }
-                return 'text-red-500';
+        willBeLiquidatedColor(): string {
+            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
+                return 'text-current';
             }
-            return 'text-current';
-        },
-        collateralLimitColor(): string {
-            if (this.collateralDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
-                    return 'text-orange-500';
-                }
-                return 'text-red-500';
-            }
-            return 'text-current';
-        },
-        maximumLiquidationColor(): string {
             if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
                 if (this.vaultTransaction.state === 'liquidatable') {
                     return 'text-orange-500';
@@ -225,15 +206,28 @@ export default Vue.extend({
             }
             return 'text-current';
         },
+        partialLiquidationLeftover(): BigNumber {
+            if (!this.willBeLiquidated) {
+                return this.vaultTransaction.debtDai;
+            }
+            return this.vaultTransaction.debtDai.minus(this.willBeLiquidated);
+        },
+        isBelowMinimal(): boolean {
+            return (
+                this.vaultTransaction.debtDai.isLessThan(this.vaultTransaction.minimalAuctionedDai) ||
+                this.willBeLiquidated?.isLessThan(this.vaultTransaction.minimalAuctionedDai) ||
+                this.partialLiquidationLeftover.isLessThan(this.vaultTransaction.minimalAuctionedDai)
+            );
+        },
         currentStateAndTitle(): PanelProps {
-            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing || !this.debtTimesPenaltyRatio) {
+            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
                 return {
                     name: 'inactive',
                     title: 'Current liquidation limits are unknown',
                 };
             }
             if (this.globalDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
+                if (!this.isBelowMinimal) {
                     return {
                         name: 'attention',
                         title: 'Current global liquidation limits are partially reached',
@@ -245,7 +239,7 @@ export default Vue.extend({
                 };
             }
             if (this.collateralDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
+                if (!this.isBelowMinimal) {
                     return {
                         name: 'attention',
                         title: `Current ${this.vaultTransaction.collateralType} liquidation limits are partially reached`,
@@ -276,6 +270,15 @@ export default Vue.extend({
     methods: {
         format(value: BigNumber): string {
             return formatToAutomaticDecimalPoints(value);
+        },
+        limitColor(difference: BigNumber): string {
+            if (difference.isNegative()) {
+                if (this.isBelowMinimal) {
+                    return 'text-red-500';
+                }
+                return 'text-orange-500';
+            }
+            return 'text-current';
         },
     },
 });
