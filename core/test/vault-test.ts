@@ -20,6 +20,7 @@ import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
+    determineBalanceSlot,
 } from '../simulations/helpers/createVaultWithCollateral';
 import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
 import { MAX } from '../src/constants/UNITS';
@@ -436,7 +437,8 @@ describe(`Collateral vault simulation liquidation `, () => {
                 }
                 throw e;
             }
-            const vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
+            const slot = await determineBalanceSlot(collateralType);
+            const vaultId = await createVaultWithCollateral(collateralType, collateralOwned, slot);
 
             const vault = await fetchVault(TEST_NETWORK, vaultId);
             expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));

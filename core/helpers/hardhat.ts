@@ -15,8 +15,7 @@ import {
     HARDHAT_PUBLIC_KEY,
 } from '../helpers/constants';
 import getProvider from '../src/provider';
-import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
-import { CollateralType } from '../src/types';
+import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 
 export const generateMappingSlotAddress = (mappingStartSlot: string, key: string) => {
     return stripZeros(ethers.utils.keccak256(concat(pad32(key), pad32(mappingStartSlot))));
@@ -52,6 +51,17 @@ export const overwriteUintMapping = async (
 ) => {
     const slotAddress = generateMappingSlotAddress(mappingSlotAddress, mappingKey);
     await overwriteUintValue(contractName, slotAddress, newValue, provider);
+};
+
+export const overwriteUintMappingInAddress = async (
+    contractAddress: string,
+    mappingSlotAddress: string,
+    mappingKey: string,
+    newValue: BigNumber,
+    provider: EthereumProvider = hre.network.provider
+) => {
+    const slotAddress = generateMappingSlotAddress(mappingSlotAddress, mappingKey);
+    await overwriteUintValueInAddress(contractAddress, slotAddress, newValue, provider);
 };
 
 export const overwriteUintTable = async (
@@ -137,12 +147,13 @@ export const addMkrToBalance = async (
     console.info(`New MKR balance: ${mkrBalance}`);
 };
 
-export const setCollateralInVat = async (
-    collateralType: CollateralType,
+export const setCollateralInWallet = async (
+    tokenAddress: string,
+    slot: string,
     collateralAmount: BigNumber,
+    decimals: number,
     provider?: EthereumProvider
 ) => {
-    const value = collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS);
-    const collateralTypeHex = ethers.utils.formatBytes32String(collateralType);
-    await overwriteUintTable('MCD_VAT', '0x4', collateralTypeHex, HARDHAT_PUBLIC_KEY, value, provider);
+    const value = collateralAmount.shiftedBy(decimals);
+    await overwriteUintMappingInAddress(tokenAddress, slot, HARDHAT_PUBLIC_KEY, value, provider);
 };

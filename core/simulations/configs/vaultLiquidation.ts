@@ -1,4 +1,10 @@
-import { warpTime, resetNetworkAndSetupWallet, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
+import {
+    warpTime,
+    resetNetworkAndSetupWallet,
+    addDaiToBalance,
+    addMkrToBalance,
+    resetNetwork,
+} from '../../helpers/hardhat';
 import { Simulation } from '../types';
 import prompts from 'prompts';
 import COLLATERALS from '../../src/constants/COLLATERALS';
@@ -6,6 +12,7 @@ import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaul
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
+    determineBalanceSlot,
 } from '../helpers/createVaultWithCollateral';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
@@ -39,12 +46,14 @@ const getBaseContext = async () => {
     const collateralType = await getCollateralType();
     const decimals = COLLATERALS[collateralType].decimals;
     const collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
+    const collateralTokenProxyAddress = COLLATERALS[collateralType].isProxyFor;
 
     console.info(`Collateral in the VAT initially: ${collateralOwned.toFixed()}`);
     return {
         collateralType,
         decimals,
         collateralOwned,
+        collateralTokenProxyAddress,
     };
 };
 
@@ -61,7 +70,16 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
-                const latestVaultId = await createVaultWithCollateral(context.collateralType, context.collateralOwned);
+                const balanceSlot = await determineBalanceSlot(
+                    context.collateralType,
+                    context.collateralTokenProxyAddress
+                );
+                resetNetwork();
+                const latestVaultId = await createVaultWithCollateral(
+                    context.collateralType,
+                    context.collateralOwned,
+                    balanceSlot
+                );
                 return { ...context, latestVaultId };
             },
         },
