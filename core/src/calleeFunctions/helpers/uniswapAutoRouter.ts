@@ -47,3 +47,18 @@ export const getUniswapAutoRoute = async function (
     }
     return route;
 };
+
+export const fetchAutoRouteInformation = async function (
+    network: string,
+    collateralSymbol: string,
+    inputAmount: string | number = 1,
+    walletAddress?: string
+) {
+    const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
+    const autoRouteExchanges = autoRouteData.route[0].tokenPath.map(p => p.symbol);
+
+    return {
+        autoRouteQuote: new BigNumber(autoRouteData.quote.toFixed(2)),
+        autoRouteExchanges,
+    };
+};

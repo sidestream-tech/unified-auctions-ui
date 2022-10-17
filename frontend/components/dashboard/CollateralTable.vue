@@ -50,7 +50,7 @@
             :class="{ Loading: isLoading(record) }"
         >
             <div v-if="autoRouteExchanges">
-                {{ autoRouteExchanges.toString() }}
+                {{ autoRouteExchanges.join(', ') }}
             </div>
         </div>
         <div
