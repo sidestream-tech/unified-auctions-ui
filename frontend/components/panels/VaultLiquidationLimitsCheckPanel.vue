@@ -97,10 +97,7 @@
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { VaultTransactionNotLiquidated } from 'auctions-core/src/types';
-import {
-    formatToAutomaticDecimalPoints,
-    formatWithThousandSeparators,
-} from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
+import { formatToAutomaticDecimalPoints } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import Explain from '~/components/common/other/Explain.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
@@ -241,7 +238,7 @@ export default Vue.extend({
     },
     methods: {
         format(value: BigNumber): string {
-            return formatWithThousandSeparators(formatToAutomaticDecimalPoints(value));
+            return formatToAutomaticDecimalPoints(value, undefined, { formatWithThousandSeparators: true });
         },
     },
 });
