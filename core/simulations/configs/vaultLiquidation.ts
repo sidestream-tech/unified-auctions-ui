@@ -16,6 +16,7 @@ import createVaultWithCollateral, {
 } from '../helpers/createVaultWithCollateral';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
+    'CRVV1ETHSTETH-A', // collateral handled differently
     'RENBTC-A', // proxy contract in the token. Needs special handling.
     'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
     'WSTETH-B', // does not accumulate stability fee rate at all.
