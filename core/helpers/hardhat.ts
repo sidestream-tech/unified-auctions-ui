@@ -68,10 +68,7 @@ export const overwriteUintMappingInAddress = async (
     provider: EthereumProvider = hre.network.provider,
     languageFormat: 'vyper' | 'solidity' = 'solidity'
 ) => {
-    const slotAddress =
-        languageFormat === 'solidity'
-            ? generateMappingSlotAddress(mappingSlotAddress, mappingKey)
-            : generateMappingSlotAddress(mappingSlotAddress, mappingKey, 'vyper');
+    const slotAddress = generateMappingSlotAddress(mappingSlotAddress, mappingKey, languageFormat);
     await overwriteUintValueInAddress(contractAddress, slotAddress, newValue, provider);
 };
 
