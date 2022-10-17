@@ -1,7 +1,7 @@
 <template>
     <span v-if="isValidNumber"
         ><span v-if="isValueSmallButNotZero">under </span
-        ><animated-number :value="safeValue" :format-value="format" :duration="duration"
+        ><animated-number :value="formattedValue" :format-value="format" :duration="duration"
     /></span>
 </template>
 
@@ -38,11 +38,10 @@ export default Vue.extend({
         },
     },
     computed: {
-        safeValue(): number {
-            if (BigNumber.isBigNumber(this.value)) {
-                return this.value.toString();
-            }
-            return this.value;
+        formattedValue(): string {
+            return formatToAutomaticDecimalPoints(this.value, this.decimalPlaces, {
+                formatWithThousandSeparators: false,
+            });
         },
         isValidNumber(): boolean {
             return isValidNumber(this.value);

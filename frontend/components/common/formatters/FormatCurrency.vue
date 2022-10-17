@@ -2,7 +2,12 @@
     <span>
         <span v-if="isNotANumber">Unknown</span>
         <span v-else
-            >{{ sign }}<animated-number :value="value" :decimal-places="decimalPlaces" :formatted="formatted" />
+            >{{ sign
+            }}<animated-number
+                :value="value"
+                :decimal-places="decimalPlaces"
+                :disable-thousand-separators="disableThousandSeparators"
+            />
         </span>
         <span class="uppercase">{{ currency }}</span>
     </span>
@@ -33,7 +38,7 @@ export default Vue.extend({
             type: Number as Vue.PropType<Number>,
             default: 2,
         },
-        formatted: {
+        disableThousandSeparators: {
             type: Boolean,
             default: false,
         },
