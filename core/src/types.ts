@@ -96,7 +96,6 @@ export declare interface CollateralConfig {
     decimals: number;
     exchange: RegularCalleeConfig | UniswapV2LpTokenCalleeConfig;
     oracle: CollateralPriceSourceConfig;
-    isProxyFor?: string;
 }
 
 interface OracleConfigBase {

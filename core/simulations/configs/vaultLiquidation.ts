@@ -16,9 +16,9 @@ import createVaultWithCollateral, {
 } from '../helpers/createVaultWithCollateral';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
-    'CRVV1ETHSTETH-A', // collateral handled differently
+    'RENBTC-A', // proxy contract in the token. Needs special handling.
     'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
-    'WSTETH-B', // does not accumulate stability fee rate fast enough
+    'WSTETH-B', // does not accumulate stability fee rate at all.
 ];
 
 export const getLiquidatableCollateralTypes = () => {
@@ -46,14 +46,12 @@ const getBaseContext = async () => {
     const collateralType = await getCollateralType();
     const decimals = COLLATERALS[collateralType].decimals;
     const collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
-    const collateralTokenProxyAddress = COLLATERALS[collateralType].isProxyFor;
 
     console.info(`Collateral in the VAT initially: ${collateralOwned.toFixed()}`);
     return {
         collateralType,
         decimals,
         collateralOwned,
-        collateralTokenProxyAddress,
     };
 };
 
@@ -70,15 +68,15 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
-                const balanceSlot = await determineBalanceSlot(
+                const [ balanceSlot, languageFormat ] = await determineBalanceSlot(
                     context.collateralType,
-                    context.collateralTokenProxyAddress
                 );
                 resetNetwork();
                 const latestVaultId = await createVaultWithCollateral(
                     context.collateralType,
                     context.collateralOwned,
-                    balanceSlot
+                    balanceSlot,
+                    languageFormat
                 );
                 return { ...context, latestVaultId };
             },

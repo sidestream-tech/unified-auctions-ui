@@ -171,7 +171,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        isProxyFor: '0xe2d6ccac3ee3a21abf7bedbe2e107ffc0c037e80',
     },
     'TUSD-A': {
         title: 'True USD',

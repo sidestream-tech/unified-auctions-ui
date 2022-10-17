@@ -1,4 +1,4 @@
-import { overwriteUintMappingInAddress, setCollateralInWallet } from '../../helpers/hardhat';
+import { findERC20BalanceSlot, setCollateralInWallet } from '../../helpers/hardhat';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
 import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';
@@ -106,55 +106,25 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
     await contract.approve(addressJoin, amountRaw);
 };
 
-const getProxyContract = async (proxiedAddress: string, contractAddress: string) => {
-    const contract = await getErc20Contract(TEST_NETWORK, proxiedAddress);
-    return contract.attach(contractAddress);
-};
-
-const findERC20BalanceSlot = async (tokenAddress: string, proxiedAddress?: string) => {
-    const contract = proxiedAddress
-        ? await getProxyContract(proxiedAddress, tokenAddress)
-        : await getErc20Contract(TEST_NETWORK, tokenAddress);
-    const balanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
-    const balance = new BigNumber(balanceHex._hex);
-    const overwriteValue = balance.eq(0) ? new BigNumber(10) : new BigNumber(0);
-    for (const i of Array.from(Array(100).keys())) {
-        const slot = ethers.utils.hexValue(i);
-        await overwriteUintMappingInAddress(tokenAddress, slot, HARDHAT_PUBLIC_KEY, overwriteValue);
-
-        const newBalanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
-        const newBalance = new BigNumber(newBalanceHex._hex);
-        if (newBalance.eq(overwriteValue)) {
-            // double check to make sure the value in the slot is not accidentally the same as the hardcoded one above
-            await overwriteUintMappingInAddress(tokenAddress, slot, HARDHAT_PUBLIC_KEY, balance);
-            const finalBalanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
-            const finalBalance = new BigNumber(finalBalanceHex._hex);
-            if (finalBalance.eq(balance)) {
-                return slot;
-            }
-        }
-    }
-    throw new Error(`Failed to find the slot of the balance for the token in address ${tokenAddress}`);
-};
-
-export const determineBalanceSlot = async (collateralType: CollateralType, proxiedAddress?: string) => {
+export const determineBalanceSlot = async (collateralType: CollateralType): Promise<[string, 'vyper' | 'solidity']> => {
     console.info('Determining balance slot...');
     const collateralConfig = getCollateralConfigByType(collateralType);
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
-    const slot = await findERC20BalanceSlot(tokenContractAddress, proxiedAddress);
-    console.info(`Balance slot is ${slot}`);
-    return slot;
+    const [slot, languageFormat] = await findERC20BalanceSlot(tokenContractAddress);
+    console.info(`Balance slot is ${slot}, language format is ${languageFormat}`);
+    return [slot, languageFormat];
 };
 
 const createVaultWithCollateral = async (
     collateralType: CollateralType,
     collateralOwned: BigNumber,
-    balanceSlot: string
+    balanceSlot: string,
+    languageFormat: 'vyper' | 'solidity',
 ) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
 
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
-    await setCollateralInWallet(tokenContractAddress, balanceSlot, collateralOwned, collateralConfig.decimals);
+    await setCollateralInWallet(tokenContractAddress, balanceSlot, collateralOwned, collateralConfig.decimals, undefined, languageFormat);
     await ensureWalletBalance(collateralConfig, collateralOwned);
 
     const vaultId = await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
