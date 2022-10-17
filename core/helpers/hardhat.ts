@@ -17,7 +17,11 @@ import {
 import getProvider from '../src/provider';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 
-export const generateMappingSlotAddress = (mappingStartSlot: string, key: string, languageFormat: 'vyper' | 'solidity' = 'solidity') => {
+export const generateMappingSlotAddress = (
+    mappingStartSlot: string,
+    key: string,
+    languageFormat: 'vyper' | 'solidity' = 'solidity'
+) => {
     if (languageFormat === 'solidity') {
         return stripZeros(ethers.utils.keccak256(concat(pad32(key), pad32(mappingStartSlot))));
     }
@@ -64,7 +68,10 @@ export const overwriteUintMappingInAddress = async (
     provider: EthereumProvider = hre.network.provider,
     languageFormat: 'vyper' | 'solidity' = 'solidity'
 ) => {
-    const slotAddress = languageFormat ==='solidity' ? generateMappingSlotAddress(mappingSlotAddress, mappingKey) : generateMappingSlotAddress(mappingSlotAddress, mappingKey, 'vyper');
+    const slotAddress =
+        languageFormat === 'solidity'
+            ? generateMappingSlotAddress(mappingSlotAddress, mappingKey)
+            : generateMappingSlotAddress(mappingSlotAddress, mappingKey, 'vyper');
     await overwriteUintValueInAddress(contractAddress, slotAddress, newValue, provider);
 };
 
@@ -163,16 +170,37 @@ export const setCollateralInWallet = async (
     await overwriteUintMappingInAddress(tokenAddress, slot, HARDHAT_PUBLIC_KEY, value, provider, languageFormat);
 };
 
-const runSlotDiscoveryLoop = async (tokenAddress: string, contract: ethers.Contract, overwriteValue: BigNumber, initialValue: BigNumber, languageFormat: 'solidity' | 'vyper', loops: number = 100) => {
+const runSlotDiscoveryLoop = async (
+    tokenAddress: string,
+    contract: ethers.Contract,
+    overwriteValue: BigNumber,
+    initialValue: BigNumber,
+    languageFormat: 'solidity' | 'vyper',
+    loops = 100
+) => {
     for (const i of Array.from(Array(loops).keys())) {
         const slot = ethers.utils.hexValue(i);
-        await overwriteUintMappingInAddress(tokenAddress, slot, HARDHAT_PUBLIC_KEY, overwriteValue, undefined, languageFormat);
+        await overwriteUintMappingInAddress(
+            tokenAddress,
+            slot,
+            HARDHAT_PUBLIC_KEY,
+            overwriteValue,
+            undefined,
+            languageFormat
+        );
 
         const newBalanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
         const newBalance = new BigNumber(newBalanceHex._hex);
         if (newBalance.eq(overwriteValue)) {
             // double check to make sure the value in the slot is not accidentally the same as the hardcoded one above
-            await overwriteUintMappingInAddress(tokenAddress, slot, HARDHAT_PUBLIC_KEY, initialValue, undefined, languageFormat);
+            await overwriteUintMappingInAddress(
+                tokenAddress,
+                slot,
+                HARDHAT_PUBLIC_KEY,
+                initialValue,
+                undefined,
+                languageFormat
+            );
             const finalBalanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
             const finalBalance = new BigNumber(finalBalanceHex._hex);
             if (finalBalance.eq(initialValue)) {
@@ -181,22 +209,21 @@ const runSlotDiscoveryLoop = async (tokenAddress: string, contract: ethers.Contr
         }
     }
     return null;
-}
+};
 
 export const findERC20BalanceSlot = async (tokenAddress: string): Promise<[string, 'vyper' | 'solidity']> => {
     const contract = await getErc20Contract(TEST_NETWORK, tokenAddress);
     const balanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
     const balance = new BigNumber(balanceHex._hex);
     const overwriteValue = balance.eq(0) ? new BigNumber(10) : new BigNumber(0);
-    const discoverySolidity = await runSlotDiscoveryLoop(tokenAddress, contract, overwriteValue, balance, 'solidity')
+    const discoverySolidity = await runSlotDiscoveryLoop(tokenAddress, contract, overwriteValue, balance, 'solidity');
     if (discoverySolidity) {
-        return [discoverySolidity, 'solidity']
+        return [discoverySolidity, 'solidity'];
     }
-    const discoveryVyper = await runSlotDiscoveryLoop(tokenAddress, contract, overwriteValue, balance, 'vyper')
+    const discoveryVyper = await runSlotDiscoveryLoop(tokenAddress, contract, overwriteValue, balance, 'vyper');
     if (discoveryVyper) {
-        return [discoveryVyper, 'vyper']
+        return [discoveryVyper, 'vyper'];
     }
 
     throw new Error(`Failed to find the slot of the balance for the token in address ${tokenAddress}`);
 };
-

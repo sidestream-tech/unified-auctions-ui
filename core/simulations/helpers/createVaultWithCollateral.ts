@@ -106,12 +106,16 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
     await contract.approve(addressJoin, amountRaw);
 };
 
-export const determineBalanceSlot = async (collateralType: CollateralType): Promise<[string, 'vyper' | 'solidity']> => {
+export const determineBalanceSlot = async (
+    collateralType: CollateralType
+): Promise<[string, 'vyper' | 'solidity']> => {
     console.info('Determining balance slot...');
     const collateralConfig = getCollateralConfigByType(collateralType);
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
     const [slot, languageFormat] = await findERC20BalanceSlot(tokenContractAddress);
-    console.info(`Balance slot is ${slot}, language format is ${languageFormat}`);
+    console.info(
+        `Balance slot is ${slot}, language format is ${languageFormat}, contract address is ${tokenContractAddress}`
+    );
     return [slot, languageFormat];
 };
 
@@ -119,12 +123,19 @@ const createVaultWithCollateral = async (
     collateralType: CollateralType,
     collateralOwned: BigNumber,
     balanceSlot: string,
-    languageFormat: 'vyper' | 'solidity',
+    languageFormat: 'vyper' | 'solidity'
 ) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
 
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
-    await setCollateralInWallet(tokenContractAddress, balanceSlot, collateralOwned, collateralConfig.decimals, undefined, languageFormat);
+    await setCollateralInWallet(
+        tokenContractAddress,
+        balanceSlot,
+        collateralOwned,
+        collateralConfig.decimals,
+        undefined,
+        languageFormat
+    );
     await ensureWalletBalance(collateralConfig, collateralOwned);
 
     const vaultId = await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);

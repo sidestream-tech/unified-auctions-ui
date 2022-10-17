@@ -68,9 +68,7 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
-                const [ balanceSlot, languageFormat ] = await determineBalanceSlot(
-                    context.collateralType,
-                );
+                const [balanceSlot, languageFormat] = await determineBalanceSlot(context.collateralType);
                 resetNetwork();
                 const latestVaultId = await createVaultWithCollateral(
                     context.collateralType,

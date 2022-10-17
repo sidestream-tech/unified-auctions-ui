@@ -20,7 +20,7 @@ import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
-    determineBalanceSlot
+    determineBalanceSlot,
 } from '../simulations/helpers/createVaultWithCollateral';
 import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
 import { MAX } from '../src/constants/UNITS';
@@ -438,7 +438,15 @@ describe(`Collateral vault simulation liquidation `, () => {
                 throw e;
             }
             const [slot, languageFormat] = await determineBalanceSlot(collateralType);
-            const vaultId = await createVaultWithCollateral(collateralType, collateralOwned, slot, languageFormat);
+            let vaultId: number;
+            try {
+                vaultId = await createVaultWithCollateral(collateralType, collateralOwned, slot, languageFormat);
+            } catch (e) {
+                if (e instanceof Error && e.message === 'Could not borrow dai because debt ceiling is exceeded.') {
+                    return;
+                }
+                throw e;
+            }
 
             const vault = await fetchVault(TEST_NETWORK, vaultId);
             expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));
