@@ -1,6 +1,12 @@
-import { fetchLiquidationRatioAndOracleAddress, fetchVault, getVaultTransaction, liquidateVault } from '../src/vaults';
+import {
+    collectStabilityFees,
+    fetchLiquidationRatioAndOracleAddress,
+    fetchVault,
+    getVaultTransaction,
+    liquidateVault,
+} from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
-import { resetNetwork } from '../helpers/hardhat';
+import { createWalletForRpc, overwriteUintValue, resetNetwork, warpTime } from '../helpers/hardhat';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
 import { expect } from 'chai';
@@ -12,6 +18,11 @@ import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
+import createVaultWithCollateral, {
+    calculateMinCollateralAmountToOpenVault,
+} from '../simulations/helpers/createVaultWithCollateral';
+import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
+import { MAX } from '../src/constants/UNITS';
 chai.use(deepEqualInAnyOrder);
 
 const compareVaultTransactionsNotLiquidated = (
@@ -405,5 +416,49 @@ describe('Sound values are extracted', () => {
             }
             expect(expectedReturn[type].nextUnitPrice).to.eq(prices.nextUnitPrice.toFixed());
         }
+    });
+});
+describe(`Collateral vault simulation liquidation `, () => {
+    before(async () => {
+        await createWalletForRpc();
+        await resetNetwork();
+        // set max global liquidation limit - `Hole` of dog.sol contract
+        await overwriteUintValue('MCD_DOG', '0x4', MAX);
+    });
+    getLiquidatableCollateralTypes().forEach(collateralType => {
+        it(`runs the simulaton for ${collateralType}`, async () => {
+            let collateralOwned: BigNumber;
+            try {
+                collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
+            } catch (e) {
+                if (e instanceof Error && e.message.endsWith('max debt set to zero')) {
+                    return;
+                }
+                throw e;
+            }
+
+            let vaultId: number;
+            try {
+                vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
+            } catch (e) {
+                if (e instanceof Error && e.message === 'Could not borrow dai because debt ceiling is exceeded.') {
+                    return;
+                }
+                throw e;
+            }
+
+            const vault = await fetchVault(TEST_NETWORK, vaultId);
+            expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));
+
+            const previousStabilityFee = vault.stabilityFeeRate;
+            await warpTime(60 * 24 * 30, 60);
+            await collectStabilityFees(TEST_NETWORK, vault.collateralType);
+            const currentStabilityFee = (await fetchVault(TEST_NETWORK, vaultId)).stabilityFeeRate;
+            if (!currentStabilityFee.gt(previousStabilityFee)) {
+                throw new Error('Successful vault creation, but stability fees did not change after time warp');
+            }
+
+            await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
+        });
     });
 });

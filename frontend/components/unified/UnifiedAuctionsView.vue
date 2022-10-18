@@ -104,6 +104,16 @@ export default Vue.extend({
                     filters: ['debt'],
                 },
                 {
+                    title: 'Vault liquidations portal',
+                    description:
+                        'Web tool that supports liquidation of vaults that are no longer collaterlised enough',
+                    links: {
+                        source: 'https://github.com/sidestream-tech/unified-auctions-ui',
+                        participate: '/vaults',
+                    },
+                    filters: ['collateral'],
+                },
+                {
                     title: 'Liquidations platform',
                     description: 'Web tool that support participation in collateral auctions by bidding with own Dai',
                     links: {

@@ -4,6 +4,7 @@
             <div class="Icon" :class="iconClass">
                 <Icon v-if="currentState === 'inactive'" type="close" />
                 <Icon v-else-if="currentState === 'incorrect'" type="warning" theme="filled" />
+                <Icon v-else-if="currentState === 'attention'" type="exclamation-circle" theme="filled" />
                 <Icon v-else-if="currentState === 'correct'" type="check" />
                 <Icon v-else-if="currentState === 'notice'" type="info-circle" theme="filled" />
             </div>
@@ -33,6 +34,12 @@ const STATES = [
         name: 'incorrect',
         titleClass: 'text-red-500',
         iconClass: 'text-red-500',
+        isExpanded: true,
+    },
+    {
+        name: 'attention',
+        titleClass: 'text-orange-500',
+        iconClass: 'text-orange-500',
         isExpanded: true,
     },
     {

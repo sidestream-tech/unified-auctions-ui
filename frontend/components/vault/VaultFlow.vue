@@ -30,6 +30,10 @@
                     :vault-transaction="selectedVaultTransaction"
                     :wallet-address="walletAddress"
                     :is-connecting-wallet="isConnectingWallet"
+                    :dai-vat-balance="daiVatBalance"
+                    :is-authorizing="isAuthorizing"
+                    :is-wallet-authorized="isWalletAuthorized"
+                    :is-withdrawing="isWithdrawing"
                     :is-refreshing-limits="isRefreshingLimits"
                     :is-liquidating="isLiquidating"
                     :is-explanations-shown="isExplanationsShown"
@@ -37,6 +41,9 @@
                     @disconnectWallet="$emit('disconnectWallet')"
                     @refreshLimits="$emit('refreshLimits')"
                     @liquidate="$emit('liquidate', $event)"
+                    @manageVat="$emit('manageVat')"
+                    @authorizeWallet="$emit('authorizeWallet')"
+                    @withdrawAllDaiFromVat="$emit('withdrawAllDaiFromVat')"
                 />
             </template>
         </SplitLayout>
@@ -44,6 +51,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import { VaultTransaction } from 'auctions-core/src/types';
 import VaultsText from './VaultsText.vue';
 import Vault from './Vault.vue';
@@ -77,6 +85,22 @@ export default Vue.extend({
             default: null,
         },
         isConnectingWallet: {
+            type: Boolean,
+            default: false,
+        },
+        daiVatBalance: {
+            type: Object as Vue.PropType<BigNumber>,
+            default: undefined,
+        },
+        isAuthorizing: {
+            type: Boolean,
+            default: false,
+        },
+        isWalletAuthorized: {
+            type: Boolean,
+            default: false,
+        },
+        isWithdrawing: {
             type: Boolean,
             default: false,
         },

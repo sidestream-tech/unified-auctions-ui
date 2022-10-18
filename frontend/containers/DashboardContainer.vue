@@ -30,6 +30,9 @@ export default Vue.extend({
             gasParameters: 'getGasParameters',
             transactionFees: 'getTransactionFees',
         }),
+        network(): string | undefined {
+            return this.$store.getters['network/getMakerNetwork'];
+        },
         isExplanationsShown: {
             get(): boolean {
                 return this.$store.getters['preferences/getIsExplanationsShown'];
@@ -46,9 +49,13 @@ export default Vue.extend({
             return getCalleesByNetworkType(network);
         },
     },
-    async mounted() {
-        await this.$store.dispatch('gas/setup');
-        await this.$store.dispatch('collaterals/setup');
+    watch: {
+        network() {
+            if (this.network) {
+                this.$store.dispatch('gas/setup');
+                this.$store.dispatch('collaterals/setup');
+            }
+        },
     },
 });
 </script>

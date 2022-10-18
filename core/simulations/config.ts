@@ -3,6 +3,7 @@ import surplusAuctionBlockchain from './configs/surplusAuctionSimulation';
 import wstethAuctionSimulation from './configs/wstethAuctionSimulation';
 import surplusAuctionSimulation from './configs/createSurplusAcutionSimulation';
 import blockWithVaultsInAllStates from './configs/blocksWithVaultsInAllStates';
+import vaultLiquidation from './configs/vaultLiquidation';
 import { Simulation } from './types';
 
 export const SIMULATIONS: Simulation[] = [
@@ -11,4 +12,5 @@ export const SIMULATIONS: Simulation[] = [
     surplusAuctionSimulation,
     wstethAuctionSimulation,
     blockWithVaultsInAllStates,
+    vaultLiquidation,
 ];
