@@ -99,14 +99,7 @@ export const actions = {
                     priceDropRatio: error.toString(),
                 };
             });
-            const autoRouteData = await fetchAutoRouteInformation(network, collateral.symbol).catch(error => {
-                console.error(error);
-                return {
-                    autoRouteError: error.toString(),
-                    autoRouteQuote: undefined,
-                    autoRouteExchanges: undefined,
-                };
-            });
+            const autoRouteData = await fetchAutoRouteInformation(network, collateral.symbol);
 
             const updated = {
                 ilk: collateral.ilk,
@@ -114,9 +107,9 @@ export const actions = {
                 secondsBetweenPriceDrops: calcParameters.secondsBetweenPriceDrops,
                 priceDropRatio: calcParameters.priceDropRatio,
                 tokenAddress,
-                autoRouteError: autoRouteData.autoRouteError,
-                autoRouteQuote: autoRouteData.autoRouteQuote,
-                autoRouteExchanges: autoRouteData.autoRouteExchanges,
+                autoRouteQuote: autoRouteData.totalPrice,
+                autoRouteExchanges: autoRouteData.routes,
+                autoRouteError: autoRouteData.errorMessage,
             };
             commit('updateCollateral', updated);
         }

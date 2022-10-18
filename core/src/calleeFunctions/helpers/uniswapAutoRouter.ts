@@ -54,12 +54,21 @@ export const fetchAutoRouteInformation = async function (
     inputAmount: string | number = 1,
     walletAddress?: string
 ) {
-    const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
-    const autoRouteExchanges = autoRouteData.route[0].tokenPath.map(p => p.symbol);
+    try {
+        const token = await getUniswapTokenBySymbol(network, collateralSymbol);
+        const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
+        const routes = autoRouteData.route[0].tokenPath.map(p => p.symbol);
 
-    return {
-        autoRouteQuote: autoRouteData.quote.toFixed(2),
-        autoRouteExchanges,
-        autoRouteError: undefined,
-    };
+        return {
+            totalPrice: new BigNumber(autoRouteData.quote.toFixed(token.decimals)),
+            routes,
+            errorMessage: undefined,
+        };
+    } catch (error: any) {
+        return {
+            totalPrice: undefined,
+            routes: undefined,
+            errorMessage: error.toString(),
+        };
+    }
 };
