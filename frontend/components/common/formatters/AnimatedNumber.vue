@@ -39,8 +39,9 @@ export default Vue.extend({
     },
     computed: {
         formattedValue(): string {
-            return formatToAutomaticDecimalPoints(this.value, this.decimalPlaces, {
-                formatWithThousandSeparators: false,
+            return formatToAutomaticDecimalPoints(this.value, {
+                decimalPlaces: this.decimalPlaces,
+                disableThousandSeparators: true,
             });
         },
         isValidNumber(): boolean {
@@ -52,8 +53,9 @@ export default Vue.extend({
     },
     methods: {
         format(value: number | BigNumber): string {
-            return formatToAutomaticDecimalPoints(value, this.decimalPlaces, {
-                formatWithThousandSeparators: !this.disableThousandSeparators,
+            return formatToAutomaticDecimalPoints(value, {
+                decimalPlaces: this.decimalPlaces,
+                disableThousandSeparators: this.disableThousandSeparators,
             });
         },
     },

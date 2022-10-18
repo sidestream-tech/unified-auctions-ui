@@ -58,28 +58,34 @@ function limitedValue(value: number | BigNumber): number | BigNumber {
     return value;
 }
 
-// We choose regex over native JS solutions, as using native solutions often misformatted the decimal points, leading to inconsistent number formatting
+// We choose regex over native JS solutions, as using native solutions only support numbers
 export function formatWithThousandSeparators(value: string): string {
     return value.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 }
 
 interface formatToAutomaticDecimalPointsOptions {
-    formatWithThousandSeparators: boolean;
+    decimalPlaces: number;
+    disableThousandSeparators: boolean;
 }
 
 export function formatToAutomaticDecimalPoints(
     value: number | BigNumber,
-    decimalPlaces: number = DECIMAL_PLACES_DEFAULT,
-    options: formatToAutomaticDecimalPointsOptions = { formatWithThousandSeparators: true }
-): string {
-    const formattedValue = limitedValue(value).toFixed(dynamicDecimalPlaces(value, decimalPlaces));
-    if (options?.formatWithThousandSeparators) {
-        return formatWithThousandSeparators(formattedValue);
+    options: formatToAutomaticDecimalPointsOptions = {
+        decimalPlaces: DECIMAL_PLACES_DEFAULT,
+        disableThousandSeparators: false,
     }
-    return formattedValue;
+): string {
+    const formattedValue = limitedValue(value).toFixed(dynamicDecimalPlaces(value, options.decimalPlaces));
+    if (options.disableThousandSeparators) {
+        return formattedValue;
+    }
+    return formatWithThousandSeparators(formattedValue);
 }
 
-export function formatToAutomaticDecimalPointsString(value: number | BigNumber, decimalPlaces?: number) {
-    const formattedValue = formatToAutomaticDecimalPoints(value, decimalPlaces);
+export function formatToAutomaticDecimalPointsString(
+    value: number | BigNumber,
+    options?: formatToAutomaticDecimalPointsOptions
+) {
+    const formattedValue = formatToAutomaticDecimalPoints(value, options);
     return isValueSmallButNotZero(value) ? `under ${formattedValue}` : formattedValue;
 }
