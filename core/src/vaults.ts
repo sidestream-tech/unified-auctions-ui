@@ -27,13 +27,49 @@ import { getOsmPrices } from './oracles';
 
 const CACHE_EXPIRY_MS = 60 * 1000;
 
-const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
-    const contract = await getContract(network, 'CDP_MANAGER');
-    const address = await contract.urns(id);
+const _fetchVaultProxyAddress = async (network: string, proxyOwnerAddress: string) => {
+    const contract = await getContract(network, 'MCD_CROPPER');
+    const eventFilter = {
+        address: contract.address,
+        topics: [ethers.utils.id('NewProxy(address,address)'), ethers.utils.hexZeroPad(proxyOwnerAddress, 32), null],
+    } as ethers.EventFilter; // type defined so that it does not allow null as topic, although documentation allows it https://docs.ethers.io/v5/concepts/events/#events-solidity
+    const events = await contract.queryFilter(eventFilter);
+    if (events.length === 0) {
+        throw new Error(`Failed to extract the event 'NewProxy' for vault belonging to ${proxyOwnerAddress}`);
+    }
+    const vaultAddressHex32 = events[0].topics[2];
+    return ethers.utils.hexValue(vaultAddressHex32);
+};
+
+const fetchVaultProxyAddress = memoizee(_fetchVaultProxyAddress, {
+    promise: true,
+    length: 2,
+});
+
+const _fetchVaultAddress = async (network: string, id: number) => {
+    const cdpManager = await getContract(network, 'CDP_MANAGER');
+    const cdpRegistry = await getContract(network, 'CDP_REGISTRY');
+    const address = await cdpManager.urns(id);
     if (address === '0x0000000000000000000000000000000000000000') {
         throw new Error('Vault does not exist');
     }
-    const collateralTypeHex = await contract.ilks(id);
+    const owner = await cdpManager.owns(id);
+    if (owner === cdpRegistry.address) {
+        const proxyOwnerAddress = await cdpRegistry.owns(id);
+        return await fetchVaultProxyAddress(network, proxyOwnerAddress);
+    }
+    return address;
+};
+
+const fetchVaultAddress = memoizee(_fetchVaultAddress, {
+    promise: true,
+    length: 2,
+});
+
+const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> => {
+    const cdpManager = await getContract(network, 'CDP_MANAGER');
+    const address = await fetchVaultAddress(network, id);
+    const collateralTypeHex = await cdpManager.ilks(id);
     const collateralType = ethers.utils.parseBytes32String(collateralTypeHex);
     return {
         id,
@@ -337,4 +373,55 @@ export const liquidateVault = async (
     return await executeTransaction(network, 'MCD_DOG', 'bark', contractParameters, {
         notifier,
     });
+};
+
+const getLatestVault = async (network: string, walletAddress: string) => {
+    const cdpManager = await getContract(network, 'CDP_MANAGER', true);
+    const lastHex = await cdpManager.last(walletAddress);
+    return new BigNumber(lastHex._hex).toNumber();
+};
+
+export const openVault = async (network: string, ownerAddress: string, collateralType: CollateralType) => {
+    const argumentList = [ethers.utils.formatBytes32String(collateralType), ownerAddress];
+    await executeTransaction(network, 'CDP_MANAGER', 'open', argumentList);
+    return await getLatestVault(network, ownerAddress);
+};
+
+export const changeVaultContents = async (
+    network: string,
+    vaultId: number,
+    differenceDebtDai: BigNumber,
+    differenceCollateral: BigNumber
+) => {
+    const argumentList = [
+        vaultId.toString(),
+        differenceCollateral.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        differenceDebtDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0),
+    ];
+    try {
+        await executeTransaction(network, 'CDP_MANAGER', 'frob', argumentList);
+    } catch (e) {
+        if (e instanceof Error && e.message.includes('Vat/ceiling-exceeded')) {
+            throw new Error('Could not borrow dai because debt ceiling is exceeded.');
+        }
+        throw e;
+    }
+};
+
+export const collectStabilityFees = async (network: string, collateralType: CollateralType) => {
+    return await executeTransaction(network, 'MCD_JUG', 'drip', [ethers.utils.formatBytes32String(collateralType)]);
+};
+
+export const changeCollateralInVault = async (
+    network: string,
+    vaultId: number,
+    differenceCollateral: BigNumber,
+    transferTargetAddress: string
+) => {
+    const argumentList = [
+        vaultId.toString(0),
+        transferTargetAddress,
+        differenceCollateral.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+    ];
+    await executeTransaction(network, 'CDP_MANAGER', 'flux(uint256,address,uint256)', argumentList);
 };

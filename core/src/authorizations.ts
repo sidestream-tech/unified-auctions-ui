@@ -1,6 +1,6 @@
 import type { Notifier } from './types';
 import memoizee from 'memoizee';
-import getContract, { getContractAddressByName, getClipperNameByCollateralType } from './contracts';
+import getContract, { getContractAddressByName, getClipperNameByCollateralType, getErc20Contract } from './contracts';
 import executeTransaction from './execute';
 import BigNumber from './bignumber';
 import { DAI_NUMBER_OF_DIGITS, MAX, MKR_NUMBER_OF_DIGITS } from './constants/UNITS';
@@ -138,6 +138,17 @@ export const setAllowanceAmountMKR = async function (
     });
 };
 
+export const featchAllowanceAmount = async (
+    network: string,
+    tokenAddress: string,
+    addressWithAccess: string,
+    accessedAddress: string,
+    decimals: number
+) => {
+    const contractAccessed = await getErc20Contract(network, tokenAddress);
+    const allowanceRaw = await contractAccessed.allowance(addressWithAccess, accessedAddress);
+    return new BigNumber(allowanceRaw._hex).shiftedBy(-decimals);
+};
 export const fetchAllowanceAmountMKR = async function (network: string, walletAddress: string): Promise<BigNumber> {
     const flapAddress = await getContractAddressByName(network, 'MCD_FLAP');
     const MKRContract = await getContract(network, 'MCD_GOV');
