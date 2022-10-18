@@ -44,6 +44,21 @@
             </div>
         </div>
         <div
+            slot="autoRouteQuote"
+            slot-scope="autoRouteQuote, record"
+            class="Element"
+            :class="{ Loading: isLoading(record) }"
+        >
+            <FormatCurrency v-if="!record.autoRouteError && autoRouteQuote" :value="autoRouteQuote" currency="DAI" />
+            <div v-else-if="record.autoRouteError">
+                <Popover placement="topLeft" :content="record.autoRouteError" trigger="hover">
+                    <p class="inline-block w-48 text-red-500 truncate">
+                        <span>{{ record.autoRouteError }}</span>
+                    </p>
+                </Popover>
+            </div>
+        </div>
+        <div
             slot="autoRouteExchanges"
             slot-scope="autoRouteExchanges, record"
             class="Element"
@@ -145,7 +160,7 @@ export default Vue.extend({
                 {
                     title: 'UniV3 Auto Route Quote',
                     dataIndex: 'autoRouteQuote',
-                    scopedSlots: { customRender: 'marketUnitPrice' },
+                    scopedSlots: { customRender: 'autoRouteQuote' },
                 },
                 {
                     title: 'UniV3 Auto Route Exchanges',

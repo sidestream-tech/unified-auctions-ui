@@ -58,7 +58,8 @@ export const fetchAutoRouteInformation = async function (
     const autoRouteExchanges = autoRouteData.route[0].tokenPath.map(p => p.symbol);
 
     return {
-        autoRouteQuote: new BigNumber(autoRouteData.quote.toFixed(2)),
+        autoRouteQuote: autoRouteData.quote.toFixed(2),
         autoRouteExchanges,
+        autoRouteError: undefined,
     };
 };

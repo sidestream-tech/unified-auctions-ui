@@ -16,7 +16,7 @@ export default Vue.extend({
     components: { AnimatedNumber },
     props: {
         value: {
-            type: [Number, Object] as Vue.PropType<Number | BigNumber>,
+            type: [Number, String, Object] as Vue.PropType<Number | String | BigNumber>,
             default: undefined,
         },
         currency: {

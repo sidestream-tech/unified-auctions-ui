@@ -102,7 +102,8 @@ export const actions = {
             const autoRouteData = await fetchAutoRouteInformation(network, collateral.symbol).catch(error => {
                 console.error(error);
                 return {
-                    autoRouteQuote: error.toString(),
+                    autoRouteError: error.toString(),
+                    autoRouteQuote: undefined,
                     autoRouteExchanges: undefined,
                 };
             });
@@ -113,6 +114,7 @@ export const actions = {
                 secondsBetweenPriceDrops: calcParameters.secondsBetweenPriceDrops,
                 priceDropRatio: calcParameters.priceDropRatio,
                 tokenAddress,
+                autoRouteError: autoRouteData.autoRouteError,
                 autoRouteQuote: autoRouteData.autoRouteQuote,
                 autoRouteExchanges: autoRouteData.autoRouteExchanges,
             };

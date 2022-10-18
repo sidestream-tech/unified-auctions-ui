@@ -1,7 +1,7 @@
 <template>
     <span v-if="isValidNumber"
         ><span v-if="isValueSmallButNotZero">under </span
-        ><animated-number :value="format(value)" :format-value="format" :duration="duration"
+        ><animated-number :value="format(parsedValue)" :format-value="format" :duration="duration"
     /></span>
 </template>
 
@@ -21,7 +21,7 @@ export default Vue.extend({
     },
     props: {
         value: {
-            type: [Number, Object] as Vue.PropType<number | BigNumber>,
+            type: [Number, String, Object] as Vue.PropType<number | string | BigNumber>,
             default: undefined,
         },
         duration: {
@@ -34,11 +34,17 @@ export default Vue.extend({
         },
     },
     computed: {
+        parsedValue(): number | BigNumber {
+            if (typeof this.value === 'string') {
+                return parseInt(this.value);
+            }
+            return this.value;
+        },
         isValidNumber(): boolean {
-            return isValidNumber(this.value);
+            return isValidNumber(this.parsedValue);
         },
         isValueSmallButNotZero(): boolean {
-            return isValueSmallButNotZero(this.value);
+            return isValueSmallButNotZero(this.parsedValue);
         },
     },
     methods: {
