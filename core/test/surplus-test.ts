@@ -13,7 +13,7 @@ import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { swapToMKR } from '../src/helpers/swap';
 import { createWalletFromPrivateKey } from '../src/signer';
 import { SurplusAuctionActive } from '../src/types';
-import { resetNetwork } from '../helpers/hardhat';
+import { resetNetwork } from '../helpers/hardhat/network';
 
 import BigNumber from '../src/bignumber';
 import { fetchSurplusAuctionByIndex } from '../src/surplus';

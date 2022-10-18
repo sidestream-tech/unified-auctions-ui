@@ -1,10 +1,5 @@
-import {
-    warpTime,
-    resetNetworkAndSetupWallet,
-    addDaiToBalance,
-    addMkrToBalance,
-    resetNetwork,
-} from '../../helpers/hardhat';
+import { warpTime, resetNetworkAndSetupWallet, resetNetwork } from '../../helpers/hardhat/network';
+import { addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
 import prompts from 'prompts';
 import COLLATERALS from '../../src/constants/COLLATERALS';

@@ -2,7 +2,7 @@ import getContract, { getContractAddressByName } from '../src/contracts';
 import { TEST_NETWORK } from '../helpers/constants';
 import BigNumber from '../src/bignumber';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS, RAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
-import { overwriteUintMapping, overwriteUintValue } from './hardhat';
+import { overwriteUintMapping, overwriteUintValue } from './hardhat/slotOverwrite';
 
 export const causeDebt = async (
     debtAmountDai: BigNumber = new BigNumber(10),

@@ -1,4 +1,4 @@
-import { findERC20BalanceSlot, setCollateralInWallet, setCollateralInVat } from '../../helpers/hardhat';
+import { findERC20BalanceSlot, setCollateralInWallet, setCollateralInVat } from '../../helpers/hardhat/balance';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
 import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';

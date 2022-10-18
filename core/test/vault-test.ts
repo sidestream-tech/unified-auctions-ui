@@ -6,7 +6,8 @@ import {
     liquidateVault,
 } from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
-import { createWalletForRpc, overwriteUintValue, resetNetwork, warpTime } from '../helpers/hardhat';
+import { createWalletForRpc, resetNetwork, warpTime } from '../helpers/hardhat/network';
+import { overwriteUintValue } from '../helpers/hardhat/slotOverwrite';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
 import { expect } from 'chai';

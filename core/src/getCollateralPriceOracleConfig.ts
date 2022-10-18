@@ -3,17 +3,14 @@ import { getContractAddressByName } from './contracts';
 import contractCollateralToOracleInterface from './abis/MCD_SPOT.json';
 import contractOracleInterface from './abis/OSM.json';
 import { ethers } from 'ethers';
-import {
-    generateMappingSlotAddress,
-    overwriteUintValueInAddress,
-    resetNetworkAndSetupWallet,
-} from '../helpers/hardhat';
 import BigNumber from './bignumber';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../helpers/constants';
 import { CONFIG_WITH_NEXT_PRICE, CONFIG_WITHOUT_NEXT_PRICE } from './constants/COLLATERALS';
 import { CollateralPriceSourceConfig, CollateralType } from './types';
 import getSigner from './signer';
 import keypress from '../helpers/keypress';
+import { resetNetworkAndSetupWallet } from '../helpers/hardhat/network';
+import { generateMappingSlotAddress, overwriteUintValueInAddress } from '../helpers/hardhat/slotOverwrite';
 
 const choicesYesNo = [
     { title: 'yes', value: true },
