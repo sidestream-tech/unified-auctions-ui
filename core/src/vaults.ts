@@ -398,7 +398,14 @@ export const changeVaultContents = async (
         differenceCollateral.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
         differenceDebtDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0),
     ];
-    await executeTransaction(network, 'CDP_MANAGER', 'frob', argumentList);
+    try {
+        await executeTransaction(network, 'CDP_MANAGER', 'frob', argumentList);
+    } catch (e) {
+        if (e instanceof Error && e.message.includes('Vat/ceiling-exceeded')) {
+            throw new Error('Could not borrow dai because debt ceiling is exceeded.');
+        }
+        throw e;
+    }
 };
 
 export const collectStabilityFees = async (network: string, collateralType: CollateralType) => {
