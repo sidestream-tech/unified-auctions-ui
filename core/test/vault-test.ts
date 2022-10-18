@@ -436,7 +436,16 @@ describe(`Collateral vault simulation liquidation `, () => {
                 }
                 throw e;
             }
-            const vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
+
+            let vaultId: number;
+            try {
+                vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
+            } catch (e) {
+                if (e instanceof Error && e.message === 'Could not borrow dai because debt ceiling is exceeded.') {
+                    return;
+                }
+                throw e;
+            }
 
             const vault = await fetchVault(TEST_NETWORK, vaultId);
             expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));
