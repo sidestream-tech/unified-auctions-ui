@@ -72,6 +72,7 @@
   // Popover
   @popover-bg: @component-background;
 
+  // fix certain styles in dark mode
   .ant-alert.ant-alert-no-icon {
     padding: 8px 15px;
   }
@@ -94,6 +95,11 @@
 
   .ant-alert-description {
     display: block;
+  }
+
+  .ant-alert-icon {
+    top: 16px;
+    left: 24px;
   }
 
   color-scheme: dark;
