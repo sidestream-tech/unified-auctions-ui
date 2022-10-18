@@ -15,7 +15,8 @@ import {
     HARDHAT_PUBLIC_KEY,
 } from '../helpers/constants';
 import getProvider from '../src/provider';
-import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
+import { CollateralType } from '../src/types';
 
 export const generateMappingSlotAddress = (
     mappingStartSlot: string,
@@ -153,6 +154,16 @@ export const addMkrToBalance = async (
     const mkrBalanceHex = await mkrContract.balanceOf(walletAddress);
     const mkrBalance = new BigNumber(mkrBalanceHex._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
     console.info(`New MKR balance: ${mkrBalance}`);
+};
+
+export const setCollateralInVat = async (
+    collateralType: CollateralType,
+    collateralAmount: BigNumber,
+    provider?: EthereumProvider
+) => {
+    const value = collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS);
+    const collateralTypeHex = ethers.utils.formatBytes32String(collateralType);
+    await overwriteUintTable('MCD_VAT', '0x4', collateralTypeHex, HARDHAT_PUBLIC_KEY, value, provider);
 };
 
 export const setCollateralInWallet = async (

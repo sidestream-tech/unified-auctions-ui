@@ -1,4 +1,4 @@
-import { findERC20BalanceSlot, setCollateralInWallet } from '../../helpers/hardhat';
+import { findERC20BalanceSlot, setCollateralInWallet, setCollateralInVat } from '../../helpers/hardhat';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
 import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';
@@ -9,11 +9,52 @@ import {
     getErc20Contract,
     getJoinNameByCollateralType,
 } from '../../src/contracts';
-import { depositCollateralToVat, fetchERC20TokenBalance } from '../../src/wallet';
+import {
+    depositCollateralToVat,
+    fetchERC20TokenBalance,
+    fetchCollateralInVat,
+    withdrawCollateralFromVat,
+} from '../../src/wallet';
 import { MAX } from '../../src/constants/UNITS';
 import { CollateralConfig, CollateralType } from '../../src/types';
 import { ethers } from 'ethers';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
+
+const setAndCheckCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    console.info(`Setting ${collateralType} balance in VAT...`);
+    await setCollateralInVat(collateralType, collateralOwned);
+    const balance = await fetchCollateralInVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
+    if (!balance.eq(collateralOwned)) {
+        throw new Error(
+            `Unexpected vat balance. Expected: ${collateralOwned.toFixed()}, Actual: ${balance.toFixed()}`
+        );
+    }
+    console.info(`New ${collateralType} balance in VAT: ${collateralOwned.toFixed()}`);
+    return balance;
+};
+
+const checkAndWithdrawCollateralFromVat = async (collateralConfig: CollateralConfig, collateralOwned: BigNumber) => {
+    const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
+    const addressJoin = await getContractAddressByName(
+        TEST_NETWORK,
+        getJoinNameByCollateralType(collateralConfig.ilk)
+    );
+    const joinBalance = await fetchERC20TokenBalance(
+        TEST_NETWORK,
+        tokenContractAddress,
+        addressJoin,
+        collateralConfig.decimals
+    );
+    if (joinBalance.lt(collateralOwned)) {
+        throw new Error(
+            `Join contract ${
+                collateralConfig.ilk
+            } does not have sufficient funds: ${joinBalance.toFixed()} vs ${collateralOwned.toFixed()}`
+        );
+    }
+    console.info(`Withdrawing collateral ${collateralConfig.ilk} from VAT`);
+    await withdrawCollateralFromVat(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralConfig.ilk, collateralOwned);
+};
 
 const ensureWalletBalance = async (collateralConfig: CollateralConfig, collateralOwned: BigNumber) => {
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
@@ -108,34 +149,50 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
 
 export const determineBalanceSlot = async (
     collateralType: CollateralType
-): Promise<[string, 'vyper' | 'solidity']> => {
+): Promise<[string, 'vyper' | 'solidity'] | [null, null]> => {
     console.info('Determining balance slot...');
     const collateralConfig = getCollateralConfigByType(collateralType);
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
-    const [slot, languageFormat] = await findERC20BalanceSlot(tokenContractAddress);
-    console.info(
-        `Balance slot is ${slot}, language format is ${languageFormat}, contract address is ${tokenContractAddress}`
-    );
-    return [slot, languageFormat];
+    try {
+        const [slot, languageFormat] = await findERC20BalanceSlot(tokenContractAddress);
+        console.info(
+            `Balance slot is ${slot}, language format is ${languageFormat}, contract address is ${tokenContractAddress}`
+        );
+        return [slot, languageFormat];
+    } catch (e) {
+        if (
+            e instanceof Error &&
+            e.message.startsWith('Failed to find the slot of the balance for the token in address ')
+        ) {
+            return [null, null];
+        }
+        throw e;
+    }
 };
 
 const createVaultWithCollateral = async (
     collateralType: CollateralType,
     collateralOwned: BigNumber,
-    balanceSlot: string,
-    languageFormat: 'vyper' | 'solidity'
+    balanceSlot: string | null,
+    languageFormat: 'vyper' | 'solidity' | null
 ) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
 
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
-    await setCollateralInWallet(
-        tokenContractAddress,
-        balanceSlot,
-        collateralOwned,
-        collateralConfig.decimals,
-        undefined,
-        languageFormat
-    );
+    if (balanceSlot && languageFormat) {
+        await setCollateralInWallet(
+            tokenContractAddress,
+            balanceSlot,
+            collateralOwned,
+            collateralConfig.decimals,
+            undefined,
+            languageFormat
+        );
+    } else {
+        // fallback to setting vat balance and withdrawing it
+        await setAndCheckCollateralInVat(collateralType, collateralOwned);
+        await checkAndWithdrawCollateralFromVat(collateralConfig, collateralOwned);
+    }
     await ensureWalletBalance(collateralConfig, collateralOwned);
 
     const vaultId = await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
