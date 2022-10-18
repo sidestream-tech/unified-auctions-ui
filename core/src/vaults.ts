@@ -404,6 +404,7 @@ export const changeVaultContents = async (
         if (e instanceof Error && e.message.includes('Vat/ceiling-exceeded')) {
             throw new Error('Could not borrow dai because debt ceiling is exceeded.');
         }
+        throw e;
     }
 };
 

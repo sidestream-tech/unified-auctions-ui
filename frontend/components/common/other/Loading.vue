@@ -5,8 +5,8 @@
             v-if="isLoading || error"
             class="absolute inset-0 flex flex-wrap justify-center content-center z-10"
             :class="{
-                'bg-white dark:bg-gray-800 dark:bg-opacity-90': isLoading,
-                'bg-gray-200 dark:bg-gray-800 dark:bg-opacity-95': !isLoading && error,
+                'bg-white dark:bg-gray-900 dark:bg-opacity-90': isLoading,
+                'bg-gray-200 dark:bg-gray-900 dark:bg-opacity-95': !isLoading && error,
                 'bg-opacity-60': isLoading || error,
             }"
         >
