@@ -1,4 +1,4 @@
-import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat';
+import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
 import { Simulation } from '../types';
 
 const simulation: Simulation = {

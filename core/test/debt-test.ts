@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { causeDebt } from '../helpers/auctionSimulators';
 import getContract from '../src/contracts';
 import { TEST_NETWORK } from '../helpers/constants';
-import { resetNetworkAndSetupWallet as reset } from '../helpers/hardhat';
+import { resetNetworkAndSetupWallet as reset } from '../helpers/hardhat/network';
 
 describe('Debt Auction', () => {
     beforeEach(async () => {

@@ -1,4 +1,4 @@
-import { resetNetworkAndSetupWallet } from '../../helpers/hardhat';
+import { resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
 import { Simulation } from '../types';
 
 const simulation: Simulation = {

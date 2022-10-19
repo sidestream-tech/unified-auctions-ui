@@ -1,4 +1,5 @@
-import { warpTime, resetNetworkAndSetupWallet, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
+import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
+import { addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
 import prompts from 'prompts';
 import COLLATERALS from '../../src/constants/COLLATERALS';
@@ -11,7 +12,7 @@ import createVaultWithCollateral, {
 const UNSUPPORTED_COLLATERAL_TYPES = [
     'CRVV1ETHSTETH-A', // collateral handled differently
     'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
-    'WSTETH-B', // does not accumulate stability fee rate fast enough
+    'WSTETH-B', // does not accumulate stability fee rate at all.
 ];
 
 export const getLiquidatableCollateralTypes = () => {

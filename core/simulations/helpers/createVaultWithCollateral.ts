@@ -1,4 +1,4 @@
-import { setCollateralInVat } from '../../helpers/hardhat';
+import { setCollateralInVat } from '../../helpers/hardhat/balance';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
 import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';
@@ -11,14 +11,15 @@ import {
 } from '../../src/contracts';
 import {
     depositCollateralToVat,
-    fetchCollateralInVat,
     fetchERC20TokenBalance,
+    fetchCollateralInVat,
     withdrawCollateralFromVat,
 } from '../../src/wallet';
 import { MAX } from '../../src/constants/UNITS';
 import { CollateralConfig, CollateralType } from '../../src/types';
 import { ethers } from 'ethers';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
+import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardhat/erc20';
 
 const setAndCheckCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     console.info(`Setting ${collateralType} balance in VAT...`);
@@ -148,9 +149,16 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
 };
 
 const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
     const collateralConfig = getCollateralConfigByType(collateralType);
-    await setAndCheckCollateralInVat(collateralType, collateralOwned);
-    await checkAndWithdrawCollateralFromVat(collateralConfig, collateralOwned);
+
+    if (balanceSlot && languageFormat) {
+        await setCollateralInWallet(collateralConfig.symbol, collateralOwned);
+    } else {
+        // fallback to setting vat balance and withdrawing it
+        await setAndCheckCollateralInVat(collateralType, collateralOwned);
+        await checkAndWithdrawCollateralFromVat(collateralConfig, collateralOwned);
+    }
     await ensureWalletBalance(collateralConfig, collateralOwned);
 
     const vaultId = await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
