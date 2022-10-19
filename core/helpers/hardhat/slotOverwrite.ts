@@ -81,7 +81,7 @@ const isOverwrittenBalanceEqual = async (contract: ethers.Contract, oldBalance: 
     const overwrittenBalance = new BigNumber(overwrittenBalanceHex._hex);
     return overwrittenBalance.eq(oldBalance);
 };
-export const runSlotDiscoveryLoop = async (
+export const runBalanceSlotDiscoveryLoopForERC20Token = async (
     tokenAddress: string,
     contract: ethers.Contract,
     overwriteValue: BigNumber,
