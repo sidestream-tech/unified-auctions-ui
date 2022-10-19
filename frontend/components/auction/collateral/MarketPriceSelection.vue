@@ -16,20 +16,22 @@
             <div v-show="isExpanded" class="Content overflow-x-auto">
                 <table class="table-auto">
                     <tbody>
-                        <tr v-for="(value, key) in callees" :key="key">
-                            <td class="pr-2 whitespace-nowrap">{{ key }}</td>
+                        <tr v-for="callee in callees" :key="callee[0]">
+                            <td class="pr-2 whitespace-nowrap">{{ callee[0] }}</td>
                             <td class="pr-2 whitespace-nowrap">
-                                <span v-for="currency in value.route" :key="currency">{{ currency }} &#8594; </span>
+                                <span v-for="currency in callee[1].route" :key="currency"
+                                    >{{ currency }} &#8594;
+                                </span>
                                 DAI
                             </td>
                             <td class="w-full text-right whitespace-nowrap">
-                                <div v-if="value.unitPrice && !value.unitPrice.isNaN()">
-                                    <button type="button" @click="$emit('update:marketId', key)">
-                                        <span v-if="marketId === key" class="opacity-50">Selected</span>
+                                <div v-if="callee[1].unitPrice && !callee[1].unitPrice.isNaN()">
+                                    <button type="button" @click="$emit('update:marketId', callee[0])">
+                                        <span v-if="marketId === callee[0]" class="opacity-50">Selected</span>
                                         <span v-else class="text-green-500">Select</span>
                                     </button>
                                     <span class="pl-1">
-                                        <FormatCurrency :value="value.unitPrice" currency="DAI" /> per
+                                        <FormatCurrency :value="callee[1].unitPrice" currency="DAI" /> per
                                         <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
                                     </span>
                                 </div>
@@ -48,7 +50,7 @@ import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { Icon } from 'ant-design-vue';
 import CollapseTransition from '@ivanv/vue-collapse-transition';
-import { AuctionTransaction } from 'auctions-core/src/types';
+import { AuctionTransaction, MarketData } from 'auctions-core/src/types';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
@@ -82,24 +84,21 @@ export default Vue.extend({
             }
             return undefined;
         },
-        callees(): Object {
-            const unknown = [];
+        callees(): Array<Array<[string, MarketData]>> {
             const sorted = [];
+            const unknown = [];
             for (const callee in this.auctionTransaction.marketData) {
                 if (
                     this.auctionTransaction.marketData[callee].unitPrice &&
                     !this.auctionTransaction.marketData[callee].unitPrice.isNaN()
                 ) {
-                    sorted.push([callee, this.auctionTransaction.marketData[callee].unitPrice]);
+                    sorted.push([callee, this.auctionTransaction.marketData[callee]]);
                 } else {
-                    unknown.push([callee, this.auctionTransaction.marketData[callee].unitPrice]);
+                    unknown.push([callee, this.auctionTransaction.marketData[callee]]);
                 }
             }
-            sorted.sort((a, b) => a[1].minus(b[1]).toNumber());
-            const calleesArray = [...sorted, ...unknown];
-            const calleesObject = {};
-            calleesArray.forEach(item => (calleesObject[item[0]] = this.auctionTransaction.marketData[item[0]]));
-            return calleesObject;
+            sorted.sort((a, b) => a[1].unitPrice.minus(b[1].unitPrice).toNumber());
+            return [...sorted, ...unknown];
         },
     },
 });
