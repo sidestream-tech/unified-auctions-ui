@@ -66,27 +66,37 @@
                 <span>DAI</span>
             </div>
         </div>
+        <div class="flex justify-between">
+            <span>Maximal liquidatable amount</span>
+            <FormatCurrency v-if="maximumLiquidationAmount" :value="maximumLiquidationAmount" currency="DAI" />
+            <div v-else>
+                <span class="opacity-50">Unknown</span>
+                <span>DAI</span>
+            </div>
+        </div>
+        <div class="flex justify-between">
+            <span>Liquidation penalty ratio</span>
+            <div>
+                <FormatCurrency
+                    v-if="vaultTransaction.liquidationPenaltyRatio"
+                    :value="liquidationPenaltyPercentage"
+                />
+                <span v-else class="opacity-50">Unknown</span> &#37;
+            </div>
+        </div>
         <div class="mt-2">
             <hr class="mb-1" />
             <div class="flex justify-between">
-                <span class="font-bold">Maximum liquidation amount</span>
-                <FormatCurrency v-if="maximumLiquidationAmount" :value="maximumLiquidationAmount" currency="DAI" />
-                <div v-else>
-                    <span class="opacity-50">Unknown</span>
-                    <span>DAI</span>
-                </div>
-            </div>
-            <div class="flex justify-between">
                 <span class="font-bold">Will be liquidated</span>
-                <FormatCurrency
-                    v-if="willBeLiquidated"
-                    :class="willBeLiquidatedColor"
-                    :value="willBeLiquidated"
-                    currency="DAI"
-                />
-                <div v-else>
-                    <span class="opacity-50">Unknown</span>
-                    <span>DAI</span>
+                <div>
+                    <span v-if="willBeLiquidated">
+                        <FormatCurrency :class="willBeLiquidatedColor" :value="willBeLiquidated" /> of
+                        <FormatCurrency :value="vaultTransaction.debtDai" currency="DAI" />
+                    </span>
+                    <div v-else>
+                        <span class="opacity-50">Unknown</span>
+                        <span>DAI</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -144,6 +154,12 @@ export default Vue.extend({
         isCollateralLimitMissing(): boolean {
             return !this.vaultTransaction.maximumCollateralDebtDai || !this.vaultTransaction.currentCollateralDebtDai;
         },
+        isLiquidatable(): boolean {
+            return this.vaultTransaction.state === 'liquidatable';
+        },
+        liquidationPenaltyPercentage(): BigNumber {
+            return this.vaultTransaction.liquidationPenaltyRatio.minus(1).times(100);
+        },
         debtTimesPenaltyRatio(): BigNumber {
             return this.vaultTransaction.debtDai.times(this.vaultTransaction.liquidationPenaltyRatio);
         },
@@ -199,7 +215,7 @@ export default Vue.extend({
                 return 'text-current';
             }
             if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
+                if (this.isLiquidatable) {
                     return 'text-orange-500';
                 }
                 return 'text-red-500';
