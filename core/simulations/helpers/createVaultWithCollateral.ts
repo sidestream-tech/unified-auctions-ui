@@ -1,4 +1,4 @@
-import { setCollateralInWallet, setCollateralInVat } from '../../helpers/hardhat/balance';
+import { setCollateralInVat } from '../../helpers/hardhat/balance';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
 import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';
@@ -19,7 +19,7 @@ import { MAX } from '../../src/constants/UNITS';
 import { CollateralConfig, CollateralType } from '../../src/types';
 import { ethers } from 'ethers';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
-import { determineBalanceSlot } from '../../helpers/hardhat/slotOverwrite';
+import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardhat/erc20';
 
 const setAndCheckCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     console.info(`Setting ${collateralType} balance in VAT...`);
@@ -153,7 +153,7 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
     const collateralConfig = getCollateralConfigByType(collateralType);
 
     if (balanceSlot && languageFormat) {
-        await setCollateralInWallet(collateralConfig, collateralOwned);
+        await setCollateralInWallet(collateralConfig.symbol, collateralOwned);
     } else {
         // fallback to setting vat balance and withdrawing it
         await setAndCheckCollateralInVat(collateralType, collateralOwned);
