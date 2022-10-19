@@ -6,6 +6,9 @@ import { EthereumProvider } from 'hardhat/types';
 import { formatToHex } from '../format';
 import { pad32, concat, stripZeros } from '../hex';
 import { TEST_NETWORK, HARDHAT_PUBLIC_KEY } from '../../helpers/constants';
+import { CollateralType } from '../../src/types';
+import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
+import { findERC20BalanceSlot } from './balance';
 
 export const generateMappingSlotAddress = (
     mappingStartSlot: string,
@@ -114,3 +117,27 @@ export const runSlotDiscoveryLoop = async (
     }
     return null;
 };
+
+export const determineBalanceSlot = async (
+    collateralType: CollateralType
+): Promise<[string, 'vyper' | 'solidity'] | [null, null]> => {
+    console.info('Determining balance slot...');
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
+    try {
+        const [slot, languageFormat] = await findERC20BalanceSlot(tokenContractAddress);
+        console.info(
+            `Balance slot is ${slot}, language format is ${languageFormat}, contract address is ${tokenContractAddress}`
+        );
+        return [slot, languageFormat];
+    } catch (e) {
+        if (
+            e instanceof Error &&
+            e.message.startsWith('Failed to find the slot of the balance for the token in address ')
+        ) {
+            return [null, null];
+        }
+        throw e;
+    }
+};
+

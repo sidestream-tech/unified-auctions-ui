@@ -7,7 +7,7 @@ import {
 } from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
 import { createWalletForRpc, resetNetwork, warpTime } from '../helpers/hardhat/network';
-import { overwriteUintValue } from '../helpers/hardhat/slotOverwrite';
+import { determineBalanceSlot, overwriteUintValue } from '../helpers/hardhat/slotOverwrite';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
 import { expect } from 'chai';
@@ -21,7 +21,6 @@ import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
-    determineBalanceSlot,
 } from '../simulations/helpers/createVaultWithCollateral';
 import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
 import { MAX } from '../src/constants/UNITS';

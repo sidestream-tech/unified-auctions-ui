@@ -7,8 +7,8 @@ import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaul
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
-    determineBalanceSlot,
 } from '../helpers/createVaultWithCollateral';
+import { determineBalanceSlot } from '../../helpers/hardhat/slotOverwrite';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
     'CRVV1ETHSTETH-A', // collateral handled differently

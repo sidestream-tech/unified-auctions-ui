@@ -1,4 +1,4 @@
-import { findERC20BalanceSlot, setCollateralInWallet, setCollateralInVat } from '../../helpers/hardhat/balance';
+import { setCollateralInWallet, setCollateralInVat } from '../../helpers/hardhat/balance';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import BigNumber from '../../src/bignumber';
 import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';
@@ -145,29 +145,6 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
     const contract = await getErc20Contract(TEST_NETWORK, tokenContractAddress, true);
     const amountRaw = amount ? amount.shiftedBy(collateralConfig.decimals).toFixed(0) : MAX.toFixed(0);
     await contract.approve(addressJoin, amountRaw);
-};
-
-export const determineBalanceSlot = async (
-    collateralType: CollateralType
-): Promise<[string, 'vyper' | 'solidity'] | [null, null]> => {
-    console.info('Determining balance slot...');
-    const collateralConfig = getCollateralConfigByType(collateralType);
-    const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
-    try {
-        const [slot, languageFormat] = await findERC20BalanceSlot(tokenContractAddress);
-        console.info(
-            `Balance slot is ${slot}, language format is ${languageFormat}, contract address is ${tokenContractAddress}`
-        );
-        return [slot, languageFormat];
-    } catch (e) {
-        if (
-            e instanceof Error &&
-            e.message.startsWith('Failed to find the slot of the balance for the token in address ')
-        ) {
-            return [null, null];
-        }
-        throw e;
-    }
 };
 
 const createVaultWithCollateral = async (
