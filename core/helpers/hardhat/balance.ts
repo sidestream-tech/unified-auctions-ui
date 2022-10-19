@@ -48,7 +48,7 @@ export const setCollateralInVat = async (
 export const setCollateralInWallet = async (
     collateralConfig: CollateralConfig,
     collateralAmount: BigNumber,
-    provider?: EthereumProvider
+    address: string = HARDHAT_PUBLIC_KEY,
 ) => {
     const value = collateralAmount.shiftedBy(collateralConfig.decimals);
     const tokenAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
@@ -59,9 +59,9 @@ export const setCollateralInWallet = async (
     await overwriteUintMappingInAddress(
         tokenAddress,
         balanceSlot,
-        HARDHAT_PUBLIC_KEY,
+        address,
         value,
-        provider,
+        undefined,
         languageFormat
     );
 };
