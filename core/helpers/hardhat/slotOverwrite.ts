@@ -76,7 +76,11 @@ export const overwriteUintTable = async (
     const rowAddress = generateMappingSlotAddress(mappingSlotAddress, tableRowKey);
     await overwriteUintMapping(contractName, rowAddress, tableColumnKey, newValue, provider);
 };
-
+const isOverwrittenBalanceEqual = async (contract: ethers.Contract, oldBalance: BigNumber) => {
+    const overwrittenBalanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
+    const overwrittenBalance = new BigNumber(overwrittenBalanceHex._hex);
+    return overwrittenBalance.eq(oldBalance);
+};
 export const runSlotDiscoveryLoop = async (
     tokenAddress: string,
     contract: ethers.Contract,
@@ -87,6 +91,7 @@ export const runSlotDiscoveryLoop = async (
 ) => {
     for (const i of Array.from(Array(loops).keys())) {
         const slot = ethers.utils.hexValue(i);
+        const slotValueBeforeEdit = new BigNumber(await hre.ethers.provider.getStorageAt(tokenAddress, slot));
         await overwriteUintMappingInAddress(
             tokenAddress,
             slot,
@@ -96,9 +101,8 @@ export const runSlotDiscoveryLoop = async (
             languageFormat
         );
 
-        const newBalanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
-        const newBalance = new BigNumber(newBalanceHex._hex);
-        if (newBalance.eq(overwriteValue)) {
+        let isSlotFound = false;
+        if (await isOverwrittenBalanceEqual(contract, overwriteValue)) {
             // double check to make sure the value in the slot is not accidentally the same as the hardcoded one above
             await overwriteUintMappingInAddress(
                 tokenAddress,
@@ -108,11 +112,21 @@ export const runSlotDiscoveryLoop = async (
                 undefined,
                 languageFormat
             );
-            const finalBalanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
-            const finalBalance = new BigNumber(finalBalanceHex._hex);
-            if (finalBalance.eq(initialValue)) {
-                return slot;
+            if (await isOverwrittenBalanceEqual(contract, initialValue)) {
+                isSlotFound = true;
             }
+        }
+        // cleanup
+        await overwriteUintMappingInAddress(
+            tokenAddress,
+            slot,
+            HARDHAT_PUBLIC_KEY,
+            slotValueBeforeEdit,
+            undefined,
+            languageFormat
+        );
+        if (isSlotFound) {
+            return slot;
         }
     }
     return null;
@@ -140,4 +154,3 @@ export const determineBalanceSlot = async (
         throw e;
     }
 };
-

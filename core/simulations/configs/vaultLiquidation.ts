@@ -1,4 +1,4 @@
-import { warpTime, resetNetworkAndSetupWallet, resetNetwork } from '../../helpers/hardhat/network';
+import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
 import { addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
 import prompts from 'prompts';
@@ -8,7 +8,6 @@ import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
-import { determineBalanceSlot } from '../../helpers/hardhat/slotOverwrite';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
     'CRVV1ETHSTETH-A', // collateral handled differently
@@ -63,14 +62,7 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
-                const [balanceSlot, languageFormat] = await determineBalanceSlot(context.collateralType);
-                resetNetwork();
-                const latestVaultId = await createVaultWithCollateral(
-                    context.collateralType,
-                    context.collateralOwned,
-                    balanceSlot,
-                    languageFormat
-                );
+                const latestVaultId = await createVaultWithCollateral(context.collateralType, context.collateralOwned);
                 return { ...context, latestVaultId };
             },
         },

@@ -19,6 +19,7 @@ import { MAX } from '../../src/constants/UNITS';
 import { CollateralConfig, CollateralType } from '../../src/types';
 import { ethers } from 'ethers';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
+import { determineBalanceSlot } from '../../helpers/hardhat/slotOverwrite';
 
 const setAndCheckCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     console.info(`Setting ${collateralType} balance in VAT...`);
@@ -147,12 +148,8 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
     await contract.approve(addressJoin, amountRaw);
 };
 
-const createVaultWithCollateral = async (
-    collateralType: CollateralType,
-    collateralOwned: BigNumber,
-    balanceSlot: string | null,
-    languageFormat: 'vyper' | 'solidity' | null
-) => {
+const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
     const collateralConfig = getCollateralConfigByType(collateralType);
 
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);

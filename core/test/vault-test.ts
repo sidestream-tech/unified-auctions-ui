@@ -7,7 +7,7 @@ import {
 } from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
 import { createWalletForRpc, resetNetwork, warpTime } from '../helpers/hardhat/network';
-import { determineBalanceSlot, overwriteUintValue } from '../helpers/hardhat/slotOverwrite';
+import { overwriteUintValue } from '../helpers/hardhat/slotOverwrite';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
 import { expect } from 'chai';
@@ -437,10 +437,9 @@ describe(`Collateral vault simulation liquidation `, () => {
                 }
                 throw e;
             }
-            const [slot, languageFormat] = await determineBalanceSlot(collateralType);
             let vaultId: number;
             try {
-                vaultId = await createVaultWithCollateral(collateralType, collateralOwned, slot, languageFormat);
+                vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
             } catch (e) {
                 if (e instanceof Error && e.message === 'Could not borrow dai because debt ceiling is exceeded.') {
                     return;
