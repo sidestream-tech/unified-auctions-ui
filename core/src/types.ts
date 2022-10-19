@@ -291,7 +291,7 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
 
-export type CollateralType = CollateralConfig['title'];
+export type CollateralType = CollateralConfig['ilk'];
 
 export declare interface LiquidationLimits {
     maximumProtocolDebtDai: BigNumber;

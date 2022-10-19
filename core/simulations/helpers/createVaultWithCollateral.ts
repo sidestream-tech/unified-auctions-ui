@@ -152,16 +152,8 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
     const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
     const collateralConfig = getCollateralConfigByType(collateralType);
 
-    const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
     if (balanceSlot && languageFormat) {
-        await setCollateralInWallet(
-            tokenContractAddress,
-            balanceSlot,
-            collateralOwned,
-            collateralConfig.decimals,
-            undefined,
-            languageFormat
-        );
+        await setCollateralInWallet(collateralConfig, collateralOwned);
     } else {
         // fallback to setting vat balance and withdrawing it
         await setAndCheckCollateralInVat(collateralType, collateralOwned);

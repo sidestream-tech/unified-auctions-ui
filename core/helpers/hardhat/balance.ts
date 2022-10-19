@@ -1,11 +1,16 @@
 import { ethers } from 'ethers';
-import getContract, { getErc20Contract } from '../../src/contracts';
+import getContract, { getContractAddressByName, getErc20Contract } from '../../src/contracts';
 import BigNumber from '../../src/bignumber';
 import { EthereumProvider } from 'hardhat/types';
 import { TEST_NETWORK, HARDHAT_PUBLIC_KEY } from '../../helpers/constants';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
-import { CollateralType } from '../../src/types';
-import { overwriteUintMapping, overwriteUintMappingInAddress, overwriteUintTable } from '../hardhat/slotOverwrite';
+import { CollateralConfig, CollateralType } from '../../src/types';
+import {
+    determineBalanceSlot,
+    overwriteUintMapping,
+    overwriteUintMappingInAddress,
+    overwriteUintTable,
+} from '../hardhat/slotOverwrite';
 import { runSlotDiscoveryLoop } from './slotOverwrite';
 
 export const addDaiToBalance = async (
@@ -41,15 +46,24 @@ export const setCollateralInVat = async (
 };
 
 export const setCollateralInWallet = async (
-    tokenAddress: string,
-    slot: string,
+    collateralConfig: CollateralConfig,
     collateralAmount: BigNumber,
-    decimals: number,
-    provider?: EthereumProvider,
-    languageFormat: 'solidity' | 'vyper' = 'solidity'
+    provider?: EthereumProvider
 ) => {
-    const value = collateralAmount.shiftedBy(decimals);
-    await overwriteUintMappingInAddress(tokenAddress, slot, HARDHAT_PUBLIC_KEY, value, provider, languageFormat);
+    const value = collateralAmount.shiftedBy(collateralConfig.decimals);
+    const tokenAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
+    const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralConfig.ilk);
+    if (!balanceSlot || !languageFormat) {
+        throw new Error('Could not overwrite the balance since the balance slot was not found');
+    }
+    await overwriteUintMappingInAddress(
+        tokenAddress,
+        balanceSlot,
+        HARDHAT_PUBLIC_KEY,
+        value,
+        provider,
+        languageFormat
+    );
 };
 
 export const findERC20BalanceSlot = async (tokenAddress: string): Promise<[string, 'vyper' | 'solidity']> => {
