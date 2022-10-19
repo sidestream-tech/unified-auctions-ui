@@ -16,7 +16,7 @@
             <div v-show="isExpanded" class="Content overflow-x-auto">
                 <table class="table-auto">
                     <tbody>
-                        <tr v-for="(value, key) in auctionTransaction.marketData" :key="key">
+                        <tr v-for="(value, key) in callees" :key="key">
                             <td class="pr-2 whitespace-nowrap">{{ key }}</td>
                             <td class="pr-2 whitespace-nowrap">
                                 <span v-for="currency in value.route" :key="currency">{{ currency }} &#8594; </span>
@@ -81,6 +81,25 @@ export default Vue.extend({
                 return this.auctionTransaction.marketData[this.suggestionOrSelection].unitPrice;
             }
             return undefined;
+        },
+        callees(): Object {
+            const unknown = [];
+            const sorted = [];
+            for (const callee in this.auctionTransaction.marketData) {
+                if (
+                    this.auctionTransaction.marketData[callee].unitPrice &&
+                    !this.auctionTransaction.marketData[callee].unitPrice.isNaN()
+                ) {
+                    sorted.push([callee, this.auctionTransaction.marketData[callee].unitPrice]);
+                } else {
+                    unknown.push([callee, this.auctionTransaction.marketData[callee].unitPrice]);
+                }
+            }
+            sorted.sort((a, b) => a[1].minus(b[1]).toNumber());
+            const calleesArray = [...sorted, ...unknown];
+            const calleesObject = {};
+            calleesArray.forEach(item => (calleesObject[item[0]] = this.auctionTransaction.marketData[item[0]]));
+            return calleesObject;
         },
     },
 });
