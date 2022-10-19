@@ -446,6 +446,17 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
+    'RETH-A': {
+        title: 'Rocket Pool ETH',
+        ilk: 'RETH-A',
+        symbol: 'RETH',
+        decimals: 18,
+        exchange: {
+            callee: 'rETHCurveUniv3Callee',
+            route: ['ETH'],
+        },
+        oracle: CONFIG_WITH_NEXT_PRICE,
+    },
 };
 
 export const getCollateralConfigBySymbol = function (symbol: string): CollateralConfig {
