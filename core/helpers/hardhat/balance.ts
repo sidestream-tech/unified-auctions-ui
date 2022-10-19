@@ -71,11 +71,23 @@ export const findERC20BalanceSlot = async (tokenAddress: string): Promise<[strin
     const balanceHex = await contract.balanceOf(HARDHAT_PUBLIC_KEY);
     const balance = new BigNumber(balanceHex._hex);
     const overwriteValue = balance.eq(0) ? new BigNumber(10) : new BigNumber(0);
-    const discoverySolidity = await runBalanceSlotDiscoveryLoopForERC20Token(tokenAddress, contract, overwriteValue, balance, 'solidity');
+    const discoverySolidity = await runBalanceSlotDiscoveryLoopForERC20Token(
+        tokenAddress,
+        contract,
+        overwriteValue,
+        balance,
+        'solidity'
+    );
     if (discoverySolidity) {
         return [discoverySolidity, 'solidity'];
     }
-    const discoveryVyper = await runBalanceSlotDiscoveryLoopForERC20Token(tokenAddress, contract, overwriteValue, balance, 'vyper');
+    const discoveryVyper = await runBalanceSlotDiscoveryLoopForERC20Token(
+        tokenAddress,
+        contract,
+        overwriteValue,
+        balance,
+        'vyper'
+    );
     if (discoveryVyper) {
         return [discoveryVyper, 'vyper'];
     }
