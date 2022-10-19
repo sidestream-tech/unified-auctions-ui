@@ -8,6 +8,7 @@ import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
+import executeSpell from '../helpers/executeSpell';
 
 const getCollateralType = async () => {
     const { collateralType } = await prompts([
@@ -39,9 +40,7 @@ const simulation: Simulation = {
         },
         {
             title: 'Execute the spell',
-            entry: async () => {
-                console.info('Execute the spell');
-            },
+            entry: () => executeSpell('https://github.com/makerdao/spells-mainnet', 'CES-795'),
         },
         {
             title: 'Create new auction',
