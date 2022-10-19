@@ -13,6 +13,8 @@ export const generateFakeCollaterals = function () {
             secondsBetweenPriceDrops: faker.datatype.number(120),
             priceDropRatio: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
             tokenAddress: faker.finance.ethereumAddress(),
+            autoRouteQuote: new BigNumber(faker.finance.amount()),
+            autoRouteExchanges: [faker.lorem.word(), faker.lorem.word()],
         });
     }
     return collaterals;
