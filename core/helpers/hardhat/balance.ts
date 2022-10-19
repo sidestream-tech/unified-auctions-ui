@@ -12,6 +12,7 @@ import {
     overwriteUintTable,
 } from '../hardhat/slotOverwrite';
 import { runBalanceSlotDiscoveryLoopForERC20Token } from './slotOverwrite';
+import { getCollateralConfigBySymbol } from '../../src/constants/COLLATERALS';
 
 export const addDaiToBalance = async (
     daiAmount: BigNumber = new BigNumber(100000),
@@ -46,10 +47,11 @@ export const setCollateralInVat = async (
 };
 
 export const setCollateralInWallet = async (
-    collateralConfig: CollateralConfig,
+    collateralSymbol: CollateralConfig['symbol'],
     collateralAmount: BigNumber,
     address: string = HARDHAT_PUBLIC_KEY,
 ) => {
+    const collateralConfig = getCollateralConfigBySymbol(collateralSymbol)
     const value = collateralAmount.shiftedBy(collateralConfig.decimals);
     const tokenAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
     const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralConfig.ilk);
