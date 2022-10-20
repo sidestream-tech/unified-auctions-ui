@@ -9,6 +9,7 @@ import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
+import deploySpell from '../helpers/deploySpell';
 import executeSpell from '../helpers/executeSpell';
 import { getContractAddressByName } from '../../src/contracts';
 
@@ -39,13 +40,18 @@ const simulation: Simulation = {
                 await addMkrToBalance();
             },
         },
-        // {
-        //     title: 'Deploy the spell',
-        //     entry: () => deploySpell('https://github.com/makerdao/spells-mainnet', 'CES-795'),
-        // },
+        {
+            title: 'Deploy the spell',
+            entry: async () => {
+                const spellAddress = await deploySpell('https://github.com/makerdao/spells-mainnet', 'CES-795');
+                return {
+                    spellAddress,
+                };
+            },
+        },
         {
             title: 'Execute the spell',
-            entry: async () => {
+            entry: async context => {
                 const printValueChangedByTheSpell = async function () {
                     // MCD_PSM_GUSD_A tout uint256
                     const address = await getContractAddressByName(TEST_NETWORK, 'MCD_PSM_GUSD_A');
@@ -57,7 +63,7 @@ const simulation: Simulation = {
                     console.info(`tout`, value);
                 };
                 await printValueChangedByTheSpell();
-                await executeSpell('0x8E4faFef5bF61f09654aDeB46E6bC970BcD42c52');
+                await executeSpell(context.spellAddress);
                 await printValueChangedByTheSpell();
             },
         },
