@@ -1,3 +1,4 @@
+import hre from 'hardhat';
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
 import { addMkrToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
@@ -9,6 +10,7 @@ import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
 import executeSpell from '../helpers/executeSpell';
+import { getContractAddressByName } from '../../src/contracts';
 
 const getCollateralType = async () => {
     const { collateralType } = await prompts([
@@ -43,7 +45,21 @@ const simulation: Simulation = {
         // },
         {
             title: 'Execute the spell',
-            entry: () => executeSpell('Ox8E4faFef5bF61f09654aDeB46E6bC970BcD42c52'),
+            entry: async () => {
+                const printValueChangedByTheSpell = async function () {
+                    // MCD_PSM_GUSD_A tout uint256
+                    const address = await getContractAddressByName(TEST_NETWORK, 'MCD_PSM_GUSD_A');
+                    const contract = await hre.ethers.getContractAt(
+                        ['function tout() external view returns (uint256)'],
+                        address
+                    );
+                    const value = await contract.tout();
+                    console.info(`tout`, value);
+                };
+                await printValueChangedByTheSpell();
+                await executeSpell('0x8E4faFef5bF61f09654aDeB46E6bC970BcD42c52');
+                await printValueChangedByTheSpell();
+            },
         },
         {
             title: 'Create new auction',

@@ -27,6 +27,7 @@ import MEDIAN_PRICE_FEED from './abis/MEDIAN_PRICE_FEED.json';
 import MCD_SPOT from './abis/MCD_SPOT.json';
 import MCD_JUG from './abis/MCD_JUG.json';
 import ERC20 from './abis/ERC20.json';
+import MCD_ADM from './abis/MCD_ADM.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
@@ -65,6 +66,7 @@ export const getContractInterfaceByName = async function (contractName: string):
         MCD_JUG,
         CDP_REGISTRY,
         MCD_CROPPER,
+        MCD_ADM,
     };
     if (Object.keys(ABIs).includes(contractName)) {
         return ABIs[contractName];
