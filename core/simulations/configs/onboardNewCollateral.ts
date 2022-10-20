@@ -80,7 +80,7 @@ const simulation: Simulation = {
                 const provider = await getProvider(TEST_NETWORK);
                 const oracleAddress = await getContractAddressByName(TEST_NETWORK, 'PIP_RETH');
                 const oraclePrice = await getCurrentOraclePrice(collateralConfig.oracle, provider, oracleAddress);
-                console.log('oraclePrice', oraclePrice.toFixed());
+                console.info('new oracle price', oraclePrice.toFixed());
                 // create and liquidate vault
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
                 const vaultId = await createVaultWithCollateral(collateralType, collateralOwned);

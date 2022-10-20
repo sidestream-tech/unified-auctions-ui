@@ -36,7 +36,6 @@ const getOraclePriceSameSlotValidity = async (
      * If the price is valid - return it, otherwise provide a NaN
      **/
     const priceAndValidityHex = await provider.getStorageAt(oracleAddress, slot);
-    console.log('priceAndValidityHex', priceAndValidityHex);
     const isPriceValid = priceAndValidityHex.substring(0, slotPriceValueBeginsAtPosition);
     if (parseInt(isPriceValid, 16) === 1) {
         return new BigNumber(`0x${priceAndValidityHex.substring(slotPriceValueBeginsAtPosition)}`).shiftedBy(

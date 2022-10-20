@@ -98,9 +98,7 @@ export const calculateMinCollateralAmountToOpenVault = async (collateralType: Co
         variableName: 'dust',
         decimalUnits: 'RAD',
     });
-    console.log('minDebtDai', minDebtDai.toFixed());
     const { minUnitPrice } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
-    console.log('minUnitPrice', minUnitPrice.toFixed());
     const debt = !minDebtDai.isZero() ? minDebtDai : new BigNumber(0.00001);
     const minCollateralInVault = minUnitPrice.isZero()
         ? new BigNumber(1)
@@ -155,8 +153,6 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
 const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
     const collateralConfig = getCollateralConfigByType(collateralType);
-
-    console.log('collateralOwned', collateralOwned.toFixed());
 
     if (balanceSlot && languageFormat) {
         await setCollateralInWallet(collateralConfig.symbol, collateralOwned);
