@@ -1,5 +1,5 @@
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
-import { addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat/balance';
+import { addMkrToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
 import prompts from 'prompts';
 import COLLATERALS from '../../src/constants/COLLATERALS';
@@ -33,14 +33,17 @@ const simulation: Simulation = {
         {
             title: 'Reset blockchain fork and add balances',
             entry: async () => {
-                await resetNetworkAndSetupWallet();
-                await addDaiToBalance();
+                await resetNetworkAndSetupWallet(15777270);
                 await addMkrToBalance();
             },
         },
+        // {
+        //     title: 'Deploy the spell',
+        //     entry: () => deploySpell('https://github.com/makerdao/spells-mainnet', 'CES-795'),
+        // },
         {
             title: 'Execute the spell',
-            entry: () => executeSpell('https://github.com/makerdao/spells-mainnet', 'CES-795'),
+            entry: () => executeSpell('Ox8E4faFef5bF61f09654aDeB46E6bC970BcD42c52'),
         },
         {
             title: 'Create new auction',
