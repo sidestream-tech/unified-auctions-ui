@@ -1,9 +1,10 @@
 import hre from 'hardhat';
+import BigNumber from '../../src/bignumber';
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
 import { addMkrToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
 import prompts from 'prompts';
-import COLLATERALS from '../../src/constants/COLLATERALS';
+import COLLATERALS, { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
@@ -12,6 +13,8 @@ import createVaultWithCollateral, {
 import deploySpell from '../helpers/deploySpell';
 import executeSpell from '../helpers/executeSpell';
 import { getContractAddressByName } from '../../src/contracts';
+import { getCurrentOraclePrice, overwriteCurrentOraclePrice } from '../../src/oracles';
+import getProvider from '../../src/provider';
 
 const getCollateralType = async () => {
     const { collateralType } = await prompts([
@@ -36,7 +39,7 @@ const simulation: Simulation = {
         {
             title: 'Reset blockchain fork and add balances',
             entry: async () => {
-                await resetNetworkAndSetupWallet(15777270);
+                await resetNetworkAndSetupWallet();
                 await addMkrToBalance();
             },
         },
@@ -71,6 +74,14 @@ const simulation: Simulation = {
             title: 'Create new auction',
             entry: async () => {
                 const collateralType = await getCollateralType();
+                // overwrite oracle price
+                await overwriteCurrentOraclePrice(TEST_NETWORK, collateralType, new BigNumber(1000));
+                const collateralConfig = getCollateralConfigByType(collateralType);
+                const provider = await getProvider(TEST_NETWORK);
+                const oracleAddress = await getContractAddressByName(TEST_NETWORK, 'PIP_RETH');
+                const oraclePrice = await getCurrentOraclePrice(collateralConfig.oracle, provider, oracleAddress);
+                console.log('oraclePrice', oraclePrice.toFixed());
+                // create and liquidate vault
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
                 const vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
                 await warpTime(60 * 24 * 30, 60);

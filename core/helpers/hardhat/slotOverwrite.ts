@@ -21,10 +21,10 @@ export const generateMappingSlotAddress = (
 export const overwriteUintValueInAddress = async (
     address: string,
     slotAddress: string,
-    newValue: BigNumber,
+    newValue: BigNumber | string,
     provider: EthereumProvider = hre.network.provider
 ) => {
-    const hexValue = formatToHex(newValue, 32);
+    const hexValue = typeof newValue === 'string' ? newValue : formatToHex(newValue, 32);
     const storageToWrite = [address, slotAddress, hexValue];
     await provider.send('hardhat_setStorageAt', storageToWrite);
 };
