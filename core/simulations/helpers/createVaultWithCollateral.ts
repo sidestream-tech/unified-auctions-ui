@@ -1,6 +1,7 @@
+import { ethers } from 'ethers';
+import BigNumber from '../../src/bignumber';
 import { setCollateralInVat } from '../../helpers/hardhat/balance';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
-import BigNumber from '../../src/bignumber';
 import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
 import {
@@ -17,9 +18,22 @@ import {
 } from '../../src/wallet';
 import { MAX } from '../../src/constants/UNITS';
 import { CollateralConfig, CollateralType } from '../../src/types';
-import { ethers } from 'ethers';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
 import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardhat/erc20';
+import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
+
+const UNSUPPORTED_COLLATERAL_TYPES = [
+    'CRVV1ETHSTETH-A', // Collateral handled differently
+    'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
+    'WSTETH-B', // Does not accumulate stability fee rate at all
+    'RETH-A', // [temporary] this collateral is not yet deployed, tested via different flow
+];
+
+export const getLiquidatableCollateralTypes = () => {
+    return Object.keys(getAllCollateralTypes()).filter(
+        collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType)
+    );
+};
 
 const setAndCheckCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     console.info(`Setting ${collateralType} balance in VAT...`);

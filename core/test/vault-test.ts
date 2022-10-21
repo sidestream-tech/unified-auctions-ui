@@ -21,8 +21,8 @@ import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
+    getLiquidatableCollateralTypes,
 } from '../simulations/helpers/createVaultWithCollateral';
-import { getLiquidatableCollateralTypes } from '../simulations/configs/vaultLiquidation';
 import { MAX } from '../src/constants/UNITS';
 chai.use(deepEqualInAnyOrder);
 
