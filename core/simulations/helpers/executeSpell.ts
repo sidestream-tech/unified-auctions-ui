@@ -2,9 +2,8 @@ import BigNumber from '../../src/bignumber';
 import hre from 'hardhat';
 import { TEST_NETWORK } from '../../helpers/constants';
 import getContract from '../../src/contracts';
-import getSigner from '../../src/signer';
-import { overwriteUintMapping } from '../../helpers/hardhat/slotOverwrite';
 import { MKR_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
+import { addMkrToBalance } from '../../helpers/hardhat/balance';
 
 const ONE_WEEK_SECONDS = 60 * 60 * 24 * 7;
 
@@ -16,22 +15,6 @@ const getMaximumVotingPoverInMkr = async () => {
     const hatAddress = await chiefContract.hat();
     const approvals = await chiefContract.approvals(hatAddress);
     return new BigNumber(approvals._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
-};
-
-const setGovernanceMkr = async (mkrAmount: BigNumber) => {
-    const signer = await getSigner(TEST_NETWORK);
-    const currentAddress = await signer.getAddress();
-    const govContract = await getContract(TEST_NETWORK, 'MCD_GOV');
-    const currentBalance = await govContract.balanceOf(currentAddress);
-    await overwriteUintMapping('MCD_GOV', '0x01', currentAddress, mkrAmount.shiftedBy(MKR_NUMBER_OF_DIGITS));
-    const newBalance = await govContract.balanceOf(currentAddress);
-    if (newBalance._hex === currentBalance._hex) {
-        throw new Error(
-            `governance MKR balance doesn't seem to change: ${ethers.utils.formatEther(
-                currentBalance
-            )}, ${ethers.utils.formatEther(newBalance)}`
-        );
-    }
 };
 
 const voteForSpell = async (spellAddress: string, mkrAmount: BigNumber) => {
@@ -49,7 +32,7 @@ const voteForSpell = async (spellAddress: string, mkrAmount: BigNumber) => {
 const executeSpell = async function (spellAddress: string) {
     console.info(`executing spell "${spellAddress}": minting enough MKR...`);
     const maximumVotingPoverMkr = await getMaximumVotingPoverInMkr();
-    await setGovernanceMkr(maximumVotingPoverMkr.plus(1));
+    await addMkrToBalance(maximumVotingPoverMkr.plus(1));
 
     console.info(`executing spell "${spellAddress}": voting for the spell...`);
     await voteForSpell(spellAddress, maximumVotingPoverMkr.plus(1));
