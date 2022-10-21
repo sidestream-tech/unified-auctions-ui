@@ -6,6 +6,8 @@ import getSigner from '../../src/signer';
 import { overwriteUintMapping } from '../../helpers/hardhat/slotOverwrite';
 import { MKR_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
 
+const ONE_WEEK_SECONDS = 60 * 60 * 24 * 7;
+
 const ethers = hre.ethers;
 const provider = hre.network.provider;
 
@@ -61,7 +63,7 @@ const executeSpell = async function (spellAddress: string) {
     const block = await ethers.provider.getBlock('latest');
     await provider.request({
         method: 'evm_setNextBlockTimestamp',
-        params: [block.timestamp + 604800], // 1 week
+        params: [block.timestamp + ONE_WEEK_SECONDS],
     });
 
     console.info(`executing spell "${spellAddress}": casting...`);
