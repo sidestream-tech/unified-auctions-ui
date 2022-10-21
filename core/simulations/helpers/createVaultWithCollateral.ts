@@ -30,9 +30,7 @@ const UNSUPPORTED_COLLATERAL_TYPES = [
 ];
 
 export const getLiquidatableCollateralTypes = () => {
-    return Object.keys(getAllCollateralTypes()).filter(
-        collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType)
-    );
+    return getAllCollateralTypes().filter(collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType));
 };
 
 const setAndCheckCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
