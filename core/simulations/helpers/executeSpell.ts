@@ -21,7 +21,6 @@ const setGovernanceMkr = async (mkrAmount: BigNumber) => {
     const currentAddress = await signer.getAddress();
     const govContract = await getContract(TEST_NETWORK, 'MCD_GOV');
     const currentBalance = await govContract.balanceOf(currentAddress);
-    console.info(`governance MKR balance: ${ethers.utils.formatEther(currentBalance)}`);
     await overwriteUintMapping('MCD_GOV', '0x01', currentAddress, mkrAmount.shiftedBy(MKR_NUMBER_OF_DIGITS));
     const newBalance = await govContract.balanceOf(currentAddress);
     if (newBalance._hex === currentBalance._hex) {

@@ -13,12 +13,10 @@ import { ethers } from 'ethers';
 import { DAI_NUMBER_OF_DIGITS } from './constants/UNITS';
 import memoizee from 'memoizee';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
-import { overwriteUintValueInAddress } from '../helpers/hardhat/slotOverwrite';
-import executeTransaction from './execute';
 
 const CACHE_EXPIRY_MS = 60 * 1000;
 
-const getOracleAddressByCollateralType = async function (network: string, collateralType: string) {
+export const getOracleAddressByCollateralType = async function (network: string, collateralType: string) {
     const collateralConfig = getCollateralConfigByType(collateralType);
     return await getContractAddressByName(network, `PIP_${collateralConfig.symbol}`);
 };
@@ -151,22 +149,3 @@ export const getOsmPrices = memoizee(_getOsmPrices, {
     promise: true,
     length: 3,
 });
-
-const createStructCoder = function () {
-    const coder = new ethers.utils.AbiCoder();
-    coder._getWordSize = () => 16;
-    return coder;
-};
-
-export const overwriteCurrentOraclePrice = async (network: string, collateralType: string, amount: BigNumber) => {
-    const collateralConfig = getCollateralConfigByType(collateralType);
-    const oracleAddress = await getOracleAddressByCollateralType(network, collateralType);
-    const amoutInteger = amount.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed();
-    const valueWithValidity = createStructCoder().encode(['uint128', 'uint128'], ['1', amoutInteger]);
-    await overwriteUintValueInAddress(
-        oracleAddress,
-        collateralConfig.oracle.currentPriceSlotAddress,
-        valueWithValidity
-    );
-    await executeTransaction(network, 'MCD_SPOT', 'poke', [ethers.utils.formatBytes32String(collateralType)]);
-};

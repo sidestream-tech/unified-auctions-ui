@@ -13,8 +13,9 @@ import createVaultWithCollateral, {
 import deploySpell from '../helpers/deploySpell';
 import executeSpell from '../helpers/executeSpell';
 import { getContractAddressByName } from '../../src/contracts';
-import { getCurrentOraclePrice, overwriteCurrentOraclePrice } from '../../src/oracles';
+import { getCurrentOraclePrice } from '../../src/oracles';
 import getProvider from '../../src/provider';
+import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
 
 const getCollateralType = async () => {
     const { collateralType } = await prompts([
@@ -39,7 +40,7 @@ const simulation: Simulation = {
         {
             title: 'Reset blockchain fork and add balances',
             entry: async () => {
-                await resetNetworkAndSetupWallet();
+                await resetNetworkAndSetupWallet(15791971);
                 await addMkrToBalance();
             },
         },
