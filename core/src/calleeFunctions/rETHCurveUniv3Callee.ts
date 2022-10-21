@@ -1,13 +1,12 @@
-import type { CalleeFunctions, CollateralConfig } from '../types';
 import { ethers } from 'ethers';
+import type { CalleeFunctions, CollateralConfig } from '../types';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { encodeRoute, convertCollateralToDai } from './helpers/uniswapV3';
 import { convertStethToEth } from './helpers/curve';
 import { convertRethToWsteth } from './helpers/rocket';
 import { convertWstethToSteth } from './helpers/wsteth';
-
-export const CHARTER_MANAGER_ADDRESS = '0x8377CD01a5834a6EaD3b7efb482f678f2092b77e';
+import { NULL_ADDRESS } from '../constants/UNITS';
 
 const getCalleeData = async function (
     network: string,
@@ -26,7 +25,7 @@ const getCalleeData = async function (
         joinAdapterAddress,
         minProfit,
         route,
-        CHARTER_MANAGER_ADDRESS,
+        NULL_ADDRESS,
     ]);
 };
 

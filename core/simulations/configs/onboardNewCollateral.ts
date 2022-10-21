@@ -1,7 +1,7 @@
 import hre from 'hardhat';
 import BigNumber from '../../src/bignumber';
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
-import { addMkrToBalance } from '../../helpers/hardhat/balance';
+import { addDaiToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
 import prompts from 'prompts';
 import COLLATERALS, { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
@@ -41,7 +41,7 @@ const simulation: Simulation = {
             title: 'Reset blockchain fork and add balances',
             entry: async () => {
                 await resetNetworkAndSetupWallet(15791971);
-                await addMkrToBalance();
+                await addDaiToBalance();
             },
         },
         {
