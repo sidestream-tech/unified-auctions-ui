@@ -112,9 +112,7 @@ export const calculateMinCollateralAmountToOpenVault = async (collateralType: Co
     });
     const { minUnitPrice } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
     const debt = !minDebtDai.isZero() ? minDebtDai : new BigNumber(0.00001);
-    const minCollateralInVault = minUnitPrice.isZero()
-        ? new BigNumber(1)
-        : roundUpToFirstSignificantDecimal(debt.div(minUnitPrice)).multipliedBy(1.1);
+    const minCollateralInVault = roundUpToFirstSignificantDecimal(debt.div(minUnitPrice)).multipliedBy(1.1);
     await checkAvailableDebtForAmountAndMinUnitPrice(collateralType, minCollateralInVault, minUnitPrice);
     return minCollateralInVault;
 };
