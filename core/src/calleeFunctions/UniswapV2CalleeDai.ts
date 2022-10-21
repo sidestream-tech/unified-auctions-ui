@@ -9,7 +9,7 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     profitAddress: string
 ): Promise<string> {
-    if (collateral.exchange.callee !== 'UniswapV2CalleeDai') {
+    if (!collateral.exchanges.hasOwnProperty('Uniswap V2')) {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));

@@ -6,6 +6,17 @@ export declare interface GasParameters {
     gasPrice?: string;
 }
 
+export declare interface MarketData {
+    marketUnitPrice: BigNumber;
+    route?: string[];
+    token0?: string;
+    token1?: string;
+    marketUnitPriceToUnitPriceRatio?: BigNumber;
+    transactionGrossProfit?: BigNumber;
+    transactionGrossProfitDate?: Date;
+    transactionNetProfit?: BigNumber;
+}
+
 export declare interface AuctionInitialInfo {
     network: string;
     id: string;
@@ -20,6 +31,8 @@ export declare interface AuctionInitialInfo {
     isActive: boolean;
     isFinished: boolean;
     isRestarting: boolean;
+    suggestedMarketId?: string;
+    marketData?: Record<string, MarketData>;
     marketUnitPrice?: BigNumber;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
     transactionGrossProfit?: BigNumber;
@@ -97,7 +110,7 @@ export declare interface CollateralConfig {
     ilk: string;
     symbol: string;
     decimals: number;
-    exchange: RegularCalleeConfig | UniswapV2LpTokenCalleeConfig;
+    exchanges: Record<string, RegularCalleeConfig | UniswapV2LpTokenCalleeConfig>;
     oracle: CollateralPriceSourceConfig;
 }
 

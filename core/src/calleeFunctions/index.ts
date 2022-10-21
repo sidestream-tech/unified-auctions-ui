@@ -1,4 +1,10 @@
-import type { CalleeNames, CalleeFunctions } from '../types';
+import type {
+    CalleeNames,
+    CalleeFunctions,
+    MarketData,
+    RegularCalleeConfig,
+    UniswapV2LpTokenCalleeConfig,
+} from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
@@ -18,17 +24,82 @@ const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV3Callee,
 };
 
-export const getCalleeData = async function (
+export const getCalleesData = async function (
     network: string,
     collateralType: string,
     profitAddress: string
-): Promise<string> {
+): Promise<Record<string, string>> {
     const collateral = getCollateralConfigByType(collateralType);
-    const calleeFuctions = allCalleeFunctions[collateral.exchange.callee];
-    if (!calleeFuctions) {
+    const calleeFuctions = {} as Record<string, CalleeFunctions>;
+    Object.entries(collateral.exchanges).forEach(exchange => {
+        calleeFuctions[exchange[0]] = allCalleeFunctions[exchange[1].callee];
+    });
+    if (!calleeFuctions.length) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await calleeFuctions.getCalleeData(network, collateral, profitAddress);
+    const calleesData = {} as Record<string, string>;
+    Object.entries(calleeFuctions).forEach(async calleeFuction => {
+        calleesData[calleeFuction[0]] = await calleeFuction[1].getCalleeData(network, collateral, profitAddress);
+    });
+    return calleesData;
+};
+
+export const getMarketData = async function (
+    network: string,
+    collateralSymbol: string,
+    amount: BigNumber = new BigNumber('1')
+): Promise<Record<string, MarketData>> {
+    const collateral = getCollateralConfigBySymbol(collateralSymbol);
+    const calleeIdAndFuctions = {} as Record<string, CalleeFunctions>;
+    Object.keys(collateral.exchanges).forEach(id => {
+        calleeIdAndFuctions[id] = allCalleeFunctions[collateral.exchanges[id].callee];
+    });
+    if (!Object.keys(calleeIdAndFuctions).length) {
+        throw new Error(`Unsupported collateral symbol "${collateralSymbol}"`);
+    }
+    const marketData = {} as Record<string, MarketData>;
+    Object.keys(calleeIdAndFuctions).forEach(async id => {
+        let marketUnitPrice: BigNumber;
+        try {
+            marketUnitPrice = await calleeIdAndFuctions[id].getMarketPrice(network, collateral, amount);
+        } catch {
+            marketUnitPrice = new BigNumber(NaN);
+        }
+        const data = { marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN) } as MarketData;
+        if (collateral.exchanges[id].hasOwnProperty('route')) {
+            data.route = (collateral.exchanges[id] as RegularCalleeConfig).route;
+        } else {
+            data.token0 = (collateral.exchanges[id] as UniswapV2LpTokenCalleeConfig).token0;
+            data.token1 = (collateral.exchanges[id] as UniswapV2LpTokenCalleeConfig).token1;
+        }
+        marketData[id] = data;
+    });
+    return marketData;
+};
+
+export const getBestMarketData = async function (
+    network: string,
+    collateralSymbol: string,
+    amount: BigNumber = new BigNumber('1')
+): Promise<Record<string, string | BigNumber>> {
+    const marketData = Object.entries(await getMarketData(network, collateralSymbol, amount));
+    marketData.sort((a, b) => {
+        // push NaNs to the end
+        if (a[1].marketUnitPrice.isNaN() && b[1].marketUnitPrice.isNaN()) {
+            return 1;
+        }
+        if (a[1].marketUnitPrice.isNaN()) {
+            return 1;
+        }
+        if (b[1].marketUnitPrice.isNaN()) {
+            return -1;
+        }
+        return a[1].marketUnitPrice.minus(b[1].marketUnitPrice).toNumber();
+    });
+    return {
+        marketId: marketData[0][0],
+        marketUnitPrice: marketData[0][1].marketUnitPrice,
+    };
 };
 
 const _getMarketPrice = async function (
@@ -36,12 +107,7 @@ const _getMarketPrice = async function (
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<BigNumber> {
-    const collateral = getCollateralConfigBySymbol(collateralSymbol);
-    const calleeFuctions = allCalleeFunctions[collateral.exchange.callee];
-    if (!calleeFuctions) {
-        throw new Error(`Unsupported collateral symbol "${collateralSymbol}"`);
-    }
-    return await calleeFuctions.getMarketPrice(network, collateral, amount);
+    return (await getBestMarketData(network, collateralSymbol, amount)).marketUnitPrice as BigNumber;
 };
 
 export const getMarketPrice = memoizee(_getMarketPrice, {

@@ -6,6 +6,7 @@ import { getContractAddressByName } from '../../contracts';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
+import { RegularCalleeConfig } from '../../types';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
@@ -38,11 +39,14 @@ export const convertCollateralToDaiUsingRoute = async function (
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     const collateral = await getCollateralConfigBySymbol(collateralSymbol);
-    if (collateral.exchange.callee !== 'UniswapV3Callee') {
+    if (!collateral.exchanges.hasOwnProperty('Uniswap V3')) {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
-    const route = encodeRoute(network, [collateral.symbol, ...collateral.exchange.route]);
+    const route = encodeRoute(network, [
+        collateral.symbol,
+        ...(collateral.exchanges['Uniswap V3'] as RegularCalleeConfig).route,
+    ]);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(route, collateralIntegerAmount);
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);

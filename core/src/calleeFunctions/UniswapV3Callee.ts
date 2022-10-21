@@ -1,4 +1,4 @@
-import type { CalleeFunctions, CollateralConfig } from '../types';
+import type { CalleeFunctions, CollateralConfig, RegularCalleeConfig } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
@@ -9,12 +9,15 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     profitAddress: string
 ): Promise<string> {
-    if (collateral.exchange.callee !== 'UniswapV3Callee') {
+    if (!collateral.exchanges.hasOwnProperty('Uniswap V3')) {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const uniswapV3route = await encodeRoute(network, [collateral.symbol, ...collateral.exchange.route]);
+    const uniswapV3route = await encodeRoute(network, [
+        collateral.symbol,
+        ...(collateral.exchanges['Uniswap V3'] as RegularCalleeConfig).route,
+    ]);
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,
