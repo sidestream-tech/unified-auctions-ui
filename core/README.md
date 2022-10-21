@@ -46,6 +46,42 @@ The process of adding new collaterals depends on the token type used. This is du
     - if the script terminates with an error, please submit the report to the repository at https://github.com/sidestream-tech/unified-auctions-ui via an issue so that the support could be added.
     - Read more about the collateral oracle configurations at `./README.md#collateral-oracle-configs`
 
+### Onboarding not yet deployed collateral
+
+When a completely new collateral type support is being prepared, we need to ensure that it will work even before the Maker Protocol is changed via a [`spell`](https://docs.makerdao.com/smart-contract-modules/governance-module/spell-detailed-documentation). Usually a new spell is prepared in the [spells-mainnet](https://github.com/makerdao/spells-mainnet/pulls) repository. When it is there we need to fork the repository, compile the spell and deploy it into the hardhat fork. Currently the setup is as follows:
+
+1. `rsync` or clone the repo to the desired x86 machine (tested with Docker 19.03.12 on Ubuntu 20.04)
+2. `cd` into the `core/simulations/docker` and run `docker-compose up` to start the hardhat fork in one container and another container with installed [`dapp-tools`](https://github.com/dapphub/dapptools)
+3. Shell into the `spells` container
+    - List avialble containers `docker container ls` (copy `CONTAINER ID` of the `docker_spells`)
+    - Shell into the container `docker exec -it 277a8d793341 sh`
+4. Fix future `Invalid argument` `nix` error via `echo 'filter-syscalls = false' >> /etc/nix/nix.conf`
+5. Open `nix` shell with useful tools `nix-shell -p cacert cachix curl git jq nix gnumake nano`
+6. Update `dapp --version` to the supported version (currently 0.35.0)
+    - Install `duppgrade` via `curl https://rari-capital.github.io/duppgrade/install | bash`
+    - Execute `duppgrade` and wait
+7. Clone branch containing the spell
+    - Clone the repo, eg `git clone https://github.com/makerdao/spells-mainnet spells && cd spells`
+    - Checkout correct branch `git checkout CES-795`
+8. Fetch all libraries (that are linked via git submodules) using `dapp update`
+9. Create keystore (that will be used by dapp-tools)
+    - Set hardhat private key into the file `echo 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80' > ../private-key`
+    - Set password `echo '' > ../key-password`
+    - Import key to create a keystore folder `(printf "\n\n" && cat) | geth account import --datadir /root ../private-key`
+    - Press enter to finish the process
+10. Prepare env vars
+    - `export ETH_KEYSTORE="/root/keystore"`
+    - `export ETH_PASSWORD="/root/key-password"`
+    - `export ETH_RPC_URL=http://core:8545`
+    - `export ETH_FROM="0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"` - the address of the key from above
+    - `export ETH_GAS=3000000` - might need to be adjusted based on the `make estimate` output
+    - `export ETH_GAS_PRICE=1000000000000`
+11. Compile the spell via `make`
+12. Deploy the spell via `dapp create DssSpell`
+13. Copy the bitecode of the spell into the `core/bytecode/compiledSpells.json` file, which will automatically update the `Onboard new collateral` simulation
+14. Run `Onboard new collateral` locally to deploy compiled bytecode and execute the spell, create vault, liquidate vault to create auction
+15. Run keeper and frontend against the simulation to validate that it worked
+
 ### Collateral oracle configs
 
 Each collateral has the source where its price is fetched from. These values are stored on the blockchain, however they are not exposed via public access methods.

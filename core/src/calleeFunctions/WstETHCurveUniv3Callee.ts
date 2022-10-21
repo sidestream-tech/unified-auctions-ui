@@ -1,10 +1,10 @@
 import type { CalleeFunctions, CollateralConfig } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
-import getContract, { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { ETH_NUMBER_OF_DIGITS } from '../constants/UNITS';
+import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { convertStethToEth } from './helpers/curve';
 import { convertCollateralToDai, UNISWAP_FEE } from './helpers/uniswapV3';
+import { convertWstethToSteth } from './helpers/wsteth';
 
 const getCalleeData = async function (
     network: string,
@@ -28,11 +28,11 @@ const getMarketPrice = async function (
     collateral: CollateralConfig,
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
+    if (collateral.exchange.callee !== 'WstETHCurveUniv3Callee') {
+        throw new Error(`Invalid callee used to get market price for ${collateral.ilk}`);
+    }
     // convert wstETH into stETH
-    const collateralContract = await getContract(network, collateral.symbol);
-    const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
-    const stethIntegerAmount = await collateralContract.getStETHByWstETH(collateralIntegerAmount);
-    const stethAmount = new BigNumber(stethIntegerAmount._hex).shiftedBy(-ETH_NUMBER_OF_DIGITS);
+    const stethAmount = await convertWstethToSteth(network, collateralAmount);
 
     // convert stETH into ETH
     const ethAmount = await convertStethToEth(network, stethAmount);

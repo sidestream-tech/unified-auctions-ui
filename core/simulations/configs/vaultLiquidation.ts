@@ -1,53 +1,13 @@
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
 import { addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
-import prompts from 'prompts';
-import COLLATERALS from '../../src/constants/COLLATERALS';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
+    getLiquidatableCollateralTypes,
 } from '../helpers/createVaultWithCollateral';
-
-const UNSUPPORTED_COLLATERAL_TYPES = [
-    'CRVV1ETHSTETH-A', // collateral handled differently
-    'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
-    'WSTETH-B', // does not accumulate stability fee rate at all.
-];
-
-export const getLiquidatableCollateralTypes = () => {
-    return Object.keys(COLLATERALS).filter(collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType));
-};
-
-const getCollateralType = async () => {
-    const { collateralType } = await prompts([
-        {
-            type: 'select',
-            name: 'collateralType',
-            message: 'Select the collateral symbol to add to the VAT.',
-            choices: getLiquidatableCollateralTypes()
-                .sort()
-                .map(collateral => ({
-                    title: collateral,
-                    value: collateral,
-                })),
-        },
-    ]);
-    return collateralType;
-};
-
-const getBaseContext = async () => {
-    const collateralType = await getCollateralType();
-    const decimals = COLLATERALS[collateralType].decimals;
-    const collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
-
-    console.info(`Collateral in the VAT initially: ${collateralOwned.toFixed()}`);
-    return {
-        collateralType,
-        decimals,
-        collateralOwned,
-    };
-};
+import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 
 const simulation: Simulation = {
     title: 'Simulate liquidation Auctions',
@@ -56,13 +16,21 @@ const simulation: Simulation = {
             title: 'Reset blockchain fork',
             entry: async () => {
                 await resetNetworkAndSetupWallet();
-                return getBaseContext();
+                const collateralType = await promptToSelectOneOption(
+                    'Select the collateral symbol to add to the VAT.',
+                    getLiquidatableCollateralTypes()
+                );
+                return {
+                    collateralType,
+                };
             },
         },
         {
             title: 'Create the vault',
             entry: async context => {
-                const latestVaultId = await createVaultWithCollateral(context.collateralType, context.collateralOwned);
+                const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
+                console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
+                const latestVaultId = await createVaultWithCollateral(context.collateralType, collateralOwned);
                 return { ...context, latestVaultId };
             },
         },

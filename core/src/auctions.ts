@@ -88,9 +88,10 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
             ...auctionWithMarketValues,
             transactionGrossProfit,
         };
-    } catch (error) {
+    } catch (error: any) {
         // since it's expected that some collaterals are not tradable on some networks
         // we should just ignore this error
+        console.warn(`auction ${auction.id} is not tradable`, error?.message);
         return auction;
     }
 };

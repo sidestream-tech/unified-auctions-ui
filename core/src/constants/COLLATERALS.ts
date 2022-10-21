@@ -446,6 +446,17 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
+    'RETH-A': {
+        title: 'Rocket Pool ETH',
+        ilk: 'RETH-A',
+        symbol: 'RETH',
+        decimals: 18,
+        exchange: {
+            callee: 'rETHCurveUniv3Callee',
+            route: ['ETH'],
+        },
+        oracle: CONFIG_WITH_NEXT_PRICE,
+    },
 };
 
 export const getCollateralConfigBySymbol = function (symbol: string): CollateralConfig {
@@ -466,11 +477,11 @@ export const getCollateralConfigByType = function (collateralType: string): Coll
 
 export const getAllCollateralSymbols = function (): string[] {
     const collateralSymbols = Object.values(COLLATERALS).map(collateral => collateral.symbol);
-    return Array.from(new Set(collateralSymbols));
+    return Array.from(new Set(collateralSymbols)).sort();
 };
 
 export const getAllCollateralTypes = function (): string[] {
-    return Object.keys(COLLATERALS);
+    return Object.keys(COLLATERALS).sort();
 };
 
 export default COLLATERALS;
