@@ -154,8 +154,18 @@ export default Vue.extend({
         isCollateralLimitMissing(): boolean {
             return !this.vaultTransaction.maximumCollateralDebtDai || !this.vaultTransaction.currentCollateralDebtDai;
         },
-        isLiquidatable(): boolean {
-            return this.vaultTransaction.state === 'liquidatable';
+        isBelowMinimal(): boolean {
+            return (
+                this.vaultTransaction.debtDai.isLessThan(this.vaultTransaction.minimalAuctionedDai) ||
+                this.willBeLiquidated?.isLessThan(this.vaultTransaction.minimalAuctionedDai) ||
+                this.partialLiquidationLeftover.isLessThan(this.vaultTransaction.minimalAuctionedDai)
+            );
+        },
+        partialLiquidationLeftover(): BigNumber {
+            if (!this.willBeLiquidated) {
+                return this.vaultTransaction.debtDai;
+            }
+            return this.vaultTransaction.debtDai.minus(this.willBeLiquidated);
         },
         liquidationPenaltyPercentage(): BigNumber {
             return this.vaultTransaction.liquidationPenaltyRatio.minus(1).times(100);
@@ -218,7 +228,7 @@ export default Vue.extend({
                 };
             }
             if (this.globalDifference.isNegative()) {
-                if (this.isLiquidatable) {
+                if (!this.isBelowMinimal) {
                     return {
                         name: 'attention',
                         title: 'Current global liquidation limits are partially reached',
@@ -230,7 +240,7 @@ export default Vue.extend({
                 };
             }
             if (this.collateralDifference.isNegative()) {
-                if (this.isLiquidatable) {
+                if (!this.isBelowMinimal) {
                     return {
                         name: 'attention',
                         title: `Current ${this.vaultTransaction.collateralType} liquidation limits are partially reached`,
