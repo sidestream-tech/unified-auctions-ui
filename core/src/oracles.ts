@@ -125,6 +125,14 @@ const getNextOraclePriceChange = async (
     return nextPriceChange;
 };
 
+export const getCurrentOraclePriceByCollateralType = async function (network: string, collateralType: string) {
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    const provider = await getProvider(network);
+    const oracleAddress = await getOracleAddressByCollateralType(network, collateralType);
+    const oraclePrice = await getCurrentOraclePrice(collateralConfig.oracle, provider, oracleAddress);
+    return oraclePrice;
+};
+
 const _getOsmPrices = async (
     network: string,
     oracleAddress: string,

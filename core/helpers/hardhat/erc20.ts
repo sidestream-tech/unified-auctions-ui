@@ -8,7 +8,6 @@ import { overwriteUintMappingInAddress, runBalanceSlotDiscoveryLoopForERC20Token
 export const determineBalanceSlot = async (
     collateralType: CollateralType
 ): Promise<[string, 'vyper' | 'solidity'] | [null, null]> => {
-    console.info('Determining balance slot...');
     const collateralConfig = getCollateralConfigByType(collateralType);
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
     try {

@@ -1,36 +1,18 @@
-import hre from 'hardhat';
 import BigNumber from '../../src/bignumber';
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
 import { addDaiToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
-import prompts from 'prompts';
-import { getAllCollateralTypes, getCollateralConfigByType } from '../../src/constants/COLLATERALS';
+import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
-import deploySpell from '../helpers/deploySpell';
+import deploySpell, { getAllSpellNames } from '../helpers/deploySpell';
 import executeSpell from '../helpers/executeSpell';
-import { getContractAddressByName } from '../../src/contracts';
-import { getCurrentOraclePrice } from '../../src/oracles';
-import getProvider from '../../src/provider';
+import { getCurrentOraclePriceByCollateralType } from '../../src/oracles';
 import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
-
-const promptCollateralSelection = async () => {
-    const { collateralType } = await prompts([
-        {
-            type: 'select',
-            name: 'collateralType',
-            message: 'Select the collateral symbol to add to the VAT.',
-            choices: getAllCollateralTypes().map(collateral => ({
-                title: collateral,
-                value: collateral,
-            })),
-        },
-    ]);
-    return collateralType;
-};
+import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 
 const simulation: Simulation = {
     title: 'Onboard new collateral',
@@ -45,7 +27,11 @@ const simulation: Simulation = {
         {
             title: 'Deploy the spell',
             entry: async () => {
-                const spellAddress = await deploySpell(TEST_NETWORK, 'RETH-A onboarding');
+                const spellName = await promptToSelectOneOption(
+                    'Select the spell you want to deploy',
+                    getAllSpellNames()
+                );
+                const spellAddress = await deploySpell(TEST_NETWORK, spellName);
                 return {
                     spellAddress,
                 };
@@ -54,32 +40,20 @@ const simulation: Simulation = {
         {
             title: 'Execute the spell',
             entry: async context => {
-                const printValueChangedByTheSpell = async function () {
-                    // MCD_PSM_GUSD_A tout uint256
-                    const address = await getContractAddressByName(TEST_NETWORK, 'MCD_PSM_GUSD_A');
-                    const contract = await hre.ethers.getContractAt(
-                        ['function tout() external view returns (uint256)'],
-                        address
-                    );
-                    const value = await contract.tout();
-                    console.info(`tout`, value);
-                };
-                await printValueChangedByTheSpell();
                 await executeSpell(context.spellAddress);
-                await printValueChangedByTheSpell();
             },
         },
         {
             title: 'Create new auction',
             entry: async () => {
-                const collateralType = await promptCollateralSelection();
+                const collateralType = await promptToSelectOneOption(
+                    'Select the collateral symbol to add to the VAT',
+                    getAllCollateralTypes()
+                );
                 // overwrite oracle price
                 await overwriteCurrentOraclePrice(TEST_NETWORK, collateralType, new BigNumber(1000));
-                const collateralConfig = getCollateralConfigByType(collateralType);
-                const provider = await getProvider(TEST_NETWORK);
-                const oracleAddress = await getContractAddressByName(TEST_NETWORK, 'PIP_RETH');
-                const oraclePrice = await getCurrentOraclePrice(collateralConfig.oracle, provider, oracleAddress);
-                console.info('new oracle price', oraclePrice.toFixed());
+                const oraclePrice = await getCurrentOraclePriceByCollateralType(TEST_NETWORK, collateralType);
+                console.info(`New ${collateralType} oracle price is ${oraclePrice.toFixed()} DAI`);
                 // create and liquidate vault
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
                 const vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
