@@ -4,7 +4,7 @@ import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/netw
 import { addDaiToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
 import prompts from 'prompts';
-import COLLATERALS, { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
+import { getAllCollateralTypes, getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
@@ -17,18 +17,16 @@ import { getCurrentOraclePrice } from '../../src/oracles';
 import getProvider from '../../src/provider';
 import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
 
-const getCollateralType = async () => {
+const promptCollateralSelection = async () => {
     const { collateralType } = await prompts([
         {
             type: 'select',
             name: 'collateralType',
             message: 'Select the collateral symbol to add to the VAT.',
-            choices: Object.keys(COLLATERALS)
-                .sort()
-                .map(collateral => ({
-                    title: collateral,
-                    value: collateral,
-                })),
+            choices: getAllCollateralTypes().map(collateral => ({
+                title: collateral,
+                value: collateral,
+            })),
         },
     ]);
     return collateralType;
@@ -47,7 +45,7 @@ const simulation: Simulation = {
         {
             title: 'Deploy the spell',
             entry: async () => {
-                const spellAddress = await deploySpell('https://github.com/makerdao/spells-mainnet', 'CES-795');
+                const spellAddress = await deploySpell(TEST_NETWORK, 'RETH-A onboarding');
                 return {
                     spellAddress,
                 };
@@ -74,7 +72,7 @@ const simulation: Simulation = {
         {
             title: 'Create new auction',
             entry: async () => {
-                const collateralType = await getCollateralType();
+                const collateralType = await promptCollateralSelection();
                 // overwrite oracle price
                 await overwriteCurrentOraclePrice(TEST_NETWORK, collateralType, new BigNumber(1000));
                 const collateralConfig = getCollateralConfigByType(collateralType);
