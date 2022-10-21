@@ -30,7 +30,7 @@
                         >dog.Dirt</a
                     >
                 </Explain>
-                = <FormatCurrency :class="limitColor(globalDifference)" :value="globalLimit" currency="DAI"
+                = <FormatCurrency :value="globalLimit" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -59,7 +59,7 @@
                         >ilk.dirt</a
                     >
                 </Explain>
-                = <FormatCurrency :class="limitColor(collateralDifference)" :value="collateralLimit" currency="DAI"
+                = <FormatCurrency :value="collateralLimit" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -68,7 +68,7 @@
         </div>
         <div class="flex justify-between">
             <span>Maximal liquidatable amount</span>
-            <FormatCurrency v-if="maximumLiquidationAmount" :value="maximumLiquidationAmount" currency="DAI" />
+            <FormatCurrency v-if="maximalLiquidatableAmount" :value="maximalLiquidatableAmount" currency="DAI" />
             <div v-else>
                 <span class="opacity-50">Unknown</span>
                 <span>DAI</span>
@@ -90,7 +90,7 @@
                 <span class="font-bold">Will be liquidated</span>
                 <div>
                     <span v-if="willBeLiquidated">
-                        <FormatCurrency :class="willBeLiquidatedColor" :value="willBeLiquidated" /> of
+                        <FormatCurrency :value="willBeLiquidated" /> of
                         <FormatCurrency :value="vaultTransaction.debtDai" currency="DAI" />
                     </span>
                     <div v-else>
@@ -177,7 +177,7 @@ export default Vue.extend({
         collateralDifference(): BigNumber {
             return this.collateralLimit.minus(this.debtTimesPenaltyRatio);
         },
-        maximumLiquidationAmount(): BigNumber | undefined {
+        maximalLiquidatableAmount(): BigNumber | undefined {
             if (
                 this.isGlobalLimitMissing ||
                 this.isCollateralLimitMissing ||
@@ -210,31 +210,6 @@ export default Vue.extend({
             }
             return this.vaultTransaction.debtDai;
         },
-        willBeLiquidatedColor(): string {
-            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
-                return 'text-current';
-            }
-            if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
-                if (this.isLiquidatable) {
-                    return 'text-orange-500';
-                }
-                return 'text-red-500';
-            }
-            return 'text-current';
-        },
-        partialLiquidationLeftover(): BigNumber {
-            if (!this.willBeLiquidated) {
-                return this.vaultTransaction.debtDai;
-            }
-            return this.vaultTransaction.debtDai.minus(this.willBeLiquidated);
-        },
-        isBelowMinimal(): boolean {
-            return (
-                this.vaultTransaction.debtDai.isLessThan(this.vaultTransaction.minimalAuctionedDai) ||
-                this.willBeLiquidated?.isLessThan(this.vaultTransaction.minimalAuctionedDai) ||
-                this.partialLiquidationLeftover.isLessThan(this.vaultTransaction.minimalAuctionedDai)
-            );
-        },
         currentStateAndTitle(): PanelProps {
             if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
                 return {
@@ -243,7 +218,7 @@ export default Vue.extend({
                 };
             }
             if (this.globalDifference.isNegative()) {
-                if (!this.isBelowMinimal) {
+                if (this.isLiquidatable) {
                     return {
                         name: 'attention',
                         title: 'Current global liquidation limits are partially reached',
@@ -255,7 +230,7 @@ export default Vue.extend({
                 };
             }
             if (this.collateralDifference.isNegative()) {
-                if (!this.isBelowMinimal) {
+                if (this.isLiquidatable) {
                     return {
                         name: 'attention',
                         title: `Current ${this.vaultTransaction.collateralType} liquidation limits are partially reached`,
@@ -286,15 +261,6 @@ export default Vue.extend({
     methods: {
         format(value: BigNumber): string {
             return formatToAutomaticDecimalPoints(value);
-        },
-        limitColor(difference: BigNumber): string {
-            if (difference.isNegative()) {
-                if (this.isBelowMinimal) {
-                    return 'text-red-500';
-                }
-                return 'text-orange-500';
-            }
-            return 'text-current';
         },
     },
 });
