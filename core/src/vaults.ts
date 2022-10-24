@@ -1,4 +1,4 @@
-import getContract, { getContractInterfaceByName } from './contracts';
+import getContract, { getContractAddressByName, getContractInterfaceByName, getErc20Contract } from './contracts';
 import getProvider from './provider';
 import {
     VaultBase,
@@ -24,6 +24,9 @@ import memoizee from 'memoizee';
 import getSigner from './signer';
 import executeTransaction from './execute';
 import { getOsmPrices } from './oracles';
+import DS_PROXY from './abis/DS_PROXY.json';
+import { argsToData, getMethodSignature } from '../helpers/hex';
+import { getCollateralConfigByType } from './constants/COLLATERALS';
 
 const CACHE_EXPIRY_MS = 60 * 1000;
 
@@ -379,6 +382,54 @@ const getLatestVault = async (network: string, walletAddress: string) => {
     const cdpManager = await getContract(network, 'CDP_MANAGER', true);
     const lastHex = await cdpManager.last(walletAddress);
     return new BigNumber(lastHex._hex).toNumber();
+};
+
+export const openVaultWithProxiedContractAndDrawDebt = async (
+    network: string,
+    ownerAddress: string,
+    collateralType: CollateralType,
+    collateralAmount: BigNumber,
+    debtAmountDai: BigNumber
+) => {
+    const config = getCollateralConfigByType(collateralType);
+    if (config.joinContractType.type !== 'proxied') {
+        throw new Error(`Can't invoke this method for the collateral ${collateralType}`);
+    }
+    console.info('Creating proxy...');
+    const proxyFactoryContract = await getContract(network, 'PROXY_FACTORY', true);
+    await proxyFactoryContract['build(address)'](ownerAddress);
+    console.info('Fetching proxy Creation event...');
+    const filter = proxyFactoryContract.filters.Created(null, ownerAddress, null, null);
+    const proxyCreationEvents = await proxyFactoryContract.queryFilter(filter);
+    const proxyAddress = proxyCreationEvents[proxyCreationEvents.length - 1].args?.proxy;
+    if (!proxyAddress) {
+        throw new Error('Failed to detect created DS-Proxy');
+    }
+    console.info(`Proxy address is ${proxyAddress}`);
+    console.info('Giving allowance to the proxy');
+    const tokenAddress = await getContractAddressByName(network, 'CRVV1ETHSTETH');
+    const tokenContract = await getErc20Contract(network, tokenAddress, true);
+    await tokenContract.approve(proxyAddress, collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed());
+
+    console.info('Executing open&draw process...');
+    const signer = await getSigner(network);
+    const proxyContract = new ethers.Contract(proxyAddress, DS_PROXY, signer);
+    const method = getMethodSignature('openLockGemAndDraw(address,address,address,bytes32,uint256,uint256)');
+    const jugContract = await getContract(network, 'MCD_JUG');
+    const joinContractCollateral = await getContract(network, 'MCD_JOIN_CRVV1ETHSTETH_A');
+    const joinContractDai = await getContract(network, 'MCD_JOIN_DAI');
+    const data = argsToData(
+        [method, 1],
+        [jugContract.address, 2],
+        [joinContractCollateral.address, 2],
+        [joinContractDai.address, 2],
+        [ethers.utils.formatBytes32String(collateralType), 2],
+        [collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toString(16), 1],
+        [debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toString(16), 1]
+    );
+    const target = (await getContract(network, `MCD_${config.joinContractType.proxyType}`)).address;
+    await proxyContract['execute(address,bytes)'](target, data);
+    return proxyContract.address;
 };
 
 export const openVault = async (network: string, ownerAddress: string, collateralType: CollateralType) => {

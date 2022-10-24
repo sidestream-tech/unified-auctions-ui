@@ -2,9 +2,15 @@ import { ethers } from 'ethers';
 import BigNumber from '../../src/bignumber';
 import { setCollateralInVat } from '../../helpers/hardhat/balance';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
-import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';
-import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
 import {
+    changeVaultContents,
+    fetchVault,
+    openVault,
+    fetchVaultCollateralParameters,
+    openVaultWithProxiedContractAndDrawDebt,
+} from '../../src/vaults';
+import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
+import getContract, {
     getContractValue,
     getContractAddressByName,
     getErc20Contract,
@@ -23,7 +29,6 @@ import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardh
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
-    'CRVV1ETHSTETH-A', // Collateral handled differently
     'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
     'WSTETH-B', // Does not accumulate stability fee rate at all
     'RETH-A', // [temporary] this collateral is not yet deployed, tested via different flow
@@ -160,7 +165,28 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
     await contract.approve(addressJoin, amountRaw);
 };
 
-const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+const createProxiedVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    const { minUnitPrice, stabilityFeeRate } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
+    const drawnDebtExact = collateralOwned.multipliedBy(minUnitPrice).dividedBy(stabilityFeeRate);
+    const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
+    const proxyAddress = await openVaultWithProxiedContractAndDrawDebt(
+        TEST_NETWORK,
+        HARDHAT_PUBLIC_KEY,
+        collateralType,
+        collateralOwned,
+        drawnDebt
+    );
+    const registry = await getContract(TEST_NETWORK, 'CDP_REGISTRY');
+    const filter = registry.filters.NewCdpRegistered(null, proxyAddress, null);
+    const vaultOpenEvents = await registry.queryFilter(filter);
+    const vaultId = vaultOpenEvents[vaultOpenEvents.length - 1].args?.cdp;
+    if (!vaultId) {
+        throw new Error(`Failed to find event with opened vault id for ${collateralType}`);
+    }
+    return vaultId;
+};
+
+const createDefaultVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
     const collateralConfig = getCollateralConfigByType(collateralType);
 
@@ -184,6 +210,16 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
     );
     await putCollateralIntoVaultAndWithdrawDai(vaultId, roundedCollateralOwned);
     return vaultId;
+};
+
+const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    if (collateralConfig.joinContractType.type === 'default') {
+        return createDefaultVaultWithCollateral(collateralType, collateralOwned);
+    }
+    if (collateralConfig.joinContractType.type === 'proxied') {
+        return createProxiedVaultWithCollateral(collateralType, collateralOwned);
+    }
 };
 
 export default createVaultWithCollateral;
