@@ -417,10 +417,9 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     const proxyContract = new ethers.Contract(proxyAddress, DS_PROXY, signer);
     const method = getMethodSignature('openLockGemAndDraw(address,address,address,bytes32,uint256,uint256)');
     const jugContract = await getContract(network, 'MCD_JUG');
-    const joinContractCollateral = await getContract(network, 'MCD_JOIN_CRVV1ETHSTETH_A');
+    const joinContractCollateral = await getContract(network, `MCD_JOIN_${config.joinContractType.joinContractName}`);
     const joinContractDai = await getContract(network, 'MCD_JOIN_DAI');
     const args = [
-        method,
         jugContract.address,
         joinContractCollateral.address,
         joinContractDai.address,
@@ -428,10 +427,11 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
         collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
         debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(),
     ];
-    const typesArray = ['bytes', 'address', 'address', 'address', 'bytes32', 'uint256', 'uint256'];
+    const typesArray = ['address', 'address', 'address', 'bytes32', 'uint256', 'uint256'];
     const encodedArgs = ethers.utils.defaultAbiCoder.encode(typesArray, args);
+    const transactionData = method + encodedArgs.substring(2);
     const target = (await getContract(network, `PROXY_ACTIONS_${config.joinContractType.proxyType}`)).address;
-    await proxyContract['execute(address,bytes)'](target, encodedArgs);
+    await proxyContract['execute(address,bytes)'](target, transactionData);
     return proxyContract.address;
 };
 

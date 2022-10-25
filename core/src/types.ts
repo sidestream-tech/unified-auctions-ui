@@ -104,6 +104,7 @@ interface DefaultJoin {
 interface ProxiedJoin {
     type: 'proxied';
     proxyType: string;
+    joinContractName: string;
 }
 
 type JoinContractType = ProxiedJoin | DefaultJoin;

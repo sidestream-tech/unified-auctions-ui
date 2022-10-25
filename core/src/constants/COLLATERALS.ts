@@ -408,6 +408,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         joinContractType: {
             type: 'proxied',
             proxyType: 'CROPPER',
+            joinContractName: 'CRVV1ETHSTETH_A',
         },
     },
     'UNIV2DAIETH-A': {
