@@ -34,8 +34,3 @@ export const postpendZeros = (val: string, numberOf32ByteSegments: number) => {
     }
     return `${val}${new Array(dataLength - val.length).join('0')}`;
 };
-
-export const argsToData = (...args: [string, number][]) => {
-    const bytes = args.map(([arg, segments]) => postpendZeros(arg, segments).substring(2)).join('');
-    return `0x${bytes}`;
-};

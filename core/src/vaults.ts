@@ -14,6 +14,7 @@ import BigNumber from './bignumber';
 import { ethers } from 'ethers';
 import {
     DAI_NUMBER_OF_DIGITS,
+    MAX,
     RAD_NUMBER_OF_DIGITS,
     RAY_NUMBER_OF_DIGITS,
     WAD_NUMBER_OF_DIGITS,
@@ -25,7 +26,7 @@ import getSigner from './signer';
 import executeTransaction from './execute';
 import { getOsmPrices } from './oracles';
 import DS_PROXY from './abis/DS_PROXY.json';
-import { argsToData, getMethodSignature } from '../helpers/hex';
+import { getMethodSignature } from '../helpers/hex';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 
 const CACHE_EXPIRY_MS = 60 * 1000;
@@ -409,7 +410,7 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     console.info('Giving allowance to the proxy');
     const tokenAddress = await getContractAddressByName(network, 'CRVV1ETHSTETH');
     const tokenContract = await getErc20Contract(network, tokenAddress, true);
-    await tokenContract.approve(proxyAddress, collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed());
+    await tokenContract.approve(proxyAddress, MAX.toFixed());
 
     console.info('Executing open&draw process...');
     const signer = await getSigner(network);
@@ -418,17 +419,21 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     const jugContract = await getContract(network, 'MCD_JUG');
     const joinContractCollateral = await getContract(network, 'MCD_JOIN_CRVV1ETHSTETH_A');
     const joinContractDai = await getContract(network, 'MCD_JOIN_DAI');
-    const data = argsToData(
-        [method, 1],
-        [jugContract.address, 2],
-        [joinContractCollateral.address, 2],
-        [joinContractDai.address, 2],
-        [ethers.utils.formatBytes32String(collateralType), 2],
-        [collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toString(16), 1],
-        [debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toString(16), 1]
+    const args = [
+        method,
+        jugContract.address,
+        joinContractCollateral.address,
+        joinContractDai.address,
+        collateralType,
+        collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
+        debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(),
+    ];
+    const encodedArgs = ethers.utils.defaultAbiCoder.encode(
+        ['bytes', 'address', 'address', 'address', 'string', 'uint256', 'uint256'],
+        args
     );
     const target = (await getContract(network, `MCD_${config.joinContractType.proxyType}`)).address;
-    await proxyContract['execute(address,bytes)'](target, data);
+    await proxyContract['execute(address,bytes)'](target, encodedArgs);
     return proxyContract.address;
 };
 
