@@ -9,6 +9,8 @@ import createVaultWithCollateral, {
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 
+const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
+
 const simulation: Simulation = {
     title: 'Simulate liquidation Auctions',
     steps: [
@@ -28,6 +30,7 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
+                await collectStabilityFees(TEST_NETWORK, context.collateralType);
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
                 const latestVaultId = await createVaultWithCollateral(context.collateralType, collateralOwned);
@@ -37,7 +40,7 @@ const simulation: Simulation = {
         {
             title: 'Skip time',
             entry: async context => {
-                await warpTime(60 * 24 * 30, 60);
+                await warpTime(TWO_YEARS_IN_MINUTES, 60);
                 return context;
             },
         },

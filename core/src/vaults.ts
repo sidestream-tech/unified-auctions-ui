@@ -14,7 +14,6 @@ import BigNumber from './bignumber';
 import { ethers } from 'ethers';
 import {
     DAI_NUMBER_OF_DIGITS,
-    MAX,
     RAD_NUMBER_OF_DIGITS,
     RAY_NUMBER_OF_DIGITS,
     WAD_NUMBER_OF_DIGITS,
@@ -410,7 +409,7 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     console.info('Giving allowance to the proxy');
     const tokenAddress = await getContractAddressByName(network, config.symbol);
     const tokenContract = await getErc20Contract(network, tokenAddress, true);
-    await tokenContract.approve(proxyAddress, MAX.toFixed());
+    await tokenContract.approve(proxyAddress, collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed());
 
     console.info('Executing open&draw process...');
     const signer = await getSigner(network);
