@@ -187,17 +187,7 @@ const createProxiedVaultWithCollateral = async (collateralType: CollateralType, 
 };
 
 const createDefaultVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
-    const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
     const collateralConfig = getCollateralConfigByType(collateralType);
-
-    if (balanceSlot && languageFormat) {
-        await setCollateralInWallet(collateralConfig.symbol, collateralOwned);
-    } else {
-        // fallback to setting vat balance and withdrawing it
-        await setAndCheckCollateralInVat(collateralType, collateralOwned);
-        await checkAndWithdrawCollateralFromVat(collateralConfig, collateralOwned);
-    }
-    await ensureWalletBalance(collateralConfig, collateralOwned);
 
     const vaultId = await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
     const vault = await fetchVault(TEST_NETWORK, vaultId);
@@ -214,6 +204,16 @@ const createDefaultVaultWithCollateral = async (collateralType: CollateralType, 
 
 const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
+    const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
+    if (balanceSlot && languageFormat) {
+        await setCollateralInWallet(collateralConfig.symbol, collateralOwned);
+    } else {
+        // fallback to setting vat balance and withdrawing it
+        await setAndCheckCollateralInVat(collateralType, collateralOwned);
+        await checkAndWithdrawCollateralFromVat(collateralConfig, collateralOwned);
+    }
+    await ensureWalletBalance(collateralConfig, collateralOwned);
+
     if (collateralConfig.joinContractType.type === 'default') {
         return createDefaultVaultWithCollateral(collateralType, collateralOwned);
     }
