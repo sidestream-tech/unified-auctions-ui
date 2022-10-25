@@ -26,11 +26,3 @@ export const roundDownToFirstSignificantDecimal = (number: BigNumber) => {
 export const getMethodSignature = (methodString: string) => {
     return ethers.utils.id(methodString).substring(0, 10);
 };
-
-export const postpendZeros = (val: string, numberOf32ByteSegments: number) => {
-    const dataLength = numberOf32ByteSegments * 32 + 2;
-    if (val.length > dataLength) {
-        throw new Error(`String has more than ${dataLength} decimals: ${val}`);
-    }
-    return `${val}${new Array(dataLength - val.length).join('0')}`;
-};
