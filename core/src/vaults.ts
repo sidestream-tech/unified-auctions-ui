@@ -430,7 +430,7 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     ];
     const typesArray = ['bytes', 'address', 'address', 'address', 'bytes32', 'uint256', 'uint256'];
     const encodedArgs = ethers.utils.defaultAbiCoder.encode(typesArray, args);
-    const target = (await getContract(network, `MCD_${config.joinContractType.proxyType}`)).address;
+    const target = (await getContract(network, `PROXY_ACTIONS_${config.joinContractType.proxyType}`)).address;
     await proxyContract['execute(address,bytes)'](target, encodedArgs);
     return proxyContract.address;
 };
