@@ -449,7 +449,7 @@ describe(`Collateral vault simulation liquidation `, () => {
             expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));
 
             const previousStabilityFee = vault.stabilityFeeRate;
-            await warpTime(60 * 24 * 30, 60);
+            await warpTime(60 * 24 * 30 * 12 * 2, 60);
             await collectStabilityFees(TEST_NETWORK, vault.collateralType);
             const currentStabilityFee = (await fetchVault(TEST_NETWORK, vaultId)).stabilityFeeRate;
             if (!currentStabilityFee.gt(previousStabilityFee)) {
