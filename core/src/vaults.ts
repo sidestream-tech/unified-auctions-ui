@@ -408,7 +408,7 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     }
     console.info(`Proxy address is ${proxyAddress}`);
     console.info('Giving allowance to the proxy');
-    const tokenAddress = await getContractAddressByName(network, 'CRVV1ETHSTETH');
+    const tokenAddress = await getContractAddressByName(network, config.symbol);
     const tokenContract = await getErc20Contract(network, tokenAddress, true);
     await tokenContract.approve(proxyAddress, MAX.toFixed());
 
@@ -424,14 +424,12 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
         jugContract.address,
         joinContractCollateral.address,
         joinContractDai.address,
-        collateralType,
+        ethers.utils.formatBytes32String(collateralType),
         collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
         debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(),
     ];
-    const encodedArgs = ethers.utils.defaultAbiCoder.encode(
-        ['bytes', 'address', 'address', 'address', 'string', 'uint256', 'uint256'],
-        args
-    );
+    const typesArray = ['bytes', 'address', 'address', 'address', 'bytes32', 'uint256', 'uint256'];
+    const encodedArgs = ethers.utils.defaultAbiCoder.encode(typesArray, args);
     const target = (await getContract(network, `MCD_${config.joinContractType.proxyType}`)).address;
     await proxyContract['execute(address,bytes)'](target, encodedArgs);
     return proxyContract.address;
