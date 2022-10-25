@@ -1,4 +1,4 @@
-import getContract from "./contracts";
+import getContract from './contracts';
 
 export const createProxy = async (network: string, proxyOwnerAddress: string) => {
     const proxyFactoryContract = await getContract(network, 'PROXY_FACTORY', true);
@@ -9,5 +9,5 @@ export const createProxy = async (network: string, proxyOwnerAddress: string) =>
     if (!proxyAddress) {
         throw new Error('Failed to detect created DS-Proxy');
     }
-    return proxyAddress
-}
+    return proxyAddress;
+};

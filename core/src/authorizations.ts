@@ -182,9 +182,14 @@ export const getDebtAuctionAuthorizationStatus = async (network: string, walletA
     return authorizationStatus.toNumber() === 1;
 };
 
-export const giveAllowanceToAddress = async (network: string, collateralSymbol: string, spenderAddress: string, collateralAmount: BigNumber) => {
-    const config = getCollateralConfigBySymbol(collateralSymbol)
+export const giveAllowanceToAddress = async (
+    network: string,
+    collateralSymbol: string,
+    spenderAddress: string,
+    collateralAmount: BigNumber
+) => {
+    const config = getCollateralConfigBySymbol(collateralSymbol);
     const tokenAddress = await getContractAddressByName(network, collateralSymbol);
     const tokenContract = await getErc20Contract(network, tokenAddress, true);
     await tokenContract.approve(spenderAddress, collateralAmount.shiftedBy(config.decimals).toFixed());
-}
+};

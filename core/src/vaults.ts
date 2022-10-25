@@ -396,7 +396,7 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     if (config.joinContractType.type !== 'proxied') {
         throw new Error(`Can't invoke this method for the collateral ${collateralType}`);
     }
-    giveAllowanceToAddress(network, config.symbol, proxyAddress, collateralAmount)
+    giveAllowanceToAddress(network, config.symbol, proxyAddress, collateralAmount);
 
     const signer = await getSigner(network);
     const proxyContract = new ethers.Contract(proxyAddress, DS_PROXY, signer);

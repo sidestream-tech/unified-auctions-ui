@@ -169,10 +169,10 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
 
 const createProxiedVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     const { minUnitPrice, stabilityFeeRate } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
-    const collateralSymbol = getCollateralConfigByType(collateralType).symbol
+    const collateralSymbol = getCollateralConfigByType(collateralType).symbol;
     const drawnDebtExact = collateralOwned.multipliedBy(minUnitPrice).dividedBy(stabilityFeeRate);
     const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
-    const proxyAddress = await createProxy(TEST_NETWORK, HARDHAT_PUBLIC_KEY)
+    const proxyAddress = await createProxy(TEST_NETWORK, HARDHAT_PUBLIC_KEY);
     await giveAllowanceToAddress(TEST_NETWORK, collateralSymbol, proxyAddress, collateralOwned);
     await openVaultWithProxiedContractAndDrawDebt(
         TEST_NETWORK,
