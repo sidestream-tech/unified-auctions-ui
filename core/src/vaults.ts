@@ -1,4 +1,8 @@
-import getContract, { getContractInterfaceByName, getJoinNameByCollateralType } from './contracts';
+import getContract, {
+    getContractAddressByName,
+    getContractInterfaceByName,
+    getJoinNameByCollateralType,
+} from './contracts';
 import getProvider from './provider';
 import {
     VaultBase,
@@ -399,13 +403,16 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     const signer = await getSigner(network);
     const proxyContract = new ethers.Contract(proxyAddress, DS_PROXY, signer);
     const method = getMethodSignature('openLockGemAndDraw(address,address,address,bytes32,uint256,uint256)');
-    const jugContract = await getContract(network, 'MCD_JUG');
-    const joinContractCollateral = await getContract(network, getJoinNameByCollateralType(collateralType));
-    const joinContractDai = await getContract(network, 'MCD_JOIN_DAI');
+    const jugContractAddress = await getContractAddressByName(network, 'MCD_JUG');
+    const joinContractCollateralAddress = await getContractAddressByName(
+        network,
+        getJoinNameByCollateralType(collateralType)
+    );
+    const joinContractDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
     const args = [
-        jugContract.address,
-        joinContractCollateral.address,
-        joinContractDai.address,
+        jugContractAddress,
+        joinContractCollateralAddress,
+        joinContractDaiAddress,
         ethers.utils.formatBytes32String(collateralType),
         collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
         debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(),

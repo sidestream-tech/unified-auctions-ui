@@ -222,7 +222,7 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
     try {
         return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
     } catch (e) {
-        if (e instanceof Error) {
+        if (e instanceof Error && e.message.includes('Error: Transaction reverted without a reason string')) {
             console.warn(
                 `Failed creating the vault with default settings. Falling back to creating via DS-PROXY: ${e.message}`
             );
