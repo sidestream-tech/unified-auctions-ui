@@ -449,7 +449,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WSTETH',
         decimals: 18,
         exchanges: {
-            'Curve V3': {
+            'Curve wstETH V3': {
                 callee: 'WstETHCurveUniv3Callee',
                 route: [],
             },
@@ -462,7 +462,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WSTETH',
         decimals: 18,
         exchanges: {
-            'Curve V3': {
+            'Curve wstETH V3': {
                 callee: 'WstETHCurveUniv3Callee',
                 route: [],
             },
@@ -627,9 +627,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'RETH-A',
         symbol: 'RETH',
         decimals: 18,
-        exchange: {
-            callee: 'rETHCurveUniv3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Curve rETH V3': {
+                callee: 'rETHCurveUniv3Callee',
+                route: ['ETH'],
+            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
