@@ -103,7 +103,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
 
     // bid on the Auction
     console.info(`collateral keeper: auction "${auctionTransaction.id}": attempting swap execution`);
-    const bidHash = await bidWithCallee(network, auctionTransaction, walletAddress);
+    const bidHash = await bidWithCallee(network, auctionTransaction, auctionTransaction.suggestedMarketId, walletAddress);
     console.info(
         `collateral keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`
     );
