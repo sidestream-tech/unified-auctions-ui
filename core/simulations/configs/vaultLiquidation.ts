@@ -34,7 +34,7 @@ const simulation: Simulation = {
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
                 const latestVaultId = await createVaultWithCollateral(context.collateralType, collateralOwned);
-                console.info(`Created Vault id: ${latestVaultId}`)
+                console.info(`Created Vault id: ${latestVaultId}`);
                 return { ...context, latestVaultId };
             },
         },
