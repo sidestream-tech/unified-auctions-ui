@@ -12,7 +12,7 @@ import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
 
 const simulation: Simulation = {
-    title: 'Simulate liquidation Auctions',
+    title: 'Simulate collateral auction per collateral type',
     steps: [
         {
             title: 'Reset blockchain fork',
