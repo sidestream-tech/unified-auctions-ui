@@ -1,32 +1,31 @@
-import type { CalleeFunctions, CollateralConfig, RegularCalleeConfig } from '../types';
 import { ethers } from 'ethers';
+import type { CalleeFunctions, CollateralConfig } from '../types';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { convertCrvethToEth, CURVE_COIN_INDEX, CURVE_POOL_ADDRESS } from './helpers/curve';
 import { encodeRoute, convertCollateralToDai } from './helpers/uniswapV3';
-
-export const CHARTER_MANAGER_ADDRESS = '0x8377CD01a5834a6EaD3b7efb482f678f2092b77e';
+import { convertStethToEth } from './helpers/curve';
+import { convertRethToWsteth } from './helpers/rocket';
+import { convertWstethToSteth } from './helpers/wsteth';
+import { NULL_ADDRESS } from '../constants/UNITS';
 
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     profitAddress: string
 ): Promise<string> {
-    if (!collateral.exchanges.hasOwnProperty('Curve Token V3')) {
+    if (collateral.exchange.callee !== 'rETHCurveUniv3Callee') {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const route = await encodeRoute(network, (collateral.exchanges['Curve Token V3'] as RegularCalleeConfig).route);
-    const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
+    const route = await encodeRoute(network, collateral.exchange.route);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const typesArray = ['address', 'address', 'uint256', 'bytes', 'address', 'tuple(address,uint256)'];
+    const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,
         joinAdapterAddress,
         minProfit,
         route,
-        CHARTER_MANAGER_ADDRESS,
-        curveData,
+        NULL_ADDRESS,
     ]);
 };
 
@@ -35,19 +34,25 @@ const getMarketPrice = async function (
     _collateral: CollateralConfig,
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
+    // convert rETH into wstETH
+    const wstethAmount = await convertRethToWsteth(network, collateralAmount);
+
+    // convert wstETH into stETH (unwrap)
+    const stethAmount = await convertWstethToSteth(network, wstethAmount);
+
     // convert stETH into ETH
-    const wethAmount = await convertCrvethToEth(network, collateralAmount);
+    const ethAmount = await convertStethToEth(network, stethAmount);
 
     // convert ETH into DAI
-    const daiAmount = await convertCollateralToDai(network, 'ETH', wethAmount);
+    const daiAmount = await convertCollateralToDai(network, 'ETH', ethAmount);
 
     // return price per unit
     return daiAmount.dividedBy(collateralAmount);
 };
 
-const CurveLpTokenUniv3Callee: CalleeFunctions = {
+const rETHCurveUniv3Callee: CalleeFunctions = {
     getCalleeData,
     getMarketPrice,
 };
 
-export default CurveLpTokenUniv3Callee;
+export default rETHCurveUniv3Callee;

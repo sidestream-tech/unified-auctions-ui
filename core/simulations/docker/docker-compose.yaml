@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+
+    spells:
+        restart: "no"
+        build:
+            context: .
+
+    core:
+        restart: "no"
+        ports:
+            - '8545:8545'
+        expose:
+            - 8545
+        env_file:
+            - '../../.env'
+        build:
+            context: ../../../
+            dockerfile: ./core/Dockerfile
+            target: hardhat

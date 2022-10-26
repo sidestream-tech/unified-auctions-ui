@@ -36,7 +36,8 @@
         "./test/**/*.json",
         "./simulations/**/*.ts",
         "./simulations/**/*.json",
-        "./helpers/**/*.ts"
+        "./helpers/**/*.ts",
+        "./bytecode/**/*.json"
     ],
     "exclude": [
         "node_modules"

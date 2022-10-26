@@ -91,7 +91,12 @@ export declare interface AuctionTransaction extends Auction, TransactionFees {
 }
 
 export declare interface RegularCalleeConfig {
-    callee: 'UniswapV2CalleeDai' | 'WstETHCurveUniv3Callee' | 'CurveLpTokenUniv3Callee' | 'UniswapV3Callee';
+    callee:
+        | 'UniswapV2CalleeDai'
+        | 'WstETHCurveUniv3Callee'
+        | 'CurveLpTokenUniv3Callee'
+        | 'UniswapV3Callee'
+        | 'rETHCurveUniv3Callee';
     route: string[];
 }
 
@@ -149,6 +154,7 @@ export declare interface CalleeAddresses {
     WstETHCurveUniv3Callee?: string;
     CurveLpTokenUniv3Callee?: string;
     UniswapV3Callee?: string;
+    rETHCurveUniv3Callee?: string;
 }
 
 export type CalleeNames = keyof CalleeAddresses;

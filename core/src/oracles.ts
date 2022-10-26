@@ -1,4 +1,4 @@
-import { getContractInterfaceByName } from './contracts';
+import { getContractAddressByName, getContractInterfaceByName } from './contracts';
 import getProvider from './provider';
 import {
     CollateralConfig,
@@ -15,6 +15,11 @@ import memoizee from 'memoizee';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 
 const CACHE_EXPIRY_MS = 60 * 1000;
+
+export const getOracleAddressByCollateralType = async function (network: string, collateralType: string) {
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    return await getContractAddressByName(network, `PIP_${collateralConfig.symbol}`);
+};
 
 const getOraclePriceSameSlotValidity = async (
     slot: string,
@@ -95,7 +100,7 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Callab
         );
     },
 };
-const getCurrentOraclePrice = async (
+export const getCurrentOraclePrice = async (
     oracle: CollateralPriceSourceConfig,
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
@@ -118,6 +123,14 @@ const getNextOraclePriceChange = async (
         nextPriceChange = new Date((lastPriceUpdateTimestampInSeconds + priceUpdateFrequencyInSeconds) * 1000);
     }
     return nextPriceChange;
+};
+
+export const getCurrentOraclePriceByCollateralType = async function (network: string, collateralType: string) {
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    const provider = await getProvider(network);
+    const oracleAddress = await getOracleAddressByCollateralType(network, collateralType);
+    const oraclePrice = await getCurrentOraclePrice(collateralConfig.oracle, provider, oracleAddress);
+    return oraclePrice;
 };
 
 const _getOsmPrices = async (
