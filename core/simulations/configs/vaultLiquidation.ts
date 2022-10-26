@@ -8,6 +8,8 @@ import createVaultWithCollateral, {
     getLiquidatableCollateralTypes,
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
+import { grantAdminPrivelegeForContract } from '../../helpers/hardhat/slotOverwrite';
+import { setDebtCeilingToMax, setLiquidationLimitToMax } from '../../helpers/hardhat/contractParametrization';
 
 const simulation: Simulation = {
     title: 'Simulate liquidation Auctions',
@@ -28,6 +30,14 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
+                console.info('Granting admin priveleges for MCD_VAT...');
+                await grantAdminPrivelegeForContract('MCD_VAT');
+                console.info('Granting admin priveleges for MCD_DOG...');
+                await grantAdminPrivelegeForContract('MCD_DOG');
+                await setLiquidationLimitToMax(context.collateralType);
+                console.info('liquidation limit accumulation is overwritten');
+                await setDebtCeilingToMax(context.collateralType);
+                console.info('debt ceiling is overwritten');
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
                 const latestVaultId = await createVaultWithCollateral(context.collateralType, collateralOwned);
