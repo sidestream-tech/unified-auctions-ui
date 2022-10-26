@@ -26,9 +26,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'BAL-A': {
         title: 'Balancer',
@@ -40,9 +37,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'BAT-A': {
         title: 'Basic Attention Token',
@@ -54,9 +48,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'COMP-A': {
         title: 'Compound',
@@ -68,9 +59,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'ETH-A': {
         title: 'Ether',
@@ -82,9 +70,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: [],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'ETH-B': {
         title: 'Ether',
@@ -96,9 +81,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: [],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'ETH-C': {
         title: 'Ether',
@@ -110,9 +92,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: [],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'GUSD-A': {
         title: 'Gemini Dollar',
@@ -124,9 +103,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITHOUT_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'KNC-A': {
         title: 'Kyber Network Crystal',
@@ -138,9 +114,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'LINK-A': {
         title: 'Chainlink',
@@ -152,9 +125,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'LRC-A': {
         title: 'Loopring',
@@ -166,9 +136,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'MANA-A': {
         title: 'Decentraland',
@@ -180,9 +147,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'PAXUSD-A': {
         title: 'Paxos Standard',
@@ -195,9 +159,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
 
         oracle: CONFIG_WITHOUT_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'RENBTC-A': {
         title: 'renBTC',
@@ -209,9 +170,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'TUSD-A': {
         title: 'True USD',
@@ -223,9 +181,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITHOUT_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNI-A': {
         title: 'Uniswap',
@@ -237,9 +192,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'USDC-A': {
         title: 'USD Coin',
@@ -251,9 +203,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITHOUT_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'USDC-B': {
         title: 'USD Coin',
@@ -265,9 +214,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITHOUT_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'USDT-A': {
         title: 'Tether USD',
@@ -279,9 +225,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'WBTC-A': {
         title: 'Wrapped Bitcoin',
@@ -293,9 +236,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'WBTC-B': {
         title: 'Wrapped BTC',
@@ -307,9 +247,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'WBTC-C': {
         title: 'Wrapped BTC',
@@ -321,9 +258,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'YFI-A': {
         title: 'yearn.finance',
@@ -335,9 +269,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'ZRX-A': {
         title: '0x',
@@ -349,9 +280,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'MATIC-A': {
         title: 'Matic',
@@ -363,9 +291,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'WSTETH-A': {
         title: 'Lido wstETH',
@@ -377,9 +302,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: [],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'WSTETH-B': {
         title: 'Lido wstETH',
@@ -391,9 +313,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: [],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'CRVV1ETHSTETH-A': {
         title: 'Curve stETH',
@@ -405,11 +324,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'proxied',
-            proxyType: 'CROPPER',
-            joinContractName: 'CRVV1ETHSTETH_A',
-        },
     },
     'UNIV2DAIETH-A': {
         title: 'UNIV2DAIETH LP',
@@ -422,9 +336,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNIV2USDCETH-A': {
         title: 'UNIV2USDCETH LP',
@@ -437,9 +348,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNIV2ETHUSDT-A': {
         title: 'UNIV2ETHUSDT LP',
@@ -452,9 +360,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'USDT',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNIV2WBTCDAI-A': {
         title: 'UNIV2WBTCDAI LP',
@@ -467,9 +372,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'DAI',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNIV2WBTCETH-A': {
         title: 'UNIV2WBTCETH LP',
@@ -482,9 +384,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNIV2LINKETH-A': {
         title: 'UNIV2LINKETH LP',
@@ -497,9 +396,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNIV2UNIETH-A': {
         title: 'UNIV2UNIETH LP',
@@ -512,9 +408,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNIV2AAVEETH-A': {
         title: 'UNIV2AAVEETH LP',
@@ -527,9 +420,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'ETH',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNIV2DAIUSDT-A': {
         title: 'UNIV2DAIUSDT LP',
@@ -542,9 +432,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'USDT',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'UNIV2DAIUSDC-A': {
         title: 'UNIV2DAIUSDC LP',
@@ -557,9 +444,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             token1: 'USDC',
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
     'RETH-A': {
         title: 'Rocket Pool ETH',
@@ -571,9 +455,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             route: ['ETH'],
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
-        joinContractType: {
-            type: 'default',
-        },
     },
 };
 

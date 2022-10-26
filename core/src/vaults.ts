@@ -1,4 +1,4 @@
-import getContract, { getContractInterfaceByName } from './contracts';
+import getContract, { getContractInterfaceByName, getJoinNameByCollateralType } from './contracts';
 import getProvider from './provider';
 import {
     VaultBase,
@@ -390,19 +390,17 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     proxyAddress: string,
     collateralType: CollateralType,
     collateralAmount: BigNumber,
-    debtAmountDai: BigNumber
+    debtAmountDai: BigNumber,
+    proxyType = 'CROPPER'
 ) => {
     const config = getCollateralConfigByType(collateralType);
-    if (config.joinContractType.type !== 'proxied') {
-        throw new Error(`Can't invoke this method for the collateral ${collateralType}`);
-    }
     giveAllowanceToAddress(network, config.symbol, proxyAddress, collateralAmount);
 
     const signer = await getSigner(network);
     const proxyContract = new ethers.Contract(proxyAddress, DS_PROXY, signer);
     const method = getMethodSignature('openLockGemAndDraw(address,address,address,bytes32,uint256,uint256)');
     const jugContract = await getContract(network, 'MCD_JUG');
-    const joinContractCollateral = await getContract(network, `MCD_JOIN_${config.joinContractType.joinContractName}`);
+    const joinContractCollateral = await getContract(network, getJoinNameByCollateralType(collateralType));
     const joinContractDai = await getContract(network, 'MCD_JOIN_DAI');
     const args = [
         jugContract.address,
@@ -415,7 +413,7 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     const typesArray = ['address', 'address', 'address', 'bytes32', 'uint256', 'uint256'];
     const encodedArgs = ethers.utils.defaultAbiCoder.encode(typesArray, args);
     const transactionData = method + encodedArgs.substring(2);
-    const target = (await getContract(network, `PROXY_ACTIONS_${config.joinContractType.proxyType}`)).address;
+    const target = (await getContract(network, `PROXY_ACTIONS_${proxyType}`)).address;
     await proxyContract['execute(address,bytes)'](target, transactionData);
 };
 

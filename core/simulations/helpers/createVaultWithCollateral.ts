@@ -219,12 +219,18 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
     }
     await ensureWalletBalance(collateralConfig, collateralOwned);
 
-    if (collateralConfig.joinContractType.type === 'default') {
-        return createDefaultVaultWithCollateral(collateralType, collateralOwned);
+    try {
+        return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
+    } catch (e) {
+        if (e instanceof Error) {
+            console.warn(
+                `Failed creating the vault with default settings. Falling back to creating via DS-PROXY: ${e.message}`
+            );
+        } else {
+            throw e;
+        }
     }
-    if (collateralConfig.joinContractType.type === 'proxied') {
-        return createProxiedVaultWithCollateral(collateralType, collateralOwned);
-    }
+    return await createProxiedVaultWithCollateral(collateralType, collateralOwned);
 };
 
 export default createVaultWithCollateral;

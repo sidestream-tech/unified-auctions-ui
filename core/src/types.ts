@@ -97,17 +97,6 @@ export declare interface ValueSlotAddressAndOffset {
     offset: number;
 }
 
-interface DefaultJoin {
-    type: 'default';
-}
-
-interface ProxiedJoin {
-    type: 'proxied';
-    proxyType: string;
-    joinContractName: string;
-}
-
-type JoinContractType = ProxiedJoin | DefaultJoin;
 export declare interface CollateralConfig {
     title: string;
     ilk: string;
@@ -115,7 +104,6 @@ export declare interface CollateralConfig {
     decimals: number;
     exchange: RegularCalleeConfig | UniswapV2LpTokenCalleeConfig;
     oracle: CollateralPriceSourceConfig;
-    joinContractType: JoinContractType;
 }
 
 interface OracleConfigBase {
