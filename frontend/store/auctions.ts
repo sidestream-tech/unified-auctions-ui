@@ -233,7 +233,11 @@ export const actions = {
     },
     async bidWithCallee(
         { getters, commit, rootGetters }: ActionContext<State, State>,
-        { id, alternativeDestinationAddress }: { id: string; alternativeDestinationAddress: string | undefined }
+        {
+            id,
+            marketId,
+            alternativeDestinationAddress,
+        }: { id: string; marketId: string; alternativeDestinationAddress: string | undefined }
     ) {
         const auction = getters.getAuctionById(id);
         if (!auction) {
@@ -251,6 +255,7 @@ export const actions = {
             const transactionAddress = await bidWithCallee(
                 network,
                 auction,
+                marketId,
                 alternativeDestinationAddress || walletAddress,
                 notifier
             );

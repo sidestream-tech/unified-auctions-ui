@@ -8,6 +8,7 @@ export declare interface GasParameters {
 
 export declare interface MarketData {
     marketUnitPrice: BigNumber;
+    exchangeFee: BigNumber;
     route?: string[];
     token0?: string;
     token1?: string;
