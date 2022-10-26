@@ -12,9 +12,6 @@ export const determineBalanceSlot = async (
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
     try {
         const [slot, languageFormat] = await findERC20BalanceSlot(tokenContractAddress);
-        console.info(
-            `Balance slot is ${slot}, language format is ${languageFormat}, contract address is ${tokenContractAddress}`
-        );
         return [slot, languageFormat];
     } catch (e) {
         if (
@@ -65,6 +62,9 @@ export const setCollateralInWallet = async (
     const value = collateralAmount.shiftedBy(collateralConfig.decimals);
     const tokenAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
     const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralConfig.ilk);
+    console.info(
+        `Balance slot is ${balanceSlot}, language format is ${languageFormat}, contract address is ${tokenAddress}`
+    );
     if (!balanceSlot || !languageFormat) {
         throw new Error('Could not overwrite the balance since the balance slot was not found');
     }
