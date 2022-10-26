@@ -129,7 +129,8 @@ export const runBalanceSlotDiscoveryLoopForERC20Token = async (
     return null;
 };
 
-const hasAdminPriveleges = async (contract: ethers.Contract, address: string = HARDHAT_PUBLIC_KEY) => {
+const hasAdminPriveleges = async (contractName: string, address: string = HARDHAT_PUBLIC_KEY) => {
+    const contract = await getContract(TEST_NETWORK, contractName);
     const access: BigNumber = await contract.wards(address);
     if (access.eq(1)) {
         return true;
@@ -137,19 +138,19 @@ const hasAdminPriveleges = async (contract: ethers.Contract, address: string = H
     return false;
 };
 const discoverAdminMappingSlot = async (contractName: string, loops = 10) => {
-    const contract = await getContract(TEST_NETWORK, contractName);
+    const contractAddress = await getContractAddressByName(TEST_NETWORK, contractName);
     const overwriteValue = new BigNumber(1);
     for (const i of Array.from(Array(loops).keys())) {
         const slot = ethers.utils.hexValue(i);
-        const slotValueBeforeEdit = new BigNumber(await hre.ethers.provider.getStorageAt(contract.address, slot));
-        await overwriteUintMappingInAddress(contract.address, slot, HARDHAT_PUBLIC_KEY, overwriteValue);
+        const slotValueBeforeEdit = new BigNumber(await hre.ethers.provider.getStorageAt(contractAddress, slot));
+        await overwriteUintMappingInAddress(contractAddress, slot, HARDHAT_PUBLIC_KEY, overwriteValue);
 
         let isSlotFound = false;
-        if (await hasAdminPriveleges(contract)) {
+        if (await hasAdminPriveleges(contractName)) {
             isSlotFound = true;
         }
         // cleanup
-        await overwriteUintMappingInAddress(contract.address, slot, HARDHAT_PUBLIC_KEY, slotValueBeforeEdit);
+        await overwriteUintMappingInAddress(contractAddress, slot, HARDHAT_PUBLIC_KEY, slotValueBeforeEdit);
         if (isSlotFound) {
             return slot;
         }
