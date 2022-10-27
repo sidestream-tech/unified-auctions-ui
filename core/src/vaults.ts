@@ -301,10 +301,7 @@ const enrichVaultWithTransactonInformation = async (
     const { liquidatiorContractAddress, liquidationPenaltyRatio } =
         await fetchCollateralLiquidationLimitsAndLiquidatorAddress(network, vault.collateralType);
 
-    const { liquidationRatio, oracleAddress } = await fetchLiquidationRatioAndOracleAddress(
-        network,
-        vault.collateralType
-    );
+    const { liquidationRatio } = await fetchLiquidationRatioAndOracleAddress(network, vault.collateralType);
     const collateralizationRatio = vault.collateralAmount
         .multipliedBy(vault.minUnitPrice)
         .multipliedBy(liquidationRatio)
@@ -313,11 +310,7 @@ const enrichVaultWithTransactonInformation = async (
     const { transactionFeeLiquidationEth, transactionFeeLiquidationDai } = await getApproximateLiquidationFees(
         network
     );
-    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(
-        network,
-        oracleAddress,
-        vault.collateralType
-    );
+    const { nextUnitPrice, nextPriceChange, currentUnitPrice } = await getOsmPrices(network, vault.collateralType);
     const { auctionedAmountDai, state } = getAuctionedDaiAndAuctionState(proximityToLiquidation, vault);
     const { incentiveCombinedDai, incentiveConstantDai, incentiveRelativeDai } = await fetchVaultLiquidationIncentive(
         network,

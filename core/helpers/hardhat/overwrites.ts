@@ -11,7 +11,7 @@ export const overwriteCurrentOraclePrice = async (network: string, collateralTyp
     const collateralConfig = getCollateralConfigByType(collateralType);
     const oracleAddress = await getOracleAddressByCollateralType(network, collateralType);
     const amoutInteger = amount.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed();
-    const valueWithValidity = createStructCoder().encode(['uint128', 'uint128'], ['1', amoutInteger]);
+    const valueWithValidity = createStructCoder().encode(['uint128', 'uint128'], [amoutInteger, '1']);
     await overwriteUintValueInAddress(
         oracleAddress,
         collateralConfig.oracle.currentPriceSlotAddress,

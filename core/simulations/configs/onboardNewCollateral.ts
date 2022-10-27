@@ -10,7 +10,7 @@ import createVaultWithCollateral, {
 } from '../helpers/createVaultWithCollateral';
 import deploySpell, { getAllSpellNames } from '../helpers/deploySpell';
 import executeSpell from '../helpers/executeSpell';
-import { getCurrentOraclePriceByCollateralType } from '../../src/oracles';
+import { getOsmPrices } from '../../src/oracles';
 import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 
@@ -52,8 +52,8 @@ const simulation: Simulation = {
                 );
                 // overwrite oracle price
                 await overwriteCurrentOraclePrice(TEST_NETWORK, collateralType, new BigNumber(1000));
-                const oraclePrice = await getCurrentOraclePriceByCollateralType(TEST_NETWORK, collateralType);
-                console.info(`New ${collateralType} oracle price is ${oraclePrice.toFixed()} DAI`);
+                const oraclePrices = await getOsmPrices(TEST_NETWORK, collateralType);
+                console.info(`New ${collateralType} oracle price is ${oraclePrices.currentUnitPrice.toFixed()} DAI`);
                 // create and liquidate vault
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
                 const vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
