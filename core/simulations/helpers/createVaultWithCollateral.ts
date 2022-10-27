@@ -29,6 +29,8 @@ import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardh
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { createProxy } from '../../src/proxy';
 import { giveAllowanceToAddress } from '../../src/authorizations';
+import getProvider from '../../src/provider';
+import detectProxyTarget from 'evm-proxy-detection';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
     'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
@@ -219,16 +221,14 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
     }
     await ensureWalletBalance(collateralConfig, collateralOwned);
 
-    try {
+    const joinContractAddress = await getContractAddressByName(
+        TEST_NETWORK,
+        getJoinNameByCollateralType(collateralType)
+    );
+    const provider = await getProvider(TEST_NETWORK);
+    const proxyTarget = await detectProxyTarget(joinContractAddress, ({method, params}) => provider.send(method, params))
+    if (!proxyTarget) {
         return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
-    } catch (e) {
-        if (e instanceof Error && e.message.includes('Error: Transaction reverted without a reason string')) {
-            console.warn(
-                `Failed creating the vault with default settings. Falling back to creating via DS-PROXY: ${e.message}`
-            );
-        } else {
-            throw e;
-        }
     }
     return await createProxiedVaultWithCollateral(collateralType, collateralOwned);
 };
