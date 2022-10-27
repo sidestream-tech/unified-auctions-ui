@@ -1,13 +1,18 @@
 import getContract from './contracts';
+import extractEventFromTransaction from './helpers/extractEventFromTransaction';
+import { ethers } from 'ethers';
 
 export const createProxy = async (network: string, proxyOwnerAddress: string) => {
     const proxyFactoryContract = await getContract(network, 'PROXY_FACTORY', true);
-    await proxyFactoryContract['build(address)'](proxyOwnerAddress);
-    const filter = proxyFactoryContract.filters.Created(null, proxyOwnerAddress, null, null);
-    const proxyCreationEvents = await proxyFactoryContract.queryFilter(filter);
-    const proxyAddress = proxyCreationEvents[proxyCreationEvents.length - 1].args?.proxy;
-    if (!proxyAddress) {
-        throw new Error('Failed to detect created DS-Proxy');
+    const transaction = await proxyFactoryContract['build(address)'](proxyOwnerAddress);
+    const events = await extractEventFromTransaction(
+        network,
+        transaction.hash,
+        'Created(address,address,address,address)'
+    );
+    if (events.length !== 1) {
+        throw new Error("Undexpected number of 'Created' events");
     }
+    const proxyAddress = ethers.utils.defaultAbiCoder.decode(['address', 'address'], events[0].data)[0];
     return proxyAddress;
 };
