@@ -32,6 +32,7 @@ import DS_PROXY from './abis/DS_PROXY.json';
 import { getMethodSignature } from '../helpers/hex';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 import { giveAllowanceToAddress } from './authorizations';
+import extractEventFromTransaction from './helpers/extractEventFromTransaction';
 
 const CACHE_EXPIRY_MS = 60 * 1000;
 
@@ -421,15 +422,16 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     const encodedArgs = ethers.utils.defaultAbiCoder.encode(typesArray, args);
     const transactionData = method + encodedArgs.substring(2);
     const target = (await getContract(network, `PROXY_ACTIONS_${proxyType}`)).address;
-    await proxyContract['execute(address,bytes)'](target, transactionData);
-
-    const registry = await getContract(network, 'CDP_REGISTRY');
-    const filter = registry.filters.NewCdpRegistered(null, proxyAddress, null);
-    const vaultOpenEvents = await registry.queryFilter(filter);
-    const vaultId = vaultOpenEvents[vaultOpenEvents.length - 1].args?.cdp;
-    if (!vaultId) {
-        throw new Error(`Failed to find event with opened vault id for ${collateralType}`);
+    const transaction = await proxyContract['execute(address,bytes)'](target, transactionData);
+    const events = await extractEventFromTransaction(
+        network,
+        transaction.hash,
+        'NewCdpRegistered(address,address,uint256)'
+    );
+    if (events.length !== 1) {
+        throw new Error('Unexpected number of NewCdpRegistered events');
     }
+    const vaultId = new BigNumber(events[0].topics[3]).toNumber();
     return vaultId;
 };
 
