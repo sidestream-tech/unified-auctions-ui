@@ -3,11 +3,11 @@ import type { CollateralConfig, ValueExtractionConfig } from '../types';
 const DEFAULT_ORACLE_CONFIG: ValueExtractionConfig[] = [
     {
         slotAddress: '0x3',
-        format: ['uint128 isCurrentUnitPriceValid', 'uint128 currentUnitPrice'],
+        format: ['bool isCurrentUnitPriceValid', 'uint128 currentUnitPrice'],
     },
     {
         slotAddress: '0x4',
-        format: ['uint128 isNextUnitPriceValid', 'uint128 nextUnitPrice'],
+        format: ['bool isNextUnitPriceValid', 'uint128 nextUnitPrice'],
     },
 ];
 const STABLECOIN_ORACLE_CONFIG: ValueExtractionConfig[] = [
