@@ -10,7 +10,7 @@ import {
     openVaultWithProxiedContractAndDrawDebt,
 } from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
-import getContract, {
+import {
     getContractValue,
     getContractAddressByName,
     getErc20Contract,
@@ -176,21 +176,13 @@ const createProxiedVaultWithCollateral = async (collateralType: CollateralType, 
     const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
     const proxyAddress = await createProxy(TEST_NETWORK, HARDHAT_PUBLIC_KEY);
     await giveAllowanceToAddress(TEST_NETWORK, collateralSymbol, proxyAddress, collateralOwned);
-    await openVaultWithProxiedContractAndDrawDebt(
+    return await openVaultWithProxiedContractAndDrawDebt(
         TEST_NETWORK,
         proxyAddress,
         collateralType,
         collateralOwned,
         drawnDebt
     );
-    const registry = await getContract(TEST_NETWORK, 'CDP_REGISTRY');
-    const filter = registry.filters.NewCdpRegistered(null, proxyAddress, null);
-    const vaultOpenEvents = await registry.queryFilter(filter);
-    const vaultId = vaultOpenEvents[vaultOpenEvents.length - 1].args?.cdp;
-    if (!vaultId) {
-        throw new Error(`Failed to find event with opened vault id for ${collateralType}`);
-    }
-    return vaultId;
 };
 
 const createDefaultVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
