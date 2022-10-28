@@ -43,6 +43,12 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         return;
     }
 
+    // check if callee is valid
+    if (!auctionTransaction.suggestedMarketId) {
+        console.info(`collateral keeper: auction "${auction.id}" has no valid market`);
+        return;
+    }
+
     // check auction's profit
     if (!auctionTransaction.transactionGrossProfit || auctionTransaction.transactionGrossProfit.isLessThan(0)) {
         if (auctionTransaction.transactionGrossProfit) {
@@ -106,7 +112,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     const bidHash = await bidWithCallee(
         network,
         auctionTransaction,
-        auctionTransaction.suggestedMarketId as string,
+        auctionTransaction.suggestedMarketId,
         walletAddress
     );
     console.info(
