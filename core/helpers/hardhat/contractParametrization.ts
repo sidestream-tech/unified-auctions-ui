@@ -1,31 +1,36 @@
-import getContract from '../../src/contracts';
+import getContract, { getClipperNameByCollateralType } from '../../src/contracts';
 import { CollateralType } from '../../src/types';
 import { TEST_NETWORK } from '../constants';
 import { ethers } from 'ethers';
-import { MAX } from '../../src/constants/UNITS';
+import BigNumber from '../../src/bignumber';
 
-export const setDebtCeilingToMax = async (collateralType: CollateralType) => {
+export const setCollateralDebtCeilingToGlobal = async (collateralType: CollateralType) => {
     const contract = await getContract(TEST_NETWORK, 'MCD_VAT', true);
     const encodedCollateralType = ethers.utils.formatBytes32String(collateralType);
     const encodedTargetVariableCollateralCeiling = ethers.utils.formatBytes32String('line');
-    const encodedTargetVariableGlobalCeiling = ethers.utils.formatBytes32String('Line');
+    const value = new BigNumber((await contract.Line())._hex);
     await contract['file(bytes32,bytes32,uint256)'](
         encodedCollateralType,
         encodedTargetVariableCollateralCeiling,
-        MAX.toFixed()
+        value.toFixed(0)
     );
-    await contract['file(bytes32,uint256)'](encodedTargetVariableGlobalCeiling, MAX.toFixed());
 };
 
-export const setLiquidationLimitToMax = async (collateralType: CollateralType) => {
+export const setCollateralLiquidationLimitToGlobal = async (collateralType: CollateralType) => {
     const contract = await getContract(TEST_NETWORK, 'MCD_DOG', true);
     const encodedCollateralType = ethers.utils.formatBytes32String(collateralType);
     const encodedTargetVariableCollateralCeiling = ethers.utils.formatBytes32String('hole');
-    const encodedTargetVariableGlobalCeiling = ethers.utils.formatBytes32String('Hole');
+    const value = new BigNumber((await contract.Hole())._hex);
     await contract['file(bytes32,bytes32,uint256)'](
         encodedCollateralType,
         encodedTargetVariableCollateralCeiling,
-        MAX.toFixed()
+        value.toFixed(0)
     );
-    await contract['file(bytes32,uint256)'](encodedTargetVariableGlobalCeiling, MAX.toFixed());
+};
+
+export const allowAllActionsInClipperContract = async (collateralType: CollateralType) => {
+    const clipper = getClipperNameByCollateralType(collateralType);
+    const contract = await getContract(TEST_NETWORK, clipper, true);
+    const encodedTargetVariable = ethers.utils.formatBytes32String('stopped');
+    await contract['file(bytes32,uint256)'](encodedTargetVariable, '0x0');
 };

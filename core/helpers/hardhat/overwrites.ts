@@ -1,11 +1,13 @@
 import BigNumber from '../../src/bignumber';
 import { ethers } from 'ethers';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
-import { DAI_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
 import executeTransaction from '../../src/execute';
 import createStructCoder from '../../src/helpers/createStructCoder';
 import { getOracleAddressByCollateralType } from '../../src/oracles';
-import { overwriteUintValueInAddress } from './slotOverwrite';
+import { overwriteUintMapping, overwriteUintValueInAddress } from './slotOverwrite';
+
+const STABILITY_FEE_ACCUMULATION_RATE_SLOT = '0x1';
 
 export const overwriteCurrentOraclePrice = async (network: string, collateralType: string, amount: BigNumber) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
@@ -18,4 +20,13 @@ export const overwriteCurrentOraclePrice = async (network: string, collateralTyp
         valueWithValidity
     );
     await executeTransaction(network, 'MCD_SPOT', 'poke', [ethers.utils.formatBytes32String(collateralType)]);
+};
+
+export const overwriteStabilityFeeAccumulationRate = async (collateralType: string, rate: BigNumber) => {
+    await overwriteUintMapping(
+        'MCD_JUG',
+        STABILITY_FEE_ACCUMULATION_RATE_SLOT,
+        ethers.utils.formatBytes32String(collateralType),
+        rate.shiftedBy(RAY_NUMBER_OF_DIGITS)
+    );
 };
