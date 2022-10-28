@@ -32,7 +32,6 @@ import { overwriteStabilityFeeAccumulationRate } from '../../helpers/hardhat/ove
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
     'CRVV1ETHSTETH-A', // Collateral handled differently
-    'WSTETH-B', // Does not accumulate stability fee rate at all
     'RETH-A', // [temporary] this collateral is not yet deployed, tested via different flow
 ];
 
