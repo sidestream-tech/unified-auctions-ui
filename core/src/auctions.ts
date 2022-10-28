@@ -5,11 +5,11 @@ import fetchAuctionsByCollateralType, {
     fetchAuctionStatus,
     fetchMinimumBidDai,
 } from './fetch';
-import { getBestMarketData, getCalleesData, getMarketData, getMarketPrice } from './calleeFunctions';
+import { getBestMarketData, getCalleeData, getMarketData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
 import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS, NULL_BYTES } from './constants/UNITS';
-import { getCalleesAddressesByCollateralType } from './constants/CALLEES';
+import { getCalleeAddressByCollateralType } from './constants/CALLEES';
 import {
     calculateAuctionDropTime,
     calculateAuctionPrice,
@@ -73,38 +73,21 @@ const enrichAuctionWithMarketValues = async function (auction: Auction, network:
     }
     try {
         const collateralToCoverDebt = await calculateCollateralToCoverDebt(network, auction);
-        const suggestedMarketId = (await getBestMarketData(network, auction.collateralSymbol, collateralToCoverDebt))
-            .marketId as string;
         const marketUnitPrice = await getMarketPrice(network, auction.collateralSymbol, collateralToCoverDebt);
         const marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
             .minus(marketUnitPrice)
             .dividedBy(marketUnitPrice);
-        const marketData = await getMarketData(network, auction.collateralSymbol, collateralToCoverDebt);
-        Object.values(marketData).forEach(market => {
-            market.marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
-                .minus(market.marketUnitPrice)
-                .dividedBy(market.marketUnitPrice);
-        });
         const auctionWithMarketValues = {
             ...auction,
             collateralToCoverDebt,
-            suggestedMarketId,
             marketUnitPrice,
             marketUnitPriceToUnitPriceRatio,
-            marketData,
         };
         const transactionGrossProfit = calculateTransactionGrossProfit(
             marketUnitPrice,
             collateralToCoverDebt,
             auction.approximateUnitPrice
         );
-        Object.values(marketData).forEach(market => {
-            market.transactionGrossProfit = calculateTransactionGrossProfit(
-                market.marketUnitPrice,
-                collateralToCoverDebt,
-                auction.approximateUnitPrice
-            );
-        });
         return {
             ...auctionWithMarketValues,
             transactionGrossProfit,
@@ -137,18 +120,6 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
             auctionWithParams.marketUnitPrice,
             currentDate
         );
-        const marketData = await getMarketData(
-            auction.network,
-            auction.collateralSymbol,
-            auction.collateralToCoverDebt
-        );
-        Object.values(marketData).forEach(market => {
-            market.transactionGrossProfitDate = calculateTransactionGrossProfitDate(
-                auctionWithParams,
-                market.marketUnitPrice,
-                currentDate
-            );
-        });
         return {
             ...auctionWithParams,
             secondsTillNextPriceDrop,
@@ -162,6 +133,41 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
             totalPrice: auction.collateralAmount.multipliedBy(auction.unitPrice),
         };
     }
+};
+
+export const enrichAuctionWithMarketData = async function (auction: Auction, network: string): Promise<Auction> {
+    if (!auction.isActive || auction.isFinished || !auction.approximateUnitPrice || !auction.collateralToCoverDebt) {
+        return auction;
+    }
+
+    const marketData = await getMarketData(network, auction.collateralSymbol, auction.collateralToCoverDebt);
+    const suggestedMarketId = (await getBestMarketData(marketData)).marketId;
+
+    const currentDate = await getNetworkDate(network);
+
+    Object.values(marketData).forEach(market => {
+        market.marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
+            .minus(market.marketUnitPrice)
+            .dividedBy(market.marketUnitPrice);
+
+        market.transactionGrossProfit = calculateTransactionGrossProfit(
+            market.marketUnitPrice,
+            auction.collateralToCoverDebt,
+            auction.approximateUnitPrice
+        );
+
+        market.transactionGrossProfitDate = calculateTransactionGrossProfitDate(
+            auction,
+            market.marketUnitPrice,
+            currentDate
+        );
+    });
+
+    return {
+        ...auction,
+        suggestedMarketId,
+        marketData,
+    };
 };
 
 export const enrichAuctionWithPriceDropAndMarketValue = async function (
@@ -213,9 +219,12 @@ export const enrichAuction = async function (
     // enrich them with market values
     const auctionWithMarketValue = await enrichAuctionWithMarketValues(auctionWithPriceDrop, network);
 
+    // enrich them with market data (callees)
+    const auctionWithMarketData = await enrichAuctionWithMarketData(auctionWithMarketValue, network);
+
     // enrich with profit and fee calculation
     const fees = await getApproximateTransactionFees(network);
-    const auctionWithFees = await enrichAuctionWithTransactionFees(auctionWithMarketValue, fees, network);
+    const auctionWithFees = await enrichAuctionWithTransactionFees(auctionWithMarketData, fees, network);
 
     if (auction.debtDAI.isEqualTo(0)) {
         return {
@@ -295,8 +304,8 @@ export const bidWithCallee = async function (
     profitAddress: string,
     notifier?: Notifier
 ): Promise<string> {
-    const calleeAddress = getCalleesAddressesByCollateralType(network, auction.collateralType)[marketId];
-    const calleeData = (await getCalleesData(network, auction.collateralType, profitAddress))[marketId];
+    const calleeAddress = getCalleeAddressByCollateralType(network, auction.collateralType, marketId);
+    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress);
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
         convertNumberTo32Bytes(auction.index),
