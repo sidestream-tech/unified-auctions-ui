@@ -1,11 +1,4 @@
-import type {
-    CalleeNames,
-    CalleeFunctions,
-    MarketData,
-    RegularCalleeConfig,
-    UniswapV2LpTokenCalleeConfig,
-} from '../types';
-import { getGasPriceForUI } from '../gas';
+import type { CalleeNames, CalleeFunctions, MarketData } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
@@ -27,24 +20,18 @@ const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     rETHCurveUniv3Callee,
 };
 
-export const getCalleesData = async function (
+export const getCalleeData = async function (
     network: string,
     collateralType: string,
+    marketId: string,
     profitAddress: string
-): Promise<Record<string, string>> {
+): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
-    const calleeFuctions = {} as Record<string, CalleeFunctions>;
-    Object.entries(collateral.exchanges).forEach(([key, value]) => {
-        calleeFuctions[key] = allCalleeFunctions[value.callee];
-    });
-    if (!Object.keys(calleeFuctions).length) {
+    const marketData = collateral.exchanges[marketId];
+    if (!marketData || !marketData.callee || !allCalleeFunctions[marketData.callee]) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    const calleesData = {} as Record<string, string>;
-    Object.entries(calleeFuctions).forEach(async ([key, value]) => {
-        calleesData[key] = await value.getCalleeData(network, collateral, profitAddress);
-    });
-    return calleesData;
+    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, profitAddress);
 };
 
 export const getMarketData = async function (
@@ -53,45 +40,52 @@ export const getMarketData = async function (
     amount: BigNumber = new BigNumber('1')
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
-    const calleeIdAndFuctions = {} as Record<string, CalleeFunctions>;
-    Object.keys(collateral.exchanges).forEach(id => {
-        calleeIdAndFuctions[id] = allCalleeFunctions[collateral.exchanges[id].callee];
-    });
-    if (!Object.keys(calleeIdAndFuctions).length) {
+    let isCollateralSupported = false;
+    for (const market of Object.values(collateral.exchanges)) {
+        if (market.callee && allCalleeFunctions[market.callee]) {
+            isCollateralSupported = true;
+            break;
+        }
+    }
+    if (!isCollateralSupported) {
         throw new Error(`Unsupported collateral symbol "${collateralSymbol}"`);
     }
-    const marketData = {} as Record<string, MarketData>;
-    const gasPrice = await getGasPriceForUI(network);
-    const exchangeFee = gasPrice.multipliedBy(722651 - 145438);
-    for (const id in calleeIdAndFuctions) {
+    const marketData = {};
+    for (const [key, value] of Object.entries(collateral.exchanges)) {
         let marketUnitPrice: BigNumber;
         try {
-            marketUnitPrice = await calleeIdAndFuctions[id].getMarketPrice(network, collateral, amount);
+            marketUnitPrice = await allCalleeFunctions[value.callee].getMarketPrice(network, collateral, amount);
         } catch {
             marketUnitPrice = new BigNumber(NaN);
         }
-        const data = {
-            marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
-            exchangeFee,
-        } as MarketData;
-        if (collateral.exchanges[id].hasOwnProperty('route')) {
-            data.route = (collateral.exchanges[id] as RegularCalleeConfig).route;
+        if ('route' in value) {
+            Object.assign(marketData, {
+                [key]: {
+                    marketUnitPrice,
+                    route: value.route,
+                },
+            });
         } else {
-            data.token0 = (collateral.exchanges[id] as UniswapV2LpTokenCalleeConfig).token0;
-            data.token1 = (collateral.exchanges[id] as UniswapV2LpTokenCalleeConfig).token1;
+            Object.assign(marketData, {
+                [key]: {
+                    marketUnitPrice,
+                    token0: value.token0,
+                    token1: value.token1,
+                },
+            });
         }
-        marketData[id] = data;
     }
     return marketData;
 };
 
-export const getBestMarketData = async function (
-    network: string,
-    collateralSymbol: string,
-    amount: BigNumber = new BigNumber('1')
-): Promise<Record<string, string | BigNumber>> {
-    const marketData = Object.entries(await getMarketData(network, collateralSymbol, amount));
-    marketData.sort((a, b) => {
+export type BestMarketData = {
+    marketId: string;
+    marketUnitPrice: BigNumber;
+};
+
+export const getBestMarketData = async function (marketData: Record<string, MarketData>): Promise<BestMarketData> {
+    const marketDataSorted = Object.entries(marketData);
+    marketDataSorted.sort((a, b) => {
         // push NaNs to the end
         if (a[1].marketUnitPrice.isNaN() && b[1].marketUnitPrice.isNaN()) {
             return 1;
@@ -105,8 +99,8 @@ export const getBestMarketData = async function (
         return a[1].marketUnitPrice.minus(b[1].marketUnitPrice).toNumber();
     });
     return {
-        marketId: marketData[0][0],
-        marketUnitPrice: marketData[0][1].marketUnitPrice,
+        marketId: marketDataSorted[0][0],
+        marketUnitPrice: marketDataSorted[0][1].marketUnitPrice,
     };
 };
 
@@ -115,7 +109,9 @@ const _getMarketPrice = async function (
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<BigNumber> {
-    return (await getBestMarketData(network, collateralSymbol, amount)).marketUnitPrice as BigNumber;
+    const marketData = await getMarketData(network, collateralSymbol, amount);
+    const bestMarketData = await getBestMarketData(marketData);
+    return bestMarketData.marketUnitPrice;
 };
 
 export const getMarketPrice = memoizee(_getMarketPrice, {
