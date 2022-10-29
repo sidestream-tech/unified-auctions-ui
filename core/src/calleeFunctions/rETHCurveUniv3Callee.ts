@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import type { CalleeFunctions, CollateralConfig, RegularCalleeConfig } from '../types';
+import type { CalleeFunctions, CollateralConfig } from '../types';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { encodeRoute, convertCollateralToDai } from './helpers/uniswapV3';
@@ -13,10 +13,10 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     profitAddress: string
 ): Promise<string> {
-    if (!collateral.exchanges.hasOwnProperty('Curve rETH V3')) {
+    if (!('route' in collateral.exchanges['Curve rETH V3'])) {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const route = await encodeRoute(network, (collateral.exchanges['Curve rETH V3'] as RegularCalleeConfig).route);
+    const route = await encodeRoute(network, collateral.exchanges['Curve rETH V3'].route);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];

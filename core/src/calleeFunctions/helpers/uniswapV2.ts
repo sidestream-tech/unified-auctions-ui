@@ -17,12 +17,12 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 
 const EXCHANGE_RATE_CACHE = 20 * 1000;
 
-const getColleeConfig = function (collateral: CollateralConfig): RegularCalleeConfig {
-    if (collateral.exchanges.hasOwnProperty('Uniswap V2')) {
-        return collateral.exchanges['Uniswap V2'] as RegularCalleeConfig;
+const getCalleeConfig = function (collateral: CollateralConfig): RegularCalleeConfig {
+    if ('route' in collateral.exchanges['Uniswap V2']) {
+        return collateral.exchanges['Uniswap V2'];
     }
-    if (collateral.exchanges.hasOwnProperty('Uniswap V3')) {
-        return collateral.exchanges['Uniswap V3'] as RegularCalleeConfig;
+    if ('route' in collateral.exchanges['Uniswap V3']) {
+        return collateral.exchanges['Uniswap V3'];
     }
     throw new Error(`"${collateral.symbol}" is not an UniSwap token`);
 };
@@ -33,7 +33,7 @@ export const getCompleteExchangePathBySymbol = function (symbol: string, useExch
         return ['DAI'];
     }
     const collateral = getCollateralConfigBySymbol(symbol);
-    return !useExchangeRoute ? [symbol, 'DAI'] : [symbol, ...getColleeConfig(collateral).route, 'DAI'];
+    return !useExchangeRoute ? [symbol, 'DAI'] : [symbol, ...getCalleeConfig(collateral).route, 'DAI'];
 };
 
 export const getUniswapRouteAddressesBySymbol = async function (network: string, symbol: string): Promise<string[]> {
@@ -111,7 +111,7 @@ export const getRegularTokenExchangeRateBySymbol = async function (
     amount: BigNumber
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(symbol);
-    getColleeConfig(collateral); // to check that the callee is supported
+    getCalleeConfig(collateral); // to check that the callee is supported
     const completeExchangePath = getCompleteExchangePathBySymbol(symbol);
     const pairs = splitArrayIntoPairs(completeExchangePath);
     const uniswapPairs = await Promise.all(pairs.map(pair => getUniswapPairBySymbols(network, pair[0], pair[1])));
