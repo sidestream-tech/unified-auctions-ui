@@ -23,6 +23,9 @@ export const getApproximateTransactionFees = async function (network: string): P
     // for each transaction when no wallet is connected
     const bidTransactionFeeETH = gasPrice.multipliedBy(BID_TRANSACTION_GAS_LIMIT);
     const swapTransactionFeeETH = gasPrice.multipliedBy(SWAP_TRANSACTION_GAS_LIMIT);
+    const swapTransactionVariableFeeETH = gasPrice.multipliedBy(
+        SWAP_TRANSACTION_GAS_LIMIT - BID_TRANSACTION_GAS_LIMIT
+    );
     const authTransactionFeeETH = gasPrice.multipliedBy(AUTH_TRANSACTION_GAS_LIMIT);
     const restartTransactionFeeETH = gasPrice.multipliedBy(RESTART_TRANSACTION_GAS_LIMIT);
 
@@ -31,19 +34,13 @@ export const getApproximateTransactionFees = async function (network: string): P
         bidTransactionFeeDAI: await convertETHtoDAI(network, bidTransactionFeeETH),
         swapTransactionFeeETH,
         swapTransactionFeeDAI: await convertETHtoDAI(network, swapTransactionFeeETH),
+        swapTransactionVariableFeeETH,
+        swapTransactionVariableFeeDAI: await convertETHtoDAI(network, swapTransactionVariableFeeETH),
         authTransactionFeeETH,
         authTransactionFeeDAI: await convertETHtoDAI(network, authTransactionFeeETH),
         restartTransactionFeeETH,
         restartTransactionFeeDAI: await convertETHtoDAI(network, restartTransactionFeeETH),
     };
-};
-
-export const getApproximateSwapTransactionVariableFee = async function (network: string): Promise<BigNumber> {
-    const gasPrice = await getGasPriceForUI(network);
-    const swapTransactionVariableFeeETH = gasPrice.multipliedBy(
-        SWAP_TRANSACTION_GAS_LIMIT - BID_TRANSACTION_GAS_LIMIT
-    );
-    return await convertETHtoDAI(network, swapTransactionVariableFeeETH);
 };
 
 export const getApproximateLiquidationFees = async function (network: string): Promise<VaultTransactionFees> {
@@ -62,6 +59,15 @@ export const enrichAuctionWithTransactionFees = async function (
 ): Promise<AuctionTransaction> {
     let combinedSwapFeesETH = fees.swapTransactionFeeETH;
     let combinedBidFeesETH = fees.bidTransactionFeeETH;
+
+    if (auction.marketData && fees.swapTransactionVariableFeeDAI) {
+        const swapTransactionVariableFeePerUnitDAI = fees.swapTransactionVariableFeeDAI.dividedBy(
+            auction.collateralToCoverDebt
+        );
+        Object.values(auction.marketData).forEach(market => {
+            market.marketUnitPrice = market.marketUnitPrice.plus(swapTransactionVariableFeePerUnitDAI);
+        });
+    }
 
     try {
         const signer = await getSigner(network);
