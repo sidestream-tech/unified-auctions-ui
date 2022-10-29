@@ -6,18 +6,6 @@ export declare interface GasParameters {
     gasPrice?: string;
 }
 
-export declare interface MarketData {
-    marketUnitPrice: BigNumber;
-    exchangeFee: BigNumber;
-    route?: string[];
-    token0?: string;
-    token1?: string;
-    marketUnitPriceToUnitPriceRatio?: BigNumber;
-    transactionGrossProfit?: BigNumber;
-    transactionGrossProfitDate?: Date;
-    transactionNetProfit?: BigNumber;
-}
-
 export declare interface AuctionInitialInfo {
     network: string;
     id: string;
@@ -67,20 +55,23 @@ export declare interface TransactionFees {
     bidTransactionFeeDAI: BigNumber;
     swapTransactionFeeETH: BigNumber;
     swapTransactionFeeDAI: BigNumber;
+    swapTransactionVariableFeeETH?: BigNumber;
+    swapTransactionVariableFeeDAI?: BigNumber;
     authTransactionFeeETH: BigNumber;
     authTransactionFeeDAI: BigNumber;
     restartTransactionFeeETH: BigNumber;
     restartTransactionFeeDAI: BigNumber;
 }
 
-export declare interface CollateralRow extends CollateralConfig, Partial<MakerParams> {
-    marketUnitPrice?: BigNumber | string;
-    tokenAddress?: string;
-    tokenAddressError?: string;
-    autoRouteQuote?: BigNumber;
-    autoRouteExchanges?: string[];
-    autoRouteError?: string;
-}
+export type CollateralRow = CollateralConfig &
+    Partial<MakerParams> & {
+        marketUnitPrice?: BigNumber | string;
+        tokenAddress?: string;
+        tokenAddressError?: string;
+        autoRouteQuote?: BigNumber;
+        autoRouteExchanges?: string[];
+        autoRouteError?: string;
+    };
 
 export declare interface AuctionTransaction extends Auction, TransactionFees {
     transactionNetProfit: BigNumber;
@@ -90,21 +81,41 @@ export declare interface AuctionTransaction extends Auction, TransactionFees {
     combinedSwapFeesETH: BigNumber;
 }
 
-export declare interface RegularCalleeConfig {
+declare interface Routed {
+    route: string[];
+}
+
+declare interface Tokenized {
+    token0: string;
+    token1: string;
+}
+
+export declare interface RegularCalleeConfig extends Routed {
     callee:
         | 'UniswapV2CalleeDai'
         | 'WstETHCurveUniv3Callee'
         | 'CurveLpTokenUniv3Callee'
         | 'UniswapV3Callee'
         | 'rETHCurveUniv3Callee';
-    route: string[];
 }
 
-export declare interface UniswapV2LpTokenCalleeConfig {
+export declare interface UniswapV2LpTokenCalleeConfig extends Tokenized {
     callee: 'UniswapV2LpTokenCalleeDai';
-    token0: string;
-    token1: string;
 }
+
+declare interface MarketDataBase {
+    marketUnitPrice: BigNumber;
+    marketUnitPriceToUnitPriceRatio?: BigNumber;
+    transactionGrossProfit?: BigNumber;
+    transactionGrossProfitDate?: Date;
+    transactionNetProfit?: BigNumber;
+}
+
+declare interface MarketDataRouted extends MarketDataBase, Routed {}
+
+declare interface MarketDataTokenized extends MarketDataBase, Tokenized {}
+
+export type MarketData = MarketDataRouted | MarketDataTokenized;
 
 export declare interface ValueSlotAddressAndOffset {
     slot: string;
