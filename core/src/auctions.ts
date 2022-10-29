@@ -136,41 +136,41 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
 };
 
 export const enrichAuctionWithMarketData = async function (auction: Auction, network: string): Promise<Auction> {
-    if (!auction.isActive || auction.isFinished || !auction.approximateUnitPrice || !auction.collateralToCoverDebt) {
+    if (!auction.isActive || auction.isFinished || !auction.collateralToCoverDebt || !auction.approximateUnitPrice) {
         return auction;
     }
+    try {
+        const marketData = await getMarketData(network, auction.collateralSymbol, auction.collateralToCoverDebt);
+        const suggestedMarketId = (await getBestMarketData(marketData)).marketId;
+        for (const market of Object.values(marketData)) {
+            market.marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
+                .minus(market.marketUnitPrice)
+                .dividedBy(market.marketUnitPrice);
 
-    const marketData = await getMarketData(network, auction.collateralSymbol, auction.collateralToCoverDebt);
-    const suggestedMarketId = (await getBestMarketData(marketData)).marketId;
+            market.transactionGrossProfit = calculateTransactionGrossProfit(
+                market.marketUnitPrice,
+                auction.collateralToCoverDebt,
+                auction.approximateUnitPrice
+            );
 
-    const currentDate = await getNetworkDate(network);
+            market.transactionGrossProfitDate = calculateTransactionGrossProfitDate(
+                auction,
+                market.marketUnitPrice,
+                await getNetworkDate(auction.network)
+            );
+        }
 
-    Object.values(marketData).forEach(market => {
-        market.marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
-            .minus(market.marketUnitPrice)
-            .dividedBy(market.marketUnitPrice);
-
-        market.transactionGrossProfit = calculateTransactionGrossProfit(
-            market.marketUnitPrice,
-            auction.collateralToCoverDebt,
-            auction.approximateUnitPrice
-        );
-
-        market.transactionGrossProfitDate = calculateTransactionGrossProfitDate(
-            auction,
-            market.marketUnitPrice,
-            currentDate
-        );
-    });
-
-    return {
-        ...auction,
-        suggestedMarketId,
-        marketData,
-    };
+        return {
+            ...auction,
+            suggestedMarketId,
+            marketData,
+        };
+    } catch {
+        return auction;
+    }
 };
 
-export const enrichAuctionWithPriceDropAndMarketValue = async function (
+export const enrichAuctionWithPriceDropAndMarketValues = async function (
     auction: Auction,
     network: string
 ): Promise<Auction> {
@@ -217,10 +217,10 @@ export const enrichAuction = async function (
     const auctionWithPriceDrop = await enrichAuctionWithPriceDrop(auctionWithStatus);
 
     // enrich them with market values
-    const auctionWithMarketValue = await enrichAuctionWithMarketValues(auctionWithPriceDrop, network);
+    const auctionWithMarketValues = await enrichAuctionWithMarketValues(auctionWithPriceDrop, network);
 
     // enrich them with market data (callees)
-    const auctionWithMarketData = await enrichAuctionWithMarketData(auctionWithMarketValue, network);
+    const auctionWithMarketData = await enrichAuctionWithMarketData(auctionWithMarketValues, network);
 
     // enrich with profit and fee calculation
     const fees = await getApproximateTransactionFees(network);
