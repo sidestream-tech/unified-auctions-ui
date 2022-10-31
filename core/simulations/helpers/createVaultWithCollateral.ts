@@ -216,7 +216,7 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
         TEST_NETWORK,
         getJoinNameByCollateralType(collateralType)
     );
-    const proxyTarget = await detectProxyTarget(TEST_NETWORK, joinContractAddress)
+    const proxyTarget = await detectProxyTarget(TEST_NETWORK, joinContractAddress);
     if (!proxyTarget) {
         return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
     }
