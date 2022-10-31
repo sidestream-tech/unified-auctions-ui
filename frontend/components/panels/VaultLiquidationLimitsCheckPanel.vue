@@ -238,7 +238,7 @@ export default Vue.extend({
     },
     methods: {
         format(value: BigNumber): string {
-            return formatToAutomaticDecimalPoints(value, undefined, { formatWithThousandSeparators: true });
+            return formatToAutomaticDecimalPoints(value);
         },
     },
 });
