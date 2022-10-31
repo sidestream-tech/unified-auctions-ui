@@ -33,6 +33,7 @@ import { getMethodSignature } from '../helpers/hex';
 import { getCollateralConfigByType } from './constants/COLLATERALS';
 import { giveAllowanceToAddress } from './authorizations';
 import extractEventFromTransaction from './helpers/extractEventFromTransaction';
+import CDP_REGISTRY from './abis/CDP_REGISTRY.json';
 
 const CACHE_EXPIRY_MS = 60 * 1000;
 
@@ -424,14 +425,14 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     const target = (await getContract(network, `PROXY_ACTIONS_${proxyType}`)).address;
     const transaction = await proxyContract['execute(address,bytes)'](target, transactionData);
     const events = await extractEventFromTransaction(
-        network,
-        transaction.hash,
-        'NewCdpRegistered(address,address,uint256)'
+        transaction,
+        'NewCdpRegistered(address,address,uint256)',
+        new ethers.utils.Interface(CDP_REGISTRY)
     );
     if (events.length !== 1) {
         throw new Error('Unexpected number of NewCdpRegistered events');
     }
-    const vaultId = new BigNumber(events[0].topics[3]).toNumber();
+    const vaultId = events[0].args.cdp.toNumber();
     return vaultId;
 };
 

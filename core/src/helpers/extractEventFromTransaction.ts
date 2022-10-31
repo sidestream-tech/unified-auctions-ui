@@ -1,11 +1,10 @@
-import getProvider from '../provider';
 import { ethers } from 'ethers';
 
-const extractEventFromTransaction = async (network: string, transactionHash: string, event: string) => {
-    const provider = await getProvider(network);
-    const receipt = await provider.getTransactionReceipt(transactionHash);
-    const eventLogs = receipt.logs.filter(log => log.topics[0] === ethers.utils.id(event));
-    return eventLogs.map(log => ({ topics: log.topics, data: log.data }));
+const extractEventFromTransaction = async (transaction: ethers.ContractTransaction, eventSignature: string, contractInterface: ethers.utils.Interface) => {
+    const receipt = await transaction.wait();
+    const eventLogs = receipt.logs.filter(log => log.topics[0] === ethers.utils.id(eventSignature));
+    const filteredLogs = eventLogs.map(log => ({ topics: log.topics, data: log.data }));
+    return filteredLogs.map(log => contractInterface.parseLog(log));
 };
 
 export default extractEventFromTransaction;
