@@ -30,7 +30,7 @@ import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { createProxy } from '../../src/proxy';
 import { giveAllowanceToAddress } from '../../src/authorizations';
 import getProvider from '../../src/provider';
-import detectProxyTarget from 'evm-proxy-detection';
+import detectProxyTarget from '../../helpers/detectProxyTarget';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
     'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
@@ -217,10 +217,7 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
         TEST_NETWORK,
         getJoinNameByCollateralType(collateralType)
     );
-    const provider = await getProvider(TEST_NETWORK);
-    const proxyTarget = await detectProxyTarget(joinContractAddress, ({ method, params }) =>
-        provider.send(method, params)
-    );
+    const proxyTarget = await detectProxyTarget(TEST_NETWORK, joinContractAddress)
     if (!proxyTarget) {
         return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
     }
