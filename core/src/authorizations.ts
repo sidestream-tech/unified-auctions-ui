@@ -191,5 +191,5 @@ export const giveAllowanceToAddress = async (
     const config = getCollateralConfigBySymbol(collateralSymbol);
     const tokenAddress = await getContractAddressByName(network, collateralSymbol);
     const tokenContract = await getErc20Contract(network, tokenAddress, true);
-    await tokenContract.approve(spenderAddress, collateralAmount.shiftedBy(config.decimals).toFixed());
+    await tokenContract.approve(spenderAddress, collateralAmount.shiftedBy(config.decimals).toFixed(0));
 };
