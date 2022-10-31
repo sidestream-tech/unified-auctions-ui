@@ -38,7 +38,7 @@ export const convertCollateralToDaiUsingRoute = async function (
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
-    if (!('route' in collateral.exchanges['Uniswap V3'])) {
+    if (collateral.exchanges['Uniswap V3']?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);

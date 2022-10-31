@@ -15,11 +15,7 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     profitAddress: string
 ): Promise<string> {
-    if (
-        !collateral.exchanges['Uniswap Token V2'] ||
-        !('token0' in collateral.exchanges['Uniswap Token V2']) ||
-        !('token1' in collateral.exchanges['Uniswap Token V2'])
-    ) {
+    if (collateral.exchanges['Uniswap Token V2']?.callee !== 'UniswapV2LpTokenCalleeDai') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
@@ -39,11 +35,7 @@ const getMarketPrice = async function (
     collateral: CollateralConfig,
     amount: BigNumber
 ): Promise<BigNumber> {
-    if (
-        !collateral.exchanges['Uniswap Token V2'] ||
-        !('token0' in collateral.exchanges['Uniswap Token V2']) ||
-        !('token1' in collateral.exchanges['Uniswap Token V2'])
-    ) {
+    if (collateral.exchanges['Uniswap Token V2']?.callee !== 'UniswapV2LpTokenCalleeDai') {
         throw new Error(`"${collateral.symbol}" is not a UniSwap LP token`);
     }
     const uniswapPair = await getUniswapPairBySymbols(

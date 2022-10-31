@@ -12,7 +12,7 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     profitAddress: string
 ): Promise<string> {
-    if (!('route' in collateral.exchanges['Curve Token V3'])) {
+    if (collateral.exchanges['Curve Token V3']?.callee !== 'CurveLpTokenUniv3Callee') {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
     const route = await encodeRoute(network, collateral.exchanges['Curve Token V3'].route);

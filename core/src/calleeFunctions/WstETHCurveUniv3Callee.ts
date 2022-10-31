@@ -28,7 +28,7 @@ const getMarketPrice = async function (
     collateral: CollateralConfig,
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
-    if (!collateral.exchanges['Curve wstETH V3']) {
+    if (collateral.exchanges['Curve wstETH V3']?.callee !== 'WstETHCurveUniv3Callee') {
         throw new Error(`Invalid callee used to get market price for ${collateral.ilk}`);
     }
     // convert wstETH into stETH
