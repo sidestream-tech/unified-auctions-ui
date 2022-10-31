@@ -12,6 +12,6 @@ export const createProxy = async (network: string, proxyOwnerAddress: string) =>
     if (events.length !== 1) {
         throw new Error("Undexpected number of 'Created' events");
     }
-    const proxyAddress = events[0].args.proxy
+    const proxyAddress = events[0].args.proxy;
     return proxyAddress;
 };
