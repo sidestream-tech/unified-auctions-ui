@@ -29,7 +29,6 @@ import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardh
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { createProxy } from '../../src/proxy';
 import { giveAllowanceToAddress } from '../../src/authorizations';
-import getProvider from '../../src/provider';
 import detectProxyTarget from '../../helpers/detectProxyTarget';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
