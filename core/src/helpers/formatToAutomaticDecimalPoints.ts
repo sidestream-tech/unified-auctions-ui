@@ -70,13 +70,12 @@ interface formatToAutomaticDecimalPointsOptions {
 
 export function formatToAutomaticDecimalPoints(
     value: number | BigNumber,
-    options: formatToAutomaticDecimalPointsOptions = {
-        decimalPlaces: DECIMAL_PLACES_DEFAULT,
-        disableThousandSeparators: false,
-    }
+    options?: formatToAutomaticDecimalPointsOptions
 ): string {
-    const formattedValue = limitedValue(value).toFixed(dynamicDecimalPlaces(value, options.decimalPlaces));
-    if (options.disableThousandSeparators) {
+    const formattedValue = limitedValue(value).toFixed(
+        dynamicDecimalPlaces(value, options?.decimalPlaces || DECIMAL_PLACES_DEFAULT)
+    );
+    if (options?.disableThousandSeparators) {
         return formattedValue;
     }
     return formatWithThousandSeparators(formattedValue);
