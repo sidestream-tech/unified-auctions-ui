@@ -76,7 +76,7 @@ const simulation: Simulation = {
                 if (!warpSeconds) {
                     throw new Error('Auction lifetime is too short to warp time.');
                 }
-                console.info(`Skipping time: ${warpSeconds} seconds`)
+                console.info(`Skipping time: ${warpSeconds} seconds`);
                 await warpTime(warpSeconds, 1);
                 return context;
             },
