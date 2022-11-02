@@ -17,27 +17,31 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 
 const EXCHANGE_RATE_CACHE = 20 * 1000;
 
-const getCalleeConfig = function (collateral: CollateralConfig): RegularCalleeConfig {
-    if (collateral.exchanges['Uniswap V2']?.callee === 'UniswapV2CalleeDai') {
-        return collateral.exchanges['Uniswap V2'];
-    }
-    if (collateral.exchanges['Uniswap V3']?.callee === 'UniswapV3Callee') {
-        return collateral.exchanges['Uniswap V3'];
+const getCalleeConfig = function (collateral: CollateralConfig, marketId: string): RegularCalleeConfig {
+    if (
+        collateral.exchanges[marketId]?.callee === 'UniswapV2CalleeDai' ||
+        collateral.exchanges[marketId]?.callee === 'UniswapV3Callee'
+    ) {
+        return collateral.exchanges[marketId];
     }
     throw new Error(`"${collateral.symbol}" is not an UniSwap token`);
 };
 
-export const getCompleteExchangePathBySymbol = function (symbol: string, useExchangeRoute = true) {
+export const getCompleteExchangePathBySymbol = function (symbol: string, marketId: string, useExchangeRoute = true) {
     if (symbol === 'DAI') {
         // no exchange is needed for DAI -> DAI
         return ['DAI'];
     }
     const collateral = getCollateralConfigBySymbol(symbol);
-    return !useExchangeRoute ? [symbol, 'DAI'] : [symbol, ...getCalleeConfig(collateral).route, 'DAI'];
+    return !useExchangeRoute ? [symbol, 'DAI'] : [symbol, ...getCalleeConfig(collateral, marketId).route, 'DAI'];
 };
 
-export const getUniswapRouteAddressesBySymbol = async function (network: string, symbol: string): Promise<string[]> {
-    const completeExchangePath = getCompleteExchangePathBySymbol(symbol);
+export const getUniswapRouteAddressesBySymbol = async function (
+    network: string,
+    symbol: string,
+    marketId: string
+): Promise<string[]> {
+    const completeExchangePath = getCompleteExchangePathBySymbol(symbol, marketId);
     return await Promise.all(
         completeExchangePath.map(exchangePathSymbol => getTokenAddressByNetworkAndSymbol(network, exchangePathSymbol))
     );
@@ -108,11 +112,12 @@ export const getLpTokenTotalSupply = async function (network: string, symbol: st
 export const getRegularTokenExchangeRateBySymbol = async function (
     network: string,
     symbol: string,
+    marketId: string,
     amount: BigNumber
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(symbol);
-    getCalleeConfig(collateral); // to check that the callee is supported
-    const completeExchangePath = getCompleteExchangePathBySymbol(symbol);
+    getCalleeConfig(collateral, marketId); // to check that the callee is supported
+    const completeExchangePath = getCompleteExchangePathBySymbol(symbol, marketId);
     const pairs = splitArrayIntoPairs(completeExchangePath);
     const uniswapPairs = await Promise.all(pairs.map(pair => getUniswapPairBySymbols(network, pair[0], pair[1])));
     const exchangeToken = await getUniswapTokenBySymbol(network, symbol);
@@ -128,6 +133,7 @@ export const getRegularTokenExchangeRateBySymbol = async function (
 export const getTotalPriceInDai = async function (
     network: string,
     reserve: TokenAmount,
+    marketId: string,
     portionOfTheTotalSupply: BigNumber
 ): Promise<BigNumber> {
     if (!reserve.token.symbol) {
@@ -138,6 +144,11 @@ export const getTotalPriceInDai = async function (
     if (reserve.token.symbol === 'DAI') {
         return amountOwned;
     }
-    const tokenExchangeRate = await getRegularTokenExchangeRateBySymbol(network, reserve.token.symbol, amountOwned);
+    const tokenExchangeRate = await getRegularTokenExchangeRateBySymbol(
+        network,
+        reserve.token.symbol,
+        marketId,
+        amountOwned
+    );
     return tokenExchangeRate.multipliedBy(amountOwned);
 };

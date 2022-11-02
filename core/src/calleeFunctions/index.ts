@@ -31,7 +31,7 @@ export const getCalleeData = async function (
     if (!marketData || !marketData.callee || !allCalleeFunctions[marketData.callee]) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, profitAddress);
+    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress);
 };
 
 export const getMarketData = async function (
@@ -50,29 +50,31 @@ export const getMarketData = async function (
     if (!isCollateralSupported) {
         throw new Error(`Unsupported collateral symbol "${collateralSymbol}"`);
     }
-    const marketData = {};
+    let marketData = {};
     for (const [key, value] of Object.entries(collateral.exchanges)) {
         let marketUnitPrice: BigNumber;
         try {
-            marketUnitPrice = await allCalleeFunctions[value.callee].getMarketPrice(network, collateral, amount);
+            marketUnitPrice = await allCalleeFunctions[value.callee].getMarketPrice(network, collateral, key, amount);
         } catch {
             marketUnitPrice = new BigNumber(NaN);
         }
         if ('route' in value) {
-            Object.assign(marketData, {
+            marketData = {
+                ...marketData,
                 [key]: {
                     marketUnitPrice,
                     route: value.route,
                 },
-            });
+            };
         } else {
-            Object.assign(marketData, {
+            marketData = {
+                ...marketData,
                 [key]: {
                     marketUnitPrice,
                     token0: value.token0,
                     token1: value.token1,
                 },
-            });
+            };
         }
     }
     return marketData;

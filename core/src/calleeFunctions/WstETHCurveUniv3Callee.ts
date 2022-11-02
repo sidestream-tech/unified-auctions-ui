@@ -9,6 +9,7 @@ import { convertWstethToSteth } from './helpers/wsteth';
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
+    _marketId: string,
     profitAddress: string
 ): Promise<string> {
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
@@ -26,9 +27,10 @@ const getCalleeData = async function (
 const getMarketPrice = async function (
     network: string,
     collateral: CollateralConfig,
+    marketId: string,
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
-    if (collateral.exchanges['Curve wstETH V3']?.callee !== 'WstETHCurveUniv3Callee') {
+    if (collateral.exchanges[marketId]?.callee !== 'WstETHCurveUniv3Callee') {
         throw new Error(`Invalid callee used to get market price for ${collateral.ilk}`);
     }
     // convert wstETH into stETH

@@ -7,17 +7,15 @@ import { convertCollateralToDaiUsingRoute, encodeRoute } from './helpers/uniswap
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
+    marketId: string,
     profitAddress: string
 ): Promise<string> {
-    if (collateral.exchanges['Uniswap V3']?.callee !== 'UniswapV3Callee') {
+    if (collateral.exchanges[marketId]?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const uniswapV3route = await encodeRoute(network, [
-        collateral.symbol,
-        ...collateral.exchanges['Uniswap V3'].route,
-    ]);
+    const uniswapV3route = await encodeRoute(network, [collateral.symbol, ...collateral.exchanges[marketId].route]);
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,
@@ -31,10 +29,11 @@ const getCalleeData = async function (
 const getMarketPrice = async function (
     network: string,
     collateral: CollateralConfig,
+    marketId: string,
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     // convert collateral into DAI
-    const daiAmount = await convertCollateralToDaiUsingRoute(network, collateral.symbol, collateralAmount);
+    const daiAmount = await convertCollateralToDaiUsingRoute(network, collateral.symbol, marketId, collateralAmount);
 
     // return price per unit
     return daiAmount.dividedBy(collateralAmount);

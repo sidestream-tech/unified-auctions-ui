@@ -13,9 +13,10 @@ import {
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
+    marketId: string,
     profitAddress: string
 ): Promise<string> {
-    if (collateral.exchanges['Uniswap Token V2']?.callee !== 'UniswapV2LpTokenCalleeDai') {
+    if (collateral.exchanges[marketId]?.callee !== 'UniswapV2LpTokenCalleeDai') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
@@ -25,34 +26,37 @@ const getCalleeData = async function (
         profitAddress,
         joinAdapterAddress,
         minProfit,
-        await getUniswapRouteAddressesBySymbol(network, collateral.exchanges['Uniswap Token V2'].token0),
-        await getUniswapRouteAddressesBySymbol(network, collateral.exchanges['Uniswap Token V2'].token1),
+        await getUniswapRouteAddressesBySymbol(network, collateral.exchanges[marketId].token0, marketId),
+        await getUniswapRouteAddressesBySymbol(network, collateral.exchanges[marketId].token1, marketId),
     ]);
 };
 
 const getMarketPrice = async function (
     network: string,
     collateral: CollateralConfig,
+    marketId: string,
     amount: BigNumber
 ): Promise<BigNumber> {
-    if (collateral.exchanges['Uniswap Token V2']?.callee !== 'UniswapV2LpTokenCalleeDai') {
+    if (collateral.exchanges[marketId]?.callee !== 'UniswapV2LpTokenCalleeDai') {
         throw new Error(`"${collateral.symbol}" is not a UniSwap LP token`);
     }
     const uniswapPair = await getUniswapPairBySymbols(
         network,
-        collateral.exchanges['Uniswap Token V2'].token0,
-        collateral.exchanges['Uniswap Token V2'].token1
+        collateral.exchanges[marketId].token0,
+        collateral.exchanges[marketId].token1
     );
     const totalSupply = await getLpTokenTotalSupply(network, collateral.symbol);
     const portionOfTheTotalSupply = amount.div(totalSupply);
     const totalPriceOfToken0 = await getTotalPriceInDai(
         network,
-        uniswapPair.reserveOf(await getUniswapTokenBySymbol(network, collateral.exchanges['Uniswap Token V2'].token0)),
+        uniswapPair.reserveOf(await getUniswapTokenBySymbol(network, collateral.exchanges[marketId].token0)),
+        marketId,
         portionOfTheTotalSupply
     );
     const totalPriceOfToken1 = await getTotalPriceInDai(
         network,
-        uniswapPair.reserveOf(await getUniswapTokenBySymbol(network, collateral.exchanges['Uniswap Token V2'].token1)),
+        uniswapPair.reserveOf(await getUniswapTokenBySymbol(network, collateral.exchanges[marketId].token1)),
+        marketId,
         portionOfTheTotalSupply
     );
     const totalPrice = totalPriceOfToken0.plus(totalPriceOfToken1);

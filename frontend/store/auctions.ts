@@ -7,7 +7,7 @@ import {
     bidWithDai,
     bidWithCallee,
     restartAuction,
-    enrichAuctionWithPriceDropAndMarketValues,
+    enrichAuctionWithPriceDropAndMarketData,
     fetchTakeEvents,
     fetchSingleAuctionById,
 } from 'auctions-core/src/auctions';
@@ -335,7 +335,7 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const auction = getters.getAuctionById(id);
         try {
-            const updatedAuction = await enrichAuctionWithPriceDropAndMarketValues(auction, network);
+            const updatedAuction = await enrichAuctionWithPriceDropAndMarketData(auction, network);
             commit('setAuction', updatedAuction);
         } catch (error: any) {
             console.warn(

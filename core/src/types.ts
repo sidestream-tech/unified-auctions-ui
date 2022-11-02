@@ -55,23 +55,20 @@ export declare interface TransactionFees {
     bidTransactionFeeDAI: BigNumber;
     swapTransactionFeeETH: BigNumber;
     swapTransactionFeeDAI: BigNumber;
-    swapTransactionVariableFeeETH?: BigNumber;
-    swapTransactionVariableFeeDAI?: BigNumber;
     authTransactionFeeETH: BigNumber;
     authTransactionFeeDAI: BigNumber;
     restartTransactionFeeETH: BigNumber;
     restartTransactionFeeDAI: BigNumber;
 }
 
-export type CollateralRow = CollateralConfig &
-    Partial<MakerParams> & {
-        marketUnitPrice?: BigNumber | string;
-        tokenAddress?: string;
-        tokenAddressError?: string;
-        autoRouteQuote?: BigNumber;
-        autoRouteExchanges?: string[];
-        autoRouteError?: string;
-    };
+export declare interface CollateralRow extends CollateralConfig, Partial<MakerParams> {
+    marketUnitPrice?: BigNumber | string;
+    tokenAddress?: string;
+    tokenAddressError?: string;
+    autoRouteQuote?: BigNumber;
+    autoRouteExchanges?: string[];
+    autoRouteError?: string;
+}
 
 export declare interface AuctionTransaction extends Auction, TransactionFees {
     transactionNetProfit: BigNumber;
@@ -81,29 +78,28 @@ export declare interface AuctionTransaction extends Auction, TransactionFees {
     combinedSwapFeesETH: BigNumber;
 }
 
-declare interface Routed {
-    route: string[];
-}
-
-declare interface Tokenized {
-    token0: string;
-    token1: string;
-}
-
-export declare interface RegularCalleeConfig extends Routed {
+export declare interface RegularCalleeConfig {
     callee:
         | 'UniswapV2CalleeDai'
         | 'WstETHCurveUniv3Callee'
         | 'CurveLpTokenUniv3Callee'
         | 'UniswapV3Callee'
         | 'rETHCurveUniv3Callee';
+    route: string[];
 }
 
-export declare interface UniswapV2LpTokenCalleeConfig extends Tokenized {
+export declare interface UniswapV2LpTokenCalleeConfig {
     callee: 'UniswapV2LpTokenCalleeDai';
+    token0: string;
+    token1: string;
 }
 
-declare interface MarketDataBase {
+export declare interface ExchangeFees {
+    exchangeFeeETH: BigNumber;
+    exchangeFeeDAI: BigNumber;
+}
+
+declare interface MarketDataBase extends Partial<ExchangeFees> {
     marketUnitPrice: BigNumber;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
     transactionGrossProfit?: BigNumber;
@@ -111,11 +107,11 @@ declare interface MarketDataBase {
     transactionNetProfit?: BigNumber;
 }
 
-declare interface MarketDataRouted extends MarketDataBase, Routed {}
+declare interface MarketDataRegular extends MarketDataBase, RegularCalleeConfig {}
 
-declare interface MarketDataTokenized extends MarketDataBase, Tokenized {}
+declare interface MarketDataUniswapV2LpToken extends MarketDataBase, UniswapV2LpTokenCalleeConfig {}
 
-export type MarketData = MarketDataRouted | MarketDataTokenized;
+export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken;
 
 export declare interface ValueSlotAddressAndOffset {
     slot: string;
@@ -171,8 +167,18 @@ export declare interface CalleeAddresses {
 export type CalleeNames = keyof CalleeAddresses;
 
 export declare interface CalleeFunctions {
-    getCalleeData: (network: string, collateral: CollateralConfig, profitAddress: string) => Promise<string>;
-    getMarketPrice: (network: string, collateral: CollateralConfig, amount: BigNumber) => Promise<BigNumber>;
+    getCalleeData: (
+        network: string,
+        collateral: CollateralConfig,
+        marketId: string,
+        profitAddress: string
+    ) => Promise<string>;
+    getMarketPrice: (
+        network: string,
+        collateral: CollateralConfig,
+        marketId: string,
+        amount: BigNumber
+    ) => Promise<BigNumber>;
 }
 
 export declare interface MakerParams {
