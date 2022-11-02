@@ -74,7 +74,7 @@ const simulation: Simulation = {
                 const auctionLifetime: number = (await contract.tail()).toNumber();
                 const warpSeconds = Math.floor(auctionLifetime / 2);
                 if (!warpSeconds) {
-                    throw new Error('Auction lifetime is too short to warp time.')
+                    throw new Error('Auction lifetime is too short to warp time.');
                 }
                 await warpTime(warpSeconds, 1);
                 return context;
