@@ -416,8 +416,8 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
         joinContractCollateralAddress,
         joinContractDaiAddress,
         ethers.utils.formatBytes32String(collateralType),
-        collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(),
-        debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(),
+        collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0),
     ];
     const typesArray = ['address', 'address', 'address', 'bytes32', 'uint256', 'uint256'];
     const encodedArgs = ethers.utils.defaultAbiCoder.encode(typesArray, args);
