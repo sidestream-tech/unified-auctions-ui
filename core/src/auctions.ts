@@ -73,34 +73,34 @@ export const enrichAuctionWithMarketData = async function (auction: Auction, net
     }
     try {
         const collateralToCoverDebt = await calculateCollateralToCoverDebt(network, auction);
-        let marketData = await getMarketData(network, auction.collateralSymbol, collateralToCoverDebt);
+        let marketDataRecords = await getMarketData(network, auction.collateralSymbol, collateralToCoverDebt);
         const exchangeFees = await getDefaultMarketFee(network);
-        for (let market of Object.values(marketData)) {
-            market = {
-                ...market,
+        for (let marketData of Object.values(marketDataRecords)) {
+            marketData = {
+                ...marketData,
                 marketUnitPriceToUnitPriceRatio: auction.approximateUnitPrice
-                    .minus(market.marketUnitPrice)
-                    .dividedBy(market.marketUnitPrice),
+                    .minus(marketData.marketUnitPrice)
+                    .dividedBy(marketData.marketUnitPrice),
                 ...exchangeFees,
                 transactionGrossProfit: calculateTransactionGrossProfit(
-                    market.marketUnitPrice,
+                    marketData.marketUnitPrice,
                     collateralToCoverDebt,
                     auction.approximateUnitPrice
                 ),
                 transactionGrossProfitDate: calculateTransactionGrossProfitDate(
                     auction,
-                    market.marketUnitPrice,
+                    marketData.marketUnitPrice,
                     await getNetworkDate(auction.network)
                 ),
             };
-            marketData = { ...marketData, market };
+            marketDataRecords = { ...marketDataRecords, marketData };
         }
-        const bestMarketData = await getBestMarketData(marketData);
+        const bestMarketData = await getBestMarketData(marketDataRecords);
         const suggestedMarketId = bestMarketData.marketId;
         const marketUnitPrice = bestMarketData.marketUnitPrice;
-        const marketUnitPriceToUnitPriceRatio = marketData[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
-        const transactionGrossProfit = marketData[suggestedMarketId].transactionGrossProfit;
-        const transactionGrossProfitDate = marketData[suggestedMarketId].transactionGrossProfitDate;
+        const marketUnitPriceToUnitPriceRatio = marketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
+        const transactionGrossProfit = marketDataRecords[suggestedMarketId].transactionGrossProfit;
+        const transactionGrossProfitDate = marketDataRecords[suggestedMarketId].transactionGrossProfitDate;
         return {
             ...auction,
             suggestedMarketId,
@@ -108,7 +108,7 @@ export const enrichAuctionWithMarketData = async function (auction: Auction, net
             marketUnitPriceToUnitPriceRatio,
             transactionGrossProfit,
             transactionGrossProfitDate,
-            marketData,
+            marketDataRecords,
         };
     } catch (error: any) {
         // since it's expected that some collaterals are not tradable on some networks

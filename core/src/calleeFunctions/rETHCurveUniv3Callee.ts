@@ -17,7 +17,7 @@ const getCalleeData = async function (
     if (collateral.exchanges[marketId]?.callee !== 'rETHCurveUniv3Callee') {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const route = await encodeRoute(network, collateral.exchanges['Curve rETH V3'].route);
+    const route = await encodeRoute(network, collateral.exchanges[marketId].route);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];

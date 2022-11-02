@@ -40,44 +40,46 @@ export const getMarketData = async function (
     amount: BigNumber = new BigNumber('1')
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
-    let isCollateralSupported = false;
-    for (const market of Object.values(collateral.exchanges)) {
-        if (market.callee && allCalleeFunctions[market.callee]) {
-            isCollateralSupported = true;
-            break;
-        }
-    }
+    const isCollateralSupported = Object.values(collateral.exchanges).some(
+        marketData => marketData.callee && allCalleeFunctions[marketData.callee]
+    );
     if (!isCollateralSupported) {
         throw new Error(`Unsupported collateral symbol "${collateralSymbol}"`);
     }
-    let marketData = {};
-    for (const [key, value] of Object.entries(collateral.exchanges)) {
+    let marketDataRecords = {};
+    for (const marketId in collateral.exchanges) {
+        const marketData = collateral.exchanges[marketId];
         let marketUnitPrice: BigNumber;
         try {
-            marketUnitPrice = await allCalleeFunctions[value.callee].getMarketPrice(network, collateral, key, amount);
+            marketUnitPrice = await allCalleeFunctions[marketData.callee].getMarketPrice(
+                network,
+                collateral,
+                marketId,
+                amount
+            );
         } catch {
             marketUnitPrice = new BigNumber(NaN);
         }
-        if ('route' in value) {
-            marketData = {
+        if (marketData.callee === 'UniswapV2LpTokenCalleeDai') {
+            marketDataRecords = {
                 ...marketData,
-                [key]: {
+                [marketId]: {
                     marketUnitPrice,
-                    route: value.route,
+                    token0: marketData.token0,
+                    token1: marketData.token1,
                 },
             };
         } else {
-            marketData = {
+            marketDataRecords = {
                 ...marketData,
-                [key]: {
+                [marketId]: {
                     marketUnitPrice,
-                    token0: value.token0,
-                    token1: value.token1,
+                    route: marketData.route,
                 },
             };
         }
     }
-    return marketData;
+    return marketDataRecords;
 };
 
 export type BestMarketData = {
@@ -85,9 +87,11 @@ export type BestMarketData = {
     marketUnitPrice: BigNumber;
 };
 
-export const getBestMarketData = async function (marketData: Record<string, MarketData>): Promise<BestMarketData> {
-    const marketDataSorted = Object.entries(marketData);
-    marketDataSorted.sort((a, b) => {
+export const getBestMarketData = async function (
+    marketDataRecords: Record<string, MarketData>
+): Promise<BestMarketData> {
+    const marketDataRecordsSorted = Object.entries(marketDataRecords);
+    marketDataRecordsSorted.sort((a, b) => {
         // push NaNs to the end
         if (a[1].marketUnitPrice.isNaN() && b[1].marketUnitPrice.isNaN()) {
             return 1;
@@ -101,8 +105,8 @@ export const getBestMarketData = async function (marketData: Record<string, Mark
         return a[1].marketUnitPrice.minus(b[1].marketUnitPrice).toNumber();
     });
     return {
-        marketId: marketDataSorted[0][0],
-        marketUnitPrice: marketDataSorted[0][1].marketUnitPrice,
+        marketId: marketDataRecordsSorted[0][0],
+        marketUnitPrice: marketDataRecordsSorted[0][1].marketUnitPrice,
     };
 };
 

@@ -21,7 +21,7 @@ export declare interface AuctionInitialInfo {
     isFinished: boolean;
     isRestarting: boolean;
     suggestedMarketId?: string;
-    marketData?: Record<string, MarketData>;
+    marketDataRecords?: Record<string, MarketData>;
     marketUnitPrice?: BigNumber;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
     transactionGrossProfit?: BigNumber;
@@ -164,7 +164,11 @@ export declare interface CalleeAddresses {
     rETHCurveUniv3Callee?: string;
 }
 
-export type CalleeNames = keyof CalleeAddresses;
+export type RegularCalleeNames = RegularCalleeConfig['callee'];
+
+export type UniswapV2LpTokenCalleeNames = UniswapV2LpTokenCalleeConfig['callee'];
+
+export type CalleeNames = RegularCalleeNames | UniswapV2LpTokenCalleeNames;
 
 export declare interface CalleeFunctions {
     getCalleeData: (
