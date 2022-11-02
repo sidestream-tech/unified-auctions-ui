@@ -8,6 +8,7 @@ import createVaultWithCollateral, {
     getLiquidatableCollateralTypes,
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
+import getContract, { getClipperNameByCollateralType } from '../../src/contracts';
 
 const simulation: Simulation = {
     title: 'Simulate liquidation Auctions',
@@ -60,12 +61,22 @@ const simulation: Simulation = {
                 const liquidatedId = context.latestVaultId;
                 const vault = await fetchVault(TEST_NETWORK, liquidatedId);
                 await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
+                return context;
             },
         },
         {
             title: 'Skip time',
             entry: async context => {
-                await warpTime(60, 60);
+                const contract = await getContract(
+                    TEST_NETWORK,
+                    getClipperNameByCollateralType(context.collateralType)
+                );
+                const auctionLifetime: number = (await contract.tail()).toNumber();
+                const warpSeconds = Math.floor(auctionLifetime / 2);
+                if (!warpSeconds) {
+                    throw new Error('Auction lifetime is too short to warp time.')
+                }
+                await warpTime(warpSeconds, 1);
                 return context;
             },
         },
