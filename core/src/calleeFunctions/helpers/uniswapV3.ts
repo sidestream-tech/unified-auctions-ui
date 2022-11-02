@@ -39,11 +39,12 @@ export const convertCollateralToDaiUsingRoute = async function (
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
-    if (collateral.exchanges[marketId]?.callee !== 'UniswapV3Callee') {
+    const marketData = collateral.exchanges[marketId];
+    if (marketData?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
-    const route = encodeRoute(network, [collateral.symbol, ...collateral.exchanges[marketId].route]);
+    const route = encodeRoute(network, [collateral.symbol, ...marketData.route]);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(route, collateralIntegerAmount);
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);

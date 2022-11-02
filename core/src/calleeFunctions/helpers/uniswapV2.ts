@@ -18,11 +18,9 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 const EXCHANGE_RATE_CACHE = 20 * 1000;
 
 const getCalleeConfig = function (collateral: CollateralConfig, marketId: string): RegularCalleeConfig {
-    if (
-        collateral.exchanges[marketId]?.callee === 'UniswapV2CalleeDai' ||
-        collateral.exchanges[marketId]?.callee === 'UniswapV3Callee'
-    ) {
-        return collateral.exchanges[marketId];
+    const marketData = collateral.exchanges[marketId];
+    if (marketData?.callee === 'UniswapV2CalleeDai' || marketData?.callee === 'UniswapV3Callee') {
+        return marketData;
     }
     throw new Error(`"${collateral.symbol}" is not an UniSwap token`);
 };

@@ -30,7 +30,8 @@ const getMarketPrice = async function (
     marketId: string,
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
-    if (collateral.exchanges[marketId]?.callee !== 'WstETHCurveUniv3Callee') {
+    const marketData = collateral.exchanges[marketId];
+    if (marketData?.callee !== 'WstETHCurveUniv3Callee') {
         throw new Error(`Invalid callee used to get market price for ${collateral.ilk}`);
     }
     // convert wstETH into stETH

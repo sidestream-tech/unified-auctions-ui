@@ -75,9 +75,11 @@ export const enrichAuctionWithMarketData = async function (auction: Auction, net
         const collateralToCoverDebt = await calculateCollateralToCoverDebt(network, auction);
         let marketDataRecords = await getMarketData(network, auction.collateralSymbol, collateralToCoverDebt);
         const exchangeFees = await getDefaultMarketFee(network);
+        const exchangeFeePerUnitDAI = exchangeFees.exchangeFeeDAI.dividedBy(collateralToCoverDebt);
         for (let marketData of Object.values(marketDataRecords)) {
             marketData = {
                 ...marketData,
+                marketUnitPrice: marketData.marketUnitPrice.plus(exchangeFeePerUnitDAI),
                 marketUnitPriceToUnitPriceRatio: auction.approximateUnitPrice
                     .minus(marketData.marketUnitPrice)
                     .dividedBy(marketData.marketUnitPrice),

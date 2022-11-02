@@ -164,11 +164,7 @@ export declare interface CalleeAddresses {
     rETHCurveUniv3Callee?: string;
 }
 
-export type RegularCalleeNames = RegularCalleeConfig['callee'];
-
-export type UniswapV2LpTokenCalleeNames = UniswapV2LpTokenCalleeConfig['callee'];
-
-export type CalleeNames = RegularCalleeNames | UniswapV2LpTokenCalleeNames;
+export type CalleeNames = keyof CalleeAddresses;
 
 export declare interface CalleeFunctions {
     getCalleeData: (

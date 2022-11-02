@@ -62,7 +62,7 @@ export const getMarketData = async function (
         }
         if (marketData.callee === 'UniswapV2LpTokenCalleeDai') {
             marketDataRecords = {
-                ...marketData,
+                ...marketDataRecords,
                 [marketId]: {
                     marketUnitPrice,
                     token0: marketData.token0,
@@ -71,7 +71,7 @@ export const getMarketData = async function (
             };
         } else {
             marketDataRecords = {
-                ...marketData,
+                ...marketDataRecords,
                 [marketId]: {
                     marketUnitPrice,
                     route: marketData.route,
