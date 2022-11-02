@@ -170,12 +170,7 @@ const createProxiedVaultWithCollateral = async (collateralType: CollateralType, 
     const { minUnitPrice, stabilityFeeRate } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
     const drawnDebtExact = collateralOwned.multipliedBy(minUnitPrice).dividedBy(stabilityFeeRate);
     const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
-    return await openVaultWithProxiedContractAndDrawDebt(
-        TEST_NETWORK,
-        collateralType,
-        collateralOwned,
-        drawnDebt
-    );
+    return await openVaultWithProxiedContractAndDrawDebt(TEST_NETWORK, collateralType, collateralOwned, drawnDebt);
 };
 
 const createDefaultVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
