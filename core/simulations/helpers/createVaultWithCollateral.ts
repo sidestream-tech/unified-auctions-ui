@@ -27,8 +27,6 @@ import { CollateralConfig, CollateralType } from '../../src/types';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
 import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardhat/erc20';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
-import { createProxy } from '../../src/proxy';
-import { giveAllowanceToAddress } from '../../src/authorizations';
 import detectProxyTarget from '../../helpers/detectProxyTarget';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
@@ -170,14 +168,10 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
 
 const createProxiedVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     const { minUnitPrice, stabilityFeeRate } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
-    const collateralSymbol = getCollateralConfigByType(collateralType).symbol;
     const drawnDebtExact = collateralOwned.multipliedBy(minUnitPrice).dividedBy(stabilityFeeRate);
     const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
-    const proxyAddress = await createProxy(TEST_NETWORK, HARDHAT_PUBLIC_KEY);
-    await giveAllowanceToAddress(TEST_NETWORK, collateralSymbol, proxyAddress, collateralOwned);
     return await openVaultWithProxiedContractAndDrawDebt(
         TEST_NETWORK,
-        proxyAddress,
         collateralType,
         collateralOwned,
         drawnDebt

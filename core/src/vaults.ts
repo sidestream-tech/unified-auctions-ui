@@ -30,10 +30,9 @@ import executeTransaction from './execute';
 import { getOsmPrices } from './oracles';
 import DS_PROXY from './abis/DS_PROXY.json';
 import { getMethodSignature } from '../helpers/hex';
-import { getCollateralConfigByType } from './constants/COLLATERALS';
-import { giveAllowanceToAddress } from './authorizations';
 import extractEventFromTransaction from './helpers/extractEventFromTransaction';
 import CDP_REGISTRY from './abis/CDP_REGISTRY.json';
+import { createProxyAndGiveAllowance } from './proxy';
 
 const CACHE_EXPIRY_MS = 60 * 1000;
 
@@ -393,14 +392,15 @@ const getLatestVault = async (network: string, walletAddress: string) => {
 
 export const openVaultWithProxiedContractAndDrawDebt = async (
     network: string,
-    proxyAddress: string,
     collateralType: CollateralType,
     collateralAmount: BigNumber,
     debtAmountDai: BigNumber,
-    proxyType = 'CROPPER'
+    proxyType = 'CROPPER',
+    existingProxyAddress?: string
 ) => {
-    const config = getCollateralConfigByType(collateralType);
-    giveAllowanceToAddress(network, config.symbol, proxyAddress, collateralAmount);
+    const proxyAddress = existingProxyAddress
+        ? existingProxyAddress
+        : await createProxyAndGiveAllowance(network, collateralType, collateralAmount);
 
     const signer = await getSigner(network);
     const proxyContract = new ethers.Contract(proxyAddress, DS_PROXY, signer);
