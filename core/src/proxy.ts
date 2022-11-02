@@ -9,9 +9,6 @@ export const createProxy = async (network: string, proxyOwnerAddress: string) =>
         'Created(address,address,address,address)',
         proxyFactoryContract.interface
     );
-    if (events.length !== 1) {
-        throw new Error("Undexpected number of 'Created' events");
-    }
     const proxyAddress = events[0].args.proxy;
     return proxyAddress;
 };

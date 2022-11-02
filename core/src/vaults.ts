@@ -429,9 +429,6 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
         'NewCdpRegistered(address,address,uint256)',
         new ethers.utils.Interface(CDP_REGISTRY)
     );
-    if (events.length !== 1) {
-        throw new Error('Unexpected number of NewCdpRegistered events');
-    }
     const vaultId = events[0].args.cdp.toNumber();
     return vaultId;
 };
