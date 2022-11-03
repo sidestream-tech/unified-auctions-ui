@@ -4,6 +4,7 @@ import { Simulation } from '../types';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
+    adjustLimitsAndRates,
     calculateMinCollateralAmountToOpenVault,
     getLiquidatableCollateralTypes,
 } from '../helpers/createVaultWithCollateral';
@@ -29,6 +30,7 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
+                await adjustLimitsAndRates(context.collateralType);
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
                 const latestVaultId = await createVaultWithCollateral(context.collateralType, collateralOwned);

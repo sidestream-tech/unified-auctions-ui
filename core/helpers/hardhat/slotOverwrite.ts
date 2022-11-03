@@ -1,6 +1,6 @@
 import hre from 'hardhat';
 import { ethers } from 'ethers';
-import { getContractAddressByName } from '../../src/contracts';
+import getContract, { getContractAddressByName } from '../../src/contracts';
 import BigNumber from '../../src/bignumber';
 import { EthereumProvider } from 'hardhat/types';
 import { formatToHex } from '../format';
@@ -127,4 +127,40 @@ export const runBalanceSlotDiscoveryLoopForERC20Token = async (
         }
     }
     return null;
+};
+
+const hasAdminPriveleges = async (contractName: string, address: string = HARDHAT_PUBLIC_KEY) => {
+    const contract = await getContract(TEST_NETWORK, contractName);
+    const access: BigNumber = await contract.wards(address);
+    if (access.eq(1)) {
+        return true;
+    }
+    return false;
+};
+const discoverAdminMappingSlot = async (contractName: string, loops = 10) => {
+    const contractAddress = await getContractAddressByName(TEST_NETWORK, contractName);
+    const overwriteValue = new BigNumber(1);
+    for (const i of Array.from(Array(loops).keys())) {
+        const slot = ethers.utils.hexValue(i);
+        const slotValueBeforeEdit = new BigNumber(await hre.ethers.provider.getStorageAt(contractAddress, slot));
+        await overwriteUintMappingInAddress(contractAddress, slot, HARDHAT_PUBLIC_KEY, overwriteValue);
+
+        let isSlotFound = false;
+        if (await hasAdminPriveleges(contractName)) {
+            isSlotFound = true;
+        }
+        // cleanup
+        await overwriteUintMappingInAddress(contractAddress, slot, HARDHAT_PUBLIC_KEY, slotValueBeforeEdit);
+        if (isSlotFound) {
+            return slot;
+        }
+    }
+    return null;
+};
+export const grantAdminPrivelegeForContract = async (contractName: string) => {
+    const slotAddress = await discoverAdminMappingSlot(contractName);
+    if (!slotAddress) {
+        throw new Error(`Failed to discover slot with admin priveleges of contract ${contractName}`);
+    }
+    await overwriteUintMapping(contractName, slotAddress, HARDHAT_PUBLIC_KEY, new BigNumber(1));
 };
