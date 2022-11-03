@@ -58,14 +58,33 @@ function limitedValue(value: number | BigNumber): number | BigNumber {
     return value;
 }
 
-export function formatToAutomaticDecimalPoints(
-    value: number | BigNumber,
-    decimalPlaces: number = DECIMAL_PLACES_DEFAULT
-): string {
-    return limitedValue(value).toFixed(dynamicDecimalPlaces(value, decimalPlaces));
+// We choose regex over native JS solutions, as using native solutions only support numbers
+export function formatWithThousandSeparators(value: string): string {
+    return value.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 }
 
-export function formatToAutomaticDecimalPointsString(value: number | BigNumber, decimalPlaces?: number) {
-    const formattedValue = formatToAutomaticDecimalPoints(value, decimalPlaces);
+interface formatToAutomaticDecimalPointsOptions {
+    decimalPlaces: number;
+    disableThousandSeparators: boolean;
+}
+
+export function formatToAutomaticDecimalPoints(
+    value: number | BigNumber,
+    options?: formatToAutomaticDecimalPointsOptions
+): string {
+    const formattedValue = limitedValue(value).toFixed(
+        dynamicDecimalPlaces(value, options?.decimalPlaces || DECIMAL_PLACES_DEFAULT)
+    );
+    if (options?.disableThousandSeparators) {
+        return formattedValue;
+    }
+    return formatWithThousandSeparators(formattedValue);
+}
+
+export function formatToAutomaticDecimalPointsString(
+    value: number | BigNumber,
+    options?: formatToAutomaticDecimalPointsOptions
+) {
+    const formattedValue = formatToAutomaticDecimalPoints(value, options);
     return isValueSmallButNotZero(value) ? `under ${formattedValue}` : formattedValue;
 }
