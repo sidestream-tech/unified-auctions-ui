@@ -105,12 +105,12 @@ declare interface MarketDataBase extends Partial<ExchangeFees> {
     transactionGrossProfit?: BigNumber;
     transactionGrossProfitDate?: Date;
     transactionNetProfit?: BigNumber;
-    errorMessage?: string;
+    errorMessage?: any;
 }
 
-declare interface MarketDataRegular extends MarketDataBase, RegularCalleeConfig {}
+declare interface MarketDataRegular extends MarketDataBase, Omit<RegularCalleeConfig, 'callee'> {}
 
-declare interface MarketDataUniswapV2LpToken extends MarketDataBase, UniswapV2LpTokenCalleeConfig {}
+declare interface MarketDataUniswapV2LpToken extends MarketDataBase, Omit<UniswapV2LpTokenCalleeConfig, 'callee'> {}
 
 export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken;
 

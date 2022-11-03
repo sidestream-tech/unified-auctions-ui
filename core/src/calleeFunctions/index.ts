@@ -1,4 +1,4 @@
-import type { CalleeNames, CalleeFunctions, MarketData } from '../types';
+import type { CalleeNames, CalleeFunctions, MarketData, CollateralConfig } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
@@ -34,55 +34,63 @@ export const getCalleeData = async function (
     return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress);
 };
 
+export const getMarketDataById = async function (
+    network: string,
+    collateral: CollateralConfig,
+    marketId: string,
+    amount: BigNumber = new BigNumber('1')
+): Promise<MarketData> {
+    const marketData = collateral.exchanges[marketId];
+    if (!allCalleeFunctions[marketData?.callee]) {
+        throw new Error(`Unsupported callee "${marketData?.callee}" for collateral symbol "${collateral.symbol}"`);
+    }
+    let marketUnitPrice: BigNumber;
+    try {
+        marketUnitPrice = await allCalleeFunctions[marketData.callee].getMarketPrice(
+            network,
+            collateral,
+            marketId,
+            amount
+        );
+    } catch (error: any) {
+        const errorMessage = error;
+        marketUnitPrice = new BigNumber(NaN);
+        return {
+            ...marketData,
+            marketUnitPrice,
+            errorMessage,
+        };
+    }
+    return {
+        ...marketData,
+        marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
+    };
+};
+
 export const getMarketData = async function (
     network: string,
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
-    const isCollateralSupported = Object.values(collateral.exchanges).some(
-        marketData => marketData.callee && allCalleeFunctions[marketData.callee]
-    );
-    if (!isCollateralSupported) {
-        throw new Error(`Unsupported collateral symbol "${collateralSymbol}"`);
-    }
     let marketDataRecords = {};
     for (const marketId in collateral.exchanges) {
-        const marketData = collateral.exchanges[marketId];
-        if (!allCalleeFunctions[marketData.callee]) {
-            continue;
-        }
-        let marketUnitPrice: BigNumber;
+        let marketData: MarketData;
         try {
-            marketUnitPrice = await allCalleeFunctions[marketData.callee].getMarketPrice(
-                network,
-                collateral,
-                marketId,
-                amount
-            );
-        } catch {
-            marketUnitPrice = new BigNumber(NaN);
-        }
-        if (marketData.callee === 'UniswapV2LpTokenCalleeDai') {
-            marketDataRecords = {
-                ...marketDataRecords,
-                [marketId]: {
-                    ...marketData,
-                    marketUnitPrice,
-                    token0: marketData.token0,
-                    token1: marketData.token1,
-                },
-            };
-        } else {
-            marketDataRecords = {
-                ...marketDataRecords,
-                [marketId]: {
-                    ...marketData,
-                    marketUnitPrice,
-                    route: marketData.route,
-                },
+            marketData = await getMarketDataById(network, collateral, marketId, amount);
+        } catch (error: any) {
+            marketData = {
+                errorMessage: error,
+                marketUnitPrice: new BigNumber(NaN),
+                route: [],
             };
         }
+        marketDataRecords = {
+            ...marketDataRecords,
+            [marketId]: {
+                ...marketData,
+            },
+        };
     }
     return marketDataRecords;
 };

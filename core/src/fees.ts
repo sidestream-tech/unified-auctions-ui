@@ -97,8 +97,23 @@ export const enrichAuctionWithTransactionFees = async function (
         combinedSwapFeesETH: combinedSwapFeesETH,
         combinedSwapFeesDAI: combinedSwapFeesDAI,
     } as AuctionTransaction;
-    if (auction.transactionGrossProfit && fees.swapTransactionFeeDAI) {
-        auctionTransaction.transactionNetProfit = auction.transactionGrossProfit.minus(combinedSwapFeesDAI);
+    if (auction.marketDataRecords && fees.swapTransactionFeeDAI) {
+        for (const marketId in auction.marketDataRecords) {
+            let marketData = { ...auction.marketDataRecords[marketId] };
+            if (marketData.transactionGrossProfit) {
+                marketData = {
+                    ...marketData,
+                    transactionNetProfit: marketData.transactionGrossProfit.minus(combinedSwapFeesDAI),
+                };
+            }
+        }
+    }
+    if (auction.suggestedMarketId && auction.marketDataRecords) {
+        const bestMarketData = auction.marketDataRecords[auction.suggestedMarketId];
+        const transactionGrossProfit = bestMarketData.transactionGrossProfit;
+        if (transactionGrossProfit) {
+            auctionTransaction.transactionNetProfit = transactionGrossProfit.minus(combinedSwapFeesDAI);
+        }
     }
     return auctionTransaction;
 };
