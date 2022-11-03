@@ -49,6 +49,9 @@ export const getMarketData = async function (
     let marketDataRecords = {};
     for (const marketId in collateral.exchanges) {
         const marketData = collateral.exchanges[marketId];
+        if (!allCalleeFunctions[marketData.callee]) {
+            continue;
+        }
         let marketUnitPrice: BigNumber;
         try {
             marketUnitPrice = await allCalleeFunctions[marketData.callee].getMarketPrice(
