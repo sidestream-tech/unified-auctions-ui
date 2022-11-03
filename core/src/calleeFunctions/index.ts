@@ -64,6 +64,7 @@ export const getMarketData = async function (
             marketDataRecords = {
                 ...marketDataRecords,
                 [marketId]: {
+                    ...marketData,
                     marketUnitPrice,
                     token0: marketData.token0,
                     token1: marketData.token1,
@@ -73,6 +74,7 @@ export const getMarketData = async function (
             marketDataRecords = {
                 ...marketDataRecords,
                 [marketId]: {
+                    ...marketData,
                     marketUnitPrice,
                     route: marketData.route,
                 },
@@ -82,14 +84,7 @@ export const getMarketData = async function (
     return marketDataRecords;
 };
 
-export type BestMarketData = {
-    marketId: string;
-    marketUnitPrice: BigNumber;
-};
-
-export const getBestMarketData = async function (
-    marketDataRecords: Record<string, MarketData>
-): Promise<BestMarketData> {
+export const getBestMarketId = async function (marketDataRecords: Record<string, MarketData>): Promise<string> {
     const marketDataRecordsSorted = Object.entries(marketDataRecords);
     marketDataRecordsSorted.sort((a, b) => {
         // push NaNs to the end
@@ -104,10 +99,7 @@ export const getBestMarketData = async function (
         }
         return a[1].marketUnitPrice.minus(b[1].marketUnitPrice).toNumber();
     });
-    return {
-        marketId: marketDataRecordsSorted[0][0],
-        marketUnitPrice: marketDataRecordsSorted[0][1].marketUnitPrice,
-    };
+    return marketDataRecordsSorted[0][0];
 };
 
 const _getMarketPrice = async function (
@@ -116,8 +108,8 @@ const _getMarketPrice = async function (
     amount: BigNumber = new BigNumber('1')
 ): Promise<BigNumber> {
     const marketData = await getMarketData(network, collateralSymbol, amount);
-    const bestMarketData = await getBestMarketData(marketData);
-    return bestMarketData.marketUnitPrice;
+    const bestMarketId = await getBestMarketId(marketData);
+    return marketData[bestMarketId].marketUnitPrice;
 };
 
 export const getMarketPrice = memoizee(_getMarketPrice, {

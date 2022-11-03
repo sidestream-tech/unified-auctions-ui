@@ -105,6 +105,7 @@ declare interface MarketDataBase extends Partial<ExchangeFees> {
     transactionGrossProfit?: BigNumber;
     transactionGrossProfitDate?: Date;
     transactionNetProfit?: BigNumber;
+    errorMessage?: string;
 }
 
 declare interface MarketDataRegular extends MarketDataBase, RegularCalleeConfig {}

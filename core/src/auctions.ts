@@ -5,7 +5,7 @@ import fetchAuctionsByCollateralType, {
     fetchAuctionStatus,
     fetchMinimumBidDai,
 } from './fetch';
-import { getBestMarketData, getCalleeData, getMarketData, getMarketPrice } from './calleeFunctions';
+import { getBestMarketId, getCalleeData, getMarketData, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
 import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS, NULL_BYTES } from './constants/UNITS';
@@ -76,6 +76,7 @@ export const enrichAuctionWithMarketData = async function (auction: Auction, net
         let marketDataRecords = await getMarketData(network, auction.collateralSymbol, collateralToCoverDebt);
         const exchangeFees = await getDefaultMarketFee(network);
         const exchangeFeePerUnitDAI = exchangeFees.exchangeFeeDAI.dividedBy(collateralToCoverDebt);
+        const currentDate = await getNetworkDate(auction.network);
         for (let marketData of Object.values(marketDataRecords)) {
             marketData = {
                 ...marketData,
@@ -92,14 +93,13 @@ export const enrichAuctionWithMarketData = async function (auction: Auction, net
                 transactionGrossProfitDate: calculateTransactionGrossProfitDate(
                     auction,
                     marketData.marketUnitPrice,
-                    await getNetworkDate(auction.network)
+                    currentDate
                 ),
             };
             marketDataRecords = { ...marketDataRecords, marketData };
         }
-        const bestMarketData = await getBestMarketData(marketDataRecords);
-        const suggestedMarketId = bestMarketData.marketId;
-        const marketUnitPrice = bestMarketData.marketUnitPrice;
+        const suggestedMarketId = await getBestMarketId(marketDataRecords);
+        const marketUnitPrice = marketDataRecords[suggestedMarketId].marketUnitPrice;
         const marketUnitPriceToUnitPriceRatio = marketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
         const transactionGrossProfit = marketDataRecords[suggestedMarketId].transactionGrossProfit;
         const transactionGrossProfitDate = marketDataRecords[suggestedMarketId].transactionGrossProfitDate;
