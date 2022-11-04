@@ -87,7 +87,10 @@ export const enrichMarketDataRecordsWithValues = async function (
         let marketData = marketDataRecords[marketId];
         // enrich with values dependent on marketUnitPrice
         if (marketData.marketUnitPrice.isNaN()) {
-            enrichedMarketDataRecords = { ...enrichedMarketDataRecords, marketData };
+            enrichedMarketDataRecords = {
+                ...enrichedMarketDataRecords,
+                [marketId]: { ...marketData },
+            };
             continue;
         }
         marketData = {
@@ -122,7 +125,10 @@ export const enrichMarketDataRecordsWithValues = async function (
                 ),
             };
         } catch {}
-        enrichedMarketDataRecords = { ...enrichedMarketDataRecords, marketData };
+        enrichedMarketDataRecords = {
+            ...enrichedMarketDataRecords,
+            [marketId]: { ...marketData },
+        };
     }
     return enrichedMarketDataRecords;
 };
@@ -145,6 +151,7 @@ export const enrichAuctionWithMarketDataRecords = async function (
             collateralToCoverDebt
         );
         const suggestedMarketId = await getBestMarketId(enrichedMarketDataRecords);
+        console.warn(suggestedMarketId);
         const marketUnitPrice = enrichedMarketDataRecords[suggestedMarketId].marketUnitPrice;
         const marketUnitPriceToUnitPriceRatio =
             enrichedMarketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
@@ -251,16 +258,16 @@ export const enrichAuction = async function (
     const auctionWithFees = await enrichAuctionWithTransactionFees(auctionWithPriceDrop, fees, network);
 
     // enrich them with market data
-    const auctionWithMarketData = await enrichAuctionWithMarketDataRecords(auctionWithFees, network);
+    const auctionWithMarketDataRecords = await enrichAuctionWithMarketDataRecords(auctionWithFees, network);
 
     if (auction.debtDAI.isEqualTo(0)) {
         return {
-            ...auctionWithMarketData,
+            ...auctionWithMarketDataRecords,
             isFinished: true,
             isActive: false,
         };
     }
-    return auctionWithMarketData;
+    return auctionWithMarketDataRecords;
 };
 
 const enrichTakeEventWithDate = async function (network: string, takeEvent: TakeEvent): Promise<TakeEvent> {
