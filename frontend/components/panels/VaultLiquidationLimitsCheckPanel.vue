@@ -30,7 +30,7 @@
                         >dog.Dirt</a
                     >
                 </Explain>
-                = <FormatCurrency :class="globalLimitColor" :value="globalLimit" currency="DAI"
+                = <FormatCurrency :value="globalLimit" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
@@ -59,25 +59,45 @@
                         >ilk.dirt</a
                     >
                 </Explain>
-                = <FormatCurrency :class="collateralLimitColor" :value="collateralLimit" currency="DAI"
+                = <FormatCurrency :value="collateralLimit" currency="DAI"
             /></span>
             <div v-else>
                 <span class="opacity-50">Unknown</span>
                 <span>DAI</span>
             </div>
         </div>
-        <hr class="mt-2 mb-1" />
         <div class="flex justify-between">
-            <span class="font-bold">Maximum liquidation amount</span>
-            <FormatCurrency
-                v-if="maximumLiquidationAmount"
-                :class="maximumLiquidationColor"
-                :value="maximumLiquidationAmount"
-                currency="DAI"
-            />
+            <span>Maximal liquidatable amount</span>
+            <FormatCurrency v-if="maximalLiquidatableAmount" :value="maximalLiquidatableAmount" currency="DAI" />
             <div v-else>
                 <span class="opacity-50">Unknown</span>
                 <span>DAI</span>
+            </div>
+        </div>
+        <div class="flex justify-between">
+            <span>Liquidation penalty ratio</span>
+            <div>
+                <FormatCurrency
+                    v-if="vaultTransaction.liquidationPenaltyRatio"
+                    :value="liquidationPenaltyPercentage"
+                />
+                <span v-else class="opacity-50">Unknown</span> &#37;
+            </div>
+        </div>
+        <div class="mt-2">
+            <hr class="mb-1" />
+            <div class="flex justify-between">
+                <span class="font-bold">Will be liquidated</span>
+                <div>
+                    <span v-if="willBeLiquidated">
+                        <FormatCurrency :value="willBeLiquidated" /> of
+                        <FormatCurrency :value="vaultTransaction.debtDai" currency="DAI" />
+                    </span>
+                    <div v-else>
+                        <span class="opacity-50">Unknown</span>
+                        <span>DAI</span>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="flex justify-end mt-4">
@@ -134,6 +154,22 @@ export default Vue.extend({
         isCollateralLimitMissing(): boolean {
             return !this.vaultTransaction.maximumCollateralDebtDai || !this.vaultTransaction.currentCollateralDebtDai;
         },
+        isBelowMinimal(): boolean {
+            return (
+                this.vaultTransaction.debtDai.isLessThan(this.vaultTransaction.minimalAuctionedDai) ||
+                this.willBeLiquidated?.isLessThan(this.vaultTransaction.minimalAuctionedDai) ||
+                this.partialLiquidationLeftover.isLessThan(this.vaultTransaction.minimalAuctionedDai)
+            );
+        },
+        partialLiquidationLeftover(): BigNumber {
+            if (!this.willBeLiquidated) {
+                return this.vaultTransaction.debtDai;
+            }
+            return this.vaultTransaction.debtDai.minus(this.willBeLiquidated);
+        },
+        liquidationPenaltyPercentage(): BigNumber {
+            return this.vaultTransaction.liquidationPenaltyRatio.minus(1).times(100);
+        },
         debtTimesPenaltyRatio(): BigNumber {
             return this.vaultTransaction.debtDai.times(this.vaultTransaction.liquidationPenaltyRatio);
         },
@@ -151,52 +187,48 @@ export default Vue.extend({
         collateralDifference(): BigNumber {
             return this.collateralLimit.minus(this.debtTimesPenaltyRatio);
         },
-        maximumLiquidationAmount(): BigNumber {
-            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
+        maximalLiquidatableAmount(): BigNumber | undefined {
+            if (
+                this.isGlobalLimitMissing ||
+                this.isCollateralLimitMissing ||
+                !this.vaultTransaction.liquidationPenaltyRatio
+            ) {
+                return undefined;
+            }
+            if (
+                this.globalDifference.isGreaterThanOrEqualTo(0) &&
+                this.collateralDifference.isGreaterThanOrEqualTo(0)
+            ) {
                 return this.vaultTransaction.debtDai;
             }
             if (this.globalLimit.isLessThanOrEqualTo(this.collateralLimit)) {
-                return this.globalLimit.absoluteValue();
+                return this.globalLimit;
             } else {
-                return this.collateralLimit.absoluteValue();
+                return this.collateralLimit;
             }
         },
-        globalLimitColor(): string {
-            if (this.globalDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
-                    return 'text-orange-500';
-                }
-                return 'text-red-500';
+        willBeLiquidated(): BigNumber | undefined {
+            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
+                return undefined;
             }
-            return 'text-current';
-        },
-        collateralLimitColor(): string {
-            if (this.collateralDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
-                    return 'text-orange-500';
-                }
-                return 'text-red-500';
-            }
-            return 'text-current';
-        },
-        maximumLiquidationColor(): string {
             if (this.globalDifference.isNegative() || this.collateralDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
-                    return 'text-orange-500';
+                if (this.globalLimit.isLessThanOrEqualTo(this.collateralLimit)) {
+                    return this.globalLimit.div(this.vaultTransaction.liquidationPenaltyRatio);
+                } else {
+                    return this.collateralLimit.div(this.vaultTransaction.liquidationPenaltyRatio);
                 }
-                return 'text-red-500';
             }
-            return 'text-current';
+            return this.vaultTransaction.debtDai;
         },
         currentStateAndTitle(): PanelProps {
-            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing || !this.debtTimesPenaltyRatio) {
+            if (this.isGlobalLimitMissing || this.isCollateralLimitMissing) {
                 return {
                     name: 'inactive',
                     title: 'Current liquidation limits are unknown',
                 };
             }
             if (this.globalDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
+                if (!this.isBelowMinimal) {
                     return {
                         name: 'attention',
                         title: 'Current global liquidation limits are partially reached',
@@ -208,7 +240,7 @@ export default Vue.extend({
                 };
             }
             if (this.collateralDifference.isNegative()) {
-                if (this.vaultTransaction.state === 'liquidatable') {
+                if (!this.isBelowMinimal) {
                     return {
                         name: 'attention',
                         title: `Current ${this.vaultTransaction.collateralType} liquidation limits are partially reached`,

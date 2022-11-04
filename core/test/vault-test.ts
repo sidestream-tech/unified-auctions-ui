@@ -7,7 +7,6 @@ import {
 } from '../src/vaults';
 import { getOsmPrices } from '../src/oracles';
 import { createWalletForRpc, resetNetwork, warpTime } from '../helpers/hardhat/network';
-import { overwriteUintValue } from '../helpers/hardhat/slotOverwrite';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
 import { expect } from 'chai';
@@ -19,10 +18,11 @@ import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
 import createVaultWithCollateral, {
+    adjustLimitsAndRates,
     calculateMinCollateralAmountToOpenVault,
     getLiquidatableCollateralTypes,
 } from '../simulations/helpers/createVaultWithCollateral';
-import { MAX, NULL_ADDRESS } from '../src/constants/UNITS';
+import { NULL_ADDRESS } from '../src/constants/UNITS';
 chai.use(deepEqualInAnyOrder);
 
 const compareVaultTransactionsNotLiquidated = (
@@ -421,12 +421,11 @@ describe(`Collateral vault simulation liquidation `, () => {
     before(async () => {
         await createWalletForRpc();
         await resetNetwork();
-        // set max global liquidation limit - `Hole` of dog.sol contract
-        await overwriteUintValue('MCD_DOG', '0x4', MAX);
     });
     for (const collateralType of getLiquidatableCollateralTypes()) {
         it(`runs the simulaton for ${collateralType}`, async () => {
             let collateralOwned: BigNumber;
+            await adjustLimitsAndRates(collateralType);
             try {
                 collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
             } catch (e) {
@@ -449,7 +448,7 @@ describe(`Collateral vault simulation liquidation `, () => {
             expect(vault.collateralAmount.toFixed(0)).to.eq(collateralOwned.toFixed(0));
 
             const previousStabilityFee = vault.stabilityFeeRate;
-            await warpTime(60 * 24 * 30, 60);
+            await warpTime(60 * 24 * 30 * 12, 60);
             await collectStabilityFees(TEST_NETWORK, vault.collateralType);
             const currentStabilityFee = (await fetchVault(TEST_NETWORK, vaultId)).stabilityFeeRate;
             if (!currentStabilityFee.gt(previousStabilityFee)) {
