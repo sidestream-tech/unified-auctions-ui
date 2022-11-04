@@ -151,7 +151,6 @@ export const enrichAuctionWithMarketDataRecords = async function (
             collateralToCoverDebt
         );
         const suggestedMarketId = await getBestMarketId(enrichedMarketDataRecords);
-        console.warn(suggestedMarketId);
         const marketUnitPrice = enrichedMarketDataRecords[suggestedMarketId].marketUnitPrice;
         const marketUnitPriceToUnitPriceRatio =
             enrichedMarketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
