@@ -42,12 +42,16 @@ export const calculateAuctionDropTime = function (auction: Auction, currentDate:
     return auction.secondsBetweenPriceDrops - (elapsedTime % auction.secondsBetweenPriceDrops);
 };
 
-export const calculateTransactionGrossProfit = function (auction: Auction): BigNumber {
-    if (!auction.marketUnitPrice) {
+export const calculateTransactionGrossProfit = function (
+    marketUnitPrice: BigNumber,
+    collateralToCoverDebt: BigNumber,
+    approximateUnitPrice: BigNumber
+): BigNumber {
+    if (!marketUnitPrice) {
         return new BigNumber(0);
     }
-    const totalDebtMarketPrice = auction.collateralToCoverDebt.multipliedBy(auction.marketUnitPrice);
-    const totalDebtPrice = auction.collateralToCoverDebt.multipliedBy(auction.approximateUnitPrice);
+    const totalDebtMarketPrice = collateralToCoverDebt.multipliedBy(marketUnitPrice);
+    const totalDebtPrice = collateralToCoverDebt.multipliedBy(approximateUnitPrice);
     return totalDebtMarketPrice.minus(totalDebtPrice);
 };
 
@@ -94,11 +98,15 @@ export const calculateTransactionCollateralOutcome = function (
     return potentialOutcomeCollateralAmount;
 };
 
-export const calculateTransactionGrossProfitDate = function (auction: Auction, currentDate: Date): Date | undefined {
+export const calculateTransactionGrossProfitDate = function (
+    auction: Auction,
+    marketUnitPrice: BigNumber | undefined,
+    currentDate: Date
+): Date | undefined {
     if (
         auction.secondsBetweenPriceDrops === undefined ||
         auction.secondsTillNextPriceDrop === undefined ||
-        auction.marketUnitPrice === undefined ||
+        marketUnitPrice === undefined ||
         auction.priceDropRatio === undefined ||
         !auction.isActive ||
         auction.isFinished
@@ -106,14 +114,14 @@ export const calculateTransactionGrossProfitDate = function (auction: Auction, c
         return undefined;
     }
 
-    const isAlreadyProfitable = auction.approximateUnitPrice.isLessThan(auction.marketUnitPrice);
+    const isAlreadyProfitable = auction.approximateUnitPrice.isLessThan(marketUnitPrice);
 
     if (isAlreadyProfitable) {
         return undefined;
     }
 
     const stepNumber = Math.ceil(
-        Math.log(auction.marketUnitPrice.dividedBy(auction.approximateUnitPrice).toNumber()) /
+        Math.log(marketUnitPrice.dividedBy(auction.approximateUnitPrice).toNumber()) /
             Math.log(auction.priceDropRatio.toNumber())
     );
 

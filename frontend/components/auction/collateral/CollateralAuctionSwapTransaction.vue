@@ -84,7 +84,13 @@
             :is-collateral-authed="isWalletCollateralAuthorizationCheckPassed"
             :fees="fees"
             :transaction-gross-profit="auctionTransaction.transactionGrossProfit"
-            @execute="$emit('execute', { id: auctionTransaction.id, alternativeDestinationAddress: $event })"
+            @execute="
+                $emit('execute', {
+                    id: auctionTransaction.id,
+                    marketId: auctionTransaction.suggestedMarketId,
+                    alternativeDestinationAddress: $event,
+                })
+            "
         />
     </div>
 </template>
