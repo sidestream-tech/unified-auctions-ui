@@ -25,13 +25,13 @@
                                 DAI
                             </td>
                             <td class="w-full text-right whitespace-nowrap">
-                                <div v-if="callee[1].unitPrice && !callee[1].unitPrice.isNaN()">
+                                <div v-if="callee[1].marketUnitPrice && !callee[1].marketUnitPrice.isNaN()">
                                     <button type="button" @click="$emit('update:marketId', callee[0])">
                                         <span v-if="marketId === callee[0]" class="opacity-50">Selected</span>
                                         <span v-else class="text-green-500">Select</span>
                                     </button>
                                     <span class="pl-1">
-                                        <FormatCurrency :value="callee[1].unitPrice" currency="DAI" /> per
+                                        <FormatCurrency :value="callee[1].marketUnitPrice" currency="DAI" /> per
                                         <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
                                     </span>
                                 </div>
@@ -50,7 +50,7 @@ import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { Icon } from 'ant-design-vue';
 import CollapseTransition from '@ivanv/vue-collapse-transition';
-import { AuctionTransaction, MarketData } from 'auctions-core/src/types';
+import { AuctionTransaction } from 'auctions-core/src/types';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
@@ -79,25 +79,25 @@ export default Vue.extend({
             return this.marketId || this.auctionTransaction.suggestedMarketId;
         },
         marketUnitPrice(): BigNumber | undefined {
-            if (this.auctionTransaction.marketData && this.suggestionOrSelection) {
-                return this.auctionTransaction.marketData[this.suggestionOrSelection].unitPrice;
+            if (this.auctionTransaction.marketDataRecords && this.suggestionOrSelection) {
+                return this.auctionTransaction.marketDataRecords[this.suggestionOrSelection].marketUnitPrice;
             }
             return undefined;
         },
-        callees(): Array<Array<[string, MarketData]>> {
+        callees() {
             const sorted = [];
             const unknown = [];
-            for (const callee in this.auctionTransaction.marketData) {
+            for (const callee in this.auctionTransaction.marketDataRecords) {
                 if (
-                    this.auctionTransaction.marketData[callee].unitPrice &&
-                    !this.auctionTransaction.marketData[callee].unitPrice.isNaN()
+                    this.auctionTransaction.marketDataRecords[callee].marketUnitPrice &&
+                    !this.auctionTransaction.marketDataRecords[callee].marketUnitPrice.isNaN()
                 ) {
-                    sorted.push([callee, this.auctionTransaction.marketData[callee]]);
+                    sorted.push([callee, this.auctionTransaction.marketDataRecords[callee]]);
                 } else {
-                    unknown.push([callee, this.auctionTransaction.marketData[callee]]);
+                    unknown.push([callee, this.auctionTransaction.marketDataRecords[callee]]);
                 }
             }
-            sorted.sort((a, b) => a[1].unitPrice.minus(b[1].unitPrice).toNumber());
+            sorted.sort((a, b) => a[1].marketUnitPrice.minus(b[1].marketUnitPrice).toNumber());
             return [...sorted, ...unknown];
         },
     },

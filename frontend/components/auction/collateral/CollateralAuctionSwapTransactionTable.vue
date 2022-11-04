@@ -25,8 +25,8 @@
         <div class="flex w-full justify-between">
             <div>Market Difference</div>
             <div class="RightInfo">
-                <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPriceToUnitPriceRatio">
-                    <FormatMarketValue :value="auctionTransaction.marketUnitPriceToUnitPriceRatio" />
+                <template v-if="auctionTransaction.isActive && marketUnitPriceToUnitPriceRatio">
+                    <FormatMarketValue :value="marketUnitPriceToUnitPriceRatio" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -41,9 +41,9 @@
             <div>Transaction Gross Profit</div>
             <div class="RightInfo">
                 <FormatCurrency
-                    v-if="auctionTransaction.transactionGrossProfit"
+                    v-if="transactionGrossProfit"
                     show-sign
-                    :value="auctionTransaction.transactionGrossProfit"
+                    :value="transactionGrossProfit"
                     currency="DAI"
                 />
                 <span v-else class="opacity-50">Unknown</span>
@@ -75,9 +75,9 @@
             <div class="font-extrabold">Transaction Net Profit</div>
             <div class="RightInfo">
                 <FormatCurrency
-                    v-if="auctionTransaction.transactionNetProfit"
+                    v-if="transactionNetProfit"
                     show-sign
-                    :value="auctionTransaction.transactionNetProfit"
+                    :value="transactionNetProfit"
                     currency="DAI"
                     class="font-extrabold"
                 />
@@ -88,6 +88,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import PriceDropAnimation from '~/components/auction/collateral/PriceDropAnimation.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import MarketPriceSelection from '~/components/auction/collateral/MarketPriceSelection.vue';
@@ -115,6 +116,26 @@ export default Vue.extend({
         marketId: {
             type: String,
             default: '',
+        },
+    },
+    computed: {
+        marketUnitPriceToUnitPriceRatio(): BigNumber | undefined {
+            if (!this.marketId || !this.auctionTransaction.marketDataRecords) {
+                return this.auctionTransaction.marketUnitPriceToUnitPriceRatio;
+            }
+            return this.auctionTransaction.marketDataRecords[this.marketId].marketUnitPriceToUnitPriceRatio;
+        },
+        transactionGrossProfit(): BigNumber | undefined {
+            if (!this.marketId || !this.auctionTransaction.marketDataRecords) {
+                return this.auctionTransaction.transactionGrossProfit;
+            }
+            return this.auctionTransaction.marketDataRecords[this.marketId].transactionGrossProfit;
+        },
+        transactionNetProfit(): BigNumber | undefined {
+            if (!this.marketId || !this.auctionTransaction.marketDataRecords) {
+                return this.auctionTransaction.transactionNetProfit;
+            }
+            return this.auctionTransaction.marketDataRecords[this.marketId].transactionNetProfit;
         },
     },
 });
