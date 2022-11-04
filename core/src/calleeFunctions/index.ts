@@ -40,34 +40,34 @@ export const getMarketDataById = async function (
     marketId: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<MarketData> {
-    const marketData = collateral.exchanges[marketId];
-    if (!allCalleeFunctions[marketData?.callee]) {
-        throw new Error(`Unsupported callee "${marketData?.callee}" for collateral symbol "${collateral.symbol}"`);
+    const calleeConfig = collateral.exchanges[marketId];
+    if (!allCalleeFunctions[calleeConfig?.callee]) {
+        throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
     let marketUnitPrice: BigNumber;
     try {
-        marketUnitPrice = await allCalleeFunctions[marketData.callee].getMarketPrice(
+        marketUnitPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
             network,
             collateral,
             marketId,
             amount
         );
     } catch (error: any) {
-        const errorMessage = error;
+        const errorMessage = error?.message;
         marketUnitPrice = new BigNumber(NaN);
         return {
-            ...marketData,
+            ...calleeConfig,
             marketUnitPrice,
             errorMessage,
         };
     }
     return {
-        ...marketData,
+        ...calleeConfig,
         marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
     };
 };
 
-export const getMarketData = async function (
+export const getMarketDataRecords = async function (
     network: string,
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
@@ -80,9 +80,9 @@ export const getMarketData = async function (
             marketData = await getMarketDataById(network, collateral, marketId, amount);
         } catch (error: any) {
             marketData = {
-                errorMessage: error,
+                errorMessage: error?.message,
                 marketUnitPrice: new BigNumber(NaN),
-                route: [],
+                route: [], // dummy value: MarketData requires either a route or tokens
             };
         }
         marketDataRecords = {
@@ -118,9 +118,9 @@ const _getMarketPrice = async function (
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<BigNumber> {
-    const marketData = await getMarketData(network, collateralSymbol, amount);
-    const bestMarketId = await getBestMarketId(marketData);
-    return marketData[bestMarketId].marketUnitPrice;
+    const marketDataRecords = await getMarketDataRecords(network, collateralSymbol, amount);
+    const bestMarketId = await getBestMarketId(marketDataRecords);
+    return marketDataRecords[bestMarketId].marketUnitPrice;
 };
 
 export const getMarketPrice = memoizee(_getMarketPrice, {
