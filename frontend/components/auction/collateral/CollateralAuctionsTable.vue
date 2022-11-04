@@ -36,11 +36,14 @@
                 </span>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
-            <div slot="endDate" slot-scope="endDate, record" class="text-center">
+            <div slot="endDate" slot-scope="endDate, record">
                 <span v-if="record.isFinished" class="opacity-50"> Finished </span>
                 <span v-else-if="record.isRestarting" class="opacity-50"> Restarting </span>
                 <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
-                <time-till v-else :date="endDate" />
+                <span v-else>
+                    Ends in
+                    <time-till :date="endDate" />
+                </span>
             </div>
             <div slot="updatingStatus" class="opacity-50 font-normal">
                 <div v-if="isLoading" class="flex items-center space-x-2">
@@ -179,10 +182,11 @@ export default Vue.extend({
                     defaultSortOrder: 'ascend',
                 },
                 {
-                    title: 'Auction Ends',
+                    title: 'State',
                     dataIndex: 'endDate',
                     scopedSlots: { customRender: 'endDate' },
                     sorter: compareBy('endDate', (a: Date, b: Date) => compareAsc(a, b)),
+                    width: '200px',
                 },
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },

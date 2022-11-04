@@ -24,6 +24,10 @@ storiesOf('Common/Formatters/AnimatedNumber', module)
         ...common,
         template: `<AnimatedNumber :value="num"/>`,
     }))
+    .add('Disable thousand separator', () => ({
+        ...common,
+        template: `<AnimatedNumber :value="num" :disableThousandSeparators="true" />`,
+    }))
     .add('Long Duration', () => ({
         ...common,
         template: `<AnimatedNumber :value="num" :duration="5000"/>`,

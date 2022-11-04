@@ -19,12 +19,17 @@ import WETH from './abis/WETH.json';
 import UNISWAP from './abis/UNISWAP_V2_ROUTER_02.json';
 import MCD_VOW from './abis/MCD_VOW.json';
 import CDP_MANAGER from './abis/CDP_MANAGER.json';
+import CDP_REGISTRY from './abis/CDP_REGISTRY.json';
+import MCD_CROPPER from './abis/MCD_CROPPER.json';
 import OSM_MOM from './abis/OSM_MOM.json';
 import OSM from './abis/OSM.json';
 import MEDIAN_PRICE_FEED from './abis/MEDIAN_PRICE_FEED.json';
 import MCD_SPOT from './abis/MCD_SPOT.json';
 import MCD_JUG from './abis/MCD_JUG.json';
 import ERC20 from './abis/ERC20.json';
+import MCD_ADM from './abis/MCD_ADM.json';
+import PROXY_FACTORY from './abis/PROXY_FACTORY.json';
+import PROXY_ACTIONS from './abis/PROXY_ACTIONS.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
@@ -61,6 +66,10 @@ export const getContractInterfaceByName = async function (contractName: string):
         MEDIAN_PRICE_FEED,
         MCD_SPOT,
         MCD_JUG,
+        CDP_REGISTRY,
+        MCD_CROPPER,
+        MCD_ADM,
+        PROXY_FACTORY,
     };
     if (Object.keys(ABIs).includes(contractName)) {
         return ABIs[contractName];
@@ -73,6 +82,9 @@ export const getContractInterfaceByName = async function (contractName: string):
     }
     if (contractName.startsWith('MCD_CLIP_')) {
         return MCD_CLIP;
+    }
+    if (contractName.startsWith('PROXY_ACTIONS_')) {
+        return PROXY_ACTIONS;
     }
     throw new Error(`No contract interface found for "${contractName}"`);
 };

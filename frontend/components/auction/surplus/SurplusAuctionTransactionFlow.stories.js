@@ -17,6 +17,7 @@ const common = {
         isConnectingWallet: false,
         isRefreshingWallet: false,
         isSettingAllowance: false,
+        isWalletAuthorized: false,
         isAuthorizing: false,
 
         walletAddress: undefined,

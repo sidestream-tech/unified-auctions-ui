@@ -1,4 +1,5 @@
-import { warpTime, resetNetworkAndSetupWallet, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
+import { resetNetworkAndSetupWallet, warpTime } from '../../helpers/hardhat/network';
+import { addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
 
 const HARDHAT_FORK_BLOCK_NUMBER = 14078339;

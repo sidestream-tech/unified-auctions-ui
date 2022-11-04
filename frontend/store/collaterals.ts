@@ -9,6 +9,7 @@ import { getMarketPrice } from 'auctions-core/src/calleeFunctions';
 import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import { isCollateralTypeSupported } from 'auctions-core/src/addresses';
+import { fetchAutoRouteInformation } from 'auctions-core/src/calleeFunctions/helpers/uniswapAutoRouter';
 
 interface State {
     collaterals: CollateralRow[];
@@ -98,12 +99,17 @@ export const actions = {
                     priceDropRatio: error.toString(),
                 };
             });
+            const autoRouteData = await fetchAutoRouteInformation(network, collateral.symbol);
+
             const updated = {
                 ilk: collateral.ilk,
                 marketUnitPrice,
                 secondsBetweenPriceDrops: calcParameters.secondsBetweenPriceDrops,
                 priceDropRatio: calcParameters.priceDropRatio,
                 tokenAddress,
+                autoRouteQuote: autoRouteData.totalPrice,
+                autoRouteExchanges: autoRouteData.routes,
+                autoRouteError: autoRouteData.errorMessage,
             };
             commit('updateCollateral', updated);
         }

@@ -1,9 +1,15 @@
-import type { Auction, AuctionTransaction, TransactionFees, VaultTransactionFees } from './types';
+import type { Auction, AuctionTransaction, TransactionFees, VaultTransactionFees, ExchangeFees } from './types';
 import BigNumber from './bignumber';
 import { getMarketPrice } from './calleeFunctions';
 import { getGasPriceForUI } from './gas';
 import getSigner from './signer';
 import { getCollateralAuthorizationStatus, getWalletAuthorizationStatus } from './authorizations';
+
+export const BID_TRANSACTION_GAS_LIMIT = 145438;
+export const SWAP_TRANSACTION_GAS_LIMIT = 722651;
+export const AUTH_TRANSACTION_GAS_LIMIT = 48356;
+export const RESTART_TRANSACTION_GAS_LIMIT = 209182;
+export const LIQUIDATION_TRANSACTION_GAS_LIMIT = 446658;
 
 export const convertETHtoDAI = async function (network: string, eth: BigNumber): Promise<BigNumber> {
     const exchangeRate = await getMarketPrice(network, 'ETH');
@@ -15,10 +21,10 @@ export const getApproximateTransactionFees = async function (network: string): P
 
     // TODO: figure out a way to properly estimate gas
     // for each transaction when no wallet is connected
-    const bidTransactionFeeETH = gasPrice.multipliedBy(145438);
-    const swapTransactionFeeETH = gasPrice.multipliedBy(722651);
-    const authTransactionFeeETH = gasPrice.multipliedBy(48356);
-    const restartTransactionFeeETH = gasPrice.multipliedBy(209182);
+    const bidTransactionFeeETH = gasPrice.multipliedBy(BID_TRANSACTION_GAS_LIMIT);
+    const swapTransactionFeeETH = gasPrice.multipliedBy(SWAP_TRANSACTION_GAS_LIMIT);
+    const authTransactionFeeETH = gasPrice.multipliedBy(AUTH_TRANSACTION_GAS_LIMIT);
+    const restartTransactionFeeETH = gasPrice.multipliedBy(RESTART_TRANSACTION_GAS_LIMIT);
 
     return {
         bidTransactionFeeETH,
@@ -32,9 +38,18 @@ export const getApproximateTransactionFees = async function (network: string): P
     };
 };
 
+export const getDefaultMarketFee = async function (network: string): Promise<ExchangeFees> {
+    const gasPrice = await getGasPriceForUI(network);
+    const exchangeFeeETH = gasPrice.multipliedBy(SWAP_TRANSACTION_GAS_LIMIT - BID_TRANSACTION_GAS_LIMIT);
+    return {
+        exchangeFeeETH,
+        exchangeFeeDAI: await convertETHtoDAI(network, exchangeFeeETH),
+    };
+};
+
 export const getApproximateLiquidationFees = async function (network: string): Promise<VaultTransactionFees> {
     const gasPrice = await getGasPriceForUI(network);
-    const transactionFeeLiquidationEth = gasPrice.multipliedBy(446658);
+    const transactionFeeLiquidationEth = gasPrice.multipliedBy(LIQUIDATION_TRANSACTION_GAS_LIMIT);
     return {
         transactionFeeLiquidationEth,
         transactionFeeLiquidationDai: await convertETHtoDAI(network, transactionFeeLiquidationEth),
@@ -82,8 +97,6 @@ export const enrichAuctionWithTransactionFees = async function (
         combinedSwapFeesETH: combinedSwapFeesETH,
         combinedSwapFeesDAI: combinedSwapFeesDAI,
     } as AuctionTransaction;
-    if (auction.transactionGrossProfit && fees.swapTransactionFeeDAI) {
-        auctionTransaction.transactionNetProfit = auction.transactionGrossProfit.minus(combinedSwapFeesDAI);
-    }
+
     return auctionTransaction;
 };

@@ -7,9 +7,11 @@ import { getUniswapRouteAddressesBySymbol, getRegularTokenExchangeRateBySymbol }
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
+    marketId: string,
     profitAddress: string
 ): Promise<string> {
-    if (collateral.exchange.callee !== 'UniswapV2CalleeDai') {
+    const marketData = collateral.exchanges[marketId];
+    if (marketData?.callee !== 'UniswapV2CalleeDai') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
@@ -19,16 +21,17 @@ const getCalleeData = async function (
         profitAddress,
         joinAdapterAddress,
         minProfit,
-        await getUniswapRouteAddressesBySymbol(network, collateral.symbol),
+        await getUniswapRouteAddressesBySymbol(network, collateral.symbol, marketId),
     ]);
 };
 
 const getMarketPrice = async function (
     network: string,
     collateral: CollateralConfig,
+    marketId: string,
     amount: BigNumber
 ): Promise<BigNumber> {
-    return await getRegularTokenExchangeRateBySymbol(network, collateral.symbol, amount);
+    return await getRegularTokenExchangeRateBySymbol(network, collateral.symbol, marketId, amount);
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {

@@ -9,7 +9,7 @@
             :fees="fees"
             show-different-wallet-info
         />
-        <div class="flex flex-col md:flex-row md:space-x-4 justify-end flex-wrap mt-4">
+        <div class="flex flex-col md:flex-row gap-4 justify-end flex-wrap mt-4">
             <ExecuteWithOtherWalletModal
                 :is-shown.sync="isExecuteToAnotherWalletModalShown"
                 :default-wallet="walletAddress"

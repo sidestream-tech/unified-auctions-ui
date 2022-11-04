@@ -7,7 +7,7 @@ const DEFAULT_NOTIFICATION_DURATION = 3;
 const NUMBER_OF_BLOCKS_TO_CONFIRM = 5;
 
 const defaultNotifier = function (_: string, messageContent: MessageContent) {
-    console.info(`transaction ${messageContent.key}: ${messageContent.content}`);
+    console.info(messageContent.content);
 };
 
 const trackTransaction = async function (

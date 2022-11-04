@@ -1,4 +1,6 @@
-import { resetNetworkAndSetupWallet, warpTime, addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat';
+import { resetNetworkAndSetupWallet, warpTime } from '../../helpers/hardhat/network';
+import { addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat/balance';
+
 import { causeSurplus } from '../../helpers/auctionSimulators';
 import { Simulation } from '../types';
 

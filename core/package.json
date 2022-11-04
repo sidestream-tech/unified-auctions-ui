@@ -31,16 +31,20 @@
   "dependencies": {
     "@nomiclabs/hardhat-ethers": "^2.1.0",
     "@uniswap/sdk": "^3.0.3",
+    "@uniswap/smart-order-router": "^2.10.0",
     "bignumber.js": "^9.0.1",
     "date-fns": "^2.28.0",
     "deep-equal-in-any-order": "^2.0.0",
     "ethers": "^5.4.6",
+    "evm-proxy-detection": "^1.0.0",
     "memoizee": "^0.4.15",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@ava/typescript": "^1.1.1",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
+    "@types/async-retry": "^1.4.5",
+    "@types/bunyan": "^1.8.8",
     "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/memoizee": "^0.4.7",
     "@types/mocha": "^9.1.1",
