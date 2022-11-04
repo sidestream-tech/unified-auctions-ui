@@ -9,7 +9,7 @@ const extractEventFromTransaction = async (
     const eventLogs = receipt.logs.filter(log => log.topics[0] === ethers.utils.id(eventSignature));
     const filteredLogs = eventLogs.map(log => ({ topics: log.topics, data: log.data }));
     const events = filteredLogs.map(log => contractInterface.parseLog(log));
-    if (events.length !== 1) {
+    if (events.length < 1) {
         throw new Error(`Unexpected number of ${eventSignature} events: ${events.length}`);
     }
     return events;
