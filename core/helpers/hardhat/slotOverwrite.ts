@@ -84,7 +84,7 @@ export const runBalanceSlotDiscoveryLoopForERC20Token = async (
     overwriteValue: BigNumber,
     initialValue: BigNumber,
     languageFormat: 'solidity' | 'vyper',
-    loops = 100
+    loops = 10
 ) => {
     for (const i of Array.from(Array(loops).keys())) {
         const slot = ethers.utils.hexValue(i);

@@ -80,7 +80,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             callee: 'UniswapV3Callee',
             route: [],
         },
-
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
     'ETH-C': {

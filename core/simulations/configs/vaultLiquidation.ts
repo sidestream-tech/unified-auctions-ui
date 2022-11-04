@@ -11,8 +11,10 @@ import createVaultWithCollateral, {
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 
+const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
+
 const simulation: Simulation = {
-    title: 'Simulate liquidation Auctions',
+    title: 'Simulate collateral auction per collateral type',
     steps: [
         {
             title: 'Reset blockchain fork',
@@ -34,13 +36,14 @@ const simulation: Simulation = {
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
                 const latestVaultId = await createVaultWithCollateral(context.collateralType, collateralOwned);
+                console.info(`Created Vault id: ${latestVaultId}`);
                 return { ...context, latestVaultId };
             },
         },
         {
             title: 'Skip time',
             entry: async context => {
-                await warpTime(60 * 24 * 30, 60);
+                await warpTime(TWO_YEARS_IN_MINUTES, 60);
                 return context;
             },
         },
