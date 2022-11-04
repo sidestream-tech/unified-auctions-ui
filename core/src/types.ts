@@ -6,11 +6,6 @@ export declare interface GasParameters {
     gasPrice?: string;
 }
 
-export type MarketData = {
-    unitPrice: BigNumber;
-    route: string[];
-};
-
 export declare interface AuctionInitialInfo {
     network: string;
     id: string;
@@ -28,8 +23,6 @@ export declare interface AuctionInitialInfo {
     suggestedMarketId?: string;
     marketDataRecords?: Record<string, MarketData>;
     marketUnitPrice?: BigNumber;
-    suggestedMarketId?: string;
-    marketData?: Record<string, MarketData>;
     marketUnitPriceToUnitPriceRatio?: BigNumber;
     transactionGrossProfit?: BigNumber;
     transactionAddress?: string;
