@@ -17,7 +17,7 @@ const _fetchMaximumAuctionDurationInSeconds = async function (
     return tail.toNumber();
 };
 
-const fetchMaximumAuctionDurationInSeconds = memoizee(_fetchMaximumAuctionDurationInSeconds, {
+export const fetchMaximumAuctionDurationInSeconds = memoizee(_fetchMaximumAuctionDurationInSeconds, {
     maxAge: CACHE_EXPIRY_MS,
     promise: true,
     length: 2,

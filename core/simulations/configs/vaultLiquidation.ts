@@ -4,10 +4,12 @@ import { Simulation } from '../types';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
+    adjustLimitsAndRates,
     calculateMinCollateralAmountToOpenVault,
     getLiquidatableCollateralTypes,
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
+import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
 
@@ -30,7 +32,7 @@ const simulation: Simulation = {
         {
             title: 'Create the vault',
             entry: async context => {
-                await collectStabilityFees(TEST_NETWORK, context.collateralType);
+                await adjustLimitsAndRates(context.collateralType);
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
                 const latestVaultId = await createVaultWithCollateral(context.collateralType, collateralOwned);
@@ -64,12 +66,22 @@ const simulation: Simulation = {
                 const liquidatedId = context.latestVaultId;
                 const vault = await fetchVault(TEST_NETWORK, liquidatedId);
                 await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
+                return context;
             },
         },
         {
             title: 'Skip time',
             entry: async context => {
-                await warpTime(60, 60);
+                const auctionLifetime = await fetchMaximumAuctionDurationInSeconds(
+                    TEST_NETWORK,
+                    context.collateralType
+                );
+                const warpSeconds = Math.floor(auctionLifetime / 2);
+                if (!warpSeconds) {
+                    throw new Error('Auction lifetime is too short to warp time.');
+                }
+                console.info(`Skipping time: ${warpSeconds} seconds`);
+                await warpTime(warpSeconds, 1);
                 return context;
             },
         },

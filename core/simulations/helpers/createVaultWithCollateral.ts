@@ -15,6 +15,7 @@ import {
     getContractAddressByName,
     getErc20Contract,
     getJoinNameByCollateralType,
+    getClipperNameByCollateralType,
 } from '../../src/contracts';
 import {
     depositCollateralToVat,
@@ -27,11 +28,16 @@ import { CollateralConfig, CollateralType } from '../../src/types';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
 import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardhat/erc20';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
+import { grantAdminPrivelegeForContract } from '../../helpers/hardhat/slotOverwrite';
+import {
+    allowAllActionsInClipperContract,
+    setCollateralDebtCeilingToGlobal,
+    setCollateralLiquidationLimitToGlobal,
+} from '../../helpers/hardhat/contractParametrization';
+import { overwriteStabilityFeeAccumulationRate } from '../../helpers/hardhat/overwrites';
 import detectProxyTarget from '../../helpers/detectProxyTarget';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
-    'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
-    'WSTETH-B', // Does not accumulate stability fee rate at all
     'RETH-A', // [temporary] this collateral is not yet deployed, tested via different flow
 ];
 
@@ -83,7 +89,7 @@ const ensureWalletBalance = async (collateralConfig: CollateralConfig, collatera
         HARDHAT_PUBLIC_KEY,
         collateralConfig.decimals
     );
-    if (!balance.eq(collateralOwned)) {
+    if (balance.minus(collateralOwned).shiftedBy(collateralConfig.decimals).abs().toFixed(0) !== '0') {
         throw new Error(
             `Unexpected wallet balance. Expected ${collateralOwned.toFixed()}, Actual ${balance.toFixed()}`
         );
@@ -210,6 +216,18 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
         return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
     }
     return await createProxiedVaultWithCollateral(collateralType, collateralOwned);
+};
+
+export const adjustLimitsAndRates = async (collateralType: CollateralType) => {
+    await grantAdminPrivelegeForContract('MCD_VAT');
+    await grantAdminPrivelegeForContract('MCD_DOG');
+    const clipper = getClipperNameByCollateralType(collateralType);
+    await grantAdminPrivelegeForContract(clipper);
+
+    await setCollateralLiquidationLimitToGlobal(collateralType);
+    await setCollateralDebtCeilingToGlobal(collateralType);
+    await allowAllActionsInClipperContract(collateralType);
+    await overwriteStabilityFeeAccumulationRate(collateralType, new BigNumber(1.0000000005));
 };
 
 export default createVaultWithCollateral;
