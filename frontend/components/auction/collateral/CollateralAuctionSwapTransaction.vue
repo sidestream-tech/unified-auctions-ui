@@ -9,7 +9,7 @@
         <Alert v-if="auctionTransaction.isFinished" message="This auction is finished" type="error" />
         <CollateralAuctionSwapTransactionTable
             :auction-transaction="auctionTransaction"
-            :market-id.sync="marketId"
+            :market-id.sync="currentMarketId"
             class="mt-4"
         />
         <TextBlock class="TextBlock mt-4 mb-8">
@@ -161,7 +161,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            marketId: '',
+            currentMarketId: '',
             isWalletConnectedCheck: false,
             isWalletDAIAuthorizationCheckPassed: false,
             isWalletCollateralAuthorizationCheckPassed: false,
@@ -189,7 +189,7 @@ export default Vue.extend({
             return fees;
         },
         marketSuggestionOrSelection(): string | undefined {
-            return this.marketId || this.auctionTransaction.suggestedMarketId;
+            return this.currentMarketId || this.auctionTransaction.suggestedMarketId;
         },
     },
 });

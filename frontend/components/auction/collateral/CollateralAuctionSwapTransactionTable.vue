@@ -143,6 +143,11 @@ export default Vue.extend({
             return this.auctionTransaction.marketDataRecords[this.currentMarketId].transactionNetProfit;
         },
     },
+    watch: {
+        currentMarketId(): void {
+            this.$emit('update:marketId', this.currentMarketId);
+        },
+    },
 });
 </script>
 
