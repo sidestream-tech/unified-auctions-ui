@@ -21,7 +21,7 @@
                 <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
             </div>
         </div>
-        <MarketPriceSelection :auction-transaction="auctionTransaction" :market-id.sync="marketId" />
+        <MarketPriceSelection :auction-transaction="auctionTransaction" :market-id.sync="currentMarketId" />
         <div class="flex w-full justify-between">
             <div>Market Difference</div>
             <div class="RightInfo">
@@ -118,24 +118,29 @@ export default Vue.extend({
             default: '',
         },
     },
+    data() {
+        return {
+            currentMarketId: '',
+        };
+    },
     computed: {
         marketUnitPriceToUnitPriceRatio(): BigNumber | undefined {
-            if (!this.marketId || !this.auctionTransaction.marketDataRecords) {
+            if (!this.currentMarketId || !this.auctionTransaction.marketDataRecords) {
                 return this.auctionTransaction.marketUnitPriceToUnitPriceRatio;
             }
-            return this.auctionTransaction.marketDataRecords[this.marketId].marketUnitPriceToUnitPriceRatio;
+            return this.auctionTransaction.marketDataRecords[this.currentMarketId].marketUnitPriceToUnitPriceRatio;
         },
         transactionGrossProfit(): BigNumber | undefined {
-            if (!this.marketId || !this.auctionTransaction.marketDataRecords) {
+            if (!this.currentMarketId || !this.auctionTransaction.marketDataRecords) {
                 return this.auctionTransaction.transactionGrossProfit;
             }
-            return this.auctionTransaction.marketDataRecords[this.marketId].transactionGrossProfit;
+            return this.auctionTransaction.marketDataRecords[this.currentMarketId].transactionGrossProfit;
         },
         transactionNetProfit(): BigNumber | undefined {
-            if (!this.marketId || !this.auctionTransaction.marketDataRecords) {
+            if (!this.currentMarketId || !this.auctionTransaction.marketDataRecords) {
                 return this.auctionTransaction.transactionNetProfit;
             }
-            return this.auctionTransaction.marketDataRecords[this.marketId].transactionNetProfit;
+            return this.auctionTransaction.marketDataRecords[this.currentMarketId].transactionNetProfit;
         },
     },
 });

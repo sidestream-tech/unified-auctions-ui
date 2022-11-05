@@ -159,13 +159,14 @@ export const enrichAuctionWithMarketDataRecords = async function (
         const transactionNetProfit = enrichedMarketDataRecords[suggestedMarketId].transactionNetProfit;
         return {
             ...auction,
+            collateralToCoverDebt,
             suggestedMarketId,
             marketUnitPrice,
             marketUnitPriceToUnitPriceRatio,
             transactionGrossProfit,
             transactionGrossProfitDate,
             transactionNetProfit: transactionNetProfit ? transactionNetProfit : new BigNumber(NaN),
-            marketDataRecords,
+            marketDataRecords: enrichedMarketDataRecords,
         };
     } catch (error: any) {
         // since it's expected that some collaterals are not tradable on some networks
