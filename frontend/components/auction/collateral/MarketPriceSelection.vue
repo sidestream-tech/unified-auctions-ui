@@ -27,7 +27,9 @@
                             <td class="w-full text-right whitespace-nowrap">
                                 <div v-if="callee[1].marketUnitPrice && !callee[1].marketUnitPrice.isNaN()">
                                     <button type="button" @click="$emit('update:marketId', callee[0])">
-                                        <span v-if="suggestionOrSelection === callee[0]" class="opacity-50">Selected</span>
+                                        <span v-if="suggestionOrSelection === callee[0]" class="opacity-50"
+                                            >Selected</span
+                                        >
                                         <span v-else class="text-green-500">Select</span>
                                     </button>
                                     <span class="pl-1">
