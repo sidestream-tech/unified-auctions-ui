@@ -108,7 +108,7 @@ export const getBestMarketId = async function (marketDataRecords: Record<string,
         if (b[1].marketUnitPrice.isNaN()) {
             return -1;
         }
-        return a[1].marketUnitPrice.minus(b[1].marketUnitPrice).toNumber();
+        return a[1].marketUnitPrice.minus(b[1].marketUnitPrice).multipliedBy(-1).toNumber();
     });
     return marketDataRecordsSorted[0][0];
 };

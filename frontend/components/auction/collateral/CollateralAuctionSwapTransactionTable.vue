@@ -21,21 +21,12 @@
                 <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
             </div>
         </div>
-        <div class="flex w-full justify-between">
-            <div>Price On Uniswap</div>
-            <div class="RightInfo">
-                <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPrice">
-                    <FormatCurrency :value="auctionTransaction.marketUnitPrice" currency="DAI" /> per
-                    <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
-                </template>
-                <span v-else class="opacity-50">Unknown</span>
-            </div>
-        </div>
+        <MarketPriceSelection :auction-transaction="auctionTransaction" :market-id.sync="currentMarketId" />
         <div class="flex w-full justify-between">
             <div>Market Difference</div>
             <div class="RightInfo">
-                <template v-if="auctionTransaction.isActive && auctionTransaction.marketUnitPriceToUnitPriceRatio">
-                    <FormatMarketValue :value="auctionTransaction.marketUnitPriceToUnitPriceRatio" />
+                <template v-if="auctionTransaction.isActive && marketUnitPriceToUnitPriceRatio">
+                    <FormatMarketValue :value="marketUnitPriceToUnitPriceRatio" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -50,9 +41,9 @@
             <div>Transaction Gross Profit</div>
             <div class="RightInfo">
                 <FormatCurrency
-                    v-if="auctionTransaction.transactionGrossProfit"
+                    v-if="transactionGrossProfit"
                     show-sign
-                    :value="auctionTransaction.transactionGrossProfit"
+                    :value="transactionGrossProfit"
                     currency="DAI"
                 />
                 <span v-else class="opacity-50">Unknown</span>
@@ -84,9 +75,9 @@
             <div class="font-extrabold">Transaction Net Profit</div>
             <div class="RightInfo">
                 <FormatCurrency
-                    v-if="auctionTransaction.transactionNetProfit"
+                    v-if="transactionNetProfit"
                     show-sign
-                    :value="auctionTransaction.transactionNetProfit"
+                    :value="transactionNetProfit"
                     currency="DAI"
                     class="font-extrabold"
                 />
@@ -97,10 +88,12 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import PriceDropAnimation from '~/components/auction/collateral/PriceDropAnimation.vue';
+import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
+import MarketPriceSelection from '~/components/auction/collateral/MarketPriceSelection.vue';
 import TimeTillProfitable from '~/components/auction/collateral/TimeTillProfitable.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
-import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import FormatMarketValue from '~/components/common/formatters/FormatMarketValue.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import { AuctionTransaction } from '~/../core/src/types';
@@ -108,9 +101,10 @@ import { AuctionTransaction } from '~/../core/src/types';
 export default Vue.extend({
     components: {
         PriceDropAnimation,
+        FormatCurrency,
+        MarketPriceSelection,
         TextBlock,
         TimeTill,
-        FormatCurrency,
         FormatMarketValue,
         TimeTillProfitable,
     },
@@ -118,6 +112,40 @@ export default Vue.extend({
         auctionTransaction: {
             type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
+        },
+        marketId: {
+            type: String,
+            default: '',
+        },
+    },
+    data() {
+        return {
+            currentMarketId: '',
+        };
+    },
+    computed: {
+        marketUnitPriceToUnitPriceRatio(): BigNumber | undefined {
+            if (!this.currentMarketId || !this.auctionTransaction.marketDataRecords) {
+                return this.auctionTransaction.marketUnitPriceToUnitPriceRatio;
+            }
+            return this.auctionTransaction.marketDataRecords[this.currentMarketId].marketUnitPriceToUnitPriceRatio;
+        },
+        transactionGrossProfit(): BigNumber | undefined {
+            if (!this.currentMarketId || !this.auctionTransaction.marketDataRecords) {
+                return this.auctionTransaction.transactionGrossProfit;
+            }
+            return this.auctionTransaction.marketDataRecords[this.currentMarketId].transactionGrossProfit;
+        },
+        transactionNetProfit(): BigNumber | undefined {
+            if (!this.currentMarketId || !this.auctionTransaction.marketDataRecords) {
+                return this.auctionTransaction.transactionNetProfit;
+            }
+            return this.auctionTransaction.marketDataRecords[this.currentMarketId].transactionNetProfit;
+        },
+    },
+    watch: {
+        currentMarketId(): void {
+            this.$emit('update:marketId', this.currentMarketId);
         },
     },
 });
