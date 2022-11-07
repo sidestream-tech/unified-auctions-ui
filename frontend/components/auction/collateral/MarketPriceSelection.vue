@@ -50,7 +50,7 @@ import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { Icon } from 'ant-design-vue';
 import CollapseTransition from '@ivanv/vue-collapse-transition';
-import { AuctionTransaction } from 'auctions-core/src/types';
+import { AuctionTransaction, MarketData } from 'auctions-core/src/types';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
@@ -84,21 +84,22 @@ export default Vue.extend({
             }
             return undefined;
         },
-        callees() {
-            const sorted = [];
-            const unknown = [];
-            for (const callee in this.auctionTransaction.marketDataRecords) {
-                if (
-                    this.auctionTransaction.marketDataRecords[callee].marketUnitPrice &&
-                    !this.auctionTransaction.marketDataRecords[callee].marketUnitPrice.isNaN()
-                ) {
-                    sorted.push([callee, this.auctionTransaction.marketDataRecords[callee]]);
-                } else {
-                    unknown.push([callee, this.auctionTransaction.marketDataRecords[callee]]);
+        callees(): [string, MarketData][] {
+            const marketDataRecordsSorted = Object.entries(this.auctionTransaction.marketDataRecords || {});
+            marketDataRecordsSorted.sort((a, b) => {
+                // push NaNs to the end
+                if (a[1].marketUnitPrice.isNaN() && b[1].marketUnitPrice.isNaN()) {
+                    return 1;
                 }
-            }
-            sorted.sort((a, b) => a[1].marketUnitPrice.minus(b[1].marketUnitPrice).toNumber());
-            return [...sorted, ...unknown];
+                if (a[1].marketUnitPrice.isNaN()) {
+                    return 1;
+                }
+                if (b[1].marketUnitPrice.isNaN()) {
+                    return -1;
+                }
+                return a[1].marketUnitPrice.minus(b[1].marketUnitPrice).multipliedBy(-1).toNumber();
+            });
+            return marketDataRecordsSorted;
         },
     },
 });

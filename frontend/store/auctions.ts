@@ -239,7 +239,6 @@ export const actions = {
             alternativeDestinationAddress,
         }: { id: string; marketId: string; alternativeDestinationAddress: string | undefined }
     ) {
-        console.info(marketId); // to be removed after core implementation
         const auction = getters.getAuctionById(id);
         if (!auction) {
             message.error(`Bidding error: can not find auction with id "${id}"`);

@@ -86,31 +86,34 @@ export const enrichMarketDataRecordsWithValues = async function (
     for (const marketId in marketDataRecords) {
         let marketData = marketDataRecords[marketId];
         // enrich with values dependent on marketUnitPrice
-        if (marketData.marketUnitPrice.isNaN()) {
+        let marketUnitPrice = marketData.marketUnitPrice;
+        if (marketUnitPrice.isNaN()) {
             enrichedMarketDataRecords = {
                 ...enrichedMarketDataRecords,
                 [marketId]: { ...marketData },
             };
             continue;
         }
+        marketUnitPrice = marketUnitPrice.plus(exchangeFeePerUnitDAI);
         marketData = {
             ...marketData,
-            marketUnitPrice: marketData.marketUnitPrice.plus(exchangeFeePerUnitDAI),
+            marketUnitPrice,
             marketUnitPriceToUnitPriceRatio: auction.approximateUnitPrice
-                .minus(marketData.marketUnitPrice)
-                .dividedBy(marketData.marketUnitPrice),
+                .minus(marketUnitPrice)
+                .dividedBy(marketUnitPrice),
             ...exchangeFees,
             transactionGrossProfit: calculateTransactionGrossProfit(
-                marketData.marketUnitPrice,
+                marketUnitPrice,
                 amount,
                 auction.approximateUnitPrice
             ),
         };
         // enrich with values dependent on fees
         if (marketData.transactionGrossProfit && auction.combinedSwapFeesDAI) {
+            const transactionGrossProfit = marketData.transactionGrossProfit;
             marketData = {
                 ...marketData,
-                transactionNetProfit: marketData.transactionGrossProfit.minus(auction.combinedSwapFeesDAI),
+                transactionNetProfit: transactionGrossProfit.minus(auction.combinedSwapFeesDAI),
             };
         }
         // enrich with values dependent on currentDate
@@ -118,11 +121,7 @@ export const enrichMarketDataRecordsWithValues = async function (
             const currentDate = await getNetworkDate(auction.network);
             marketData = {
                 ...marketData,
-                transactionGrossProfitDate: calculateTransactionGrossProfitDate(
-                    auction,
-                    marketData.marketUnitPrice,
-                    currentDate
-                ),
+                transactionGrossProfitDate: calculateTransactionGrossProfitDate(auction, marketUnitPrice, currentDate),
             };
         } catch {}
         enrichedMarketDataRecords = {
