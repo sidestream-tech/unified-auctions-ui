@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import type { CalleeFunctions, CollateralConfig } from '../types';
+import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { encodeRoute, convertCollateralToDai } from './helpers/uniswapV3';
@@ -12,13 +12,15 @@ const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    profitAddress: string
+    profitAddress: string,
+    _pools?: Pool[]
 ): Promise<string> {
-    const marketData = collateral.exchanges[marketId];
-    if (marketData?.callee !== 'rETHCurveUniv3Callee') {
+    const calleeConfig = collateral.exchanges[marketId];
+    const isAutorouted = 'automaticRouter' in calleeConfig;
+    if (calleeConfig?.callee !== 'rETHCurveUniv3Callee' || isAutorouted) {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const route = await encodeRoute(network, marketData.route);
+    const route = await encodeRoute(network, calleeConfig.route);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];

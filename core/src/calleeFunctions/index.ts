@@ -1,4 +1,4 @@
-import type { CalleeNames, CalleeFunctions, MarketData, CollateralConfig } from '../types';
+import type { CalleeNames, CalleeFunctions, MarketData, CollateralConfig, CollateralSymbol, CalleeConfig, Pool, MarketDataUniswapV2LpToken, MarketDataRegular, MarketDataUniswapV3Automatic } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
@@ -8,6 +8,9 @@ import CurveLpTokenUniv3Callee from './CurveLpTokenUniv3Callee';
 import UniswapV3Callee from './UniswapV3Callee';
 import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
+import { routeToPool } from './helpers/pools';
+import { fetchAutoRouteInformation } from './helpers/uniswapAutoRouter';
+import { UNISWAP_FEE } from './helpers/uniswapV3';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
@@ -24,15 +27,44 @@ export const getCalleeData = async function (
     network: string,
     collateralType: string,
     marketId: string,
-    profitAddress: string
+    profitAddress: string,
+    pools?: Pool[]
 ): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
     const marketData = collateral.exchanges[marketId];
     if (!marketData || !marketData.callee || !allCalleeFunctions[marketData.callee]) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress);
+    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress, pools);
 };
+const getCalleeAutoRoute = async (
+    network: string,
+    collateral: CollateralConfig,
+    marketId: string,
+    amount: BigNumber = new BigNumber('1')
+): Promise<string[] | undefined> => {
+    const calleeConfig = collateral.exchanges[marketId];
+    if (!('automaticRouter' in calleeConfig)) {
+        return undefined;
+    }
+    return (await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed())).route || [];
+}
+
+const getMarketDataWithoutPrice = (calleeConfig: CalleeConfig, route: string[] | undefined, pools: Pool[] | undefined) => {
+    if (!route && calleeConfig.callee === 'UniswapV2LpTokenCalleeDai') {
+        const uniswapV2LpMarketData: Omit<MarketDataUniswapV2LpToken, 'marketUnitPrice'> = calleeConfig;
+        return uniswapV2LpMarketData;
+    }
+    if ('route' in calleeConfig && pools) {
+        const regularMarketData: Omit<MarketDataRegular, 'marketUnitPrice'> = {...calleeConfig, pools};
+        return regularMarketData;
+    }
+    if ('automaticRouter' in calleeConfig && route && pools) {
+        const autorouterMarketData: Omit<MarketDataUniswapV3Automatic, 'marketUnitPrice'> = {...calleeConfig, route, pools};
+        return autorouterMarketData;
+    }
+    throw new Error('Unexpected market data parameters. Failed to determine the callee type.');
+}
 
 export const getMarketDataById = async function (
     network: string,
@@ -44,6 +76,10 @@ export const getMarketDataById = async function (
     if (!allCalleeFunctions[calleeConfig?.callee]) {
         throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
+
+    const route = 'route' in calleeConfig ? calleeConfig.route : await getCalleeAutoRoute(network, collateral, marketId, amount);
+    const pools = route ? await routeToPool(network, route, UNISWAP_FEE) : undefined;
+
     let marketUnitPrice: BigNumber;
     try {
         marketUnitPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
@@ -56,20 +92,20 @@ export const getMarketDataById = async function (
         const errorMessage = error?.message;
         marketUnitPrice = new BigNumber(NaN);
         return {
-            ...calleeConfig,
+            ...getMarketDataWithoutPrice(calleeConfig, route, pools),
             marketUnitPrice,
             errorMessage,
         };
     }
     return {
-        ...calleeConfig,
+        ...getMarketDataWithoutPrice(calleeConfig, route, pools),
         marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
     };
 };
 
 export const getMarketDataRecords = async function (
     network: string,
-    collateralSymbol: string,
+    collateralSymbol: CollateralSymbol,
     amount: BigNumber = new BigNumber('1')
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
@@ -83,6 +119,7 @@ export const getMarketDataRecords = async function (
                 errorMessage: error?.message,
                 marketUnitPrice: new BigNumber(NaN),
                 route: [], // dummy value: MarketData requires either a route or tokens
+                pools: [],
             };
         }
         marketDataRecords = {
@@ -118,6 +155,7 @@ const _getMarketPrice = async function (
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<BigNumber> {
+    // get collateral config and if exchanges contains automaticRouter, use that
     const marketDataRecords = await getMarketDataRecords(network, collateralSymbol, amount);
     const bestMarketId = await getBestMarketId(marketDataRecords);
     return marketDataRecords[bestMarketId].marketUnitPrice;

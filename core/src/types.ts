@@ -78,6 +78,7 @@ export declare interface AuctionTransaction extends Auction, TransactionFees {
     combinedSwapFeesETH: BigNumber;
 }
 
+
 export declare interface RegularCalleeConfig {
     callee:
         | 'UniswapV2CalleeDai'
@@ -86,6 +87,11 @@ export declare interface RegularCalleeConfig {
         | 'UniswapV3Callee'
         | 'rETHCurveUniv3Callee';
     route: string[];
+}
+
+export declare interface UniswapV3AutoRouterCalleeConfig {
+    callee: RegularCalleeConfig['callee'];
+    automaticRouter: true;
 }
 
 export declare interface UniswapV2LpTokenCalleeConfig {
@@ -108,23 +114,35 @@ declare interface MarketDataBase extends Partial<ExchangeFees> {
     errorMessage?: any;
 }
 
-declare interface MarketDataRegular extends MarketDataBase, Omit<RegularCalleeConfig, 'callee'> {}
+export declare interface Pool {
+    addresses: string[];
+    fee: number;
+}
+export declare interface MarketDataRegular extends MarketDataBase, Omit<RegularCalleeConfig, 'callee'> {
+    pools: Pool[]
+}
 
-declare interface MarketDataUniswapV2LpToken extends MarketDataBase, Omit<UniswapV2LpTokenCalleeConfig, 'callee'> {}
+export declare interface MarketDataUniswapV2LpToken extends MarketDataBase, Omit<UniswapV2LpTokenCalleeConfig, 'callee'> {}
 
-export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken;
+export declare interface MarketDataUniswapV3Automatic extends MarketDataBase, Omit<UniswapV3AutoRouterCalleeConfig, 'callee'> {
+    route: string[];
+    pools: Pool[];
+}
+
+export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken | (MarketDataUniswapV3Automatic & {route: string[]});
 
 export declare interface ValueSlotAddressAndOffset {
     slot: string;
     offset: number;
 }
 
+export type CalleeConfig = RegularCalleeConfig | UniswapV3AutoRouterCalleeConfig | UniswapV2LpTokenCalleeConfig;
 export declare interface CollateralConfig {
     title: string;
     ilk: string;
     symbol: string;
     decimals: number;
-    exchanges: Record<string, RegularCalleeConfig | UniswapV2LpTokenCalleeConfig>;
+    exchanges: Record<string, CalleeConfig >;
     oracle: CollateralPriceSourceConfig;
 }
 
@@ -172,7 +190,8 @@ export declare interface CalleeFunctions {
         network: string,
         collateral: CollateralConfig,
         marketId: string,
-        profitAddress: string
+        profitAddress: string,
+        pools?: Pool[]
     ) => Promise<string>;
     getMarketPrice: (
         network: string,
@@ -333,6 +352,7 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
 
 export type CollateralType = CollateralConfig['ilk'];
+export type CollateralSymbol = CollateralConfig['symbol'];
 
 export declare interface LiquidationLimits {
     maximumProtocolDebtDai: BigNumber;

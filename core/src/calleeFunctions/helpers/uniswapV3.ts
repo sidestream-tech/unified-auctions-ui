@@ -6,6 +6,7 @@ import { getContractAddressByName } from '../../contracts';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
+import { Pool } from '../../types';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
@@ -13,6 +14,23 @@ export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
 const getUniswapV3quoterContract = async function (network: string): Promise<ethers.Contract> {
     const provider = await getProvider(network);
     return new ethers.Contract(UNISWAP_V3_QUOTER_ADDRESS, UNISWAP_V3_QUOTER_ABI, provider);
+};
+
+export const encodePools = async function (pools: Pool[]): Promise<string> {
+    const types = [] as string[];
+    const values = [] as Array<string | number>;
+
+    types.push('address');
+    values.push(pools[0].addresses[0]);
+    for (const pool of pools) {
+        types.push('address');
+        values.push(pool.addresses[1]);
+
+        types.push('uint24');
+        values.push(pool.fee);
+    }
+
+    return ethers.utils.solidityPack(types, values);
 };
 
 export const encodeRoute = async function (network: string, collateralSymbols: string[]): Promise<string> {
@@ -40,7 +58,8 @@ export const convertCollateralToDaiUsingRoute = async function (
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     const marketData = collateral.exchanges[marketId];
-    if (marketData?.callee !== 'UniswapV3Callee') {
+    const isAutorouted = 'automaticRouter' in marketData;
+    if (marketData?.callee !== 'UniswapV3Callee' || isAutorouted) {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);

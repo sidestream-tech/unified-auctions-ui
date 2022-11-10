@@ -1,22 +1,27 @@
-import type { CalleeFunctions, CollateralConfig } from '../types';
+import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { convertCollateralToDaiUsingRoute, encodeRoute } from './helpers/uniswapV3';
+import { convertCollateralToDaiUsingRoute, encodePools } from './helpers/uniswapV3';
 
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    profitAddress: string
+    profitAddress: string,
+    pools?: Pool[]
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
+    if (!pools) {
+        throw new Error(`getCalleeData called with invalid pools`);
+    }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const uniswapV3route = await encodeRoute(network, [collateral.symbol, ...marketData.route]);
+    const uniswapV3route = await encodePools(pools);
+    console.log('uniswapV3route', uniswapV3route);
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,

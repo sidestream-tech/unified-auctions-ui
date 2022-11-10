@@ -57,17 +57,25 @@ export const fetchAutoRouteInformation = async function (
     try {
         const token = await getUniswapTokenBySymbol(network, collateralSymbol);
         const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
-        const routes = autoRouteData.route[0].tokenPath.map(p => p.symbol);
+        const route = autoRouteData.route[0].tokenPath.map(p => {
+            if (!p.symbol) {
+                throw new Error(`Could not get symbol for token "${p.address}".`);
+            }
+            return p.symbol;
+        });
+        const quote = new BigNumber(autoRouteData.quote.toFixed());
 
         return {
             totalPrice: new BigNumber(autoRouteData.quote.toFixed(token.decimals)),
-            routes,
+            route,
+            quote,
             errorMessage: undefined,
         };
     } catch (error: any) {
         return {
             totalPrice: undefined,
-            routes: undefined,
+            route: undefined,
+            quote: undefined,
             errorMessage: error.toString(),
         };
     }
