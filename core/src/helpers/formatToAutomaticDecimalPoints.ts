@@ -58,9 +58,9 @@ function limitedValue(value: number | BigNumber): number | BigNumber {
     return value;
 }
 
-// We choose regex over native JS solutions, as using native solutions only support numbers
 export function formatWithThousandSeparators(value: string): string {
-    return value.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+    // We choose regex over native JS solutions, as using native solutions only support numbers
+    return value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
 }
 
 interface formatToAutomaticDecimalPointsOptions {
