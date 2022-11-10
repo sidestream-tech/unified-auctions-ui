@@ -9,16 +9,20 @@ import {
 } from './network';
 import { formatToHexWithoutPad } from '../helpers/format';
 
-const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<string> {
+export const getDecimalChainIdFromRpcUrl = async function (rpcUrl: string): Promise<number> {
     const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcUrl });
     const networkInfo = await provider.getNetwork();
     if (!networkInfo || !networkInfo.chainId) {
         throw new Error(`Can not verify RPC url`);
     }
-    return formatToHexWithoutPad(networkInfo.chainId);
+    return networkInfo.chainId;
 };
 
-const parseInfuraProjectIdFromRpcUrl = function (rpcUrl: string): string | undefined {
+const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<string> {
+    return formatToHexWithoutPad(await getDecimalChainIdFromRpcUrl(rpcUrl));
+};
+
+export const parseInfuraProjectIdFromRpcUrl = function (rpcUrl: string): string | undefined {
     const result = /infura\.io\/v3\/(\S+)/gm.exec(rpcUrl);
     return result?.[1] ?? undefined;
 };
