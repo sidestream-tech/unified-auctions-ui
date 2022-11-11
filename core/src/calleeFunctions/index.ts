@@ -106,14 +106,10 @@ export const getMarketDataRecords = async function (
     network: string,
     collateralSymbol: CollateralSymbol,
     amount: BigNumber = new BigNumber('1'),
-    marketIds?: string[]
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     let marketDataRecords = {};
-    const collateralExchanges = marketIds
-        ? Object.keys(collateral.exchanges).filter(e => marketIds.includes(e))
-        : Object.keys(collateral.exchanges);
-    for (const marketId of collateralExchanges) {
+    for (const marketId in collateral.exchanges) {
         let marketData: MarketData;
         try {
             marketData = await getMarketDataById(network, collateral, marketId, amount);
