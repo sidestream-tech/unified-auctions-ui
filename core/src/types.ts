@@ -88,7 +88,7 @@ export declare interface RegularCalleeConfig {
     route: string[];
 }
 
-export declare interface UniswapV3AutoRouterCalleeConfig {
+export declare interface AutoRouterCalleeConfig {
     callee: RegularCalleeConfig['callee'];
     automaticRouter: true;
 }
@@ -126,7 +126,7 @@ export declare interface MarketDataUniswapV2LpToken
 
 export declare interface MarketDataUniswapV3Automatic
     extends MarketDataBase,
-        Omit<UniswapV3AutoRouterCalleeConfig, 'callee'> {
+        Omit<AutoRouterCalleeConfig, 'callee'> {
     route: string[];
 }
 
@@ -140,7 +140,7 @@ export declare interface ValueSlotAddressAndOffset {
     offset: number;
 }
 
-export type CalleeConfig = RegularCalleeConfig | UniswapV3AutoRouterCalleeConfig | UniswapV2LpTokenCalleeConfig;
+export type CalleeConfig = RegularCalleeConfig | AutoRouterCalleeConfig | UniswapV2LpTokenCalleeConfig;
 export declare interface CollateralConfig {
     title: string;
     ilk: string;
