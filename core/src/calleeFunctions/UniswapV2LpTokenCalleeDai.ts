@@ -1,4 +1,4 @@
-import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
+import type { CalleeFunctions, CollateralConfig } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
@@ -15,7 +15,6 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     marketId: string,
     profitAddress: string,
-    _pools?: Pool[]
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'UniswapV2LpTokenCalleeDai') {

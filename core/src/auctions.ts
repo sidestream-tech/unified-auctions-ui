@@ -6,7 +6,6 @@ import type {
     TakeEvent,
     MarketData,
     ExchangeFees,
-    Pool,
 } from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, {
@@ -336,11 +335,10 @@ export const bidWithCallee = async function (
     auction: Auction,
     marketId: string,
     profitAddress: string,
-    pools?: Pool[],
     notifier?: Notifier
 ): Promise<string> {
     const calleeAddress = getCalleeAddressByCollateralType(network, auction.collateralType, marketId);
-    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress, pools);
+    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress);
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
         convertNumberTo32Bytes(auction.index),

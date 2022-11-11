@@ -1,4 +1,4 @@
-import type { CalleeNames, CalleeFunctions, MarketData, CollateralConfig, CollateralSymbol, Pool } from '../types';
+import type { CalleeNames, CalleeFunctions, MarketData, CollateralConfig, CollateralSymbol } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
@@ -28,7 +28,6 @@ export const getCalleeData = async function (
     collateralType: string,
     marketId: string,
     profitAddress: string,
-    pools?: Pool[]
 ): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
     const marketData = collateral.exchanges[marketId];
@@ -40,7 +39,6 @@ export const getCalleeData = async function (
         collateral,
         marketId,
         profitAddress,
-        pools
     );
 };
 const getCalleeAutoRoute = async (
@@ -56,7 +54,7 @@ const getCalleeAutoRoute = async (
     return (await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed())).route || [];
 };
 
-const getPools = async (network: string, collateral: CollateralConfig, marketId: string, amount: BigNumber) => {
+export const getPools = async (network: string, collateral: CollateralConfig, marketId: string, amount: BigNumber = new BigNumber(1)) => {
     const calleeConfig = collateral.exchanges[marketId];
     if (calleeConfig.callee === 'UniswapV2LpTokenCalleeDai') {
         return undefined;
