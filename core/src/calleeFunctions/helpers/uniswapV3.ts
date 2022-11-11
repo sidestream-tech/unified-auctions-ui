@@ -7,6 +7,7 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { Pool } from '../../types';
 import { routeToPool } from './pools';
+import { getContractAddressByName } from '../../contracts';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
@@ -16,7 +17,7 @@ const getUniswapV3quoterContract = async function (network: string): Promise<eth
     return new ethers.Contract(UNISWAP_V3_QUOTER_ADDRESS, UNISWAP_V3_QUOTER_ABI, provider);
 };
 
-export const encodePools = async function (pools: Pool[]): Promise<string> {
+export const encodePools = async function (network: string, pools: Pool[]): Promise<string> {
     const types = [] as string[];
     const values = [] as Array<string | number>;
 
@@ -29,6 +30,8 @@ export const encodePools = async function (pools: Pool[]): Promise<string> {
         types.push('uint24');
         values.push(pool.fee);
     }
+    types.push('address');
+    values.push(await getContractAddressByName(network, 'MCD_DAI'));
 
     return ethers.utils.solidityPack(types, values);
 };
@@ -47,7 +50,7 @@ export const convertCollateralToDaiUsingPool = async function (
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
     const pools = await routeToPool(network, [collateral.symbol, ...calleeConfig.route], UNISWAP_FEE);
-    const encodedPools = encodePools(pools);
+    const encodedPools = encodePools(network, pools);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(
         encodedPools,

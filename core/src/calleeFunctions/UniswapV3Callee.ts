@@ -20,7 +20,7 @@ const getCalleeData = async function (
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const uniswapV3pools = await encodePools(pools);
+    const uniswapV3pools = await encodePools(network, pools);
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,

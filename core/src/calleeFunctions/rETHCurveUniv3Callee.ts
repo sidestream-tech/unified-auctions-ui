@@ -21,7 +21,7 @@ const getCalleeData = async function (
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
     const pools = await routeToPool(network, calleeConfig.route, UNISWAP_FEE);
-    const route = await encodePools(pools);
+    const route = await encodePools(network, pools);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
