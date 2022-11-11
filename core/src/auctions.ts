@@ -129,8 +129,6 @@ export const enrichMarketDataRecordsWithValues = async function (
             ...enrichedMarketDataRecords,
             [marketId]: { ...marketData },
         };
-        if (marketData) {
-        }
     }
     return enrichedMarketDataRecords;
 };
