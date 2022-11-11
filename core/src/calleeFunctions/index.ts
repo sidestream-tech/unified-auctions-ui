@@ -154,7 +154,6 @@ const _getMarketPrice = async function (
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<BigNumber> {
-    // get collateral config and if exchanges contains automaticRouter, use that
     const marketDataRecords = await getMarketDataRecords(network, collateralSymbol, amount);
     const bestMarketId = await getBestMarketId(marketDataRecords);
     return marketDataRecords[bestMarketId].marketUnitPrice;
