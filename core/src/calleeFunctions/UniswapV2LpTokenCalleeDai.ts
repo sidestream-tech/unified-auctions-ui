@@ -14,7 +14,7 @@ const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    profitAddress: string,
+    profitAddress: string
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'UniswapV2LpTokenCalleeDai') {

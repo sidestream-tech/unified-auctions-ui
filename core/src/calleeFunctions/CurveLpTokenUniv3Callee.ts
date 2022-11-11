@@ -12,7 +12,7 @@ const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    profitAddress: string,
+    profitAddress: string
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
     const isAutorouted = 'automaticRouter' in marketData;

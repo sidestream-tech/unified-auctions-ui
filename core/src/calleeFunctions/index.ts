@@ -27,19 +27,14 @@ export const getCalleeData = async function (
     network: string,
     collateralType: string,
     marketId: string,
-    profitAddress: string,
+    profitAddress: string
 ): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
     const marketData = collateral.exchanges[marketId];
     if (!marketData || !marketData.callee || !allCalleeFunctions[marketData.callee]) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await allCalleeFunctions[marketData.callee].getCalleeData(
-        network,
-        collateral,
-        marketId,
-        profitAddress,
-    );
+    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress);
 };
 const getCalleeAutoRoute = async (
     network: string,
@@ -54,7 +49,12 @@ const getCalleeAutoRoute = async (
     return (await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed())).route || [];
 };
 
-export const getPools = async (network: string, collateral: CollateralConfig, marketId: string, amount: BigNumber = new BigNumber(1)) => {
+export const getPools = async (
+    network: string,
+    collateral: CollateralConfig,
+    marketId: string,
+    amount: BigNumber = new BigNumber(1)
+) => {
     const calleeConfig = collateral.exchanges[marketId];
     if (calleeConfig.callee === 'UniswapV2LpTokenCalleeDai') {
         return undefined;
@@ -103,7 +103,7 @@ export const getMarketDataById = async function (
 export const getMarketDataRecords = async function (
     network: string,
     collateralSymbol: CollateralSymbol,
-    amount: BigNumber = new BigNumber('1'),
+    amount: BigNumber = new BigNumber('1')
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     let marketDataRecords = {};

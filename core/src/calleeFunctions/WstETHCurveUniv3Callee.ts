@@ -10,7 +10,7 @@ const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     _marketId: string,
-    profitAddress: string,
+    profitAddress: string
 ): Promise<string> {
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
