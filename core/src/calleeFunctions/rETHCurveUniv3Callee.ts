@@ -13,14 +13,14 @@ const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    profitAddress: string,
+    profitAddress: string
 ): Promise<string> {
     const calleeConfig = collateral.exchanges[marketId];
     const isAutorouted = 'automaticRouter' in calleeConfig;
     if (calleeConfig?.callee !== 'rETHCurveUniv3Callee' || isAutorouted) {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const pools = await routeToPool(network, calleeConfig.route, UNISWAP_FEE)
+    const pools = await routeToPool(network, calleeConfig.route, UNISWAP_FEE);
     const route = await encodePools(pools);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;

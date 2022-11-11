@@ -20,7 +20,7 @@ const getCalleeData = async function (
     if (marketData?.callee !== 'CurveLpTokenUniv3Callee' || isAutorouted) {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const pools = await routeToPool(network, marketData.route, UNISWAP_FEE)
+    const pools = await routeToPool(network, marketData.route, UNISWAP_FEE);
     const route = await encodePools(pools);
     const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));

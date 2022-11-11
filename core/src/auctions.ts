@@ -130,7 +130,6 @@ export const enrichMarketDataRecordsWithValues = async function (
             [marketId]: { ...marketData },
         };
         if (marketData) {
-
         }
     }
     return enrichedMarketDataRecords;

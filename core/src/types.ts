@@ -78,7 +78,6 @@ export declare interface AuctionTransaction extends Auction, TransactionFees {
     combinedSwapFeesETH: BigNumber;
 }
 
-
 export declare interface RegularCalleeConfig {
     callee:
         | 'UniswapV2CalleeDai'
@@ -112,24 +111,29 @@ declare interface MarketDataBase extends Partial<ExchangeFees> {
     transactionGrossProfitDate?: Date;
     transactionNetProfit?: BigNumber;
     errorMessage?: any;
+    pools?: Pool[];
 }
 
 export declare interface Pool {
     addresses: string[];
     fee: number;
 }
-export declare interface MarketDataRegular extends MarketDataBase, Omit<RegularCalleeConfig, 'callee'> {
-    pools: Pool[]
-}
+export declare interface MarketDataRegular extends MarketDataBase, Omit<RegularCalleeConfig, 'callee'> {}
 
-export declare interface MarketDataUniswapV2LpToken extends MarketDataBase, Omit<UniswapV2LpTokenCalleeConfig, 'callee'> {}
+export declare interface MarketDataUniswapV2LpToken
+    extends MarketDataBase,
+        Omit<UniswapV2LpTokenCalleeConfig, 'callee'> {}
 
-export declare interface MarketDataUniswapV3Automatic extends MarketDataBase, Omit<UniswapV3AutoRouterCalleeConfig, 'callee'> {
+export declare interface MarketDataUniswapV3Automatic
+    extends MarketDataBase,
+        Omit<UniswapV3AutoRouterCalleeConfig, 'callee'> {
     route: string[];
-    pools: Pool[];
 }
 
-export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken | (MarketDataUniswapV3Automatic & {route: string[]});
+export type MarketData =
+    | MarketDataRegular
+    | MarketDataUniswapV2LpToken
+    | (MarketDataUniswapV3Automatic & { route: string[] });
 
 export declare interface ValueSlotAddressAndOffset {
     slot: string;
@@ -142,7 +146,7 @@ export declare interface CollateralConfig {
     ilk: string;
     symbol: string;
     decimals: number;
-    exchanges: Record<string, CalleeConfig >;
+    exchanges: Record<string, CalleeConfig>;
     oracle: CollateralPriceSourceConfig;
 }
 

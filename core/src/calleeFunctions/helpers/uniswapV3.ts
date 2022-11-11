@@ -49,7 +49,10 @@ export const convertCollateralToDaiUsingPool = async function (
     const pools = await routeToPool(network, [collateral.symbol, ...calleeConfig.route], UNISWAP_FEE);
     const encodedPools = encodePools(pools);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
-    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(encodedPools, collateralIntegerAmount);
+    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(
+        encodedPools,
+        collateralIntegerAmount
+    );
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     return daiAmount;
 };

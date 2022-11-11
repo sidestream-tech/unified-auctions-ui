@@ -138,7 +138,7 @@ export const getMarketDataRecords = async function (
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     let marketDataRecords = {};
     const collateralExchanges = marketIds
-        ? Object.keys( collateral.exchanges ).filter(e => marketIds.includes(e))
+        ? Object.keys(collateral.exchanges).filter(e => marketIds.includes(e))
         : Object.keys(collateral.exchanges);
     for (const marketId of collateralExchanges) {
         let marketData: MarketData;
