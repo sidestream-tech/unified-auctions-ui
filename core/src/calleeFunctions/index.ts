@@ -1,4 +1,15 @@
-import type { CalleeNames, CalleeFunctions, MarketData, CollateralConfig, CollateralSymbol, CalleeConfig, Pool, MarketDataUniswapV2LpToken, MarketDataRegular, MarketDataUniswapV3Automatic } from '../types';
+import type {
+    CalleeNames,
+    CalleeFunctions,
+    MarketData,
+    CollateralConfig,
+    CollateralSymbol,
+    CalleeConfig,
+    Pool,
+    MarketDataUniswapV2LpToken,
+    MarketDataRegular,
+    MarketDataUniswapV3Automatic,
+} from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
@@ -35,7 +46,13 @@ export const getCalleeData = async function (
     if (!marketData || !marketData.callee || !allCalleeFunctions[marketData.callee]) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress, pools);
+    return await allCalleeFunctions[marketData.callee].getCalleeData(
+        network,
+        collateral,
+        marketId,
+        profitAddress,
+        pools
+    );
 };
 const getCalleeAutoRoute = async (
     network: string,
@@ -48,23 +65,31 @@ const getCalleeAutoRoute = async (
         return undefined;
     }
     return (await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed())).route || [];
-}
+};
 
-const getMarketDataWithoutPrice = (calleeConfig: CalleeConfig, route: string[] | undefined, pools: Pool[] | undefined) => {
+const getMarketDataWithoutPrice = (
+    calleeConfig: CalleeConfig,
+    route: string[] | undefined,
+    pools: Pool[] | undefined
+) => {
     if (!route && calleeConfig.callee === 'UniswapV2LpTokenCalleeDai') {
         const uniswapV2LpMarketData: Omit<MarketDataUniswapV2LpToken, 'marketUnitPrice'> = calleeConfig;
         return uniswapV2LpMarketData;
     }
     if ('route' in calleeConfig && pools) {
-        const regularMarketData: Omit<MarketDataRegular, 'marketUnitPrice'> = {...calleeConfig, pools};
+        const regularMarketData: Omit<MarketDataRegular, 'marketUnitPrice'> = { ...calleeConfig, pools };
         return regularMarketData;
     }
     if ('automaticRouter' in calleeConfig && route && pools) {
-        const autorouterMarketData: Omit<MarketDataUniswapV3Automatic, 'marketUnitPrice'> = {...calleeConfig, route, pools};
+        const autorouterMarketData: Omit<MarketDataUniswapV3Automatic, 'marketUnitPrice'> = {
+            ...calleeConfig,
+            route,
+            pools,
+        };
         return autorouterMarketData;
     }
     throw new Error('Unexpected market data parameters. Failed to determine the callee type.');
-}
+};
 
 export const getMarketDataById = async function (
     network: string,
@@ -77,7 +102,8 @@ export const getMarketDataById = async function (
         throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
 
-    const route = 'route' in calleeConfig ? calleeConfig.route : await getCalleeAutoRoute(network, collateral, marketId, amount);
+    const route =
+        'route' in calleeConfig ? calleeConfig.route : await getCalleeAutoRoute(network, collateral, marketId, amount);
     const pools = route ? await routeToPool(network, route, UNISWAP_FEE) : undefined;
 
     let marketUnitPrice: BigNumber;
@@ -106,11 +132,15 @@ export const getMarketDataById = async function (
 export const getMarketDataRecords = async function (
     network: string,
     collateralSymbol: CollateralSymbol,
-    amount: BigNumber = new BigNumber('1')
+    amount: BigNumber = new BigNumber('1'),
+    marketIds?: string[]
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     let marketDataRecords = {};
-    for (const marketId in collateral.exchanges) {
+    const collateralExchanges = marketIds
+        ? Object.keys( collateral.exchanges ).filter(e => marketIds.includes(e))
+        : Object.keys(collateral.exchanges);
+    for (const marketId of collateralExchanges) {
         let marketData: MarketData;
         try {
             marketData = await getMarketDataById(network, collateral, marketId, amount);

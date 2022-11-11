@@ -2,7 +2,7 @@ import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { convertCollateralToDaiUsingRoute, encodePools } from './helpers/uniswapV3';
+import { convertCollateralToDaiUsingPool, encodePools } from './helpers/uniswapV3';
 
 const getCalleeData = async function (
     network: string,
@@ -20,14 +20,14 @@ const getCalleeData = async function (
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const uniswapV3route = await encodePools(pools);
-    console.log('uniswapV3route', uniswapV3route);
+    const uniswapV3pools = await encodePools(pools);
+    console.log('uniswapV3route', uniswapV3pools);
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,
         joinAdapterAddress,
         minProfit,
-        uniswapV3route,
+        uniswapV3pools,
         ethers.constants.AddressZero,
     ]);
 };
@@ -39,7 +39,7 @@ const getMarketPrice = async function (
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     // convert collateral into DAI
-    const daiAmount = await convertCollateralToDaiUsingRoute(network, collateral.symbol, marketId, collateralAmount);
+    const daiAmount = await convertCollateralToDaiUsingPool(network, collateral.symbol, marketId, collateralAmount);
 
     // return price per unit
     return daiAmount.dividedBy(collateralAmount);
