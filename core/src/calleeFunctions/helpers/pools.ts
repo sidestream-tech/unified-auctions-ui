@@ -2,9 +2,10 @@ import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { Pool } from '../../types';
 
 const getRouteSteps = (route: string[]) => {
+    const fullRoute = [...route, 'DAI'];
     const routeSteps = [];
-    for (let i = 0; i < route.length - 1; i++) {
-        routeSteps.push([route[i], route[i + 1]]);
+    for (let i = 0; i < fullRoute.length - 1; i++) {
+        routeSteps.push([fullRoute[i], fullRoute[i + 1]]);
     }
     return routeSteps;
 };
