@@ -4,11 +4,7 @@ import type {
     MarketData,
     CollateralConfig,
     CollateralSymbol,
-    CalleeConfig,
     Pool,
-    MarketDataUniswapV2LpToken,
-    MarketDataRegular,
-    MarketDataUniswapV3Automatic,
 } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
@@ -59,37 +55,23 @@ const getCalleeAutoRoute = async (
     collateral: CollateralConfig,
     marketId: string,
     amount: BigNumber = new BigNumber('1')
-): Promise<string[] | undefined> => {
+): Promise<string[]> => {
     const calleeConfig = collateral.exchanges[marketId];
     if (!('automaticRouter' in calleeConfig)) {
-        return undefined;
+        throw new Error('Unexpected market data parameters. Failed to determine the callee type.');
     }
     return (await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed())).route || [];
 };
 
-const getMarketDataWithoutPrice = (
-    calleeConfig: CalleeConfig,
-    route: string[] | undefined,
-    pools: Pool[] | undefined
-) => {
-    if (!route && calleeConfig.callee === 'UniswapV2LpTokenCalleeDai') {
-        const uniswapV2LpMarketData: Omit<MarketDataUniswapV2LpToken, 'marketUnitPrice'> = calleeConfig;
-        return uniswapV2LpMarketData;
+const getPools = async (network: string, collateral: CollateralConfig, marketId: string, amount: BigNumber) => {
+    const calleeConfig = collateral.exchanges[marketId]
+    if (calleeConfig.callee === 'UniswapV2LpTokenCalleeDai') {
+        return undefined;
     }
-    if ('route' in calleeConfig && pools) {
-        const regularMarketData: Omit<MarketDataRegular, 'marketUnitPrice'> = { ...calleeConfig, pools };
-        return regularMarketData;
-    }
-    if ('automaticRouter' in calleeConfig && route && pools) {
-        const autorouterMarketData: Omit<MarketDataUniswapV3Automatic, 'marketUnitPrice'> = {
-            ...calleeConfig,
-            route,
-            pools,
-        };
-        return autorouterMarketData;
-    }
-    throw new Error('Unexpected market data parameters. Failed to determine the callee type.');
-};
+    const route =
+        'route' in calleeConfig ? calleeConfig.route : await getCalleeAutoRoute(network, collateral, marketId, amount);
+    return await routeToPool(network, route, UNISWAP_FEE);
+}
 
 export const getMarketDataById = async function (
     network: string,
@@ -101,11 +83,7 @@ export const getMarketDataById = async function (
     if (!allCalleeFunctions[calleeConfig?.callee]) {
         throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
-
-    const route =
-        'route' in calleeConfig ? calleeConfig.route : await getCalleeAutoRoute(network, collateral, marketId, amount);
-    const pools = route ? await routeToPool(network, route, UNISWAP_FEE) : undefined;
-
+    const pools = await getPools(network, collateral, marketId, amount);
     let marketUnitPrice: BigNumber;
     try {
         marketUnitPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
@@ -118,13 +96,15 @@ export const getMarketDataById = async function (
         const errorMessage = error?.message;
         marketUnitPrice = new BigNumber(NaN);
         return {
-            ...getMarketDataWithoutPrice(calleeConfig, route, pools),
+            ...calleeConfig,
+            pools,
             marketUnitPrice,
             errorMessage,
         };
     }
     return {
-        ...getMarketDataWithoutPrice(calleeConfig, route, pools),
+        ...calleeConfig,
+        pools,
         marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
     };
 };

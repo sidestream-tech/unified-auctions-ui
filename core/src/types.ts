@@ -127,13 +127,12 @@ export declare interface MarketDataUniswapV2LpToken
 export declare interface MarketDataUniswapV3Automatic
     extends MarketDataBase,
         Omit<AutoRouterCalleeConfig, 'callee'> {
-    route: string[];
 }
 
 export type MarketData =
     | MarketDataRegular
     | MarketDataUniswapV2LpToken
-    | (MarketDataUniswapV3Automatic & { route: string[] });
+    | MarketDataUniswapV3Automatic;
 
 export declare interface ValueSlotAddressAndOffset {
     slot: string;
