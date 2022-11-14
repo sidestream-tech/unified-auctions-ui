@@ -23,4 +23,8 @@ storiesOf('Common/Formatters/TimeTill', module)
             date: new Date(Date.now() + 5000).toUTCString(),
         }),
         template: `<TimeTill :date="date" />`,
+    }))
+    .add('Invalid date', () => ({
+        components: { TimeTill },
+        template: `<TimeTill date="Invalid Date" />`,
     }));
