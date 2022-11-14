@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { formatToHexWithoutPad } from 'auctions-core/helpers/format';
 import { getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { setSigner } from 'auctions-core/src/signer';
-import { getDecimalChainIdFromRpcUrl, parseInfuraProjectIdFromRpcUrl } from 'auctions-core/src/rpc';
 import WalletConnectLogo from '~/assets/icons/wallets/walletconnect.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
 
@@ -22,29 +21,12 @@ export default class WalletConnect extends AbstractWallet {
     }
 
     async getProvider(): Promise<ethers.providers.JsonRpcProvider> {
-        const rpcUrl = process.env.RPC_URL;
-        if (!rpcUrl) {
-            throw new Error(`No RPC_URL env variable was provided`);
+        const infuraId = process.env.INFURA_PROJECT_ID;
+        if (!infuraId) {
+            throw new Error(`No INFURA_PROJECT_ID env variable was provided`);
         }
-        const chainId = await getDecimalChainIdFromRpcUrl(rpcUrl);
-        const chainIdHex = formatToHexWithoutPad(chainId);
-        const networkType = getNetworkTypeByChainId(chainIdHex);
-        const projectId = parseInfuraProjectIdFromRpcUrl(rpcUrl);
-        if (projectId) {
-            WalletConnect.provider = new WalletConnectProvider({
-                infuraId: projectId,
-                chainId,
-            });
-        } else {
-            WalletConnect.provider = new WalletConnectProvider({
-                rpc: {
-                    [chainId]: rpcUrl,
-                },
-                chainId,
-            });
-        }
+        WalletConnect.provider = new WalletConnectProvider({ infuraId });
         await WalletConnect.provider.enable();
-        await WalletConnect.provider.updateState({ rpcUrl, chainId, networkId: networkType });
         return new ethers.providers.Web3Provider(WalletConnect.provider);
     }
 
@@ -63,21 +45,21 @@ export default class WalletConnect extends AbstractWallet {
 
     public async switchNetwork(network: string): Promise<void> {
         const provider = await this.getProvider();
-        const chainIdHex = getChainIdByNetworkType(network);
-        await provider.send('wallet_switchEthereumChain', [{ chainIdHex }]);
+        const chainId = getChainIdByNetworkType(network);
+        await provider.send('wallet_switchEthereumChain', [{ chainId }]);
     }
 
     public async networkChangedHandler() {
         if (!WalletConnect.provider) {
             return;
         }
-        const chainIdHex = formatToHexWithoutPad(WalletConnect.provider.chainId);
-        const networkType = getNetworkTypeByChainId(chainIdHex);
+        const chainId = formatToHexWithoutPad(WalletConnect.provider.chainId);
+        const networkType = getNetworkTypeByChainId(chainId);
         const signer = await this.getSigner();
         if (networkType) {
             setSigner(networkType, signer as any);
         }
-        window.$nuxt.$store.dispatch('network/setWalletChainId', chainIdHex);
+        window.$nuxt.$store.dispatch('network/setWalletChainId', chainId);
     }
 
     public accountsChangedHandler(addresses: Array<string>) {
