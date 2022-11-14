@@ -90,6 +90,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: [],

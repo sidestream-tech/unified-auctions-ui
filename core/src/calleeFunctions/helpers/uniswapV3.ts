@@ -7,7 +7,7 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { Pool } from '../../types';
 import { routeToPool } from './pools';
-import { getContractAddressByName } from '../../contracts';
+import { fetchAutoRouteInformation } from './uniswapAutoRouter';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
@@ -29,7 +29,7 @@ export const encodePools = async function (_network: string, pools: Pool[]): Pro
         values.push(pool.fee);
     }
     types.push('address');
-    values.push(pools[pools.length-1].addresses[1]);
+    values.push(pools[pools.length - 1].addresses[1]);
     return ethers.utils.solidityPack(types, values);
 };
 
@@ -42,11 +42,17 @@ export const convertCollateralToDaiUsingPool = async function (
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     const calleeConfig = collateral.exchanges[marketId];
     const isAutorouted = 'automaticRouter' in calleeConfig;
-    if (calleeConfig?.callee !== 'UniswapV3Callee' || isAutorouted) {
+    if (calleeConfig?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
-    const pools = await routeToPool(network, [collateral.symbol, ...calleeConfig.route], UNISWAP_FEE);
+    const route = isAutorouted
+        ? (await fetchAutoRouteInformation(network, collateralSymbol, collateralAmount.toFixed())).route
+        : [collateral.symbol, ...calleeConfig.route];
+    if (!route) {
+        throw new Error(`No route found for ${collateralSymbol} to DAI`);
+    }
+    const pools = await routeToPool(network, route, UNISWAP_FEE);
     const encodedPools = await encodePools(network, pools);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(
