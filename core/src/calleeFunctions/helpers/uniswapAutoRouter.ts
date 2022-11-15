@@ -6,7 +6,11 @@ import { getDecimalChainIdByNetworkType } from '../../network';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 
-const getUniswapTokenBySymbol = async function (network: string, symbol: string, decimalChainId?: number): Promise<Token> {
+const getUniswapTokenBySymbol = async function (
+    network: string,
+    symbol: string,
+    decimalChainId?: number
+): Promise<Token> {
     const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const tokenDecimals = getTokenDecimalsBySymbol(symbol);
     const chainId = decimalChainId || getDecimalChainIdByNetworkType(network);
@@ -18,7 +22,7 @@ export const getUniswapAutoRoute = async function (
     collateralSymbol: string,
     inputAmount: string | number = 1,
     walletAddress?: string,
-    chainId: number = 1
+    chainId = 1
 ) {
     const collateralConfig = getCollateralConfigBySymbol(collateralSymbol);
     const provider = await getProvider(network);
@@ -54,11 +58,17 @@ export const fetchAutoRouteInformation = async function (
     collateralSymbol: string,
     inputAmount: string | number = 1,
     walletAddress?: string,
-    chainId: number = 1
+    chainId = 1
 ) {
     try {
         const token = await getUniswapTokenBySymbol(network, collateralSymbol, chainId);
-        const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress, chainId);
+        const autoRouteData = await getUniswapAutoRoute(
+            network,
+            collateralSymbol,
+            inputAmount,
+            walletAddress,
+            chainId
+        );
         const route = autoRouteData.route[0].tokenPath.map(p => {
             if (!p.symbol) {
                 throw new Error(`Could not get symbol for token "${p.address}".`);
