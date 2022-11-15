@@ -17,13 +17,14 @@ export const getUniswapAutoRoute = async function (
     network: string,
     collateralSymbol: string,
     inputAmount: string | number = 1,
-    walletAddress?: string
+    walletAddress?: string,
+    chainId: number = 1
 ) {
     const collateralConfig = getCollateralConfigBySymbol(collateralSymbol);
     const provider = await getProvider(network);
-    const router = new AlphaRouter({ chainId: 1, provider });
-    const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol, 1);
-    const outputToken = await getUniswapTokenBySymbol(network, 'DAI', 1);
+    const router = new AlphaRouter({ chainId, provider });
+    const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol, chainId);
+    const outputToken = await getUniswapTokenBySymbol(network, 'DAI', chainId);
 
     const inputAmountInteger = new BigNumber(inputAmount).shiftedBy(collateralConfig.decimals).toFixed(0);
     const inputAmountWithCurrency = CurrencyAmount.fromRawAmount(inputToken, inputAmountInteger);
@@ -52,11 +53,12 @@ export const fetchAutoRouteInformation = async function (
     network: string,
     collateralSymbol: string,
     inputAmount: string | number = 1,
-    walletAddress?: string
+    walletAddress?: string,
+    chainId: number = 1
 ) {
     try {
-        const token = await getUniswapTokenBySymbol(network, collateralSymbol, 1);
-        const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
+        const token = await getUniswapTokenBySymbol(network, collateralSymbol, chainId);
+        const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress, chainId);
         const route = autoRouteData.route[0].tokenPath.map(p => {
             if (!p.symbol) {
                 throw new Error(`Could not get symbol for token "${p.address}".`);
