@@ -6,11 +6,11 @@ import { getDecimalChainIdByNetworkType } from '../../network';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 
-const getUniswapTokenBySymbol = async function (network: string, symbol: string): Promise<Token> {
+const getUniswapTokenBySymbol = async function (network: string, symbol: string, decimalChainId?: number): Promise<Token> {
     const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const tokenDecimals = getTokenDecimalsBySymbol(symbol);
-    const decimalChainId = getDecimalChainIdByNetworkType(network);
-    return new Token(decimalChainId, tokenAddress, tokenDecimals, symbol);
+    const chainId = decimalChainId || getDecimalChainIdByNetworkType(network);
+    return new Token(chainId, tokenAddress, tokenDecimals, symbol);
 };
 
 export const getUniswapAutoRoute = async function (
@@ -22,8 +22,8 @@ export const getUniswapAutoRoute = async function (
     const collateralConfig = getCollateralConfigBySymbol(collateralSymbol);
     const provider = await getProvider(network);
     const router = new AlphaRouter({ chainId: 1, provider });
-    const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol);
-    const outputToken = await getUniswapTokenBySymbol(network, 'DAI');
+    const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol, 1);
+    const outputToken = await getUniswapTokenBySymbol(network, 'DAI', 1);
 
     const inputAmountInteger = new BigNumber(inputAmount).shiftedBy(collateralConfig.decimals).toFixed(0);
     const inputAmountWithCurrency = CurrencyAmount.fromRawAmount(inputToken, inputAmountInteger);
@@ -55,7 +55,7 @@ export const fetchAutoRouteInformation = async function (
     walletAddress?: string
 ) {
     try {
-        const token = await getUniswapTokenBySymbol(network, collateralSymbol);
+        const token = await getUniswapTokenBySymbol(network, collateralSymbol, 1);
         const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
         const route = autoRouteData.route[0].tokenPath.map(p => {
             if (!p.symbol) {
