@@ -35,6 +35,24 @@ export const getUniswapAutoRoute = async function (
     const inputAmountWithCurrency = CurrencyAmount.fromRawAmount(inputToken, inputAmountInteger);
 
     // get auto route
+    console.log('try catch will not finish')
+    try{
+    await router.route(
+        inputAmountWithCurrency,
+        outputToken,
+        TradeType.EXACT_INPUT,
+        {
+            recipient: walletAddress || '0x000000000000000000000000000000000000dEaD', // use given address or "dead" address as fallback
+            slippageTolerance: new Percent(10, 100),
+            deadline: Math.floor(Date.now() / 1000 + 1800),
+        },
+        {
+            maxSplits: 0,
+        }
+    );
+    } catch (e) {
+        console.log(e)
+    }
     const route = await router.route(
         inputAmountWithCurrency,
         outputToken,
@@ -62,14 +80,14 @@ export const fetchAutoRouteInformation = async function (
     decimalChainId: number = 1
 ) {
     try {
-        const chainId = decimalChainId || getDecimalChainIdByNetworkType(network);
-        const token = await getUniswapTokenBySymbol(network, collateralSymbol, chainId);
+
+        const token = await getUniswapTokenBySymbol(network, collateralSymbol, decimalChainId);
         const autoRouteData = await getUniswapAutoRoute(
             network,
             collateralSymbol,
             inputAmount,
             walletAddress,
-            chainId
+            decimalChainId
         );
         const route = autoRouteData.route[0].tokenPath.map(p => {
             if (!p.symbol) {
