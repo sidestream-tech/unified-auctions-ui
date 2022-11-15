@@ -22,10 +22,11 @@ export const getUniswapAutoRoute = async function (
     collateralSymbol: string,
     inputAmount: string | number = 1,
     walletAddress?: string,
-    chainId = 1
+    decimalChainId?: number
 ) {
     const collateralConfig = getCollateralConfigBySymbol(collateralSymbol);
     const provider = await getProvider(network);
+    const chainId = decimalChainId || getDecimalChainIdByNetworkType(network);
     const router = new AlphaRouter({ chainId, provider });
     const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol, chainId);
     const outputToken = await getUniswapTokenBySymbol(network, 'DAI', chainId);
@@ -58,9 +59,10 @@ export const fetchAutoRouteInformation = async function (
     collateralSymbol: string,
     inputAmount: string | number = 1,
     walletAddress?: string,
-    chainId = 1
+    decimalChainId: number = 1
 ) {
     try {
+        const chainId = decimalChainId || getDecimalChainIdByNetworkType(network);
         const token = await getUniswapTokenBySymbol(network, collateralSymbol, chainId);
         const autoRouteData = await getUniswapAutoRoute(
             network,
@@ -76,11 +78,13 @@ export const fetchAutoRouteInformation = async function (
             return p.symbol;
         });
         const quote = new BigNumber(autoRouteData.quote.toFixed());
+        const quoteGasAdjusted = new BigNumber(autoRouteData.quoteGasAdjusted.toFixed());
 
         return {
             totalPrice: new BigNumber(autoRouteData.quote.toFixed(token.decimals)),
             route,
             quote,
+            quoteGasAdjusted,
             errorMessage: undefined,
         };
     } catch (error: any) {
