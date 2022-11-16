@@ -97,7 +97,7 @@ export default Vue.extend({
                 if (b[1].marketUnitPrice.isNaN()) {
                     return -1;
                 }
-                return a[1].marketUnitPrice.minus(b[1].marketUnitPrice).multipliedBy(-1).toNumber();
+                return b[1].marketUnitPrice.minus(a[1].marketUnitPrice).toNumber();
             });
             return marketDataArraySorted;
         },
