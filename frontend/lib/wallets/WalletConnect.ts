@@ -1,8 +1,7 @@
 import WalletConnectProvider from '@walletconnect/web3-provider';
 import { ethers } from 'ethers';
-import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
+import { getNetworks, getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { formatToHexWithoutPad } from 'auctions-core/helpers/format';
-import { getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { setSigner } from 'auctions-core/src/signer';
 import WalletConnectLogo from '~/assets/icons/wallets/walletconnect.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
@@ -23,19 +22,15 @@ export default class WalletConnect extends AbstractWallet {
 
     async getProvider(): Promise<ethers.providers.JsonRpcProvider> {
         if (!WalletConnect.provider) {
-            const rpcUrl = process.env.RPC_URL;
-            const { networks } = await setupRpcUrlAndGetNetworks(rpcUrl);
-            let rpcMap = {};
-            for (const network of networks) {
-                const chainIdDecimal = parseInt(network.chainId, 16);
-                rpcMap = {
-                    ...rpcMap,
-                    [chainIdDecimal]: network.url,
-                };
-            }
+            const networks = getNetworks();
+            const rpcMap = networks.reduce(
+                (accumulatorObj, network) => ({ ...accumulatorObj, [parseInt(network.chainId, 16)]: network.url }),
+                {}
+            );
+            console.warn(rpcMap);
             WalletConnect.provider = new WalletConnectProvider({ rpc: rpcMap });
+            await WalletConnect.provider.enable();
         }
-        await WalletConnect.provider.enable();
         return new ethers.providers.Web3Provider(WalletConnect.provider);
     }
 
