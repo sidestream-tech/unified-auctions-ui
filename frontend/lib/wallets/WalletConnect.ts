@@ -47,9 +47,7 @@ export default class WalletConnect extends AbstractWallet {
 
     public async connect(): Promise<void> {
         const signer = await this.getSigner();
-        console.warn('BEFORE');
         this.addresses = [await signer.getAddress()];
-        console.warn('AFTER');
         await this.networkChangedHandler();
         this.setup();
     }
