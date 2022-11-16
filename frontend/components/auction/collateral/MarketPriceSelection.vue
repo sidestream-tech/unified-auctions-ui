@@ -16,24 +16,22 @@
             <div v-show="isExpanded" class="Content overflow-x-auto">
                 <table class="table-auto">
                     <tbody>
-                        <tr v-for="callee in callees" :key="callee[0]">
-                            <td class="pr-2 whitespace-nowrap">{{ callee[0] }}</td>
+                        <tr v-for="[id, marketData] in marketDataArray" :key="id">
+                            <td class="pr-2 whitespace-nowrap">{{ id }}</td>
                             <td class="pr-2 whitespace-nowrap">
-                                <span v-for="currency in callee[1].route" :key="currency"
+                                <span v-for="(currency, index) in marketData.route" :key="index"
                                     >{{ currency }} &#8594;
                                 </span>
                                 DAI
                             </td>
                             <td class="w-full text-right whitespace-nowrap">
-                                <div v-if="callee[1].marketUnitPrice && !callee[1].marketUnitPrice.isNaN()">
-                                    <button type="button" @click="$emit('update:marketId', callee[0])">
-                                        <span v-if="suggestionOrSelection === callee[0]" class="opacity-50"
-                                            >Selected</span
-                                        >
+                                <div v-if="marketData.marketUnitPrice && !marketData.marketUnitPrice.isNaN()">
+                                    <button type="button" @click="$emit('update:marketId', id)">
+                                        <span v-if="suggestionOrSelection === id" class="opacity-50">Selected</span>
                                         <span v-else class="text-green-500">Select</span>
                                     </button>
                                     <span class="pl-1">
-                                        <FormatCurrency :value="callee[1].marketUnitPrice" currency="DAI" /> per
+                                        <FormatCurrency :value="marketData.marketUnitPrice" currency="DAI" /> per
                                         <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
                                     </span>
                                 </div>
@@ -86,9 +84,9 @@ export default Vue.extend({
             }
             return undefined;
         },
-        callees(): [string, MarketData][] {
-            const marketDataRecordsSorted = Object.entries(this.auctionTransaction.marketDataRecords || {});
-            marketDataRecordsSorted.sort((a, b) => {
+        marketDataArray(): [string, MarketData][] {
+            const marketDataArraySorted = Object.entries(this.auctionTransaction.marketDataRecords || {});
+            marketDataArraySorted.sort((a, b) => {
                 // push NaNs to the end
                 if (a[1].marketUnitPrice.isNaN() && b[1].marketUnitPrice.isNaN()) {
                     return 1;
@@ -101,7 +99,7 @@ export default Vue.extend({
                 }
                 return a[1].marketUnitPrice.minus(b[1].marketUnitPrice).multipliedBy(-1).toNumber();
             });
-            return marketDataRecordsSorted;
+            return marketDataArraySorted;
         },
     },
 });
