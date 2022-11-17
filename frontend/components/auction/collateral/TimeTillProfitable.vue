@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div v-if="auction.transactionGrossProfitDate">
-            <time-till v-if="isProfitableBeforeEnding" :date="auction.transactionGrossProfitDate" />
+        <div v-if="transactionGrossProfitDate">
+            <time-till v-if="isProfitableBeforeEnding" :date="transactionGrossProfitDate" />
             <div v-else>Likely will not be profitable</div>
         </div>
         <div v-else-if="isAlreadyProfitable">Auction is profitable</div>
@@ -11,6 +11,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import { AuctionTransaction } from 'auctions-core/src/types';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 
@@ -23,19 +24,35 @@ export default Vue.extend({
             type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
         },
+        marketId: {
+            type: String,
+            default: '',
+        },
     },
     computed: {
+        transactionGrossProfitDate(): Date | undefined {
+            if (!this.marketId || !this.auction.marketDataRecords) {
+                return this.auction.transactionGrossProfitDate;
+            }
+            return this.auction.marketDataRecords[this.marketId].transactionGrossProfitDate;
+        },
+        marketUnitPrice(): BigNumber | undefined {
+            if (!this.marketId || !this.auction.marketDataRecords) {
+                return this.auction.marketUnitPrice;
+            }
+            return this.auction.marketDataRecords[this.marketId].marketUnitPrice;
+        },
         isProfitableBeforeEnding(): boolean {
-            if (!this.auction.transactionGrossProfitDate) {
+            if (!this.transactionGrossProfitDate) {
                 return false;
             }
-            return this.auction.endDate > this.auction.transactionGrossProfitDate;
+            return this.auction.endDate > this.transactionGrossProfitDate;
         },
         isAlreadyProfitable(): boolean {
-            if (!this.auction.marketUnitPrice) {
+            if (!this.marketUnitPrice) {
                 return false;
             }
-            return this.auction.approximateUnitPrice.isLessThan(this.auction.marketUnitPrice);
+            return this.auction.approximateUnitPrice.isLessThan(this.marketUnitPrice);
         },
     },
 });

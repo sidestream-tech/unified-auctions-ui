@@ -34,7 +34,7 @@
         <div class="flex w-full justify-between">
             <div>Estimated Profitability Time</div>
             <div class="RightInfo">
-                <time-till-profitable :auction="auctionTransaction" />
+                <TimeTillProfitable :auction="auctionTransaction" :market-id="currentMarketId" />
             </div>
         </div>
         <div class="flex w-full justify-between">
