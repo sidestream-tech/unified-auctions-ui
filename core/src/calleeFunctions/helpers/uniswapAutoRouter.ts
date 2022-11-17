@@ -1,35 +1,34 @@
 import { AlphaRouter } from '@uniswap/smart-order-router';
+import { Protocol } from '@uniswap/router-sdk';
 import { Token, Percent, TradeType, CurrencyAmount } from '@uniswap/sdk-core';
 import BigNumber from '../../bignumber';
 import getProvider from '../../provider';
-import { getDecimalChainIdByNetworkType } from '../../network';
+import { getActualDecimalChainIdByNetworkType } from '../../network';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
+import { DAI_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 
-const getUniswapTokenBySymbol = async function (
-    network: string,
-    symbol: string,
-    decimalChainId?: number
-): Promise<Token> {
+const getUniswapTokenBySymbol = async function (network: string, symbol: string): Promise<Token> {
     const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const tokenDecimals = getTokenDecimalsBySymbol(symbol);
-    const chainId = decimalChainId || getDecimalChainIdByNetworkType(network);
-    return new Token(chainId, tokenAddress, tokenDecimals, symbol);
+    const decimalChainId = getActualDecimalChainIdByNetworkType(network);
+    return new Token(decimalChainId, tokenAddress, tokenDecimals, symbol);
 };
 
 export const getUniswapAutoRoute = async function (
     network: string,
     collateralSymbol: string,
     inputAmount: string | number = 1,
-    walletAddress?: string,
-    decimalChainId?: number
+    walletAddress?: string
 ) {
     const collateralConfig = getCollateralConfigBySymbol(collateralSymbol);
     const provider = await getProvider(network);
-    const chainId = decimalChainId || getDecimalChainIdByNetworkType(network);
-    const router = new AlphaRouter({ chainId, provider });
-    const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol, chainId);
-    const outputToken = await getUniswapTokenBySymbol(network, 'DAI', chainId);
+    const router = new AlphaRouter({
+        chainId: getActualDecimalChainIdByNetworkType(network),
+        provider,
+    });
+    const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol);
+    const outputToken = await getUniswapTokenBySymbol(network, 'DAI');
 
     const inputAmountInteger = new BigNumber(inputAmount).shiftedBy(collateralConfig.decimals).toFixed(0);
     const inputAmountWithCurrency = CurrencyAmount.fromRawAmount(inputToken, inputAmountInteger);
@@ -46,6 +45,7 @@ export const getUniswapAutoRoute = async function (
         },
         {
             maxSplits: 0,
+            protocols: [Protocol.V3],
         }
     );
     if (!route) {
@@ -58,19 +58,10 @@ export const fetchAutoRouteInformation = async function (
     network: string,
     collateralSymbol: string,
     inputAmount: string | number = 1,
-    walletAddress?: string,
-    decimalChainId: number = 1
+    walletAddress?: string
 ) {
     try {
-        const chainId = decimalChainId || getDecimalChainIdByNetworkType(network);
-        const token = await getUniswapTokenBySymbol(network, collateralSymbol, chainId);
-        const autoRouteData = await getUniswapAutoRoute(
-            network,
-            collateralSymbol,
-            inputAmount,
-            walletAddress,
-            chainId
-        );
+        const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
         const route = autoRouteData.route[0].tokenPath.map(p => {
             if (!p.symbol) {
                 throw new Error(`Could not get symbol for token "${p.address}".`);
@@ -79,9 +70,8 @@ export const fetchAutoRouteInformation = async function (
         });
         const quote = new BigNumber(autoRouteData.quote.toFixed());
         const quoteGasAdjusted = new BigNumber(autoRouteData.quoteGasAdjusted.toFixed());
-
         return {
-            totalPrice: new BigNumber(autoRouteData.quote.toFixed(token.decimals)),
+            totalPrice: new BigNumber(autoRouteData.quote.toFixed(DAI_NUMBER_OF_DIGITS)),
             route,
             quote,
             quoteGasAdjusted,
