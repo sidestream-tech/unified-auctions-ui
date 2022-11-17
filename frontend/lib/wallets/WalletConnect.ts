@@ -27,7 +27,6 @@ export default class WalletConnect extends AbstractWallet {
                 (accumulatorObj, network) => ({ ...accumulatorObj, [parseInt(network.chainId, 16)]: network.url }),
                 {}
             );
-            console.warn(rpcMap);
             WalletConnect.provider = new WalletConnectProvider({ rpc: rpcMap });
             await WalletConnect.provider.enable();
         }
