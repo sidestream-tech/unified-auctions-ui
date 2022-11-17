@@ -15,7 +15,6 @@ const SUPPORTED_NETWORKS: NetworkConfig[] = [
         chainId: '0x5',
         type: 'goerli',
         title: 'Goerli',
-        gasPrice: 2000000000,
         url: '',
         etherscanUrl: 'https://goerli.etherscan.io',
         isFork: false,
