@@ -62,11 +62,6 @@ export default class Coinbase extends AbstractWallet {
         window.$nuxt.$store.dispatch('network/setWalletChainId', chainId);
     }
 
-    public accountsChangedHandler(addresses: Array<string>) {
-        this.addresses = addresses;
-        window.$nuxt.$store.dispatch('wallet/setAddress', this.address);
-    }
-
     public setup() {
         if (!Coinbase.provider) {
             return;
