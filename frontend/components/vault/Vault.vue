@@ -30,20 +30,20 @@
                         <tr>
                             <td>Next price update</td>
                             <td>
-                                <div class="flex items-center space-x-1">
+                                <div
+                                    v-if="
+                                        vaultTransaction.nextPriceChange &&
+                                        vaultTransaction.nextPriceChange instanceof Date
+                                    "
+                                    class="flex items-center space-x-1"
+                                >
                                     <AnimatedArrow
                                         :direction="getIsPriceGoingUpOrDown(vaultTransaction)"
                                         class="h-4 opacity-50"
                                     />
-                                    <span
-                                        v-if="
-                                            vaultTransaction.nextPriceChange &&
-                                            vaultTransaction.nextPriceChange instanceof Date
-                                        "
-                                        >in <TimeTill :date="vaultTransaction.nextPriceChange"
-                                    /></span>
-                                    <span v-else class="opacity-50">Unknown</span>
+                                    <span>in <TimeTill :date="vaultTransaction.nextPriceChange" /></span>
                                 </div>
+                                <span v-else class="opacity-50">Unknown</span>
                             </td>
                         </tr>
                         <tr>
