@@ -10,6 +10,8 @@
             :custom-row="customRowEvents"
             :get-popup-container="() => $el"
             :locale="{ emptyText: 'No active auctions' }"
+            :table-layout="auto"
+            :scroll="{ x: 'max-content' }"
             class="AuctionsTable relative overflow-visible"
         >
             <div slot="bidAmountDai" slot-scope="bidAmountDai">
@@ -234,7 +236,6 @@ export default Vue.extend({
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
                     scopedSlots: { customRender: 'action' },
-                    width: '20%',
                 },
             ];
         },

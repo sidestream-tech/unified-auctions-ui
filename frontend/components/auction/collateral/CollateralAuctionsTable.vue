@@ -10,6 +10,8 @@
             :custom-row="customRowEvents"
             :get-popup-container="() => $el"
             :locale="{ emptyText: 'No active auctions' }"
+            :table-layout="auto"
+            :scroll="{ x: 'max-content' }"
             class="AuctionsTable relative overflow-visible"
         >
             <div slot="collateralAmount" slot-scope="collateralAmount, record" class="flex items-center space-x-2">
@@ -186,7 +188,6 @@ export default Vue.extend({
                     dataIndex: 'endDate',
                     scopedSlots: { customRender: 'endDate' },
                     sorter: compareBy('endDate', (a: Date, b: Date) => compareAsc(a, b)),
-                    width: '200px',
                 },
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },

@@ -10,6 +10,8 @@
             :custom-row="customRowEvents"
             :get-popup-container="() => $el"
             :locale="{ emptyText: 'No active auctions' }"
+            :table-layout="auto"
+            :scroll="{ x: 'max-content' }"
             class="AuctionsTable relative overflow-visible"
         >
             <div slot="auctionAmount" slot-scope="receiveAmountDAI">

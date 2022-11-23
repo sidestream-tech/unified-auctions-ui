@@ -10,6 +10,8 @@
             :custom-row="customRowEvents"
             :get-popup-container="() => $el"
             :locale="{ emptyText: 'There are currently no vaults at risk.' }"
+            :table-layout="auto"
+            :scroll="{ x: 'max-content' }"
             class="VaultsTable relative overflow-visible"
         >
             <div slot="collateralAmount" slot-scope="collateralAmount, record">
@@ -184,7 +186,6 @@ export default Vue.extend({
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
                     scopedSlots: { customRender: 'action' },
-                    width: '20%',
                 },
             ];
         },
