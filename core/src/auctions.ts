@@ -338,7 +338,9 @@ export const bidWithCallee = async function (
     notifier?: Notifier
 ): Promise<string> {
     const calleeAddress = getCalleeAddressByCollateralType(network, auction.collateralType, marketId);
-    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress);
+    const marketData = auction.marketDataRecords?.[marketId];
+    const preloadedPools = marketData && 'pools' in marketData ? marketData.pools : undefined;
+    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress, preloadedPools);
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
         convertNumberTo32Bytes(auction.index),

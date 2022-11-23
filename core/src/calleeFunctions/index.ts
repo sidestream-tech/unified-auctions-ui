@@ -37,14 +37,21 @@ export const getCalleeData = async function (
     network: string,
     collateralType: string,
     marketId: string,
-    profitAddress: string
+    profitAddress: string,
+    preloadedPools?: Pool[]
 ): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
     const marketData = collateral.exchanges[marketId];
     if (!marketData || !marketData.callee || !allCalleeFunctions[marketData.callee]) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress);
+    return await allCalleeFunctions[marketData.callee].getCalleeData(
+        network,
+        collateral,
+        marketId,
+        profitAddress,
+        preloadedPools
+    );
 };
 const getCalleeAutoRoute = async (
     network: string,

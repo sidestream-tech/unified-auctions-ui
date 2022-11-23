@@ -188,7 +188,8 @@ export declare interface CalleeFunctions {
         network: string,
         collateral: CollateralConfig,
         marketId: string,
-        profitAddress: string
+        profitAddress: string,
+        pools?: Pool[]
     ) => Promise<string>;
     getMarketPrice: (
         network: string,
