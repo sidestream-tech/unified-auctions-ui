@@ -1,4 +1,14 @@
-import type { CalleeNames, CalleeFunctions, MarketData, CollateralConfig, CollateralSymbol } from '../types';
+import type {
+    CalleeNames,
+    CalleeFunctions,
+    MarketData,
+    CollateralConfig,
+    CollateralSymbol,
+    RegularCalleeConfig,
+    UniswapV2LpTokenCalleeConfig,
+    AutoRouterCalleeConfig,
+    Pool,
+} from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
@@ -64,17 +74,33 @@ export const getPools = async (
     return await routeToPool(network, route, UNISWAP_FEE);
 };
 
+export const enrichCalleeConfigWithPools = async (
+    network: string,
+    collateral: CollateralConfig,
+    marketId: string,
+    amount: BigNumber
+): Promise<UniswapV2LpTokenCalleeConfig | ((RegularCalleeConfig | AutoRouterCalleeConfig) & { pools: Pool[] })> => {
+    const config = collateral.exchanges[marketId];
+    if (config.callee === 'UniswapV2LpTokenCalleeDai') {
+        return { ...config };
+    }
+    const pools = await getPools(network, collateral, marketId, amount);
+    if (pools) {
+        return { ...config, pools };
+    }
+    throw new Error('Failed to get pools');
+};
+
 export const getMarketDataById = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<MarketData> {
-    const calleeConfig = collateral.exchanges[marketId];
+    const calleeConfig = await enrichCalleeConfigWithPools(network, collateral, marketId, amount);
     if (!allCalleeFunctions[calleeConfig?.callee]) {
         throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
-    const pools = await getPools(network, collateral, marketId, amount);
     let marketUnitPrice: BigNumber;
     try {
         marketUnitPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
@@ -88,14 +114,12 @@ export const getMarketDataById = async function (
         marketUnitPrice = new BigNumber(NaN);
         return {
             ...calleeConfig,
-            pools,
             marketUnitPrice,
             errorMessage,
         };
     }
     return {
         ...calleeConfig,
-        pools,
         marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
     };
 };
@@ -115,8 +139,7 @@ export const getMarketDataRecords = async function (
             marketData = {
                 errorMessage: error?.message,
                 marketUnitPrice: new BigNumber(NaN),
-                route: [], // dummy value: MarketData requires either a route or tokens
-                pools: [],
+                pools: [], // dummy value: MarketData requires either a route or tokens
             };
         }
         marketDataRecords = {

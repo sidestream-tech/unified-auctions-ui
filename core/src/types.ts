@@ -111,22 +111,23 @@ declare interface MarketDataBase extends Partial<ExchangeFees> {
     transactionGrossProfitDate?: Date;
     transactionNetProfit?: BigNumber;
     errorMessage?: any;
-    pools?: Pool[];
 }
 
 export declare interface Pool {
     addresses: string[];
     fee: number;
+    routes: string[];
 }
-export declare interface MarketDataRegular extends MarketDataBase, Omit<RegularCalleeConfig, 'callee'> {}
+
+export declare interface MarketDataRegular extends MarketDataBase {
+    pools: Pool[];
+}
 
 export declare interface MarketDataUniswapV2LpToken
     extends MarketDataBase,
         Omit<UniswapV2LpTokenCalleeConfig, 'callee'> {}
 
-export declare interface MarketDataUniswapV3Automatic extends MarketDataBase, Omit<AutoRouterCalleeConfig, 'callee'> {}
-
-export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken | MarketDataUniswapV3Automatic;
+export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken;
 
 export declare interface ValueSlotAddressAndOffset {
     slot: string;
@@ -187,8 +188,7 @@ export declare interface CalleeFunctions {
         network: string,
         collateral: CollateralConfig,
         marketId: string,
-        profitAddress: string,
-        pools?: Pool[]
+        profitAddress: string
     ) => Promise<string>;
     getMarketPrice: (
         network: string,
