@@ -12,6 +12,7 @@ const common = {
         vaultTransactions: fakeVaultTransaction,
         selectedVaultId: randomSelectedVault.id,
         lastUpdated: new Date(faker.date.recent()),
+        isLoading: false,
     }),
 };
 
@@ -20,6 +21,20 @@ storiesOf('Vault/VaultsTable', module)
         ...common,
         template:
             '<VaultsTable :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" :last-updated="lastUpdated" />',
+    }))
+    .add('Reset Updated Timer', () => ({
+        ...common,
+        created() {
+            setInterval(() => {
+                this.isLoading = true;
+                setTimeout(() => {
+                    this.isLoading = false;
+                }, 1000);
+                this.lastUpdated = new Date(faker.date.recent());
+            }, 10 * 1000);
+        },
+        template:
+            '<VaultsTable :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" :last-updated="lastUpdated" :is-loading="isLoading" />',
     }))
     .add('Fetching With Vaults', () => ({
         ...common,

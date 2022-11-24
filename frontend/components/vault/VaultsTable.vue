@@ -46,8 +46,8 @@
                     <LoadingIcon class="h-4 w-4 animate animate-spin fill-current dark:text-gray-300" />
                     <span>Updating...</span>
                 </div>
-                <span v-else-if="lastUpdated"> Last updated <TimeTill :date="lastUpdated" /></span>
-                <span v-else> Last updated unknown time ago </span>
+                <span v-else-if="lastUpdated">Updated <TimeTill :date="lastUpdated" :is-count-up="true" /> ago</span>
+                <span v-else>Updated <span class="opacity-50">unknown time</span> ago</span>
             </div>
             <div slot="action" slot-scope="text, record, index" class="w-full h-full">
                 <nuxt-link
