@@ -33,7 +33,8 @@
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
 import Vue, { PropType } from 'vue';
-import BaseButton from '~/components/common/inputs/BaseButton';
+import { NetworkConfig } from 'auctions-core/src/types';
+import BaseButton from '~/components/common/inputs/BaseButton.vue';
 
 export default Vue.extend({
     name: 'ChangeWalletNetworkModal',
