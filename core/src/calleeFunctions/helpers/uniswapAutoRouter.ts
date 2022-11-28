@@ -62,12 +62,17 @@ export const fetchAutoRouteInformation = async function (
 ) {
     try {
         const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
-        const route = autoRouteData.route[0].tokenPath.map(p => {
+        const bestRoute = autoRouteData.route[0]
+        const route = bestRoute.tokenPath.map(p => {
             if (!p.symbol) {
                 throw new Error(`Could not get symbol for token "${p.address}".`);
             }
             return p.symbol;
         });
+        if( bestRoute.route.protocol !== Protocol.V3 ) {
+            throw new Error('Only V3 routes are supported.');
+        }
+        const fees = bestRoute.route.pools.map(pool => pool.fee)
         const quote = new BigNumber(autoRouteData.quote.toFixed());
         const quoteGasAdjusted = new BigNumber(autoRouteData.quoteGasAdjusted.toFixed());
         return {
@@ -76,12 +81,14 @@ export const fetchAutoRouteInformation = async function (
             quote,
             quoteGasAdjusted,
             errorMessage: undefined,
+            fees,
         };
     } catch (error: any) {
         return {
             totalPrice: undefined,
             route: undefined,
             quote: undefined,
+            fees: undefined,
             errorMessage: error.toString(),
         };
     }

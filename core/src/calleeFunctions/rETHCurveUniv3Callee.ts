@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { convertCollateralToDai, encodePools, UNISWAP_FEE } from './helpers/uniswapV3';
+import { convertCollateralToDai, encodePools } from './helpers/uniswapV3';
 import { convertStethToEth } from './helpers/curve';
 import { convertRethToWsteth } from './helpers/rocket';
 import { convertWstethToSteth } from './helpers/wsteth';
@@ -21,7 +21,7 @@ const getCalleeData = async function (
     if (calleeConfig?.callee !== 'rETHCurveUniv3Callee' || isAutorouted) {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const pools = preloadedPools || (await routeToPool(network, calleeConfig.route, UNISWAP_FEE));
+    const pools = preloadedPools || (await routeToPool(network, calleeConfig.route));
     const route = await encodePools(network, pools);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;

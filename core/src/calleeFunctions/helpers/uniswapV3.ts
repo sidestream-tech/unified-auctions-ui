@@ -46,12 +46,10 @@ const getRouteAndGasQuote = async (
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     if (isAutorouted) {
-        const routeInfo = await fetchAutoRouteInformation(network, collateralSymbol, collateralAmount.toFixed());
-        const route = routeInfo.route;
-        const quoteGasAdjusted = routeInfo.quoteGasAdjusted;
-        return { route, quoteGasAdjusted };
+        const { route, quoteGasAdjusted, fees } = await fetchAutoRouteInformation(network, collateralSymbol, collateralAmount.toFixed());
+        return { route, quoteGasAdjusted, fees };
     } else {
-        return { route: [collateral.symbol, ...calleeConfig.route], quoteGasAdjusted: undefined };
+        return { route: [collateral.symbol, ...calleeConfig.route], quoteGasAdjusted: undefined, fees: undefined };
     }
 };
 
@@ -67,7 +65,7 @@ export const convertCollateralToDaiUsingPool = async function (
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
-    const { route, quoteGasAdjusted: quoteGasAdjusted } = await getRouteAndGasQuote(
+    const { route, fees } = await getRouteAndGasQuote(
         network,
         collateralSymbol,
         collateralAmount,
@@ -76,8 +74,7 @@ export const convertCollateralToDaiUsingPool = async function (
     if (!route) {
         throw new Error(`No route found for ${collateralSymbol} to DAI`);
     }
-    const quote = quoteGasAdjusted ? Math.ceil(quoteGasAdjusted.toNumber()) : UNISWAP_FEE;
-    const pools = await routeToPool(network, route, quote);
+    const pools = await routeToPool(network, route, fees);
     const encodedPools = await encodePools(network, pools);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(

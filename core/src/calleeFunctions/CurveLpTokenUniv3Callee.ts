@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { convertCrvethToEth, CURVE_COIN_INDEX, CURVE_POOL_ADDRESS } from './helpers/curve';
-import { convertCollateralToDai, encodePools, UNISWAP_FEE } from './helpers/uniswapV3';
+import { convertCollateralToDai, encodePools } from './helpers/uniswapV3';
 import { routeToPool } from './helpers/pools';
 
 export const CHARTER_MANAGER_ADDRESS = '0x8377CD01a5834a6EaD3b7efb482f678f2092b77e';
@@ -20,7 +20,7 @@ const getCalleeData = async function (
     if (marketData?.callee !== 'CurveLpTokenUniv3Callee' || isAutorouted) {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const pools = preloadedPools || (await routeToPool(network, marketData.route, UNISWAP_FEE));
+    const pools = preloadedPools || (await routeToPool(network, marketData.route));
     const route = await encodePools(network, pools);
     const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));

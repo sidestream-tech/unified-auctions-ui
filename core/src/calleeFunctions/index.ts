@@ -20,7 +20,6 @@ import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 import { routeToPool } from './helpers/pools';
 import { fetchAutoRouteInformation } from './helpers/uniswapAutoRouter';
-import { UNISWAP_FEE } from './helpers/uniswapV3';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
@@ -78,7 +77,7 @@ export const getPools = async (
     }
     const route =
         'route' in calleeConfig ? calleeConfig.route : await getCalleeAutoRoute(network, collateral, marketId, amount);
-    return await routeToPool(network, route, UNISWAP_FEE);
+    return await routeToPool(network, route);
 };
 
 export const enrichCalleeConfigWithPools = async (
