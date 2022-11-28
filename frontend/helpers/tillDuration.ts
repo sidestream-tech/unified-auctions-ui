@@ -20,11 +20,12 @@ export const formatSeconds = function (seconds: number): string {
     return formatDuration(duration);
 };
 
-export const formatInterval = function (startDate: Date, endDate: Date): string {
-    if (startDate < endDate) {
+export const formatInterval = function (startDate: Date, endDate: Date, isCountUp: boolean = false): string {
+    if (startDate < endDate || isCountUp) {
+        // switch startDate and endDate to act as a count-up timer
         const duration = intervalToDuration({
-            start: startDate,
-            end: endDate,
+            start: isCountUp ? endDate : startDate,
+            end: isCountUp ? startDate : endDate,
         });
         return formatDuration(duration);
     } else {

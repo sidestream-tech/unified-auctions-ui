@@ -26,7 +26,6 @@ export default Vue.extend({
     data: () => ({
         timeTill: '',
         isEndingSoon: false,
-        secondsElapsed: 0,
     }),
     computed: {
         parsedDate(): Date | null {
@@ -37,11 +36,6 @@ export default Vue.extend({
             return date;
         },
     },
-    watch: {
-        parsedDate() {
-            this.secondsElapsed = 0;
-        },
-    },
     created() {
         this.calculateTime();
         setInterval(this.calculateTime, 1000);
@@ -50,12 +44,8 @@ export default Vue.extend({
         calculateTime(): void {
             if (this.parsedDate) {
                 const now = new Date();
-                if (this.isCountUp) {
-                    ++this.secondsElapsed;
-                    const newDate = new Date(now.getTime() + this.secondsElapsed * 1000);
-                    this.timeTill = formatInterval(now, newDate);
-                } else {
-                    this.timeTill = formatInterval(now, this.parsedDate);
+                this.timeTill = formatInterval(now, this.parsedDate, this.isCountUp);
+                if (!this.isCountUp) {
                     const duration = this.parsedDate.getTime() - now.getTime();
                     this.isEndingSoon = duration < ENDING_SOON_THRESHOLD && duration > 0;
                 }
