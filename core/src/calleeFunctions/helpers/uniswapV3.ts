@@ -46,7 +46,11 @@ const getRouteAndGasQuote = async (
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     if (isAutorouted) {
-        const { route, quoteGasAdjusted, fees } = await fetchAutoRouteInformation(network, collateralSymbol, collateralAmount.toFixed());
+        const { route, quoteGasAdjusted, fees } = await fetchAutoRouteInformation(
+            network,
+            collateralSymbol,
+            collateralAmount.toFixed()
+        );
         return { route, quoteGasAdjusted, fees };
     } else {
         return { route: [collateral.symbol, ...calleeConfig.route], quoteGasAdjusted: undefined, fees: undefined };
@@ -65,12 +69,7 @@ export const convertCollateralToDaiUsingPool = async function (
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
-    const { route, fees } = await getRouteAndGasQuote(
-        network,
-        collateralSymbol,
-        collateralAmount,
-        marketId
-    );
+    const { route, fees } = await getRouteAndGasQuote(network, collateralSymbol, collateralAmount, marketId);
     if (!route) {
         throw new Error(`No route found for ${collateralSymbol} to DAI`);
     }
