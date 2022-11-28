@@ -10,12 +10,14 @@ export const CHARTER_MANAGER_ADDRESS = '0x8377CD01a5834a6EaD3b7efb482f678f2092b7
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
+    marketId: string,
     profitAddress: string
 ): Promise<string> {
-    if (collateral.exchange.callee !== 'CurveLpTokenUniv3Callee') {
+    const marketData = collateral.exchanges[marketId];
+    if (marketData?.callee !== 'CurveLpTokenUniv3Callee') {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const route = await encodeRoute(network, collateral.exchange.route);
+    const route = await encodeRoute(network, marketData.route);
     const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
@@ -33,6 +35,7 @@ const getCalleeData = async function (
 const getMarketPrice = async function (
     network: string,
     _collateral: CollateralConfig,
+    _marketId: string,
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     // convert stETH into ETH

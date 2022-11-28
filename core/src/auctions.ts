@@ -1,11 +1,19 @@
-import type { Auction, AuctionInitialInfo, AuctionTransaction, Notifier, TakeEvent } from './types';
+import type {
+    Auction,
+    AuctionInitialInfo,
+    AuctionTransaction,
+    Notifier,
+    TakeEvent,
+    MarketData,
+    ExchangeFees,
+} from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, {
     fetchAuctionByCollateralTypeAndAuctionIndex,
     fetchAuctionStatus,
     fetchMinimumBidDai,
 } from './fetch';
-import { getCalleeData, getMarketPrice } from './calleeFunctions';
+import { getBestMarketId, getCalleeData, getMarketDataRecords, getMarketPrice } from './calleeFunctions';
 import { fetchCalcParametersByCollateralType } from './params';
 import executeTransaction from './execute';
 import { RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS, NULL_BYTES } from './constants/UNITS';
@@ -20,7 +28,7 @@ import {
 import { getSupportedCollateralTypes } from './addresses';
 import getContract, { getClipperNameByCollateralType } from './contracts';
 import convertNumberTo32Bytes from './helpers/convertNumberTo32Bytes';
-import { enrichAuctionWithTransactionFees, getApproximateTransactionFees } from './fees';
+import { enrichAuctionWithTransactionFees, getApproximateTransactionFees, getDefaultMarketFee } from './fees';
 import parseAuctionId from './helpers/parseAuctionId';
 import { EventFilter } from 'ethers';
 import getNetworkDate, { fetchDateByBlockNumber } from './date';
@@ -67,26 +75,97 @@ const calculateCollateralToCoverDebt = async function (network: string, auction:
     return auction.debtDAI.dividedBy(marketPriceForAllCollateral);
 };
 
-const enrichAuctionWithMarketValues = async function (auction: Auction, network: string): Promise<Auction> {
+export const enrichMarketDataRecordsWithValues = async function (
+    auction: AuctionTransaction,
+    marketDataRecords: Record<string, MarketData>,
+    exchangeFees: ExchangeFees,
+    amount: BigNumber = new BigNumber(1)
+): Promise<Record<string, MarketData>> {
+    const exchangeFeePerUnitDAI = exchangeFees.exchangeFeeDAI.dividedBy(amount);
+    let enrichedMarketDataRecords = {};
+    for (const marketId in marketDataRecords) {
+        let marketData = marketDataRecords[marketId];
+        // enrich with values dependent on marketUnitPrice
+        let marketUnitPrice = marketData.marketUnitPrice;
+        if (marketUnitPrice.isNaN()) {
+            enrichedMarketDataRecords = {
+                ...enrichedMarketDataRecords,
+                [marketId]: { ...marketData },
+            };
+            continue;
+        }
+        marketUnitPrice = marketUnitPrice.plus(exchangeFeePerUnitDAI);
+        marketData = {
+            ...marketData,
+            marketUnitPrice,
+            marketUnitPriceToUnitPriceRatio: auction.approximateUnitPrice
+                .minus(marketUnitPrice)
+                .dividedBy(marketUnitPrice),
+            ...exchangeFees,
+            transactionGrossProfit: calculateTransactionGrossProfit(
+                marketUnitPrice,
+                amount,
+                auction.approximateUnitPrice
+            ),
+        };
+        // enrich with values dependent on fees
+        if (marketData.transactionGrossProfit && auction.combinedSwapFeesDAI) {
+            const transactionGrossProfit = marketData.transactionGrossProfit;
+            marketData = {
+                ...marketData,
+                transactionNetProfit: transactionGrossProfit.minus(auction.combinedSwapFeesDAI),
+            };
+        }
+        // enrich with values dependent on currentDate
+        try {
+            const currentDate = await getNetworkDate(auction.network);
+            marketData = {
+                ...marketData,
+                transactionGrossProfitDate: calculateTransactionGrossProfitDate(auction, marketUnitPrice, currentDate),
+            };
+        } catch {}
+        enrichedMarketDataRecords = {
+            ...enrichedMarketDataRecords,
+            [marketId]: { ...marketData },
+        };
+    }
+    return enrichedMarketDataRecords;
+};
+
+export const enrichAuctionWithMarketDataRecords = async function (
+    auction: AuctionTransaction,
+    network: string
+): Promise<AuctionTransaction> {
     if (!auction.isActive || !auction.approximateUnitPrice || auction.isFinished) {
         return auction;
     }
     try {
         const collateralToCoverDebt = await calculateCollateralToCoverDebt(network, auction);
-        const marketUnitPrice = await getMarketPrice(network, auction.collateralSymbol, collateralToCoverDebt);
-        const marketUnitPriceToUnitPriceRatio = auction.approximateUnitPrice
-            .minus(marketUnitPrice)
-            .dividedBy(marketUnitPrice);
-        const auctionWithMarketValues = {
+        const exchangeFees = await getDefaultMarketFee(network);
+        const marketDataRecords = await getMarketDataRecords(network, auction.collateralSymbol, collateralToCoverDebt);
+        const enrichedMarketDataRecords = await enrichMarketDataRecordsWithValues(
+            auction,
+            marketDataRecords,
+            exchangeFees,
+            collateralToCoverDebt
+        );
+        const suggestedMarketId = await getBestMarketId(enrichedMarketDataRecords);
+        const marketUnitPrice = enrichedMarketDataRecords[suggestedMarketId].marketUnitPrice;
+        const marketUnitPriceToUnitPriceRatio =
+            enrichedMarketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
+        const transactionGrossProfit = enrichedMarketDataRecords[suggestedMarketId].transactionGrossProfit;
+        const transactionGrossProfitDate = enrichedMarketDataRecords[suggestedMarketId].transactionGrossProfitDate;
+        const transactionNetProfit = enrichedMarketDataRecords[suggestedMarketId].transactionNetProfit;
+        return {
             ...auction,
             collateralToCoverDebt,
+            suggestedMarketId,
             marketUnitPrice,
             marketUnitPriceToUnitPriceRatio,
-        };
-        const transactionGrossProfit = calculateTransactionGrossProfit(auctionWithMarketValues);
-        return {
-            ...auctionWithMarketValues,
             transactionGrossProfit,
+            transactionGrossProfitDate,
+            transactionNetProfit: transactionNetProfit ? transactionNetProfit : new BigNumber(NaN),
+            marketDataRecords: enrichedMarketDataRecords,
         };
     } catch (error: any) {
         // since it's expected that some collaterals are not tradable on some networks
@@ -111,13 +190,11 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
         const secondsTillNextPriceDrop = calculateAuctionDropTime(auctionWithParams, currentDate);
         const approximateUnitPrice = calculateAuctionPrice(auctionWithParams, currentDate);
         const totalPrice = auction.collateralAmount.multipliedBy(approximateUnitPrice);
-        const transactionGrossProfitDate = calculateTransactionGrossProfitDate(auctionWithParams, currentDate);
         return {
             ...auctionWithParams,
             secondsTillNextPriceDrop,
             approximateUnitPrice,
             totalPrice,
-            transactionGrossProfitDate,
         };
     } catch (error) {
         return {
@@ -127,12 +204,14 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
     }
 };
 
-export const enrichAuctionWithPriceDropAndMarketValue = async function (
+export const enrichAuctionWithPriceDropAndMarketDataRecords = async function (
     auction: Auction,
     network: string
 ): Promise<Auction> {
     const enrichedAuctionWithNewPriceDrop = await enrichAuctionWithPriceDrop(auction);
-    return await enrichAuctionWithMarketValues(enrichedAuctionWithNewPriceDrop, network);
+    const fees = await getApproximateTransactionFees(network);
+    const auctionWithFees = await enrichAuctionWithTransactionFees(enrichedAuctionWithNewPriceDrop, fees, network);
+    return await enrichAuctionWithMarketDataRecords(auctionWithFees, network);
 };
 
 export const fetchSingleAuctionById = async function (
@@ -173,21 +252,21 @@ export const enrichAuction = async function (
     // enrich them with price drop
     const auctionWithPriceDrop = await enrichAuctionWithPriceDrop(auctionWithStatus);
 
-    // enrich them with market values
-    const auctionWithMarketValue = await enrichAuctionWithMarketValues(auctionWithPriceDrop, network);
-
     // enrich with profit and fee calculation
     const fees = await getApproximateTransactionFees(network);
-    const auctionWithFees = await enrichAuctionWithTransactionFees(auctionWithMarketValue, fees, network);
+    const auctionWithFees = await enrichAuctionWithTransactionFees(auctionWithPriceDrop, fees, network);
+
+    // enrich them with market data
+    const auctionWithMarketDataRecords = await enrichAuctionWithMarketDataRecords(auctionWithFees, network);
 
     if (auction.debtDAI.isEqualTo(0)) {
         return {
-            ...auctionWithFees,
+            ...auctionWithMarketDataRecords,
             isFinished: true,
             isActive: false,
         };
     }
-    return auctionWithFees;
+    return auctionWithMarketDataRecords;
 };
 
 const enrichTakeEventWithDate = async function (network: string, takeEvent: TakeEvent): Promise<TakeEvent> {
@@ -254,11 +333,12 @@ export const bidWithDai = async function (
 export const bidWithCallee = async function (
     network: string,
     auction: Auction,
+    marketId: string,
     profitAddress: string,
     notifier?: Notifier
 ): Promise<string> {
-    const calleeAddress = getCalleeAddressByCollateralType(network, auction.collateralType);
-    const calleeData = await getCalleeData(network, auction.collateralType, profitAddress);
+    const calleeAddress = getCalleeAddressByCollateralType(network, auction.collateralType, marketId);
+    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress);
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
         convertNumberTo32Bytes(auction.index),

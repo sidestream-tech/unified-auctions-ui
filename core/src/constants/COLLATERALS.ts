@@ -29,9 +29,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'AAVE-A',
         symbol: 'AAVE',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -40,9 +46,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'BAL-A',
         symbol: 'BAL',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -51,9 +63,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'BAT-A',
         symbol: 'BAT',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -62,9 +80,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'COMP-A',
         symbol: 'COMP',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -73,9 +97,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'ETH-A',
         symbol: 'ETH',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: [],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: [],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: [],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -84,11 +114,16 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'ETH-B',
         symbol: 'ETH',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: [],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: [],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: [],
+            },
         },
-
         oracle: DEFAULT_ORACLE_CONFIG,
     },
     'ETH-C': {
@@ -96,9 +131,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'ETH-C',
         symbol: 'ETH',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: [],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: [],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: [],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -107,9 +148,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'GUSD-A',
         symbol: 'GUSD',
         decimals: 2,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: STABLECOIN_ORACLE_CONFIG,
     },
@@ -118,9 +165,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'KNC-A',
         symbol: 'KNC',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -129,9 +182,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'LINK-A',
         symbol: 'LINK',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -140,9 +199,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'LRC-A',
         symbol: 'LRC',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -151,9 +216,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'MANA-A',
         symbol: 'MANA',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -162,9 +233,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'PAXUSD-A',
         symbol: 'PAXUSD',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
 
         oracle: STABLECOIN_ORACLE_CONFIG,
@@ -174,9 +251,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'RENBTC-A',
         symbol: 'RENBTC',
         decimals: 8,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -185,9 +268,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'TUSD-A',
         symbol: 'TUSD',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: STABLECOIN_ORACLE_CONFIG,
     },
@@ -196,9 +285,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNI-A',
         symbol: 'UNI',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -207,9 +302,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'USDC-A',
         symbol: 'USDC',
         decimals: 6,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: STABLECOIN_ORACLE_CONFIG,
     },
@@ -218,9 +319,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'USDC-B',
         symbol: 'USDC',
         decimals: 6,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: STABLECOIN_ORACLE_CONFIG,
     },
@@ -229,9 +336,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'USDT-A',
         symbol: 'USDT',
         decimals: 6,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -240,9 +353,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WBTC-A',
         symbol: 'WBTC',
         decimals: 8,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -251,9 +370,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WBTC-B',
         symbol: 'WBTC',
         decimals: 8,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -262,9 +387,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WBTC-C',
         symbol: 'WBTC',
         decimals: 8,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -273,9 +404,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'YFI-A',
         symbol: 'YFI',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -284,9 +421,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'ZRX-A',
         symbol: 'ZRX',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -295,9 +438,15 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'MATIC-A',
         symbol: 'MATIC',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -306,9 +455,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WSTETH-A',
         symbol: 'WSTETH',
         decimals: 18,
-        exchange: {
-            callee: 'WstETHCurveUniv3Callee',
-            route: [],
+        exchanges: {
+            'Curve wstETH V3': {
+                callee: 'WstETHCurveUniv3Callee',
+                route: [],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -317,9 +468,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WSTETH-B',
         symbol: 'WSTETH',
         decimals: 18,
-        exchange: {
-            callee: 'WstETHCurveUniv3Callee',
-            route: [],
+        exchanges: {
+            'Curve wstETH V3': {
+                callee: 'WstETHCurveUniv3Callee',
+                route: [],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -328,9 +481,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'CRVV1ETHSTETH-A',
         symbol: 'CRVV1ETHSTETH',
         decimals: 18,
-        exchange: {
-            callee: 'CurveLpTokenUniv3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Curve Token V3': {
+                callee: 'CurveLpTokenUniv3Callee',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -339,10 +494,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2DAIETH-A',
         symbol: 'UNIV2DAIETH',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'DAI',
-            token1: 'ETH',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'DAI',
+                token1: 'ETH',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -351,10 +508,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2USDCETH-A',
         symbol: 'UNIV2USDCETH',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'USDC',
-            token1: 'ETH',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'USDC',
+                token1: 'ETH',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -363,10 +522,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2ETHUSDT-A',
         symbol: 'UNIV2ETHUSDT',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'ETH',
-            token1: 'USDT',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'ETH',
+                token1: 'USDT',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -375,10 +536,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2WBTCDAI-A',
         symbol: 'UNIV2WBTCDAI',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'WBTC',
-            token1: 'DAI',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'WBTC',
+                token1: 'DAI',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -387,10 +550,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2WBTCETH-A',
         symbol: 'UNIV2WBTCETH',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'WBTC',
-            token1: 'ETH',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'WBTC',
+                token1: 'ETH',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -399,10 +564,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2LINKETH-A',
         symbol: 'UNIV2LINKETH',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'LINK',
-            token1: 'ETH',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'LINK',
+                token1: 'ETH',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -411,10 +578,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2UNIETH-A',
         symbol: 'UNIV2UNIETH',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'UNI',
-            token1: 'ETH',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'UNI',
+                token1: 'ETH',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -423,10 +592,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2AAVEETH-A',
         symbol: 'UNIV2AAVEETH',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'AAVE',
-            token1: 'ETH',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'AAVE',
+                token1: 'ETH',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -435,10 +606,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2DAIUSDT-A',
         symbol: 'UNIV2DAIUSDT',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'DAI',
-            token1: 'USDT',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'DAI',
+                token1: 'USDT',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -447,10 +620,12 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2DAIUSDC-A',
         symbol: 'UNIV2DAIUSDC',
         decimals: 18,
-        exchange: {
-            callee: 'UniswapV2LpTokenCalleeDai',
-            token0: 'DAI',
-            token1: 'USDC',
+        exchanges: {
+            'Uniswap Token V2': {
+                callee: 'UniswapV2LpTokenCalleeDai',
+                token0: 'DAI',
+                token1: 'USDC',
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },
@@ -459,9 +634,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'RETH-A',
         symbol: 'RETH',
         decimals: 18,
-        exchange: {
-            callee: 'rETHCurveUniv3Callee',
-            route: ['ETH'],
+        exchanges: {
+            'Curve rETH V3': {
+                callee: 'rETHCurveUniv3Callee',
+                route: ['ETH'],
+            },
         },
         oracle: DEFAULT_ORACLE_CONFIG,
     },

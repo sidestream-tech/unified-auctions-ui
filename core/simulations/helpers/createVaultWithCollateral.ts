@@ -2,13 +2,20 @@ import { ethers } from 'ethers';
 import BigNumber from '../../src/bignumber';
 import { setCollateralInVat } from '../../helpers/hardhat/balance';
 import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
-import { changeVaultContents, fetchVault, openVault, fetchVaultCollateralParameters } from '../../src/vaults';
+import {
+    changeVaultContents,
+    fetchVault,
+    openVault,
+    fetchVaultCollateralParameters,
+    openVaultWithProxiedContractAndDrawDebt,
+} from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
 import {
     getContractValue,
     getContractAddressByName,
     getErc20Contract,
     getJoinNameByCollateralType,
+    getClipperNameByCollateralType,
 } from '../../src/contracts';
 import {
     depositCollateralToVat,
@@ -21,12 +28,18 @@ import { CollateralConfig, CollateralType } from '../../src/types';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
 import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardhat/erc20';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
+import { grantAdminPrivelegeForContract } from '../../helpers/hardhat/slotOverwrite';
+import {
+    allowAllActionsInClipperContract,
+    setCollateralDebtCeilingToGlobal,
+    setCollateralLiquidationLimitToGlobal,
+} from '../../helpers/hardhat/contractParametrization';
+import { overwriteStabilityFeeAccumulationRate } from '../../helpers/hardhat/overwrites';
+import detectProxyTarget from '../../helpers/detectProxyTarget';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
-    'CRVV1ETHSTETH-A', // Collateral handled differently
-    'UNIV2DAIUSDC-A', // Liquidation limit too high (fails with "Dog/liquidation-limit-hit")
-    'WSTETH-B', // Does not accumulate stability fee rate at all
     'RETH-A', // [temporary] this collateral is not yet deployed, tested via different flow
+    'TUSD-A', // [proxy] this collateral has a proxy-token contract and fallback solution does not work since JOIN contract does not have sufficient funds
 ];
 
 export const getLiquidatableCollateralTypes = () => {
@@ -77,7 +90,7 @@ const ensureWalletBalance = async (collateralConfig: CollateralConfig, collatera
         HARDHAT_PUBLIC_KEY,
         collateralConfig.decimals
     );
-    if (!balance.eq(collateralOwned)) {
+    if (balance.minus(collateralOwned).shiftedBy(collateralConfig.decimals).abs().toFixed(0) !== '0') {
         throw new Error(
             `Unexpected wallet balance. Expected ${collateralOwned.toFixed()}, Actual ${balance.toFixed()}`
         );
@@ -160,18 +173,15 @@ const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amo
     await contract.approve(addressJoin, amountRaw);
 };
 
-const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
-    const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
-    const collateralConfig = getCollateralConfigByType(collateralType);
+const createProxiedVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    const { minUnitPrice, stabilityFeeRate } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
+    const drawnDebtExact = collateralOwned.multipliedBy(minUnitPrice).dividedBy(stabilityFeeRate);
+    const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
+    return await openVaultWithProxiedContractAndDrawDebt(TEST_NETWORK, collateralType, collateralOwned, drawnDebt);
+};
 
-    if (balanceSlot && languageFormat) {
-        await setCollateralInWallet(collateralConfig.symbol, collateralOwned);
-    } else {
-        // fallback to setting vat balance and withdrawing it
-        await setAndCheckCollateralInVat(collateralType, collateralOwned);
-        await checkAndWithdrawCollateralFromVat(collateralConfig, collateralOwned);
-    }
-    await ensureWalletBalance(collateralConfig, collateralOwned);
+const createDefaultVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    const collateralConfig = getCollateralConfigByType(collateralType);
 
     const vaultId = await openVault(TEST_NETWORK, HARDHAT_PUBLIC_KEY, collateralType);
     const vault = await fetchVault(TEST_NETWORK, vaultId);
@@ -184,6 +194,41 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
     );
     await putCollateralIntoVaultAndWithdrawDai(vaultId, roundedCollateralOwned);
     return vaultId;
+};
+
+const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
+    if (balanceSlot && languageFormat) {
+        await setCollateralInWallet(collateralConfig.symbol, collateralOwned);
+    } else {
+        // fallback to setting vat balance and withdrawing it
+        await setAndCheckCollateralInVat(collateralType, collateralOwned);
+        await checkAndWithdrawCollateralFromVat(collateralConfig, collateralOwned);
+    }
+    await ensureWalletBalance(collateralConfig, collateralOwned);
+
+    const joinContractAddress = await getContractAddressByName(
+        TEST_NETWORK,
+        getJoinNameByCollateralType(collateralType)
+    );
+    const proxyTarget = await detectProxyTarget(TEST_NETWORK, joinContractAddress);
+    if (!proxyTarget) {
+        return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
+    }
+    return await createProxiedVaultWithCollateral(collateralType, collateralOwned);
+};
+
+export const adjustLimitsAndRates = async (collateralType: CollateralType) => {
+    await grantAdminPrivelegeForContract('MCD_VAT');
+    await grantAdminPrivelegeForContract('MCD_DOG');
+    const clipper = getClipperNameByCollateralType(collateralType);
+    await grantAdminPrivelegeForContract(clipper);
+
+    await setCollateralLiquidationLimitToGlobal(collateralType);
+    await setCollateralDebtCeilingToGlobal(collateralType);
+    await allowAllActionsInClipperContract(collateralType);
+    await overwriteStabilityFeeAccumulationRate(collateralType, new BigNumber(1.0000000005));
 };
 
 export default createVaultWithCollateral;

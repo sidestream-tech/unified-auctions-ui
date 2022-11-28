@@ -36,6 +36,7 @@
     "date-fns": "^2.28.0",
     "deep-equal-in-any-order": "^2.0.0",
     "ethers": "^5.4.6",
+    "evm-proxy-detection": "^1.0.0",
     "memoizee": "^0.4.15",
     "uuid": "^8.3.2"
   },
