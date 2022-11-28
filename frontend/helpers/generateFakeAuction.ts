@@ -3,8 +3,6 @@ import { random } from 'lodash';
 import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { AuctionTransaction, MarketData } from '~/../core/src/types';
-import { routeToPool } from '~/../core/src/calleeFunctions/helpers/pools';
-import { getTokenAddressByNetworkAndSymbol } from '~/../core/src/tokens';
 
 const FAKE_CALLEES = ['Uniswap V3', '1inch']; // Curve V3 marketUnitPrice is NaN (see below)
 
@@ -122,7 +120,7 @@ export const generateFakeAuction = function () {
     };
 };
 
-export const generateFakeAuctionTransaction = async function (): Promise<AuctionTransaction> {
+export const generateFakeAuctionTransaction = function (): Promise<AuctionTransaction> {
     const auction = generateFakeAuction();
     const swapTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const swapTransactionFeeDAI = swapTransactionFeeETH.multipliedBy(1000);
