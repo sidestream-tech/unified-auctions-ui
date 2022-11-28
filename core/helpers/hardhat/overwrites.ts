@@ -12,7 +12,7 @@ const STABILITY_FEE_ACCUMULATION_RATE_SLOT = '0x1';
 export const overwriteCurrentOraclePrice = async (network: string, collateralType: string, amount: BigNumber) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
     const oracleAddress = await getOracleAddressByCollateralType(network, collateralType);
-    const amoutInteger = amount.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed();
+    const amoutInteger = amount.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0);
     const valueWithValidity = createStructCoder().encode(['uint128', 'uint128'], ['1', amoutInteger]);
     await overwriteUintValueInAddress(
         oracleAddress,

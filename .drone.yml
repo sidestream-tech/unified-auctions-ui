@@ -199,23 +199,6 @@ data:
         event:
           - pull_request
 
-    # notification-service:pr-$PULL_REQUEST_NUMBER
-    - name: publish-notification-service-on-pr-push
-      target: development
-      repository: ghcr.io/sidestream-tech/unified-auctions-ui/notification-service
-      tags:
-        - "pr-${DRONE_PULL_REQUEST}"
-      labels:
-        - key: org.opencontainers.image.source
-          value: https://github.com/sidestream-tech/unified-auctions-ui
-      path_to_dockerfile: notification-service/Dockerfile
-      path_to_context: ./
-      tags_to_cache_from:
-        - "main"
-      trigger:
-        event:
-          - pull_request
-
   deployments_to_aws_eks:
     - name: deploy-main.auction-ui.k8s.sidestream.tech
       depends_on:
@@ -291,17 +274,6 @@ data:
       depends_on: [publish-bot-on-pr-push]
       image: ghcr.io/sidestream-tech/unified-auctions-ui/bot:pr-${DRONE_PULL_REQUEST}
       workdir: /bot
-      steps_parallel:
-        - name: lint
-          command: npm run lint
-      trigger:
-        event:
-          - pull_request
-    - name: notification-service-lint
-      type: kubernetes
-      depends_on: [publish-notification-service-on-pr-push]
-      image: ghcr.io/sidestream-tech/unified-auctions-ui/notification-service:pr-${DRONE_PULL_REQUEST}
-      workdir: /notification-service
       steps_parallel:
         - name: lint
           command: npm run lint
