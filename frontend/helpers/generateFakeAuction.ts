@@ -43,15 +43,15 @@ export const generateFakeAuction = async function () {
     const marketDataRecords: Record<string, MarketData> = {
         'Uniswap V3': {
             ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
-            pools: await routeToPool('custom', [collateralObject.symbol, 'USDC'], 3000),
+            pools: await routeToPool('custom', [collateralObject.symbol, 'USDC']),
         },
         'Curve V3': {
             marketUnitPrice: new BigNumber(NaN),
-            pools: await routeToPool('custom', [collateralObject.symbol], 3000),
+            pools: await routeToPool('custom', [collateralObject.symbol]),
         },
         '1inch': {
             ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
-            pools: await routeToPool('custom', [collateralObject.symbol], 3000),
+            pools: await routeToPool('custom', [collateralObject.symbol]),
         },
     };
     const marketUnitPriceToUnitPriceRatio = marketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
