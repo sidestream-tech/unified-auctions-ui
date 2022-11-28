@@ -28,6 +28,8 @@ import MCD_SPOT from './abis/MCD_SPOT.json';
 import MCD_JUG from './abis/MCD_JUG.json';
 import ERC20 from './abis/ERC20.json';
 import MCD_ADM from './abis/MCD_ADM.json';
+import PROXY_FACTORY from './abis/PROXY_FACTORY.json';
+import PROXY_ACTIONS from './abis/PROXY_ACTIONS.json';
 import getSigner from './signer';
 import memoizee from 'memoizee';
 
@@ -67,6 +69,7 @@ export const getContractInterfaceByName = async function (contractName: string):
         CDP_REGISTRY,
         MCD_CROPPER,
         MCD_ADM,
+        PROXY_FACTORY,
     };
     if (Object.keys(ABIs).includes(contractName)) {
         return ABIs[contractName];
@@ -79,6 +82,9 @@ export const getContractInterfaceByName = async function (contractName: string):
     }
     if (contractName.startsWith('MCD_CLIP_')) {
         return MCD_CLIP;
+    }
+    if (contractName.startsWith('PROXY_ACTIONS_')) {
+        return PROXY_ACTIONS;
     }
     throw new Error(`No contract interface found for "${contractName}"`);
 };

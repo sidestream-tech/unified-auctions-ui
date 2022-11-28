@@ -1,7 +1,7 @@
 <template>
     <span v-if="isValidNumber"
         ><span v-if="isValueSmallButNotZero">under </span
-        ><animated-number :value="format(value)" :format-value="format" :duration="duration"
+        ><animated-number :value="formattedValue" :format-value="format" :duration="duration"
     /></span>
 </template>
 
@@ -32,8 +32,18 @@ export default Vue.extend({
             type: Number,
             default: undefined,
         },
+        disableThousandSeparators: {
+            type: Boolean,
+            default: false,
+        },
     },
     computed: {
+        formattedValue(): string {
+            return formatToAutomaticDecimalPoints(this.value, {
+                decimalPlaces: this.decimalPlaces,
+                disableThousandSeparators: true,
+            });
+        },
         isValidNumber(): boolean {
             return isValidNumber(this.value);
         },
@@ -43,7 +53,10 @@ export default Vue.extend({
     },
     methods: {
         format(value: number | BigNumber): string {
-            return formatToAutomaticDecimalPoints(value, this.decimalPlaces);
+            return formatToAutomaticDecimalPoints(value, {
+                decimalPlaces: this.decimalPlaces,
+                disableThousandSeparators: this.disableThousandSeparators,
+            });
         },
     },
 });

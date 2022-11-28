@@ -66,7 +66,7 @@ storiesOf('Panels/VaultLiquidationLimitsCheckPanel', module)
                 vaultTransaction: {
                     ...vaultTransaction,
                     state: 'not-liquidatable',
-                    debtDai: new BigNumber(faker.datatype.float({ min: 10000 })),
+                    debtDai: new BigNumber(10000),
                     maximumProtocolDebtDai: new BigNumber(5000),
                     currentProtocolDebtDai: new BigNumber(5000),
                     maximumCollateralDebtDai: new BigNumber(5000),

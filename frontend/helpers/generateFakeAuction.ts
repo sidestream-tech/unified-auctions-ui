@@ -2,7 +2,32 @@ import faker from 'faker';
 import { random } from 'lodash';
 import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
-import { AuctionTransaction } from '~/../core/src/types';
+import { AuctionTransaction, MarketData } from '~/../core/src/types';
+
+const FAKE_CALLEES = ['Uniswap V3', '1inch']; // Curve V3 marketUnitPrice is NaN (see below)
+
+export const generateFakeMarketData = function (
+    isActive: boolean,
+    approximateUnitPrice: BigNumber,
+    collateralAmount: BigNumber
+) {
+    const marketUnitPriceToUnitPriceRatio = isActive
+        ? new BigNumber(faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 }))
+        : undefined;
+    const marketUnitPrice = approximateUnitPrice.multipliedBy(
+        new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio || 0)
+    );
+    const transactionGrossProfit = marketUnitPrice
+        .multipliedBy(collateralAmount)
+        .minus(approximateUnitPrice.multipliedBy(collateralAmount));
+    const transactionGrossProfitDate = faker.date.future();
+    return {
+        marketUnitPrice,
+        marketUnitPriceToUnitPriceRatio,
+        transactionGrossProfit,
+        transactionGrossProfitDate,
+    };
+};
 
 export const generateFakeAuction = function () {
     const index = faker.datatype.number();
@@ -12,16 +37,26 @@ export const generateFakeAuction = function () {
     const isActive = faker.datatype.boolean();
     const isFinished = faker.datatype.boolean();
     const approximateUnitPrice = totalPrice.dividedBy(collateralAmount);
-    const marketUnitPriceToUnitPriceRatio = isActive
-        ? new BigNumber(faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 }))
-        : undefined;
     const collateralObject = faker.helpers.randomize(Object.values(COLLATERALS));
-    const marketUnitPrice = approximateUnitPrice.multipliedBy(
-        new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio || 0)
-    );
-    const transactionGrossProfit = marketUnitPrice
-        .multipliedBy(collateralAmount)
-        .minus(approximateUnitPrice.multipliedBy(collateralAmount));
+    const suggestedMarketId = faker.helpers.randomize(FAKE_CALLEES);
+    const marketDataRecords: Record<string, MarketData> = {
+        'Uniswap V3': {
+            ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
+            route: [collateralObject.symbol, 'USDC'],
+        },
+        'Curve V3': {
+            marketUnitPrice: new BigNumber(NaN),
+            route: [collateralObject.symbol],
+        },
+        '1inch': {
+            ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
+            route: [collateralObject.symbol],
+        },
+    };
+    const marketUnitPriceToUnitPriceRatio = marketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
+    const marketUnitPrice = marketDataRecords[suggestedMarketId].marketUnitPrice;
+    const transactionGrossProfit = marketDataRecords[suggestedMarketId].transactionGrossProfit;
+    const transactionGrossProfitDate = marketDataRecords[suggestedMarketId].transactionGrossProfitDate;
     const secondsBetweenPriceDrops = faker.datatype.number(120);
     const secondsTillNextPriceDrop = faker.datatype.number(secondsBetweenPriceDrops);
     return {
@@ -40,6 +75,8 @@ export const generateFakeAuction = function () {
         approximateUnitPrice,
         unitPrice: approximateUnitPrice,
         marketUnitPrice,
+        marketDataRecords,
+        suggestedMarketId,
         isActive,
         transactionGrossProfit,
         isFinished,
@@ -51,7 +88,7 @@ export const generateFakeAuction = function () {
         collateralToCoverDebt: collateralAmount.multipliedBy(debtDAI.dividedBy(totalPrice)),
         minimumBidDai: new BigNumber(faker.finance.amount()),
         priceDropRatio: new BigNumber(faker.datatype.number({ min: 0.5, max: 1, precision: 0.0001 })),
-        transactionGrossProfitDate: faker.date.future(),
+        transactionGrossProfitDate,
         fetchedAt: new Date(),
     };
 };
@@ -66,7 +103,13 @@ export const generateFakeAuctionTransaction = function (): AuctionTransaction {
     const authTransactionFeeDAI = authTransactionFeeETH.multipliedBy(1000);
     const restartTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const restartTransactionFeeDAI = restartTransactionFeeETH.multipliedBy(1000);
-    const transactionNetProfit = auction.transactionGrossProfit.minus(swapTransactionFeeDAI);
+    for (const marketData of Object.values(auction.marketDataRecords)) {
+        if (marketData.transactionGrossProfit) {
+            marketData.transactionNetProfit = marketData.transactionGrossProfit.minus(swapTransactionFeeDAI);
+        }
+    }
+    const transactionNetProfit =
+        auction.marketDataRecords[auction.suggestedMarketId].transactionNetProfit || new BigNumber(NaN);
     const combinedSwapFeesETH = swapTransactionFeeETH.plus(authTransactionFeeETH).plus(authTransactionFeeETH);
     const combinedSwapFeesDAI = combinedSwapFeesETH.multipliedBy(1000);
     const combinedBidFeesETH = bidTransactionFeeETH.plus(authTransactionFeeETH).plus(authTransactionFeeETH);

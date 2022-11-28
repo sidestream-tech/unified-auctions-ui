@@ -33,12 +33,16 @@ export const getCalleesByNetworkType = function (network: string): CalleeAddress
     return networkCallees;
 };
 
-export const getCalleeAddressByCollateralType = function (network: string, collateralType: string): string {
+export const getCalleeAddressByCollateralType = function (
+    network: string,
+    collateralType: string,
+    marketId: string
+): string | undefined {
     const networkCallees = getCalleesByNetworkType(network);
     const collateral = getCollateralConfigByType(collateralType);
-    const calleeAddress = networkCallees[collateral.exchange.callee];
-    if (!calleeAddress) {
+    const marketData = collateral.exchanges[marketId];
+    if (!marketData || !networkCallees[marketData.callee]) {
         throw new Error(`No callee address found for the "${collateralType}" collateral on "${network}" network`);
     }
-    return calleeAddress;
+    return networkCallees[marketData.callee];
 };

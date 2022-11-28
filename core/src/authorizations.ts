@@ -4,6 +4,7 @@ import getContract, { getContractAddressByName, getClipperNameByCollateralType, 
 import executeTransaction from './execute';
 import BigNumber from './bignumber';
 import { DAI_NUMBER_OF_DIGITS, MAX, MKR_NUMBER_OF_DIGITS } from './constants/UNITS';
+import { getCollateralConfigBySymbol } from './constants/COLLATERALS';
 
 const _authorizeWallet = async function (
     network: string,
@@ -179,4 +180,16 @@ export const getDebtAuctionAuthorizationStatus = async (network: string, walletA
     const contract = await getContract(network, 'MCD_VAT');
     const authorizationStatus = await contract.can(walletAddress, flopperAddress);
     return authorizationStatus.toNumber() === 1;
+};
+
+export const giveAllowanceToAddress = async (
+    network: string,
+    collateralSymbol: string,
+    spenderAddress: string,
+    collateralAmount: BigNumber
+) => {
+    const config = getCollateralConfigBySymbol(collateralSymbol);
+    const tokenAddress = await getContractAddressByName(network, collateralSymbol);
+    const tokenContract = await getErc20Contract(network, tokenAddress, true);
+    await tokenContract.approve(spenderAddress, collateralAmount.shiftedBy(config.decimals).toFixed(0));
 };

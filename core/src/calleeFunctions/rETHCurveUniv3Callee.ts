@@ -11,12 +11,14 @@ import { NULL_ADDRESS } from '../constants/UNITS';
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
+    marketId: string,
     profitAddress: string
 ): Promise<string> {
-    if (collateral.exchange.callee !== 'rETHCurveUniv3Callee') {
+    const marketData = collateral.exchanges[marketId];
+    if (marketData?.callee !== 'rETHCurveUniv3Callee') {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const route = await encodeRoute(network, collateral.exchange.route);
+    const route = await encodeRoute(network, marketData.route);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
@@ -32,6 +34,7 @@ const getCalleeData = async function (
 const getMarketPrice = async function (
     network: string,
     _collateral: CollateralConfig,
+    _marketId: string,
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     // convert rETH into wstETH
