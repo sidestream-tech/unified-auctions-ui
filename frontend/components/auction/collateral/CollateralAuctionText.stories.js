@@ -3,7 +3,7 @@ import faker from 'faker';
 import CollateralAuctionText from './CollateralAuctionText';
 import { generateFakeAuctions } from '~/helpers/generateFakeAuction';
 
-const fakeAuctions = await generateFakeAuctions();
+const fakeAuctions = generateFakeAuctions();
 const randomSelectedAuction = faker.random.arrayElement(fakeAuctions);
 
 const common = {

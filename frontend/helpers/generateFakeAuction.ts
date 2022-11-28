@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { AuctionTransaction, MarketData } from '~/../core/src/types';
 import { routeToPool } from '~/../core/src/calleeFunctions/helpers/pools';
+import { getTokenAddressByNetworkAndSymbol } from '~/../core/src/tokens';
 
 const FAKE_CALLEES = ['Uniswap V3', '1inch']; // Curve V3 marketUnitPrice is NaN (see below)
 
@@ -30,7 +31,7 @@ export const generateFakeMarketData = function (
     };
 };
 
-export const generateFakeAuction = async function () {
+export const generateFakeAuction = function () {
     const index = faker.datatype.number();
     const collateralAmount = new BigNumber(parseFloat(faker.finance.amount()));
     const totalPrice = new BigNumber(parseFloat(faker.finance.amount()));
@@ -38,20 +39,47 @@ export const generateFakeAuction = async function () {
     const isActive = faker.datatype.boolean();
     const isFinished = faker.datatype.boolean();
     const approximateUnitPrice = totalPrice.dividedBy(collateralAmount);
-    const collateralObject = faker.helpers.randomize(Object.values(COLLATERALS));
+    const collateralObject = COLLATERALS['ETH-A'];
     const suggestedMarketId = faker.helpers.randomize(FAKE_CALLEES);
+    const fakePoolsTwoSteps = [
+        {
+            addresses: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'],
+            fee: 3000,
+            routes: ['ETH-A', 'USDC-A'],
+        },
+        {
+            addresses: ['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0x6b175474e89094c44da98b954eedeac495271d0f'],
+            fee: 3000,
+            routes: ['USDC-A', 'DAI'],
+        },
+    ];
+    const fakePoolsNanMarketUnitPrice = [
+        {
+            addresses: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0x6b175474e89094c44da98b954eedeac495271d0f'],
+            fee: 3000,
+            routes: ['ETH-A', 'DAI'],
+        },
+    ];
+    const fakePoolsOneStep = [
+        {
+            addresses: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0x6b175474e89094c44da98b954eedeac495271d0f'],
+            fee: 3000,
+            routes: ['ETH-A', 'DAI'],
+        },
+    ];
+
     const marketDataRecords: Record<string, MarketData> = {
         'Uniswap V3': {
             ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
-            pools: await routeToPool('custom', [collateralObject.symbol, 'USDC']),
+            pools: fakePoolsTwoSteps,
         },
         'Curve V3': {
             marketUnitPrice: new BigNumber(NaN),
-            pools: await routeToPool('custom', [collateralObject.symbol]),
+            pools: fakePoolsNanMarketUnitPrice,
         },
         '1inch': {
             ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
-            pools: await routeToPool('custom', [collateralObject.symbol]),
+            pools: fakePoolsOneStep,
         },
     };
     const marketUnitPriceToUnitPriceRatio = marketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
@@ -95,7 +123,7 @@ export const generateFakeAuction = async function () {
 };
 
 export const generateFakeAuctionTransaction = async function (): Promise<AuctionTransaction> {
-    const auction = await generateFakeAuction();
+    const auction = generateFakeAuction();
     const swapTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const swapTransactionFeeDAI = swapTransactionFeeETH.multipliedBy(1000);
     const bidTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
@@ -137,6 +165,6 @@ export const generateFakeAuctionTransactions = function (number = random(5, 15))
     return Array(number).fill(null).map(generateFakeAuctionTransaction);
 };
 
-export const generateFakeAuctions = async function (number = random(5, 15)) {
-    return await Promise.all(Array(number).fill(null).map(generateFakeAuction));
+export const generateFakeAuctions = function (number = random(5, 15)) {
+    return Array(number).fill(null).map(generateFakeAuction);
 };
