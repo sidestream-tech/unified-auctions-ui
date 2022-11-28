@@ -120,7 +120,7 @@ export const generateFakeAuction = function () {
     };
 };
 
-export const generateFakeAuctionTransaction = function (): Promise<AuctionTransaction> {
+export const generateFakeAuctionTransaction = function (): AuctionTransaction {
     const auction = generateFakeAuction();
     const swapTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const swapTransactionFeeDAI = swapTransactionFeeETH.multipliedBy(1000);
