@@ -3,6 +3,7 @@ import { random } from 'lodash';
 import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { AuctionTransaction, MarketData } from '~/../core/src/types';
+import { routeToPool } from '~/../core/src/calleeFunctions/helpers/pools';
 
 const FAKE_CALLEES = ['Uniswap V3', '1inch']; // Curve V3 marketUnitPrice is NaN (see below)
 
@@ -29,7 +30,7 @@ export const generateFakeMarketData = function (
     };
 };
 
-export const generateFakeAuction = function () {
+export const generateFakeAuction = async function () {
     const index = faker.datatype.number();
     const collateralAmount = new BigNumber(parseFloat(faker.finance.amount()));
     const totalPrice = new BigNumber(parseFloat(faker.finance.amount()));
@@ -42,15 +43,15 @@ export const generateFakeAuction = function () {
     const marketDataRecords: Record<string, MarketData> = {
         'Uniswap V3': {
             ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
-            route: [collateralObject.symbol, 'USDC'],
+            pools: await routeToPool('custom', [collateralObject.symbol, 'USDC'], 3000),
         },
         'Curve V3': {
             marketUnitPrice: new BigNumber(NaN),
-            route: [collateralObject.symbol],
+            pools: await routeToPool('custom', [collateralObject.symbol], 3000),
         },
         '1inch': {
             ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
-            route: [collateralObject.symbol],
+            pools: await routeToPool('custom', [collateralObject.symbol], 3000),
         },
     };
     const marketUnitPriceToUnitPriceRatio = marketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
@@ -93,8 +94,8 @@ export const generateFakeAuction = function () {
     };
 };
 
-export const generateFakeAuctionTransaction = function (): AuctionTransaction {
-    const auction = generateFakeAuction();
+export const generateFakeAuctionTransaction = async function (): Promise<AuctionTransaction> {
+    const auction = await generateFakeAuction();
     const swapTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
     const swapTransactionFeeDAI = swapTransactionFeeETH.multipliedBy(1000);
     const bidTransactionFeeETH = new BigNumber(faker.datatype.float({ min: 0, max: 0.001, precision: 0.000001 }));
@@ -136,6 +137,6 @@ export const generateFakeAuctionTransactions = function (number = random(5, 15))
     return Array(number).fill(null).map(generateFakeAuctionTransaction);
 };
 
-export const generateFakeAuctions = function (number = random(5, 15)) {
-    return Array(number).fill(null).map(generateFakeAuction);
+export const generateFakeAuctions = async function (number = random(5, 15)) {
+    return await Promise.all(Array(number).fill(null).map(generateFakeAuction));
 };
