@@ -138,6 +138,10 @@ export const getMarketDataRecords = async function (
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     let marketDataRecords = {};
     for (const marketId in collateral.exchanges) {
+        // turn off autorouter during tests because it takes too long
+        if (process.env.TEST_ENV && marketId === 'Uniswap V3 Autorouter') {
+            continue;
+        }
         let marketData: MarketData;
         try {
             marketData = await getMarketDataById(network, collateral, marketId, amount);
