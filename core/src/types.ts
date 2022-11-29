@@ -121,7 +121,7 @@ export declare interface ValueSlotAddressAndOffset {
 
 export declare interface ValueExtractionConfig {
     slotAddress: string;
-    format: string[];
+    abiCoderFormat: string[];
     wordSize?: number;
 }
 

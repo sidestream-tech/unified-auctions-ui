@@ -34,15 +34,15 @@ const getNextOraclePriceChange = async (network: string, collateralType: string)
 const extractValuesFromAddress = async function (
     network: string,
     contractAddress: string,
-    configs: ValueExtractionConfig[]
+    extractionConfigs: ValueExtractionConfig[]
 ) {
     const provider = await getProvider(network);
     let values = {} as any;
-    for (const config of configs) {
-        const hexValues = await provider.getStorageAt(contractAddress, config.slotAddress);
+    for (const extractionConfig of extractionConfigs) {
+        const hexValues = await provider.getStorageAt(contractAddress, extractionConfig.slotAddress);
         values = {
             ...values,
-            ...createStructCoder(config.wordSize).decode(config.format, hexValues),
+            ...createStructCoder(extractionConfig.wordSize).decode(extractionConfig.abiCoderFormat, hexValues),
         };
     }
     return values;
