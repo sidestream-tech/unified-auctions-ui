@@ -7,6 +7,7 @@ import { getActualDecimalChainIdByNetworkType } from '../../network';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { DAI_NUMBER_OF_DIGITS } from '../../constants/UNITS';
+import memoizee from 'memoizee';
 
 const routers: Record<string, AlphaRouter> = {};
 
@@ -63,7 +64,7 @@ export const getUniswapAutoRoute = async function (
     return route;
 };
 
-export const fetchAutoRouteInformation = async function (
+const _fetchAutoRouteInformation = async function (
     network: string,
     collateralSymbol: string,
     inputAmount: string | number = 1,
@@ -102,3 +103,9 @@ export const fetchAutoRouteInformation = async function (
         };
     }
 };
+
+export const fetchAutoRouteInformation = memoizee(_fetchAutoRouteInformation, {
+    promise: true,
+    maxAge: 1000 * 60, // 1 minute
+    length: 4,
+});

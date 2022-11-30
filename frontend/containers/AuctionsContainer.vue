@@ -170,6 +170,7 @@ export default Vue.extend({
         toggleAutoRouterLoad(id: string): void {
             const previousValue = this.$store.getters['auctions/getAuctionAutoRouterStates'][id] || false;
             this.$store.commit('auctions/setAuctionAutoRouterState', { id, useAutoRouter: !previousValue });
+            this.$store.dispatch('auctions/updateAuctionsPrices');
         },
     },
 });
