@@ -30,7 +30,22 @@
                                         type="button"
                                         @click="$emit('update:toggleAutoRouterLoad', auctionTransaction.id)"
                                     >
-                                        <span v-if="isAutoroutingEnabled" class="opacity-50">Disable</span>
+                                        <div v-if="isAutoroutingEnabled" class="flex justify-between">
+                                            <span class="opacity-50 pr-2">Disable</span
+                                            ><LoadingIcon
+                                                v-if="
+                                                    !marketData.marketUnitPrice || marketData.marketUnitPrice.isNaN()
+                                                "
+                                                class="
+                                                    h-3
+                                                    w-3
+                                                    mt-1
+                                                    animate animate-spin
+                                                    fill-current
+                                                    dark:text-gray-300
+                                                "
+                                            />
+                                        </div>
                                         <span v-else class="text-green-500">Enable</span>
                                     </button>
                                 </div>
@@ -62,6 +77,7 @@ import BigNumber from 'bignumber.js';
 import { Icon } from 'ant-design-vue';
 import CollapseTransition from '@ivanv/vue-collapse-transition';
 import { AuctionTransaction, MarketData } from 'auctions-core/src/types';
+import LoadingIcon from '~/assets/icons/loading.svg';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
@@ -69,6 +85,7 @@ export default Vue.extend({
         Icon,
         FormatCurrency,
         CollapseTransition,
+        LoadingIcon,
     },
     props: {
         auctionTransaction: {
