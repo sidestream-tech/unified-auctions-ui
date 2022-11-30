@@ -1,8 +1,9 @@
 import CoinbaseWalletSDK, { CoinbaseWalletProvider } from '@coinbase/wallet-sdk';
 import { ethers } from 'ethers';
-import { getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/network';
+import { getChainIdByNetworkType, getNetworkConfigByType, getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { setSigner } from 'auctions-core/src/signer';
 import { formatToHexWithoutPad } from 'auctions-core/helpers/format';
+import { SITE_TITLE } from '~/nuxt.config';
 import CoinbaseLogo from '~/assets/icons/wallets/coinbase.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
 
@@ -21,13 +22,19 @@ export default class Coinbase extends AbstractWallet {
         }
     }
 
-    getProvider(): ethers.providers.JsonRpcProvider {
-        const rpcUrl = process.env.RPC_URL;
+    getProvider(network?: string): ethers.providers.JsonRpcProvider {
+        let rpcUrl: string | undefined;
+        try {
+            rpcUrl = getNetworkConfigByType(network).url;
+        } catch {
+            rpcUrl = process.env.RPC_URL;
+        }
         if (!rpcUrl) {
             throw new Error(`No RPC_URL env variable was provided`);
         }
+        console.warn(`RPC_URL: ${rpcUrl}`);
         if (!Coinbase.provider) {
-            const walletSdk = new CoinbaseWalletSDK({ appName: 'Unified Auctions UI' });
+            const walletSdk = new CoinbaseWalletSDK({ appName: SITE_TITLE });
             Coinbase.provider = walletSdk.makeWeb3Provider(rpcUrl);
         }
         return new ethers.providers.Web3Provider(Coinbase.provider as any);
@@ -47,7 +54,7 @@ export default class Coinbase extends AbstractWallet {
     }
 
     public async switchNetwork(network: string): Promise<void> {
-        const provider = this.getProvider();
+        const provider = this.getProvider(network);
         const chainId = getChainIdByNetworkType(network);
         await provider.send('wallet_switchEthereumChain', [{ chainId }]);
     }
