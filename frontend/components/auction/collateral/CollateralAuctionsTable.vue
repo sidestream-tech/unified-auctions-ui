@@ -44,7 +44,7 @@
                 <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
                 <span v-else>
                     Ends in
-                    <time-till :date="endDate" />
+                    <TimeTill :date="endDate" />
                 </span>
             </div>
             <div slot="updatingStatus" class="opacity-50 font-normal">
