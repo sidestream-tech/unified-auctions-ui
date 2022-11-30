@@ -24,6 +24,17 @@
                                 </span>
                                 DAI
                             </td>
+                            <td class="pr-2 text-right whitespace-nowrap">
+                                <div v-if="id === 'Uniswap V3 Autorouter'">
+                                    <button
+                                        type="button"
+                                        @click="$emit('update:toggleAutoRouterLoad', auctionTransaction.id)"
+                                    >
+                                        <span v-if="isAutoroutingEnabled" class="opacity-50">Disable</span>
+                                        <span v-else class="text-green-500">Enable</span>
+                                    </button>
+                                </div>
+                            </td>
                             <td class="w-full text-right whitespace-nowrap">
                                 <div v-if="marketData.marketUnitPrice && !marketData.marketUnitPrice.isNaN()">
                                     <button type="button" @click="$emit('update:marketId', id)">
@@ -67,6 +78,10 @@ export default Vue.extend({
         marketId: {
             type: String,
             default: '',
+        },
+        isAutoroutingEnabled: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {

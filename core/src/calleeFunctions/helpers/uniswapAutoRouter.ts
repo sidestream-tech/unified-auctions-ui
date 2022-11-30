@@ -8,6 +8,19 @@ import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { DAI_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 
+const routers: Record<string, AlphaRouter> = {};
+
+const getAutoRouter = async function (network: string): Promise<AlphaRouter> {
+    if (routers[network]) {
+        return routers[network];
+    }
+    routers[network] = new AlphaRouter({
+        chainId: getActualDecimalChainIdByNetworkType(network),
+        provider: await getProvider(network),
+    });
+    return routers[network];
+};
+
 const getUniswapTokenBySymbol = async function (network: string, symbol: string): Promise<Token> {
     const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const tokenDecimals = getTokenDecimalsBySymbol(symbol);
@@ -22,11 +35,7 @@ export const getUniswapAutoRoute = async function (
     walletAddress?: string
 ) {
     const collateralConfig = getCollateralConfigBySymbol(collateralSymbol);
-    const provider = await getProvider(network);
-    const router = new AlphaRouter({
-        chainId: getActualDecimalChainIdByNetworkType(network),
-        provider,
-    });
+    const router = await getAutoRouter(network);
     const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol);
     const outputToken = await getUniswapTokenBySymbol(network, 'DAI');
 

@@ -133,23 +133,28 @@ export const getMarketDataById = async function (
 export const getMarketDataRecords = async function (
     network: string,
     collateralSymbol: CollateralSymbol,
-    amount: BigNumber = new BigNumber('1')
+    amount: BigNumber = new BigNumber('1'),
+    useAutoRouter = false
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     let marketDataRecords = {};
     for (const marketId in collateral.exchanges) {
-        // turn off autorouter during tests because it takes too long
-        if (process.env.TEST_ENV && marketId === 'Uniswap V3 Autorouter') {
-            continue;
-        }
         let marketData: MarketData;
         try {
-            marketData = await getMarketDataById(network, collateral, marketId, amount);
+            // turn off autorouter during tests because it takes too long
+            if ((process.env.TEST_ENV || !useAutoRouter) && marketId === 'Uniswap V3 Autorouter') {
+                marketData = {
+                    marketUnitPrice: new BigNumber(NaN),
+                    pools: [], // dummy value: MarketData requires either a pool or tokens
+                };
+            } else {
+                marketData = await getMarketDataById(network, collateral, marketId, amount);
+            }
         } catch (error: any) {
             marketData = {
                 errorMessage: error?.message,
                 marketUnitPrice: new BigNumber(NaN),
-                pools: [], // dummy value: MarketData requires either a route or tokens
+                pools: [], // dummy value: MarketData requires either a pool or tokens
             };
         }
         marketDataRecords = {
