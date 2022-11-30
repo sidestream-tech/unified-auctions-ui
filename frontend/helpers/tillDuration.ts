@@ -1,4 +1,4 @@
-import { intervalToDuration, formatDistance, Duration } from 'date-fns';
+import { intervalToDuration, formatDistance, Duration, isSameMonth } from 'date-fns';
 
 const formatDuration = function (duration: Duration): string {
     // formats duration into `1y 2m 3d 4h 5m 6s` format
@@ -20,17 +20,26 @@ export const formatSeconds = function (seconds: number): string {
     return formatDuration(duration);
 };
 
-export const formatInterval = function (startDate: Date, endDate: Date, isCountUp: boolean = false): string {
-    if (startDate < endDate || isCountUp) {
-        // switch startDate and endDate to act as a count-up timer
+export const formatInterval = function (startDate: Date, endDate: Date): string {
+    if (startDate < endDate) {
         const duration = intervalToDuration({
-            start: isCountUp ? endDate : startDate,
-            end: isCountUp ? startDate : endDate,
+            start: startDate,
+            end: endDate,
         });
         return formatDuration(duration);
     } else {
-        return formatDistance(endDate, startDate, {
-            addSuffix: true,
+        // check if difference between start and end dates is more than one month
+        if (!isSameMonth(startDate, endDate)) {
+            // return less precise time-elapsed
+            return formatDistance(endDate, startDate, {
+                addSuffix: true,
+            });
+        }
+        // switch start and end dates to count up
+        const duration = intervalToDuration({
+            start: endDate,
+            end: startDate,
         });
+        return `${formatDuration(duration)} ago`;
     }
 };

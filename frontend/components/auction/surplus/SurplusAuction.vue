@@ -93,7 +93,7 @@
                                     />
                                     <span>Updating...</span>
                                 </div>
-                                <TimeTill v-else :date="auction.fetchedAt" :is-count-up="true" /> ago
+                                <TimeTill v-else :date="auction.fetchedAt" />
                             </td>
                         </tr>
                     </tbody>
