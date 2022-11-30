@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { getChainIdByNetworkType, getNetworkConfigByType, getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { setSigner } from 'auctions-core/src/signer';
 import { formatToHexWithoutPad } from 'auctions-core/helpers/format';
-import { SITE_TITLE } from '~/nuxt.config';
 import CoinbaseLogo from '~/assets/icons/wallets/coinbase.svg';
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
 
@@ -32,9 +31,8 @@ export default class Coinbase extends AbstractWallet {
         if (!rpcUrl) {
             throw new Error(`No RPC_URL env variable was provided`);
         }
-        console.warn(`RPC_URL: ${rpcUrl}`);
         if (!Coinbase.provider) {
-            const walletSdk = new CoinbaseWalletSDK({ appName: SITE_TITLE });
+            const walletSdk = new CoinbaseWalletSDK({ appName: process.env.SITE_TITLE || '' });
             Coinbase.provider = walletSdk.makeWeb3Provider(rpcUrl);
         }
         return new ethers.providers.Web3Provider(Coinbase.provider as any);

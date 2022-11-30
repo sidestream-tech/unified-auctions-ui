@@ -1,7 +1,7 @@
 import pkg from './package.json';
 
 const PREVIEW_IMAGE = (process.env.FRONTEND_ORIGIN || '') + '/preview.jpeg';
-export const SITE_TITLE = 'Unified Auctions';
+const SITE_TITLE = 'Unified Auctions';
 const SITE_DESCRIPTION = `The "${SITE_TITLE}" is the portal to all Maker Auctions related services. Easily interact with the Maker Protocol through streamlined interfaces, inform yourself about how the protocol works and receive updates on current auctions.`;
 const TWITTER_HANDLE = '@MakerDAO_SAS';
 
@@ -13,6 +13,7 @@ export default {
     target: 'static',
 
     env: {
+        SITE_TITLE,
         RPC_URL: process.env.RPC_URL,
         DEMO_MODE: process.env.DEMO_MODE || false,
         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,
