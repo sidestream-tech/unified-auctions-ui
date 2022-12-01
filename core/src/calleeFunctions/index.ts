@@ -21,8 +21,6 @@ import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../const
 import { routeToPool } from './helpers/pools';
 import { fetchAutoRouteInformation } from './helpers/uniswapAutoRouter';
 
-const MARKET_PRICE_CACHE_MS = 10 * 1000;
-
 const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV2CalleeDai,
     UniswapV2LpTokenCalleeDai,
