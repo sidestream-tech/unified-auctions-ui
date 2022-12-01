@@ -50,7 +50,7 @@ export default class MetaMask extends AbstractWallet {
         return provider.getSigner();
     }
 
-    public async connect(): Promise<void> {
+    public async connect(_network: string): Promise<void> {
         const constructor = this.constructor as typeof MetaMask;
         if (!constructor.isConnected) {
             message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
