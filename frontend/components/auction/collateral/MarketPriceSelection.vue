@@ -77,7 +77,7 @@ import BigNumber from 'bignumber.js';
 import { Icon } from 'ant-design-vue';
 import CollapseTransition from '@ivanv/vue-collapse-transition';
 import { AuctionTransaction, MarketData } from 'auctions-core/src/types';
-import COLLATERALS from 'auctions-core/src/constants/collaterals';
+import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import LoadingIcon from '~/assets/icons/loading.svg';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
