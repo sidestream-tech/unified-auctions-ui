@@ -110,14 +110,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV3Callee',
                 automaticRouter: true,
             },
-            'Uniswap V3 Autorouter': {
-                callee: 'UniswapV3Callee',
-                automaticRouter: true,
-            },
-            'Uniswap V3 Autorouter': {
-                callee: 'UniswapV3Callee',
-                automaticRouter: true,
-            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: [],

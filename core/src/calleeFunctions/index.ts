@@ -130,7 +130,7 @@ export const getMarketDataById = async function (
     };
 };
 
-const getMarketDataRecords = async function (
+export const getMarketDataRecords = async function (
     network: string,
     collateralSymbol: CollateralSymbol,
     amount: BigNumber = new BigNumber('1'),
