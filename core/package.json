@@ -7,7 +7,7 @@
     "dev": "tsc-watch --noClear",
     "build": "tsc --build tsconfig.json",
     "start": "node .",
-    "test": "TEST_ENV=1 npx hardhat test --network testnetwork --config local.hardhat.config.ts",
+    "test": "NODE_ENV=test npx hardhat test --network testnetwork --config local.hardhat.config.ts",
     "lint": "eslint --ext \".js,.ts\" --ignore-path .gitignore . --max-warnings=0",
     "hardhat:silent": "npx hardhat node &> /dev/null",
     "hardhat": "npx hardhat node",

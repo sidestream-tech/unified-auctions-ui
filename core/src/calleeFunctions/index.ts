@@ -142,7 +142,7 @@ const _getMarketDataRecords = async function (
         let marketData: MarketData;
         try {
             // turn off autorouter during tests because it takes too long
-            if ((process.env.TEST_ENV || !useAutoRouter) && marketId === 'Uniswap V3 Autorouter') {
+            if ((process.env.NODE_ENV === 'test' || !useAutoRouter) && marketId === 'Uniswap V3 Autorouter') {
                 marketData = {
                     marketUnitPrice: new BigNumber(NaN),
                     pools: [], // dummy value: MarketData requires either a pool or tokens
