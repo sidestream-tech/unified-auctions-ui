@@ -31,10 +31,7 @@
                             <td>Next price update</td>
                             <td>
                                 <div
-                                    v-if="
-                                        vaultTransaction.nextPriceChange &&
-                                        vaultTransaction.nextPriceChange instanceof Date
-                                    "
+                                    v-if="vaultTransaction.nextPriceChange && !isNextPriceChangeNaN"
                                     class="flex items-center space-x-1"
                                 >
                                     <AnimatedArrow
@@ -276,6 +273,9 @@ export default Vue.extend({
             }
             const link = generateLink(this.vaultTransaction.network, 'collateral');
             return `${link}&auction=${encodeURIComponent(this.vaultTransaction.pastLiquidations[0].auctionId)}`;
+        },
+        isNextPriceChangeNaN(): boolean {
+            return isNaN(new Date(this.vaultTransaction.nextPriceChange).getTime());
         },
     },
     watch: {
