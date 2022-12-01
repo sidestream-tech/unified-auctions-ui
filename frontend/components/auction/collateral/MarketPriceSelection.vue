@@ -25,7 +25,7 @@
                                 DAI
                             </td>
                             <td class="pr-2 text-right whitespace-nowrap">
-                                <div v-if="marketData.autoRouter">
+                                <div v-if="isMarketIdAutorouted(id)">
                                     <button
                                         type="button"
                                         @click="$emit('update:toggleAutoRouterLoad', auctionTransaction.id)"
@@ -77,6 +77,7 @@ import BigNumber from 'bignumber.js';
 import { Icon } from 'ant-design-vue';
 import CollapseTransition from '@ivanv/vue-collapse-transition';
 import { AuctionTransaction, MarketData } from 'auctions-core/src/types';
+import COLLATERALS from 'auctions-core/src/constants/collaterals';
 import LoadingIcon from '~/assets/icons/loading.svg';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
@@ -132,6 +133,11 @@ export default Vue.extend({
                 return b[1].marketUnitPrice.minus(a[1].marketUnitPrice).toNumber();
             });
             return marketDataArraySorted;
+        },
+    },
+    methods: {
+        isMarketIdAutorouted(id: string) {
+            return COLLATERALS[this.auctionTransaction.collateralType].exchanges[id].automaticRouter === true;
         },
     },
 });
