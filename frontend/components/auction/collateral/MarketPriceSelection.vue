@@ -136,8 +136,9 @@ export default Vue.extend({
         },
     },
     methods: {
-        isMarketIdAutorouted(id: string) {
-            return COLLATERALS[this.auctionTransaction.collateralType].exchanges[id].automaticRouter === true;
+        isMarketIdAutorouted(id: string): boolean {
+            const exchange: any = COLLATERALS[this.auctionTransaction.collateralType].exchanges[id] || undefined;
+            return exchange ? exchange.automaticRouter === true : false;
         },
     },
 });
