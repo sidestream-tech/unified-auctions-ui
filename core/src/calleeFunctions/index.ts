@@ -189,7 +189,7 @@ export const getBestMarketId = async function (marketDataRecords: Record<string,
     return marketDataRecordsSorted[0][0];
 };
 
-export const _getMarketPrice = async function (
+const _getMarketPrice = async function (
     network: string,
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
