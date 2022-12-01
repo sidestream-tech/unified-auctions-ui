@@ -25,7 +25,7 @@
                                 DAI
                             </td>
                             <td class="pr-2 text-right whitespace-nowrap">
-                                <div v-if="id === 'Uniswap V3 Autorouter'">
+                                <div v-if="marketData.autoRouter">
                                     <button
                                         type="button"
                                         @click="$emit('update:toggleAutoRouterLoad', auctionTransaction.id)"
