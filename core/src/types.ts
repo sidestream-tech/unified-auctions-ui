@@ -89,7 +89,7 @@ export declare interface RegularCalleeConfig {
 }
 
 export declare interface AutoRouterCalleeConfig {
-    callee: RegularCalleeConfig['callee'];
+    callee: 'UniswapV3Callee';
     automaticRouter: true;
 }
 
