@@ -1,3 +1,5 @@
+import chai, { expect } from 'chai';
+import deepEqualInAnyOrder from 'deep-equal-in-any-order';
 import {
     collectStabilityFees,
     fetchLiquidationRatioAndOracleAddress,
@@ -9,12 +11,9 @@ import { getOsmPrices } from '../src/oracles';
 import { createWalletForRpc, resetNetwork, warpTime } from '../helpers/hardhat/network';
 import { setupRpcUrlAndGetNetworks } from '../src/rpc';
 import { HARDHAT_PRIVATE_KEY, HARDHAT_PUBLIC_KEY, LOCAL_RPC_URL, TEST_NETWORK } from '../helpers/constants';
-import { expect } from 'chai';
 import { VaultTransactionLiquidated, VaultTransactionNotLiquidated, Vault, CollateralType } from '../src/types';
 import BigNumber from '../src/bignumber';
 import { createWalletFromPrivateKey } from '../src/signer';
-import deepEqualInAnyOrder from 'deep-equal-in-any-order';
-import chai from 'chai';
 import { fetchAuctionByCollateralTypeAndAuctionIndex } from '../src/fetch';
 import { fetchVATbalanceDAI } from '../src/wallet';
 import createVaultWithCollateral, {
@@ -231,9 +230,9 @@ describe('Sound values are extracted', () => {
             nextPriceChange: new Date('2022-01-23T22:00:00.000Z'),
         },
         'ETH-A': {
-            nextUnitPrice: '1712.2106886',
-            currentUnitPrice: '1712.2106886',
-            nextPriceChange: new Date('2022-09-09T10:00:00.000Z'),
+            nextUnitPrice: '1602.1803800999999',
+            currentUnitPrice: '1602.1803800999999',
+            nextPriceChange: new Date('2022-09-14T13:00:00.000Z'),
         },
         'ETH-B': {
             nextUnitPrice: '1602.1803800999999',
@@ -241,9 +240,9 @@ describe('Sound values are extracted', () => {
             nextPriceChange: new Date('2022-09-14T13:00:00.000Z'),
         },
         'ETH-C': {
-            nextUnitPrice: '1208.0159951',
-            currentUnitPrice: '1227.067888375',
-            nextPriceChange: new Date('2022-06-13T11:00:00.000Z'),
+            nextUnitPrice: '1602.1803800999999',
+            currentUnitPrice: '1602.1803800999999',
+            nextPriceChange: new Date('2022-09-14T13:00:00.000Z'),
         },
         'GUSD-A': {
             nextUnitPrice: 'NaN',
@@ -405,7 +404,7 @@ describe('Sound values are extracted', () => {
         it(`can reach ${type} oracle`, async () => {
             const liquidationRatioAndAddress = await fetchLiquidationRatioAndOracleAddress(TEST_NETWORK, type);
             expect(liquidationRatioAndAddress.oracleAddress).not.to.eq(NULL_ADDRESS);
-            const prices = await getOsmPrices(TEST_NETWORK, liquidationRatioAndAddress.oracleAddress, type);
+            const prices = await getOsmPrices(TEST_NETWORK, type);
             expect(expectedReturn[type].currentUnitPrice).to.eq(prices.currentUnitPrice.toFixed());
             if (expectedReturn[type].nextPriceChange.getTime()) {
                 expect(expectedReturn[type].nextPriceChange.toISOString()).to.eq(prices.nextPriceChange.toISOString());
