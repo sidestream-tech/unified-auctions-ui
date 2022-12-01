@@ -7,7 +7,6 @@ import { convertStethToEth } from './helpers/curve';
 import { convertRethToWsteth } from './helpers/rocket';
 import { convertWstethToSteth } from './helpers/wsteth';
 import { NULL_ADDRESS } from '../constants/UNITS';
-import { routeToPool } from './helpers/pools';
 
 const getCalleeData = async function (
     network: string,
@@ -21,8 +20,10 @@ const getCalleeData = async function (
     if (calleeConfig?.callee !== 'rETHCurveUniv3Callee' || isAutorouted) {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const pools = preloadedPools || (await routeToPool(network, calleeConfig.route));
-    const route = await encodePools(network, pools);
+    if (!preloadedPools) {
+        throw new Error(`Can not encode route for the "${collateral.ilk}" without preloaded pools`);
+    }
+    const route = await encodePools(network, preloadedPools);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];

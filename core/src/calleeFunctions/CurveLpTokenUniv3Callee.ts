@@ -22,8 +22,7 @@ const getCalleeData = async function (
     if (!preloadedPools) {
         throw new Error(`Can not encode route for the "${collateral.ilk}" without preloaded pools`);
     }
-    const pools = preloadedPools;
-    const route = await encodePools(network, pools);
+    const route = await encodePools(network, preloadedPools);
     const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
