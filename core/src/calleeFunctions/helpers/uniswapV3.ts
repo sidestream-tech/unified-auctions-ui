@@ -6,7 +6,6 @@ import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNIT
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { CollateralSymbol, Pool } from '../../types';
-import { routeToPool } from './pools';
 import { fetchAutoRouteInformation } from './uniswapAutoRouter';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
@@ -33,7 +32,7 @@ export const encodePools = async function (_network: string, pools: Pool[]): Pro
     return ethers.utils.solidityPack(types, values);
 };
 
-const getRouteAndGasQuote = async (
+export const getRouteAndGasQuote = async (
     network: string,
     collateralSymbol: CollateralSymbol,
     collateralAmount: BigNumber,
@@ -61,7 +60,8 @@ export const convertCollateralToDaiUsingPool = async function (
     network: string,
     collateralSymbol: string,
     marketId: string,
-    collateralAmount: BigNumber
+    collateralAmount: BigNumber,
+    pools: Pool[]
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     const calleeConfig = collateral.exchanges[marketId];
@@ -69,11 +69,6 @@ export const convertCollateralToDaiUsingPool = async function (
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
-    const { route, fees } = await getRouteAndGasQuote(network, collateralSymbol, collateralAmount, marketId);
-    if (!route) {
-        throw new Error(`No route found for ${collateralSymbol} to DAI`);
-    }
-    const pools = await routeToPool(network, route, fees);
     const encodedPools = await encodePools(network, pools);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
     const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(
