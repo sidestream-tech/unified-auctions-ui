@@ -7,7 +7,7 @@ export default abstract class AbstractWallet {
     public static isLoggedIn: boolean;
 
     public abstract address?: string;
-    public abstract connect(): Promise<void>;
+    public abstract connect(network?: string): Promise<void>;
     public abstract switchNetwork(network: string): Promise<void>;
     public abstract setup(): void;
     public abstract teardown(): void;

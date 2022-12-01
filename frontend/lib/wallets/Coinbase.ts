@@ -1,6 +1,11 @@
 import CoinbaseWalletSDK, { CoinbaseWalletProvider } from '@coinbase/wallet-sdk';
 import { ethers } from 'ethers';
-import { getChainIdByNetworkType, getNetworkConfigByType, getNetworkTypeByChainId } from 'auctions-core/src/network';
+import {
+    getChainIdByNetworkType,
+    getDecimalChainIdByNetworkType,
+    getNetworkConfigByType,
+    getNetworkTypeByChainId,
+} from 'auctions-core/src/network';
 import { setSigner } from 'auctions-core/src/signer';
 import { formatToHexWithoutPad } from 'auctions-core/helpers/format';
 import CoinbaseLogo from '~/assets/icons/wallets/coinbase.svg';
@@ -21,16 +26,8 @@ export default class Coinbase extends AbstractWallet {
         }
     }
 
-    getProvider(network?: string): ethers.providers.JsonRpcProvider {
-        let rpcUrl: string | undefined;
-        try {
-            rpcUrl = getNetworkConfigByType(network).url;
-        } catch {
-            rpcUrl = process.env.RPC_URL;
-        }
-        if (!rpcUrl) {
-            throw new Error(`No RPC_URL env variable was provided`);
-        }
+    getProvider(network: string): ethers.providers.JsonRpcProvider {
+        const rpcUrl = getNetworkConfigByType(network).url;
         if (!Coinbase.provider) {
             const walletSdk = new CoinbaseWalletSDK({ appName: process.env.SITE_TITLE || '' });
             Coinbase.provider = walletSdk.makeWeb3Provider(rpcUrl);
@@ -38,16 +35,17 @@ export default class Coinbase extends AbstractWallet {
         return new ethers.providers.Web3Provider(Coinbase.provider as any);
     }
 
-    async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
-        const provider = this.getProvider();
+    async getSigner(network: string): Promise<ethers.providers.JsonRpcSigner> {
+        const provider = this.getProvider(network);
         await provider.send('eth_requestAccounts', []);
         return provider.getSigner();
     }
 
-    public async connect(): Promise<void> {
-        const signer = await this.getSigner();
+    public async connect(network: string): Promise<void> {
+        const signer = await this.getSigner(network);
         this.addresses = [await signer.getAddress()];
-        this.networkChangedHandler();
+        const chainIdDecimal = getDecimalChainIdByNetworkType(network);
+        this.networkChangedHandler(chainIdDecimal);
         this.setup();
     }
 
@@ -57,14 +55,14 @@ export default class Coinbase extends AbstractWallet {
         await provider.send('wallet_switchEthereumChain', [{ chainId }]);
     }
 
-    public async networkChangedHandler() {
-        const signer = await this.getSigner();
-        const chainId = formatToHexWithoutPad(await signer.getChainId());
+    public async networkChangedHandler(chainIdDecimal: number) {
+        const chainId = formatToHexWithoutPad(chainIdDecimal);
         const networkType = getNetworkTypeByChainId(chainId);
+        await window.$nuxt.$store.dispatch('network/setWalletChainId', chainId);
         if (networkType) {
+            const signer = await this.getSigner(networkType);
             setSigner(networkType, signer as any);
         }
-        window.$nuxt.$store.dispatch('network/setWalletChainId', chainId);
     }
 
     public setup() {
