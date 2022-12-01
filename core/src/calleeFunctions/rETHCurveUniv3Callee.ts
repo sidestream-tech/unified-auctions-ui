@@ -16,8 +16,7 @@ const getCalleeData = async function (
     preloadedPools?: Pool[]
 ): Promise<string> {
     const calleeConfig = collateral.exchanges[marketId];
-    const isAutorouted = 'automaticRouter' in calleeConfig;
-    if (calleeConfig?.callee !== 'rETHCurveUniv3Callee' || isAutorouted) {
+    if (calleeConfig?.callee !== 'rETHCurveUniv3Callee') {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
     if (!preloadedPools) {
