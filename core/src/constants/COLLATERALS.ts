@@ -22,6 +22,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'AAVE',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -39,6 +43,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'BAL',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -56,6 +64,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'BAT',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -73,6 +85,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'COMP',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -94,6 +110,14 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV3Callee',
                 automaticRouter: true,
             },
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: [],
@@ -111,6 +135,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: [],
@@ -128,6 +156,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: [],
@@ -145,6 +177,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'GUSD',
         decimals: 2,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -162,6 +198,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'KNC',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -179,6 +219,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'LINK',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -196,6 +240,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'LRC',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -213,6 +261,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'MANA',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -230,6 +282,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'PAXUSD',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -248,6 +304,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'RENBTC',
         decimals: 8,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -265,6 +325,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'TUSD',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -282,6 +346,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNI',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -299,6 +367,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDC',
         decimals: 6,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -316,6 +388,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDC',
         decimals: 6,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -333,6 +409,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDT',
         decimals: 6,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -350,6 +430,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         decimals: 8,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -367,6 +451,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         decimals: 8,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -384,6 +472,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         decimals: 8,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -401,6 +493,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'YFI',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -418,6 +514,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ZRX',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
@@ -435,6 +535,10 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'MATIC',
         decimals: 18,
         exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
                 route: ['ETH'],
