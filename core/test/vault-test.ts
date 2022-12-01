@@ -420,7 +420,7 @@ describe('Sound values are extracted', () => {
 describe(`Collateral vault simulation liquidation `, () => {
     before(async () => {
         await createWalletForRpc();
-        await resetNetwork();
+        await resetNetwork(16066000); // TODO: remove hardcoded block number and investigate `Dog/not-unsafe` error
     });
     for (const collateralType of getLiquidatableCollateralTypes()) {
         it(`runs the simulaton for ${collateralType}`, async () => {
