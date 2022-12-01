@@ -138,11 +138,15 @@ const getMarketDataRecords = async function (
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     let marketDataRecords = {};
-    for (const marketId in collateral.exchanges) {
+    for (const [marketId, exchange] of Object.entries(collateral.exchanges)) {
         let marketData: MarketData;
         try {
             // turn off autorouter during tests because it takes too long
-            if ((process.env.NODE_ENV === 'test' || !useAutoRouter) && marketId === 'Uniswap V3 Autorouter') {
+            if (
+                (process.env.NODE_ENV === 'test' || !useAutoRouter) &&
+                'automaticRouter' in exchange &&
+                exchange.automaticRouter
+            ) {
                 marketData = {
                     marketUnitPrice: new BigNumber(NaN),
                     pools: [], // dummy value: MarketData requires either a pool or tokens
