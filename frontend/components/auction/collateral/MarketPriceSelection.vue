@@ -153,6 +153,6 @@ export default Vue.extend({
     @apply pl-4;
 }
 .LoadingAutoRouter {
-    @apply h-3 w-3 mt-1 animate-spin fill-current;
+    @apply h-3 w-3 mt-1 mr-1 animate-spin fill-current;
 }
 </style>

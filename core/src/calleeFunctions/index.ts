@@ -52,32 +52,25 @@ export const getCalleeData = async function (
         preloadedPools
     );
 };
-const getCalleeAutoRoute = async (
-    network: string,
-    collateral: CollateralConfig,
-    marketId: string,
-    amount: BigNumber = new BigNumber('1')
-): Promise<string[]> => {
-    const calleeConfig = collateral.exchanges[marketId];
-    if (!('automaticRouter' in calleeConfig)) {
-        throw new Error('Unexpected market data parameters. Failed to determine the callee type.');
-    }
-    return (await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed())).route || [];
-};
 
 export const getPools = async (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
     amount: BigNumber = new BigNumber(1)
-) => {
+): Promise<Pool[] | undefined> => {
     const calleeConfig = collateral.exchanges[marketId];
-    if (calleeConfig.callee === 'UniswapV2LpTokenCalleeDai') {
-        return undefined;
+    if ('route' in calleeConfig) {
+        return await routeToPool(network, calleeConfig.route, collateral.symbol);
     }
-    const route =
-        'route' in calleeConfig ? calleeConfig.route : await getCalleeAutoRoute(network, collateral, marketId, amount);
-    return await routeToPool(network, route, collateral.symbol);
+    if ('automaticRouter' in calleeConfig) {
+        const { route, fees } = await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed());
+        if (!route) {
+            throw new Error('No automatic route can be found');
+        }
+        return await routeToPool(network, route, collateral.symbol, fees);
+    }
+    return undefined;
 };
 
 export const enrichCalleeConfigWithPools = async (
