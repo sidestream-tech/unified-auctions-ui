@@ -1,8 +1,9 @@
 import AbstractWallet from '~/lib/wallets/AbstractWallet';
 import MetaMask from '~/lib/wallets/MetaMask';
 import WalletConnect from '~/lib/wallets/WalletConnect';
+import Coinbase from '~/lib/wallets/Coinbase';
 
-const WALLETS = [MetaMask, WalletConnect];
+const WALLETS = [MetaMask, WalletConnect, Coinbase];
 
 let globalWallet: AbstractWallet;
 
