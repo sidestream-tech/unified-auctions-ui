@@ -41,7 +41,6 @@ export default Vue.extend({
             if (this.parsedDate) {
                 const now = new Date();
                 this.timeTill = formatInterval(now, this.parsedDate);
-
                 const duration = this.parsedDate.getTime() - now.getTime();
                 this.isEndingSoon = duration < ENDING_SOON_THRESHOLD && duration > 0;
             } else {

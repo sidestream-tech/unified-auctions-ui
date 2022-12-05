@@ -93,7 +93,7 @@
                                     />
                                     <span>Updating...</span>
                                 </div>
-                                <time-till v-else :date="auction.fetchedAt" />
+                                <TimeTill v-else :date="auction.fetchedAt" />
                             </td>
                         </tr>
                     </tbody>
