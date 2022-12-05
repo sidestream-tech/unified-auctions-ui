@@ -11,10 +11,14 @@
         </div>
         <div class="flex justify-between">
             <div>Next price update</div>
-            <div class="flex items-center space-x-1">
-                <AnimatedArrow v-if="getIsPriceGoingUpOrDown" :direction="getIsPriceGoingUpOrDown" class="h-3" />
+            <div
+                v-if="getIsPriceGoingUpOrDown && vaultTransaction.nextPriceChange"
+                class="flex items-center space-x-1"
+            >
+                <AnimatedArrow :direction="getIsPriceGoingUpOrDown" class="h-3" />
                 <span>in <TimeTill :date="vaultTransaction.nextPriceChange" /></span>
             </div>
+            <div v-else class="opacity-50">Unknown</div>
         </div>
         <div class="flex justify-between">
             <div>Debt</div>
