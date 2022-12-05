@@ -1,11 +1,6 @@
 import CoinbaseWalletSDK, { CoinbaseWalletProvider } from '@coinbase/wallet-sdk';
 import { ethers } from 'ethers';
-import {
-    getChainIdByNetworkType,
-    getDecimalChainIdByNetworkType,
-    getNetworkConfigByType,
-    getNetworkTypeByChainId,
-} from 'auctions-core/src/network';
+import { getChainIdByNetworkType, getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { setSigner } from 'auctions-core/src/signer';
 import { formatToHexWithoutPad } from 'auctions-core/helpers/format';
 import CoinbaseLogo from '~/assets/icons/wallets/coinbase.svg';
@@ -26,43 +21,41 @@ export default class Coinbase extends AbstractWallet {
         }
     }
 
-    getProvider(network: string): ethers.providers.JsonRpcProvider {
-        const rpcUrl = getNetworkConfigByType(network).url;
+    getProvider(): ethers.providers.JsonRpcProvider {
         if (!Coinbase.provider) {
             const walletSdk = new CoinbaseWalletSDK({ appName: process.env.SITE_TITLE || '' });
-            Coinbase.provider = walletSdk.makeWeb3Provider(rpcUrl);
+            Coinbase.provider = walletSdk.makeWeb3Provider();
         }
-        return new ethers.providers.Web3Provider(Coinbase.provider as any);
+        return new ethers.providers.Web3Provider(Coinbase.provider as any, 'any');
     }
 
-    async getSigner(network: string): Promise<ethers.providers.JsonRpcSigner> {
-        const provider = this.getProvider(network);
+    async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
+        const provider = this.getProvider();
         await provider.send('eth_requestAccounts', []);
         return provider.getSigner();
     }
 
-    public async connect(network: string): Promise<void> {
-        const signer = await this.getSigner(network);
+    public async connect(): Promise<void> {
+        const signer = await this.getSigner();
         this.addresses = [await signer.getAddress()];
-        const chainIdDecimal = getDecimalChainIdByNetworkType(network);
-        this.networkChangedHandler(chainIdDecimal);
+        this.networkChangedHandler();
         this.setup();
     }
 
     public async switchNetwork(network: string): Promise<void> {
-        const provider = this.getProvider(network);
+        const provider = this.getProvider();
         const chainId = getChainIdByNetworkType(network);
         await provider.send('wallet_switchEthereumChain', [{ chainId }]);
     }
 
-    public async networkChangedHandler(chainIdDecimal: number) {
-        const chainId = formatToHexWithoutPad(chainIdDecimal);
+    public async networkChangedHandler() {
+        const signer = await this.getSigner();
+        const chainId = formatToHexWithoutPad(await signer.getChainId());
         const networkType = getNetworkTypeByChainId(chainId);
-        await window.$nuxt.$store.dispatch('network/setWalletChainId', chainId);
         if (networkType) {
-            const signer = await this.getSigner(networkType);
             setSigner(networkType, signer as any);
         }
+        await window.$nuxt.$store.dispatch('network/setWalletChainId', chainId);
     }
 
     public setup() {

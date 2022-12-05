@@ -154,13 +154,12 @@ export const actions = {
             dispatch('authorizations/reset', undefined, { root: true });
         }
     },
-    async connect({ commit, dispatch, rootGetters }: ActionContext<State, State>, walletType: string): Promise<void> {
+    async connect({ commit, dispatch }: ActionContext<State, State>, walletType: string): Promise<void> {
         dispatch('authorizations/reset', undefined, { root: true });
         commit('setIsConnecting', true);
         try {
             const wallet = getWallet(walletType);
-            const network = rootGetters['network/getMakerNetwork'];
-            await wallet.connect(network);
+            await wallet.connect();
             commit('setAddress', wallet.address);
             commit('setWalletType', walletType);
         } catch (error) {
