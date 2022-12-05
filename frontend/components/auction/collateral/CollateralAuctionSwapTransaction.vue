@@ -10,7 +10,9 @@
         <CollateralAuctionSwapTransactionTable
             :auction-transaction="auctionTransaction"
             :market-id.sync="currentMarketId"
+            :is-autorouting-enabled="isAutoroutingEnabled"
             class="mt-4"
+            @update:toggleAutoRouterLoad="$emit('toggleAutoRouterLoad', $event)"
         />
         <TextBlock class="TextBlock mt-4 mb-8">
             Please note, the transaction fee is a suggested value based on the current gas prices on the market; the
@@ -157,6 +159,10 @@ export default Vue.extend({
         isExplanationsShown: {
             type: Boolean,
             default: true,
+        },
+        isAutoroutingEnabled: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {

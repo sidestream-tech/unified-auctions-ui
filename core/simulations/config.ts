@@ -8,11 +8,11 @@ import vaultLiquidation from './configs/vaultLiquidation';
 import onboardNewCollateral from './configs/onboardNewCollateral';
 
 export const SIMULATIONS: Simulation[] = [
+    vaultLiquidation,
     debtAuctionSimulation,
-    surplusAuctionBlockchain,
     surplusAuctionSimulation,
+    surplusAuctionBlockchain,
     wstethAuctionSimulation,
     blockWithVaultsInAllStates,
-    vaultLiquidation,
     onboardNewCollateral,
 ];

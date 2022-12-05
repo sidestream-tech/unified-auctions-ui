@@ -1,28 +1,36 @@
-import type { CalleeFunctions, CollateralConfig } from '../types';
+import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { convertCollateralToDaiUsingRoute, encodeRoute } from './helpers/uniswapV3';
+import { convertCollateralToDaiUsingPool, encodePools } from './helpers/uniswapV3';
+import { getPools } from '.';
+import { routeToPool } from './helpers/pools';
+import { getRouteAndGasQuote } from './helpers/uniswapV3';
 
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    profitAddress: string
+    profitAddress: string,
+    preloadedPools?: Pool[]
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
+    const pools = preloadedPools || (await getPools(network, collateral, marketId));
+    if (!pools) {
+        throw new Error(`getCalleeData called with invalid pools`);
+    }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const uniswapV3route = await encodeRoute(network, [collateral.symbol, ...marketData.route]);
+    const uniswapV3pools = await encodePools(network, pools);
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,
         joinAdapterAddress,
         minProfit,
-        uniswapV3route,
+        uniswapV3pools,
         ethers.constants.AddressZero,
     ]);
 };
@@ -34,7 +42,18 @@ const getMarketPrice = async function (
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     // convert collateral into DAI
-    const daiAmount = await convertCollateralToDaiUsingRoute(network, collateral.symbol, marketId, collateralAmount);
+    const { route, fees } = await getRouteAndGasQuote(network, collateral.symbol, collateralAmount, marketId);
+    if (!route) {
+        throw new Error(`No route found for ${collateral.symbol} to DAI`);
+    }
+    const pools = await routeToPool(network, route, collateral.symbol, fees);
+    const daiAmount = await convertCollateralToDaiUsingPool(
+        network,
+        collateral.symbol,
+        marketId,
+        collateralAmount,
+        pools
+    );
 
     // return price per unit
     return daiAmount.dividedBy(collateralAmount);
