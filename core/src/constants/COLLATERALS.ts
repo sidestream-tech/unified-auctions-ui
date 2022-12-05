@@ -84,6 +84,23 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
+    'GNO-A': {
+        title: 'Gnosis Token',
+        ilk: 'GNO-A',
+        symbol: 'GNO',
+        decimals: 18,
+        exchanges: {
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['ETH'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['ETH'],
+            },
+        },
+        oracle: CONFIG_WITH_NEXT_PRICE,
+    },
     'ETH-A': {
         title: 'Ether',
         ilk: 'ETH-A',
