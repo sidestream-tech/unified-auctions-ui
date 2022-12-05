@@ -13,6 +13,7 @@ export default {
     target: 'static',
 
     env: {
+        SITE_TITLE,
         RPC_URL: process.env.RPC_URL,
         DEMO_MODE: process.env.DEMO_MODE || false,
         PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN,

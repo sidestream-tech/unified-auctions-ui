@@ -3,7 +3,7 @@
         <div class="flex justify-between">
             <div>Auction State</div>
             <div>
-                <time-till :date="auction.auctionEndDate" />
+                <TimeTill :date="auction.auctionEndDate" />
             </div>
         </div>
         <div class="flex justify-between">

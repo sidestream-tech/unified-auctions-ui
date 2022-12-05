@@ -12,6 +12,7 @@ const common = {
         auctions: fakeAuctions,
         selectedAuctionId: randomSelectedAuction.id,
         lastUpdated: new Date(faker.date.recent()),
+        isLoading: false,
     }),
 };
 
@@ -20,6 +21,20 @@ storiesOf('Auction/Debt/DebtAuctionsTable', module)
         ...common,
         template:
             '<DebtAuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" :last-updated="lastUpdated" />',
+    }))
+    .add('Reset Updated Timer', () => ({
+        ...common,
+        created() {
+            setInterval(() => {
+                this.isLoading = true;
+                setTimeout(() => {
+                    this.isLoading = false;
+                }, 1000);
+                this.lastUpdated = new Date(faker.date.recent());
+            }, 10 * 1000);
+        },
+        template:
+            '<DebtAuctionsTable :auctions="auctions" :selectedAuctionId="selectedAuctionId" :last-updated="lastUpdated" :is-loading="isLoading" />',
     }))
     .add('Fetching With Auctions', () => ({
         ...common,
