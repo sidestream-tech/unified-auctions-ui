@@ -23,4 +23,18 @@ storiesOf('Common/Formatters/TimeTill', module)
             date: new Date(Date.now() + 5000).toUTCString(),
         }),
         template: `<TimeTill :date="date" />`,
+    }))
+    .add('Recent Past', () => ({
+        components: { TimeTill },
+        data: () => ({
+            date: faker.date.recent(),
+        }),
+        template: `<TimeTill :date="date" />`,
+    }))
+    .add('Late Past', () => ({
+        components: { TimeTill },
+        data: () => ({
+            date: faker.date.past(),
+        }),
+        template: `<TimeTill :date="date" />`,
     }));

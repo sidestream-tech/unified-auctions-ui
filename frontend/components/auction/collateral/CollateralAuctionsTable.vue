@@ -10,6 +10,8 @@
             :custom-row="customRowEvents"
             :get-popup-container="() => $el"
             :locale="{ emptyText: 'No active auctions' }"
+            :table-layout="auto"
+            :scroll="{ x: 'max-content' }"
             class="AuctionsTable relative overflow-visible"
         >
             <div slot="collateralAmount" slot-scope="collateralAmount, record" class="flex items-center space-x-2">
@@ -42,7 +44,7 @@
                 <span v-else-if="!record.isActive" class="opacity-50"> Requires Restart </span>
                 <span v-else>
                     Ends in
-                    <time-till :date="endDate" />
+                    <TimeTill :date="endDate" />
                 </span>
             </div>
             <div slot="updatingStatus" class="opacity-50 font-normal">
@@ -50,8 +52,8 @@
                     <LoadingIcon class="h-4 w-4 animate animate-spin fill-current dark:text-gray-300" />
                     <span>Updating...</span>
                 </div>
-                <span v-else-if="lastUpdated"> Last updated <TimeTill :date="lastUpdated" /></span>
-                <span v-else> Last updated unknown time ago </span>
+                <span v-else-if="lastUpdated">Updated <TimeTill :date="lastUpdated" /></span>
+                <span v-else>Updated <span class="opacity-50">unknown time</span> ago</span>
             </div>
             <div slot="action" slot-scope="text, record, index" class="w-full h-full">
                 <nuxt-link
@@ -186,7 +188,6 @@ export default Vue.extend({
                     dataIndex: 'endDate',
                     scopedSlots: { customRender: 'endDate' },
                     sorter: compareBy('endDate', (a: Date, b: Date) => compareAsc(a, b)),
-                    width: '200px',
                 },
                 {
                     slots: { title: 'updatingStatus', customRender: 'action' },
