@@ -1,18 +1,23 @@
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
-import { Pool } from '../../types';
+import { CollateralSymbol, Pool } from '../../types';
 
 const getRouteSteps = (route: string[], fees: number[]) => {
-    const fullRoute = route[route.length - 1] === 'DAI' ? [...route] : [...route, 'DAI'];
     const routeSteps = [];
-    for (let i = 0; i < fullRoute.length - 1; i++) {
-        routeSteps.push({ tokens: [fullRoute[i], fullRoute[i + 1]], fee: fees[i] });
+    for (let i = 0; i < route.length - 1; i++) {
+        routeSteps.push({ tokens: [route[i], route[i + 1]], fee: fees[i] });
     }
     return routeSteps;
 };
 
-export const routeToPool = async (network: string, routes: string[], uniswapFees?: number[]): Promise<Pool[]> => {
-    const fees = uniswapFees || routes.map(() => 3000);
-    const routeSteps = getRouteSteps(routes, fees);
+export const routeToPool = async (
+    network: string,
+    route: string[],
+    collateralSymbol: CollateralSymbol,
+    uniswapFees?: number[]
+): Promise<Pool[]> => {
+    const fees = uniswapFees || Array.from({ length: route.length + 2 }, () => 3000);
+    const fullRoute = [collateralSymbol, ...route, 'DAI'];
+    const routeSteps = getRouteSteps(fullRoute, fees);
     return await Promise.all(
         routeSteps.map(async step => ({
             addresses: await Promise.all(

@@ -52,7 +52,7 @@ export const getRouteAndGasQuote = async (
         );
         return { route, quoteGasAdjusted, fees };
     } else {
-        return { route: [collateral.symbol, ...calleeConfig.route], quoteGasAdjusted: undefined, fees: undefined };
+        return { route: calleeConfig.route, quoteGasAdjusted: undefined, fees: undefined };
     }
 };
 

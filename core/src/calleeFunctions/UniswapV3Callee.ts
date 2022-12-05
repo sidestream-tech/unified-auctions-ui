@@ -46,7 +46,7 @@ const getMarketPrice = async function (
     if (!route) {
         throw new Error(`No route found for ${collateral.symbol} to DAI`);
     }
-    const pools = await routeToPool(network, route, fees);
+    const pools = await routeToPool(network, route, collateral.symbol, fees);
     const daiAmount = await convertCollateralToDaiUsingPool(
         network,
         collateral.symbol,

@@ -64,6 +64,13 @@ export const getUniswapAutoRoute = async function (
     return route;
 };
 
+const trimRoute = (route: string[]): string[] => {
+    if (route.length < 2) {
+        throw new Error('Route array must have at least 2 elements.');
+    }
+    return route.slice(1, route.length - 1);
+};
+
 const _fetchAutoRouteInformation = async function (
     network: string,
     collateralSymbol: string,
@@ -73,12 +80,13 @@ const _fetchAutoRouteInformation = async function (
     try {
         const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
         const bestRoute = autoRouteData.route[0];
-        const route = bestRoute.tokenPath.map(p => {
+        const fullRoute = bestRoute.tokenPath.map(p => {
             if (!p.symbol) {
                 throw new Error(`Could not get symbol for token "${p.address}".`);
             }
             return p.symbol;
         });
+        const route = trimRoute(fullRoute);
         if (bestRoute.route.protocol !== Protocol.V3) {
             throw new Error('Only V3 routes are supported.');
         }

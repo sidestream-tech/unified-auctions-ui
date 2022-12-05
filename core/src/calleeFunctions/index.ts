@@ -77,7 +77,7 @@ export const getPools = async (
     }
     const route =
         'route' in calleeConfig ? calleeConfig.route : await getCalleeAutoRoute(network, collateral, marketId, amount);
-    return await routeToPool(network, route);
+    return await routeToPool(network, route, collateral.symbol);
 };
 
 export const enrichCalleeConfigWithPools = async (
