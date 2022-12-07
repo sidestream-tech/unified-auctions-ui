@@ -40,22 +40,27 @@ const getMarketPrice = async function (
     marketId: string,
     collateralAmount: BigNumber
 ): Promise<{ price: BigNumber; pools: Pool[] }> {
-    const { route, fees, totalPrice } = await getRouteAndGasQuote(
+    const { route, fees, totalPrice, pools } = await getRouteAndGasQuote(
         network,
         collateral.symbol,
         collateralAmount,
         marketId
     );
-    if (!route) {
-        throw new Error(`No route found for ${collateral.symbol} to DAI`);
+    if (!pools && route) {
+        const generatedPools = await routeToPool(network, route, collateral.symbol, fees);
+        const daiAmount = await convertCollateralToDaiUsingPool(
+            network,
+            collateral.symbol,
+            marketId,
+            collateralAmount,
+            generatedPools
+        );
+        return { price: daiAmount.dividedBy(collateralAmount), pools: generatedPools };
     }
-    const pools = await routeToPool(network, route, collateral.symbol, fees);
-    const daiAmount =
-        totalPrice ||
-        (await convertCollateralToDaiUsingPool(network, collateral.symbol, marketId, collateralAmount, pools));
-
-    // return price per unit
-    return { price: daiAmount.dividedBy(collateralAmount), pools: pools };
+    if (totalPrice && pools) {
+        return { price: totalPrice.dividedBy(collateralAmount), pools: pools };
+    }
+    throw new Error(`Failed to compute market data due to lack of information`);
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {
