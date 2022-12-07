@@ -54,11 +54,11 @@ const getInitialState = (): State => ({
 export const state = (): State => getInitialState();
 
 export const getters = {
-    listAuctions(state: State): AuctionTransaction[] {
-        return Object.values(state.auctionStorage);
-    },
-    listAuctionTransactions(state: State, getters: any, _rootState: any): AuctionTransaction[] {
-        const auctions = Object.values(state.auctionStorage);
+    // `rootGetters` is exposed to the `getters` module as the 4th parameter, right after `rootState`
+    // Hence the dummy _rootState parameter
+    listAuctionTransactions(state: State, getters: any, _rootState: any, rootGetters: any): AuctionTransaction[] {
+        const network = rootGetters['network/getMakerNetwork'];
+        const auctions = Object.values(state.auctionStorage).filter(auction => auction.network === network);
         return auctions.map(auction => {
             const isRestarting = getters.isAuctionRestarting(auction.id);
             return {
