@@ -116,7 +116,7 @@ declare interface MarketDataBase extends Partial<ExchangeFees> {
 export declare interface Pool {
     addresses: string[];
     fee: number;
-    routes: string[];
+    routes: (string | undefined)[];
 }
 
 export declare interface MarketDataRegular extends MarketDataBase {

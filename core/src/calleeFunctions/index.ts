@@ -64,11 +64,11 @@ export const getPools = async (
         return await routeToPool(network, calleeConfig.route, collateral.symbol);
     }
     if ('automaticRouter' in calleeConfig) {
-        const { route, fees } = await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed());
-        if (!route) {
-            throw new Error('No automatic route can be found');
+        const { pools } = await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed());
+        if (!pools) {
+            throw new Error('No automatic pools can be found');
         }
-        return await routeToPool(network, route, collateral.symbol, fees);
+        return pools;
     }
     return undefined;
 };

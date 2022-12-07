@@ -19,6 +19,7 @@ const getCalleeData = async function (
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const pools = preloadedPools || (await getPools(network, collateral, marketId));
+    console.log(pools)
     if (!pools) {
         throw new Error(`getCalleeData called with invalid pools`);
     }
