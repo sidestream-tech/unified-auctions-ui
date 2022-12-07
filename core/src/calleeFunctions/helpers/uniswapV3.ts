@@ -45,14 +45,20 @@ export const getRouteAndGasQuote = async (
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     if (isAutorouted) {
-        const { route, quoteGasAdjusted, fees, pools } = await fetchAutoRouteInformation(
+        const { route, quoteGasAdjusted, fees, pools, totalPrice } = await fetchAutoRouteInformation(
             network,
             collateralSymbol,
             collateralAmount.toFixed()
         );
-        return { route, quoteGasAdjusted, fees, pools };
+        return { route, quoteGasAdjusted, fees, pools, totalPrice };
     } else {
-        return { route: calleeConfig.route, quoteGasAdjusted: undefined, fees: undefined, pools: undefined };
+        return {
+            route: calleeConfig.route,
+            quoteGasAdjusted: undefined,
+            fees: undefined,
+            pools: undefined,
+            totalPrice: undefined,
+        };
     }
 };
 

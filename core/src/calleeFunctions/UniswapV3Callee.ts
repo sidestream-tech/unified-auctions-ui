@@ -40,18 +40,19 @@ const getMarketPrice = async function (
     marketId: string,
     collateralAmount: BigNumber
 ): Promise<{ price: BigNumber; pools: Pool[] }> {
-    const { route, fees } = await getRouteAndGasQuote(network, collateral.symbol, collateralAmount, marketId);
+    const { route, fees, totalPrice } = await getRouteAndGasQuote(
+        network,
+        collateral.symbol,
+        collateralAmount,
+        marketId
+    );
     if (!route) {
         throw new Error(`No route found for ${collateral.symbol} to DAI`);
     }
     const pools = await routeToPool(network, route, collateral.symbol, fees);
-    const daiAmount = await convertCollateralToDaiUsingPool(
-        network,
-        collateral.symbol,
-        marketId,
-        collateralAmount,
-        pools
-    );
+    const daiAmount =
+        totalPrice ||
+        (await convertCollateralToDaiUsingPool(network, collateral.symbol, marketId, collateralAmount, pools));
 
     // return price per unit
     return { price: daiAmount.dividedBy(collateralAmount), pools: pools };
