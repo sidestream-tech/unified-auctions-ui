@@ -11,10 +11,14 @@
         </div>
         <div class="flex justify-between">
             <div>Next price update</div>
-            <div class="flex items-center space-x-1">
-                <AnimatedArrow v-if="getIsPriceGoingUpOrDown" :direction="getIsPriceGoingUpOrDown" class="h-3" />
+            <div
+                v-if="getIsPriceGoingUpOrDown && vaultTransaction.nextPriceChange && !isNextPriceChangeNaN"
+                class="flex items-center space-x-1"
+            >
+                <AnimatedArrow :direction="getIsPriceGoingUpOrDown" class="h-3" />
                 <span>in <TimeTill :date="vaultTransaction.nextPriceChange" /></span>
             </div>
+            <div v-else class="opacity-50">Unknown</div>
         </div>
         <div class="flex justify-between">
             <div>Debt</div>
@@ -111,7 +115,7 @@ export default Vue.extend({
                 this.vaultTransaction.incentiveRelativeDai.div(this.vaultTransaction.debtDai).times(100)
             );
         },
-        getIsPriceGoingUpOrDown(): ArrowDirections {
+        getIsPriceGoingUpOrDown(): ArrowDirections | undefined {
             if (!this.vaultTransaction.nextUnitPrice || !this.vaultTransaction.currentUnitPrice) {
                 return undefined;
             }
@@ -119,6 +123,9 @@ export default Vue.extend({
                 return 'up';
             }
             return 'down';
+        },
+        isNextPriceChangeNaN(): boolean {
+            return isNaN(new Date(this.vaultTransaction.nextPriceChange).getTime());
         },
     },
 });
