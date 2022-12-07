@@ -46,4 +46,17 @@ storiesOf('Vault/Vault', module)
     .add('Not found', () => ({
         ...common,
         template: `<Vault :vaultId='vaultId' />`,
+    }))
+    .add('Invalid Date', () => ({
+        ...common,
+        data() {
+            return {
+                vault: {
+                    ...fakeVaultNotLiquidatedTransaction,
+                    nextPriceChange: 'Invalid Date',
+                },
+                vaultId: fakeVaultLiquidatedTransaction.id.toString(),
+            };
+        },
+        template: `<Vault :vaultTransaction="vault" :vaultId='vaultId' @liquidate="liquidate" />`,
     }));

@@ -24,6 +24,10 @@ storiesOf('Common/Formatters/TimeTill', module)
         }),
         template: `<TimeTill :date="date" />`,
     }))
+    .add('Invalid date', () => ({
+        components: { TimeTill },
+        template: `<TimeTill date="Invalid Date" />`,
+    }))
     .add('Recent Past', () => ({
         components: { TimeTill },
         data: () => ({
