@@ -38,8 +38,8 @@ const getMarketPrice = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    collateralAmount: BigNumber,
-): Promise<BigNumber> {
+    collateralAmount: BigNumber
+): Promise<{ price: BigNumber; pools: Pool[] }> {
     const { route, fees } = await getRouteAndGasQuote(network, collateral.symbol, collateralAmount, marketId);
     if (!route) {
         throw new Error(`No route found for ${collateral.symbol} to DAI`);
@@ -54,7 +54,7 @@ const getMarketPrice = async function (
     );
 
     // return price per unit
-    return daiAmount.dividedBy(collateralAmount);
+    return { price: daiAmount.dividedBy(collateralAmount), pools: pools };
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {

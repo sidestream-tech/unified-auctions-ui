@@ -4,10 +4,8 @@ import type {
     MarketData,
     CollateralConfig,
     CollateralSymbol,
-    RegularCalleeConfig,
-    UniswapV2LpTokenCalleeConfig,
-    AutoRouterCalleeConfig,
     Pool,
+    PriceWithPools,
 } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
@@ -73,54 +71,49 @@ export const getPools = async (
     return undefined;
 };
 
-export const enrichCalleeConfigWithPools = async (
-    network: string,
-    collateral: CollateralConfig,
-    marketId: string,
-    amount: BigNumber
-): Promise<UniswapV2LpTokenCalleeConfig | ((RegularCalleeConfig | AutoRouterCalleeConfig) & { pools: Pool[] })> => {
-    const config = collateral.exchanges[marketId];
-    if (config.callee === 'UniswapV2LpTokenCalleeDai') {
-        return { ...config };
-    }
-    const pools = await getPools(network, collateral, marketId, amount);
-    if (pools) {
-        return { ...config, pools };
-    }
-    throw new Error('Failed to get pools');
-};
-
 export const getMarketDataById = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<MarketData> {
-    const calleeConfig = await enrichCalleeConfigWithPools(network, collateral, marketId, amount);
+    const calleeConfig = collateral.exchanges[marketId];
     if (!allCalleeFunctions[calleeConfig?.callee]) {
         throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
-    let marketUnitPrice: BigNumber;
+    let marketPrice: PriceWithPools;
+
     try {
-        marketUnitPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
+        marketPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
             network,
             collateral,
             marketId,
-            amount,
+            amount
         );
     } catch (error: any) {
         const errorMessage = error?.message;
-        marketUnitPrice = new BigNumber(NaN);
         return {
             ...calleeConfig,
-            marketUnitPrice,
+            marketUnitPrice: new BigNumber(NaN),
+            pools: [],
             errorMessage,
         };
     }
-    return {
-        ...calleeConfig,
-        marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
-    };
+    const marketUnitPrice = marketPrice.price;
+    if (calleeConfig.callee !== 'UniswapV2LpTokenCalleeDai' && marketPrice.pools) {
+        return {
+            ...calleeConfig,
+            marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
+            pools: marketPrice.pools,
+        };
+    }
+    if (calleeConfig.callee === 'UniswapV2LpTokenCalleeDai') {
+        return {
+            ...calleeConfig,
+            marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
+        };
+    }
+    throw new Error('No pools found where expected');
 };
 
 export const getMarketDataRecords = async function (
