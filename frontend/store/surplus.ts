@@ -46,7 +46,7 @@ const getInitialState = (): State => ({
     auctionStorage: {},
     auctionStates: {},
     allowanceAmount: undefined,
-    areAuctionsFetching: false,
+    areAuctionsFetching: true,
     isAuthorizationLoading: false,
     error: null,
     lastUpdated: undefined,

@@ -30,7 +30,7 @@ interface State {
 const getInitialState = (): State => ({
     auctionStorage: {},
     auctionStates: {},
-    areAuctionsFetching: false,
+    areAuctionsFetching: true,
     isAuthorizationLoading: false,
     error: null,
     lastUpdated: undefined,
