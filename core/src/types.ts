@@ -196,7 +196,6 @@ export declare interface CalleeFunctions {
         collateral: CollateralConfig,
         marketId: string,
         amount: BigNumber,
-        pools?: Pool[]
     ) => Promise<BigNumber>;
 }
 

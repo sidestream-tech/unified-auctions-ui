@@ -107,7 +107,6 @@ export const getMarketDataById = async function (
             collateral,
             marketId,
             amount,
-            calleeConfig.callee === 'UniswapV2LpTokenCalleeDai' ? undefined : calleeConfig.pools
         );
     } catch (error: any) {
         const errorMessage = error?.message;

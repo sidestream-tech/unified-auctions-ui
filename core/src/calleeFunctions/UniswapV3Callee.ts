@@ -2,8 +2,9 @@ import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { convertCollateralToDaiUsingPool, encodePools } from './helpers/uniswapV3';
+import { convertCollateralToDaiUsingPool, encodePools, getRouteAndGasQuote } from './helpers/uniswapV3';
 import { getPools } from '.';
+import { routeToPool } from './helpers/pools';
 
 const getCalleeData = async function (
     network: string,
@@ -38,17 +39,18 @@ const getMarketPrice = async function (
     collateral: CollateralConfig,
     marketId: string,
     collateralAmount: BigNumber,
-    preloadedPools?: Pool[]
 ): Promise<BigNumber> {
-    if (!preloadedPools) {
-        throw new Error(`pools required to get market price for callee type "${marketId}"`);
+    const { route, fees } = await getRouteAndGasQuote(network, collateral.symbol, collateralAmount, marketId);
+    if (!route) {
+        throw new Error(`No route found for ${collateral.symbol} to DAI`);
     }
+    const pools = await routeToPool(network, route, collateral.symbol, fees);
     const daiAmount = await convertCollateralToDaiUsingPool(
         network,
         collateral.symbol,
         marketId,
         collateralAmount,
-        preloadedPools
+        pools
     );
 
     // return price per unit
