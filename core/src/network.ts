@@ -76,12 +76,29 @@ const NETWORK_TITLES: Record<string, string | undefined> = {
     '0x539': 'custom',
 };
 
+export const getNetworkConfigByType = function (networkType: string | undefined): NetworkConfig {
+    if (!networkType || !networks[networkType]) {
+        throw new Error(`No network found with name "${networkType}"`);
+    }
+    return networks[networkType];
+};
+
 export const getDecimalChainIdByNetworkType = function (networkType: string): number {
-    const network = networks[networkType];
-    if (!network || !network.chainId) {
-        throw new Error(`No network with name "${networkType}" can be found`);
+    const network = getNetworkConfigByType(networkType);
+    if (!network.chainId) {
+        throw new Error(`No chainId found for the networ "${networkType}"`);
     }
     return parseInt(network.chainId, 16);
+};
+
+export const getActualDecimalChainIdByNetworkType = function (networkType: string): number {
+    const network = getNetworkConfigByType(networkType);
+    if (network.isFork) {
+        // TODO: come up with the better way to detect "actual" chain id
+        // currently we assume that if it's a fork, then it's a fork of the mainnet
+        return 1;
+    }
+    return getDecimalChainIdByNetworkType(networkType);
 };
 
 export const getChainIdByNetworkType = function (networkType: string | undefined): string | undefined {
@@ -97,11 +114,4 @@ export const getNetworkTypeByChainId = function (chainId: string | undefined): s
         return;
     }
     return NETWORK_TITLES[chainId];
-};
-
-export const getNetworkConfigByType = function (networkType: string | undefined): NetworkConfig {
-    if (!networkType || !networks[networkType]) {
-        throw new Error(`No network found with name "${networkType}"`);
-    }
-    return networks[networkType];
 };

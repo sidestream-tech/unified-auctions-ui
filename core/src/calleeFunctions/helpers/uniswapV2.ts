@@ -19,7 +19,10 @@ const EXCHANGE_RATE_CACHE = 20 * 1000;
 
 const getCalleeConfig = function (collateral: CollateralConfig, marketId: string): RegularCalleeConfig {
     const marketData = collateral.exchanges[marketId];
-    if (marketData?.callee === 'UniswapV2CalleeDai' || marketData?.callee === 'UniswapV3Callee') {
+    const isUniswapTokenNonAutoRouted =
+        (marketData?.callee === 'UniswapV2CalleeDai' || marketData?.callee === 'UniswapV3Callee') &&
+        !('automaticRouter' in marketData);
+    if (isUniswapTokenNonAutoRouted) {
         return marketData;
     }
     throw new Error(`"${collateral.symbol}" is not an UniSwap token`);

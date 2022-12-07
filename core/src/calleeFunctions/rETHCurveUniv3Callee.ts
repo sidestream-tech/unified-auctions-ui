@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
-import type { CalleeFunctions, CollateralConfig } from '../types';
+import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { encodeRoute, convertCollateralToDai } from './helpers/uniswapV3';
+import { convertCollateralToDai, encodePools } from './helpers/uniswapV3';
 import { convertStethToEth } from './helpers/curve';
 import { convertRethToWsteth } from './helpers/rocket';
 import { convertWstethToSteth } from './helpers/wsteth';
@@ -12,13 +12,17 @@ const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    profitAddress: string
+    profitAddress: string,
+    preloadedPools?: Pool[]
 ): Promise<string> {
-    const marketData = collateral.exchanges[marketId];
-    if (marketData?.callee !== 'rETHCurveUniv3Callee') {
+    const calleeConfig = collateral.exchanges[marketId];
+    if (calleeConfig?.callee !== 'rETHCurveUniv3Callee') {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    const route = await encodeRoute(network, marketData.route);
+    if (!preloadedPools) {
+        throw new Error(`Can not encode route for the "${collateral.ilk}" without preloaded pools`);
+    }
+    const route = await encodePools(network, preloadedPools);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];

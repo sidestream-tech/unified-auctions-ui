@@ -37,20 +37,47 @@ export const generateFakeAuction = function () {
     const isActive = faker.datatype.boolean();
     const isFinished = faker.datatype.boolean();
     const approximateUnitPrice = totalPrice.dividedBy(collateralAmount);
-    const collateralObject = faker.helpers.randomize(Object.values(COLLATERALS));
+    const collateralObject = COLLATERALS['ETH-A'];
     const suggestedMarketId = faker.helpers.randomize(FAKE_CALLEES);
+    const fakePoolsTwoSteps = [
+        {
+            addresses: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'],
+            fee: 3000,
+            routes: ['ETH-A', 'USDC-A'],
+        },
+        {
+            addresses: ['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', '0x6b175474e89094c44da98b954eedeac495271d0f'],
+            fee: 3000,
+            routes: ['USDC-A', 'DAI'],
+        },
+    ];
+    const fakePoolsNanMarketUnitPrice = [
+        {
+            addresses: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0x6b175474e89094c44da98b954eedeac495271d0f'],
+            fee: 3000,
+            routes: ['ETH-A', 'DAI'],
+        },
+    ];
+    const fakePoolsOneStep = [
+        {
+            addresses: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0x6b175474e89094c44da98b954eedeac495271d0f'],
+            fee: 3000,
+            routes: ['ETH-A', 'DAI'],
+        },
+    ];
+
     const marketDataRecords: Record<string, MarketData> = {
         'Uniswap V3': {
             ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
-            route: [collateralObject.symbol, 'USDC'],
+            pools: fakePoolsTwoSteps,
         },
         'Curve V3': {
             marketUnitPrice: new BigNumber(NaN),
-            route: [collateralObject.symbol],
+            pools: fakePoolsNanMarketUnitPrice,
         },
         '1inch': {
             ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
-            route: [collateralObject.symbol],
+            pools: fakePoolsOneStep,
         },
     };
     const marketUnitPriceToUnitPriceRatio = marketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;

@@ -88,6 +88,11 @@ export declare interface RegularCalleeConfig {
     route: string[];
 }
 
+export declare interface AutoRouterCalleeConfig {
+    callee: 'UniswapV3Callee';
+    automaticRouter: true;
+}
+
 export declare interface UniswapV2LpTokenCalleeConfig {
     callee: 'UniswapV2LpTokenCalleeDai';
     token0: string;
@@ -108,9 +113,19 @@ declare interface MarketDataBase extends Partial<ExchangeFees> {
     errorMessage?: any;
 }
 
-declare interface MarketDataRegular extends MarketDataBase, Omit<RegularCalleeConfig, 'callee'> {}
+export declare interface Pool {
+    addresses: string[];
+    fee: number;
+    routes: string[];
+}
 
-declare interface MarketDataUniswapV2LpToken extends MarketDataBase, Omit<UniswapV2LpTokenCalleeConfig, 'callee'> {}
+export declare interface MarketDataRegular extends MarketDataBase {
+    pools: Pool[];
+}
+
+export declare interface MarketDataUniswapV2LpToken
+    extends MarketDataBase,
+        Omit<UniswapV2LpTokenCalleeConfig, 'callee'> {}
 
 export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken;
 
@@ -119,12 +134,13 @@ export declare interface ValueSlotAddressAndOffset {
     offset: number;
 }
 
+export type CalleeConfig = RegularCalleeConfig | AutoRouterCalleeConfig | UniswapV2LpTokenCalleeConfig;
 export declare interface CollateralConfig {
     title: string;
     ilk: string;
     symbol: string;
     decimals: number;
-    exchanges: Record<string, RegularCalleeConfig | UniswapV2LpTokenCalleeConfig>;
+    exchanges: Record<string, CalleeConfig>;
     oracle: CollateralPriceSourceConfig;
 }
 
@@ -172,7 +188,8 @@ export declare interface CalleeFunctions {
         network: string,
         collateral: CollateralConfig,
         marketId: string,
-        profitAddress: string
+        profitAddress: string,
+        pools?: Pool[]
     ) => Promise<string>;
     getMarketPrice: (
         network: string,
@@ -333,6 +350,7 @@ export declare interface DebtAuctionEnriched extends DebtAuctionActive {
 export declare interface DebtAuctionTransaction extends DebtAuctionEnriched, CompensationAuctionTransactionFees {}
 
 export type CollateralType = CollateralConfig['ilk'];
+export type CollateralSymbol = CollateralConfig['symbol'];
 
 export declare interface LiquidationLimits {
     maximumProtocolDebtDai: BigNumber;

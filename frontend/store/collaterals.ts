@@ -108,7 +108,7 @@ export const actions = {
                 priceDropRatio: calcParameters.priceDropRatio,
                 tokenAddress,
                 autoRouteQuote: autoRouteData.totalPrice,
-                autoRouteExchanges: autoRouteData.routes,
+                autoRouteExchanges: autoRouteData.route,
                 autoRouteError: autoRouteData.errorMessage,
             };
             commit('updateCollateral', updated);

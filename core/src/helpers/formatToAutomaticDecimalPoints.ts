@@ -60,7 +60,9 @@ function limitedValue(value: number | BigNumber): number | BigNumber {
 
 export function formatWithThousandSeparators(value: string): string {
     // We choose regex over native JS solutions, as using native solutions only support numbers
-    return value.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+    const parts = value.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
 }
 
 interface formatToAutomaticDecimalPointsOptions {

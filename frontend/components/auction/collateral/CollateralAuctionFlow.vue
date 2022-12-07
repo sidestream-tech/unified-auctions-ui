@@ -52,11 +52,13 @@
                     :is-executing="isExecuting"
                     :wallet-address="walletAddress"
                     :is-explanations-shown="isExplanationsShown"
+                    :is-autorouting-enabled="isAutoroutingEnabled"
                     @connect="$emit('connect')"
                     @disconnect="$emit('disconnect')"
                     @authorizeWallet="$emit('authorizeWallet')"
                     @authorizeCollateral="$emit('authorizeCollateral', $event)"
                     @execute="$emit('execute', $event)"
+                    @toggleAutoRouterLoad="$emit('toggleAutoRouterLoad', $event)"
                 />
                 <CollateralAuctionBidTransaction
                     v-if="selectedAuction && secondStep === 'purchase'"
@@ -192,6 +194,10 @@ export default Vue.extend({
             type: Date,
             default: null,
         },
+        autoroutingStates: {
+            type: Object as Vue.PropType<Record<string, boolean>>,
+            default: () => ({}),
+        },
     },
     data: () => ({
         step: 0,
@@ -218,6 +224,9 @@ export default Vue.extend({
                 return;
             }
             return this.collateralVatBalanceStore[this.selectedAuction.collateralType];
+        },
+        isAutoroutingEnabled(): boolean {
+            return this.autoroutingStates[this.selectedAuction.id];
         },
     },
     watch: {
