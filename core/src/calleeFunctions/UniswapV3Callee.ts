@@ -4,8 +4,6 @@ import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { convertCollateralToDaiUsingPool, encodePools } from './helpers/uniswapV3';
 import { getPools } from '.';
-import { routeToPool } from './helpers/pools';
-import { getRouteAndGasQuote } from './helpers/uniswapV3';
 
 const getCalleeData = async function (
     network: string,
@@ -19,7 +17,6 @@ const getCalleeData = async function (
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const pools = preloadedPools || (await getPools(network, collateral, marketId));
-    console.log(pools)
     if (!pools) {
         throw new Error(`getCalleeData called with invalid pools`);
     }
@@ -40,20 +37,18 @@ const getMarketPrice = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    collateralAmount: BigNumber
+    collateralAmount: BigNumber,
+    preloadedPools?: Pool[]
 ): Promise<BigNumber> {
-    // convert collateral into DAI
-    const { route, fees } = await getRouteAndGasQuote(network, collateral.symbol, collateralAmount, marketId);
-    if (!route) {
-        throw new Error(`No route found for ${collateral.symbol} to DAI`);
+    if (!preloadedPools) {
+        throw new Error(`pools required to get market price for callee type "${marketId}"`);
     }
-    const pools = await routeToPool(network, route, collateral.symbol, fees);
     const daiAmount = await convertCollateralToDaiUsingPool(
         network,
         collateral.symbol,
         marketId,
         collateralAmount,
-        pools
+        preloadedPools
     );
 
     // return price per unit
