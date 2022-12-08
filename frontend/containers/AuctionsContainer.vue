@@ -3,6 +3,7 @@
         <CollateralAuctionFlow
             :auctions="auctions"
             :are-auctions-fetching="areAuctionsFetching"
+            :is-selected-auction-fetching="isSelectedAuctionFetching"
             :are-take-events-fetching="areTakeEventsFetching"
             :auctions-error="auctionsError"
             :auction-errors="auctionErrors"
@@ -54,6 +55,7 @@ export default Vue.extend({
             auctions: 'listAuctionTransactions',
             takeEvents: 'getTakeEventStorage',
             areAuctionsFetching: 'getAreAuctionsFetching',
+            isSelectedAuctionFetching: 'getIsSelectedAuctionFetching',
             areTakeEventsFetching: 'getAreTakeEventsFetching',
             isAuctionBidding: 'getIsBidding',
             auctionsError: 'getError',

@@ -27,6 +27,7 @@ interface State {
     auctionStorage: Record<string, AuctionTransaction>;
     takeEventStorage: Record<string, TakeEvent[]>;
     areAuctionsFetching: boolean;
+    isSelectedAuctionFetching: boolean;
     areTakeEventsFetching: boolean;
     isBidding: boolean;
     error: string | null;
@@ -40,6 +41,7 @@ const getInitialState = (): State => ({
     auctionStorage: {},
     takeEventStorage: {},
     areAuctionsFetching: true,
+    isSelectedAuctionFetching: false,
     areTakeEventsFetching: false,
     isBidding: false,
     error: null,
@@ -76,6 +78,9 @@ export const getters = {
     },
     getAreAuctionsFetching(state: State) {
         return state.areAuctionsFetching;
+    },
+    getIsSelectedAuctionFetching(state: State) {
+        return state.isSelectedAuctionFetching;
     },
     getAreTakeEventsFetching(state: State) {
         return state.areTakeEventsFetching;
@@ -148,6 +153,9 @@ export const mutations = {
     setAreAuctionsFetching(state: State, areFetching: boolean) {
         state.areAuctionsFetching = areFetching;
     },
+    setIsSelectedAuctionFetching(state: State, isFetching: boolean) {
+        state.isSelectedAuctionFetching = isFetching;
+    },
     setAreTakeEventsFetching(state: State, areFetching: boolean) {
         state.areTakeEventsFetching = areFetching;
     },
@@ -207,7 +215,8 @@ export const actions = {
         if (!network) {
             return;
         }
-        commit('setAreAuctionsFetching', true);
+        commit('setIsSelectedAuctionFetching', true);
+        commit('setAreAuctionsFetching', false);
         try {
             const auction = await fetchSingleAuctionById(network, auctionId);
             commit('setAuction', auction);
@@ -217,7 +226,7 @@ export const actions = {
             console.error('fetch auction error', error);
             commit('setErrorByAuctionId', { auctionId, error: error.message });
         } finally {
-            commit('setAreAuctionsFetching', false);
+            commit('setIsSelectedAuctionFetching', false);
         }
     },
     async fetch({ dispatch }: ActionContext<State, State>) {
