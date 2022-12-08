@@ -18,20 +18,14 @@ const simulation: Simulation = {
     title: 'Onboard new collateral',
     steps: [
         {
-            title: 'Reset blockchain fork and add balances',
-            entry: async () => {
-                await resetNetworkAndSetupWallet(15791971);
-                await addDaiToBalance();
-            },
-        },
-        {
-            title: 'Deploy the spell',
+            title: 'Choose spell to deploy',
             entry: async () => {
                 const spellName = await promptToSelectOneOption(
                     'Select the spell you want to deploy',
                     getAllSpellNames()
                 );
                 const spellAddress = await deploySpell(TEST_NETWORK, spellName);
+                await addDaiToBalance();
                 return {
                     spellAddress,
                 };

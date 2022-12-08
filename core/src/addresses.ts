@@ -24,11 +24,6 @@ export const _fetchContractAddressByNetwork = async function (network: string, c
     if (contractName === 'UNISWAP') {
         return UNISWAP_ADDRESS;
     }
-    if (network === 'custom') {
-        if (contractName === 'CDP_REGISTRY') {
-            return '0x0636E6878703E30aB11Ba13A68C6124d9d252e6B';
-        }
-    }
     const chainLogContract = await getChainLogContract(network);
     try {
         const encodedContractName = ethers.utils.formatBytes32String(contractName);
