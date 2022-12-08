@@ -34,6 +34,7 @@ interface State {
     auctionErrors: Record<string, string | undefined>;
     restartingAuctionsIds: string[];
     lastUpdated: Date | undefined;
+    auctionAutoRouterStates: Record<string, boolean>;
 }
 
 const getInitialState = (): State => ({
@@ -47,6 +48,7 @@ const getInitialState = (): State => ({
     auctionErrors: {},
     restartingAuctionsIds: [],
     lastUpdated: undefined,
+    auctionAutoRouterStates: {},
 });
 
 export const state = (): State => getInitialState();
@@ -97,6 +99,9 @@ export const getters = {
     },
     isAuctionRestarting: (state: State) => (id: string) => {
         return state.restartingAuctionsIds.includes(id);
+    },
+    getAuctionAutoRouterStates: (state: State) => {
+        return state.auctionAutoRouterStates;
     },
 };
 
@@ -162,6 +167,9 @@ export const mutations = {
     },
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
         Vue.set(state.auctionErrors, auctionId, error);
+    },
+    setAuctionAutoRouterState(state: State, { id, useAutoRouter }: { id: string; useAutoRouter: boolean }) {
+        Vue.set(state.auctionAutoRouterStates, id, useAutoRouter);
     },
     reset(state: State) {
         Object.assign(state, getInitialState());
@@ -335,7 +343,12 @@ export const actions = {
         const network = rootGetters['network/getMakerNetwork'];
         const auction = getters.getAuctionById(id);
         try {
-            const updatedAuction = await enrichAuctionWithPriceDropAndMarketDataRecords(auction, network);
+            const useAutoRouter = getters.getAuctionAutoRouterStates[id];
+            const updatedAuction = await enrichAuctionWithPriceDropAndMarketDataRecords(
+                auction,
+                network,
+                useAutoRouter
+            );
             commit('setAuction', updatedAuction);
         } catch (error: any) {
             console.warn(

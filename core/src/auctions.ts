@@ -134,7 +134,8 @@ export const enrichMarketDataRecordsWithValues = async function (
 
 export const enrichAuctionWithMarketDataRecords = async function (
     auction: AuctionTransaction,
-    network: string
+    network: string,
+    useAutoRouter = false
 ): Promise<AuctionTransaction> {
     if (!auction.isActive || !auction.approximateUnitPrice || auction.isFinished) {
         return auction;
@@ -142,7 +143,12 @@ export const enrichAuctionWithMarketDataRecords = async function (
     try {
         const collateralToCoverDebt = await calculateCollateralToCoverDebt(network, auction);
         const exchangeFees = await getDefaultMarketFee(network);
-        const marketDataRecords = await getMarketDataRecords(network, auction.collateralSymbol, collateralToCoverDebt);
+        const marketDataRecords = await getMarketDataRecords(
+            network,
+            auction.collateralSymbol,
+            collateralToCoverDebt,
+            useAutoRouter
+        );
         const enrichedMarketDataRecords = await enrichMarketDataRecordsWithValues(
             auction,
             marketDataRecords,
@@ -206,12 +212,13 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
 
 export const enrichAuctionWithPriceDropAndMarketDataRecords = async function (
     auction: Auction,
-    network: string
+    network: string,
+    useAutoRouter?: boolean
 ): Promise<Auction> {
     const enrichedAuctionWithNewPriceDrop = await enrichAuctionWithPriceDrop(auction);
     const fees = await getApproximateTransactionFees(network);
     const auctionWithFees = await enrichAuctionWithTransactionFees(enrichedAuctionWithNewPriceDrop, fees, network);
-    return await enrichAuctionWithMarketDataRecords(auctionWithFees, network);
+    return await enrichAuctionWithMarketDataRecords(auctionWithFees, network, useAutoRouter);
 };
 
 export const fetchSingleAuctionById = async function (
@@ -338,7 +345,9 @@ export const bidWithCallee = async function (
     notifier?: Notifier
 ): Promise<string> {
     const calleeAddress = getCalleeAddressByCollateralType(network, auction.collateralType, marketId);
-    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress);
+    const marketData = auction.marketDataRecords?.[marketId];
+    const preloadedPools = marketData && 'pools' in marketData ? marketData.pools : undefined;
+    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress, preloadedPools);
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
         convertNumberTo32Bytes(auction.index),

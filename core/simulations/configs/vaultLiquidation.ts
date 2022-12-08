@@ -14,7 +14,7 @@ import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
 
 const simulation: Simulation = {
-    title: 'Simulate collateral auction per collateral type',
+    title: 'Create collateral auction',
     steps: [
         {
             title: 'Reset blockchain fork',

@@ -1,4 +1,14 @@
-import type { CalleeNames, CalleeFunctions, MarketData, CollateralConfig } from '../types';
+import type {
+    CalleeNames,
+    CalleeFunctions,
+    MarketData,
+    CollateralConfig,
+    CollateralSymbol,
+    RegularCalleeConfig,
+    UniswapV2LpTokenCalleeConfig,
+    AutoRouterCalleeConfig,
+    Pool,
+} from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
 import UniswapV2CalleeDai from './UniswapV2CalleeDai';
@@ -8,6 +18,8 @@ import CurveLpTokenUniv3Callee from './CurveLpTokenUniv3Callee';
 import UniswapV3Callee from './UniswapV3Callee';
 import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
+import { routeToPool } from './helpers/pools';
+import { fetchAutoRouteInformation } from './helpers/uniswapAutoRouter';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
@@ -24,14 +36,58 @@ export const getCalleeData = async function (
     network: string,
     collateralType: string,
     marketId: string,
-    profitAddress: string
+    profitAddress: string,
+    preloadedPools?: Pool[]
 ): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
     const marketData = collateral.exchanges[marketId];
     if (!marketData || !marketData.callee || !allCalleeFunctions[marketData.callee]) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress);
+    return await allCalleeFunctions[marketData.callee].getCalleeData(
+        network,
+        collateral,
+        marketId,
+        profitAddress,
+        preloadedPools
+    );
+};
+
+export const getPools = async (
+    network: string,
+    collateral: CollateralConfig,
+    marketId: string,
+    amount: BigNumber = new BigNumber(1)
+): Promise<Pool[] | undefined> => {
+    const calleeConfig = collateral.exchanges[marketId];
+    if ('route' in calleeConfig) {
+        return await routeToPool(network, calleeConfig.route, collateral.symbol);
+    }
+    if ('automaticRouter' in calleeConfig) {
+        const { route, fees } = await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed());
+        if (!route) {
+            throw new Error('No automatic route can be found');
+        }
+        return await routeToPool(network, route, collateral.symbol, fees);
+    }
+    return undefined;
+};
+
+export const enrichCalleeConfigWithPools = async (
+    network: string,
+    collateral: CollateralConfig,
+    marketId: string,
+    amount: BigNumber
+): Promise<UniswapV2LpTokenCalleeConfig | ((RegularCalleeConfig | AutoRouterCalleeConfig) & { pools: Pool[] })> => {
+    const config = collateral.exchanges[marketId];
+    if (config.callee === 'UniswapV2LpTokenCalleeDai') {
+        return { ...config };
+    }
+    const pools = await getPools(network, collateral, marketId, amount);
+    if (pools) {
+        return { ...config, pools };
+    }
+    throw new Error('Failed to get pools');
 };
 
 export const getMarketDataById = async function (
@@ -40,7 +96,7 @@ export const getMarketDataById = async function (
     marketId: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<MarketData> {
-    const calleeConfig = collateral.exchanges[marketId];
+    const calleeConfig = await enrichCalleeConfigWithPools(network, collateral, marketId, amount);
     if (!allCalleeFunctions[calleeConfig?.callee]) {
         throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
@@ -69,20 +125,33 @@ export const getMarketDataById = async function (
 
 export const getMarketDataRecords = async function (
     network: string,
-    collateralSymbol: string,
-    amount: BigNumber = new BigNumber('1')
+    collateralSymbol: CollateralSymbol,
+    amount: BigNumber = new BigNumber('1'),
+    useAutoRouter = false
 ): Promise<Record<string, MarketData>> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     let marketDataRecords = {};
-    for (const marketId in collateral.exchanges) {
+    for (const [marketId, exchange] of Object.entries(collateral.exchanges)) {
         let marketData: MarketData;
         try {
-            marketData = await getMarketDataById(network, collateral, marketId, amount);
+            // turn off autorouter during tests because it takes too long
+            if (
+                (process.env.NODE_ENV === 'test' || !useAutoRouter) &&
+                'automaticRouter' in exchange &&
+                exchange.automaticRouter
+            ) {
+                marketData = {
+                    marketUnitPrice: new BigNumber(NaN),
+                    pools: [], // dummy value: MarketData requires either a pool or tokens
+                };
+            } else {
+                marketData = await getMarketDataById(network, collateral, marketId, amount);
+            }
         } catch (error: any) {
             marketData = {
                 errorMessage: error?.message,
                 marketUnitPrice: new BigNumber(NaN),
-                route: [], // dummy value: MarketData requires either a route or tokens
+                pools: [], // dummy value: MarketData requires either a pool or tokens
             };
         }
         marketDataRecords = {

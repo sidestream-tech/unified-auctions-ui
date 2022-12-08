@@ -1,15 +1,31 @@
 import { AlphaRouter } from '@uniswap/smart-order-router';
+import { Protocol } from '@uniswap/router-sdk';
 import { Token, Percent, TradeType, CurrencyAmount } from '@uniswap/sdk-core';
 import BigNumber from '../../bignumber';
 import getProvider from '../../provider';
-import { getDecimalChainIdByNetworkType } from '../../network';
+import { getActualDecimalChainIdByNetworkType } from '../../network';
 import { getTokenAddressByNetworkAndSymbol, getTokenDecimalsBySymbol } from '../../tokens';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
+import { DAI_NUMBER_OF_DIGITS } from '../../constants/UNITS';
+import memoizee from 'memoizee';
+
+const routers: Record<string, AlphaRouter> = {};
+
+const getAutoRouter = async function (network: string): Promise<AlphaRouter> {
+    if (routers[network]) {
+        return routers[network];
+    }
+    routers[network] = new AlphaRouter({
+        chainId: getActualDecimalChainIdByNetworkType(network),
+        provider: await getProvider(network),
+    });
+    return routers[network];
+};
 
 const getUniswapTokenBySymbol = async function (network: string, symbol: string): Promise<Token> {
     const tokenAddress = await getTokenAddressByNetworkAndSymbol(network, symbol);
     const tokenDecimals = getTokenDecimalsBySymbol(symbol);
-    const decimalChainId = getDecimalChainIdByNetworkType(network);
+    const decimalChainId = getActualDecimalChainIdByNetworkType(network);
     return new Token(decimalChainId, tokenAddress, tokenDecimals, symbol);
 };
 
@@ -20,8 +36,7 @@ export const getUniswapAutoRoute = async function (
     walletAddress?: string
 ) {
     const collateralConfig = getCollateralConfigBySymbol(collateralSymbol);
-    const provider = await getProvider(network);
-    const router = new AlphaRouter({ chainId: 1, provider });
+    const router = await getAutoRouter(network);
     const inputToken = await getUniswapTokenBySymbol(network, collateralConfig.symbol);
     const outputToken = await getUniswapTokenBySymbol(network, 'DAI');
 
@@ -40,6 +55,7 @@ export const getUniswapAutoRoute = async function (
         },
         {
             maxSplits: 0,
+            protocols: [Protocol.V3],
         }
     );
     if (!route) {
@@ -48,27 +64,56 @@ export const getUniswapAutoRoute = async function (
     return route;
 };
 
-export const fetchAutoRouteInformation = async function (
+const trimRoute = (route: string[]): string[] => {
+    if (route.length < 2) {
+        throw new Error('Route array must have at least 2 elements.');
+    }
+    return route.slice(1, route.length - 1);
+};
+
+const _fetchAutoRouteInformation = async function (
     network: string,
     collateralSymbol: string,
     inputAmount: string | number = 1,
     walletAddress?: string
 ) {
     try {
-        const token = await getUniswapTokenBySymbol(network, collateralSymbol);
         const autoRouteData = await getUniswapAutoRoute(network, collateralSymbol, inputAmount, walletAddress);
-        const routes = autoRouteData.route[0].tokenPath.map(p => p.symbol);
-
+        const bestRoute = autoRouteData.route[0];
+        const fullRoute = bestRoute.tokenPath.map(p => {
+            if (!p.symbol) {
+                throw new Error(`Could not get symbol for token "${p.address}".`);
+            }
+            return p.symbol;
+        });
+        const route = trimRoute(fullRoute);
+        if (bestRoute.route.protocol !== Protocol.V3) {
+            throw new Error('Only V3 routes are supported.');
+        }
+        const fees = bestRoute.route.pools.map(pool => pool.fee);
+        const quote = new BigNumber(autoRouteData.quote.toFixed());
+        const quoteGasAdjusted = new BigNumber(autoRouteData.quoteGasAdjusted.toFixed());
         return {
-            totalPrice: new BigNumber(autoRouteData.quote.toFixed(token.decimals)),
-            routes,
+            totalPrice: new BigNumber(autoRouteData.quote.toFixed(DAI_NUMBER_OF_DIGITS)),
+            route,
+            quote,
+            quoteGasAdjusted,
             errorMessage: undefined,
+            fees,
         };
     } catch (error: any) {
         return {
             totalPrice: undefined,
-            routes: undefined,
+            route: undefined,
+            quote: undefined,
+            fees: undefined,
             errorMessage: error.toString(),
         };
     }
 };
+
+export const fetchAutoRouteInformation = memoizee(_fetchAutoRouteInformation, {
+    promise: true,
+    maxAge: 1000 * 60, // 1 minute
+    length: 4,
+});

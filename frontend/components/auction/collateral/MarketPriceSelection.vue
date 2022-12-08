@@ -19,10 +19,7 @@
                         <tr v-for="[id, marketData] in marketDataArray" :key="id">
                             <td class="pr-2 whitespace-nowrap">{{ id }}</td>
                             <td class="pr-2 whitespace-nowrap">
-                                <span v-for="(currency, index) in marketData.route" :key="index"
-                                    >{{ currency }} &#8594;
-                                </span>
-                                DAI
+                                {{ formatRouteFromPools(marketData ? marketData.pools : undefined) }}
                             </td>
                             <td class="w-full text-right whitespace-nowrap">
                                 <div v-if="marketData.marketUnitPrice && !marketData.marketUnitPrice.isNaN()">
@@ -35,7 +32,27 @@
                                         <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
                                     </span>
                                 </div>
-                                <div v-else class="opacity-50">Unknown</div>
+                                <div v-else class="flex justify-end">
+                                    <div v-if="isMarketIdAutorouted(id)" class="pr-1">
+                                        <button
+                                            type="button"
+                                            @click="$emit('update:toggleAutoRouterLoad', auctionTransaction.id)"
+                                        >
+                                            <div v-if="isAutoroutingEnabled" class="flex">
+                                                <span class="opacity-50 pr-2">Disable</span
+                                                ><LoadingIcon
+                                                    v-if="
+                                                        !marketData.marketUnitPrice ||
+                                                        marketData.marketUnitPrice.isNaN()
+                                                    "
+                                                    class="LoadingAutoRouter dark:text-gray-300"
+                                                />
+                                            </div>
+                                            <span v-else class="text-green-500">Enable</span>
+                                        </button>
+                                    </div>
+                                    <div class="opacity-50">Unknown</div>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -50,7 +67,9 @@ import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { Icon } from 'ant-design-vue';
 import CollapseTransition from '@ivanv/vue-collapse-transition';
-import { AuctionTransaction, MarketData } from 'auctions-core/src/types';
+import { AuctionTransaction, MarketData, Pool } from 'auctions-core/src/types';
+import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
+import LoadingIcon from '~/assets/icons/loading.svg';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 
 export default Vue.extend({
@@ -58,6 +77,7 @@ export default Vue.extend({
         Icon,
         FormatCurrency,
         CollapseTransition,
+        LoadingIcon,
     },
     props: {
         auctionTransaction: {
@@ -67,6 +87,10 @@ export default Vue.extend({
         marketId: {
             type: String,
             default: '',
+        },
+        isAutoroutingEnabled: {
+            type: Boolean,
+            default: false,
         },
     },
     data() {
@@ -102,6 +126,19 @@ export default Vue.extend({
             return marketDataArraySorted;
         },
     },
+    methods: {
+        isMarketIdAutorouted(id: string): boolean {
+            const exchange: any = COLLATERALS[this.auctionTransaction.collateralType].exchanges[id] || undefined;
+            return exchange ? exchange.automaticRouter === true : false;
+        },
+        formatRouteFromPools(pools: Pool[] | undefined) {
+            if (!pools || !pools?.length) {
+                return '';
+            }
+            const fullRoute = [...pools.map(pool => pool.routes[0]), 'DAI'];
+            return fullRoute.join(' → ');
+        },
+    },
 });
 </script>
 
@@ -114,5 +151,8 @@ export default Vue.extend({
 }
 .Content {
     @apply pl-4;
+}
+.LoadingAutoRouter {
+    @apply h-3 w-3 mt-1 mr-1 animate-spin fill-current;
 }
 </style>

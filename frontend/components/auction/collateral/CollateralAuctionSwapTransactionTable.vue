@@ -2,7 +2,7 @@
     <TextBlock class="flex flex-col space-y-1">
         <div class="flex w-full justify-between">
             <div>Auction Ends</div>
-            <div class="RightInfo"><time-till :date="auctionTransaction.endDate" /></div>
+            <div class="RightInfo"><TimeTill :date="auctionTransaction.endDate" /></div>
         </div>
         <div class="flex w-full justify-between">
             <div>Auction Amount</div>
@@ -21,7 +21,12 @@
                 <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
             </div>
         </div>
-        <MarketPriceSelection :auction-transaction="auctionTransaction" :market-id.sync="currentMarketId" />
+        <MarketPriceSelection
+            :auction-transaction="auctionTransaction"
+            :market-id.sync="currentMarketId"
+            :is-autorouting-enabled="isAutoroutingEnabled"
+            @update:toggleAutoRouterLoad="toggleAutoRouterLoad"
+        />
         <div class="flex w-full justify-between">
             <div>Market Difference</div>
             <div class="RightInfo">
@@ -117,6 +122,10 @@ export default Vue.extend({
             type: String,
             default: '',
         },
+        isAutoroutingEnabled: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
@@ -146,6 +155,11 @@ export default Vue.extend({
     watch: {
         currentMarketId(): void {
             this.$emit('update:marketId', this.currentMarketId);
+        },
+    },
+    methods: {
+        toggleAutoRouterLoad(id: string): void {
+            this.$emit('update:toggleAutoRouterLoad', id);
         },
     },
 });

@@ -2,10 +2,11 @@ import { ethers } from 'ethers';
 import { abi as UNISWAP_V3_QUOTER_ABI } from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 import BigNumber from '../../bignumber';
 import getProvider from '../../provider';
-import { getContractAddressByName } from '../../contracts';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
+import { CollateralSymbol, Pool } from '../../types';
+import { fetchAutoRouteInformation } from './uniswapAutoRouter';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
@@ -15,38 +16,65 @@ const getUniswapV3quoterContract = async function (network: string): Promise<eth
     return new ethers.Contract(UNISWAP_V3_QUOTER_ADDRESS, UNISWAP_V3_QUOTER_ABI, provider);
 };
 
-export const encodeRoute = async function (network: string, collateralSymbols: string[]): Promise<string> {
+export const encodePools = async function (_network: string, pools: Pool[]): Promise<string> {
     const types = [] as string[];
     const values = [] as Array<string | number>;
 
-    for (const collateralSymbol of collateralSymbols) {
+    for (const pool of pools) {
         types.push('address');
-        values.push(await getContractAddressByName(network, collateralSymbol));
+        values.push(pool.addresses[0]);
 
         types.push('uint24');
-        values.push(UNISWAP_FEE);
+        values.push(pool.fee);
     }
-
     types.push('address');
-    values.push(await getContractAddressByName(network, 'MCD_DAI'));
+    values.push(pools[pools.length - 1].addresses[1]);
     return ethers.utils.solidityPack(types, values);
 };
 
-export const convertCollateralToDaiUsingRoute = async function (
+export const getRouteAndGasQuote = async (
+    network: string,
+    collateralSymbol: CollateralSymbol,
+    collateralAmount: BigNumber,
+    marketId: string
+) => {
+    const collateral = getCollateralConfigBySymbol(collateralSymbol);
+    const calleeConfig = collateral.exchanges[marketId];
+    const isAutorouted = 'automaticRouter' in calleeConfig;
+    if (calleeConfig?.callee !== 'UniswapV3Callee') {
+        throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
+    }
+    if (isAutorouted) {
+        const { route, quoteGasAdjusted, fees } = await fetchAutoRouteInformation(
+            network,
+            collateralSymbol,
+            collateralAmount.toFixed()
+        );
+        return { route, quoteGasAdjusted, fees };
+    } else {
+        return { route: calleeConfig.route, quoteGasAdjusted: undefined, fees: undefined };
+    }
+};
+
+export const convertCollateralToDaiUsingPool = async function (
     network: string,
     collateralSymbol: string,
     marketId: string,
-    collateralAmount: BigNumber
+    collateralAmount: BigNumber,
+    pools: Pool[]
 ): Promise<BigNumber> {
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
-    const marketData = collateral.exchanges[marketId];
-    if (marketData?.callee !== 'UniswapV3Callee') {
+    const calleeConfig = collateral.exchanges[marketId];
+    if (calleeConfig?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
     const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
-    const route = encodeRoute(network, [collateral.symbol, ...marketData.route]);
+    const encodedPools = await encodePools(network, pools);
     const uniswapV3quoterContract = await getUniswapV3quoterContract(network);
-    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(route, collateralIntegerAmount);
+    const daiIntegerAmount = await uniswapV3quoterContract.callStatic.quoteExactInput(
+        encodedPools,
+        collateralIntegerAmount
+    );
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     return daiAmount;
 };

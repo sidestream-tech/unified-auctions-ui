@@ -2,7 +2,7 @@
     <BasePanel :current-state="currentStateAndTitle.name">
         <template #title>
             {{ currentStateAndTitle.title }}
-            <time-till v-if="auction.state === 'have-bids'" :date="auction.earliestEndDate" />
+            <TimeTill v-if="auction.state === 'have-bids'" :date="auction.earliestEndDate" />
         </template>
 
         <TextBlock v-if="auction.state === 'ready-for-collection'">
