@@ -1,5 +1,5 @@
 import BigNumber from '../../src/bignumber';
-import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
+import { warpTime } from '../../helpers/hardhat/network';
 import { addDaiToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
