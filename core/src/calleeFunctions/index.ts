@@ -17,7 +17,6 @@ import UniswapV3Callee from './UniswapV3Callee';
 import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 import { routeToPool } from './helpers/pools';
-import { fetchAutoRouteInformation } from './helpers/uniswapAutoRouter';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
@@ -54,19 +53,14 @@ export const getCalleeData = async function (
 export const getPools = async (
     network: string,
     collateral: CollateralConfig,
-    marketId: string,
-    amount: BigNumber = new BigNumber(1)
+    marketId: string
 ): Promise<Pool[] | undefined> => {
     const calleeConfig = collateral.exchanges[marketId];
     if ('route' in calleeConfig) {
         return await routeToPool(network, calleeConfig.route, collateral.symbol);
     }
     if ('automaticRouter' in calleeConfig) {
-        const { pools } = await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed());
-        if (!pools) {
-            throw new Error('No automatic pools can be found');
-        }
-        return pools;
+        throw new Error('This function should not be called for callees whre autorouter is enabled');
     }
     return undefined;
 };
