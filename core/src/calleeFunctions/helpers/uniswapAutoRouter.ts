@@ -91,11 +91,16 @@ const _fetchAutoRouteInformation = async function (
             throw new Error('Only V3 routes are supported.');
         }
         const fees = bestRoute.route.pools.map(pool => pool.fee);
-        const pools = bestRoute.route.pools.map(pool => ({
-            addresses: [pool.token1.address, pool.token0.address],
-            fee: pool.fee,
-            routes: [pool.token1.symbol, pool.token0.symbol],
-        }));
+        const pools = bestRoute.route.pools.map(pool => {
+            if (!pool.token1.symbol || !pool.token0.symbol) {
+                throw new Error(`Could not get symbol for token from autorouter. Pool: ${pool}`);
+            }
+            return {
+                addresses: [pool.token1.address, pool.token0.address],
+                fee: pool.fee,
+                routes: [pool.token1.symbol, pool.token0.symbol],
+            }
+        });
         const quote = new BigNumber(autoRouteData.quote.toFixed());
         const quoteGasAdjusted = new BigNumber(autoRouteData.quoteGasAdjusted.toFixed());
         return {
