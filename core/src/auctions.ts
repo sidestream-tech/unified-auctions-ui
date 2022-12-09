@@ -334,7 +334,6 @@ export const bidWithDai = async function (
         profitAddress,
         NULL_BYTES,
     ];
-    console.log('bidWithDai', collateralAmount, collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0));
     return executeTransaction(network, contractName, 'take', contractParameters, { notifier });
 };
 
