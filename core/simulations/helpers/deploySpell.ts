@@ -3,10 +3,15 @@ import getSigner from '../../src/signer';
 import compiledSpells from '../../bytecode/compiledSpells.json';
 import { resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
 
-interface SpellConfig {
+interface SpellConfigBytecode {
     block?: number;
     bytecode: string;
 }
+interface SpellConfigAddress {
+    block?: number;
+    address: string;
+}
+type SpellConfig = SpellConfigBytecode | SpellConfigAddress;
 
 export const getAllSpellNames = function (): string[] {
     return Object.keys(compiledSpells).sort();
@@ -21,6 +26,10 @@ const deploySpell = async function (network: string, name: string): Promise<stri
     const spellConfig = (compiledSpells as Record<string, SpellConfig>)[name];
     await resetNetworkAndSetupWallet(spellConfig.block);
 
+    if ('address' in spellConfig) {
+        console.info(`Spell is already deployed at ${spellConfig.address}`);
+        return spellConfig.address;
+    }
     const signer = await getSigner(network);
     const factory = new ethers.ContractFactory([], spellConfig.bytecode, signer);
     const contract = await factory.deploy();
