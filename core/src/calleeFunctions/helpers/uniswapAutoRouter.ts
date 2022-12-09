@@ -99,7 +99,7 @@ const _fetchAutoRouteInformation = async function (
                 addresses: [pool.token1.address, pool.token0.address],
                 fee: pool.fee,
                 routes: [pool.token1.symbol, pool.token0.symbol],
-            }
+            };
         });
         const quote = new BigNumber(autoRouteData.quote.toFixed());
         const quoteGasAdjusted = new BigNumber(autoRouteData.quoteGasAdjusted.toFixed());

@@ -2,9 +2,10 @@ import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { convertCollateralToDaiUsingPool, encodePools, getRouteAndGasQuote } from './helpers/uniswapV3';
+import { convertCollateralToDaiUsingPool, encodePools } from './helpers/uniswapV3';
 import { getPools } from '.';
 import { routeToPool } from './helpers/pools';
+import { fetchAutoRouteInformation } from './helpers/uniswapAutoRouter';
 
 const getCalleeData = async function (
     network: string,
@@ -40,12 +41,20 @@ const getMarketPrice = async function (
     marketId: string,
     collateralAmount: BigNumber
 ): Promise<{ price: BigNumber; pools: Pool[] }> {
-    const { route, fees, totalPrice, pools } = await getRouteAndGasQuote(
-        network,
-        collateral.symbol,
-        collateralAmount,
-        marketId
-    );
+    const calleeConfig = collateral.exchanges[marketId];
+    const isAutorouted = 'automaticRouter' in calleeConfig;
+    if (calleeConfig?.callee !== 'UniswapV3Callee') {
+        throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
+    }
+    const { route, fees, totalPrice, pools } = isAutorouted
+        ? await fetchAutoRouteInformation(network, collateral.symbol, collateralAmount.toFixed())
+        : {
+              route: calleeConfig.route,
+              fees: undefined,
+              pools: undefined,
+              totalPrice: undefined,
+          };
+
     if (!pools && route) {
         const generatedPools = await routeToPool(network, route, collateral.symbol, fees);
         const daiAmount = await convertCollateralToDaiUsingPool(
