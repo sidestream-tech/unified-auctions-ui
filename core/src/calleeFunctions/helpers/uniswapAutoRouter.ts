@@ -107,7 +107,7 @@ const _fetchAutoRouteInformation = async function (
             totalPrice: new BigNumber(autoRouteData.quote.toFixed(DAI_NUMBER_OF_DIGITS)),
             route,
             quote,
-            quoteGasAdjusted,
+            totalPriceAdjusted: quoteGasAdjusted,
             errorMessage: undefined,
             fees,
             pools,

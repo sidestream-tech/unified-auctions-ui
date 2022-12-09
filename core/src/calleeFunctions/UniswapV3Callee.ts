@@ -46,13 +46,13 @@ const getMarketPrice = async function (
     if (calleeConfig?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
-    const { route, fees, totalPrice, pools } = isAutorouted
+    const { route, fees, totalPriceAdjusted, pools } = isAutorouted
         ? await fetchAutoRouteInformation(network, collateral.symbol, collateralAmount.toFixed())
         : {
               route: calleeConfig.route,
               fees: undefined,
               pools: undefined,
-              totalPrice: undefined,
+              totalPriceAdjusted: undefined,
           };
 
     if (!pools && route) {
@@ -66,8 +66,8 @@ const getMarketPrice = async function (
         );
         return { price: daiAmount.dividedBy(collateralAmount), pools: generatedPools };
     }
-    if (totalPrice && pools) {
-        return { price: totalPrice.dividedBy(collateralAmount), pools: pools };
+    if (totalPriceAdjusted && pools) {
+        return { price: totalPriceAdjusted.dividedBy(collateralAmount), pools: pools };
     }
     throw new Error(`Failed to compute market data due to lack of information`);
 };
