@@ -1,8 +1,7 @@
 <template>
-    <span :title="parsedDate">
+    <span :title="date">
         <span v-if="timeTill" :class="{ 'font-bold': isEndingSoon }">{{ timeTill }}</span>
-        <span v-else-if="date">{{ date }}</span>
-        <span v-else></span>
+        <span v-else class="opacity-50">Unknown</span>
     </span>
 </template>
 
