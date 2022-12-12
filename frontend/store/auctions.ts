@@ -40,7 +40,7 @@ interface State {
 const getInitialState = (): State => ({
     auctionStorage: {},
     takeEventStorage: {},
-    areAuctionsFetching: false,
+    areAuctionsFetching: true,
     isSelectedAuctionFetching: false,
     areTakeEventsFetching: false,
     isBidding: false,
@@ -214,6 +214,7 @@ export const actions = {
             return;
         }
         commit('setIsSelectedAuctionFetching', true);
+        commit('setAreAuctionsFetching', false);
         try {
             const auction = await fetchSingleAuctionById(network, auctionId);
             commit('setAuction', auction);

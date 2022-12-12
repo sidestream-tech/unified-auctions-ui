@@ -19,7 +19,7 @@ interface State {
 const getInitialState = (): State => ({
     vaultTransactions: {},
     vaultErrors: {},
-    areVaultsLoading: false,
+    areVaultsLoading: true,
     isVaultBeingLiquidated: false,
     isVaultLiquidationDone: false,
     lastUpdated: undefined,
@@ -88,6 +88,9 @@ export const actions = {
     },
     async fetchVault({ commit, rootGetters }: ActionContext<State, State>, vaultId: number) {
         const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return;
+        }
         commit('setAreVaultsLoading', true);
         try {
             const vault = await fetchVault(network, vaultId);
