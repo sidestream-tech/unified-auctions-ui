@@ -24,7 +24,7 @@ export default class MetaMask extends AbstractWallet {
             return false;
         }
         if (window.ethereum.providers?.length) {
-            const metaMask = window.ethereum.providers.find((p: any) => p.isMetaMask);
+            const metaMask = window.ethereum.providers.find((provider: any) => provider.isMetaMask);
             if (metaMask) {
                 return metaMask.isConnected();
             }
@@ -40,7 +40,7 @@ export default class MetaMask extends AbstractWallet {
             return false;
         }
         if (window.ethereum.providers?.length) {
-            const metaMask = window.ethereum.providers.find((p: any) => p.isMetaMask);
+            const metaMask = window.ethereum.providers.find((provider: any) => provider.isMetaMask);
             if (metaMask) {
                 return metaMask.selectedAddress;
             }
@@ -60,11 +60,10 @@ export default class MetaMask extends AbstractWallet {
             // handle case of MetaMask and Coinbase Wallet extensions both installed
             if (typeof window.ethereum !== 'undefined') {
                 if (window.ethereum.providers?.length) {
-                    window.ethereum.providers.forEach((p: any) => {
-                        if (p.isMetaMask) {
-                            MetaMask.provider = p;
-                        }
-                    });
+                    const metaMask = window.ethereum.providers.find((provider: any) => provider.isMetaMask);
+                    if (metaMask) {
+                        MetaMask.provider = metaMask;
+                    }
                 }
             }
         }
