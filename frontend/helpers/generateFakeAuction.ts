@@ -4,15 +4,20 @@ import BigNumber from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { AuctionTransaction, MarketData } from '~/../core/src/types';
 
-const FAKE_CALLEES = ['Uniswap V3', '1inch']; // Curve V3 marketUnitPrice is NaN (see below)
-
 export const generateFakeMarketData = function (
     isActive: boolean,
     approximateUnitPrice: BigNumber,
-    collateralAmount: BigNumber
+    collateralAmount: BigNumber,
+    isRatioPositive: boolean
 ) {
     const marketUnitPriceToUnitPriceRatio = isActive
-        ? new BigNumber(faker.datatype.number({ min: -0.3, max: 0.3, precision: 0.001 }))
+        ? new BigNumber(
+              faker.datatype.number({
+                  min: isRatioPositive ? 0 : -0.3,
+                  max: isRatioPositive ? 0.3 : 0,
+                  precision: 0.001,
+              })
+          )
         : undefined;
     const marketUnitPrice = approximateUnitPrice.multipliedBy(
         new BigNumber(1).minus(marketUnitPriceToUnitPriceRatio || 0)
@@ -29,6 +34,24 @@ export const generateFakeMarketData = function (
     };
 };
 
+const sortMarketDataRecords = function (marketDataRecords: Record<string, MarketData>): [string, MarketData][] {
+    const marketDataArraySorted = Object.entries(marketDataRecords || {});
+    marketDataArraySorted.sort((a, b) => {
+        // push NaNs to the end
+        if (a[1].marketUnitPrice.isNaN() && b[1].marketUnitPrice.isNaN()) {
+            return 1;
+        }
+        if (a[1].marketUnitPrice.isNaN()) {
+            return 1;
+        }
+        if (b[1].marketUnitPrice.isNaN()) {
+            return -1;
+        }
+        return b[1].marketUnitPrice.minus(a[1].marketUnitPrice).toNumber();
+    });
+    return marketDataArraySorted;
+};
+
 export const generateFakeAuction = function () {
     const index = faker.datatype.number();
     const collateralAmount = new BigNumber(parseFloat(faker.finance.amount()));
@@ -38,7 +61,6 @@ export const generateFakeAuction = function () {
     const isFinished = faker.datatype.boolean();
     const approximateUnitPrice = totalPrice.dividedBy(collateralAmount);
     const collateralObject = COLLATERALS['ETH-A'];
-    const suggestedMarketId = faker.helpers.randomize(FAKE_CALLEES);
     const fakePoolsTwoSteps = [
         {
             addresses: ['0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'],
@@ -68,7 +90,7 @@ export const generateFakeAuction = function () {
 
     const marketDataRecords: Record<string, MarketData> = {
         'Uniswap V3': {
-            ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
+            ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount, true),
             pools: fakePoolsTwoSteps,
         },
         'Curve V3': {
@@ -76,10 +98,11 @@ export const generateFakeAuction = function () {
             pools: fakePoolsNanMarketUnitPrice,
         },
         '1inch': {
-            ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount),
+            ...generateFakeMarketData(isActive, approximateUnitPrice, collateralAmount, false),
             pools: fakePoolsOneStep,
         },
     };
+    const suggestedMarketId = sortMarketDataRecords(marketDataRecords)[0][0];
     const marketUnitPriceToUnitPriceRatio = marketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
     const marketUnitPrice = marketDataRecords[suggestedMarketId].marketUnitPrice;
     const transactionGrossProfit = marketDataRecords[suggestedMarketId].transactionGrossProfit;
