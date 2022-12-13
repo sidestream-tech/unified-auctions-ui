@@ -49,11 +49,7 @@ export default class MetaMask extends AbstractWallet {
             // Coinbase overwites metamask's object into `providers` list
             return window?.ethereum?.providers.find((provider: any) => provider.isMetaMask);
         }
-        if (window?.ethereum?.isMetaMask) {
-            // Only MetaMask extension installed
-            return window.ethereum;
-        }
-        if (window?.ethereum?.isConnected) {
+        if (window?.ethereum?.isConnected && window?.ethereum?.isMetaMask) {
             // wallet has been connected before
             return window?.ethereum;
         }
