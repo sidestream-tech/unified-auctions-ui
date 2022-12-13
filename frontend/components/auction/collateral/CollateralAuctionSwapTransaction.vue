@@ -67,8 +67,8 @@
             />
             <ProfitCheckPanel
                 :is-correct.sync="isProfitCheckPassed"
-                :gross-profit="auctionTransaction.transactionGrossProfit"
-                :net-profit="auctionTransaction.transactionNetProfit"
+                :gross-profit="transactionGrossProfit"
+                :net-profit="transactionNetProfit"
                 :is-explanations-shown="isExplanationsShown"
             />
         </div>
@@ -89,7 +89,6 @@
             :is-wallet-authed="isWalletAuthorized"
             :is-collateral-authed="isWalletCollateralAuthorizationCheckPassed"
             :fees="fees"
-            :transaction-gross-profit="auctionTransaction.transactionGrossProfit"
             @execute="
                 $emit('execute', {
                     id: auctionTransaction.id,
@@ -103,6 +102,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import BigNumber from 'bignumber.js';
 import { Alert } from 'ant-design-vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';
@@ -196,6 +196,18 @@ export default Vue.extend({
         },
         marketSuggestionOrSelection(): string | undefined {
             return this.currentMarketId || this.auctionTransaction.suggestedMarketId;
+        },
+        transactionGrossProfit(): BigNumber | undefined {
+            if (!this.auctionTransaction.marketDataRecords) {
+                return undefined;
+            }
+            return this.auctionTransaction.marketDataRecords[this.marketSuggestionOrSelection]?.transactionGrossProfit;
+        },
+        transactionNetProfit(): BigNumber | undefined {
+            if (!this.auctionTransaction.marketDataRecords) {
+                return undefined;
+            }
+            return this.auctionTransaction.marketDataRecords[this.marketSuggestionOrSelection]?.transactionNetProfit;
         },
     },
 });

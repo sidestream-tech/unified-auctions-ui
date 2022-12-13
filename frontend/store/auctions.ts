@@ -40,7 +40,7 @@ interface State {
 const getInitialState = (): State => ({
     auctionStorage: {},
     takeEventStorage: {},
-    areAuctionsFetching: false,
+    areAuctionsFetching: true,
     isSelectedAuctionFetching: false,
     areTakeEventsFetching: false,
     isBidding: false,
@@ -214,6 +214,7 @@ export const actions = {
             return;
         }
         commit('setIsSelectedAuctionFetching', true);
+        commit('setAreAuctionsFetching', false);
         try {
             const auction = await fetchSingleAuctionById(network, auctionId);
             commit('setAuction', auction);
@@ -235,7 +236,10 @@ export const actions = {
             clearInterval(updateAuctionsPricesIntervalId);
         }
         refetchIntervalId = setInterval(() => dispatch('update'), REFETCH_INTERVAL);
-        updateAuctionsPricesIntervalId = setInterval(() => dispatch('updateAuctionsPrices'), TIMER_INTERVAL);
+        updateAuctionsPricesIntervalId = setInterval(
+            async () => await dispatch('updateAuctionsPrices'),
+            TIMER_INTERVAL
+        );
     },
     async bidWithCallee(
         { getters, commit, rootGetters }: ActionContext<State, State>,
@@ -330,15 +334,17 @@ export const actions = {
             console.error(`Auction redo error: ${error.message}`);
         }
     },
-    updateAuctionsPrices({ getters, dispatch }: ActionContext<State, State>) {
-        const auctions = getters.listAuctions;
-        if (!auctions?.length) {
+    async updateAuctionsPrices({ getters, dispatch }: ActionContext<State, State>) {
+        const auctions = getters.listAuctionTransactions;
+        if (!auctions) {
             return;
         }
 
-        auctions.forEach((auction: Auction) => {
-            dispatch('updateAuctionPrice', auction.id);
+        const promises = auctions.map((auction: Auction) => {
+            return dispatch('updateAuctionPrice', auction.id);
         });
+
+        await Promise.all(promises);
     },
     async updateAuctionPrice({ getters, commit, rootGetters }: ActionContext<State, State>, id: string) {
         const network = rootGetters['network/getMakerNetwork'];
