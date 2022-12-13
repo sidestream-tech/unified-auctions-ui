@@ -18,13 +18,12 @@ export default class MetaMask extends AbstractWallet {
     }
 
     public static get isConnected() {
-        let provider: ethers.providers.Web3Provider;
-        try {
-            provider = MetaMask.provider;
-        } catch (e) {
-            return false;
+        const eth = MetaMask.ethereum
+        console.log(eth)
+        if (!eth) {
+            return false
         }
-        return provider.isConnected();
+        return eth.isConnected();
     }
 
     public static get isLoggedIn() {
@@ -46,17 +45,25 @@ export default class MetaMask extends AbstractWallet {
         }
     }
 
-    static get provider(): ethers.providers.Web3Provider {
-        if (window?.ethereum?.isMetaMask) {
-            return new ethers.providers.Web3Provider(window.ethereum);
-        }
+    static get ethereum(): any {
         if (window?.ethereum?.providers) {
-            return new ethers.providers.Web3Provider(
-                window?.ethereum?.providers.find((provider: any) => provider.isMetaMask)
-            );
+            // Coinbase overwites metamask's object into `providers` list
+            return window?.ethereum?.providers.find((provider: any) => provider.isMetaMask)
+        }
+        if (window?.ethereum?.isMetaMask) {
+            // Only MetaMask extension installed
+            return window.ethereum;
         }
         if (window?.ethereum?.isConnected) {
-            return new ethers.providers.Web3Provider(window?.ethereum);
+            // wallet has been connected before
+            return window?.ethereum;
+        }
+        return undefined;
+    }
+    static get provider(): ethers.providers.Web3Provider {
+        const ethereum = MetaMask.ethereum;
+        if (ethereum) {
+            return new ethers.providers.Web3Provider(ethereum);
         }
         throw new Error('failed to get provider');
     }
