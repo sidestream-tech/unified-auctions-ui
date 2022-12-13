@@ -18,12 +18,11 @@ export default class MetaMask extends AbstractWallet {
     }
 
     public static get isConnected() {
-        const eth = MetaMask.ethereum;
-        console.log(eth);
-        if (!eth) {
+        const ethereum = MetaMask.ethereum;
+        if (!ethereum) {
             return false;
         }
-        return eth.isConnected();
+        return ethereum.isConnected();
     }
 
     public static get isLoggedIn() {
