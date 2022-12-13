@@ -18,11 +18,10 @@ export default class MetaMask extends AbstractWallet {
     }
 
     public static get isConnected() {
-        const ethereum = MetaMask.metamaskProvider;
-        if (!ethereum) {
+        if (!MetaMask.metamaskProvider) {
             return false;
         }
-        return ethereum.isConnected();
+        return MetaMask.metamaskProvider.isConnected();
     }
 
     public static get isLoggedIn() {
@@ -57,17 +56,15 @@ export default class MetaMask extends AbstractWallet {
     }
 
     static get provider(): ethers.providers.Web3Provider {
-        const ethereum = MetaMask.metamaskProvider;
-        if (ethereum) {
-            return new ethers.providers.Web3Provider(ethereum);
+        if (MetaMask.metamaskProvider) {
+            return new ethers.providers.Web3Provider(MetaMask.metamaskProvider);
         }
         throw new Error('failed to get provider');
     }
 
     async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
-        const provider = MetaMask.provider;
-        await provider.send('eth_requestAccounts', []);
-        return provider.getSigner();
+        await MetaMask.provider.send('eth_requestAccounts', []);
+        return MetaMask.provider.getSigner();
     }
 
     public async connect(): Promise<void> {
@@ -88,9 +85,8 @@ export default class MetaMask extends AbstractWallet {
             message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
             return;
         }
-        const provider = MetaMask.provider;
         const chainId = getChainIdByNetworkType(network);
-        await provider.send('wallet_switchEthereumChain', [{ chainId }]);
+        await MetaMask.provider.send('wallet_switchEthereumChain', [{ chainId }]);
     }
 
     public async networkChangedHandler() {
