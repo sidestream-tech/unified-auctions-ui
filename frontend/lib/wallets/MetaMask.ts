@@ -18,19 +18,13 @@ export default class MetaMask extends AbstractWallet {
     }
 
     public static get isConnected() {
-        if (!window.ethereum) {
+        let provider: ethers.providers.Web3Provider;
+        try {
+            provider = MetaMask.provider;
+        } catch (e) {
             return false;
         }
-        if (window.ethereum.providers?.length) {
-            const metaMask = window.ethereum.providers.find((provider: any) => provider.isMetaMask);
-            if (metaMask) {
-                return metaMask.isConnected();
-            }
-        }
-        if (typeof window.ethereum.isConnected !== 'function') {
-            return false;
-        }
-        return window.ethereum.isConnected();
+        return provider.isConnected();
     }
 
     public static get isLoggedIn() {
@@ -52,7 +46,7 @@ export default class MetaMask extends AbstractWallet {
         }
     }
 
-    static get provider(): ethers.providers.JsonRpcProvider {
+    static get provider(): ethers.providers.Web3Provider {
         if (window?.ethereum?.isMetaMask) {
             return new ethers.providers.Web3Provider(window.ethereum);
         }
