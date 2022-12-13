@@ -57,12 +57,14 @@ export default class MetaMask extends AbstractWallet {
             return new ethers.providers.Web3Provider(window.ethereum);
         }
         if (window?.ethereum?.providers) {
-            return new ethers.providers.Web3Provider(window?.ethereum?.providers.find((provider: any) => provider.isMetaMask));
+            return new ethers.providers.Web3Provider(
+                window?.ethereum?.providers.find((provider: any) => provider.isMetaMask)
+            );
         }
         if (window?.ethereum?.isConnected) {
             return new ethers.providers.Web3Provider(window?.ethereum);
         }
-        throw new Error ('failed to get provider')
+        throw new Error('failed to get provider');
     }
 
     async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
