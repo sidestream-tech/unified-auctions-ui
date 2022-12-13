@@ -332,6 +332,9 @@ export const actions = {
     },
     updateAuctionsPrices({ getters, dispatch }: ActionContext<State, State>) {
         const auctions = getters.listAuctions;
+        if (!auctions?.length) {
+            return;
+        }
 
         auctions.forEach((auction: Auction) => {
             dispatch('updateAuctionPrice', auction.id);
