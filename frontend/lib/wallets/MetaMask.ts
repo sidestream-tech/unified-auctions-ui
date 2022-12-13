@@ -11,8 +11,6 @@ export default class MetaMask extends AbstractWallet {
     public static icon = MetaMaskLogo;
     public static downloadUrl = 'https://metamask.io/';
 
-    private static provider?: any;
-
     private addresses?: string[];
 
     public static get isInterfaceReady() {
@@ -54,24 +52,21 @@ export default class MetaMask extends AbstractWallet {
         }
     }
 
-    getProvider(): ethers.providers.JsonRpcProvider {
-        if (!MetaMask.provider) {
-            MetaMask.provider = window.ethereum;
-            // handle case of MetaMask and Coinbase Wallet extensions both installed
-            if (typeof window.ethereum !== 'undefined') {
-                if (window.ethereum.providers?.length) {
-                    const metaMask = window.ethereum.providers.find((provider: any) => provider.isMetaMask);
-                    if (metaMask) {
-                        MetaMask.provider = metaMask;
-                    }
-                }
-            }
+    static get provider(): ethers.providers.JsonRpcProvider {
+        if (window?.ethereum?.isMetaMask) {
+            return new ethers.providers.Web3Provider(window.ethereum);
         }
-        return new ethers.providers.Web3Provider(MetaMask.provider, 'any');
+        if (window?.ethereum?.providers) {
+            return new ethers.providers.Web3Provider(window?.ethereum?.providers.find((provider: any) => provider.isMetaMask));
+        }
+        if (window?.ethereum?.isConnected) {
+            return new ethers.providers.Web3Provider(window?.ethereum);
+        }
+        throw new Error ('failed to get provider')
     }
 
     async getSigner(): Promise<ethers.providers.JsonRpcSigner> {
-        const provider = this.getProvider();
+        const provider = MetaMask.provider;
         await provider.send('eth_requestAccounts', []);
         return provider.getSigner();
     }
@@ -94,7 +89,7 @@ export default class MetaMask extends AbstractWallet {
             message.error(`Please install ${constructor.title} first from ${constructor.downloadUrl}`);
             return;
         }
-        const provider = this.getProvider();
+        const provider = MetaMask.provider;
         const chainId = getChainIdByNetworkType(network);
         await provider.send('wallet_switchEthereumChain', [{ chainId }]);
     }
@@ -129,6 +124,5 @@ export default class MetaMask extends AbstractWallet {
         window.$nuxt.$store.dispatch('network/setWalletChainId', undefined);
         MetaMask.provider.removeListener('accountsChanged', this.accountsChangedHandler.bind(this));
         MetaMask.provider.removeListener('chainChanged', this.networkChangedHandler.bind(this));
-        MetaMask.provider = undefined;
     }
 }
