@@ -25,16 +25,7 @@ export default class MetaMask extends AbstractWallet {
     }
 
     public static get isLoggedIn() {
-        if (!window.ethereum) {
-            return false;
-        }
-        if (window.ethereum.providers?.length) {
-            const metaMask = window.ethereum.providers.find((provider: any) => provider.isMetaMask);
-            if (metaMask) {
-                return metaMask.selectedAddress;
-            }
-        }
-        return window.ethereum.selectedAddress;
+        return MetaMask.metamaskProvider?.selectedAddress;
     }
 
     public get address() {
