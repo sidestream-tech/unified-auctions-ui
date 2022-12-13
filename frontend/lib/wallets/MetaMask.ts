@@ -18,10 +18,10 @@ export default class MetaMask extends AbstractWallet {
     }
 
     public static get isConnected() {
-        const eth = MetaMask.ethereum
-        console.log(eth)
+        const eth = MetaMask.ethereum;
+        console.log(eth);
         if (!eth) {
-            return false
+            return false;
         }
         return eth.isConnected();
     }
@@ -48,7 +48,7 @@ export default class MetaMask extends AbstractWallet {
     static get ethereum(): any {
         if (window?.ethereum?.providers) {
             // Coinbase overwites metamask's object into `providers` list
-            return window?.ethereum?.providers.find((provider: any) => provider.isMetaMask)
+            return window?.ethereum?.providers.find((provider: any) => provider.isMetaMask);
         }
         if (window?.ethereum?.isMetaMask) {
             // Only MetaMask extension installed
@@ -60,6 +60,7 @@ export default class MetaMask extends AbstractWallet {
         }
         return undefined;
     }
+
     static get provider(): ethers.providers.Web3Provider {
         const ethereum = MetaMask.ethereum;
         if (ethereum) {
