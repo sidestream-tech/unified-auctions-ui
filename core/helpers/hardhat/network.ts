@@ -27,6 +27,7 @@ export const resetNetwork = async (
                     jsonRpcUrl: rpcUrl,
                     blockNumber: blockNumber,
                 },
+                allowUnlimitedContractSize: true,
             },
         ],
     });

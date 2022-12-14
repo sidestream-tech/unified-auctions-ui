@@ -38,6 +38,7 @@ import { overwriteStabilityFeeAccumulationRate } from '../../helpers/hardhat/ove
 import detectProxyTarget from '../../helpers/detectProxyTarget';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
+    'GNO-A',
     'RETH-A', // [temporary] this collateral is not yet deployed, tested via different flow
     'TUSD-A', // [proxy] this collateral has a proxy-token contract and fallback solution does not work since JOIN contract does not have sufficient funds
 ];

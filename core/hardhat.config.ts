@@ -17,6 +17,7 @@ const customNetworkConfig = {
             url: REMOTE_RPC_URL,
         },
         initialBaseFeePerGas: 1,
+        allowUnlimitedContractSize: true,
     },
 };
 
