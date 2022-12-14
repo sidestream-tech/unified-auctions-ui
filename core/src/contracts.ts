@@ -1,8 +1,10 @@
 import type { Contract, ContractInterface } from 'ethers';
+import { ethers } from 'ethers';
+import memoizee from 'memoizee';
+import getProvider from './provider';
+import getSigner from './signer';
 import BigNumber from '../src/bignumber';
 import { RAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
-import { ethers } from 'ethers';
-import getProvider from './provider';
 import { fetchContractAddressByNetwork } from './addresses';
 import MCD_DAI from './abis/MCD_DAI.json';
 import MCD_VAT from './abis/MCD_VAT.json';
@@ -30,8 +32,7 @@ import ERC20 from './abis/ERC20.json';
 import MCD_ADM from './abis/MCD_ADM.json';
 import PROXY_FACTORY from './abis/PROXY_FACTORY.json';
 import PROXY_ACTIONS from './abis/PROXY_ACTIONS.json';
-import getSigner from './signer';
-import memoizee from 'memoizee';
+import MCD_PAUSE from './abis/MCD_PAUSE.json';
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
     const suffix = collateralType.toUpperCase().replace('-', '_');
@@ -70,6 +71,7 @@ export const getContractInterfaceByName = async function (contractName: string):
         MCD_CROPPER,
         MCD_ADM,
         PROXY_FACTORY,
+        MCD_PAUSE,
     };
     if (Object.keys(ABIs).includes(contractName)) {
         return ABIs[contractName];
