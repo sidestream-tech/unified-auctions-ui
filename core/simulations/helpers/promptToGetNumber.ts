@@ -8,7 +8,7 @@ const promptToGetNumber = async (title: string, initial: number, max: number, mi
             message: title,
             initial,
             min,
-            max
+            max,
         },
     ]);
     return number;
