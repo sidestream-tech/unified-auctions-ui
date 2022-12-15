@@ -23,7 +23,7 @@ const simulation: Simulation = {
             title: 'Reset blockchain fork',
             entry: async () => {
                 const latestBlock = await hre.ethers.provider.getBlockNumber();
-                const number = await promptToGetNumber('Block number to fork from', latestBlock);
+                const number = await promptToGetNumber('Block number to fork from', latestBlock, latestBlock);
                 await resetNetworkAndSetupWallet(number);
                 const collateralType = await promptToSelectOneOption(
                     'Select the collateral symbol to add to the VAT.',

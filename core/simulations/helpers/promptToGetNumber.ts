@@ -1,6 +1,6 @@
 import prompts from 'prompts';
 
-const promptToGetNumber = async (title: string, initial: number, min = 1) => {
+const promptToGetNumber = async (title: string, initial: number, max: number, min = 1) => {
     const { number } = await prompts([
         {
             type: 'number',
@@ -8,6 +8,7 @@ const promptToGetNumber = async (title: string, initial: number, min = 1) => {
             message: title,
             initial,
             min,
+            max
         },
     ]);
     return number;
