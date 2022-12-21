@@ -10,7 +10,7 @@ interface BlockNumberPromt {
 }
 const promptToGetNumber = async (params?: BlockNumberPromt) => {
     const title: string = params?.title || 'Block number to fork from';
-    const min = params?.min || 1;
+    const min = params?.min || 0;
     const initial = params?.initial;
     const max = params?.initial;
     // only compute latest block if we need to fill values
