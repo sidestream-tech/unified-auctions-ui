@@ -8,10 +8,9 @@ import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
-import promptToGetNumber from '../helpers/promptToGetNumber';
+import promptToGetBlockNumber from '../helpers/promptToGetNumber';
 
 import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
-import hre from 'hardhat';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
@@ -22,8 +21,7 @@ const simulation: Simulation = {
         {
             title: 'Reset blockchain fork',
             entry: async () => {
-                const latestBlock = await hre.ethers.provider.getBlockNumber();
-                const number = await promptToGetNumber('Block number to fork from', latestBlock, latestBlock);
+                const number = await promptToGetBlockNumber();
                 await resetNetworkAndSetupWallet(number);
                 const collateralType = await promptToSelectOneOption(
                     'Select the collateral symbol to add to the VAT.',
