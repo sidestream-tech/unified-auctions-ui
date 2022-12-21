@@ -18,7 +18,7 @@ const promptToGetBlockNumber = async (params?: BlockNumberPromt) => {
             type: 'number',
             name: 'number',
             message: title,
-            initial: initial || max,
+            initial: initial ?? max,
             min,
             max,
         },
