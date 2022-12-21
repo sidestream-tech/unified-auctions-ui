@@ -1,5 +1,5 @@
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
-import promptToGetNumber from '../helpers/promptToGetNumber';
+import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
 import { Simulation } from '../types';
 
 const simulation: Simulation = {
@@ -8,7 +8,7 @@ const simulation: Simulation = {
         {
             title: `Reset blockchain fork`,
             entry: async () => {
-                const selectedBlockNumber = await promptToGetNumber();
+                const selectedBlockNumber = await promptToGetBlockNumber();
                 await resetNetworkAndSetupWallet(selectedBlockNumber);
             },
         },

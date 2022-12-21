@@ -8,7 +8,7 @@ interface BlockNumberPromt {
     max?: number;
     min?: number;
 }
-const promptToGetNumber = async (params?: BlockNumberPromt) => {
+const promptToGetBlockNumber = async (params?: BlockNumberPromt) => {
     const title: string = params?.title || 'Block number to fork from';
     const min = params?.min || 0;
     const initial = params?.initial;
@@ -28,4 +28,4 @@ const promptToGetNumber = async (params?: BlockNumberPromt) => {
     return number;
 };
 
-export default promptToGetNumber;
+export default promptToGetBlockNumber;

@@ -8,7 +8,7 @@ import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
-import promptToGetBlockNumber from '../helpers/promptToGetNumber';
+import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
 
 import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
