@@ -8,6 +8,8 @@ import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
+import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
+
 import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 
@@ -19,7 +21,8 @@ const simulation: Simulation = {
         {
             title: 'Reset blockchain fork',
             entry: async () => {
-                await resetNetworkAndSetupWallet();
+                const number = await promptToGetBlockNumber();
+                await resetNetworkAndSetupWallet(number);
                 const collateralType = await promptToSelectOneOption(
                     'Select the collateral symbol to add to the VAT.',
                     getAllCollateralTypes()
