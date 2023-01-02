@@ -146,7 +146,7 @@ export const actions = {
     },
     async setRpcUrl({ commit, dispatch }: ActionContext<State, State>, rpcUrl: string): Promise<void> {
         commit('setRpcUrl', rpcUrl);
-        await dispatch('setupNetworks');
+        await dispatch('setup');
     },
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);
