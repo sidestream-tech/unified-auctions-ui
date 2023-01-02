@@ -19,8 +19,9 @@
             @openManageCollateralModal="openManageCollateralModal"
         />
         <Nuxt />
+        <RpcUrlInputModal v-if="!getRpcUrl" @setRpcUrl="setRpcUrl" />
         <ChangePageNetworkModal
-            v-if="!isPageNetworkValid && !isChangingNetwork"
+            v-else-if="!isPageNetworkValid && !isChangingNetwork"
             :invalid-network="getPageNetwork"
             :networks="networks"
             @setPageNetwork="setPageNetwork"
@@ -50,6 +51,7 @@ import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
+import RpcUrlInputModal from '~/components/modals/RpcUrlInputModal.vue';
 import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.vue';
 import ChangeWalletNetworkModal from '~/components/modals/ChangeWalletNetworkModal.vue';
 import WalletSelectModal from '~/components/modals/WalletSelectModal.vue';
@@ -60,6 +62,7 @@ import Analytics from '~/components/common/other/Analytics.vue';
 
 export default Vue.extend({
     components: {
+        RpcUrlInputModal,
         WalletModalContainer,
         TermsModal,
         ChangePageNetworkModal,
@@ -83,6 +86,7 @@ export default Vue.extend({
         }),
         ...mapGetters('network', [
             'networks',
+            'getRpcUrl',
             'getWalletNetworkTitle',
             'getPageNetwork',
             'getMakerNetwork',
@@ -139,7 +143,7 @@ export default Vue.extend({
         },
     },
     methods: {
-        ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
+        ...mapActions('network', ['setRpcUrl', 'setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
             this.$store.commit('cookies/acceptTerms');

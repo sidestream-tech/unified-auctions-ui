@@ -9,6 +9,7 @@ const NETWORK_SWITCH_TIMEOUT = 8000;
 let networkChangeTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
 interface State {
+    rpcUrl: string | undefined;
     walletChainId: string | undefined;
     isChangingNetwork: boolean;
     networks: NetworkConfig[];
@@ -17,6 +18,7 @@ interface State {
 }
 
 export const state = (): State => ({
+    rpcUrl: undefined,
     walletChainId: undefined,
     isChangingNetwork: false,
     networks: [],
@@ -30,6 +32,9 @@ export const getters = {
     },
     getNetworkConfigByType: (state: State) => (network: string) => {
         return state.networks.find(n => n.type === network);
+    },
+    getRpcUrl(state: State) {
+        return state.rpcUrl;
     },
     getWalletChainId(state: State) {
         return state.walletChainId;
@@ -86,6 +91,9 @@ export const getters = {
 };
 
 export const mutations = {
+    setRpcUrl(state: State, rpcUrl: string | undefined): void {
+        state.rpcUrl = rpcUrl;
+    },
     setWalletChainId(state: State, walletChainId: string): void {
         state.walletChainId = walletChainId;
     },
@@ -114,19 +122,31 @@ export const actions = {
         await dispatch('surplus/setup', undefined, { root: true });
         await dispatch('debt/setup', undefined, { root: true });
     },
-    async setupNetworks({ commit }: ActionContext<State, State>, isDev?: boolean) {
+    async setupNetworks({ getters, commit }: ActionContext<State, State>, isDev?: boolean) {
+        if (!getters.getRpcUrl) {
+            return;
+        }
         commit('setIsChangingNetwork', true);
         if (networkChangeTimeoutId) {
             clearTimeout(networkChangeTimeoutId);
         }
-        const { networks, defaultChainId, defaultNetwork } = await setupRpcUrlAndGetNetworks(
-            process.env.RPC_URL,
-            isDev
-        );
-        commit('setListOfNetworks', networks);
-        commit('setDefaultChainId', defaultChainId);
-        commit('setDefaultNetwork', defaultNetwork);
+        try {
+            const { networks, defaultChainId, defaultNetwork } = await setupRpcUrlAndGetNetworks(
+                getters.getRpcUrl,
+                isDev
+            );
+            commit('setListOfNetworks', networks);
+            commit('setDefaultChainId', defaultChainId);
+            commit('setDefaultNetwork', defaultNetwork);
+        } catch (error) {
+            message.error(`Network setup error: ${error.message}`);
+            commit('setRpcUrl', undefined);
+        }
         commit('setIsChangingNetwork', false);
+    },
+    async setRpcUrl({ commit, dispatch }: ActionContext<State, State>, rpcUrl: string): Promise<void> {
+        commit('setRpcUrl', rpcUrl);
+        await dispatch('setupNetworks');
     },
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);

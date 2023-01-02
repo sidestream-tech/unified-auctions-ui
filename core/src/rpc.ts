@@ -13,7 +13,7 @@ const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<string> {
     const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcUrl });
     const networkInfo = await provider.getNetwork();
     if (!networkInfo || !networkInfo.chainId) {
-        throw new Error(`Can not verify RPC url`);
+        throw new Error(`Cannot verify RPC URL`);
     }
     return formatToHexWithoutPad(networkInfo.chainId);
 };
@@ -28,7 +28,7 @@ export const setupRpcUrlAndGetNetworks = async function (
     isDev = false
 ): Promise<{ networks: NetworkConfig[]; defaultNetwork: string; defaultChainId: string }> {
     if (!rpcUrl) {
-        throw new Error(`No RPC_URL env variable was provided`);
+        throw new Error(`Invalid RPC URL`);
     }
     const chainId = await getChainIdFromRpcUrl(rpcUrl);
     const defaultNetwork = getNetworkTypeByChainId(chainId);
