@@ -4,6 +4,10 @@ const PREVIEW_IMAGE = (process.env.FRONTEND_ORIGIN || '') + '/preview.jpeg';
 const SITE_TITLE = 'Unified Auctions';
 const SITE_DESCRIPTION = `The "${SITE_TITLE}" is the portal to all Maker Auctions related services. Easily interact with the Maker Protocol through streamlined interfaces, inform yourself about how the protocol works and receive updates on current auctions.`;
 const TWITTER_HANDLE = '@MakerDAO_SAS';
+// mode: https://v3.router.vuejs.org/api/#mode
+const ROUTER_HISTORY_MODES = ['history', 'hash', 'abstract'];
+// Nuxt has 'history' as default
+const HISTORY_MODE = ROUTER_HISTORY_MODES.includes(process.env.HISTORY_MODE) ? process.env.HISTORY_MODE : 'history';
 
 export default {
     // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -107,5 +111,9 @@ export default {
                 },
             },
         },
+    },
+    // router: https://nuxtjs.org/docs/configuration-glossary/configuration-router
+    router: {
+        mode: HISTORY_MODE,
     },
 };
