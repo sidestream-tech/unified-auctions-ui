@@ -14,12 +14,18 @@
             :networks="networks"
             :is-changing-network="isChangingNetwork"
             @changeWalletType="changeWalletType"
+            @openRpcUrlInputModal="setRpcUrlInputModal(true)"
             @openTermsModal="setTermsModal(true)"
             @openWalletModal="openWalletModal"
             @openManageCollateralModal="openManageCollateralModal"
         />
         <Nuxt />
-        <RpcUrlInputModal v-if="!getRpcUrl" @setRpcUrl="setRpcUrl" />
+        <RpcUrlInputModal
+            v-if="!getRpcUrl || isRpcUrlInputModalShown"
+            :current-rpc-url="getRpcUrl"
+            @setRpcUrl="setRpcUrl"
+            @close="setRpcUrlInputModal(false)"
+        />
         <ChangePageNetworkModal
             v-else-if="!isPageNetworkValid && !isChangingNetwork"
             :invalid-network="getPageNetwork"
@@ -78,6 +84,7 @@ export default Vue.extend({
             walletAddress: 'getAddress',
         }),
         ...mapGetters('modals', {
+            isRpcUrlInputModalShown: 'getRpcUrlInputModal',
             isTermsModalShown: 'getTermsModal',
             isSelectWalletModalShown: 'getSelectWalletModal',
         }),
@@ -149,6 +156,9 @@ export default Vue.extend({
             this.$store.commit('cookies/acceptTerms');
             this.$store.commit('modals/setTermsModal', false);
             this.$store.commit('modals/setSelectWalletModal', true);
+        },
+        setRpcUrlInputModal(open: boolean): void {
+            this.$store.commit('modals/setRpcUrlInputModal', open);
         },
         setTermsModal(open: boolean): void {
             this.$store.commit('modals/setTermsModal', open);

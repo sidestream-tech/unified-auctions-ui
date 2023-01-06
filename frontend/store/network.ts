@@ -112,8 +112,11 @@ export const mutations = {
 };
 
 export const actions = {
-    async setup({ dispatch }: ActionContext<State, State>, isDev?: boolean): Promise<void> {
-        await dispatch('setupNetworks', isDev);
+    async setup(
+        { dispatch }: ActionContext<State, State>,
+        { isDev, oldRpcUrl }: { isDev?: boolean; oldRpcUrl?: string } = {}
+    ): Promise<void> {
+        await dispatch('setupNetworks', { isDev, oldRpcUrl });
         await dispatch('wallet/setup', undefined, { root: true });
         await dispatch('gas/setup', undefined, { root: true });
         await dispatch('authorizations/setup', undefined, { root: true });
@@ -122,7 +125,10 @@ export const actions = {
         await dispatch('surplus/setup', undefined, { root: true });
         await dispatch('debt/setup', undefined, { root: true });
     },
-    async setupNetworks({ getters, commit }: ActionContext<State, State>, isDev?: boolean) {
+    async setupNetworks(
+        { getters, commit, dispatch }: ActionContext<State, State>,
+        { isDev, oldRpcUrl }: { isDev?: boolean; oldRpcUrl?: string } = {}
+    ) {
         if (!getters.getRpcUrl) {
             return;
         }
@@ -140,13 +146,17 @@ export const actions = {
             commit('setDefaultNetwork', defaultNetwork);
         } catch (error) {
             message.error(`Network setup error: ${error.message}`);
-            commit('setRpcUrl', undefined);
+            await dispatch('setRpcUrl', oldRpcUrl);
         }
         commit('setIsChangingNetwork', false);
     },
-    async setRpcUrl({ commit, dispatch }: ActionContext<State, State>, rpcUrl: string): Promise<void> {
-        commit('setRpcUrl', rpcUrl);
-        await dispatch('setup');
+    async setRpcUrl({ getters, commit, dispatch }: ActionContext<State, State>, newRpcUrl: string): Promise<void> {
+        const oldRpcUrl = getters.getRpcUrl;
+        if (oldRpcUrl === newRpcUrl) {
+            return;
+        }
+        commit('setRpcUrl', newRpcUrl);
+        await dispatch('setup', { oldRpcUrl });
     },
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);

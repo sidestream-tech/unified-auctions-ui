@@ -19,6 +19,8 @@
                     </label>
 
                     <div class="flex space-x-4">
+                        <button class="inline-block" @click="$emit('openRpcUrlInputModal')">Change RPC URL</button>
+
                         <NetworkSelector
                             v-if="isAuctionsPortal || isDefaultHeader"
                             :network="network"

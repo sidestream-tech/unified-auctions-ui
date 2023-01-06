@@ -15,6 +15,6 @@ export default ({ store, isDev }) => {
             modules: ['cookies'],
         }).plugin(store);
         store.dispatch('wallet/autoConnect');
-        store.dispatch('network/setup', isDev);
+        store.dispatch('network/setup', { isDev });
     });
 };
