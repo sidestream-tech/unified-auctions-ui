@@ -5,6 +5,7 @@ import {
     getCustomNetworkConfig,
     getNetworks,
     setNetwork,
+    resetNetworks,
     getNetworkTypeByChainId,
 } from './network';
 import { formatToHexWithoutPad } from '../helpers/format';
@@ -29,6 +30,9 @@ export const setupRpcUrlAndGetNetworks = async function (
 ): Promise<{ networks: NetworkConfig[]; defaultNetwork: string; defaultChainId: string }> {
     if (!rpcUrl) {
         throw new Error(`Invalid RPC URL`);
+    }
+    if (getNetworks()) {
+        resetNetworks();
     }
     const chainId = await getChainIdFromRpcUrl(rpcUrl);
     const defaultNetwork = getNetworkTypeByChainId(chainId);

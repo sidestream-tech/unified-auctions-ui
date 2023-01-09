@@ -17,7 +17,7 @@ interface State {
     defaultNetwork?: string;
 }
 
-const getInitialState = (): State => ({
+export const state = (): State => ({
     rpcUrl: undefined,
     walletChainId: undefined,
     isChangingNetwork: false,
@@ -25,8 +25,6 @@ const getInitialState = (): State => ({
     defaultChainId: undefined,
     defaultNetwork: undefined,
 });
-
-export const state = (): State => getInitialState();
 
 export const getters = {
     networks(state: State) {
@@ -65,9 +63,10 @@ export const getters = {
         }
         return state.defaultChainId;
     },
-    isPageNetworkValid(state: State, getters: any) {
+    isPageNetworkValid(state: State, _getters: any, rootState: any) {
+        const pageNetwork = rootState.route.query.network;
         try {
-            return state.networks.some(n => n.chainId === getters.getPageChainId);
+            return state.networks.some(n => n.type === pageNetwork);
         } catch {
             return false;
         }
@@ -111,9 +110,6 @@ export const mutations = {
     setDefaultNetwork(state: State, defaultNetwork: string): void {
         state.defaultNetwork = defaultNetwork;
     },
-    reset(state: State) {
-        Object.assign(state, getInitialState());
-    },
 };
 
 export const actions = {
@@ -154,7 +150,6 @@ export const actions = {
         if (oldRpcUrl === newRpcUrl) {
             return;
         }
-        commit('reset');
         commit('setRpcUrl', newRpcUrl);
         await dispatch('setup', oldRpcUrl);
     },
