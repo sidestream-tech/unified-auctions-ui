@@ -63,10 +63,9 @@ export const getters = {
         }
         return state.defaultChainId;
     },
-    isPageNetworkValid(state: State, _getters: any, rootState: any) {
-        const pageNetwork = rootState.route.query.network;
+    isPageNetworkValid(state: State, getters: any) {
         try {
-            return state.networks.some(n => n.type === pageNetwork);
+            return state.networks.some(n => n.type === getters.getPageNetwork);
         } catch {
             return false;
         }
