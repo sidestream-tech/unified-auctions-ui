@@ -1,18 +1,13 @@
 const { app, BrowserWindow } = require('electron');
 const serve = require('electron-serve');
 
-const loadURL = serve({ directory: 'dist' });
+const loadURL = serve({ directory: '../frontend/dist' });
 
 let mainWindow;
 
 function createWindow() {
-    mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-            nodeIntegration: true,
-        },
-    });
+    mainWindow = new BrowserWindow({ show: false });
+    mainWindow.maximize();
     loadURL(mainWindow);
 }
 
