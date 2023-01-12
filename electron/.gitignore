@@ -71,6 +71,9 @@ typings/
 # Nuxt generate
 dist
 
+# Electron Forge output
+out
+
 # vuepress build output
 .vuepress/dist
 
