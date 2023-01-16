@@ -19,14 +19,13 @@
                     </label>
 
                     <div class="flex space-x-4">
-                        <button class="inline-block" @click="$emit('openRpcUrlInputModal')">Change RPC URL</button>
-
                         <NetworkSelector
                             v-if="isAuctionsPortal || isDefaultHeader"
                             :network="network"
                             :networks="networks"
                             :is-changing-network="isChangingNetwork"
                             @update:network="$emit('update:network', $event)"
+                            @changeRpcUrl="$emit('changeRpcUrl')"
                         />
 
                         <WalletSelector

@@ -5,7 +5,7 @@ export default ({ store }) => {
     window.onNuxtReady(async () => {
         new VuexPersistence({
             storage: window.localStorage,
-            modules: ['network', 'preferences'],
+            modules: ['preferences'],
         }).plugin(store);
         new VuexPersistence({
             storage: {

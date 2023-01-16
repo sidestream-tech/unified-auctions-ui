@@ -58,7 +58,7 @@ export default Vue.extend({
 
 <style scoped>
 .Button {
-    @apply overflow-hidden;
+    @apply w-auto;
 }
 
 .Button.Default:enabled {

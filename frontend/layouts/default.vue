@@ -14,17 +14,18 @@
             :networks="networks"
             :is-changing-network="isChangingNetwork"
             @changeWalletType="changeWalletType"
-            @openRpcUrlInputModal="setRpcUrlInputModal(true)"
+            @changeRpcUrl="setRpcUrlConfigurationModal(true)"
             @openTermsModal="setTermsModal(true)"
             @openWalletModal="openWalletModal"
             @openManageCollateralModal="openManageCollateralModal"
         />
         <Nuxt />
-        <RpcUrlInputModal
-            v-if="!getRpcUrl || isRpcUrlInputModalShown"
+        <RpcUrlConfigurationModal
+            v-if="!getRpcUrl || isRpcUrlConfigurationModalShown"
             :current-rpc-url="getRpcUrl"
-            @setRpcUrl="setRpcUrl"
-            @close="setRpcUrlInputModal(false)"
+            :disabled="isChangingNetwork"
+            @configureRpcUrl="configureRpcUrl"
+            @close="setRpcUrlConfigurationModal(false)"
         />
         <ChangePageNetworkModal
             v-else-if="!isPageNetworkValid && !isChangingNetwork"
@@ -57,7 +58,7 @@ import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
-import RpcUrlInputModal from '~/components/modals/RpcUrlInputModal.vue';
+import RpcUrlConfigurationModal from '~/components/modals/RpcUrlConfigurationModal.vue';
 import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.vue';
 import ChangeWalletNetworkModal from '~/components/modals/ChangeWalletNetworkModal.vue';
 import WalletSelectModal from '~/components/modals/WalletSelectModal.vue';
@@ -68,7 +69,7 @@ import Analytics from '~/components/common/other/Analytics.vue';
 
 export default Vue.extend({
     components: {
-        RpcUrlInputModal,
+        RpcUrlConfigurationModal,
         WalletModalContainer,
         TermsModal,
         ChangePageNetworkModal,
@@ -84,16 +85,16 @@ export default Vue.extend({
             walletAddress: 'getAddress',
         }),
         ...mapGetters('modals', {
-            isRpcUrlInputModalShown: 'getRpcUrlInputModal',
+            isRpcUrlConfigurationModalShown: 'getRpcUrlConfigurationModal',
             isTermsModalShown: 'getTermsModal',
             isSelectWalletModalShown: 'getSelectWalletModal',
         }),
         ...mapGetters('cookies', {
             hasAcceptedTerms: 'hasAcceptedTerms',
         }),
+        ...mapGetters('preferences', ['getRpcUrl']),
         ...mapGetters('network', [
             'networks',
-            'getRpcUrl',
             'getWalletNetworkTitle',
             'getPageNetwork',
             'getMakerNetwork',
@@ -150,15 +151,15 @@ export default Vue.extend({
         },
     },
     methods: {
-        ...mapActions('network', ['setRpcUrl', 'setPageNetwork', 'fixWalletNetwork']),
+        ...mapActions('network', ['configureRpcUrl', 'setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
             this.$store.commit('cookies/acceptTerms');
             this.$store.commit('modals/setTermsModal', false);
             this.$store.commit('modals/setSelectWalletModal', true);
         },
-        setRpcUrlInputModal(open: boolean): void {
-            this.$store.commit('modals/setRpcUrlInputModal', open);
+        setRpcUrlConfigurationModal(open: boolean): void {
+            this.$store.commit('modals/setRpcUrlConfigurationModal', open);
         },
         setTermsModal(open: boolean): void {
             this.$store.commit('modals/setTermsModal', open);

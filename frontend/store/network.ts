@@ -1,7 +1,7 @@
 import { message } from 'ant-design-vue';
 import { ActionContext } from 'vuex';
 import { getNetworkTypeByChainId } from 'auctions-core/src/network';
-import { setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
+import { getChainIdFromRpcUrl, setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
 import { NetworkConfig } from 'auctions-core/src/types';
 import getWallet from '~/lib/wallet';
 
@@ -9,7 +9,6 @@ const NETWORK_SWITCH_TIMEOUT = 8000;
 let networkChangeTimeoutId: ReturnType<typeof setTimeout> | undefined;
 
 interface State {
-    rpcUrl: string | undefined;
     walletChainId: string | undefined;
     isChangingNetwork: boolean;
     networks: NetworkConfig[];
@@ -18,7 +17,6 @@ interface State {
 }
 
 export const state = (): State => ({
-    rpcUrl: undefined,
     walletChainId: undefined,
     isChangingNetwork: false,
     networks: [],
@@ -32,9 +30,6 @@ export const getters = {
     },
     getNetworkConfigByType: (state: State) => (network: string) => {
         return state.networks.find(n => n.type === network);
-    },
-    getRpcUrl(state: State) {
-        return state.rpcUrl;
     },
     getWalletChainId(state: State) {
         return state.walletChainId;
@@ -91,9 +86,6 @@ export const getters = {
 };
 
 export const mutations = {
-    setRpcUrl(state: State, rpcUrl: string | undefined): void {
-        state.rpcUrl = rpcUrl;
-    },
     setWalletChainId(state: State, walletChainId: string): void {
         state.walletChainId = walletChainId;
     },
@@ -112,8 +104,8 @@ export const mutations = {
 };
 
 export const actions = {
-    async setup({ dispatch }: ActionContext<State, State>, oldRpcUrl?: string): Promise<void> {
-        await dispatch('setupNetworks', oldRpcUrl);
+    async setup({ dispatch }: ActionContext<State, State>): Promise<void> {
+        await dispatch('setupNetworks');
         await dispatch('wallet/setup', undefined, { root: true });
         await dispatch('gas/setup', undefined, { root: true });
         await dispatch('authorizations/setup', undefined, { root: true });
@@ -122,8 +114,9 @@ export const actions = {
         await dispatch('surplus/setup', undefined, { root: true });
         await dispatch('debt/setup', undefined, { root: true });
     },
-    async setupNetworks({ getters, commit, dispatch }: ActionContext<State, State>, oldRpcUrl?: string) {
-        if (!getters.getRpcUrl) {
+    async setupNetworks({ rootGetters, commit }: ActionContext<State, State>) {
+        const rpcUrl = rootGetters['preferences/getRpcUrl'];
+        if (!rpcUrl) {
             return;
         }
         commit('setIsChangingNetwork', true);
@@ -132,7 +125,7 @@ export const actions = {
         }
         try {
             const { networks, defaultChainId, defaultNetwork } = await setupRpcUrlAndGetNetworks(
-                getters.getRpcUrl,
+                rpcUrl,
                 window.$nuxt.context.isDev
             );
             commit('setListOfNetworks', networks);
@@ -140,17 +133,27 @@ export const actions = {
             commit('setDefaultNetwork', defaultNetwork);
         } catch (error: any) {
             message.error(`Network setup error: ${error.message}`);
-            await dispatch('setRpcUrl', oldRpcUrl);
         }
         commit('setIsChangingNetwork', false);
     },
-    async setRpcUrl({ getters, commit, dispatch }: ActionContext<State, State>, newRpcUrl: string): Promise<void> {
-        const oldRpcUrl = getters.getRpcUrl;
+    async configureRpcUrl(
+        { rootGetters, commit, dispatch }: ActionContext<State, State>,
+        newRpcUrl: string
+    ): Promise<void> {
+        commit('setIsChangingNetwork', true);
+        const oldRpcUrl = rootGetters['preferences/getRpcUrl'];
         if (oldRpcUrl === newRpcUrl) {
+            commit('setIsChangingNetwork', false);
             return;
         }
-        commit('setRpcUrl', newRpcUrl);
-        await dispatch('setup', oldRpcUrl);
+        try {
+            await getChainIdFromRpcUrl(newRpcUrl);
+            await dispatch('preferences/setRpcUrl', newRpcUrl, { root: true });
+        } catch (error: any) {
+            message.error(`Invalid RPC URL: ${error.message}`);
+            await dispatch('preferences/setRpcUrl', oldRpcUrl, { root: true });
+        }
+        await dispatch('setup');
     },
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);
