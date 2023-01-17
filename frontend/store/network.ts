@@ -115,7 +115,7 @@ export const actions = {
         await dispatch('debt/setup', undefined, { root: true });
     },
     async setupNetworks({ rootGetters, commit }: ActionContext<State, State>) {
-        const rpcUrl = rootGetters['preferences/getRpcUrl'];
+        const rpcUrl = rootGetters['preferences/getRpcUrl'] || process.env.RPC_URL;
         if (!rpcUrl) {
             return;
         }
