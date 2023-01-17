@@ -90,7 +90,7 @@ export const getNetworkConfigByType = function (networkType: string | undefined)
 export const getDecimalChainIdByNetworkType = function (networkType: string): number {
     const network = getNetworkConfigByType(networkType);
     if (!network.chainId) {
-        throw new Error(`No chainId found for the networ "${networkType}"`);
+        throw new Error(`No chainId found for the network "${networkType}"`);
     }
     return parseInt(network.chainId, 16);
 };
