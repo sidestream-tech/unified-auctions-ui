@@ -14,7 +14,7 @@
             :networks="networks"
             :is-changing-network="isChangingNetwork"
             @changeWalletType="changeWalletType"
-            @changeRpcUrl="setRpcUrlConfigurationModal(true)"
+            @changeRpcUrl="isRpcUrlConfigurationModalShown = true"
             @openTermsModal="setTermsModal(true)"
             @openWalletModal="openWalletModal"
             @openManageCollateralModal="openManageCollateralModal"
@@ -22,10 +22,10 @@
         <Nuxt />
         <RpcUrlConfigurationModal
             v-if="!getRpcUrl || isRpcUrlConfigurationModalShown"
+            :is-shown.sync="isRpcUrlConfigurationModalShown"
             :current-rpc-url="getRpcUrl"
             :disabled="isChangingNetwork"
             @configureRpcUrl="configureRpcUrl"
-            @close="setRpcUrlConfigurationModal(false)"
         />
         <ChangePageNetworkModal
             v-else-if="!isPageNetworkValid && !isChangingNetwork"
@@ -85,7 +85,6 @@ export default Vue.extend({
             walletAddress: 'getAddress',
         }),
         ...mapGetters('modals', {
-            isRpcUrlConfigurationModalShown: 'getRpcUrlConfigurationModal',
             isTermsModalShown: 'getTermsModal',
             isSelectWalletModalShown: 'getSelectWalletModal',
         }),
@@ -110,20 +109,28 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
+        isDarkMode: {
+            get() {
+                return this.$store.getters['preferences/getIsDarkMode'];
+            },
+            set(newIsDarkMode) {
+                this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
+            },
+        },
+        isRpcUrlConfigurationModalShown: {
+            get() {
+                return this.$store.getters['modals/getRpcUrlConfigurationModal'];
+            },
+            set(newIsShown) {
+                this.$store.commit('modals/setRpcUrlConfigurationModal', newIsShown);
+            },
+        },
         network: {
             get() {
                 return this.getPageNetwork;
             },
             set(newNetwork) {
                 this.setPageNetwork(newNetwork);
-            },
-        },
-        isDarkMode: {
-            get(): Boolean {
-                return this.$store.getters['preferences/getIsDarkMode'];
-            },
-            set(newIsDarkMode) {
-                this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
         },
         stagingBannerURL() {
@@ -157,9 +164,6 @@ export default Vue.extend({
             this.$store.commit('cookies/acceptTerms');
             this.$store.commit('modals/setTermsModal', false);
             this.$store.commit('modals/setSelectWalletModal', true);
-        },
-        setRpcUrlConfigurationModal(open: boolean): void {
-            this.$store.commit('modals/setRpcUrlConfigurationModal', open);
         },
         setTermsModal(open: boolean): void {
             this.$store.commit('modals/setTermsModal', open);

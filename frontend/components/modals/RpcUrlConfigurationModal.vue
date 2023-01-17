@@ -34,6 +34,10 @@ export default Vue.extend({
     name: 'RpcUrlConfigurationModal',
     components: { Modal, Input, TextBlock, BaseButton },
     props: {
+        isShown: {
+            type: Boolean,
+            default: false,
+        },
         currentRpcUrl: {
             type: String,
             default: undefined,
@@ -61,7 +65,7 @@ export default Vue.extend({
             this.$emit('configureRpcUrl', this.newRpcUrl);
         },
         close() {
-            this.$emit('close');
+            this.$emit('update:isShown', false);
         },
     },
 });
