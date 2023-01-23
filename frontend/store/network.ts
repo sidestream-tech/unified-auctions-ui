@@ -149,11 +149,14 @@ export const actions = {
         try {
             await getChainIdFromRpcUrl(newRpcUrl);
             await dispatch('preferences/setRpcUrl', newRpcUrl, { root: true });
+            await dispatch('setup');
+            message.success(`Connected to: ${newRpcUrl}`);
+            commit('modals/setRpcUrlConfigurationModal', false, { root: true });
         } catch (error: any) {
-            message.error(`Invalid RPC URL: ${error.message}`);
+            message.error(`RPC URL configuration error: ${error.message}`);
             await dispatch('preferences/setRpcUrl', oldRpcUrl, { root: true });
+            commit('setIsChangingNetwork', false);
         }
-        await dispatch('setup');
     },
     setWalletChainId({ commit }: ActionContext<State, State>, walletChainId: string): void {
         commit('setWalletChainId', walletChainId);
