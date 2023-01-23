@@ -12,13 +12,15 @@
             <TextBlock>
                 In order for the application to make requests to the blockchain, fetch auctions and market data, and
                 send transactions, it needs the address of a RPC URL. To get this URL, you can
-                <a href="#" target="_blank">run your own Ethereum node</a> or use external services like
-                <a href="https://www.alchemy.com/" target="_blank">Alchemy</a> or
+                <a href="https://ethereum.org/en/run-a-node/" target="_blank">run your own Ethereum node</a> or use
+                external services like <a href="https://www.alchemy.com/" target="_blank">Alchemy</a> or
                 <a href="https://www.infura.io/" target="_blank">Infura</a>.
             </TextBlock>
             <div class="flex mt-2 gap-x-2">
-                <Input v-model="newRpcUrl" :disabled="disabled" placeholder="https://" />
-                <BaseButton type="primary" :disabled="disabled" @click="connect()">{{ buttonText }}</BaseButton>
+                <Input v-model="newRpcUrl" :disabled="isChangingNetwork" placeholder="https://" />
+                <BaseButton type="primary" :disabled="isButtonDisabled" @click="connect()">{{
+                    buttonText
+                }}</BaseButton>
             </div>
         </div>
     </Modal>
@@ -42,7 +44,7 @@ export default Vue.extend({
             type: String,
             default: undefined,
         },
-        disabled: {
+        isChangingNetwork: {
             type: Boolean,
             default: false,
         },
@@ -54,10 +56,13 @@ export default Vue.extend({
     },
     computed: {
         buttonText(): string {
-            if (this.disabled) {
+            if (this.isChangingNetwork) {
                 return this.currentRpcUrl ? 'Reconnecting...' : 'Connecting...';
             }
             return this.currentRpcUrl ? 'Reconnect' : 'Connect';
+        },
+        isButtonDisabled(): boolean {
+            return this.isChangingNetwork || this.currentRpcUrl === this.newRpcUrl;
         },
     },
     methods: {

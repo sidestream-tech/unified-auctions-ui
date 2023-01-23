@@ -24,7 +24,7 @@
             v-if="!getRpcUrl || isRpcUrlConfigurationModalShown"
             :is-shown.sync="isRpcUrlConfigurationModalShown"
             :current-rpc-url="getRpcUrl"
-            :disabled="isChangingNetwork"
+            :is-changing-network="isChangingNetwork"
             @configureRpcUrl="configureRpcUrl"
         />
         <ChangePageNetworkModal
