@@ -12,6 +12,7 @@
   },
   "scripts": {
     "preinstall": "cd ../frontend/ && npm ci && npm run build && npm run generate && cd ../electron/",
+    "postinstall": "electron-builder install-app-deps",
     "start": "npm run preinstall && electron .",
     "build": "npm run preinstall && electron-builder"
   },
