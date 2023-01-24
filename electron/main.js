@@ -1,7 +1,8 @@
 const { app, BrowserWindow } = require('electron');
 const serve = require('electron-serve');
+const path = require('path')
 
-const loadURL = serve({ directory: '../frontend/dist' });
+const loadURL = serve({ directory: path.join(__dirname, '../frontend/dist/') });
 
 let mainWindow;
 

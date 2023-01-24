@@ -5,16 +5,16 @@
   "author": "SIDESTREAM GmbH",
   "main": "main.js",
   "build": {
-    "appId": "com.MakerDAO.UnifiedAuctions",
+    "appId": "com.makerdao.unified-auctions",
     "mac": {
       "category": "public.app-category.finance"
     }
   },
   "scripts": {
-    "preinstall": "cd ../frontend/ && npm ci && npm run build && npm run generate && cd ../electron/",
+    "preinstall": "cd ../frontend/ && npm ci && npm run build && npm run generate",
     "postinstall": "electron-builder install-app-deps",
-    "start": "npm run preinstall && electron .",
-    "build": "npm run preinstall && electron-builder"
+    "start": "npm ci && electron .",
+    "build": "npm ci && electron-builder"
   },
   "devDependencies": {
     "electron": "^22.0.2",
