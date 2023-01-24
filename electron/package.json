@@ -11,8 +11,9 @@
     }
   },
   "scripts": {
-    "start": "cd ../frontend/ && npm ci && npm run build && npm run generate && cd ../electron/ && electron .",
-    "build": "electron-builder"
+    "preinstall": "cd ../frontend/ && npm ci && npm run build && npm run generate && cd ../electron/",
+    "start": "npm run preinstall && electron .",
+    "build": "npm run preinstall && electron-builder"
   },
   "devDependencies": {
     "electron": "^22.0.2",
