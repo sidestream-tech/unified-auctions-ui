@@ -1,23 +1,24 @@
 {
-  "name": "auctions-electron",
+  "name": "unified-auctions",
   "version": "1.0.0",
-  "description": "auctions electron app packaging",
+  "description": "MakerDAO Unified Auctions UI",
+  "author": "SIDESTREAM GmbH",
   "main": "main.js",
+  "build": {
+    "appId": "com.MakerDAO.UnifiedAuctions",
+    "mac": {
+      "category": "public.app-category.finance"
+    }
+  },
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
+    "start": "cd ../frontend/ && npm ci && npm run build && npm run generate && cd ../electron/ && electron .",
+    "build": "electron-builder"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.4",
-    "@electron-forge/maker-deb": "^6.0.4",
-    "@electron-forge/maker-rpm": "^6.0.4",
-    "@electron-forge/maker-squirrel": "^6.0.4",
-    "@electron-forge/maker-zip": "^6.0.4",
-    "electron": "^22.0.1"
+    "electron": "^22.0.2",
+    "electron-builder": "^23.6.0"
   },
   "dependencies": {
-    "electron-serve": "^1.1.0",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-serve": "^1.1.0"
   }
 }
