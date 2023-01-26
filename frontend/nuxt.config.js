@@ -1,3 +1,4 @@
+import path from 'path';
 import pkg from './package.json';
 
 const PREVIEW_IMAGE = (process.env.FRONTEND_ORIGIN || '') + '/preview.jpeg';
@@ -48,8 +49,8 @@ export default {
             { name: 'twitter:description', content: SITE_DESCRIPTION },
             { name: 'twitter:image', content: PREVIEW_IMAGE },
         ],
-        link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
-        script: [{ src: '/js/HeapIO.js' }],
+        link: [{ rel: 'icon', type: 'image/x-icon', href: path.join(__dirname, '/dist/favicon.ico') }],
+        script: [{ src: path.join(__dirname, '/dist/js/HeapIO.js') }],
     },
 
     // Global CSS: https://go.nuxtjs.dev/config-css
@@ -107,5 +108,9 @@ export default {
                 },
             },
         },
+    },
+    router: {
+        mode: 'hash',
+        base: path.join(__dirname, '/dist/'),
     },
 };

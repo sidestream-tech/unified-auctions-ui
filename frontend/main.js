@@ -1,20 +1,20 @@
+const path = require('path');
+const url = require('url');
 const { app, BrowserWindow } = require('electron');
-const serve = require('electron-serve');
-const path = require('path')
-
-const loadURL = serve({ directory: path.join(__dirname, '../frontend/dist/') });
-
-let mainWindow;
 
 function createWindow() {
-    mainWindow = new BrowserWindow({
-        show: false,
-        webPreferences: {
-            nodeIntegration: true,
-        }
+    const mainWindow = new BrowserWindow({ show: false });
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.maximize();
     });
-    mainWindow.maximize();
-    loadURL(mainWindow);
+    mainWindow.loadURL(
+        url.format({
+            protocol: 'file',
+            slashes: true,
+            pathname: path.join(__dirname, 'dist/index.html'),
+        })
+    );
+    mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
