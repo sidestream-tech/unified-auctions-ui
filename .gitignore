@@ -4,10 +4,4 @@
 # macOS
 .DS_Store
 
-# Dependency directories
-node_modules/
-
-# Distribution directories
-dist/
-
 secrets.yaml
