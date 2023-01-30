@@ -1,5 +1,5 @@
 {
-  "name": "unified-auctions",
+  "name": "unified-auctions-app",
   "version": "1.0.0",
   "description": "MakerDAO Unified Auctions Electron App",
   "main": "main.js",
