@@ -8,30 +8,12 @@
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
   },
-  "main": "main.js",
-  "build": {
-    "appId": "com.makerdao.unified-auctions",
-    "mac": {
-      "category": "public.app-category.finance"
-    },
-    "directories": {
-      "output": "electron",
-      "buildResources": "assets"
-    },
-    "files": [
-      "main.js",
-      "dist/**/*"
-    ]
-  },
   "scripts": {
     "preinstall": "cd ../core && npm i && npm run build",
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "prepare:electron": "npm ci && npm run build && npm run generate",
-    "start:electron": "npm run prepare:electron && electron .",
-    "build:electron": "npm run prepare:electron && electron-builder",
     "lint:js": "eslint --ext \".js,.vue,.ts\" --ignore-path .gitignore . --max-warnings=0",
     "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path .gitignore",
     "lint": "npm run lint:js && npm run lint:style",
@@ -95,8 +77,6 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^27.4.2",
     "babel-loader": "^8.2.2",
-    "electron": "^22.1.0",
-    "electron-builder": "^23.6.0",
     "eslint": "^7.31.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-nuxt": "^2.0.0",

@@ -1,7 +1,5 @@
 # Unified Auctions UI
 
-Frontend and Electron packaging.
-
 ## Setup
 
 ```bash
@@ -17,12 +15,6 @@ $ npm run start
 
 # generate static project
 $ npm run generate
-
-# start Electron app
-$ npm run start:electron
-
-# package and build Electron app
-$ npm run build:electron
 
 # for component development
 $ npm run storybook

@@ -49,8 +49,8 @@ export default {
             { name: 'twitter:description', content: SITE_DESCRIPTION },
             { name: 'twitter:image', content: PREVIEW_IMAGE },
         ],
-        link: [{ rel: 'icon', type: 'image/x-icon', href: path.join(__dirname, '/dist/favicon.ico') }],
-        script: [{ src: path.join(__dirname, '/dist/js/HeapIO.js') }],
+        link: [{ rel: 'icon', type: 'image/x-icon', href: path.join(__dirname, 'dist/favicon.ico') }],
+        script: [{ src: path.join(__dirname, 'dist/js/HeapIO.js') }],
     },
 
     // Global CSS: https://go.nuxtjs.dev/config-css
@@ -111,6 +111,6 @@ export default {
     },
     router: {
         mode: 'hash',
-        base: path.join(__dirname, '/dist/'),
+        base: path.join(__dirname, 'dist'),
     },
 };

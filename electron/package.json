@@ -1,0 +1,32 @@
+{
+  "name": "unified-auctions",
+  "version": "1.0.0",
+  "description": "MakerDAO Unified Auctions Electron App",
+  "main": "main.js",
+  "build": {
+    "appId": "com.makerdao.unified-auctions",
+    "mac": {
+      "category": "public.app-category.finance"
+    },
+    "directories": {
+      "output": "out"
+    },
+    "files": [
+      "main.js",
+      "dist/**/*"
+    ]
+  },
+  "scripts": {
+    "preinstall": "cd ../frontend && npm ci && npm run build && npm run generate",
+    "postinstall": "electron-builder install-app-deps",
+    "prepare": "npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
+    "start": "npm ci && electron .",
+    "build": "npm ci && electron-builder"
+  },
+  "author": "SIDESTREAM GmbH",
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "electron": "^22.1.0",
+    "electron-builder": "^23.6.0"
+  }
+}
