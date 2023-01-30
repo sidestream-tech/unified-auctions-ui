@@ -1,3 +1,4 @@
+import path from 'path';
 import pkg from './package.json';
 
 const PREVIEW_IMAGE = (process.env.FRONTEND_ORIGIN || '') + '/preview.jpeg';
@@ -8,6 +9,7 @@ const TWITTER_HANDLE = '@MakerDAO_SAS';
 const ROUTER_HISTORY_MODES = ['history', 'hash', 'abstract'];
 // Nuxt has 'history' as default
 const HISTORY_MODE = ROUTER_HISTORY_MODES.includes(process.env.HISTORY_MODE) ? process.env.HISTORY_MODE : 'history';
+const BASE = HISTORY_MODE === 'hash' ? path.join(__dirname, 'dist') : '';
 
 export default {
     // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -52,8 +54,8 @@ export default {
             { name: 'twitter:description', content: SITE_DESCRIPTION },
             { name: 'twitter:image', content: PREVIEW_IMAGE },
         ],
-        link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
-        script: [{ src: '/js/HeapIO.js' }],
+        link: [{ rel: 'icon', type: 'image/x-icon', href: `${BASE}/favicon.ico` }],
+        script: [{ src: `${BASE}/js/HeapIO.js` }],
     },
 
     // Global CSS: https://go.nuxtjs.dev/config-css
@@ -115,5 +117,6 @@ export default {
     // router: https://nuxtjs.org/docs/configuration-glossary/configuration-router
     router: {
         mode: HISTORY_MODE,
+        base: BASE || '/',
     },
 };
