@@ -6,10 +6,12 @@ import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     adjustLimitsAndRates,
     calculateMinCollateralAmountToOpenVault,
-    getLiquidatableCollateralTypes,
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
+import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
+
 import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
+import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
 
@@ -19,10 +21,11 @@ const simulation: Simulation = {
         {
             title: 'Reset blockchain fork',
             entry: async () => {
-                await resetNetworkAndSetupWallet();
+                const number = await promptToGetBlockNumber();
+                await resetNetworkAndSetupWallet(number);
                 const collateralType = await promptToSelectOneOption(
                     'Select the collateral symbol to add to the VAT.',
-                    getLiquidatableCollateralTypes()
+                    getAllCollateralTypes()
                 );
                 return {
                     collateralType,

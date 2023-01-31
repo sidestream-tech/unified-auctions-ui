@@ -8,7 +8,7 @@ import { CollateralType } from '../../src/types';
 import { overwriteUintMapping, overwriteUintTable } from '../hardhat/slotOverwrite';
 
 export const addDaiToBalance = async (
-    daiAmount: BigNumber = new BigNumber(100000),
+    daiAmount: BigNumber = new BigNumber(10 ** 6),
     walletAddress: string = HARDHAT_PUBLIC_KEY
 ) => {
     const daiContract = await getContract(TEST_NETWORK, 'MCD_DAI', false);
@@ -19,7 +19,7 @@ export const addDaiToBalance = async (
 };
 
 export const addMkrToBalance = async (
-    mkrAmount: BigNumber = new BigNumber(100000),
+    mkrAmount: BigNumber = new BigNumber(10 ** 6),
     walletAddress: string = HARDHAT_PUBLIC_KEY
 ) => {
     const mkrContract = await getContract(TEST_NETWORK, 'MCD_GOV', false);

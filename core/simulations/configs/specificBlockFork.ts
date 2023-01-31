@@ -1,15 +1,15 @@
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
+import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
 import { Simulation } from '../types';
 
 const simulation: Simulation = {
-    title: 'Fork block with active WSTETH-A auction',
+    title: `Fork at specific block`,
     steps: [
         {
-            title: 'Reset blockchain fork',
-            // Few blocks before WSTETH-A is taken at 14052147,
-            // https://etherscan.io/address/0x49a33a28c4c7d9576ab28898f4c9ac7e52ea457at
+            title: `Reset blockchain fork`,
             entry: async () => {
-                await resetNetworkAndSetupWallet(14052140);
+                const selectedBlockNumber = await promptToGetBlockNumber();
+                await resetNetworkAndSetupWallet(selectedBlockNumber);
             },
         },
         {
