@@ -25,6 +25,7 @@
                             :networks="networks"
                             :is-changing-network="isChangingNetwork"
                             @update:network="$emit('update:network', $event)"
+                            @changeRpcUrl="$emit('changeRpcUrl')"
                         />
 
                         <WalletSelector

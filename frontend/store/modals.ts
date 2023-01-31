@@ -1,6 +1,7 @@
 import { ActionContext } from 'vuex';
 
 interface State {
+    rpcUrlConfigurationModal: boolean;
     termsModal: boolean;
     selectWalletModal: boolean;
     walletModal: boolean;
@@ -8,6 +9,7 @@ interface State {
 }
 
 export const state = (): State => ({
+    rpcUrlConfigurationModal: false,
     termsModal: false,
     walletModal: false,
     selectWalletModal: false,
@@ -15,6 +17,9 @@ export const state = (): State => ({
 });
 
 export const getters = {
+    getRpcUrlConfigurationModal(state: State) {
+        return state.rpcUrlConfigurationModal;
+    },
     getTermsModal(state: State) {
         return state.termsModal;
     },
@@ -30,6 +35,9 @@ export const getters = {
 };
 
 export const mutations = {
+    setRpcUrlConfigurationModal(state: State, open: boolean) {
+        state.rpcUrlConfigurationModal = open;
+    },
     setTermsModal(state: State, open: boolean): void {
         state.termsModal = open;
     },

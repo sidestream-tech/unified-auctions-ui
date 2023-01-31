@@ -14,13 +14,21 @@
             :networks="networks"
             :is-changing-network="isChangingNetwork"
             @changeWalletType="changeWalletType"
+            @changeRpcUrl="isRpcUrlConfigurationModalShown = true"
             @openTermsModal="setTermsModal(true)"
             @openWalletModal="openWalletModal"
             @openManageCollateralModal="openManageCollateralModal"
         />
         <Nuxt />
+        <RpcUrlConfigurationModal
+            v-if="!getRpcUrl || isRpcUrlConfigurationModalShown"
+            :is-shown.sync="isRpcUrlConfigurationModalShown"
+            :current-rpc-url="getRpcUrl"
+            :is-changing-network="isChangingNetwork"
+            @configureRpcUrl="configureRpcUrl"
+        />
         <ChangePageNetworkModal
-            v-if="!isPageNetworkValid && !isChangingNetwork"
+            v-else-if="!isPageNetworkValid && !isChangingNetwork"
             :invalid-network="getPageNetwork"
             :networks="networks"
             @setPageNetwork="setPageNetwork"
@@ -50,6 +58,7 @@ import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
+import RpcUrlConfigurationModal from '~/components/modals/RpcUrlConfigurationModal.vue';
 import ChangePageNetworkModal from '~/components/modals/ChangePageNetworkModal.vue';
 import ChangeWalletNetworkModal from '~/components/modals/ChangeWalletNetworkModal.vue';
 import WalletSelectModal from '~/components/modals/WalletSelectModal.vue';
@@ -60,6 +69,7 @@ import Analytics from '~/components/common/other/Analytics.vue';
 
 export default Vue.extend({
     components: {
+        RpcUrlConfigurationModal,
         WalletModalContainer,
         TermsModal,
         ChangePageNetworkModal,
@@ -81,6 +91,7 @@ export default Vue.extend({
         ...mapGetters('cookies', {
             hasAcceptedTerms: 'hasAcceptedTerms',
         }),
+        ...mapGetters('preferences', ['getRpcUrl']),
         ...mapGetters('network', [
             'networks',
             'getWalletNetworkTitle',
@@ -98,20 +109,28 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
+        isDarkMode: {
+            get() {
+                return this.$store.getters['preferences/getIsDarkMode'];
+            },
+            set(newIsDarkMode) {
+                this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
+            },
+        },
+        isRpcUrlConfigurationModalShown: {
+            get() {
+                return this.$store.getters['modals/getRpcUrlConfigurationModal'];
+            },
+            set(newIsShown) {
+                this.$store.commit('modals/setRpcUrlConfigurationModal', newIsShown);
+            },
+        },
         network: {
             get() {
                 return this.getPageNetwork;
             },
             set(newNetwork) {
                 this.setPageNetwork(newNetwork);
-            },
-        },
-        isDarkMode: {
-            get(): Boolean {
-                return this.$store.getters['preferences/getIsDarkMode'];
-            },
-            set(newIsDarkMode) {
-                this.$store.dispatch('preferences/setIsDarkMode', newIsDarkMode);
             },
         },
         stagingBannerURL() {
@@ -139,7 +158,7 @@ export default Vue.extend({
         },
     },
     methods: {
-        ...mapActions('network', ['setPageNetwork', 'fixWalletNetwork']),
+        ...mapActions('network', ['configureRpcUrl', 'setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
         acceptTerms(): void {
             this.$store.commit('cookies/acceptTerms');

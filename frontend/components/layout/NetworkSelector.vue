@@ -5,7 +5,7 @@
             :value="network"
             :options="options"
             title="Select Network"
-            @input="$emit('update:network', $event)"
+            @input="updateNetworkOrChangeUrl($event)"
         >
             <template #text-prefix>
                 <icon type="share-alt" class="pr-2 text-3xl md:text-sm" />
@@ -46,7 +46,19 @@ export default Vue.extend({
     },
     computed: {
         options() {
-            return [...this.networks.map(eachNetwork => ({ label: eachNetwork.title, value: eachNetwork.type }))];
+            return [
+                ...this.networks.map(eachNetwork => ({ label: eachNetwork.title, value: eachNetwork.type })),
+                { label: 'Change RPC URL', value: 'changeRpcUrl' },
+            ];
+        },
+    },
+    methods: {
+        updateNetworkOrChangeUrl(value: string): void {
+            if (value === 'changeRpcUrl') {
+                this.$emit(value);
+            } else {
+                this.$emit('update:network', value);
+            }
         },
     },
 });

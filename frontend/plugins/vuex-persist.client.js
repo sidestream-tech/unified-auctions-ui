@@ -1,8 +1,8 @@
 import VuexPersistence from 'vuex-persist';
 import Cookies from 'js-cookie';
 
-export default ({ store, isDev }) => {
-    window.onNuxtReady(() => {
+export default ({ store }) => {
+    window.onNuxtReady(async () => {
         new VuexPersistence({
             storage: window.localStorage,
             modules: ['preferences'],
@@ -14,7 +14,7 @@ export default ({ store, isDev }) => {
             },
             modules: ['cookies'],
         }).plugin(store);
+        await store.dispatch('network/setup');
         store.dispatch('wallet/autoConnect');
-        store.dispatch('network/setup', isDev);
     });
 };
