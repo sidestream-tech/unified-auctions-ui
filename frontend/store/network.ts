@@ -114,8 +114,15 @@ export const actions = {
         await dispatch('surplus/setup', undefined, { root: true });
         await dispatch('debt/setup', undefined, { root: true });
     },
-    async setupNetworks({ rootGetters, commit }: ActionContext<State, State>) {
-        const rpcUrl = rootGetters['preferences/getRpcUrl'] || process.env.RPC_URL;
+    async setupNetworks({ rootGetters, commit, dispatch }: ActionContext<State, State>) {
+        let rpcUrl: string | undefined;
+        if (process.env.RPC_URL && !rootGetters['preferences/getWasEnvRpcUrlUsed']) {
+            rpcUrl = process.env.RPC_URL;
+            await dispatch('preferences/setRpcUrl', rpcUrl, { root: true });
+            await dispatch('preferences/setWasEnvRpcUrlUsed', true, { root: true });
+        } else {
+            rpcUrl = rootGetters['preferences/getRpcUrl'];
+        }
         if (!rpcUrl) {
             return;
         }
