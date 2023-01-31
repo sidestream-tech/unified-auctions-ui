@@ -18,7 +18,7 @@
   },
   "scripts": {
     "preinstall": "cd ../frontend && npm ci",
-    "prebuild": "(cd ../frontend && npm run generate) && npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
+    "prebuild": "(cd ../frontend && ENABLE_FILE_PROTOCOL=\"true\" npm run generate) && npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
     "start": "electron .",
     "build": "rm -rf out && electron-builder"
   },
