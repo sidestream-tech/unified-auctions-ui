@@ -4,6 +4,7 @@
   "description": "MakerDAO Unified Auctions Electron App",
   "main": "main.js",
   "build": {
+    "productName": "Unified Auctions UI",
     "appId": "com.makerdao.unified-auctions",
     "mac": {
       "category": "public.app-category.finance"
