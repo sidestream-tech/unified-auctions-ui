@@ -1,4 +1,3 @@
-import path from 'path';
 import pkg from './package.json';
 
 const PREVIEW_IMAGE = (process.env.FRONTEND_ORIGIN || '') + '/preview.jpeg';
@@ -9,7 +8,7 @@ const TWITTER_HANDLE = '@MakerDAO_SAS';
 const ROUTER_HISTORY_MODES = ['history', 'hash', 'abstract'];
 // Nuxt has 'history' as default
 const HISTORY_MODE = ROUTER_HISTORY_MODES.includes(process.env.HISTORY_MODE) ? process.env.HISTORY_MODE : 'history';
-const BASE = HISTORY_MODE === 'hash' ? path.join(__dirname, 'dist') : '';
+const BASE = HISTORY_MODE === 'hash' ? '.' : '';
 
 export default {
     // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
