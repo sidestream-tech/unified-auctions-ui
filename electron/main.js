@@ -1,6 +1,6 @@
 const path = require('path');
 const url = require('url');
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, shell } = require('electron');
 
 function createWindow() {
     const mainWindow = new BrowserWindow({ show: false });
@@ -14,6 +14,15 @@ function createWindow() {
             pathname: path.join(__dirname, 'dist/index.html'),
         })
     );
+    // open external links in the default browser instead of a new window
+    mainWindow.webContents.setWindowOpenHandler(details => {
+        if (details.url.startsWith('http')) {
+            shell.openExternal(details.url);
+        }
+        return {
+            action: 'deny',
+        };
+    });
 }
 
 app.whenReady().then(() => {
