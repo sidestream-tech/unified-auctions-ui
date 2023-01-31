@@ -4,6 +4,9 @@ const PREVIEW_IMAGE = (process.env.FRONTEND_ORIGIN || '') + '/preview.jpeg';
 const SITE_TITLE = 'Unified Auctions';
 const SITE_DESCRIPTION = `The "${SITE_TITLE}" is the portal to all Maker Auctions related services. Easily interact with the Maker Protocol through streamlined interfaces, inform yourself about how the protocol works and receive updates on current auctions.`;
 const TWITTER_HANDLE = '@MakerDAO_SAS';
+const ENABLE_FILE_PROTOCOL = process.env.ENABLE_FILE_PROTOCOL?.toLocaleLowerCase() === 'true';
+const ROUTER_HISTORY_MODE = ENABLE_FILE_PROTOCOL ? 'hash' : 'history';
+const ROUTER_BASE = ENABLE_FILE_PROTOCOL ? '.' : '';
 
 export default {
     // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -48,8 +51,8 @@ export default {
             { name: 'twitter:description', content: SITE_DESCRIPTION },
             { name: 'twitter:image', content: PREVIEW_IMAGE },
         ],
-        link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
-        script: [{ src: '/js/HeapIO.js' }],
+        link: [{ rel: 'icon', type: 'image/x-icon', href: `${ROUTER_BASE}/favicon.ico` }],
+        script: [{ src: `${ROUTER_BASE}/js/HeapIO.js` }],
     },
 
     // Global CSS: https://go.nuxtjs.dev/config-css
@@ -107,5 +110,10 @@ export default {
                 },
             },
         },
+    },
+    // router: https://nuxtjs.org/docs/configuration-glossary/configuration-router
+    router: {
+        mode: ROUTER_HISTORY_MODE,
+        base: ROUTER_BASE || '/',
     },
 };
