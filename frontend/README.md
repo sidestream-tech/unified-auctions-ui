@@ -43,3 +43,4 @@ Help on both things is given in the linked resources above.
 - `MAX_PRIORITY_FEE_PER_GAS_WEI`: (optional, default can be found in core/src/gas.ts) – [EIP-1559](https://eips.ethereum.org/EIPS/eip-1559) `max_priority_fee_per_gas` value
 - `HEAPIO_ID`: (optional) [HeapIO analytics](https://heapanalytics.com/) Project's Environment ID. Required for tracking analytics.
 - `FRONTEND_ORIGIN`: (optional, default empty) – public url of the frontend, eg `https://unified-auctions.makerdao.com`. Used to correctly specify open graph meta tags
+- `ENABLE_FILE_PROTOCOL`: (optional, default `false`) – By setting this variable to `true`, `npm run generate` will set [vue router mode](https://v3.router.vuejs.org/api/#mode) to `hash` and produce html that can be opened without http server, via `file://` protocol
