@@ -7,6 +7,7 @@ import getWallet from '~/lib/wallet';
 
 const NETWORK_SWITCH_TIMEOUT = 8000;
 let networkChangeTimeoutId: ReturnType<typeof setTimeout> | undefined;
+let wasEnvRpcUrlUsed = false;
 
 interface State {
     walletChainId: string | undefined;
@@ -116,10 +117,10 @@ export const actions = {
     },
     async setupNetworks({ rootGetters, commit, dispatch }: ActionContext<State, State>) {
         let rpcUrl: string | undefined;
-        if (process.env.RPC_URL && !rootGetters['preferences/getWasEnvRpcUrlUsed']) {
+        if (process.env.RPC_URL && !wasEnvRpcUrlUsed) {
             rpcUrl = process.env.RPC_URL;
             await dispatch('preferences/setRpcUrl', rpcUrl, { root: true });
-            await dispatch('preferences/setWasEnvRpcUrlUsed', true, { root: true });
+            wasEnvRpcUrlUsed = true;
         } else {
             rpcUrl = rootGetters['preferences/getRpcUrl'];
         }

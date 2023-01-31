@@ -4,14 +4,12 @@ interface State {
     isExplanationsShown: boolean;
     isDarkMode: boolean | undefined;
     rpcUrl: string | undefined;
-    wasEnvRpcUrlUsed: boolean;
 }
 
 export const state = (): State => ({
     isExplanationsShown: true,
     isDarkMode: undefined,
     rpcUrl: undefined,
-    wasEnvRpcUrlUsed: false,
 });
 
 export const getters = {
@@ -30,9 +28,6 @@ export const getters = {
     getRpcUrl(state: State) {
         return state.rpcUrl;
     },
-    getWasEnvRpcUrlUsed(state: State) {
-        return state.wasEnvRpcUrlUsed;
-    },
 };
 
 export const mutations = {
@@ -45,9 +40,6 @@ export const mutations = {
     setRpcUrl(state: State, rpcUrl: string | undefined): void {
         state.rpcUrl = rpcUrl;
     },
-    setWasEnvRpcUrlUsed(state: State, wasEnvRpcUrlUsed: boolean): void {
-        state.wasEnvRpcUrlUsed = wasEnvRpcUrlUsed;
-    },
 };
 
 export const actions = {
@@ -59,8 +51,5 @@ export const actions = {
     },
     setRpcUrl({ commit }: ActionContext<State, State>, rpcUrl: string | undefined): void {
         commit('setRpcUrl', rpcUrl);
-    },
-    setWasEnvRpcUrlUsed({ commit }: ActionContext<State, State>, wasEnvRpcUrlUsed: boolean): void {
-        commit('setWasEnvRpcUrlUsed', wasEnvRpcUrlUsed);
     },
 };
