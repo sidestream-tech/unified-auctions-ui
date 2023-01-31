@@ -3,11 +3,13 @@ import { ActionContext } from 'vuex';
 interface State {
     isExplanationsShown: boolean;
     isDarkMode: boolean | undefined;
+    rpcUrl: string | undefined;
 }
 
 export const state = (): State => ({
     isExplanationsShown: true,
     isDarkMode: undefined,
+    rpcUrl: undefined,
 });
 
 export const getters = {
@@ -23,6 +25,9 @@ export const getters = {
         }
         return state.isDarkMode;
     },
+    getRpcUrl(state: State) {
+        return state.rpcUrl;
+    },
 };
 
 export const mutations = {
@@ -32,6 +37,9 @@ export const mutations = {
     setIsDarkMode(state: State, isDarkMode: boolean): void {
         state.isDarkMode = isDarkMode;
     },
+    setRpcUrl(state: State, rpcUrl: string | undefined): void {
+        state.rpcUrl = rpcUrl;
+    },
 };
 
 export const actions = {
@@ -40,5 +48,8 @@ export const actions = {
     },
     setIsDarkMode({ commit }: ActionContext<State, State>, isDarkMode: boolean): void {
         commit('setIsDarkMode', isDarkMode);
+    },
+    setRpcUrl({ commit }: ActionContext<State, State>, rpcUrl: string | undefined): void {
+        commit('setRpcUrl', rpcUrl);
     },
 };

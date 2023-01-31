@@ -5,17 +5,19 @@ import {
     getCustomNetworkConfig,
     getNetworks,
     setNetwork,
+    resetNetworks,
     getNetworkTypeByChainId,
 } from './network';
 import { formatToHexWithoutPad } from '../helpers/format';
 
-const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<string> {
-    const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcUrl });
-    const networkInfo = await provider.getNetwork();
-    if (!networkInfo || !networkInfo.chainId) {
-        throw new Error(`Can not verify RPC url`);
+export const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<string> {
+    try {
+        const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcUrl });
+        const networkInfo = await provider.getNetwork();
+        return formatToHexWithoutPad(networkInfo.chainId);
+    } catch {
+        throw new Error(`Cannot verify RPC URL`);
     }
-    return formatToHexWithoutPad(networkInfo.chainId);
 };
 
 const parseInfuraProjectIdFromRpcUrl = function (rpcUrl: string): string | undefined {
@@ -28,11 +30,12 @@ export const setupRpcUrlAndGetNetworks = async function (
     isDev = false
 ): Promise<{ networks: NetworkConfig[]; defaultNetwork: string; defaultChainId: string }> {
     if (!rpcUrl) {
-        throw new Error(`No RPC_URL env variable was provided`);
+        throw new Error(`No valid RPC URL provided`);
     }
     const chainId = await getChainIdFromRpcUrl(rpcUrl);
     const defaultNetwork = getNetworkTypeByChainId(chainId);
     const projectId = parseInfuraProjectIdFromRpcUrl(rpcUrl);
+    resetNetworks();
     if (projectId && defaultNetwork) {
         const networkConfigs = getDefaultNetworkConfigs(projectId, isDev);
         networkConfigs.map(setNetwork);

@@ -1,6 +1,6 @@
 import type { NetworkConfig } from './types';
 
-const networks: Record<string, NetworkConfig> = {};
+let networks: Record<string, NetworkConfig> = {};
 
 const SUPPORTED_NETWORKS: NetworkConfig[] = [
     {
@@ -66,7 +66,11 @@ export const getNetworks = function (): NetworkConfig[] {
 };
 
 export const setNetwork = function (networkConfig: NetworkConfig): void {
-    networks[networkConfig.type] = networkConfig;
+    networks = { ...networks, [networkConfig.type]: networkConfig };
+};
+
+export const resetNetworks = function (): void {
+    networks = {};
 };
 
 const NETWORK_TITLES: Record<string, string | undefined> = {
@@ -86,7 +90,7 @@ export const getNetworkConfigByType = function (networkType: string | undefined)
 export const getDecimalChainIdByNetworkType = function (networkType: string): number {
     const network = getNetworkConfigByType(networkType);
     if (!network.chainId) {
-        throw new Error(`No chainId found for the networ "${networkType}"`);
+        throw new Error(`No chainId found for the network "${networkType}"`);
     }
     return parseInt(network.chainId, 16);
 };
