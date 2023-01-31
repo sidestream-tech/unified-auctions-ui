@@ -1,5 +1,5 @@
 {
-  "name": "unified-auctions-app",
+  "name": "unified-auctions",
   "version": "1.0.0",
   "description": "MakerDAO Unified Auctions Electron App",
   "main": "main.js",
@@ -17,11 +17,10 @@
     ]
   },
   "scripts": {
-    "preinstall": "cd ../frontend && npm ci && npm run build && npm run generate",
-    "postinstall": "electron-builder install-app-deps",
-    "prepare": "npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
-    "start": "npm ci && electron .",
-    "build": "npm ci && electron-builder"
+    "preinstall": "cd ../frontend && npm ci",
+    "prebuild": "(cd ../frontend && npm run generate) && npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
+    "start": "electron .",
+    "build": "rm -rf out && electron-builder"
   },
   "author": "SIDESTREAM GmbH",
   "devDependencies": {
