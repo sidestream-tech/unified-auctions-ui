@@ -29,7 +29,7 @@ export default {
     },
 
     publicRuntimeConfig: {
-        TERMS_AND_CONDITIONS_URL: '/pdf/Unified-Auction-UI_Terms.Conditions.pdf',
+        TERMS_AND_CONDITIONS_URL: 'https://unified-auctions.makerdao.com/pdf/Unified-Auction-UI_Terms.Conditions.pdf',
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head

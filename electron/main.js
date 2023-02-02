@@ -16,7 +16,7 @@ function createWindow() {
     );
     // open external links in the default browser instead of a new window
     mainWindow.webContents.setWindowOpenHandler(details => {
-        if (details.url.startsWith('http')) {
+        if (!details.url.startsWith('/')) {
             shell.openExternal(details.url);
         }
         return {
