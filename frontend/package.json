@@ -1,7 +1,9 @@
 {
-  "name": "auction-ui",
+  "name": "unified-auctions-ui",
   "version": "1.0.0",
   "private": true,
+  "description": "MakerDAO Unified Auctions UI",
+  "author": "SIDESTREAM GmbH",
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=7.0.0"

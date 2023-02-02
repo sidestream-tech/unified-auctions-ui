@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import pkg from './package.json';
 
 const PREVIEW_IMAGE = (process.env.FRONTEND_ORIGIN || '') + '/preview.jpeg';
@@ -24,10 +25,11 @@ export default {
         GITHUB_URL: pkg.repository.url,
         STAGING_BANNER_URL: process.env.STAGING_BANNER_URL || undefined,
         HEAPIO_ID: process.env.HEAPIO_ID || undefined,
+        APPLICATION_VERSION: uuidv4(), // hardcoded this during build
     },
 
     publicRuntimeConfig: {
-        TERMS_AND_CONDITIONS_URL: '/pdf/Unified-Auction-UI_Terms.Conditions.pdf',
+        TERMS_AND_CONDITIONS_URL: 'https://unified-auctions.makerdao.com/pdf/Unified-Auction-UI_Terms.Conditions.pdf',
     },
 
     // Global page headers: https://go.nuxtjs.dev/config-head

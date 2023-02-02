@@ -1,0 +1,8 @@
+# Dependency directories
+node_modules
+
+# Nuxt generate
+dist
+
+# Build output
+out

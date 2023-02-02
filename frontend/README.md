@@ -1,4 +1,4 @@
-# Auction UI Frontend
+# Unified Auctions UI
 
 ## Setup
 

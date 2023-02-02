@@ -11,9 +11,7 @@
             "
         >
             <li>
-                <NuxtLink class="FooterLink" :to="termsAndConditionsURL" target="_blank">
-                    Terms & Conditions
-                </NuxtLink>
+                <a class="FooterLink" :href="termsAndConditionsURL" target="_blank">Terms & Conditions</a>
             </li>
             <li>
                 <NuxtLink class="FooterLink" to="/privacy">Privacy</NuxtLink>
