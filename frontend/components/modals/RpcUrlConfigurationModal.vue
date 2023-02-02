@@ -16,12 +16,12 @@
                 external services like <a href="https://www.alchemy.com/" target="_blank">Alchemy</a> or
                 <a href="https://www.infura.io/" target="_blank">Infura</a>.
             </TextBlock>
-            <div class="flex mt-2 gap-x-2">
-                <Input v-model="newRpcUrl" :disabled="isChangingNetwork" placeholder="https://" />
-                <BaseButton type="primary" :disabled="isButtonDisabled" @click="connect()">{{
+            <form class="flex mt-2 gap-x-2" @submit.prevent="connect">
+                <Input v-model="newRpcUrl" :disabled="isChangingNetwork" autofocus placeholder="https://" />
+                <BaseButton type="primary" html-type="submit" :disabled="isButtonDisabled">{{
                     buttonText
                 }}</BaseButton>
-            </div>
+            </form>
         </div>
     </Modal>
 </template>
