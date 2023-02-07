@@ -7,6 +7,7 @@ import { convertStethToEth } from './helpers/curve';
 import { convertRethToWsteth } from './helpers/rocket';
 import { convertWstethToSteth } from './helpers/wsteth';
 import { NULL_ADDRESS } from '../constants/UNITS';
+import { routeToPool } from './helpers/pools';
 
 const getCalleeData = async function (
     network: string,
@@ -37,10 +38,14 @@ const getCalleeData = async function (
 
 const getMarketPrice = async function (
     network: string,
-    _collateral: CollateralConfig,
-    _marketId: string,
+    collateral: CollateralConfig,
+    marketId: string,
     collateralAmount: BigNumber
-): Promise<BigNumber> {
+): Promise<{ price: BigNumber; pools: Pool[] }> {
+    const marketData = collateral.exchanges[marketId];
+    if (marketData.callee !== 'rETHCurveUniv3Callee') {
+        throw new Error(`Can not get market price for the "${collateral.ilk}"`);
+    }
     // convert rETH into wstETH
     const wstethAmount = await convertRethToWsteth(network, collateralAmount);
 
@@ -54,7 +59,10 @@ const getMarketPrice = async function (
     const daiAmount = await convertCollateralToDai(network, 'ETH', ethAmount);
 
     // return price per unit
-    return daiAmount.dividedBy(collateralAmount);
+    return {
+        price: daiAmount.dividedBy(collateralAmount),
+        pools: await routeToPool(network, marketData.route, collateral.symbol),
+    };
 };
 
 const rETHCurveUniv3Callee: CalleeFunctions = {

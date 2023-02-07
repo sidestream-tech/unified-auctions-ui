@@ -1,10 +1,11 @@
-import type { CalleeFunctions, CollateralConfig } from '../types';
+import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { convertStethToEth } from './helpers/curve';
 import { convertCollateralToDai, UNISWAP_FEE } from './helpers/uniswapV3';
 import { convertWstethToSteth } from './helpers/wsteth';
+import { routeToPool } from './helpers/pools';
 
 const getCalleeData = async function (
     network: string,
@@ -29,7 +30,7 @@ const getMarketPrice = async function (
     collateral: CollateralConfig,
     marketId: string,
     collateralAmount: BigNumber
-): Promise<BigNumber> {
+): Promise<{ price: BigNumber; pools: Pool[] }> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'WstETHCurveUniv3Callee') {
         throw new Error(`Invalid callee used to get market price for ${collateral.ilk}`);
@@ -44,7 +45,10 @@ const getMarketPrice = async function (
     const daiAmount = await convertCollateralToDai(network, 'ETH', ethAmount);
 
     // return price per unit
-    return daiAmount.dividedBy(collateralAmount);
+    return {
+        price: daiAmount.dividedBy(collateralAmount),
+        pools: await routeToPool(network, marketData.route, collateral.symbol),
+    };
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {
