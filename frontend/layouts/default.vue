@@ -11,6 +11,7 @@
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
             :staging-banner-url="stagingBannerURL"
+            :production-banner-url="productionBannerURL"
             :networks="networks"
             :is-changing-network="isChangingNetwork"
             @changeWalletType="changeWalletType"
@@ -135,6 +136,9 @@ export default Vue.extend({
         },
         stagingBannerURL() {
             return process.env.STAGING_BANNER_URL;
+        },
+        productionBannerURL() {
+            return process.env.PRODUCTION_BANNER_URL;
         },
         pageName(): string {
             return this.$route?.name || '';

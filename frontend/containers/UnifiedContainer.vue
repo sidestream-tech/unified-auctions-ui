@@ -1,5 +1,5 @@
 <template>
-    <div :class="isStagingEnvironment ? 'UnifiedStagingContainer' : 'UnifiedContainer'">
+    <div :class="doShowHeader ? 'UnifiedHeaderPrependedContainer' : 'UnifiedContainer'">
         <UnifiedAuctionsView :is-explanations-shown.sync="isExplanationsShown" />
     </div>
 </template>
@@ -21,8 +21,8 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
-        isStagingEnvironment(): boolean {
-            return !!process.env.STAGING_BANNER_URL;
+        doShowHeader(): boolean {
+            return !!process.env.STAGING_BANNER_URL || !!process.env.PRODUCTION_BANNER_URL;
         },
     },
 });
@@ -33,7 +33,7 @@ export default Vue.extend({
     min-height: calc(100vh - 9.8rem);
 }
 
-.UnifiedStagingContainer {
+.UnifiedHeaderPrependedContainer {
     margin-top: 2.3rem;
     min-height: calc(100vh - 12.1rem);
 }
