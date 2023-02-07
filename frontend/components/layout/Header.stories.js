@@ -64,7 +64,7 @@ storiesOf('Layout/Header', module)
         template: `<Header
         type="unified"
         :isExplanationsShown.sync="isExplanationsShown"
-        :productionBannerUrl="https://github.com"
+        productionBannerUrl='https://github.com'
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
     }))
