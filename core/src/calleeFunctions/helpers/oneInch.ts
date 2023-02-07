@@ -1,13 +1,12 @@
 import { ethers } from 'ethers';
+import { getContractSymbolByName } from '../../contracts';
 import { Pool } from '../../types';
 
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
 
-export const getOneInchUrl = (
-    chainId: number,
-) => {
+export const getOneInchUrl = (chainId: number) => {
     return `https://api.1inch.io/v5.0/${chainId}`;
-}
+};
 
 interface Protocol {
     id: string;
@@ -19,11 +18,12 @@ interface Protocol {
 interface LiquiditySourcesResponse {
     protocols: Protocol[];
 }
+type OneInchSwapRoute = { name: string; part: number; fromTokenAddress: string; toTokenAddress: string }[];
 
 export const executeOneInchApiRequest = async (
     chainId: number,
     endpoint: '/swap' | '/quote' | '/liquidity-sources',
-    params?: Record<string, any>,
+    params?: Record<string, any>
 ) => {
     const oneInchUrl = getOneInchUrl(chainId);
     const url = `${oneInchUrl}${endpoint}?${new URLSearchParams(params)}`;
@@ -32,7 +32,7 @@ export const executeOneInchApiRequest = async (
         throw new Error(`failed to receive response from oneinch: ${response.error}`);
     }
     return response;
-}
+};
 
 export async function getOneinchValidProtocols(chainId: number) {
     // Fetch all supported protocols except for the limit orders
@@ -41,7 +41,14 @@ export async function getOneinchValidProtocols(chainId: number) {
     return protocolIds.filter(protocolId => !protocolId.toLowerCase().includes('limit'));
 }
 
-export async function getOneinchSwapParameters(chainId: number, fromTokenAddress: string, toTokenAddress: string, calleeAddress: string, amount: string, slippage: string) {
+export async function getOneinchSwapParameters(
+    chainId: number,
+    fromTokenAddress: string,
+    toTokenAddress: string,
+    calleeAddress: string,
+    amount: string,
+    slippage: string
+) {
     // Documentation https://docs.1inch.io/docs/aggregation-protocol/api/swap-params/
     const swapParams = {
         fromTokenAddress,
@@ -63,9 +70,23 @@ export async function getOneinchSwapParameters(chainId: number, fromTokenAddress
     return oneinchResponse;
 }
 
+export async function extractPoolsFromSwapResponseProtocols(
+    network: string,
+    oneInchRoutes: OneInchSwapRoute
+): Promise<Pool[]> {
+    return await Promise.all(
+        oneInchRoutes.map(async route => ({
+            routes: await Promise.all([
+                getContractSymbolByName(network, route.fromTokenAddress),
+                getContractSymbolByName(network, route.toTokenAddress),
+            ]),
+            fee: 3000,
+            addresses: [route.fromTokenAddress, route.toTokenAddress],
+        }))
+    );
+}
 
-export const fetchAutoRouteInformation = async function (
-) {
+export const fetchAutoRouteInformation = async function () {
     // 0. get autoRouteData
     // 1. extract route from response
     // 2. trim route if needed
@@ -90,4 +111,3 @@ export const encodePools = async function (_network: string, pools: Pool[]): Pro
     values.push(pools[pools.length - 1].addresses[1]);
     return ethers.utils.solidityPack(types, values);
 };
-
