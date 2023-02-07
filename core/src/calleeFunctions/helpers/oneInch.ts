@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { getContractSymbolByName } from '../../contracts';
+import { getContractSymbolByAddress } from '../../contracts';
 import { Pool } from '../../types';
 
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
@@ -77,8 +77,8 @@ export async function extractPoolsFromSwapResponseProtocols(
     return await Promise.all(
         oneInchRoutes.map(async route => ({
             routes: await Promise.all([
-                getContractSymbolByName(network, route.fromTokenAddress),
-                getContractSymbolByName(network, route.toTokenAddress),
+                getContractSymbolByAddress(network, route.fromTokenAddress),
+                getContractSymbolByAddress(network, route.toTokenAddress),
             ]),
             fee: 3000,
             addresses: [route.fromTokenAddress, route.toTokenAddress],
