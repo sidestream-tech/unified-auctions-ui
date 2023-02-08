@@ -7,6 +7,7 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { CollateralSymbol, Pool } from '../../types';
 import { fetchAutoRouteInformation } from './uniswapAutoRouter';
+import { getOneInchQuote } from './oneInch';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
@@ -41,6 +42,10 @@ export const getRouteAndGasQuote = async (
     const collateral = getCollateralConfigBySymbol(collateralSymbol);
     const calleeConfig = collateral.exchanges[marketId];
     const isAutorouted = 'automaticRouter' in calleeConfig;
+    if (calleeConfig?.callee === 'OneInchCallee') {
+        const {estimatedGas, route} = await getOneInchQuote(network, collateralSymbol, collateralAmount.toFixed(), marketId);
+        return { route, quoteGasAdjusted: estimatedGas };
+    }
     if (calleeConfig?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }

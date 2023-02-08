@@ -1,8 +1,12 @@
 import { ethers } from 'ethers';
-import { getContractSymbolByAddress } from '../../contracts';
+import { getCalleeAddressByCollateralType } from '../../constants/CALLEES';
+import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
+import { getContractAddressByName, getContractSymbolByAddress } from '../../contracts';
+import { getChainIdByNetworkType } from '../../network';
 import { Pool } from '../../types';
 
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
+const CALLEE_ADDRESS = '0x0'; // TODO: fill in
 
 export const getOneInchUrl = (chainId: number) => {
     return `https://api.1inch.io/v5.0/${chainId}`;
@@ -15,6 +19,28 @@ interface Protocol {
     img_color: string;
 }
 
+interface OneInchToken {
+    symbol: string;
+    name: string;
+    address: string;
+    decimals: 0;
+    logoURI: string;
+}
+interface OneInchSwapRepsonse {
+    fromToken: OneInchToken;
+    toToken: OneInchToken;
+    toTokenAmount: string;
+    fromTokenAmount: string;
+    protocols: OneInchSwapRoute[];
+    tx: {
+        from: string;
+        to: string;
+        data: string;
+        value: string;
+        gasPrice: string;
+        gas: string;
+    };
+}
 interface LiquiditySourcesResponse {
     protocols: Protocol[];
 }
@@ -42,18 +68,22 @@ export async function getOneinchValidProtocols(chainId: number) {
 }
 
 export async function getOneinchSwapParameters(
-    chainId: number,
-    fromTokenAddress: string,
-    toTokenAddress: string,
-    calleeAddress: string,
+    network: string,
+    collateralSymbol: string,
     amount: string,
-    slippage: string
-) {
+    slippage: string = '10'
+): Promise<OneInchSwapRepsonse> {
+    const chainId = parseInt(getChainIdByNetworkType(network) || '', 16);
+    if (Number.isNaN(chainId)) {
+        throw new Error(`Invalid chainId: ${chainId}`);
+    }
+    const toTokenAddress = await getContractAddressByName(network, 'DAI');
+    const fromTokenAddress = await getContractAddressByName(network, collateralSymbol);
     // Documentation https://docs.1inch.io/docs/aggregation-protocol/api/swap-params/
     const swapParams = {
         fromTokenAddress,
         toTokenAddress,
-        fromAddress: calleeAddress,
+        fromAddress: CALLEE_ADDRESS,
         amount,
         slippage,
         allowPartialFill: false, // disable partial fill
@@ -70,44 +100,46 @@ export async function getOneinchSwapParameters(
     return oneinchResponse;
 }
 
-export async function extractPoolsFromSwapResponseProtocols(
+export async function extractPathFromSwapResponseProtocols(
     network: string,
     oneInchRoutes: OneInchSwapRoute
-): Promise<Pool[]> {
-    return await Promise.all(
-        oneInchRoutes.map(async route => ({
-            routes: await Promise.all([
-                getContractSymbolByAddress(network, route.fromTokenAddress),
-                getContractSymbolByAddress(network, route.toTokenAddress),
-            ]),
-            fee: 3000,
-            addresses: [route.fromTokenAddress, route.toTokenAddress],
-        }))
+): Promise<string[]> {
+    const pathSteps = await Promise.all(
+        oneInchRoutes.map(
+            async route =>
+                await Promise.all([
+                    getContractSymbolByAddress(network, route.fromTokenAddress),
+                    getContractSymbolByAddress(network, route.toTokenAddress),
+                ])
+        )
     );
+    const path = [pathSteps[0][0]];
+    for (const step of pathSteps) {
+        path.push(step[1]);
+    }
+    return path;
 }
 
-export const fetchAutoRouteInformation = async function () {
-    // 0. get autoRouteData
-    // 1. extract route from response
-    // 2. trim route if needed
-    // 3. feel fees in
-    // 4. derive quote from input amount
-    // 5. derive quote gas adjusted from input amount, gas price and gas
-    // ( can have estimated gas from the api)
-};
-
-export const encodePools = async function (_network: string, pools: Pool[]): Promise<string> {
-    const types = [] as string[];
-    const values = [] as Array<string | number>;
-
-    for (const pool of pools) {
-        types.push('address');
-        values.push(pool.addresses[0]);
-
-        types.push('uint24');
-        values.push(pool.fee);
+export async function getOneInchQuote(network: string, collateralSymbol: string, amount: string, marketId: string) {
+    const chainId = parseInt(getChainIdByNetworkType(network) || '', 16);
+    if (Number.isNaN(chainId)) {
+        throw new Error(`Invalid chainId: ${chainId}`);
     }
-    types.push('address');
-    values.push(pools[pools.length - 1].addresses[1]);
-    return ethers.utils.solidityPack(types, values);
-};
+    const toTokenAddress = await getContractAddressByName(network, 'DAI');
+    const fromTokenAddress = await getContractAddressByName(network, collateralSymbol);
+    const calleeAddress = getCalleeAddressByCollateralType(network, getCollateralConfigBySymbol(collateralSymbol).ilk, marketId);
+    // Documentation https://docs.1inch.io/docs/aggregation-protocol/api/swap-params/
+    const swapParams = {
+        fromTokenAddress,
+        toTokenAddress,
+        fromAddress: calleeAddress,
+        amount,
+        protocols: (await getOneinchValidProtocols(chainId)).join(','),
+    };
+    const oneinchResponse = await executeOneInchApiRequest(chainId, '/quote', swapParams);
+    return {
+        estimatedGas: oneinchResponse?.estimatedGas,
+        route: await extractPathFromSwapResponseProtocols(network, oneinchResponse?.protocols),
+        tokenOut: oneinchResponse?.toTokenAmount,
+    };
+}

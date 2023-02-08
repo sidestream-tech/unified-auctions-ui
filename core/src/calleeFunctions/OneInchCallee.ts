@@ -2,36 +2,35 @@ import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
-import { convertCollateralToDaiUsingPool, encodePools } from './helpers/uniswapV3';
-import { getPools } from '.';
+import { convertCollateralToDaiUsingPool } from './helpers/uniswapV3';
 import { routeToPool } from './helpers/pools';
 import { getRouteAndGasQuote } from './helpers/uniswapV3';
+import { getOneInchQuote } from './helpers/oneInch';
 
 const getCalleeData = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
     profitAddress: string,
-    params?: { pools?: Pool[]; oneInchParams?: {txData: string; to: string} }
+    params: { pools?: Pool[]; oneInchParams?: {txData: string; to: string} }
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
-    if (marketData?.callee !== 'UniswapV3Callee') {
+    if (marketData?.callee !== 'OneInchCallee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
-    const pools = params?.pools || (await getPools(network, collateral, marketId));
-    if (!pools) {
-        throw new Error(`getCalleeData called with invalid pools`);
+    if (!params.oneInchParams) {
+        throw new Error(`getCalleeData called with invalid txData`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
-    const uniswapV3pools = await encodePools(network, pools);
-    const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
+    const typesArray = ['address', 'address', 'uint256', 'address', 'address', 'bytes'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [
         profitAddress,
         joinAdapterAddress,
         minProfit,
-        uniswapV3pools,
         ethers.constants.AddressZero,
+        params.oneInchParams.to,
+        params.oneInchParams.txData
     ]);
 };
 
@@ -42,21 +41,10 @@ const getMarketPrice = async function (
     collateralAmount: BigNumber
 ): Promise<BigNumber> {
     // convert collateral into DAI
-    const { route, fees } = await getRouteAndGasQuote(network, collateral.symbol, collateralAmount, marketId);
-    if (!route) {
-        throw new Error(`No route found for ${collateral.symbol} to DAI`);
-    }
-    const pools = await routeToPool(network, route, collateral.symbol, fees);
-    const daiAmount = await convertCollateralToDaiUsingPool(
-        network,
-        collateral.symbol,
-        marketId,
-        collateralAmount,
-        pools
-    );
+    const { tokenOut } = await getOneInchQuote(network, collateral.symbol, collateralAmount.toFixed(), marketId);
 
     // return price per unit
-    return daiAmount.dividedBy(collateralAmount);
+    return new BigNumber(tokenOut).dividedBy(collateralAmount);
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {

@@ -93,6 +93,10 @@ export declare interface AutoRouterCalleeConfig {
     automaticRouter: true;
 }
 
+export declare interface OneInchCalleeConfig {
+    callee: 'OneInchCallee'
+}
+
 export declare interface UniswapV2LpTokenCalleeConfig {
     callee: 'UniswapV2LpTokenCalleeDai';
     token0: string;
@@ -123,18 +127,28 @@ export declare interface MarketDataRegular extends MarketDataBase {
     pools: Pool[];
 }
 
+export declare interface MarketDataOneInch extends MarketDataBase {
+    oneInch: {
+        to: string;
+        path: string[];
+        calleeData: string;
+        exchangeFeeEth: BigNumber;
+        exchangeFeeDai: BigNumber;
+    };
+}
+
 export declare interface MarketDataUniswapV2LpToken
     extends MarketDataBase,
         Omit<UniswapV2LpTokenCalleeConfig, 'callee'> {}
 
-export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken;
+export type MarketData = MarketDataRegular | MarketDataUniswapV2LpToken | MarketDataOneInch;
 
 export declare interface ValueSlotAddressAndOffset {
     slot: string;
     offset: number;
 }
 
-export type CalleeConfig = RegularCalleeConfig | AutoRouterCalleeConfig | UniswapV2LpTokenCalleeConfig;
+export type CalleeConfig = RegularCalleeConfig | AutoRouterCalleeConfig | UniswapV2LpTokenCalleeConfig | OneInchCalleeConfig;
 export declare interface CollateralConfig {
     title: string;
     ilk: string;
@@ -179,6 +193,7 @@ export declare interface CalleeAddresses {
     CurveLpTokenUniv3Callee?: string;
     UniswapV3Callee?: string;
     rETHCurveUniv3Callee?: string;
+    OneInchCallee?: string;
 }
 
 export type CalleeNames = keyof CalleeAddresses;
@@ -189,7 +204,7 @@ export declare interface CalleeFunctions {
         collateral: CollateralConfig,
         marketId: string,
         profitAddress: string,
-        pools?: Pool[]
+        params?:  {pools?: Pool[]; oneInchParams?: {txData: string; to: string} }
     ) => Promise<string>;
     getMarketPrice: (
         network: string,
