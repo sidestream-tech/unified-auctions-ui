@@ -7,6 +7,9 @@ import type {
     Pool,
     OneInchCalleeConfig,
     PriceWithPools,
+    AutoRouterCalleeConfig,
+    RegularCalleeConfig,
+    UniswapV2LpTokenCalleeConfig
 } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
