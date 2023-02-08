@@ -13,16 +13,16 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     marketId: string,
     profitAddress: string,
-    params: { pools?: Pool[]; oneInchParams?: {txData: string; to: string} }
+    params?: { pools?: Pool[]; oneInchParams?: {txData: string; to: string} }
 ): Promise<string> {
     const calleeConfig = collateral.exchanges[marketId];
     if (calleeConfig?.callee !== 'rETHCurveUniv3Callee') {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
-    if (!params.pools) {
+    if (!params || !params.pools) {
         throw new Error(`Can not encode route for the "${collateral.ilk}" without preloaded pools`);
     }
-    const route = await encodePools(network, preloadedPools);
+    const route = await encodePools(network, params.pools);
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];

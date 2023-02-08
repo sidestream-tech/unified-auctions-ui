@@ -3,7 +3,6 @@ import { getCalleeAddressByCollateralType } from '../../constants/CALLEES';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getContractAddressByName, getContractSymbolByAddress } from '../../contracts';
 import { getChainIdByNetworkType } from '../../network';
-import { Pool } from '../../types';
 
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
 const CALLEE_ADDRESS = '0x0'; // TODO: fill in
