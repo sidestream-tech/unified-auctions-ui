@@ -88,23 +88,6 @@ export const getOneInchApiData = async function (
     return swapParams.tx.data;
 }
 
-export const enrichCalleeConfigWithPools = async (
-    network: string,
-    collateral: CollateralConfig,
-    marketId: string,
-): Promise<UniswapV2LpTokenCalleeConfig | OneInchCalleeConfig | ((RegularCalleeConfig | AutoRouterCalleeConfig) & { pools: Pool[] })> => {
-    const config = collateral.exchanges[marketId];
-    if (config.callee === 'UniswapV2LpTokenCalleeDai' ||
-        config.callee === 'OneInchCallee') {
-        return { ...config };
-    }
-    const pools = await getPools(network, collateral, marketId);
-    if (pools) {
-        return { ...config, pools };
-    }
-    throw new Error('Failed to get pools');
-};
-
 export const getMarketDataById = async function (
     network: string,
     collateral: CollateralConfig,
