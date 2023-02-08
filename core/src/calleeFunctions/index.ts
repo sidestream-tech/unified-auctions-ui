@@ -29,7 +29,7 @@ const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     CurveLpTokenUniv3Callee,
     UniswapV3Callee,
     rETHCurveUniv3Callee,
-    OneInchCallee
+    OneInchCallee,
 };
 
 export const getCalleeData = async function (
@@ -37,20 +37,17 @@ export const getCalleeData = async function (
     collateralType: string,
     marketId: string,
     profitAddress: string,
-    params?: { pools?: Pool[]; oneInchParams?: {txData: string; to: string} }
+    params?: { pools?: Pool[]; oneInchParams?: { txData: string; to: string } }
 ): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
     const marketData = collateral.exchanges[marketId];
     if (!marketData || !marketData.callee || !allCalleeFunctions[marketData.callee]) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await allCalleeFunctions[marketData.callee].getCalleeData(
-        network,
-        collateral,
-        marketId,
-        profitAddress,
-        {pools: params?.pools, oneInchParams: params?.oneInchParams}
-    );
+    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress, {
+        pools: params?.pools,
+        oneInchParams: params?.oneInchParams,
+    });
 };
 
 export const getPools = async (
@@ -75,13 +72,13 @@ export const getOneInchApiData = async function (
     amount: BigNumber = new BigNumber('1')
 ) {
     const calleeConfig = collateral.exchanges[marketId];
-    if (calleeConfig.callee !== "OneInchCallee") {
+    if (calleeConfig.callee !== 'OneInchCallee') {
         return undefined;
     }
 
     const swapParams = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed());
     return swapParams.tx.data;
-}
+};
 
 export const getMarketDataById = async function (
     network: string,
@@ -93,7 +90,7 @@ export const getMarketDataById = async function (
     if (!allCalleeFunctions[calleeConfig?.callee]) {
         throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
-    let marketPriceResult: {marketPrice: PriceWithPools, errorMessage?: string};
+    let marketPriceResult: { marketPrice: PriceWithPools; errorMessage?: string };
     try {
         const marketPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
             network,
@@ -103,7 +100,10 @@ export const getMarketDataById = async function (
         );
         marketPriceResult = { marketPrice };
     } catch (error: any) {
-        marketPriceResult = { marketPrice: { price: new BigNumber(NaN), pools: undefined}, errorMessage: error?.message };
+        marketPriceResult = {
+            marketPrice: { price: new BigNumber(NaN), pools: undefined },
+            errorMessage: error?.message,
+        };
     }
     if (calleeConfig.callee === 'OneInchCallee') {
         const apiExchangeData = await getOneInchMarketData(network, collateral, amount, marketId);
@@ -112,7 +112,7 @@ export const getMarketDataById = async function (
             marketUnitPrice: marketPriceResult.marketPrice.price,
             errorMessage: marketPriceResult.errorMessage,
             oneInch: apiExchangeData,
-        }
+        };
     }
     const { marketPrice } = marketPriceResult;
     const marketUnitPrice = marketPrice.price;

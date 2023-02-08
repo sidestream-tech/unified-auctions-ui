@@ -4,7 +4,7 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getContractAddressByName, getContractSymbolByAddress } from '../../contracts';
 import { getChainIdByNetworkType } from '../../network';
 import { CollateralConfig } from '../../types';
-import BigNumber from '../../bignumber'
+import BigNumber from '../../bignumber';
 import { convertETHtoDAI } from '../../fees';
 
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
@@ -73,7 +73,7 @@ export async function getOneinchSwapParameters(
     network: string,
     collateralSymbol: string,
     amount: string,
-    slippage: string = '10'
+    slippage = '10'
 ): Promise<OneInchSwapRepsonse> {
     const chainId = parseInt(getChainIdByNetworkType(network) || '', 16);
     if (Number.isNaN(chainId)) {
@@ -129,7 +129,11 @@ export async function getOneInchQuote(network: string, collateralSymbol: string,
     }
     const toTokenAddress = await getContractAddressByName(network, 'DAI');
     const fromTokenAddress = await getContractAddressByName(network, collateralSymbol);
-    const calleeAddress = getCalleeAddressByCollateralType(network, getCollateralConfigBySymbol(collateralSymbol).ilk, marketId);
+    const calleeAddress = getCalleeAddressByCollateralType(
+        network,
+        getCollateralConfigBySymbol(collateralSymbol).ilk,
+        marketId
+    );
     // Documentation https://docs.1inch.io/docs/aggregation-protocol/api/swap-params/
     const swapParams = {
         fromTokenAddress,
@@ -146,21 +150,26 @@ export async function getOneInchQuote(network: string, collateralSymbol: string,
     };
 }
 
-export async function getOneInchMarketData(network: string, collateral: CollateralConfig, amount: BigNumber, marketId: string){
-
-        const swapData = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed());
-        const path = await extractPathFromSwapResponseProtocols(network, swapData.protocols[0])
-        const calleeData = swapData.tx.data;
-        const estimatedGas = new BigNumber((await getOneInchQuote(network, collateral.symbol, amount.toFixed(), marketId)).estimatedGas);
-        const exchangeFeeEth = new BigNumber(swapData.tx.gasPrice).multipliedBy(estimatedGas);
-        const exchangeFeeDai = await convertETHtoDAI(network, exchangeFeeEth)
-        const to = swapData.tx.to;
-        return {
-            path,
-            exchangeFeeEth,
-            exchangeFeeDai,
-            calleeData,
-            to
-        }
+export async function getOneInchMarketData(
+    network: string,
+    collateral: CollateralConfig,
+    amount: BigNumber,
+    marketId: string
+) {
+    const swapData = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed());
+    const path = await extractPathFromSwapResponseProtocols(network, swapData.protocols[0]);
+    const calleeData = swapData.tx.data;
+    const estimatedGas = new BigNumber(
+        (await getOneInchQuote(network, collateral.symbol, amount.toFixed(), marketId)).estimatedGas
+    );
+    const exchangeFeeEth = new BigNumber(swapData.tx.gasPrice).multipliedBy(estimatedGas);
+    const exchangeFeeDai = await convertETHtoDAI(network, exchangeFeeEth);
+    const to = swapData.tx.to;
+    return {
+        path,
+        exchangeFeeEth,
+        exchangeFeeDai,
+        calleeData,
+        to,
+    };
 }
-

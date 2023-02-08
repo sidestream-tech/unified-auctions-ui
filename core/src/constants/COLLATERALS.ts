@@ -137,7 +137,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'One Inch Router': {
                 callee: 'OneInchCallee',
-            }
+            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },

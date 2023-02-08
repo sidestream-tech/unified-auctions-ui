@@ -14,7 +14,7 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     marketId: string,
     profitAddress: string,
-    params?: { pools?: Pool[]; oneInchParams?: {txData: string; to: string} }
+    params?: { pools?: Pool[]; oneInchParams?: { txData: string; to: string } }
 ): Promise<string> {
     const calleeConfig = collateral.exchanges[marketId];
     if (calleeConfig?.callee !== 'rETHCurveUniv3Callee') {

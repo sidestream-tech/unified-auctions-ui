@@ -94,7 +94,7 @@ export declare interface AutoRouterCalleeConfig {
 }
 
 export declare interface OneInchCalleeConfig {
-    callee: 'OneInchCallee'
+    callee: 'OneInchCallee';
 }
 
 export declare interface UniswapV2LpTokenCalleeConfig {
@@ -148,7 +148,11 @@ export declare interface ValueSlotAddressAndOffset {
     offset: number;
 }
 
-export type CalleeConfig = RegularCalleeConfig | AutoRouterCalleeConfig | UniswapV2LpTokenCalleeConfig | OneInchCalleeConfig;
+export type CalleeConfig =
+    | RegularCalleeConfig
+    | AutoRouterCalleeConfig
+    | UniswapV2LpTokenCalleeConfig
+    | OneInchCalleeConfig;
 export declare interface CollateralConfig {
     title: string;
     ilk: string;
@@ -209,7 +213,7 @@ export declare interface CalleeFunctions {
         collateral: CollateralConfig,
         marketId: string,
         profitAddress: string,
-        params?:  {pools?: Pool[]; oneInchParams?: {txData: string; to: string} }
+        params?: { pools?: Pool[]; oneInchParams?: { txData: string; to: string } }
     ) => Promise<string>;
     getMarketPrice: (
         network: string,

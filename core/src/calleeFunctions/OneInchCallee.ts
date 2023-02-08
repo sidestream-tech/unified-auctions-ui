@@ -9,7 +9,7 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     marketId: string,
     profitAddress: string,
-    params?: { pools?: Pool[]; oneInchParams?: {txData: string; to: string} }
+    params?: { pools?: Pool[]; oneInchParams?: { txData: string; to: string } }
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'OneInchCallee') {
@@ -27,7 +27,7 @@ const getCalleeData = async function (
         minProfit,
         ethers.constants.AddressZero,
         params.oneInchParams.to,
-        params.oneInchParams.txData
+        params.oneInchParams.txData,
     ]);
 };
 
@@ -36,12 +36,12 @@ const getMarketPrice = async function (
     collateral: CollateralConfig,
     marketId: string,
     collateralAmount: BigNumber
-): Promise<{price: BigNumber; pools: undefined}> {
+): Promise<{ price: BigNumber; pools: undefined }> {
     // convert collateral into DAI
     const { tokenOut } = await getOneInchQuote(network, collateral.symbol, collateralAmount.toFixed(), marketId);
 
     // return price per unit
-    return {price: new BigNumber(tokenOut).dividedBy(collateralAmount), pools: undefined};
+    return { price: new BigNumber(tokenOut).dividedBy(collateralAmount), pools: undefined };
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {
