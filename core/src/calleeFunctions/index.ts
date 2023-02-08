@@ -50,7 +50,7 @@ export const getCalleeData = async function (
         collateral,
         marketId,
         profitAddress,
-        {pools: params?.pools}
+        {pools: params?.pools, oneInchParams: params?.oneInchParams}
     );
 };
 
