@@ -5,9 +5,7 @@ import getProvider from '../../provider';
 import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
-import { CollateralSymbol, Pool } from '../../types';
-import { fetchAutoRouteInformation } from './uniswapAutoRouter';
-import { getOneInchQuote } from './oneInch';
+import { Pool } from '../../types';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
@@ -31,34 +29,6 @@ export const encodePools = async function (_network: string, pools: Pool[]): Pro
     types.push('address');
     values.push(pools[pools.length - 1].addresses[1]);
     return ethers.utils.solidityPack(types, values);
-};
-
-export const getRouteAndGasQuote = async (
-    network: string,
-    collateralSymbol: CollateralSymbol,
-    collateralAmount: BigNumber,
-    marketId: string
-) => {
-    const collateral = getCollateralConfigBySymbol(collateralSymbol);
-    const calleeConfig = collateral.exchanges[marketId];
-    const isAutorouted = 'automaticRouter' in calleeConfig;
-    if (calleeConfig?.callee === 'OneInchCallee') {
-        const {estimatedGas, route} = await getOneInchQuote(network, collateralSymbol, collateralAmount.toFixed(), marketId);
-        return { route, quoteGasAdjusted: estimatedGas };
-    }
-    if (calleeConfig?.callee !== 'UniswapV3Callee') {
-        throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
-    }
-    if (isAutorouted) {
-        const { route, quoteGasAdjusted, fees } = await fetchAutoRouteInformation(
-            network,
-            collateralSymbol,
-            collateralAmount.toFixed()
-        );
-        return { route, quoteGasAdjusted, fees };
-    } else {
-        return { route: calleeConfig.route, quoteGasAdjusted: undefined, fees: undefined };
-    }
 };
 
 export const convertCollateralToDaiUsingPool = async function (

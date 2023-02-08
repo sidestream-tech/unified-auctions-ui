@@ -4,11 +4,9 @@ import type {
     MarketData,
     CollateralConfig,
     CollateralSymbol,
-    RegularCalleeConfig,
-    UniswapV2LpTokenCalleeConfig,
-    AutoRouterCalleeConfig,
     Pool,
     OneInchCalleeConfig,
+    PriceWithPools,
 } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
@@ -21,7 +19,6 @@ import OneInchCallee from './OneInchCallee';
 import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 import { routeToPool } from './helpers/pools';
-import { fetchAutoRouteInformation } from './helpers/uniswapAutoRouter';
 import { extractPathFromSwapResponseProtocols, getOneInchQuote, getOneinchSwapParameters } from './helpers/oneInch';
 import { convertETHtoDAI } from '../fees';
 
@@ -61,19 +58,14 @@ export const getCalleeData = async function (
 export const getPools = async (
     network: string,
     collateral: CollateralConfig,
-    marketId: string,
-    amount: BigNumber = new BigNumber(1)
+    marketId: string
 ): Promise<Pool[] | undefined> => {
     const calleeConfig = collateral.exchanges[marketId];
     if ('route' in calleeConfig) {
         return await routeToPool(network, calleeConfig.route, collateral.symbol);
     }
     if ('automaticRouter' in calleeConfig) {
-        const { route, fees } = await fetchAutoRouteInformation(network, collateral.symbol, amount.toFixed());
-        if (!route) {
-            throw new Error('No automatic route can be found');
-        }
-        return await routeToPool(network, route, collateral.symbol, fees);
+        throw new Error('This function should not be called for callees whre autorouter is enabled');
     }
     return undefined;
 };
@@ -97,14 +89,13 @@ export const enrichCalleeConfigWithPools = async (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
-    amount: BigNumber
 ): Promise<UniswapV2LpTokenCalleeConfig | OneInchCalleeConfig | ((RegularCalleeConfig | AutoRouterCalleeConfig) & { pools: Pool[] })> => {
     const config = collateral.exchanges[marketId];
     if (config.callee === 'UniswapV2LpTokenCalleeDai' ||
         config.callee === 'OneInchCallee') {
         return { ...config };
     }
-    const pools = await getPools(network, collateral, marketId, amount);
+    const pools = await getPools(network, collateral, marketId);
     if (pools) {
         return { ...config, pools };
     }
@@ -117,21 +108,21 @@ export const getMarketDataById = async function (
     marketId: string,
     amount: BigNumber = new BigNumber('1')
 ): Promise<MarketData> {
-    const calleeConfig = await enrichCalleeConfigWithPools(network, collateral, marketId, amount);
+    const calleeConfig = collateral.exchanges[marketId];
     if (!allCalleeFunctions[calleeConfig?.callee]) {
         throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
-    let marketUnitPriceResult: {marketUnitPrice: BigNumber, errorMessage?: string};
+    let marketPriceResult: {marketPrice: PriceWithPools, errorMessage?: string};
     try {
-        const marketUnitPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
+        const marketPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
             network,
             collateral,
             marketId,
             amount
         );
-        marketUnitPriceResult = { marketUnitPrice};
+        marketPriceResult = { marketPrice };
     } catch (error: any) {
-        marketUnitPriceResult = { marketUnitPrice: new BigNumber(NaN), errorMessage: error?.message };
+        marketPriceResult = { marketPrice: { price: new BigNumber(NaN), pools: undefined}, errorMessage: error?.message };
     }
     let apiExchangeData: {
             path: string[];
@@ -157,14 +148,27 @@ export const getMarketDataById = async function (
         }
         return {
             ...calleeConfig,
-            ...marketUnitPriceResult,
+            marketUnitPrice: marketPriceResult.marketPrice.price,
+            errorMessage: marketPriceResult.errorMessage,
             oneInch: apiExchangeData,
         }
     }
-    return {
-        ...calleeConfig,
-        marketUnitPrice: marketUnitPriceResult.marketUnitPrice,
-    };
+    const { marketPrice } = marketPriceResult;
+    const marketUnitPrice = marketPrice.price;
+    if (calleeConfig.callee !== 'UniswapV2LpTokenCalleeDai' && marketPrice.pools) {
+        return {
+            ...calleeConfig,
+            marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
+            pools: marketPrice.pools,
+        };
+    }
+    if (calleeConfig.callee === 'UniswapV2LpTokenCalleeDai') {
+        return {
+            ...calleeConfig,
+            marketUnitPrice: marketUnitPrice ? marketUnitPrice : new BigNumber(NaN),
+        };
+    }
+    throw new Error('No pools found where expected');
 };
 
 export const getMarketDataRecords = async function (
