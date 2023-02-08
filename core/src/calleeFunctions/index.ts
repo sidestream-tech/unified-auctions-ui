@@ -18,8 +18,7 @@ import OneInchCallee from './OneInchCallee';
 import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 import { routeToPool } from './helpers/pools';
-import { extractPathFromSwapResponseProtocols, getOneInchQuote, getOneinchSwapParameters } from './helpers/oneInch';
-import { convertETHtoDAI } from '../fees';
+import { getOneInchMarketData, getOneinchSwapParameters } from './helpers/oneInch';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
@@ -106,28 +105,8 @@ export const getMarketDataById = async function (
     } catch (error: any) {
         marketPriceResult = { marketPrice: { price: new BigNumber(NaN), pools: undefined}, errorMessage: error?.message };
     }
-    let apiExchangeData: {
-            path: string[];
-            exchangeFeeEth: BigNumber;
-            exchangeFeeDai: BigNumber;
-            calleeData: string;
-            to: string;
-    };
     if (calleeConfig.callee === 'OneInchCallee') {
-        const swapData = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed());
-        const path = await extractPathFromSwapResponseProtocols(network, swapData.protocols[0])
-        const calleeData = swapData.tx.data;
-        const estimatedGas = new BigNumber((await getOneInchQuote(network, collateral.symbol, amount.toFixed(), marketId)).estimatedGas);
-        const exchangeFeeEth = new BigNumber(swapData.tx.gasPrice).multipliedBy(estimatedGas);
-        const exchangeFeeDai = await convertETHtoDAI(network, exchangeFeeEth)
-        const to = swapData.tx.to;
-        apiExchangeData = {
-            path,
-            exchangeFeeEth,
-            exchangeFeeDai,
-            calleeData,
-            to
-        }
+        const apiExchangeData = await getOneInchMarketData(network, collateral, amount, marketId);
         return {
             ...calleeConfig,
             marketUnitPrice: marketPriceResult.marketPrice.price,

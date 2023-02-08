@@ -3,6 +3,9 @@ import { getCalleeAddressByCollateralType } from '../../constants/CALLEES';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getContractAddressByName, getContractSymbolByAddress } from '../../contracts';
 import { getChainIdByNetworkType } from '../../network';
+import { CollateralConfig } from '../../types';
+import BigNumber from '../../bignumber'
+import { convertETHtoDAI } from '../../fees';
 
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
 const CALLEE_ADDRESS = '0x0'; // TODO: fill in
@@ -142,3 +145,22 @@ export async function getOneInchQuote(network: string, collateralSymbol: string,
         tokenOut: oneinchResponse?.toTokenAmount,
     };
 }
+
+export async function getOneInchMarketData(network: string, collateral: CollateralConfig, amount: BigNumber, marketId: string){
+
+        const swapData = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed());
+        const path = await extractPathFromSwapResponseProtocols(network, swapData.protocols[0])
+        const calleeData = swapData.tx.data;
+        const estimatedGas = new BigNumber((await getOneInchQuote(network, collateral.symbol, amount.toFixed(), marketId)).estimatedGas);
+        const exchangeFeeEth = new BigNumber(swapData.tx.gasPrice).multipliedBy(estimatedGas);
+        const exchangeFeeDai = await convertETHtoDAI(network, exchangeFeeEth)
+        const to = swapData.tx.to;
+        return {
+            path,
+            exchangeFeeEth,
+            exchangeFeeDai,
+            calleeData,
+            to
+        }
+}
+
