@@ -77,7 +77,12 @@ export const getOneInchApiData = async function (
         return undefined;
     }
 
-    const swapParams = await getOneinchSwapParameters(network, collateral.symbol, amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(), marketId);
+    const swapParams = await getOneinchSwapParameters(
+        network,
+        collateral.symbol,
+        amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        marketId
+    );
     return swapParams.tx.data;
 };
 
@@ -171,7 +176,6 @@ export const getMarketDataRecords = async function (
             },
         };
     }
-    console.log('marketDataRecords', marketDataRecords);
     return marketDataRecords;
 };
 

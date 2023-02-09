@@ -39,10 +39,11 @@ const getMarketPrice = async function (
     collateralAmount: BigNumber
 ): Promise<{ price: BigNumber; pools: undefined }> {
     // convert collateral into DAI
-    const { tokenOut } = await getOneInchQuote(network, collateral.symbol, collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(), marketId);
+    const collateralAmountWad = collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
+    const { tokenOut } = await getOneInchQuote(network, collateral.symbol, collateralAmountWad, marketId);
 
     // return price per unit
-    return { price: new BigNumber(tokenOut).dividedBy(collateralAmount), pools: undefined };
+    return { price: new BigNumber(tokenOut).dividedBy(collateralAmountWad), pools: undefined };
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {
