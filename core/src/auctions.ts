@@ -34,7 +34,7 @@ import { EventFilter } from 'ethers';
 import getNetworkDate, { fetchDateByBlockNumber } from './date';
 import memoizee from 'memoizee';
 
-const MARKET_DATA_CACHE_TIME = 10 * 1000;
+const MARKET_DATA_CACHE_TIME = 29 * 1000;
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
