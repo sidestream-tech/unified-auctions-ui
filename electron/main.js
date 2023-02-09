@@ -1,12 +1,19 @@
 const path = require('path');
 const url = require('url');
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, Notification } = require('electron');
+const { autoUpdater } = require('electron-updater');
+
+autoUpdater.autoDownload = false;
 
 function createWindow() {
-    const mainWindow = new BrowserWindow({ show: false });
+    const mainWindow = new BrowserWindow({
+        show: false,
+    });
     mainWindow.once('ready-to-show', () => {
         mainWindow.maximize();
     });
+
+    // open dist/index.html using file protocol
     mainWindow.loadURL(
         url.format({
             protocol: 'file',
@@ -14,6 +21,7 @@ function createWindow() {
             pathname: path.join(__dirname, 'dist/index.html'),
         })
     );
+
     // open external links in the default browser instead of a new window
     mainWindow.webContents.setWindowOpenHandler(details => {
         if (!details.url.startsWith('/')) {
@@ -27,6 +35,16 @@ function createWindow() {
 
 app.whenReady().then(() => {
     createWindow();
+
+    // check and notify for updates
+    autoUpdater.checkForUpdates();
+    autoUpdater.on('update-available', info => {
+        new Notification({
+            title: 'Unified Auctions UI',
+            body: `A new version (v${info.version}) is available for download at https://github.com/sidestream-tech/unified-auctions-ui/releases/latest`,
+        }).show();
+    });
+
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     app.on('activate', () => {
