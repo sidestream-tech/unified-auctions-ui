@@ -32,6 +32,9 @@ import { enrichAuctionWithTransactionFees, getApproximateTransactionFees, getDef
 import parseAuctionId from './helpers/parseAuctionId';
 import { EventFilter } from 'ethers';
 import getNetworkDate, { fetchDateByBlockNumber } from './date';
+import memoizee from 'memoizee';
+
+const MARKET_DATA_CACHE_TIME = 10 * 1000;
 
 const enrichAuctionWithActualNumbers = async function (
     network: string,
@@ -210,7 +213,7 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
     }
 };
 
-export const enrichAuctionWithPriceDropAndMarketDataRecords = async function (
+const _enrichAuctionWithPriceDropAndMarketDataRecords = async function (
     auction: Auction,
     network: string,
     useAutoRouter?: boolean
@@ -220,6 +223,15 @@ export const enrichAuctionWithPriceDropAndMarketDataRecords = async function (
     const auctionWithFees = await enrichAuctionWithTransactionFees(enrichedAuctionWithNewPriceDrop, fees, network);
     return await enrichAuctionWithMarketDataRecords(auctionWithFees, network, useAutoRouter);
 };
+
+export const enrichAuctionWithPriceDropAndMarketDataRecords = memoizee(
+    _enrichAuctionWithPriceDropAndMarketDataRecords,
+    {
+        maxAge: MARKET_DATA_CACHE_TIME,
+        promise: true,
+        length: 3,
+    }
+);
 
 export const fetchSingleAuctionById = async function (
     network: string,
