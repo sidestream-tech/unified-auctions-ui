@@ -76,7 +76,7 @@ export const getOneInchApiData = async function (
         return undefined;
     }
 
-    const swapParams = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed());
+    const swapParams = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed(), marketId);
     return swapParams.tx.data;
 };
 

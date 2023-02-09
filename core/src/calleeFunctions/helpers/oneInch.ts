@@ -1,14 +1,14 @@
 import { ethers } from 'ethers';
 import { getCalleeAddressByCollateralType } from '../../constants/CALLEES';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
-import { getContractAddressByName, getContractSymbolByAddress } from '../../contracts';
+import { getContractSymbolByAddress } from '../../contracts';
 import { getChainIdByNetworkType } from '../../network';
 import { CollateralConfig } from '../../types';
 import BigNumber from '../../bignumber';
 import { convertETHtoDAI } from '../../fees';
+import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
-const CALLEE_ADDRESS = '0x0'; // TODO: fill in
 
 export const getOneInchUrl = (chainId: number) => {
     return `https://api.1inch.io/v5.0/${chainId}`;
@@ -46,7 +46,7 @@ interface OneInchSwapRepsonse {
 interface LiquiditySourcesResponse {
     protocols: Protocol[];
 }
-type OneInchSwapRoute = { name: string; part: number; fromTokenAddress: string; toTokenAddress: string }[];
+type OneInchSwapRoute = { name: string; part: number; fromTokenAddress: string; toTokenAddress: string }[][];
 
 export const executeOneInchApiRequest = async (
     chainId: number,
@@ -73,25 +73,33 @@ export async function getOneinchSwapParameters(
     network: string,
     collateralSymbol: string,
     amount: string,
+    marketId: string,
     slippage = '10'
 ): Promise<OneInchSwapRepsonse> {
-    const chainId = parseInt(getChainIdByNetworkType(network) || '', 16);
+    let chainId = parseInt(getChainIdByNetworkType(network) || '', 16);
+    if (chainId === 1337) {
+        chainId = 1;
+    }
     if (Number.isNaN(chainId)) {
         throw new Error(`Invalid chainId: ${chainId}`);
     }
-    const toTokenAddress = await getContractAddressByName(network, 'DAI');
-    const fromTokenAddress = await getContractAddressByName(network, collateralSymbol);
+    const toTokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'DAI');
+    const fromTokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateralSymbol);
+    const calleeAddress = getCalleeAddressByCollateralType(
+        network,
+        getCollateralConfigBySymbol(collateralSymbol).ilk,
+        marketId
+    );
     // Documentation https://docs.1inch.io/docs/aggregation-protocol/api/swap-params/
     const swapParams = {
         fromTokenAddress,
         toTokenAddress,
-        fromAddress: CALLEE_ADDRESS,
+        fromAddress: calleeAddress,
         amount,
         slippage,
         allowPartialFill: false, // disable partial fill
         disableEstimate: true, // disable eth_estimateGas
         compatibilityMode: true, // always receive parameters for the `swap` call
-        protocols: (await getOneinchValidProtocols(chainId)).join(','),
     };
     const oneinchResponse = await executeOneInchApiRequest(chainId, '/swap', swapParams);
     console.info('received oneinch API response:', oneinchResponse);
@@ -104,31 +112,36 @@ export async function getOneinchSwapParameters(
 
 export async function extractPathFromSwapResponseProtocols(
     network: string,
-    oneInchRoutes: OneInchSwapRoute
+    oneInchRoutes: OneInchSwapRoute[]
 ): Promise<string[]> {
-    const pathSteps = await Promise.all(
-        oneInchRoutes.map(
+    const pathStepsResolves = await Promise.all(
+        oneInchRoutes[0].map(
             async route =>
-                await Promise.all([
-                    getContractSymbolByAddress(network, route.fromTokenAddress),
-                    getContractSymbolByAddress(network, route.toTokenAddress),
+            {
+                return await Promise.all([
+                    await getContractSymbolByAddress(network, route[0].fromTokenAddress),
+                    await getContractSymbolByAddress(network, route[0].toTokenAddress),
                 ])
+            }
         )
     );
-    const path = [pathSteps[0][0]];
-    for (const step of pathSteps) {
+    const path = [pathStepsResolves[0][0]];
+    for (const step of pathStepsResolves) {
         path.push(step[1]);
     }
     return path;
 }
 
 export async function getOneInchQuote(network: string, collateralSymbol: string, amount: string, marketId: string) {
-    const chainId = parseInt(getChainIdByNetworkType(network) || '', 16);
+    let chainId = parseInt(getChainIdByNetworkType(network) || '', 16);
+    if (chainId === 1337) { // TODO: remove this hack
+        chainId = 1
+    }
     if (Number.isNaN(chainId)) {
         throw new Error(`Invalid chainId: ${chainId}`);
     }
-    const toTokenAddress = await getContractAddressByName(network, 'DAI');
-    const fromTokenAddress = await getContractAddressByName(network, collateralSymbol);
+    const toTokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'DAI');
+    const fromTokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateralSymbol);
     const calleeAddress = getCalleeAddressByCollateralType(
         network,
         getCollateralConfigBySymbol(collateralSymbol).ilk,
@@ -156,8 +169,8 @@ export async function getOneInchMarketData(
     amount: BigNumber,
     marketId: string
 ) {
-    const swapData = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed());
-    const path = await extractPathFromSwapResponseProtocols(network, swapData.protocols[0]);
+    const swapData = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed(), marketId);
+    const path = await extractPathFromSwapResponseProtocols(network, swapData.protocols);
     const calleeData = swapData.tx.data;
     const estimatedGas = new BigNumber(
         (await getOneInchQuote(network, collateral.symbol, amount.toFixed(), marketId)).estimatedGas
