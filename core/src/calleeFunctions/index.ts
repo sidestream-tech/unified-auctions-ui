@@ -19,6 +19,7 @@ import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 import { routeToPool } from './helpers/pools';
 import { getOneInchMarketData, getOneinchSwapParameters } from './helpers/oneInch';
+import { WAD_NUMBER_OF_DIGITS } from '../constants/UNITS';
 
 const MARKET_PRICE_CACHE_MS = 10 * 1000;
 
@@ -76,7 +77,7 @@ export const getOneInchApiData = async function (
         return undefined;
     }
 
-    const swapParams = await getOneinchSwapParameters(network, collateral.symbol, amount.toFixed(), marketId);
+    const swapParams = await getOneinchSwapParameters(network, collateral.symbol, amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(), marketId);
     return swapParams.tx.data;
 };
 
@@ -170,6 +171,7 @@ export const getMarketDataRecords = async function (
             },
         };
     }
+    console.log('marketDataRecords', marketDataRecords);
     return marketDataRecords;
 };
 
