@@ -91,15 +91,26 @@ const _fetchAutoRouteInformation = async function (
             throw new Error('Only V3 routes are supported.');
         }
         const fees = bestRoute.route.pools.map(pool => pool.fee);
+        const pools = bestRoute.route.pools.map(pool => {
+            if (!pool.token1.symbol || !pool.token0.symbol) {
+                throw new Error(`Could not get symbol for token from autorouter. Pool: ${pool}`);
+            }
+            return {
+                addresses: [pool.token1.address, pool.token0.address],
+                fee: pool.fee,
+                routes: [pool.token1.symbol, pool.token0.symbol],
+            };
+        });
         const quote = new BigNumber(autoRouteData.quote.toFixed());
         const quoteGasAdjusted = new BigNumber(autoRouteData.quoteGasAdjusted.toFixed());
         return {
             totalPrice: new BigNumber(autoRouteData.quote.toFixed(DAI_NUMBER_OF_DIGITS)),
             route,
             quote,
-            quoteGasAdjusted,
+            totalPriceAdjusted: quoteGasAdjusted,
             errorMessage: undefined,
             fees,
+            pools,
         };
     } catch (error: any) {
         return {
@@ -107,6 +118,7 @@ const _fetchAutoRouteInformation = async function (
             route: undefined,
             quote: undefined,
             fees: undefined,
+            pools: undefined,
             errorMessage: error.toString(),
         };
     }
