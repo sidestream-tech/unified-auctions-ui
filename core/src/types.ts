@@ -213,7 +213,7 @@ export declare interface CalleeFunctions {
         collateral: CollateralConfig,
         marketId: string,
         profitAddress: string,
-        params?: { pools?: Pool[]; oneInchParams?: { txData: string; to: string } }
+        params?: GetCalleeDataParams
     ) => Promise<string>;
     getMarketPrice: (
         network: string,
@@ -426,6 +426,10 @@ export declare interface VaultTransactionLiquidated extends VaultBase {
     state: 'liquidated';
     pastLiquidations: LiquidationEvent[];
 }
+export declare type GetCalleeDataParams =
+    | { pools: Pool[] }
+    | { oneInchParams?: { txData: string; to: string } }
+    | Record<string, never>;
 
 export declare interface VaultTransactionBase extends Vault, VaultTransactionFees, OraclePrices {
     liquidationRatio: BigNumber;

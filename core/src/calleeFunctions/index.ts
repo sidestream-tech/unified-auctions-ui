@@ -6,6 +6,7 @@ import type {
     CollateralSymbol,
     Pool,
     PriceWithPools,
+    GetCalleeDataParams,
 } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
@@ -38,17 +39,20 @@ export const getCalleeData = async function (
     collateralType: string,
     marketId: string,
     profitAddress: string,
-    params?: { pools?: Pool[]; oneInchParams?: { txData: string; to: string } }
+    params?: GetCalleeDataParams
 ): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
     const marketData = collateral.exchanges[marketId];
     if (!marketData || !marketData.callee || !allCalleeFunctions[marketData.callee]) {
         throw new Error(`Unsupported collateral type "${collateralType}"`);
     }
-    return await allCalleeFunctions[marketData.callee].getCalleeData(network, collateral, marketId, profitAddress, {
-        pools: params?.pools,
-        oneInchParams: params?.oneInchParams,
-    });
+    return await allCalleeFunctions[marketData.callee].getCalleeData(
+        network,
+        collateral,
+        marketId,
+        profitAddress,
+        params
+    );
 };
 
 export const getPools = async (

@@ -1,4 +1,4 @@
-import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
+import type { CalleeFunctions, CollateralConfig, GetCalleeDataParams } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
@@ -10,13 +10,14 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     marketId: string,
     profitAddress: string,
-    params?: { pools?: Pool[]; oneInchParams?: { txData: string; to: string } }
+    params?: GetCalleeDataParams
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'OneInchCallee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
-    if (!params || !params.oneInchParams) {
+    const oneInchParams = !!params && 'oneInchParams' in params ? params.oneInchParams : undefined;
+    if (!oneInchParams) {
         throw new Error(`getCalleeData called with invalid txData`);
     }
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
@@ -27,8 +28,8 @@ const getCalleeData = async function (
         joinAdapterAddress,
         minProfit,
         ethers.constants.AddressZero,
-        params.oneInchParams.to,
-        params.oneInchParams.txData,
+        oneInchParams.to,
+        oneInchParams.txData,
     ]);
 };
 

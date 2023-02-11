@@ -1,4 +1,4 @@
-import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
+import type { CalleeFunctions, CollateralConfig, GetCalleeDataParams, Pool } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
@@ -12,13 +12,14 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     marketId: string,
     profitAddress: string,
-    params?: { pools?: Pool[]; oneInchParams?: { txData: string; to: string } }
+    params?: GetCalleeDataParams
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
-    const pools = params?.pools || (await getPools(network, collateral, marketId));
+    const preloadedPools = !!params && 'pools' in params ? params.pools : undefined;
+    const pools = preloadedPools || (await getPools(network, collateral, marketId));
     if (!pools) {
         throw new Error(`getCalleeData called with invalid pools`);
     }

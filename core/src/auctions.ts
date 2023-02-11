@@ -348,9 +348,6 @@ export const bidWithCallee = async function (
     const marketData = auction.marketDataRecords?.[marketId];
     const preloadedPools = marketData && 'pools' in marketData ? marketData.pools : undefined;
     const oneInchData = marketData && 'oneInch' in marketData ? marketData.oneInch : undefined;
-    if ([!!oneInchData, !!preloadedPools].filter(i => i).length > 1) {
-        throw new Error('Only one of oneInchData and preloadedPools can be provided');
-    }
     const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress, {
         pools: preloadedPools,
         oneInchParams: oneInchData ? { txData: oneInchData.calleeData, to: oneInchData.to } : undefined,
