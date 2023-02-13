@@ -19,9 +19,9 @@
   },
   "scripts": {
     "preinstall": "cd ../frontend && npm ci",
-    "prebuild": "(cd ../frontend && ENABLE_FILE_PROTOCOL=\"true\" npm run generate) && npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
+    "build": "(cd ../frontend && ENABLE_FILE_PROTOCOL=\"true\" npm run generate) && npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
     "start": "electron .",
-    "build": "rm -rf out && electron-builder"
+    "dist": "rm -rf out && npm run build && electron-builder"
   },
   "author": "SIDESTREAM GmbH",
   "devDependencies": {

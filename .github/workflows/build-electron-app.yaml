@@ -1,0 +1,39 @@
+name: Build Electron app
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Setup Node.js and NPM
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: Run electron-builder
+        uses: samuelmeuli/action-electron-builder@v1
+        with:
+          package_root: electron
+          github_token: ${{ secrets.github_token }}
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: out
+          path: |
+            electron/out/*dmg*
+            electron/out/*AppImage*
+            electron/out/*exe*
+            electron/out/latest*
