@@ -165,8 +165,7 @@ export default Vue.extend({
         },
     },
     created() {
-        const ENABLE_FILE_PROTOCOL = process.env.ENABLE_FILE_PROTOCOL?.toLocaleLowerCase() === 'true';
-        if (ENABLE_FILE_PROTOCOL) {
+        if (process.env.ENABLE_FILE_PROTOCOL) {
             this.setElectronUpdateVersion();
         }
     },
