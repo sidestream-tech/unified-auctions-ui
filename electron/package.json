@@ -21,6 +21,7 @@
     },
     "files": [
       "main.js",
+      "preload.js",
       "dist/**/*"
     ]
   },

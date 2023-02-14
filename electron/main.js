@@ -1,6 +1,6 @@
 const path = require('path');
 const url = require('url');
-const { app, BrowserWindow, shell, Notification } = require('electron');
+const { app, BrowserWindow, shell, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 
 autoUpdater.autoDownload = false;
@@ -8,6 +8,9 @@ autoUpdater.autoDownload = false;
 function createWindow() {
     const mainWindow = new BrowserWindow({
         show: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+        },
     });
     mainWindow.once('ready-to-show', () => {
         mainWindow.maximize();
@@ -36,13 +39,10 @@ function createWindow() {
 app.whenReady().then(() => {
     createWindow();
 
-    // check and notify for updates
-    autoUpdater.checkForUpdates();
-    autoUpdater.on('update-available', info => {
-        new Notification({
-            title: 'Unified Auctions UI',
-            body: `A new version (v${info.version}) is available for download at https://github.com/sidestream-tech/unified-auctions-ui/releases/latest`,
-        }).show();
+    // check for updates
+    ipcMain.handle('update-version', async () => {
+        const updateCheckResult = await autoUpdater.checkForUpdates();
+        return updateCheckResult.updateInfo.version;
     });
 
     // On macOS it's common to re-create a window in the app when the

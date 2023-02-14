@@ -56,6 +56,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
+import { notification } from 'ant-design-vue';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 import RpcUrlConfigurationModal from '~/components/modals/RpcUrlConfigurationModal.vue';
@@ -78,6 +79,11 @@ export default Vue.extend({
         WalletSelectModal,
         ManageCollateralModalContainer,
         Analytics,
+    },
+    data() {
+        return {
+            electronUpdateVersion: undefined,
+        };
     },
     computed: {
         ...mapGetters('wallet', {
@@ -156,6 +162,42 @@ export default Vue.extend({
                 this.$store.dispatch('network/setup');
             }
         },
+        electronUpdateVersion(newValue) {
+            if (newValue) {
+                notification.info({
+                    message: 'Update available',
+                    description: {
+                        tag: 'div',
+                        children: [
+                            {
+                                tag: 'span',
+                                text: `A new version (v${newValue}) is available for download at `,
+                                isRootInsert: false,
+                                isComment: false,
+                            },
+                            {
+                                tag: 'a',
+                                text: 'https://github.com/sidestream-tech/unified-auctions-ui/releases/latest',
+                                data: {
+                                    attrs: {
+                                        href: 'https://github.com/sidestream-tech/unified-auctions-ui/releases/latest',
+                                        target: '_blank',
+                                    },
+                                },
+                                isRootInsert: false,
+                                isComment: false,
+                            },
+                        ],
+                        isRootInsert: false,
+                        isComment: false,
+                    },
+                    duration: 0,
+                });
+            }
+        },
+    },
+    created() {
+        this.setElectronUpdateVersion();
     },
     methods: {
         ...mapActions('network', ['configureRpcUrl', 'setPageNetwork', 'fixWalletNetwork']),
@@ -176,6 +218,9 @@ export default Vue.extend({
         },
         setSelectWalletModal(open: boolean): void {
             this.$store.commit('modals/setSelectWalletModal', open);
+        },
+        async setElectronUpdateVersion(): Promise<void> {
+            this.electronUpdateVersion = await window.electronAPI?.getUpdateVersion();
         },
     },
 });
