@@ -1,12 +1,13 @@
 name: Build Electron app
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [released]
 
 jobs:
-  release:
+  build-and-release:
+    permissions:
+      contents: write
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -28,11 +29,11 @@ jobs:
           package_root: electron
           github_token: ${{ secrets.github_token }}
 
-      - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@v1
+        if: ${{startsWith(github.ref, 'refs/tags/') }}
         with:
-          name: out
-          path: |
+          files: |
             electron/out/*dmg*
             electron/out/*AppImage*
             electron/out/*exe*
