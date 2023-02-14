@@ -10,7 +10,7 @@ const CALLEES: Record<string, CalleeAddresses | undefined> = {
         CurveLpTokenUniv3Callee: '0x71f2198849F3B1372EA90c079BD634928583f2d2',
         UniswapV3Callee: '0xdB9C76109d102d2A1E645dCa3a7E671EBfd8e11A',
         rETHCurveUniv3Callee: '0x7cdAb0fE16efb1EFE89e53B141347D7F299d6610',
-        OneInchCallee: '0x0ed881FA53C3777FB7220F4D64f7B45136CCA2c2',
+        OneInchCallee: '0xF5b81Fe0B6F378f9E6A3fb6A6cD1921FCeA11799',
     },
     '0x5': {
         UniswapV2CalleeDai: '0x6d9139ac89ad2263f138633de20e47bcae253938',

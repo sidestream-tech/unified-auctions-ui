@@ -29,7 +29,7 @@ const getCalleeData = async function (
         minProfit,
         ethers.constants.AddressZero,
         oneInchParams.to,
-        oneInchParams.txData,
+        ethers.utils.hexDataSlice(oneInchParams.txData, 4),
     ]);
 };
 

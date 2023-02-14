@@ -102,7 +102,6 @@ export async function getOneinchSwapParameters(
         compatibilityMode: true, // always receive parameters for the `swap` call
     };
     const oneinchResponse = await executeOneInchApiRequest(chainId, '/swap', swapParams);
-    console.info('received oneinch API response:', oneinchResponse);
     const functionSignature = ethers.utils.hexDataSlice(oneinchResponse.tx.data, 0, 4); // see https://docs.soliditylang.org/en/develop/abi-spec.html#function-selector
     if (functionSignature !== EXPECTED_SIGNATURE) {
         throw new Error(`Unexpected 1inch function signature: ${functionSignature}, expected: ${EXPECTED_SIGNATURE}`);
