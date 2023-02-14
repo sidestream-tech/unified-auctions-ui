@@ -210,7 +210,7 @@ export const enrichAuctionWithPriceDrop = async function (auction: Auction): Pro
     }
 };
 
-const enrichAuctionWithPriceDropAndMarketDataRecords = async function (
+export const enrichAuctionWithPriceDropAndMarketDataRecords = async function (
     auction: Auction,
     network: string,
     useAutoRouter?: boolean
