@@ -57,6 +57,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
+import { message } from 'ant-design-vue';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 import RpcUrlConfigurationModal from '~/components/modals/RpcUrlConfigurationModal.vue';
@@ -190,7 +191,11 @@ export default Vue.extend({
             this.$store.commit('modals/setSelectWalletModal', open);
         },
         async setElectronUpdateVersion(): Promise<void> {
-            this.electronUpdateVersion = await window.electronAPI?.getUpdateVersion();
+            try {
+                this.electronUpdateVersion = await window.electronAPI?.getUpdateVersion();
+            } catch (error: any) {
+                message.error(`Cannot check for updates: ${error.message}`);
+            }
         },
     },
 });

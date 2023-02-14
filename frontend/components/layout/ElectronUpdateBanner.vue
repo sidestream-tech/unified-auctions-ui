@@ -2,12 +2,8 @@
     <div class="w-full py-2 text-center bg-red-400">
         <h1>
             A new version (v{{ version }}) is available for download at
-            <a
-                class="underline"
-                href="https://github.com/sidestream-tech/unified-auctions-ui/releases/latest/"
-                target="_blank"
-            >
-                https://github.com/sidestream-tech/unified-auctions-ui/releases/latest/
+            <a class="underline" :href="latestReleaseUrl" target="_blank">
+                {{ latestReleaseUrl }}
             </a>
         </h1>
     </div>
@@ -15,6 +11,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { repository } from '~/package.json';
 
 export default Vue.extend({
     name: 'ElectronUpdateBanner',
@@ -23,6 +20,11 @@ export default Vue.extend({
             type: String,
             required: true,
         },
+    },
+    data() {
+        return {
+            latestReleaseUrl: `${repository.url}/releases/latest`,
+        };
     },
 });
 </script>
