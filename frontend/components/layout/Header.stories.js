@@ -50,12 +50,21 @@ storiesOf('Layout/Header', module)
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
     }))
-    .add('With Staging header', () => ({
+    .add('With Electron Update Banner', () => ({
         ...common,
         template: `<Header
         type="unified" 
         :isExplanationsShown.sync="isExplanationsShown"
-        :isStagingEnvironment="true"
+        electronUpdateVersion="1.0.0"
+        @update:isExplanationsShown="updateIsExplanationsShown"
+        />`,
+    }))
+    .add('With Staging Banner', () => ({
+        ...common,
+        template: `<Header
+        type="unified" 
+        :isExplanationsShown.sync="isExplanationsShown"
+        stagingBannerUrl="https://example.com/"
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
     }))

@@ -10,6 +10,7 @@
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
+            :electron-update-version="electronUpdateVersion"
             :staging-banner-url="stagingBannerURL"
             :networks="networks"
             :is-changing-network="isChangingNetwork"
@@ -56,7 +57,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
-import { notification } from 'ant-design-vue';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 import RpcUrlConfigurationModal from '~/components/modals/RpcUrlConfigurationModal.vue';
@@ -160,39 +160,6 @@ export default Vue.extend({
         getMakerNetwork(newValue) {
             if (newValue) {
                 this.$store.dispatch('network/setup');
-            }
-        },
-        electronUpdateVersion(newValue) {
-            if (newValue) {
-                notification.info({
-                    message: 'Update available',
-                    description: {
-                        tag: 'div',
-                        children: [
-                            {
-                                tag: 'span',
-                                text: `A new version (v${newValue}) is available for download at `,
-                                isRootInsert: false,
-                                isComment: false,
-                            },
-                            {
-                                tag: 'a',
-                                text: 'https://github.com/sidestream-tech/unified-auctions-ui/releases/latest',
-                                data: {
-                                    attrs: {
-                                        href: 'https://github.com/sidestream-tech/unified-auctions-ui/releases/latest',
-                                        target: '_blank',
-                                    },
-                                },
-                                isRootInsert: false,
-                                isComment: false,
-                            },
-                        ],
-                        isRootInsert: false,
-                        isComment: false,
-                    },
-                    duration: 0,
-                });
             }
         },
     },
