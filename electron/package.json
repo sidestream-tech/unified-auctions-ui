@@ -22,6 +22,7 @@
     "files": [
       "main.js",
       "preload.js",
+      "helpers.js",
       "dist/**/*"
     ]
   },

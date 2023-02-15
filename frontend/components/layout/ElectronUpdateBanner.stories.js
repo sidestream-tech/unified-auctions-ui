@@ -7,5 +7,5 @@ const common = {
 
 storiesOf('Layout/ElectronUpdateBanner', module).add('Default', () => ({
     ...common,
-    template: `<ElectronUpdateBanner version="1.0.0" />`,
+    template: `<ElectronUpdateBanner url="https://example.com/" />`,
 }));

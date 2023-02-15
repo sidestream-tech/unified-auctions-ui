@@ -2,6 +2,8 @@ const path = require('path');
 const url = require('url');
 const { app, BrowserWindow, shell, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
+const { version, repository } = require('./package.json');
+const { compareVersions } = require('./helpers.js');
 
 autoUpdater.autoDownload = false;
 
@@ -42,7 +44,9 @@ app.whenReady().then(() => {
     // check for updates
     ipcMain.handle('update-version', async () => {
         const updateCheckResult = await autoUpdater.checkForUpdates();
-        return updateCheckResult.updateInfo.version;
+        const isLaterVersion = compareVersions(updateCheckResult.updateInfo.version, version) > 0;
+
+        return isLaterVersion ? `${repository.url}/releases/latest` : undefined;
     });
 
     // On macOS it's common to re-create a window in the app when the

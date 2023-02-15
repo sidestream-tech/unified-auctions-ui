@@ -55,7 +55,7 @@ storiesOf('Layout/Header', module)
         template: `<Header
         type="unified" 
         :isExplanationsShown.sync="isExplanationsShown"
-        electronUpdateVersion="1.0.0"
+        electronUpdateUrl="https://example.com/"
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
     }))

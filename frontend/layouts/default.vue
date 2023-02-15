@@ -10,7 +10,7 @@
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
-            :electron-update-version="electronUpdateVersion"
+            :electron-update-url="electronUpdateUrl"
             :staging-banner-url="stagingBannerURL"
             :networks="networks"
             :is-changing-network="isChangingNetwork"
@@ -68,7 +68,6 @@ import WalletModalContainer from '~/containers/WalletModalContainer.vue';
 import ManageCollateralModalContainer from '~/containers/ManageCollateralModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
 import Analytics from '~/components/common/other/Analytics.vue';
-
 export default Vue.extend({
     components: {
         RpcUrlConfigurationModal,
@@ -83,7 +82,7 @@ export default Vue.extend({
     },
     data() {
         return {
-            electronUpdateVersion: undefined,
+            electronUpdateUrl: undefined,
         };
     },
     computed: {
@@ -165,8 +164,11 @@ export default Vue.extend({
         },
     },
     created() {
-        if (process.env.ENABLE_FILE_PROTOCOL) {
-            this.setElectronUpdateVersion();
+        // check if running in Electron
+        // source: https://github.com/electron/electron/issues/2288#issuecomment-337858978
+        const userAgent = navigator.userAgent.toLowerCase();
+        if (userAgent.includes(' electron/')) {
+            this.setElectronUpdateUrl();
         }
     },
     methods: {
@@ -189,9 +191,9 @@ export default Vue.extend({
         setSelectWalletModal(open: boolean): void {
             this.$store.commit('modals/setSelectWalletModal', open);
         },
-        async setElectronUpdateVersion(): Promise<void> {
+        async setElectronUpdateUrl(): Promise<void> {
             try {
-                this.electronUpdateVersion = await window.electronAPI?.getUpdateVersion();
+                this.electronUpdateUrl = await window.electronAPI?.getUpdateUrl();
             } catch (error: any) {
                 message.error(`Cannot check for updates: ${error.message}`);
             }
