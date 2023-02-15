@@ -3,7 +3,7 @@ const url = require('url');
 const { app, BrowserWindow, shell, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { version, repository } = require('./package.json');
-const { compareVersions } = require('./helpers.js');
+const semverGt = require('semver/functions/gt');
 
 autoUpdater.autoDownload = false;
 
@@ -42,11 +42,10 @@ app.whenReady().then(() => {
     createWindow();
 
     // check for updates
-    ipcMain.handle('update-version', async () => {
+    ipcMain.handle('getUpdateUrl', async () => {
         const updateCheckResult = await autoUpdater.checkForUpdates();
-        const isLaterVersion = compareVersions(updateCheckResult.updateInfo.version, version) > 0;
-
-        return isLaterVersion ? `${repository.url}/releases/latest` : undefined;
+        const isNewerVersionAvailable = semverGt(updateCheckResult.updateInfo.version, version);
+        return isNewerVersionAvailable ? `${repository.url}/releases/latest` : undefined;
     });
 
     // On macOS it's common to re-create a window in the app when the
