@@ -11,5 +11,5 @@ Scripts to package unified-auction frontend into os-native applications
 ### Build a distributable app
 
 1. Install dependencies via `npm i`
-2. Build applications for the current platform via `npm run dist` (will run `npm run build`)
+2. Build applications for the current platform via `npm run distribute` (will run `npm run build`)
 3. Built files will be available under the newly created `./out` directory

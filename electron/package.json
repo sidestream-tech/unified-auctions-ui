@@ -21,7 +21,7 @@
     "preinstall": "cd ../frontend && npm ci",
     "build": "(cd ../frontend && cross-env ENABLE_FILE_PROTOCOL=true npm run generate) && npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
     "start": "electron .",
-    "dist": "rm -rf out && npm run build && electron-builder"
+    "distribute": "rm -rf dist out && npm run build && electron-builder"
   },
   "author": "SIDESTREAM GmbH",
   "devDependencies": {
