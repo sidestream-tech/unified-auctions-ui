@@ -22,7 +22,7 @@ import { routeToPool } from './helpers/pools';
 import { getOneInchMarketData, getOneinchSwapParameters } from './helpers/oneInch';
 import { WAD_NUMBER_OF_DIGITS } from '../constants/UNITS';
 
-const MARKET_PRICE_CACHE_MS = 10 * 1000;
+const GET_MARKET_DATA_BY_ID_CACHE_TIME = 1000 * 29;
 
 const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV2CalleeDai,
@@ -90,7 +90,7 @@ export const getOneInchApiData = async function (
     return swapParams.tx.data;
 };
 
-export const getMarketDataById = async function (
+const _getMarketDataById = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
@@ -142,7 +142,16 @@ export const getMarketDataById = async function (
     throw new Error('No pools found where expected');
 };
 
-const _getMarketDataRecords = async function (
+export const getMarketDataById = memoizee(_getMarketDataById, {
+    promise: true,
+    maxAge: GET_MARKET_DATA_BY_ID_CACHE_TIME,
+    length: 4,
+    normalizer: (args: any[]) => {
+        JSON.stringify(args);
+    },
+});
+
+export const getMarketDataRecords = async function (
     network: string,
     collateralSymbol: CollateralSymbol,
     amount: BigNumber = new BigNumber('1'),
@@ -183,15 +192,6 @@ const _getMarketDataRecords = async function (
     return marketDataRecords;
 };
 
-export const getMarketDataRecords = memoizee(_getMarketDataRecords, {
-    promise: true,
-    maxAge: 1000 * 30, // 5 minutes
-    length: 4,
-    normalizer: (args: any[]) => {
-        return JSON.stringify(args);
-    },
-});
-
 export const getBestMarketId = async function (marketDataRecords: Record<string, MarketData>): Promise<string> {
     const marketDataRecordsSorted = Object.entries(marketDataRecords);
     marketDataRecordsSorted.sort((a, b) => {
@@ -210,7 +210,7 @@ export const getBestMarketId = async function (marketDataRecords: Record<string,
     return marketDataRecordsSorted[0][0];
 };
 
-const _getMarketPrice = async function (
+export const getMarketPrice = async function (
     network: string,
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
@@ -219,11 +219,5 @@ const _getMarketPrice = async function (
     const bestMarketId = await getBestMarketId(marketDataRecords);
     return marketDataRecords[bestMarketId].marketUnitPrice;
 };
-
-export const getMarketPrice = memoizee(_getMarketPrice, {
-    maxAge: MARKET_PRICE_CACHE_MS,
-    promise: true,
-    length: 3,
-});
 
 export default allCalleeFunctions;
