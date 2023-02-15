@@ -147,7 +147,7 @@ export const getMarketDataById = memoizee(_getMarketDataById, {
     maxAge: GET_MARKET_DATA_BY_ID_CACHE_TIME,
     length: 4,
     normalizer: (args: any[]) => {
-        JSON.stringify(args);
+        return JSON.stringify(args);
     },
 });
 
