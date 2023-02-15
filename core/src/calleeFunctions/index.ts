@@ -111,7 +111,7 @@ export const getMarketDataById = async function (
     throw new Error('No pools found where expected');
 };
 
-const _getMarketDataRecords = async function (
+export const getMarketDataRecords = async function (
     network: string,
     collateralSymbol: CollateralSymbol,
     amount: BigNumber = new BigNumber('1'),
@@ -152,15 +152,6 @@ const _getMarketDataRecords = async function (
     return marketDataRecords;
 };
 
-export const getMarketDataRecords = memoizee(_getMarketDataRecords, {
-    promise: true,
-    maxAge: MARKET_DATA_RECORDS_CACHE_MS,
-    length: 3,
-    normalizer: (args: any[]) => {
-        return JSON.stringify(args);
-    },
-});
-
 export const getBestMarketId = async function (marketDataRecords: Record<string, MarketData>): Promise<string> {
     const marketDataRecordsSorted = Object.entries(marketDataRecords);
     marketDataRecordsSorted.sort((a, b) => {
@@ -193,6 +184,9 @@ export const getMarketPrice = memoizee(_getMarketPrice, {
     maxAge: MARKET_PRICE_CACHE_MS,
     promise: true,
     length: 3,
+    normalizer: (args: any[]) => {
+        return JSON.stringify(args);
+    },
 });
 
 export default allCalleeFunctions;
