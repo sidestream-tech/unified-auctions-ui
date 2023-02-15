@@ -17,7 +17,6 @@ export default {
     target: 'static',
 
     env: {
-        ENABLE_FILE_PROTOCOL,
         SITE_TITLE,
         RPC_URL: process.env.RPC_URL,
         DEMO_MODE: process.env.DEMO_MODE || false,
