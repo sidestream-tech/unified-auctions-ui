@@ -18,7 +18,7 @@ import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 import { routeToPool } from './helpers/pools';
 
-const MARKET_PRICE_CACHE_MS = 10 * 1000;
+const MARKET_DATA_RECORDS_CACHE_MS = 29 * 1000;
 
 const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV2CalleeDai,
@@ -65,7 +65,7 @@ export const getPools = async (
     return undefined;
 };
 
-export const getMarketDataById = async function (
+const _getMarketDataById = async function (
     network: string,
     collateral: CollateralConfig,
     marketId: string,
@@ -109,6 +109,15 @@ export const getMarketDataById = async function (
     }
     throw new Error('No pools found where expected');
 };
+
+export const getMarketDataById = memoizee(_getMarketDataById, {
+    promise: true,
+    maxAge: MARKET_DATA_RECORDS_CACHE_MS,
+    length: 4,
+    normalizer: (args: any[]) => {
+        return JSON.stringify(args);
+    },
+});
 
 export const getMarketDataRecords = async function (
     network: string,
@@ -169,7 +178,7 @@ export const getBestMarketId = async function (marketDataRecords: Record<string,
     return marketDataRecordsSorted[0][0];
 };
 
-const _getMarketPrice = async function (
+export const getMarketPrice = async function (
     network: string,
     collateralSymbol: string,
     amount: BigNumber = new BigNumber('1')
@@ -178,11 +187,5 @@ const _getMarketPrice = async function (
     const bestMarketId = await getBestMarketId(marketDataRecords);
     return marketDataRecords[bestMarketId].marketUnitPrice;
 };
-
-export const getMarketPrice = memoizee(_getMarketPrice, {
-    maxAge: MARKET_PRICE_CACHE_MS,
-    promise: true,
-    length: 3,
-});
 
 export default allCalleeFunctions;
