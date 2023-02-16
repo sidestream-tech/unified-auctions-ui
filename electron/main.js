@@ -1,9 +1,9 @@
 const path = require('path');
 const url = require('url');
+const semverGt = require('semver/functions/gt');
 const { app, BrowserWindow, shell, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
 const { version, repository } = require('./package.json');
-const semverGt = require('semver/functions/gt');
 
 autoUpdater.autoDownload = false;
 

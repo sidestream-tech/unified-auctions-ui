@@ -22,7 +22,6 @@
     "files": [
       "main.js",
       "preload.js",
-      "helpers.js",
       "dist/**/*"
     ]
   },
@@ -42,6 +41,7 @@
     "electron-builder": "^23.6.0"
   },
   "dependencies": {
-    "electron-updater": "^5.3.0"
+    "electron-updater": "^5.3.0",
+    "semver": "^7.3.8"
   }
 }
