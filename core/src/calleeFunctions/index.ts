@@ -22,7 +22,7 @@ import { routeToPool } from './helpers/pools';
 import { getOneInchMarketData, getOneinchSwapParameters } from './helpers/oneInch';
 import { WAD_NUMBER_OF_DIGITS } from '../constants/UNITS';
 
-const GET_MARKET_DATA_BY_ID_CACHE_TIME = 1000 * 29;
+const MARKET_DATA_RECORDS_CACHE_MS = 29 * 1000;
 
 const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV2CalleeDai,
@@ -144,7 +144,7 @@ const _getMarketDataById = async function (
 
 export const getMarketDataById = memoizee(_getMarketDataById, {
     promise: true,
-    maxAge: GET_MARKET_DATA_BY_ID_CACHE_TIME,
+    maxAge: MARKET_DATA_RECORDS_CACHE_MS,
     length: 4,
     normalizer: (args: any[]) => {
         return JSON.stringify(args);
