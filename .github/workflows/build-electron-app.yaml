@@ -5,7 +5,7 @@ on:
     types: [released]
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -22,43 +22,10 @@ jobs:
           node-version: 16.9.1
 
       - name: Run electron-builder
-        uses: samuelmeuli/action-electron-builder@v1
+        uses: samuelmeuli/action-electron-builder@e4b12cd06ddf023422f1ac4e39632bd76f6e6928
         with:
           package_root: electron
           github_token: ${{ secrets.github_token }}
-
-      - name: Cache electron-builder files
-        uses: actions/cache@v3
-        with:
-          path: |
-            electron/out/*dmg*
-            electron/out/*AppImage*
-            electron/out/*exe*
-            electron/out/latest*
-          key: electron-builder-${{ runner.os }}
-
-  release:
-    needs: build
-
-    permissions:
-      contents: write
-
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
-    steps:
-      - name: Restore cached electron-builder files
-        uses: actions/cache@v3
-        with:
-          path: |
-            electron/out/*dmg*
-            electron/out/*AppImage*
-            electron/out/*exe*
-            electron/out/latest*
-          key: electron-builder-${{ runner.os }}
 
       - name: Upload binaries to release
         uses: softprops/action-gh-release@d4e8205d7e959a9107da6396278b2f1f07af0f9b
