@@ -19,8 +19,7 @@ import OneInchCallee from './OneInchCallee';
 import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 import { routeToPool } from './helpers/pools';
-import { getOneInchMarketData, getOneinchSwapParameters } from './helpers/oneInch';
-import { WAD_NUMBER_OF_DIGITS } from '../constants/UNITS';
+import { getOneInchMarketData } from './helpers/oneInch';
 
 const MARKET_DATA_RECORDS_CACHE_MS = 29 * 1000;
 
