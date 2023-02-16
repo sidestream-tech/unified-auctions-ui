@@ -70,26 +70,6 @@ export const getPools = async (
     return undefined;
 };
 
-export const getOneInchApiData = async function (
-    network: string,
-    collateral: CollateralConfig,
-    marketId: string,
-    amount: BigNumber = new BigNumber('1')
-) {
-    const calleeConfig = collateral.exchanges[marketId];
-    if (calleeConfig.callee !== 'OneInchCallee') {
-        return undefined;
-    }
-
-    const swapParams = await getOneinchSwapParameters(
-        network,
-        collateral.symbol,
-        amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
-        marketId
-    );
-    return swapParams.tx.data;
-};
-
 const _getMarketDataById = async function (
     network: string,
     collateral: CollateralConfig,
