@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { getCalleeAddressByCollateralType } from '../../constants/CALLEES';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getErc20SymbolByAddress } from '../../contracts';
-import { getChainIdByNetworkType } from '../../network';
+import { getChainIdByNetworkType, getNetworkConfigByType } from '../../network';
 import { CollateralConfig } from '../../types';
 import BigNumber from '../../bignumber';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
@@ -76,10 +76,7 @@ export async function getOneinchSwapParameters(
     marketId: string,
     slippage = '10'
 ): Promise<OneInchSwapRepsonse> {
-    let chainId = parseInt(getChainIdByNetworkType(network) || '', 16);
-    if (chainId === 1337) {
-        chainId = 1;
-    }
+    let chainId = getNetworkConfigByType(network).isFork ? 1 : parseInt(getChainIdByNetworkType(network) || '', 16);
     if (Number.isNaN(chainId)) {
         throw new Error(`Invalid chainId: ${chainId}`);
     }
