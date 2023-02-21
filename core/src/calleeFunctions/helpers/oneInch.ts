@@ -125,38 +125,6 @@ export async function extractPathFromSwapResponseProtocols(
     return path;
 }
 
-export async function getOneInchQuote(network: string, collateralSymbol: string, amount: string, marketId: string) {
-    let chainId = parseInt(getChainIdByNetworkType(network) || '', 16);
-    if (chainId === 1337) {
-        // TODO: remove this hack
-        chainId = 1;
-    }
-    if (Number.isNaN(chainId)) {
-        throw new Error(`Invalid chainId: ${chainId}`);
-    }
-    const toTokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'DAI');
-    const fromTokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateralSymbol);
-    const calleeAddress = getCalleeAddressByCollateralType(
-        network,
-        getCollateralConfigBySymbol(collateralSymbol).ilk,
-        marketId
-    );
-    // Documentation https://docs.1inch.io/docs/aggregation-protocol/api/swap-params/
-    const swapParams = {
-        fromTokenAddress,
-        toTokenAddress,
-        fromAddress: calleeAddress,
-        amount,
-        protocols: (await getOneinchValidProtocols(chainId)).join(','),
-    };
-    const oneinchResponse = await executeOneInchApiRequest(chainId, '/quote', swapParams);
-    return {
-        estimatedGas: oneinchResponse?.estimatedGas,
-        route: await extractPathFromSwapResponseProtocols(network, oneinchResponse?.protocols),
-        tokenOut: oneinchResponse?.toTokenAmount,
-    };
-}
-
 export async function getOneInchMarketData(
     network: string,
     collateral: CollateralConfig,
@@ -171,16 +139,7 @@ export async function getOneInchMarketData(
     );
     const path = await extractPathFromSwapResponseProtocols(network, swapData.protocols);
     const calleeData = swapData.tx.data;
-    const estimatedGas = new BigNumber(
-        (
-            await getOneInchQuote(
-                network,
-                collateral.symbol,
-                amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
-                marketId
-            )
-        ).estimatedGas
-    );
+    const estimatedGas = swapData.tx.gas;
     const exchangeFeeEth = new BigNumber(swapData.tx.gasPrice).multipliedBy(estimatedGas);
     const exchangeFeeDai = new BigNumber(10).multipliedBy(exchangeFeeEth); // await convertETHtoDAI(network, exchangeFeeEth); TODO: uncomment
     const to = swapData.tx.to;
