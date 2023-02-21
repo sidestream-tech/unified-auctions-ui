@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { getCalleeAddressByCollateralType } from '../../constants/CALLEES';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
-import { getContractSymbolByAddress } from '../../contracts';
+import { getErc20SymbolByAddress } from '../../contracts';
 import { getChainIdByNetworkType } from '../../network';
 import { CollateralConfig } from '../../types';
 import BigNumber from '../../bignumber';
@@ -116,8 +116,8 @@ export async function extractPathFromSwapResponseProtocols(
     const pathStepsResolves = await Promise.all(
         oneInchRoutes[0].map(async route => {
             return await Promise.all([
-                await getContractSymbolByAddress(network, route[0].fromTokenAddress),
-                await getContractSymbolByAddress(network, route[0].toTokenAddress),
+                await getErc20SymbolByAddress(network, route[0].fromTokenAddress),
+                await getErc20SymbolByAddress(network, route[0].toTokenAddress),
             ]);
         })
     );

@@ -134,7 +134,7 @@ export const getContractValue = async function (
     return new BigNumber(variableHex._hex).shiftedBy(-decimals);
 };
 
-export const getContractSymbolByAddress = async function (network: string, address: string): Promise<string> {
+export const getErc20SymbolByAddress = async function (network: string, address: string): Promise<string> {
     const contract = await getErc20Contract(network, address);
     return await contract.symbol();
 };
