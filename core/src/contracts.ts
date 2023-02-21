@@ -34,6 +34,8 @@ import PROXY_FACTORY from './abis/PROXY_FACTORY.json';
 import PROXY_ACTIONS from './abis/PROXY_ACTIONS.json';
 import MCD_PAUSE from './abis/MCD_PAUSE.json';
 
+const ERC20_SYMBOL_CALL_CACHE_TIME_MS = 1000 * 60 * 60 * 24; // 1 day
+
 export const getClipperNameByCollateralType = function (collateralType: string): string {
     const suffix = collateralType.toUpperCase().replace('-', '_');
     return `MCD_CLIP_${suffix}`;
@@ -134,9 +136,15 @@ export const getContractValue = async function (
     return new BigNumber(variableHex._hex).shiftedBy(-decimals);
 };
 
-export const getErc20SymbolByAddress = async function (network: string, address: string): Promise<string> {
+const _getErc20SymbolByAddress = async function (network: string, address: string): Promise<string> {
     const contract = await getErc20Contract(network, address);
     return await contract.symbol();
 };
+
+export const getErc20SymbolByAddress = memoizee(_getErc20SymbolByAddress, {
+    promise: true,
+    length: 2,
+    maxAge: ERC20_SYMBOL_CALL_CACHE_TIME_MS,
+});
 
 export default getContract;
