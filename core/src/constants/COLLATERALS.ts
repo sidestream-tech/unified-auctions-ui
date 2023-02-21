@@ -34,7 +34,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -58,7 +58,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -82,7 +82,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -106,7 +106,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -147,7 +147,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: [],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -171,7 +171,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: [],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -195,7 +195,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: [],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -219,7 +219,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -243,7 +243,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -267,7 +267,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -291,7 +291,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -315,7 +315,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -339,7 +339,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -364,7 +364,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -388,7 +388,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -412,7 +412,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -436,7 +436,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -460,7 +460,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -484,7 +484,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -508,7 +508,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -532,7 +532,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -556,7 +556,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -580,7 +580,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -604,7 +604,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
@@ -628,7 +628,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            'One Inch Router': {
+            '1inch': {
                 callee: 'OneInchCallee',
             },
         },
