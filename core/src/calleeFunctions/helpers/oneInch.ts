@@ -7,7 +7,9 @@ import { CollateralConfig } from '../../types';
 import BigNumber from '../../bignumber';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { WAD_NUMBER_OF_DIGITS } from '../../constants/UNITS';
+import { RateLimiter } from "limiter";
 
+const REQUEST_LIMITER = new RateLimiter({ tokensPerInterval: 1, interval: "second" });
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
 
 export const getOneInchUrl = (chainId: number) => {
@@ -55,6 +57,7 @@ export const executeOneInchApiRequest = async (
 ) => {
     const oneInchUrl = getOneInchUrl(chainId);
     const url = `${oneInchUrl}${endpoint}?${new URLSearchParams(params)}`;
+    await REQUEST_LIMITER.removeTokens(1);
     const response = await fetch(url).then(res => res.json());
     if (response.error) {
         throw new Error(`failed to receive response from oneinch: ${response.error}`);

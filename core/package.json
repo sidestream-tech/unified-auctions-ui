@@ -37,6 +37,7 @@
     "deep-equal-in-any-order": "^2.0.0",
     "ethers": "^5.4.6",
     "evm-proxy-detection": "^1.0.0",
+    "limiter": "^2.1.0",
     "memoizee": "^0.4.15",
     "uuid": "^8.3.2"
   },
