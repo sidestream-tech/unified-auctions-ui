@@ -7,9 +7,9 @@ import { CollateralConfig } from '../../types';
 import BigNumber from '../../bignumber';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { WAD_NUMBER_OF_DIGITS } from '../../constants/UNITS';
-import { RateLimiter } from "limiter";
+import { RateLimiter } from 'limiter';
 
-const REQUEST_LIMITER = new RateLimiter({ tokensPerInterval: 1, interval: "second" });
+const REQUEST_LIMITER = new RateLimiter({ tokensPerInterval: 1, interval: 'second' });
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
 
 export const getOneInchUrl = (chainId: number) => {
@@ -79,7 +79,7 @@ export async function getOneinchSwapParameters(
     marketId: string,
     slippage = '10'
 ): Promise<OneInchSwapRepsonse> {
-    let chainId = getNetworkConfigByType(network).isFork ? 1 : parseInt(getChainIdByNetworkType(network) || '', 16);
+    const chainId = getNetworkConfigByType(network).isFork ? 1 : parseInt(getChainIdByNetworkType(network) || '', 16);
     if (Number.isNaN(chainId)) {
         throw new Error(`Invalid chainId: ${chainId}`);
     }
