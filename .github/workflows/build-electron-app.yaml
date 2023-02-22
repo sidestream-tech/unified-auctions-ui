@@ -12,6 +12,9 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
+    permissions:
+      contents: write
+
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
@@ -32,7 +35,7 @@ jobs:
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         with:
           files: |
-            electron/out/*dmg*
-            electron/out/*AppImage*
-            electron/out/*exe*
-            electron/out/latest*
+            electron/out/*.dmg*
+            electron/out/*.AppImage*
+            electron/out/*.exe*
+            electron/out/latest*.yml
