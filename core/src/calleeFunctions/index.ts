@@ -95,21 +95,13 @@ const _getMarketDataById = async function (
         };
     }
     if (calleeConfig.callee === 'OneInchCallee') {
-        try {
-            const apiExchangeData = await getOneInchMarketData(network, collateral, amount, marketId);
-            return {
-                ...calleeConfig,
-                marketUnitPrice: marketPriceResult.marketPrice.price,
-                errorMessage: marketPriceResult.errorMessage,
-                oneInch: apiExchangeData,
-            };
-        } catch (e) {
-            return {
-                ...calleeConfig,
-                marketUnitPrice: new BigNumber(NaN),
-                errorMessage: e instanceof Error ? e.message : e,
-            };
-        }
+        const apiExchangeData = await getOneInchMarketData(network, collateral, amount, marketId);
+        return {
+            ...calleeConfig,
+            marketUnitPrice: marketPriceResult.marketPrice.price,
+            errorMessage: marketPriceResult.errorMessage,
+            oneInch: apiExchangeData,
+        };
     }
     const { marketPrice } = marketPriceResult;
     const marketUnitPrice = marketPrice.price;

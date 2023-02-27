@@ -128,7 +128,7 @@ export declare interface MarketDataRegular extends MarketDataBase {
 }
 
 export declare interface MarketDataOneInch extends MarketDataBase {
-    oneInch?: {
+    oneInch: {
         to: string;
         path: string[];
         calleeData: string;
