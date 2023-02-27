@@ -22,7 +22,10 @@
                                 {{ formatRouteFromPools(marketData ? marketData.pools : undefined) }}
                             </td>
                             <td class="w-full text-right whitespace-nowrap">
-                                <div v-if="marketData.marketUnitPrice && !marketData.marketUnitPrice.isNaN()">
+                                <div v-if="marketData.errorMessage">
+                                    <span class="text-red-500">{{ marketData.errorMessage }}</span>
+                                </div>
+                                <div v-else-if="marketData.marketUnitPrice && !marketData.marketUnitPrice.isNaN()">
                                     <button type="button" @click="$emit('update:marketId', id)">
                                         <span v-if="suggestionOrSelection === id" class="opacity-50">Selected</span>
                                         <span v-else class="text-green-500">Select</span>

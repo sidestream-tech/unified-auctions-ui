@@ -11,6 +11,7 @@ import { RateLimiter } from 'limiter';
 
 const REQUEST_LIMITER = new RateLimiter({ tokensPerInterval: 1, interval: 'second' });
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
+const SUPPORTED_1INCH_NETWORK_IDS = [1, 56, 137, 10, 42161, 100, 43114];
 
 export const getOneInchUrl = (chainId: number) => {
     return `https://api.1inch.io/v5.0/${chainId}`;
@@ -80,6 +81,9 @@ export async function getOneinchSwapParameters(
     slippage = '10'
 ): Promise<OneInchSwapRepsonse> {
     const chainId = getNetworkConfigByType(network).isFork ? 1 : parseInt(getChainIdByNetworkType(network) || '', 16);
+    if (!SUPPORTED_1INCH_NETWORK_IDS.includes(chainId)) {
+        throw new Error(`1inch does not support network ${network}`);
+    }
     if (Number.isNaN(chainId)) {
         throw new Error(`Invalid chainId: ${chainId}`);
     }
