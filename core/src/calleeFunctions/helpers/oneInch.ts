@@ -80,8 +80,9 @@ export async function getOneinchSwapParameters(
     marketId: string,
     slippage = '10'
 ): Promise<OneInchSwapRepsonse> {
-    const chainId = getNetworkConfigByType(network).isFork ? 1 : parseInt(getChainIdByNetworkType(network) || '', 16);
-    if (!SUPPORTED_1INCH_NETWORK_IDS.includes(chainId)) {
+    const isFork = getNetworkConfigByType(network).isFork
+    const chainId = isFork ? 1 : parseInt(getChainIdByNetworkType(network) || '', 16);
+    if (!isFork && !SUPPORTED_1INCH_NETWORK_IDS.includes(chainId)) {
         throw new Error(`1inch does not support network ${network}`);
     }
     if (Number.isNaN(chainId)) {
