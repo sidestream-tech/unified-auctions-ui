@@ -3,9 +3,8 @@
         <Alert v-if="isElectronUpdateError" type="error" show-icon banner closable>
             <template #message>
                 Could not check for updates automatically. Please do so manually at:
-                <a :href="`${repository.url}/releases`">{{ repository.url }}/releases</a>. Current version: v{{
-                    version
-                }}.
+                <a :href="`${repository.url}/releases`" target="_blank">{{ repository.url }}/releases</a>. Current
+                version: v{{ version }}.
             </template>
         </Alert>
         <Header
