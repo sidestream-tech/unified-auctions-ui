@@ -1,5 +1,13 @@
 <template>
     <div :class="isDarkMode && 'dark bg-gray-900'">
+        <Alert v-if="isElectronUpdateError" type="error" show-icon banner closable>
+            <template #message>
+                Could not check for updates automatically. Please do so manually at:
+                <a :href="`${repository.url}/releases`">{{ repository.url }}/releases</a>. Current version: v{{
+                    version
+                }}.
+            </template>
+        </Alert>
         <Header
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
@@ -57,7 +65,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
-import { message } from 'ant-design-vue';
+import { Alert, message } from 'ant-design-vue';
+import { repository, version } from '~/../electron/package.json';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 import RpcUrlConfigurationModal from '~/components/modals/RpcUrlConfigurationModal.vue';
@@ -71,6 +80,7 @@ import Analytics from '~/components/common/other/Analytics.vue';
 
 export default Vue.extend({
     components: {
+        Alert,
         RpcUrlConfigurationModal,
         WalletModalContainer,
         TermsModal,
@@ -84,6 +94,9 @@ export default Vue.extend({
     data() {
         return {
             electronUpdateUrl: undefined,
+            isElectronUpdateError: false,
+            repository,
+            version,
         };
     },
     computed: {
@@ -195,8 +208,11 @@ export default Vue.extend({
         async setElectronUpdateUrl(): Promise<void> {
             try {
                 this.electronUpdateUrl = await window.electronAPI?.getUpdateUrl();
-            } catch (error: any) {
-                message.error(`Cannot check for updates: ${error.message}`);
+            } catch {
+                this.isElectronUpdateError = true;
+                message.error(
+                    `Cannot check for updates. Error code: ${await window.electronAPI?.getUpdateErrorCode()}.`
+                );
             }
         },
     },
