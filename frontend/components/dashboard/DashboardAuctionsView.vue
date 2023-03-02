@@ -18,7 +18,11 @@
             </TextBlock>
         </div>
         <div class="Block max-w-screen-xl">
-            <CollateralTable :collaterals="collaterals" class="overflow-x-auto" />
+            <CollateralTable
+                :collaterals="collaterals"
+                :off-boarded-collaterals="offBoardedCollaterals"
+                class="overflow-x-auto"
+            />
         </div>
         <div class="Block space-y-4 md:space-y-8 max-w-screen-sm">
             <TextBlock v-if="isExplanationsShown" title="Exchange Callee Contracts">
@@ -65,6 +69,10 @@ export default Vue.extend({
         },
         collaterals: {
             type: Array as Vue.PropType<CollateralRow[]>,
+            default: () => [],
+        },
+        offBoardedCollaterals: {
+            type: Array as Vue.PropType<string[]>,
             default: () => [],
         },
         callees: {

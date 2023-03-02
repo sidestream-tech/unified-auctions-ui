@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import { ActionContext } from 'vuex';
+import { ethers } from 'ethers';
 import type { CollateralRow, CollateralStatus } from 'auctions-core/src/types';
 import COLLATERALS, {
     getAllCollateralTypes,
@@ -10,6 +11,7 @@ import { fetchCalcParametersByCollateralType } from 'auctions-core/src/params';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import { isCollateralTypeSupported } from 'auctions-core/src/addresses';
 import { fetchAutoRouteInformation } from 'auctions-core/src/calleeFunctions/helpers/uniswapAutoRouter';
+import { getContractValue } from 'auctions-core/src/contracts';
 
 interface State {
     collaterals: CollateralRow[];
@@ -161,6 +163,22 @@ export const actions = {
                 address: null,
             });
         }
+    },
+    async isCollateralOffboarded(
+        { rootGetters }: ActionContext<State, State>,
+        collateralType: string
+    ): Promise<boolean> {
+        const network = rootGetters['network/getMakerNetwork'];
+        if (!network) {
+            return false;
+        }
+        const typeHex = ethers.utils.formatBytes32String(collateralType);
+        const maxCollateralDebt = await getContractValue(network, 'MCD_VAT', 'ilks', {
+            parameters: [typeHex],
+            variableName: 'line',
+            decimalUnits: 'RAD',
+        });
+        return maxCollateralDebt.isZero();
     },
     async setup({ commit, dispatch }: ActionContext<State, State>) {
         commit('reset');
