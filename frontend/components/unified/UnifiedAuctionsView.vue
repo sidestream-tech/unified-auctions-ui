@@ -37,6 +37,7 @@
                             :participate-url="tool.links.participate"
                             :analytics-url="tool.links.analytics"
                             :profile-url="tool.links.profile"
+                            :view-url="tool.links.view"
                         >
                             {{ tool.description }}
                         </AuctionTool>
@@ -112,6 +113,14 @@ export default Vue.extend({
                         participate: '/vaults',
                     },
                     filters: ['collateral'],
+                },
+                {
+                    title: 'Unified Auctions UI application',
+                    description: 'Electron-packaged application to run the Unified Auctions UI locally',
+                    links: {
+                        view: ' https://github.com/sidestream-tech/unified-auctions-ui/releases/latest',
+                    },
+                    filters: ['collateral', 'surplus', 'debt'],
                 },
                 {
                     title: 'Liquidations platform',
