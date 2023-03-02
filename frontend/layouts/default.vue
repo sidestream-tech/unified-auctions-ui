@@ -3,8 +3,8 @@
         <Alert v-if="isElectronUpdateError" type="error" show-icon banner closable>
             <template #message>
                 Could not check for updates automatically. Please do so manually at:
-                <a :href="`${repository.url}/releases`" target="_blank">{{ repository.url }}/releases</a>. Current
-                version: v{{ version }}.
+                <a :href="electronReleasesLink" target="_blank">{{ electronReleasesLink }}</a
+                >. Current version: v{{ currentElectronVersion }}.
             </template>
         </Alert>
         <Header
@@ -65,7 +65,6 @@
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
 import { Alert, message } from 'ant-design-vue';
-import { repository, version } from '~/../electron/package.json';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 import RpcUrlConfigurationModal from '~/components/modals/RpcUrlConfigurationModal.vue';
@@ -93,9 +92,9 @@ export default Vue.extend({
     data() {
         return {
             electronUpdateUrl: undefined,
+            currentElectronVersion: undefined,
+            electronReleasesLink: undefined,
             isElectronUpdateError: false,
-            repository,
-            version,
         };
     },
     computed: {
@@ -181,7 +180,7 @@ export default Vue.extend({
         // source: https://github.com/electron/electron/issues/2288#issuecomment-337858978
         const userAgent = navigator.userAgent.toLowerCase();
         if (userAgent.includes(' electron/')) {
-            this.setElectronUpdateUrl();
+            this.handleElectronUpdate();
         }
     },
     methods: {
@@ -204,7 +203,9 @@ export default Vue.extend({
         setSelectWalletModal(open: boolean): void {
             this.$store.commit('modals/setSelectWalletModal', open);
         },
-        async setElectronUpdateUrl(): Promise<void> {
+        async handleElectronUpdate(): Promise<void> {
+            this.currentElectronVersion = await window.electronAPI?.getAppVersion();
+            this.electronReleasesLink = await window.electronAPI?.getReleasesLink();
             try {
                 this.electronUpdateUrl = await window.electronAPI?.getUpdateUrl();
             } catch {

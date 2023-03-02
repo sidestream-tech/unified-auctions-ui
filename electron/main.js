@@ -48,6 +48,16 @@ app.whenReady().then(() => {
         return isNewerVersionAvailable ? `${repository.url}/releases/latest` : undefined;
     });
 
+    // pass current app version to frontend
+    ipcMain.handle('getAppVersion', () => {
+        return version;
+    });
+
+    // pass releases link to frontend
+    ipcMain.handle('getReleasesLink', async () => {
+        return `${repository.url}/releases`;
+    });
+
     autoUpdater.on('error', (error, _message) => {
         ipcMain.handle('getUpdateErrorCode', () => {
             return error.code;
