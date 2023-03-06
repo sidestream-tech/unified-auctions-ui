@@ -1,6 +1,5 @@
 <template>
     <div>
-        <ElectronUpdateBanner v-if="electronUpdateUrl" :url="electronUpdateUrl" />
         <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
         <header class="bg-primary dark:bg-primary-dark">
             <nav class="flex items-center py-2 px-4 md:px-10">
@@ -54,7 +53,6 @@
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import { NetworkConfig } from 'auctions-core/src/types';
-import ElectronUpdateBanner from './ElectronUpdateBanner.vue';
 import StagingBanner from './StagingBanner.vue';
 import HeaderLogo from './HeaderLogo.vue';
 import BaseSwitch from '~/components/common/inputs/BaseSwitch.vue';
@@ -66,7 +64,6 @@ export default Vue.extend({
     name: 'Header',
     components: {
         HeaderLogo,
-        ElectronUpdateBanner,
         StagingBanner,
         ThemeSwitcher,
         BaseSwitch,
@@ -105,10 +102,6 @@ export default Vue.extend({
         hasAcceptedTerms: {
             type: Boolean,
             default: false,
-        },
-        electronUpdateUrl: {
-            type: String,
-            default: undefined,
         },
         stagingBannerUrl: {
             type: String,

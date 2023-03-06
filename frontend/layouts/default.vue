@@ -1,12 +1,6 @@
 <template>
     <div :class="isDarkMode && 'dark bg-gray-900'">
-        <Alert v-if="isElectronUpdateError" type="error" show-icon banner closable>
-            <template #message>
-                Could not check for updates automatically. Please do so manually at:
-                <a :href="electronReleasesLink" target="_blank">{{ electronReleasesLink }}</a
-                >. Current version: v{{ currentElectronVersion }}.
-            </template>
-        </Alert>
+        <ElectronUpdateBannerContainer />
         <Header
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
@@ -17,7 +11,6 @@
             :wallet-address="walletAddress"
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
-            :electron-update-url="electronUpdateUrl"
             :staging-banner-url="stagingBannerURL"
             :networks="networks"
             :is-changing-network="isChangingNetwork"
@@ -64,7 +57,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
-import { Alert, message } from 'ant-design-vue';
 import Header from '~/components/layout/Header.vue';
 import '~/assets/styles/index';
 import RpcUrlConfigurationModal from '~/components/modals/RpcUrlConfigurationModal.vue';
@@ -75,10 +67,10 @@ import WalletModalContainer from '~/containers/WalletModalContainer.vue';
 import ManageCollateralModalContainer from '~/containers/ManageCollateralModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
 import Analytics from '~/components/common/other/Analytics.vue';
+import ElectronUpdateBannerContainer from '~/components/layout/ElectronUpdateBannerContainer.vue';
 
 export default Vue.extend({
     components: {
-        Alert,
         RpcUrlConfigurationModal,
         WalletModalContainer,
         TermsModal,
@@ -88,14 +80,7 @@ export default Vue.extend({
         WalletSelectModal,
         ManageCollateralModalContainer,
         Analytics,
-    },
-    data() {
-        return {
-            electronUpdateUrl: undefined,
-            currentElectronVersion: undefined,
-            electronReleasesLink: undefined,
-            isElectronUpdateError: false,
-        };
+        ElectronUpdateBannerContainer,
     },
     computed: {
         ...mapGetters('wallet', {
@@ -175,14 +160,6 @@ export default Vue.extend({
             }
         },
     },
-    created() {
-        // check if running in Electron
-        // source: https://github.com/electron/electron/issues/2288#issuecomment-337858978
-        const userAgent = navigator.userAgent.toLowerCase();
-        if (userAgent.includes(' electron/')) {
-            this.handleElectronUpdate();
-        }
-    },
     methods: {
         ...mapActions('network', ['configureRpcUrl', 'setPageNetwork', 'fixWalletNetwork']),
         ...mapActions('wallet', ['changeWalletType']),
@@ -202,18 +179,6 @@ export default Vue.extend({
         },
         setSelectWalletModal(open: boolean): void {
             this.$store.commit('modals/setSelectWalletModal', open);
-        },
-        async handleElectronUpdate(): Promise<void> {
-            this.currentElectronVersion = await window.electronAPI?.getAppVersion();
-            this.electronReleasesLink = await window.electronAPI?.getReleasesLink();
-            try {
-                this.electronUpdateUrl = await window.electronAPI?.getUpdateUrl();
-            } catch {
-                this.isElectronUpdateError = true;
-                message.error(
-                    `Cannot check for updates. Error code: ${await window.electronAPI?.getUpdateErrorCode()}.`
-                );
-            }
         },
     },
 });

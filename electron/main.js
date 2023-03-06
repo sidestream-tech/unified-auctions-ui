@@ -3,7 +3,7 @@ const url = require('url');
 const semverGt = require('semver/functions/gt');
 const { app, BrowserWindow, shell, ipcMain } = require('electron');
 const { autoUpdater } = require('electron-updater');
-const { version, repository } = require('./package.json');
+const currentPackage = require('./package.json');
 
 autoUpdater.autoDownload = false;
 
@@ -41,27 +41,34 @@ function createWindow() {
 app.whenReady().then(() => {
     createWindow();
 
-    // check for updates
-    ipcMain.handle('getUpdateUrl', async () => {
-        const updateCheckResult = await autoUpdater.checkForUpdates();
-        const isNewerVersionAvailable = semverGt(updateCheckResult.updateInfo.version, version);
-        return isNewerVersionAvailable ? `${repository.url}/releases/latest` : undefined;
-    });
-
-    // pass current app version to frontend
-    ipcMain.handle('getAppVersion', () => {
-        return version;
-    });
-
-    // pass releases link to frontend
-    ipcMain.handle('getReleasesLink', async () => {
-        return `${repository.url}/releases`;
-    });
-
-    autoUpdater.on('error', (error, _message) => {
-        ipcMain.handle('getUpdateErrorCode', () => {
-            return error.code;
-        });
+    // provide method to check for updates
+    ipcMain.handle('checkForUpdates', async () => {
+        const releasesUrl = `${currentPackage.repository.url}/releases`;
+        try {
+            const updateCheckResult = await autoUpdater.checkForUpdates();
+            const isNewerVersionAvailable = semverGt(updateCheckResult.updateInfo.version, currentPackage.version);
+            if (isNewerVersionAvailable) {
+                return {
+                    version: currentPackage.version,
+                    status: 'available',
+                    url: `${releasesUrl}/latest`,
+                };
+            } else {
+                return {
+                    version: currentPackage.version,
+                    status: 'unavailable',
+                    url: releasesUrl,
+                };
+            }
+        } catch (error) {
+            console.error('Error while retrieving updates', error.message);
+            return {
+                version: currentPackage.version,
+                status: 'error',
+                url: releasesUrl,
+                errorMessage: error.message,
+            };
+        }
     });
 
     // On macOS it's common to re-create a window in the app when the
