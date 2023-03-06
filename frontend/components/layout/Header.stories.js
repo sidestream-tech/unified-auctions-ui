@@ -50,15 +50,6 @@ storiesOf('Layout/Header', module)
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
     }))
-    .add('With Electron Update Banner', () => ({
-        ...common,
-        template: `<Header
-        type="unified" 
-        :isExplanationsShown.sync="isExplanationsShown"
-        electronUpdateUrl="https://example.com/"
-        @update:isExplanationsShown="updateIsExplanationsShown"
-        />`,
-    }))
     .add('With Staging Banner', () => ({
         ...common,
         template: `<Header
