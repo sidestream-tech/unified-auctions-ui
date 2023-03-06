@@ -67,7 +67,7 @@ import WalletModalContainer from '~/containers/WalletModalContainer.vue';
 import ManageCollateralModalContainer from '~/containers/ManageCollateralModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
 import Analytics from '~/components/common/other/Analytics.vue';
-import ElectronUpdateBannerContainer from '~/components/layout/ElectronUpdateBannerContainer.vue';
+import ElectronUpdateBannerContainer from '~/containers/ElectronUpdateBannerContainer.vue';
 
 export default Vue.extend({
     components: {

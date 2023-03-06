@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { message } from 'ant-design-vue';
-import ElectronUpdateBanner from './ElectronUpdateBanner.vue';
+import ElectronUpdateBanner from '~/components/layout/ElectronUpdateBanner.vue';
 
 export default Vue.extend({
     components: {
