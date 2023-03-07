@@ -426,10 +426,7 @@ export declare interface VaultTransactionLiquidated extends VaultBase {
     state: 'liquidated';
     pastLiquidations: LiquidationEvent[];
 }
-export declare type GetCalleeDataParams =
-    | { pools: Pool[] }
-    | { oneInchParams?: { txData: string; to: string } }
-    | Record<string, never>;
+export declare type GetCalleeDataParams = { pools: Pool[] } | { oneInchParams: { txData: string; to: string } };
 
 export declare interface VaultTransactionBase extends Vault, VaultTransactionFees, OraclePrices {
     liquidationRatio: BigNumber;
