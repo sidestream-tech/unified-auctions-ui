@@ -24,6 +24,18 @@ jobs:
         with:
           node-version: 16.9.1
 
+      - name: Get version from tag
+        id: get_version
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const tag = context.ref
+            const version = tag.replace('refs/tags/v', '')
+            core.setOutput('version', version)
+
+      - name: Set version
+        run: cd electron && npm version ${{ steps.get_version.outputs.version }} --no-git-tag-version && cd ..
+
       - name: Run electron-builder
         uses: samuelmeuli/action-electron-builder@e4b12cd06ddf023422f1ac4e39632bd76f6e6928
         with:
