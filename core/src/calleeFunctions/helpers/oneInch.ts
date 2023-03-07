@@ -7,9 +7,9 @@ import { CollateralConfig } from '../../types';
 import BigNumber from '../../bignumber';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { WAD_NUMBER_OF_DIGITS } from '../../constants/UNITS';
-import { RateLimiter } from 'limiter';
+import { Queue } from 'async-await-queue';
 
-const REQUEST_LIMITER = new RateLimiter({ tokensPerInterval: 1, interval: 'second' });
+const REQUEST_QUEUE = new Queue(1, 1000);
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
 const SUPPORTED_1INCH_NETWORK_IDS = [1, 56, 137, 10, 42161, 100, 43114];
 
@@ -51,6 +51,14 @@ interface LiquiditySourcesResponse {
 }
 type OneInchSwapRoute = { name: string; part: number; fromTokenAddress: string; toTokenAddress: string }[][];
 
+const executeRequestInQueue = async (url: string) => {
+    const apiRequestSymbol = Symbol();
+    await REQUEST_QUEUE.wait(apiRequestSymbol);
+    const response = await fetch(url).then(res => res.json());
+    REQUEST_QUEUE.end(apiRequestSymbol);
+    return response;
+};
+
 export const executeOneInchApiRequest = async (
     chainId: number,
     endpoint: '/swap' | '/quote' | '/liquidity-sources',
@@ -58,8 +66,7 @@ export const executeOneInchApiRequest = async (
 ) => {
     const oneInchUrl = getOneInchUrl(chainId);
     const url = `${oneInchUrl}${endpoint}?${new URLSearchParams(params)}`;
-    await REQUEST_LIMITER.removeTokens(1);
-    const response = await fetch(url).then(res => res.json());
+    const response = await executeRequestInQueue(url);
     if (response.error) {
         throw new Error(`failed to receive response from oneinch: ${response.error}`);
     }
