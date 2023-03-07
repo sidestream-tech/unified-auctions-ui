@@ -61,7 +61,7 @@ const executeRequestInQueue = async (url: string) => {
 
 export const executeOneInchApiRequest = async (
     chainId: number,
-    endpoint: '/swap' | '/quote' | '/liquidity-sources',
+    endpoint: '/swap' | '/liquidity-sources',
     params?: Record<string, any>
 ) => {
     const oneInchUrl = getOneInchUrl(chainId);
