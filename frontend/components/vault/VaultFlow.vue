@@ -1,5 +1,5 @@
 <template>
-    <div :class="doShowHeader ? 'SplitLayoutBannerPrependedContainer' : 'SplitLayoutContainer'">
+    <div :class="isStagingEnvironment ? 'SplitLayoutStagingContainer' : 'SplitLayoutContainer'">
         <SplitLayout :step.sync="step">
             <template #step0>
                 <div v-if="isExplanationsShown" class="h-1/2">
@@ -140,8 +140,8 @@ export default Vue.extend({
                 ) || null
             );
         },
-        doShowHeader(): boolean {
-            return !!process.env.STAGING_BANNER_URL || !!process.env.PRODUCTION_BANNER_URL;
+        isStagingEnvironment(): boolean {
+            return !!process.env.STAGING_BANNER_URL;
         },
     },
     watch: {
@@ -183,7 +183,7 @@ export default Vue.extend({
     height: calc(100vh - 4rem);
 }
 
-.SplitLayoutBannerPrependedContainer {
+.SplitLayoutStagingContainer {
     margin-top: 2.3rem;
     height: calc(100vh - 6.3rem);
 }
