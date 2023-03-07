@@ -9,6 +9,7 @@ import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { WAD_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { Queue } from 'async-await-queue';
 import memoizee from 'memoizee';
+import { convertETHtoDAI } from '../../fees';
 
 const REQUEST_QUEUE = new Queue(1, 1000);
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
@@ -161,7 +162,7 @@ export async function getOneInchMarketData(
     const calleeData = swapData.tx.data;
     const estimatedGas = swapData.tx.gas;
     const exchangeFeeEth = new BigNumber(swapData.tx.gasPrice).multipliedBy(estimatedGas);
-    const exchangeFeeDai = new BigNumber(10).multipliedBy(exchangeFeeEth); // await convertETHtoDAI(network, exchangeFeeEth); TODO: uncomment
+    const exchangeFeeDai = await convertETHtoDAI(network, exchangeFeeEth);
     const to = swapData.tx.to;
     return {
         path,
