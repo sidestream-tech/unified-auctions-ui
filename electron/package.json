@@ -7,26 +7,42 @@
     "productName": "Unified Auctions UI",
     "appId": "com.makerdao.unified-auctions",
     "mac": {
+      "target": "dmg",
       "category": "public.app-category.finance"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
     },
     "directories": {
       "output": "out"
     },
     "files": [
       "main.js",
+      "preload.js",
       "dist/**/*"
     ]
   },
   "scripts": {
     "preinstall": "cd ../frontend && npm ci",
-    "prebuild": "(cd ../frontend && ENABLE_FILE_PROTOCOL=\"true\" npm run generate) && npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
+    "build": "(cd ../frontend && cross-env ENABLE_FILE_PROTOCOL=true npm run generate) && npx copyfiles -a -u 2 \"../frontend/dist/**/*\" .",
     "start": "electron .",
-    "build": "rm -rf out && electron-builder"
+    "distribute": "rm -rf dist out && npm run build && electron-builder"
+  },
+  "repository": {
+    "url": "https://github.com/sidestream-tech/unified-auctions-ui"
   },
   "author": "SIDESTREAM GmbH",
   "devDependencies": {
     "copyfiles": "^2.4.1",
+    "cross-env": "^7.0.3",
     "electron": "^22.1.0",
     "electron-builder": "^23.6.0"
+  },
+  "dependencies": {
+    "electron-updater": "^5.3.0",
+    "semver": "^7.3.8"
   }
 }

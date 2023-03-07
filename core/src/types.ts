@@ -183,6 +183,11 @@ export declare interface CalleeAddresses {
 
 export type CalleeNames = keyof CalleeAddresses;
 
+export interface PriceWithPools {
+    price: BigNumber;
+    pools?: Pool[];
+}
+
 export declare interface CalleeFunctions {
     getCalleeData: (
         network: string,
@@ -196,7 +201,7 @@ export declare interface CalleeFunctions {
         collateral: CollateralConfig,
         marketId: string,
         amount: BigNumber
-    ) => Promise<BigNumber>;
+    ) => Promise<PriceWithPools>;
 }
 
 export declare interface MakerParams {

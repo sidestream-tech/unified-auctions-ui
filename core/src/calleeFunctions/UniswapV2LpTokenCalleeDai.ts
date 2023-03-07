@@ -37,7 +37,7 @@ const getMarketPrice = async function (
     collateral: CollateralConfig,
     marketId: string,
     amount: BigNumber
-): Promise<BigNumber> {
+): Promise<{ price: BigNumber; pools: undefined }> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'UniswapV2LpTokenCalleeDai') {
         throw new Error(`"${collateral.symbol}" is not a UniSwap LP token`);
@@ -58,7 +58,7 @@ const getMarketPrice = async function (
         portionOfTheTotalSupply
     );
     const totalPrice = totalPriceOfToken0.plus(totalPriceOfToken1);
-    return totalPrice.dividedBy(amount);
+    return { price: totalPrice.dividedBy(amount), pools: undefined };
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {
