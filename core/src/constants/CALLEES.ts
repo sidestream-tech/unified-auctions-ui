@@ -11,7 +11,7 @@ const CALLEES: Record<string, CalleeAddresses | undefined> = {
         UniswapV3Callee: '0xdB9C76109d102d2A1E645dCa3a7E671EBfd8e11A',
         rETHCurveUniv3Callee: '0x7cdAb0fE16efb1EFE89e53B141347D7F299d6610',
         // TODO: insert a real address here after deployment:
-        OneInchCallee: '0x773330693cb7d5D233348E25809770A32483A940',
+        OneInchCallee: '0xdB012DD3E3345e2f8D23c0F3cbCb2D94f430Be8C',
     },
     '0x5': {
         UniswapV2CalleeDai: '0x6d9139ac89ad2263f138633de20e47bcae253938',
