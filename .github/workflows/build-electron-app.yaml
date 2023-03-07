@@ -1,0 +1,41 @@
+name: Build and release Electron app
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  build-and-release:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+
+      - name: Setup Node.js and NPM
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.9.1
+
+      - name: Run electron-builder
+        uses: samuelmeuli/action-electron-builder@e4b12cd06ddf023422f1ac4e39632bd76f6e6928
+        with:
+          package_root: electron
+          github_token: ${{ secrets.github_token }}
+
+      - name: Upload binaries to release
+        uses: softprops/action-gh-release@d4e8205d7e959a9107da6396278b2f1f07af0f9b
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        with:
+          files: |
+            electron/out/*.dmg*
+            electron/out/*.AppImage*
+            electron/out/*.exe*
+            electron/out/latest*.yml
