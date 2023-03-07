@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { getCalleeAddressByCollateralType } from '../../constants/CALLEES';
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getErc20SymbolByAddress } from '../../contracts';
-import { getChainIdByNetworkType, getNetworkConfigByType } from '../../network';
+import { getDecimalChainIdByNetworkType, getNetworkConfigByType } from '../../network';
 import { CollateralConfig } from '../../types';
 import BigNumber from '../../bignumber';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
@@ -12,7 +12,7 @@ import memoizee from 'memoizee';
 
 const REQUEST_QUEUE = new Queue(1, 1000);
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
-const SUPPORTED_1INCH_NETWORK_IDS = [1, 56, 137, 10, 42161, 100, 43114];
+const SUPPORTED_1INCH_NETWORK_IDS = [1, 56, 137, 10, 42161, 100, 43114]; // see https://help.1inch.io/en/articles/5528619-how-to-use-different-networks-on-1inch
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export const getOneInchUrl = (chainId: number) => {
@@ -96,12 +96,9 @@ export async function getOneinchSwapParameters(
     slippage = '10'
 ): Promise<OneInchSwapRepsonse> {
     const isFork = getNetworkConfigByType(network).isFork;
-    const chainId = isFork ? 1 : parseInt(getChainIdByNetworkType(network) || '', 16);
+    const chainId = isFork ? 1 : getDecimalChainIdByNetworkType(network);
     if (!isFork && !SUPPORTED_1INCH_NETWORK_IDS.includes(chainId)) {
         throw new Error(`1inch does not support network ${network}`);
-    }
-    if (Number.isNaN(chainId)) {
-        throw new Error(`Invalid chainId: ${chainId}`);
     }
     const toTokenAddress = await getTokenAddressByNetworkAndSymbol(network, 'DAI');
     const fromTokenAddress = await getTokenAddressByNetworkAndSymbol(network, collateralSymbol);
