@@ -8,10 +8,12 @@ import BigNumber from '../../bignumber';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { WAD_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { Queue } from 'async-await-queue';
+import memoizee from 'memoizee';
 
 const REQUEST_QUEUE = new Queue(1, 1000);
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
 const SUPPORTED_1INCH_NETWORK_IDS = [1, 56, 137, 10, 42161, 100, 43114];
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export const getOneInchUrl = (chainId: number) => {
     return `https://api.1inch.io/v5.0/${chainId}`;
@@ -73,12 +75,18 @@ export const executeOneInchApiRequest = async (
     return response;
 };
 
-export async function getOneinchValidProtocols(chainId: number) {
+async function _getOneinchValidProtocols(chainId: number) {
     // Fetch all supported protocols except for the limit orders
     const response: LiquiditySourcesResponse = await executeOneInchApiRequest(chainId, '/liquidity-sources');
     const protocolIds = response.protocols.map(protocol => protocol.id);
     return protocolIds.filter(protocolId => !protocolId.toLowerCase().includes('limit'));
 }
+
+export const getOneinchValidProtocols = memoizee(_getOneinchValidProtocols, {
+    promise: true,
+    length: 1,
+    maxAge: ONE_DAY_MS,
+});
 
 export async function getOneinchSwapParameters(
     network: string,
