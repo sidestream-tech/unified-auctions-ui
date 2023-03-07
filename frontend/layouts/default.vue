@@ -1,5 +1,6 @@
 <template>
     <div :class="isDarkMode && 'dark bg-gray-900'">
+        <ElectronUpdateBannerContainer />
         <Header
             class="sticky top-0 z-50 w-full h-16"
             :is-explanations-shown.sync="isExplanationsShown"
@@ -66,6 +67,7 @@ import WalletModalContainer from '~/containers/WalletModalContainer.vue';
 import ManageCollateralModalContainer from '~/containers/ManageCollateralModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
 import Analytics from '~/components/common/other/Analytics.vue';
+import ElectronUpdateBannerContainer from '~/containers/ElectronUpdateBannerContainer.vue';
 
 export default Vue.extend({
     components: {
@@ -78,6 +80,7 @@ export default Vue.extend({
         WalletSelectModal,
         ManageCollateralModalContainer,
         Analytics,
+        ElectronUpdateBannerContainer,
     },
     computed: {
         ...mapGetters('wallet', {
