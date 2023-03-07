@@ -27,12 +27,6 @@ export default Vue.extend({
                 // should never be the case
                 message.error(`Cannot check for updates for unknown reason`);
             }
-        } else if (process.env.PRODUCTION_BANNER_URL) {
-            this.result = {
-                status: 'production',
-                url: process.env.PRODUCTION_BANNER_URL,
-                version: '',
-            };
         }
     },
 });

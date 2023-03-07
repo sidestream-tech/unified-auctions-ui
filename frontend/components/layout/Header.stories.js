@@ -59,6 +59,15 @@ storiesOf('Layout/Header', module)
         @update:isExplanationsShown="updateIsExplanationsShown"
         />`,
     }))
+    .add('With Production header', () => ({
+        ...common,
+        template: `<Header
+        type="unified"
+        :isExplanationsShown.sync="isExplanationsShown"
+        productionBannerUrl='https://github.com'
+        @update:isExplanationsShown="updateIsExplanationsShown"
+        />`,
+    }))
     .add('Surplus Auctions Page', () => ({
         ...common,
         template: `<Header
