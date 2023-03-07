@@ -22,6 +22,8 @@ data:
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/contact_email
         - key: STAGING_BANNER_URL
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/staging_banner_url
+        - key: PRODUCTION_BANNER_URL
+          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/production_banner_url
         - key: HEAPIO_ID
           value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/heapio_id
         - key: FRONTEND_ORIGIN
@@ -214,8 +216,8 @@ data:
         aws_target_eks_cluster_name: eks-cluster-sidestream
         aws_ssm_path_to_base64_encoded_secrets_yaml: auction-ui/secrets.yaml
         value_files:
-        - values.yaml
-        - values.override_main.auction-ui.k8s.sidestream.tech.yaml
+          - values.yaml
+          - values.override_main.auction-ui.k8s.sidestream.tech.yaml
         target_namespace: "auction-ui-main"
         release_name: "auction-ui"
         values_to_set:
@@ -234,8 +236,8 @@ data:
         aws_target_eks_cluster_name: eks-cluster-sidestream
         aws_ssm_path_to_base64_encoded_secrets_yaml: auction-ui/secrets.yaml
         value_files:
-        - values.yaml
-        - values.override_unified-auctions.makerdao.com.yaml
+          - values.yaml
+          - values.override_unified-auctions.makerdao.com.yaml
         target_namespace: "auction-ui-production"
         release_name: "auction-ui"
         values_to_set:
@@ -299,7 +301,7 @@ data:
             - npm run test
 
       services:
-        - name: hardhat-service  # named with 'service' to avoid duplication with the default value
+        - name: hardhat-service # named with 'service' to avoid duplication with the default value
           image: ghcr.io/sidestream-tech/unified-auctions-ui/core-hardhat:pr-${DRONE_PULL_REQUEST}
           expose: 8545
 
