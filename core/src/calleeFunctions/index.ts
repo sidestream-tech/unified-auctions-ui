@@ -21,7 +21,7 @@ import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../const
 import { routeToPool } from './helpers/pools';
 import { getOneInchMarketData } from './helpers/oneInch';
 
-const MARKET_DATA_RECORDS_CACHE_MS = 29 * 1000;
+export const MARKET_DATA_RECORDS_CACHE_MS = 29 * 1000;
 
 const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV2CalleeDai,
