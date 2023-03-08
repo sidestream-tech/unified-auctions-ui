@@ -11,7 +11,8 @@ import { Queue } from 'async-await-queue';
 import memoizee from 'memoizee';
 import { convertETHtoDAI } from '../../fees';
 
-const REQUEST_QUEUE = new Queue(1, 1000);
+const MAX_DELAY_BETWEEN_REQUESTS_MS = 600;
+const REQUEST_QUEUE = new Queue(1, MAX_DELAY_BETWEEN_REQUESTS_MS);
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
 const SUPPORTED_1INCH_NETWORK_IDS = [1, 56, 137, 10, 42161, 100, 43114]; // see https://help.1inch.io/en/articles/5528619-how-to-use-different-networks-on-1inch
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
