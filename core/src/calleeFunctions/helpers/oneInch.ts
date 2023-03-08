@@ -155,7 +155,7 @@ export async function getOneInchMarketData(
     const swapData = await getOneinchSwapParameters(
         network,
         collateral.symbol,
-        amount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+        amount.shiftedBy(collateral.decimals).toFixed(0),
         marketId
     );
     const path = await extractPathFromSwapResponseProtocols(network, swapData.protocols);
