@@ -133,7 +133,7 @@ data:
         - key: FRONTEND_ORIGIN
           value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/frontend_origin
         - key: PRODUCTION_BANNER_URL
-          value_from_secret: auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/production_banner_url
+          value_from_secret: auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/production_banner_url
       tags_to_cache_from:
         - "main"
       trigger:
