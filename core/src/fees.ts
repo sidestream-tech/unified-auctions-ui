@@ -13,7 +13,7 @@ export const RESTART_TRANSACTION_GAS_LIMIT = 209182;
 export const LIQUIDATION_TRANSACTION_GAS_LIMIT = 446658;
 
 export const convertETHtoDAI = async function (network: string, eth: BigNumber): Promise<BigNumber> {
-    const exchangeRate = await convertSymbolToDai(network, 'ETH', new BigNumber(1), ETH_NUMBER_OF_DIGITS)
+    const exchangeRate = await convertSymbolToDai(network, 'ETH', new BigNumber(1), ETH_NUMBER_OF_DIGITS);
     return eth.multipliedBy(exchangeRate);
 };
 
