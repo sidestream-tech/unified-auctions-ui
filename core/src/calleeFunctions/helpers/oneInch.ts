@@ -6,7 +6,6 @@ import { getDecimalChainIdByNetworkType, getNetworkConfigByType } from '../../ne
 import { CollateralConfig } from '../../types';
 import BigNumber from '../../bignumber';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
-import { WAD_NUMBER_OF_DIGITS } from '../../constants/UNITS';
 import { Queue } from 'async-await-queue';
 import memoizee from 'memoizee';
 import { convertETHtoDAI } from '../../fees';
