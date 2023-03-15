@@ -46,6 +46,7 @@ export const fetchAuctionStatus = async function (
     const unitPrice = new BigNumber(statusData.price._hex).div(RAY);
     const collateralAmount = new BigNumber(statusData.lot._hex).div(WAD);
     const debtDAI = new BigNumber(statusData.tab._hex).div(RAD);
+    console.log('debtDAI.debtDAI.debtDAI', debtDAI.toFixed());
     return {
         isActive: !statusData.needsRedo,
         collateralAmount,
