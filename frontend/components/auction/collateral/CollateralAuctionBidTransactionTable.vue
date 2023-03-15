@@ -81,7 +81,7 @@
                         :min-value="auctionTransaction.minimumBidDai"
                         :max-value="auctionTransaction.debtDAI"
                         :fallback-value="auctionTransaction.debtDAI"
-                        :disabled="!isActive || isTooSmallToPartiallyTake"
+                        :disabled="!isActive"
                         :is-too-small-to-partially-take="isTooSmallToPartiallyTake"
                         :validator="validator"
                     />
