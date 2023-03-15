@@ -1,14 +1,16 @@
 # Unified Auctions UI
 
-## Setup
+### Development Setup
+
+1. Install minimum `node` and `npm` version (see `package.json` `engine` section)
+2. Provide correct env variables by creating `frontend/.env` file
+3. Install dependencies via `npm install`
+4. Run the application in development mode via `npm run dev`
+5. Configure formatting and linting setup
+
+#### Other available commands
 
 ```bash
-# install dependencies
-$ npm install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
 # build for production and launch server
 $ npm run build
 $ npm run start
@@ -22,15 +24,6 @@ $ npm run storybook
 # to run jest tests
 $ npm run test
 ```
-
-## Development Setup
-
-Please see [this centralized guide](https://github.com/sidestream-tech/guides/blob/main/frontend-development/README.md) to get started with your development setup. Namely, you should:
-
-- have a minimum `node` and `npm` version (see `package.json` `engine` section)
-- have a certain formatting and linting setup
-
-Help on both things is given in the linked resources above.
 
 ### Environment variables
 
