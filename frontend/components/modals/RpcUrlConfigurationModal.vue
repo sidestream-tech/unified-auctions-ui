@@ -10,11 +10,12 @@
     >
         <div class="px-4 pt-2 pb-4">
             <TextBlock>
-                In order for the application to make requests to the blockchain, fetch auctions and market data, and
-                send transactions, it needs the address of a RPC URL. To get this URL, you can
-                <a href="https://ethereum.org/en/run-a-node/" target="_blank">run your own Ethereum node</a> or use
-                external services like <a href="https://www.alchemy.com/" target="_blank">Alchemy</a> or
-                <a href="https://www.infura.io/" target="_blank">Infura</a>.
+                In order for the application to make requests to the blockchain, fetch auctions, market data and send
+                transactions, it needs the address of a RPC URL. To get this URL, you can use external services like
+                <a href="https://www.alchemy.com/" target="_blank">Alchemy</a> or
+                <a href="https://www.infura.io/" target="_blank">Infura</a>
+                or
+                <a href="https://ethereum.org/en/run-a-node/" target="_blank">run your own Ethereum node</a>.
             </TextBlock>
             <form class="flex mt-2 gap-x-2" @submit.prevent="connect">
                 <Input v-model="newRpcUrl" :disabled="isChangingNetwork" autofocus placeholder="https://" />

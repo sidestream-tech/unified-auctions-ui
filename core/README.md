@@ -2,9 +2,9 @@
 
 Set of typescript functions, tests and simulation to work with MakerDAO auctions.
 
-## Simulations
+## Development setup
 
-In order to run create specific situations relevant to the Maker auctions:
+In order to run simulations and create specific blockchain state, relevant to the Maker auctions:
 1. Create `core/.env` file with required env variables (see the list below)
 2. Start RPC node and the simulation via a single command `npm run simulate`
 3. Select desired simulation from the list
