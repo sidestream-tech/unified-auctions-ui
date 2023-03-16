@@ -47,9 +47,11 @@ describe('Surplus Auction', () => {
         const auctions = await fetchActiveSurplusAuctions(network);
         const auction = auctions[0] as SurplusAuctionActive;
         const enrichedAucton = await enrichSurplusAuction(network, auction);
-        expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('0.001395892836151232667549186');
+        expect(enrichedAucton.marketUnitPrice?.toString()).to.equal('0.001395892836151232667549185678491851066262951');
         expect(enrichedAucton.unitPrice?.toString()).to.equal('0.0005430260298973471');
-        expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal('-0.61098300970253348099040009');
+        expect(enrichedAucton.marketUnitPriceToUnitPriceRatio?.toString()).to.equal(
+            '-0.610983009702533480990400000000000000000000026'
+        );
     });
     it('enrichesAuctionWithMinimumBids', async () => {
         const network = TEST_NETWORK;

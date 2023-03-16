@@ -35,29 +35,29 @@ const compareVaultTransactionsNotLiquidated = (
     expect(expected.network).to.eq(actual.network);
     expect(expected.nextPriceChange).to.deep.equalInAnyOrder(actual.nextPriceChange);
 
-    expect(expected.liquidationRatio).to.deep.equalInAnyOrder(actual.liquidationRatio);
-    expect(expected.collateralizationRatio).to.deep.equalInAnyOrder(actual.collateralizationRatio);
-    expect(expected.proximityToLiquidation).to.deep.equalInAnyOrder(actual.proximityToLiquidation);
+    expect(expected.liquidationRatio.toFixed()).to.eq(actual.liquidationRatio.toFixed());
+    expect(expected.collateralizationRatio.toFixed()).to.eq(actual.collateralizationRatio.toFixed());
+    expect(expected.proximityToLiquidation.toFixed()).to.eq(actual.proximityToLiquidation.toFixed());
     expect(expected.id).to.eq(actual.id);
-    expect(expected.incentiveCombinedDai).to.deep.equalInAnyOrder(actual.incentiveCombinedDai);
-    expect(expected.incentiveRelativeDai).to.deep.equalInAnyOrder(actual.incentiveRelativeDai);
-    expect(expected.incentiveConstantDai).to.deep.equalInAnyOrder(actual.incentiveConstantDai);
-    expect(expected.grossProfitDai).to.deep.equalInAnyOrder(actual.grossProfitDai);
+    expect(expected.incentiveCombinedDai.toFixed()).to.eq(actual.incentiveCombinedDai.toFixed());
+    expect(expected.incentiveRelativeDai.toFixed()).to.eq(actual.incentiveRelativeDai.toFixed());
+    expect(expected.incentiveConstantDai.toFixed()).to.eq(actual.incentiveConstantDai.toFixed());
+    expect(expected.grossProfitDai.toFixed()).to.eq(actual.grossProfitDai.toFixed());
     // TODO: enable the check and fix the bug with inconsistent price received
-    // expect(expected.netProfitDai).to.deep.equalInAnyOrder(actual.netProfitDai);
-    expect(expected.stabilityFeeRate).to.deep.equalInAnyOrder(actual.stabilityFeeRate);
-    expect(expected.minUnitPrice).to.deep.equalInAnyOrder(actual.minUnitPrice);
-    expect(expected.maximumProtocolDebtDai).to.deep.equalInAnyOrder(actual.maximumProtocolDebtDai);
-    expect(expected.currentProtocolDebtDai).to.deep.equalInAnyOrder(actual.currentProtocolDebtDai);
-    expect(expected.currentCollateralDebtDai).to.deep.equalInAnyOrder(actual.currentCollateralDebtDai);
-    expect(expected.maximumCollateralDebtDai).to.deep.equalInAnyOrder(actual.maximumCollateralDebtDai);
-    expect(expected.debtDai).to.deep.equalInAnyOrder(actual.debtDai);
-    expect(expected.collateralAmount).to.deep.equalInAnyOrder(actual.collateralAmount);
-    expect(expected.currentUnitPrice).to.deep.equalInAnyOrder(actual.currentUnitPrice);
-    expect(expected.nextUnitPrice).to.deep.equalInAnyOrder(actual.nextUnitPrice);
-    expect(expected.initialDebtDai).to.deep.equalInAnyOrder(actual.initialDebtDai);
-    expect(expected.liquidationPenaltyRatio).to.deep.equalInAnyOrder(actual.liquidationPenaltyRatio);
-    expect(expected.minimalAuctionedDai).to.deep.equalInAnyOrder(actual.minimalAuctionedDai);
+    // expect(expected.netProfitDai.toFixed()).to.eq(actual.netProfitDai.toFixed());
+    expect(expected.stabilityFeeRate.toFixed()).to.eq(actual.stabilityFeeRate.toFixed());
+    expect(expected.minUnitPrice.toFixed()).to.eq(actual.minUnitPrice.toFixed());
+    expect(expected.maximumProtocolDebtDai.toFixed()).to.eq(actual.maximumProtocolDebtDai.toFixed());
+    expect(expected.currentProtocolDebtDai.toFixed()).to.eq(actual.currentProtocolDebtDai.toFixed());
+    expect(expected.currentCollateralDebtDai.toFixed()).to.eq(actual.currentCollateralDebtDai.toFixed());
+    expect(expected.maximumCollateralDebtDai.toFixed()).to.eq(actual.maximumCollateralDebtDai.toFixed());
+    expect(expected.debtDai.toFixed()).to.eq(actual.debtDai.toFixed());
+    expect(expected.collateralAmount.toFixed()).to.eq(actual.collateralAmount.toFixed());
+    expect(expected.currentUnitPrice.toFixed()).to.eq(actual.currentUnitPrice.toFixed());
+    expect(expected.nextUnitPrice.toFixed()).to.eq(actual.nextUnitPrice.toFixed());
+    expect(expected.initialDebtDai.toFixed()).to.eq(actual.initialDebtDai.toFixed());
+    expect(expected.liquidationPenaltyRatio.toFixed()).to.eq(actual.liquidationPenaltyRatio.toFixed());
+    expect(expected.minimalAuctionedDai.toFixed()).to.eq(actual.minimalAuctionedDai.toFixed());
 };
 
 describe('Vaults', () => {
@@ -82,8 +82,8 @@ describe('Vaults', () => {
             nextPriceChange: new Date('2022-09-09T10:00:00.000Z'),
 
             liquidationRatio: new BigNumber('1.45'),
-            collateralizationRatio: new BigNumber('3.204790430641710905476031356'),
-            proximityToLiquidation: new BigNumber('0.547552318511616565008415095'),
+            collateralizationRatio: new BigNumber('3.204790430641710905476031355953603471763531393'),
+            proximityToLiquidation: new BigNumber('0.547552318511616565008415094516004867207418444'),
             liquidationPenaltyRatio: new BigNumber('1.13'),
             minimalAuctionedDai: new BigNumber('15000'),
             id: 22025,
@@ -141,8 +141,8 @@ describe('Vaults', () => {
             nextPriceChange: new Date('2022-06-13T11:00:00.000Z'),
 
             liquidationRatio: new BigNumber(1.7),
-            collateralizationRatio: new BigNumber('1.698313241866926788910221381'),
-            proximityToLiquidation: new BigNumber('-0.000993196126304112564617121'),
+            collateralizationRatio: new BigNumber('1.698313241866926788910221380759664664393806833'),
+            proximityToLiquidation: new BigNumber('-0.000993196126304112564617120755317536277614422'),
             liquidationPenaltyRatio: new BigNumber('1.13'),
             minimalAuctionedDai: new BigNumber('5000'),
             id: 27435,
