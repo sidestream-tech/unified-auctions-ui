@@ -1,7 +1,7 @@
 import type { Auction } from './types';
 import BigNumber from './bignumber';
 import { addSeconds } from 'date-fns';
-import { convertSymbolToDai } from './calleeFunctions/helpers/uniswapV3';
+import { RAD_NUMBER_OF_DIGITS } from './constants/UNITS';
 
 const checkAuctionStartDate = function (startDate: Date, currentDate: Date): void {
     const auctionStartTimestamp = startDate.getTime();
@@ -77,17 +77,17 @@ export const calculateTransactionCollateralOutcome = function (
     const approximateDebt = new BigNumber(auction.debtDAI.toPrecision(16, BigNumber.ROUND_DOWN));
     console.log('approximateDebt', approximateDebt.toFixed());
     const approximatePotentialOutcomeTotalPrice = new BigNumber(
-        potentialOutcomeTotalPrice.toPrecision(16, BigNumber.ROUND_DOWN)
+        potentialOutcomeTotalPrice.toPrecision(RAD_NUMBER_OF_DIGITS, BigNumber.ROUND_UP)
     );
     console.log('approximatePotentialOutcomeTotalPrice', approximatePotentialOutcomeTotalPrice.toFixed());
     if (
         // if owe > tab
         // soft compensation because of precision problems.
-        potentialOutcomeTotalPrice.isGreaterThan(auction.debtDAI)
+        approximatePotentialOutcomeTotalPrice.isGreaterThan(auction.debtDAI)
     ) {
         console.log('return tab / price', approximateDebt.toFixed(), approximatePotentialOutcomeTotalPrice.toFixed());
         console.log('auction.debtDAI.dividedBy(unitPrice)', auction.debtDAI.dividedBy(unitPrice).toFixed());
-        return auction.debtDAI.dividedBy(unitPrice).multipliedBy(1.1); // return tab / price
+        return auction.debtDAI.dividedBy(unitPrice).multipliedBy(1.001); // return tab / price
     } else if (
         // if owe < tab && slice < lot
         potentialOutcomeTotalPrice.isLessThan(auction.debtDAI) &&

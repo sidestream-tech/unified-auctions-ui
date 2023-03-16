@@ -29,7 +29,19 @@ const getErrorTitle = function (errorMessage = '') {
     return errorMessage.substring(0, jsonStartIndex).trim();
 };
 
+const getVMError = function (errorMessage = '') {
+    const prefix = 'Error: VM Exception while processing transaction:';
+    if (!errorMessage.startsWith(prefix)) {
+        return '';
+    }
+    return errorMessage.replace(prefix, 'VM').trim();
+};
+
 const parseMetamaskError = function (errorMessage = ''): unknown {
+    const vmError = getVMError(errorMessage);
+    if (vmError) {
+        return vmError;
+    }
     const errorTitle = getErrorTitle(errorMessage);
     if (!errorTitle) {
         return truncateText(errorMessage || UNKNOWN_ERROR_TEXT);

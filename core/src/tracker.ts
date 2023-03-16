@@ -35,7 +35,7 @@ const trackTransaction = async function (
         });
     } catch (error: any) {
         notifier('error', {
-            content: `Transaction error: "${parseMetamaskError(error?.message)}"`,
+            content: `Transaction error: "${parseMetamaskError(error?.data?.message || error?.message)}"`,
             key: messageId,
             duration: DEFAULT_NOTIFICATION_DURATION,
         });
@@ -72,7 +72,9 @@ const trackTransaction = async function (
         return confirmedTransactionReceipt.transactionHash;
     } catch (error: any) {
         notifier('error', {
-            content: `Transaction was rejected with error: "${parseMetamaskError(error?.message)}"`,
+            content: `Transaction was rejected with error: "${parseMetamaskError(
+                error?.data?.message || error?.message
+            )}"`,
             key: messageId,
             duration: DEFAULT_NOTIFICATION_DURATION,
         });
