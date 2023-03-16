@@ -73,7 +73,8 @@ export const calculateTransactionCollateralOutcome = function (
         // if owe > tab
         potentialOutcomeTotalPriceRounded.isGreaterThan(auction.debtDAI)
     ) {
-        return auction.debtDAI.dividedBy(unitPrice).multipliedBy(1.001); // return tab / price
+        // return tab / price + 0.1% compensation for the js/sol math differences
+        return auction.debtDAI.dividedBy(unitPrice).multipliedBy(1.001);
     } else if (
         // if owe < tab && slice < lot
         potentialOutcomeTotalPrice.isLessThan(auction.debtDAI) &&
