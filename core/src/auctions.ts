@@ -327,9 +327,6 @@ export const bidWithDai = async function (
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const updatedAuction = await enrichAuctionWithActualNumbers(network, auction);
     const collateralAmount = calculateTransactionCollateralOutcome(bidAmountDai, updatedAuction.unitPrice, auction);
-    console.log('bidAmountDai', bidAmountDai.toFixed());
-    console.log('updatedAuction.unitPrice', updatedAuction.unitPrice.toFixed());
-    console.log('collateralAmount', collateralAmount.toFixed());
     const contractParameters = [
         convertNumberTo32Bytes(auction.index),
         collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
