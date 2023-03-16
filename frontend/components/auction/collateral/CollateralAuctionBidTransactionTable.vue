@@ -81,7 +81,7 @@
                         :min-value="auctionTransaction.minimumBidDai"
                         :max-value="auctionTransaction.debtDAI"
                         :fallback-value="auctionTransaction.debtDAI"
-                        :disabled="!isActive"
+                        :disabled="!isActive || isTooSmallToPartiallyTake"
                         :is-too-small-to-partially-take="isTooSmallToPartiallyTake"
                         :validator="validator"
                     />
@@ -161,20 +161,21 @@ export default Vue.extend({
                 this.inputBidAmount = value;
             }
         },
-        validator() // currentValue: BigNumber | undefined,
-        // minValue: BigNumber | undefined,
-        // maxValue: BigNumber | undefined
-        {
-            // if (!currentValue || !minValue || !maxValue) {
-            //     return;
-            // }
-            // const bidTopLimit = maxValue?.minus(minValue);
-            // if (currentValue?.isGreaterThan(bidTopLimit)) {
-            //     throw new Error(`The value can only be less than ${bidTopLimit.toFixed(2)} or the maximum`);
-            // }
-            // if (maxValue?.isLessThan(minValue)) {
-            //     throw new Error('The value can not be changed since the leftover part will be too small');
-            // }
+        validator(
+            currentValue: BigNumber | undefined,
+            minValue: BigNumber | undefined,
+            maxValue: BigNumber | undefined
+        ) {
+            if (!currentValue || !minValue || !maxValue) {
+                return;
+            }
+            const bidTopLimit = maxValue?.minus(minValue);
+            if (currentValue?.isGreaterThan(bidTopLimit)) {
+                throw new Error(`The value can only be less than ${bidTopLimit.toFixed(2)} or the maximum`);
+            }
+            if (maxValue?.isLessThan(minValue)) {
+                throw new Error('The value can not be changed since the leftover part will be too small');
+            }
         },
     },
 });
