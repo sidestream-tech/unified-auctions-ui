@@ -50,7 +50,7 @@ const getMarketPrice = async function (
 
     // return price per unit
     return {
-        price: new BigNumber(toTokenAmount).shiftedBy(-DAI_NUMBER_OF_DIGITS).dividedBy(collateralAmountDecimals),
+        price: new BigNumber(toTokenAmount).shiftedBy(-DAI_NUMBER_OF_DIGITS).dividedBy(collateralAmount),
         pools: undefined,
     };
 };
