@@ -141,7 +141,7 @@ export default Vue.extend({
             const fullRoute = [...pools.map(pool => pool.routes[0]), 'DAI'];
             return fullRoute.join(' → ');
         },
-        getRouteFromMarketData(marketData) {
+        getRouteFromMarketData(marketData: MarketData) {
             if (!marketData) {
                 return undefined;
             }
