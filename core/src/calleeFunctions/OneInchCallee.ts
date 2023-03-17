@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { getOneinchSwapParameters } from './helpers/oneInch';
-import { DAI_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS } from '../constants/UNITS';
 
 const getCalleeData = async function (
     network: string,
@@ -49,7 +49,10 @@ const getMarketPrice = async function (
     );
 
     // return price per unit
-    return { price: new BigNumber(toTokenAmount).shiftedBy(-DAI_NUMBER_OF_DIGITS).dividedBy(collateralAmountDecimals), pools: undefined };
+    return {
+        price: new BigNumber(toTokenAmount).shiftedBy(-DAI_NUMBER_OF_DIGITS).dividedBy(collateralAmountDecimals),
+        pools: undefined,
+    };
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {
