@@ -19,7 +19,7 @@
                         <tr v-for="[id, marketData] in marketDataArray" :key="id">
                             <td class="pr-2 whitespace-nowrap">{{ id }}</td>
                             <td class="pr-2 whitespace-nowrap">
-                                {{ formatRouteFromPools(marketData ? marketData.pools : undefined) }}
+                                {{ getRouteFromMarketData(marketData) }}
                             </td>
                             <td class="w-full text-right whitespace-nowrap">
                                 <div v-if="marketData.errorMessage">
@@ -140,6 +140,17 @@ export default Vue.extend({
             }
             const fullRoute = [...pools.map(pool => pool.routes[0]), 'DAI'];
             return fullRoute.join(' → ');
+        },
+        getRouteFromMarketData(marketData) {
+            if (!marketData) {
+                return undefined;
+            }
+            if (marketData.pools) {
+                return this.formatRouteFromPools(marketData.pools);
+            }
+            if (marketData.oneInch?.path) {
+                return marketData.oneInch.path.join(' → ');
+            }
         },
     },
 });
