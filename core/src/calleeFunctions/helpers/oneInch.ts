@@ -94,7 +94,7 @@ export async function getOneinchSwapParameters(
     collateralSymbol: string,
     amount: string,
     marketId: string,
-    slippage = '10'
+    slippage = '1'
 ): Promise<OneInchSwapRepsonse> {
     const isFork = getNetworkConfigByType(network).isFork;
     const chainId = isFork ? 1 : getDecimalChainIdByNetworkType(network);

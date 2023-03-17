@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
 import { getOneinchSwapParameters } from './helpers/oneInch';
-import { WAD_NUMBER_OF_DIGITS } from '../constants/UNITS';
+import { DAI_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../constants/UNITS';
 
 const getCalleeData = async function (
     network: string,
@@ -40,16 +40,16 @@ const getMarketPrice = async function (
     collateralAmount: BigNumber
 ): Promise<{ price: BigNumber; pools: undefined }> {
     // convert collateral into DAI
-    const collateralAmountWad = collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
+    const collateralAmountDecimals = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
     const { toTokenAmount } = await getOneinchSwapParameters(
         network,
         collateral.symbol,
-        collateralAmountWad,
+        collateralAmountDecimals,
         marketId
     );
 
     // return price per unit
-    return { price: new BigNumber(toTokenAmount).dividedBy(collateralAmountWad), pools: undefined };
+    return { price: new BigNumber(toTokenAmount).shiftedBy(-DAI_NUMBER_OF_DIGITS).dividedBy(collateralAmountDecimals), pools: undefined };
 };
 
 const UniswapV2CalleeDai: CalleeFunctions = {
