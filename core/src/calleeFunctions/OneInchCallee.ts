@@ -40,11 +40,11 @@ const getMarketPrice = async function (
     collateralAmount: BigNumber
 ): Promise<{ price: BigNumber; pools: undefined }> {
     // convert collateral into DAI
-    const collateralAmountDecimals = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
+    const collateralIntegerAmount = collateralAmount.shiftedBy(collateral.decimals).toFixed(0);
     const { toTokenAmount } = await getOneinchSwapParameters(
         network,
         collateral.symbol,
-        collateralAmountDecimals,
+        collateralIntegerAmount,
         marketId
     );
 
