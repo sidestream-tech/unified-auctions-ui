@@ -1,12 +1,15 @@
 <template>
-    <span v-if="isValidNumber"
-        ><span v-if="isValueSmallButNotZero">under </span
-        ><animated-number :value="formattedValue" :format-value="format" :duration="duration"
-    /></span>
+    <Popover :content="pureValue" placement="top">
+        <span v-if="isValidNumber"
+            ><span v-if="isValueSmallButNotZero">under </span
+            ><animated-number :value="formattedValue" :format-value="format" :duration="duration"
+        /></span>
+    </Popover>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { Popover } from 'ant-design-vue';
 import AnimatedNumber from 'animated-number-vue';
 import BigNumber from 'bignumber.js';
 import {
@@ -18,6 +21,7 @@ import {
 export default Vue.extend({
     components: {
         AnimatedNumber,
+        Popover,
     },
     props: {
         value: {
@@ -38,6 +42,15 @@ export default Vue.extend({
         },
     },
     computed: {
+        pureValue(): string {
+            if (this.value === undefined) {
+                return '';
+            }
+            if (typeof this.value === 'number') {
+                return this.value.toString();
+            }
+            return this.value.toFixed();
+        },
         formattedValue(): string {
             return formatToAutomaticDecimalPoints(this.value, {
                 decimalPlaces: this.decimalPlaces,

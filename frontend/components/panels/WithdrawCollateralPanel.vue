@@ -3,7 +3,8 @@
         <template #title>{{ currentStateAndTitle.title }}</template>
         <TextBlock v-if="isExplanationsShown">
             After participating in the auction, the collateral will end up in your VAT account. One more transaction is
-            required to move it to your wallet.
+            required to move it to your wallet. Current amount of collateral in the VAT:
+            <FormatCurrency :value="collateralVatBalance" :currency="collateralSymbol" />
         </TextBlock>
         <div class="flex justify-end mt-2 gap-5">
             <BaseButton
