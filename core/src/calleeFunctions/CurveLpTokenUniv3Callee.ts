@@ -1,4 +1,4 @@
-import type { CalleeFunctions, CollateralConfig, Pool } from '../types';
+import type { CalleeFunctions, CollateralConfig, GetCalleeDataParams, Pool } from '../types';
 import { ethers } from 'ethers';
 import BigNumber from '../bignumber';
 import { getContractAddressByName, getJoinNameByCollateralType } from '../contracts';
@@ -13,12 +13,13 @@ const getCalleeData = async function (
     collateral: CollateralConfig,
     marketId: string,
     profitAddress: string,
-    preloadedPools?: Pool[]
+    params?: GetCalleeDataParams
 ): Promise<string> {
     const marketData = collateral.exchanges[marketId];
     if (marketData?.callee !== 'CurveLpTokenUniv3Callee') {
         throw new Error(`Can not encode route for the "${collateral.ilk}"`);
     }
+    const preloadedPools = !!params && 'pools' in params ? params.pools : undefined;
     if (!preloadedPools) {
         throw new Error(`Can not encode route for the "${collateral.ilk}" without preloaded pools`);
     }

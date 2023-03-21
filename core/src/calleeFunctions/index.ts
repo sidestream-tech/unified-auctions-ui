@@ -6,6 +6,7 @@ import type {
     CollateralSymbol,
     Pool,
     PriceWithPools,
+    GetCalleeDataParams,
 } from '../types';
 import memoizee from 'memoizee';
 import BigNumber from '../bignumber';
@@ -14,11 +15,13 @@ import UniswapV2LpTokenCalleeDai from './UniswapV2LpTokenCalleeDai';
 import WstETHCurveUniv3Callee from './WstETHCurveUniv3Callee';
 import CurveLpTokenUniv3Callee from './CurveLpTokenUniv3Callee';
 import UniswapV3Callee from './UniswapV3Callee';
+import OneInchCallee from './OneInchCallee';
 import rETHCurveUniv3Callee from './rETHCurveUniv3Callee';
 import { getCollateralConfigByType, getCollateralConfigBySymbol } from '../constants/COLLATERALS';
 import { routeToPool } from './helpers/pools';
+import { getOneInchMarketData } from './helpers/oneInch';
 
-const MARKET_DATA_RECORDS_CACHE_MS = 29 * 1000;
+export const MARKET_DATA_RECORDS_CACHE_MS = 29 * 1000;
 
 const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     UniswapV2CalleeDai,
@@ -27,6 +30,7 @@ const allCalleeFunctions: Record<CalleeNames, CalleeFunctions> = {
     CurveLpTokenUniv3Callee,
     UniswapV3Callee,
     rETHCurveUniv3Callee,
+    OneInchCallee,
 };
 
 export const getCalleeData = async function (
@@ -34,7 +38,7 @@ export const getCalleeData = async function (
     collateralType: string,
     marketId: string,
     profitAddress: string,
-    preloadedPools?: Pool[]
+    params?: GetCalleeDataParams
 ): Promise<string> {
     const collateral = getCollateralConfigByType(collateralType);
     const marketData = collateral.exchanges[marketId];
@@ -46,7 +50,7 @@ export const getCalleeData = async function (
         collateral,
         marketId,
         profitAddress,
-        preloadedPools
+        params
     );
 };
 
@@ -75,24 +79,31 @@ const _getMarketDataById = async function (
     if (!allCalleeFunctions[calleeConfig?.callee]) {
         throw new Error(`Unsupported callee "${calleeConfig?.callee}" for collateral symbol "${collateral.symbol}"`);
     }
-    let marketPrice: PriceWithPools;
-
+    let marketPriceResult: { marketPrice: PriceWithPools; errorMessage?: string };
     try {
-        marketPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
+        const marketPrice = await allCalleeFunctions[calleeConfig.callee].getMarketPrice(
             network,
             collateral,
             marketId,
             amount
         );
+        marketPriceResult = { marketPrice };
     } catch (error: any) {
-        const errorMessage = error?.message;
-        return {
-            ...calleeConfig,
-            marketUnitPrice: new BigNumber(NaN),
-            pools: [],
-            errorMessage,
+        marketPriceResult = {
+            marketPrice: { price: new BigNumber(NaN), pools: undefined },
+            errorMessage: error?.message,
         };
     }
+    if (calleeConfig.callee === 'OneInchCallee') {
+        const apiExchangeData = await getOneInchMarketData(network, collateral, amount, marketId);
+        return {
+            ...calleeConfig,
+            marketUnitPrice: marketPriceResult.marketPrice.price,
+            errorMessage: marketPriceResult.errorMessage,
+            oneInch: apiExchangeData,
+        };
+    }
+    const { marketPrice } = marketPriceResult;
     const marketUnitPrice = marketPrice.price;
     if (calleeConfig.callee !== 'UniswapV2LpTokenCalleeDai' && marketPrice.pools) {
         return {

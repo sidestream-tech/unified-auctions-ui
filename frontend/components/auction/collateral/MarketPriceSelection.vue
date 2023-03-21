@@ -19,10 +19,13 @@
                         <tr v-for="[id, marketData] in marketDataArray" :key="id">
                             <td class="pr-2 whitespace-nowrap">{{ id }}</td>
                             <td class="pr-2 whitespace-nowrap">
-                                {{ formatRouteFromPools(marketData ? marketData.pools : undefined) }}
+                                {{ getRouteFromMarketData(marketData) }}
                             </td>
                             <td class="w-full text-right whitespace-nowrap">
-                                <div v-if="marketData.marketUnitPrice && !marketData.marketUnitPrice.isNaN()">
+                                <div v-if="marketData.errorMessage">
+                                    <span class="text-red-500 truncate">Error: {{ marketData.errorMessage }}</span>
+                                </div>
+                                <div v-else-if="marketData.marketUnitPrice && !marketData.marketUnitPrice.isNaN()">
                                     <button type="button" @click="$emit('update:marketId', id)">
                                         <span v-if="suggestionOrSelection === id" class="opacity-50">Selected</span>
                                         <span v-else class="text-green-500">Select</span>
@@ -137,6 +140,17 @@ export default Vue.extend({
             }
             const fullRoute = [...pools.map(pool => pool.routes[0]), 'DAI'];
             return fullRoute.join(' → ');
+        },
+        getRouteFromMarketData(marketData: MarketData) {
+            if (!marketData) {
+                return undefined;
+            }
+            if (marketData.pools) {
+                return this.formatRouteFromPools(marketData.pools);
+            }
+            if (marketData.oneInch?.path) {
+                return marketData.oneInch.path.join(' → ');
+            }
         },
     },
 });

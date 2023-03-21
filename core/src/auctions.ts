@@ -6,6 +6,7 @@ import type {
     TakeEvent,
     MarketData,
     ExchangeFees,
+    GetCalleeDataParams,
 } from './types';
 import BigNumber from './bignumber';
 import fetchAuctionsByCollateralType, {
@@ -337,6 +338,22 @@ export const bidWithDai = async function (
     return executeTransaction(network, contractName, 'take', contractParameters, { notifier });
 };
 
+const buildGetCalleeDataParams = (marketData?: MarketData): GetCalleeDataParams | undefined => {
+    const preloadedPools = marketData && 'pools' in marketData ? marketData.pools : undefined;
+    const oneInchData = marketData && 'oneInch' in marketData ? marketData.oneInch : undefined;
+    if (preloadedPools && oneInchData) {
+        throw new Error('Cannot use both preloaded pools and oneInch data as params to get callee data');
+    }
+    if (preloadedPools) {
+        return {
+            pools: preloadedPools,
+        };
+    }
+    if (oneInchData) {
+        return { oneInchParams: { txData: oneInchData.calleeData, to: oneInchData.to } };
+    }
+    return undefined;
+};
 export const bidWithCallee = async function (
     network: string,
     auction: Auction,
@@ -346,8 +363,8 @@ export const bidWithCallee = async function (
 ): Promise<string> {
     const calleeAddress = getCalleeAddressByCollateralType(network, auction.collateralType, marketId);
     const marketData = auction.marketDataRecords?.[marketId];
-    const preloadedPools = marketData && 'pools' in marketData ? marketData.pools : undefined;
-    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress, preloadedPools);
+    const params = buildGetCalleeDataParams(marketData);
+    const calleeData = await getCalleeData(network, auction.collateralType, marketId, profitAddress, params);
     const contractName = getClipperNameByCollateralType(auction.collateralType);
     const contractParameters = [
         convertNumberTo32Bytes(auction.index),

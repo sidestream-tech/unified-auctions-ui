@@ -6,6 +6,8 @@ import { DAI_NUMBER_OF_DIGITS, MKR_NUMBER_OF_DIGITS } from '../../constants/UNIT
 import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 import { getTokenAddressByNetworkAndSymbol } from '../../tokens';
 import { Pool } from '../../types';
+import memoizee from 'memoizee';
+import { MARKET_DATA_RECORDS_CACHE_MS } from '..';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
 export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
@@ -54,7 +56,7 @@ export const convertCollateralToDaiUsingPool = async function (
     return daiAmount;
 };
 
-export const convertSymbolToDai = async function (
+const _convertSymbolToDai = async function (
     network: string,
     symbol: string,
     amount: BigNumber,
@@ -72,6 +74,15 @@ export const convertSymbolToDai = async function (
     const daiAmount = new BigNumber(daiIntegerAmount._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS);
     return daiAmount;
 };
+
+export const convertSymbolToDai = memoizee(_convertSymbolToDai, {
+    promise: true,
+    length: 4,
+    maxAge: MARKET_DATA_RECORDS_CACHE_MS,
+    normalizer: (args: any[]) => {
+        return JSON.stringify(args); // use normalizer due to BigNumber object being an argument
+    },
+});
 
 export const convertDaiToSymbol = async function (
     network: string,
