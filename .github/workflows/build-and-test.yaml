@@ -94,7 +94,7 @@ jobs:
         target: development
         platforms: linux/amd64
         build-args: |
-          REMOTE_RPC_URL=${{ env.REMOTE_RPC_URL }}
+          REMOTE_RPC_URL=${{ secrets.REMOTE_RPC_URL }}
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/core:${{ github.sha }}
         push: true
@@ -148,7 +148,7 @@ jobs:
         target: hardhat
         platforms: linux/amd64
         build-args: |
-          REMOTE_RPC_URL=${{ env.REMOTE_RPC_URL }}
+          REMOTE_RPC_URL=${{ secrets.REMOTE_RPC_URL }}
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/core-hardhat:${{ github.sha }}
         push: true
@@ -188,8 +188,6 @@ jobs:
         context: ./
         target: development
         platforms: linux/amd64
-        build-args: |
-          REMOTE_RPC_URL=${{ env.REMOTE_RPC_URL }}
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/bot:${{ github.sha }}
         push: true
