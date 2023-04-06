@@ -212,12 +212,12 @@ jobs:
 
     - name: lint
       run: |
-        cd core
+        cd /core
         npm run lint
 
     - name: build
       run: |
-        cd core
+        cd /core
         npm run build
 
   frontend-lint-test:
@@ -235,13 +235,13 @@ jobs:
       uses: actions/checkout@v3
 
     - name: lint
-      working-directory: ./frontend
       run: |
+        cd /frontend
         npm run lint
 
     - name: test
       run: |
-        cd frontend
+        cd /frontend
         npm run test
 
   bot-lint:
@@ -260,7 +260,7 @@ jobs:
 
     - name: lint
       run: |
-        cd bot
+        cd /bot
         npm run lint
 
   core-integration-test:
@@ -275,7 +275,7 @@ jobs:
 
     services:
       hardhat-service:
-        image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:${{ github.sha }}
+        image: ghcr.io/sidestream-tech/unified-auctions-ui/core-hardhat:${{ github.sha }}
         credentials:
           username: ${{ secrets.GH_WORKFLOW_USER }}
           password: ${{ secrets.GH_WORKFLOW_TOKEN }}
