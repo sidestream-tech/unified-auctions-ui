@@ -76,11 +76,11 @@ jobs:
         role-to-assume: arn:aws:iam::802385070966:role/GithubActionsSSMRole
         role-session-name: AuctionsUiSession
 
-    - name: Get secrets by name and by ARN
-      uses: aws-actions/aws-secretsmanager-get-secrets@v1
+    - name: Get secrets from parameterstore
+      uses: dkershner6/aws-ssm-getparameters-action@v1
       with:
-        secret-ids: |
-          REMOTE_RPC_URL,auction-ui/localhost/hardhat/remote_rpc_url
+        parameterPairs: "auction-ui/localhost/hardhat/remote_rpc_url = REMOTE_RPC_URL"
+      withDecryption: "true"
 
     - name: Set outputs
       id: vars
@@ -133,14 +133,14 @@ jobs:
     - name: Get secrets by name and by ARN
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
       with:
-        secret-ids: |
-          REMOTE_RPC_URL,auction-ui/localhost/hardhat/remote_rpc_url
+        parameterPairs: "auction-ui/localhost/hardhat/remote_rpc_url = REMOTE_RPC_URL"
+      withDecryption: "true"
 
     - name: Set outputs
       id: vars
       run: echo "git_hash_short=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_OUTPUT
     
-    - name: build and push hardhat
+    - name: build hardhat
       uses: docker/build-push-action@v3
       with:
         file: core/Dockerfile
@@ -148,9 +148,7 @@ jobs:
         target: hardhat
         platforms: linux/amd64
         build-args: |
-          PRODUCTION_DOMAIN=null.sidestream.tech
           REMOTE_RPC_URL=${{ env.REMOTE_RPC_URL }}
-          CONTACT_EMAIL=development@sidestream.tech
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/core-hardhat:${{ github.sha }}
         push: true
