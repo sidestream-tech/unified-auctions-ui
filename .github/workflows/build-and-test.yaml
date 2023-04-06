@@ -155,58 +155,110 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-  # test:
-  #   needs: [build-worker, build-frontend]
-  #   name: database integration test
-  #   runs-on: ubuntu-latest
-  #   container: 
-  #     image: ghcr.io/sidestream-tech/audit-tool/backend:${{ github.sha }}
-  #     credentials:
-  #       username: ${{ secrets.GH_WORKFLOW_USER }}
-  #       password: ${{ secrets.GH_WORKFLOW_TOKEN }}
-  #   env:
-  #     DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/postgres"
-  #   services:
-  #     postgres:
-  #       image: postgres:14
-  #       env:
-  #         POSTGRES_DB: postgres
-  #         POSTGRES_USER: postgres
-  #         POSTGRES_PASSWORD: postgres
-  #         POSTGRES_PORT: 5432
-  #       options: >-
-  #         --health-cmd pg_isready
-  #         --health-interval 10s
-  #         --health-timeout 5s
-  #         --health-retries 5
-  #       ports:
-  #         - 5432:5432
-  #     gotrue:
-  #       image: supabase/gotrue
-  #       env:
-  #         GOTRUE_API_HOST: gotrue
-  #         GOTRUE_OPERATOR_TOKEN: super-secret-operator-token
-  #         GOTRUE_JWT_SECRET: super-secret-jwt-token
-  #         GOTRUE_JWT_EXP: 3600
-  #         GOTRUE_DB_DRIVER: postgres
-  #         GOTRUE_SITE_URL: frontend
-  #         GOTRUE_MAILER_AUTOCONFIRM: "true"  # disable email confirmation
-  #         GOTRUE_LOG_LEVEL: DEBUG
-  #         GOTRUE_JWT_DEFAULT_GROUP_NAME: "viewer"
-  #         DATABASE_URL: "postgresql://gotrue:postgres@postgres:5432/postgres"
+  build-bot:
+    name: build bot
+    runs-on: ubuntu-latest
+    permissions: write-all
 
-  #   steps:
-  #   - name: Checkout
-  #     uses: actions/checkout@v3
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
 
-  #   - name: migrations
-  #     run: |
-  #       sleep 10
-  #       cd app
-  #       npm i
-  #       npx prisma migrate deploy
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
 
-  #   - name: frontend
-  #     run: |
-  #       cd app
-  #       npm run test
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to GitHub Packages
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ secrets.GH_WORKFLOW_USER }}
+        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+
+    - name: Set outputs
+      id: vars
+      run: echo "git_hash_short=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_OUTPUT
+    
+    - name: build and push bot
+      uses: docker/build-push-action@v3
+      with:
+        file: bot/Dockerfile
+        context: ./
+        target: development
+        platforms: linux/amd64
+        build-args: |
+          REMOTE_RPC_URL=${{ env.REMOTE_RPC_URL }}
+        tags: |
+          ghcr.io/sidestream-tech/unified-auctions-ui/bot:${{ github.sha }}
+        push: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+  core-lint-build:
+    needs: [build-frontend]
+    name: core-lint-build
+    runs-on: ubuntu-latest
+    container: 
+      image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
+      credentials:
+        username: ${{ secrets.GH_WORKFLOW_USER }}
+        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: lint
+      run: |
+        cd core
+        npm run lint
+
+    - name: build
+      run: |
+        cd core
+        npm run build
+
+  frontend-lint-test:
+    needs: [build-frontend]
+    name: frontend-lint-test
+    runs-on: ubuntu-latest
+    container: 
+      image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
+      credentials:
+        username: ${{ secrets.GH_WORKFLOW_USER }}
+        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: lint
+      run: |
+        cd frontend
+        npm run lint
+
+    - name: test
+      run: |
+        cd frontend
+        npm run test
+
+  bot-lint:
+    needs: [build-bot]
+    name: bot-lint
+    runs-on: ubuntu-latest
+    container: 
+      image: ghcr.io/sidestream-tech/unified-auctions-ui/bot:${{ github.sha }}
+      credentials:
+        username: ${{ secrets.GH_WORKFLOW_USER }}
+        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: lint
+      run: |
+        cd bot
+        npm run lint
