@@ -102,7 +102,7 @@ jobs:
         cache-to: type=gha,mode=max
 
   build-hardhat:
-    name: build and push hardhat
+    name: build hardhat
     runs-on: ubuntu-latest
     permissions: write-all
 
@@ -131,7 +131,7 @@ jobs:
         role-session-name: AuctionsUiSession
 
     - name: Get secrets by name and by ARN
-      uses: aws-actions/aws-secretsmanager-get-secrets@v1
+      uses: dkershner6/aws-ssm-getparameters-action@v1
       with:
         parameterPairs: "auction-ui/localhost/hardhat/remote_rpc_url = REMOTE_RPC_URL"
         withDecryption: "true"
@@ -140,7 +140,7 @@ jobs:
       id: vars
       run: echo "git_hash_short=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_OUTPUT
     
-    - name: build hardhat
+    - name: build and push hardhat
       uses: docker/build-push-action@v3
       with:
         file: core/Dockerfile
