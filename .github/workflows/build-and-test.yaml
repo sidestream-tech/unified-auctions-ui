@@ -262,3 +262,34 @@ jobs:
       run: |
         cd bot
         npm run lint
+
+  core-integration-test:
+    needs: [build-core, build-hardhat]
+    name: core-integration-test
+    runs-on: ubuntu-latest
+    container: 
+      image: ghcr.io/sidestream-tech/unified-auctions-ui/core:${{ github.sha }}
+      credentials:
+        username: ${{ secrets.GH_WORKFLOW_USER }}
+        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+
+    services:
+      hardhat-service:
+        image: ghcr.io/sidestream-tech/unified-auctions-ui/hardhat:${{ github.sha }}
+        credentials:
+          username: ${{ secrets.GH_WORKFLOW_USER }}
+          password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        ports:
+          - 8545:8545
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: core-integration-test
+      run: |
+        cd core
+        npm ci
+        npm run test
+      env:
+        LOCAL_RPC_URL: "http://hardhat-service:8545"
