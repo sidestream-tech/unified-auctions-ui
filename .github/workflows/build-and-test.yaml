@@ -80,7 +80,7 @@ jobs:
       uses: dkershner6/aws-ssm-getparameters-action@v1
       with:
         parameterPairs: "auction-ui/localhost/hardhat/remote_rpc_url = REMOTE_RPC_URL"
-      withDecryption: "true"
+        withDecryption: "true"
 
     - name: Set outputs
       id: vars
@@ -134,7 +134,7 @@ jobs:
       uses: aws-actions/aws-secretsmanager-get-secrets@v1
       with:
         parameterPairs: "auction-ui/localhost/hardhat/remote_rpc_url = REMOTE_RPC_URL"
-      withDecryption: "true"
+        withDecryption: "true"
 
     - name: Set outputs
       id: vars
