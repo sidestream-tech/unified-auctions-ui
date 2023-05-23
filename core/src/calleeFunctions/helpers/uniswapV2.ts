@@ -17,8 +17,9 @@ import { getCollateralConfigBySymbol } from '../../constants/COLLATERALS';
 
 const EXCHANGE_RATE_CACHE = 20 * 1000;
 
-const getCalleeConfig = function (collateral: CollateralConfig, marketId: string): RegularCalleeConfig {
-    const marketData = collateral.exchanges[marketId];
+const getCalleeConfig = function (collateral: CollateralConfig, _marketId: string): RegularCalleeConfig {
+    // TODO: remove _marketId from the all uniswapV2 functions, since they have to always use 'Uniswap V2' config
+    const marketData = collateral.exchanges['Uniswap V2'];
     const isUniswapTokenNonAutoRouted =
         (marketData?.callee === 'UniswapV2CalleeDai' || marketData?.callee === 'UniswapV3Callee') &&
         !('automaticRouter' in marketData);
