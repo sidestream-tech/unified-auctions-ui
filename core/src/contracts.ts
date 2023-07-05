@@ -136,9 +136,13 @@ export const getContractValue = async function (
     return new BigNumber(variableHex._hex).shiftedBy(-decimals);
 };
 
-const _getErc20SymbolByAddress = async function (network: string, address: string): Promise<string> {
+const _getErc20SymbolByAddress = async function (network: string, address: string): Promise<string | undefined> {
     const contract = await getErc20Contract(network, address);
-    return await contract.symbol();
+    try {
+        return await contract.symbol();
+    } catch (e) {
+        return undefined;
+    }
 };
 
 export const getErc20SymbolByAddress = memoizee(_getErc20SymbolByAddress, {
