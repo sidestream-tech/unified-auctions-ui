@@ -6,6 +6,8 @@ import surplusAuctionSimulation from './configs/createSurplusAcutionSimulation';
 import blockWithVaultsInAllStates from './configs/blocksWithVaultsInAllStates';
 import vaultLiquidation from './configs/vaultLiquidation';
 import onboardNewCollateral from './configs/onboardNewCollateral';
+import multipleVaultLiquidation from './configs/multipleVaultLiquidation';
+import skipTime from './configs/skipTime';
 
 export const SIMULATIONS: Simulation[] = [
     vaultLiquidation,
@@ -15,4 +17,6 @@ export const SIMULATIONS: Simulation[] = [
     specificBlockFork,
     blockWithVaultsInAllStates,
     onboardNewCollateral,
+    multipleVaultLiquidation,
+    skipTime,
 ];
