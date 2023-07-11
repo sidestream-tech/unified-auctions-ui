@@ -62,7 +62,6 @@ const simulation: Simulation = {
                 for (const collateralOwned of collateralsOwned) {
                     let multiplier = 1;
                     for (let _i = 0; _i < context.vaultNumberPerCollateral; _i++) {
-                        console.log('asdf', multiplier, collateralOwned.minCollateralAmount.toFixed(), collateralOwned.minCollateralAmount.multipliedBy(multiplier).toFixed())
                         const latestVaultId: number = await createVaultWithCollateral(
                             collateralOwned.type,
                             collateralOwned.minCollateralAmount.multipliedBy(multiplier)
@@ -114,7 +113,6 @@ const simulation: Simulation = {
                     TEST_NETWORK,
                     context.collateralTypes[0]
                 );
-                console.log(`Auction lifetime: ${auctionLifetime}`);
                 const warpSeconds = Math.floor(auctionLifetime / 2);
                 if (!warpSeconds) {
                     throw new Error('Auction lifetime is too short to warp time.');
