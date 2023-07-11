@@ -114,10 +114,10 @@ const simulation: Simulation = {
                     for (let _i = 0; _i < context.vaultNumberPerCollateral; _i++) {
                         const amount = collateralOwned.minCollateralAmount.multipliedBy(multiplier);
                         const outcome = await createVaultOrReportFailure(collateralOwned.type, amount);
+                        multiplier += 1;
                         if (outcome.result === 'success') {
                             vaultIds.push({ type: outcome.type, latestVaultId: outcome.latestVaultId });
                             console.info(`Created Vault id: ${outcome.latestVaultId}`);
-                            multiplier += 1;
                             continue;
                         }
                         failedVaultCreations.push({
