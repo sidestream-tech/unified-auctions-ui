@@ -57,9 +57,9 @@ async function printErrorsForVaultCreation(failedVaultCreations: FailedVaultCrea
     for (const [index, failed] of failedVaultCreations.entries()) {
         let message = `${index + 1}. Failed to create vault with type ${failed.type} and amount ${failed.amount}`;
         if (doPrintErrors) {
-            message += '; Error:\n';
+            message += `; Error:\n${failed.error}\n`;
         }
-        console.warn(message, doPrintErrors ? failed.error + '\n' : '');
+        console.warn(message);
     }
 }
 
