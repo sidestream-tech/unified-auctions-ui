@@ -54,9 +54,12 @@ async function createVaultOrReportFailure(
 async function printErrorsForVaultCreation(failedVaultCreations: FailedVaultCreation[]) {
     console.info('Some of the vaults were not created.');
     const doPrintErrors = await promptYesNo('Print blockchain errors in the list? (they can be long)');
-    for (const failed of failedVaultCreations) {
-        const message = `Failed to create vault with type ${failed.type} and amount ${failed.amount}`;
-        console.warn(message, doPrintErrors ? failed.error : '');
+    for (const [index, failed] of failedVaultCreations.entries()) {
+        let message = `${index + 1}. Failed to create vault with type ${failed.type} and amount ${failed.amount}`;
+        if (doPrintErrors) {
+            message += '; Error:\n';
+        }
+        console.warn(message, doPrintErrors ? failed.error + '\n' : '');
     }
 }
 
