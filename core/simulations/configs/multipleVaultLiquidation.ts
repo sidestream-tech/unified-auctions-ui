@@ -103,12 +103,12 @@ const simulation: Simulation = {
                 console.info(
                     `Minimum collaterals amount to open vault: ${JSON.stringify(
                         collateralsOwned.map(c => ({
-                            c: c.minCollateralAmount.toFixed(),
+                            [c.type]: c.minCollateralAmount.toFixed(),
                         }))
                     )}`
                 );
                 const vaultIds: { type: string; latestVaultId: number }[] = [];
-                const failedVaultCreations: { type: string; amount: string; error: string }[] = [];
+                const failedVaultCreations: FailedVaultCreation[] = [];
                 for (const collateralOwned of collateralsOwned) {
                     let multiplier = 1;
                     for (let _i = 0; _i < context.vaultNumberPerCollateral; _i++) {
