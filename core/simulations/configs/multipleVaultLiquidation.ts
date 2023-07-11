@@ -9,12 +9,56 @@ import createVaultWithCollateral, {
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectMultipleOptions from '../helpers/promptToSelectMultipleOptions';
 import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
+import promptYesNo from '../helpers/promptYesNo';
 
 import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import promptNumber from '../helpers/promptNumber';
+import BigNumber from '../../src/bignumber';
 
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
+
+interface SuccessfulVaultCreationOutcome {
+    result: 'success';
+    type: string;
+    latestVaultId: number;
+}
+
+interface FailedVaultCreation {
+    type: string;
+    amount: string;
+    error: string;
+}
+
+interface FailedVaultCreationOutcome extends FailedVaultCreation {
+    result: 'error';
+}
+
+async function createVaultOrReportFailure(
+    collateralType: string,
+    amount: BigNumber
+): Promise<SuccessfulVaultCreationOutcome | FailedVaultCreationOutcome> {
+    try {
+        const latestVaultId: number = await createVaultWithCollateral(collateralType, amount);
+        return { type: collateralType, latestVaultId, result: 'success' };
+    } catch (error) {
+        return {
+            result: 'error',
+            type: collateralType,
+            amount: amount.toFixed(),
+            error: (error as Error).message || 'unknown',
+        };
+    }
+}
+
+async function printErrorsForVaultCreation(failedVaultCreations: FailedVaultCreation[]) {
+    console.info('Some of the vaults were not created.');
+    const doPrintErrors = await promptYesNo('Print blockchain errors in the list? (they can be long)');
+    for (const failed of failedVaultCreations) {
+        const message = `Failed to create vault with type ${failed.type} and amount ${failed.amount}`;
+        console.warn(message, doPrintErrors ? failed.error : '');
+    }
+}
 
 const simulation: Simulation = {
     title: 'Create multiple collateral auctions',
@@ -64,17 +108,27 @@ const simulation: Simulation = {
                     )}`
                 );
                 const vaultIds: { type: string; latestVaultId: number }[] = [];
+                const failedVaultCreations: { type: string; amount: string; error: string }[] = [];
                 for (const collateralOwned of collateralsOwned) {
                     let multiplier = 1;
                     for (let _i = 0; _i < context.vaultNumberPerCollateral; _i++) {
-                        const latestVaultId: number = await createVaultWithCollateral(
-                            collateralOwned.type,
-                            collateralOwned.minCollateralAmount.multipliedBy(multiplier)
-                        );
-                        vaultIds.push({ type: collateralOwned.type, latestVaultId });
-                        console.info(`Created Vault id: ${latestVaultId}`);
-                        multiplier += 1;
+                        const amount = collateralOwned.minCollateralAmount.multipliedBy(multiplier);
+                        const outcome = await createVaultOrReportFailure(collateralOwned.type, amount);
+                        if (outcome.result === 'success') {
+                            vaultIds.push({ type: outcome.type, latestVaultId: outcome.latestVaultId });
+                            console.info(`Created Vault id: ${outcome.latestVaultId}`);
+                            multiplier += 1;
+                            continue;
+                        }
+                        failedVaultCreations.push({
+                            type: outcome.type,
+                            amount: outcome.amount,
+                            error: outcome.error,
+                        });
                     }
+                }
+                if (failedVaultCreations.length !== 0) {
+                    await printErrorsForVaultCreation(failedVaultCreations);
                 }
                 return { ...context, vaultIds };
             },
