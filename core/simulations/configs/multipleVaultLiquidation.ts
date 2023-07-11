@@ -12,6 +12,7 @@ import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
 
 import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
+import promptNumber from '../helpers/promptNumber';
 
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
 
@@ -22,6 +23,12 @@ const simulation: Simulation = {
             title: 'Reset blockchain fork',
             entry: async () => {
                 const number = await promptToGetBlockNumber();
+                const vaultNumberPerCollateral = await promptNumber({
+                    title: 'Number of vaults to create per collateral type',
+                    min: 1,
+                    max: 5,
+                    initial: 1,
+                });
                 await resetNetworkAndSetupWallet(number);
                 const collateralTypes = await promptToSelectMultipleOptions(
                     'Select the collateral symbols to add to the VAT.',
@@ -29,6 +36,7 @@ const simulation: Simulation = {
                 );
                 return {
                     collateralTypes,
+                    vaultNumberPerCollateral,
                 };
             },
         },
@@ -46,15 +54,23 @@ const simulation: Simulation = {
                     }))
                 );
                 console.info(
-                    `Minimum collaterals amount to open vault: ${collateralsOwned.map(c =>
-                        ({c: c.minCollateralAmount.toFixed()})
-                    )}`
+                    `Minimum collaterals amount to open vault: ${JSON.stringify(collateralsOwned.map(c => ({
+                        c: c.minCollateralAmount.toFixed(),
+                    })))}`
                 );
-                const vaultIds: {type: string; latestVaultId: number}[] = [];
+                const vaultIds: { type: string; latestVaultId: number }[] = [];
                 for (const collateralOwned of collateralsOwned) {
-                    const latestVaultId: number = await createVaultWithCollateral(collateralOwned.type, collateralOwned.minCollateralAmount);
-                    vaultIds.push({type: collateralOwned.type, latestVaultId});
-                    console.info(`Created Vault id: ${latestVaultId}`);
+                    let multiplier = 1;
+                    for (let _i = 0; _i < context.vaultNumberPerCollateral; _i++) {
+                        console.log('asdf', multiplier, collateralOwned.minCollateralAmount.toFixed(), collateralOwned.minCollateralAmount.multipliedBy(multiplier).toFixed())
+                        const latestVaultId: number = await createVaultWithCollateral(
+                            collateralOwned.type,
+                            collateralOwned.minCollateralAmount.multipliedBy(multiplier)
+                        );
+                        vaultIds.push({ type: collateralOwned.type, latestVaultId });
+                        console.info(`Created Vault id: ${latestVaultId}`);
+                        multiplier += 1;
+                    }
                 }
                 return { ...context, vaultIds };
             },
@@ -98,7 +114,7 @@ const simulation: Simulation = {
                     TEST_NETWORK,
                     context.collateralTypes[0]
                 );
-                console.log(`Auction lifetime: ${auctionLifetime}`)
+                console.log(`Auction lifetime: ${auctionLifetime}`);
                 const warpSeconds = Math.floor(auctionLifetime / 2);
                 if (!warpSeconds) {
                     throw new Error('Auction lifetime is too short to warp time.');

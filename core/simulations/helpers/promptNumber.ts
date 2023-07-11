@@ -4,6 +4,7 @@ interface BlockNumberPromt {
     title?: string;
     initial?: number;
     min?: number;
+    max?: number;
 }
 const promptNumber = async (params?: BlockNumberPromt) => {
     const title: string = params?.title || 'Number';
@@ -16,6 +17,7 @@ const promptNumber = async (params?: BlockNumberPromt) => {
             message: title,
             initial,
             min,
+            max: params?.max,
         },
     ]);
     return number;
