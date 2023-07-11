@@ -34,6 +34,9 @@ const simulation: Simulation = {
                     'Select the collateral symbols to add to the VAT.',
                     getAllCollateralTypes()
                 );
+                if (collateralTypes.length === 0) {
+                    throw new Error('No collateral types selected.');
+                }
                 return {
                     collateralTypes,
                     vaultNumberPerCollateral,
