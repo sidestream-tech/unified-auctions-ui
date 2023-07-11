@@ -54,9 +54,11 @@ const simulation: Simulation = {
                     }))
                 );
                 console.info(
-                    `Minimum collaterals amount to open vault: ${JSON.stringify(collateralsOwned.map(c => ({
-                        c: c.minCollateralAmount.toFixed(),
-                    })))}`
+                    `Minimum collaterals amount to open vault: ${JSON.stringify(
+                        collateralsOwned.map(c => ({
+                            c: c.minCollateralAmount.toFixed(),
+                        }))
+                    )}`
                 );
                 const vaultIds: { type: string; latestVaultId: number }[] = [];
                 for (const collateralOwned of collateralsOwned) {
