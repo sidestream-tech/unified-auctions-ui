@@ -15,6 +15,7 @@ const REQUEST_QUEUE = new Queue(1, MAX_DELAY_BETWEEN_REQUESTS_MS);
 const EXPECTED_SIGNATURE = '0x12aa3caf'; // see https://www.4byte.directory/signatures/?bytes4_signature=0x12aa3caf
 const SUPPORTED_1INCH_NETWORK_IDS = [1, 56, 137, 10, 42161, 100, 43114]; // see https://help.1inch.io/en/articles/5528619-how-to-use-different-networks-on-1inch
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+const ONEINCH_ETH_ADDRESS_SUBSTITUTE_LOWECASE = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 
 export const getOneInchUrl = (chainId: number) => {
     return `https://api.1inch.io/v5.0/${chainId}`;
@@ -127,6 +128,14 @@ export async function getOneinchSwapParameters(
     return oneinchResponse;
 }
 
+async function sanitizeAndGetErc20SymbolByAddress(network: string, address: string) {
+    if (address.toLowerCase() === ONEINCH_ETH_ADDRESS_SUBSTITUTE_LOWECASE) {
+        return 'ETH';
+    };
+    const symbol = await getErc20SymbolByAddress(network, address);
+    return symbol || 'UNKNOWN';
+}
+
 export async function extractPathFromSwapResponseProtocols(
     network: string,
     oneInchRoutes: OneInchSwapRoute[]
@@ -134,8 +143,8 @@ export async function extractPathFromSwapResponseProtocols(
     const pathStepsResolves = await Promise.all(
         oneInchRoutes[0].map(async route => {
             return await Promise.all([
-                await getErc20SymbolByAddress(network, route[0].fromTokenAddress),
-                await getErc20SymbolByAddress(network, route[0].toTokenAddress),
+                await sanitizeAndGetErc20SymbolByAddress(network, route[0].fromTokenAddress),
+                await sanitizeAndGetErc20SymbolByAddress(network, route[0].toTokenAddress),
             ]);
         })
     );
