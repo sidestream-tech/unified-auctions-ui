@@ -58,8 +58,11 @@ type OneInchSwapRoute = { name: string; part: number; fromTokenAddress: string; 
 const executeRequestInQueue = async (url: string) => {
     const apiRequestSymbol = Symbol();
     await REQUEST_QUEUE.wait(apiRequestSymbol);
-    const response = await fetch(url).then(res => res.json()).catch(e => console.error('error', e));
+    const response = await fetch(url).then(res => res.json()).catch(e => {return e});
     REQUEST_QUEUE.end(apiRequestSymbol);
+    if (response instanceof Error) {
+        return {error: response.message}
+    }
     return response;
 };
 
