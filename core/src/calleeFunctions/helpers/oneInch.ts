@@ -58,10 +58,14 @@ type OneInchSwapRoute = { name: string; part: number; fromTokenAddress: string; 
 const executeRequestInQueue = async (url: string) => {
     const apiRequestSymbol = Symbol();
     await REQUEST_QUEUE.wait(apiRequestSymbol);
-    const response = await fetch(url).then(res => res.json()).catch(e => {return e});
+    const response = await fetch(url)
+        .then(res => res.json())
+        .catch(e => {
+            return e;
+        });
     REQUEST_QUEUE.end(apiRequestSymbol);
     if (response instanceof Error) {
-        return {error: response.message}
+        return { error: response.message };
     }
     return response;
 };
@@ -134,7 +138,7 @@ export async function getOneinchSwapParameters(
 async function sanitizeAndGetErc20SymbolByAddress(network: string, address: string) {
     if (address.toLowerCase() === ONEINCH_ETH_ADDRESS_SUBSTITUTE_LOWECASE) {
         return 'ETH';
-    };
+    }
     const symbol = await getErc20SymbolByAddress(network, address);
     return symbol || 'UNKNOWN';
 }
