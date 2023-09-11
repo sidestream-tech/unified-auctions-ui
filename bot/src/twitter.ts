@@ -38,9 +38,9 @@ export const sendNotification = async function (message: string) {
         return;
     }
     try {
-        const result = await twitterClient.v1.tweet(message);
-        console.info(`twitter: https://twitter.com/anyuser/status/${result.id_str}`);
+        const result = await twitterClient.v2.tweet(message);
+        console.info(`twitter: https://twitter.com/anyuser/status/${result.data.id}`);
     } catch (error) {
-        console.error('twitter: tweet error', error);
+        console.error('twitter: tweeting failed:', error);
     }
 };
