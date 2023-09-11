@@ -5,10 +5,8 @@ import { setupSupportedAuctionTypes, getSupportedAuctionTypes } from './supporte
 import { setupWhitelistedCollaterals } from './whitelist';
 import { setupTwitter } from './twitter';
 import { setupCollateralKeeper } from './keepers/collateral';
-import { setupSurplusKeeper } from './keepers/surplus';
 import { setupDebtKeeper } from './keepers/debt';
 import { loopCollateral } from './auctions/collateral';
-import { loopSurplus } from './auctions/surplus';
 import { loopDebt } from './auctions/debt';
 
 const start = async function (): Promise<void> {
@@ -22,12 +20,6 @@ const start = async function (): Promise<void> {
         await setupCollateralKeeper(network);
         loopCollateral(network);
         setInterval(() => loopCollateral(network), REFETCH_INTERVAL_MS);
-    }
-
-    if (getSupportedAuctionTypes().includes('SURPLUS')) {
-        await setupSurplusKeeper(network);
-        loopSurplus(network);
-        setInterval(() => loopSurplus(network), REFETCH_INTERVAL_MS);
     }
 
     if (getSupportedAuctionTypes().includes('DEBT')) {

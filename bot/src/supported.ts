@@ -1,6 +1,6 @@
 import { SUPPORTED_AUCTION_TYPES } from './variables';
 
-const ALL_SUPPORTED_AUCTION_TYPES = ['COLLATERAL', 'SURPLUS', 'DEBT'] as const;
+const ALL_SUPPORTED_AUCTION_TYPES = ['COLLATERAL', 'DEBT'] as const;
 
 export const getSupportedAuctionTypes = function () {
     if (!SUPPORTED_AUCTION_TYPES) {
