@@ -1,7 +1,8 @@
-import TwitterApi from 'twitter-api-v2';
+import { TwitterApi, TwitterApiV2Settings } from 'twitter-api-v2';
 import type { TwitterApiTokens } from 'twitter-api-v2';
 import { isDev, enforceEnvVariables } from './utils';
 
+TwitterApiV2Settings.debug = isDev;
 let twitterClient: TwitterApi | undefined;
 
 export const setupTwitter = function (): void {
