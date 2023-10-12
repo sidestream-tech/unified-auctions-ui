@@ -11,7 +11,7 @@
             <CurrencyIcon :currency-symbol="record.symbol" />
         </div>
         <div slot="ilk" slot-scope="ilk" class="Element">
-            {{ ilk }}
+            {{ ilk }} <span v-if="isCollateralOffboarded(ilk)" class="opacity-50">&nbsp;(off-boarded)</span>
         </div>
         <div slot="symbol" slot-scope="symbol" class="Element">{{ symbol }}</div>
         <div slot="token" slot-scope="tokenAddress, record" class="Element" :class="{ Loading: isLoading(record) }">
@@ -103,10 +103,10 @@
 </template>
 
 <script lang="ts">
-import type { CollateralRow } from 'auctions-core/src/types';
 import Vue from 'vue';
 import BigNumber from 'bignumber.js';
 import { Table, Popover } from 'ant-design-vue';
+import type { CollateralRow } from 'auctions-core/src/types';
 import CurrencyIcon from '~/components/common/other/CurrencyIcon.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
@@ -124,6 +124,10 @@ export default Vue.extend({
     props: {
         collaterals: {
             type: Array as Vue.PropType<CollateralRow[]>,
+            default: () => [],
+        },
+        offBoardedCollaterals: {
+            type: Array as Vue.PropType<string[]>,
             default: () => [],
         },
     },
@@ -190,6 +194,9 @@ export default Vue.extend({
         },
         isValidBigNumber(bigNumber: BigNumber) {
             return BigNumber.isBigNumber(bigNumber);
+        },
+        isCollateralOffboarded(collateralType: string) {
+            return this.offBoardedCollaterals.includes(collateralType);
         },
     },
 });
