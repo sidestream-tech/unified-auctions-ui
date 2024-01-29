@@ -10,7 +10,7 @@ import memoizee from 'memoizee';
 import { MARKET_DATA_RECORDS_CACHE_MS } from '..';
 
 const UNISWAP_V3_QUOTER_ADDRESS = '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6';
-export const UNISWAP_FEE = 3000; // denominated in hundredths of a bip
+export const UNISWAP_FEE = 5000; // denominated in hundredths of a bip
 
 const getUniswapV3quoterContract = async function (network: string): Promise<ethers.Contract> {
     const provider = await getProvider(network);
