@@ -13,6 +13,7 @@ import getProvider from '../../src/provider';
 
 import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
+import { setCollateralDebtCeilingToGlobal } from '../../helpers/hardhat/contractParametrization';
 
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
 
@@ -34,34 +35,29 @@ const simulation: Simulation = {
             },
         },
         {
-            title: 'Create the vault',
+            title: 'Create underwater vault',
             entry: async context => {
                 await adjustLimitsAndRates(context.collateralType);
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
-                const latestVaultId = await createVaultWithCollateral(context.collateralType, collateralOwned);
+                await setCollateralDebtCeilingToGlobal(context.collateralType);
+                const latestVaultId = await createVaultWithCollateral(
+                    context.collateralType,
+                    collateralOwned.multipliedBy(1_000)
+                );
                 console.info(`Created Vault id: ${latestVaultId}`);
-                return { ...context, latestVaultId };
-            },
-        },
-        {
-            title: 'Skip time',
-            entry: async context => {
+
+                console.info(`Skipping ${TWO_YEARS_IN_MINUTES} minutes...`);
                 await warpTime(TWO_YEARS_IN_MINUTES, 60);
-                return context;
-            },
-        },
-        {
-            title: 'Collect stability fees',
-            entry: async context => {
-                const collateralType = context.collateralType;
-                const latestVaultId = context.latestVaultId;
+
+                console.info(`Collecting stability fees...`);
                 const vaultBefore = await fetchVault(TEST_NETWORK, latestVaultId);
-                console.info(`stability fees before ${vaultBefore.stabilityFeeRate}`);
-                await collectStabilityFees(TEST_NETWORK, collateralType);
+                console.info(`Stability fee before ${vaultBefore.stabilityFeeRate}`);
+                await collectStabilityFees(TEST_NETWORK, context.collateralType);
                 const vaultAfter = await fetchVault(TEST_NETWORK, latestVaultId);
-                console.info(`stability fees after ${vaultAfter.stabilityFeeRate}`);
-                return context;
+                console.info(`Stability fee after ${vaultAfter.stabilityFeeRate}`);
+
+                return { ...context, latestVaultId };
             },
         },
         {
