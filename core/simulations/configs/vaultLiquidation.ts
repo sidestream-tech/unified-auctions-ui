@@ -9,6 +9,7 @@ import createVaultWithCollateral, {
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
+import getProvider from '../../src/provider';
 
 import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
@@ -79,13 +80,17 @@ const simulation: Simulation = {
                     TEST_NETWORK,
                     context.collateralType
                 );
-                const warpSeconds = Math.floor(auctionLifetime / 2);
-                if (!warpSeconds) {
-                    throw new Error('Auction lifetime is too short to warp time.');
-                }
-                console.info(`Skipping time: ${warpSeconds} seconds`);
+                const INITIAL_WARP_PARTS = 12;
+                const warpSeconds = Math.floor(auctionLifetime / INITIAL_WARP_PARTS);
+                console.info(`Initial warp of 1/${INITIAL_WARP_PARTS} of an auction time: ${warpSeconds} seconds`);
                 await warpTime(warpSeconds, 1);
-                return context;
+                const provider = await getProvider(TEST_NETWORK);
+                const STEP_SECONDS = 30;
+                while (true) {
+                    console.info(`Gradually skipping time, one block every ${STEP_SECONDS} seconds`);
+                    await provider.send('evm_mine', []);
+                    await new Promise(resolve => setTimeout(resolve, STEP_SECONDS * 1000));
+                }
             },
         },
         {
