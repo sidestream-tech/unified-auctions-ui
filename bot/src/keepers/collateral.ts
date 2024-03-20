@@ -1,6 +1,7 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
 import getSigner from 'auctions-core/src/signer';
+import { fetchVATbalanceDAI, fetchBalanceDAI } from 'auctions-core/src/wallet';
 import { KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI } from '../variables';
 import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from '../authorisation';
 import { setupWallet } from '../signer';
@@ -49,12 +50,12 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         return;
     }
 
-    // check auction's profit
+    // check auction's gross profit
     if (!auctionTransaction.transactionGrossProfit || auctionTransaction.transactionGrossProfit.isLessThan(0)) {
         if (auctionTransaction.transactionGrossProfit) {
             const profit = `${auctionTransaction.transactionGrossProfit.toFixed(0)} DAI`;
             console.info(
-                `collateral keeper: auction "${auction.id}" is not yet profitable (current profit: ${profit})`
+                `collateral keeper: auction "${auction.id}" is not yet executable (current gross profit: ${profit})`
             );
         } else {
             console.info(`collateral keeper: auction "${auction.id}" is not tradable`);
@@ -70,7 +71,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         console.info(
             `collateral keeper: auction "${
                 auction.id
-            }" net profit is smaller than min profit (${auctionTransaction.transactionNetProfit.toFixed(
+            }" net profit is smaller than min net profit (${auctionTransaction.transactionNetProfit.toFixed(
                 0
             )} < ${KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI})`
         );
@@ -107,6 +108,10 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
         return;
     }
 
+    // save previous balances
+    const preVatBalanceDai = await fetchVATbalanceDAI(network, walletAddress);
+    const preErcBalanceDai = await fetchBalanceDAI(network, walletAddress);
+
     // bid on the Auction
     console.info(`collateral keeper: auction "${auctionTransaction.id}": attempting swap execution`);
     const bidHash = await bidWithCallee(
@@ -118,6 +123,12 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     console.info(
         `collateral keeper: auction "${auctionTransaction.id}" was succesfully executed via "${bidHash}" transaction`
     );
+
+    // display profit
+    const postVatBalanceDai = await fetchVATbalanceDAI(network, walletAddress);
+    const postErcBalanceDai = await fetchBalanceDAI(network, walletAddress);
+    console.info(`DAI VAT profit from the transaction: ${postVatBalanceDai.minus(preVatBalanceDai).toFixed()}`);
+    console.info(`DAI ERC profit from the transaction: ${postErcBalanceDai.minus(preErcBalanceDai).toFixed()}`);
 };
 
 const participateInAuction = async function (network: string, auction: AuctionInitialInfo) {
