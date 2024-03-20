@@ -25,12 +25,12 @@ const simulation: Simulation = {
             entry: async () => {
                 const number = await promptToGetBlockNumber();
                 await resetNetworkAndSetupWallet(number);
-                const collateralType = await promptToSelectOneOption(
-                    'Select the collateral symbol to add to the VAT.',
-                    getAllCollateralTypes()
-                );
                 await addDaiToBalance();
                 await addMkrToBalance();
+                const collateralType = await promptToSelectOneOption(
+                    'Select the collateral type',
+                    getAllCollateralTypes()
+                );
                 return {
                     collateralType,
                 };
