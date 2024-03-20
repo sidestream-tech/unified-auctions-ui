@@ -10,13 +10,6 @@
             </button>
             <button
                 class="BaseButton"
-                :class="selectedType === 'surplus' ? 'Selected' : 'Primary'"
-                @click="selectType('surplus')"
-            >
-                System surplus auctions
-            </button>
-            <button
-                class="BaseButton"
                 :class="selectedType === 'debt' ? 'Selected' : 'Primary'"
                 @click="selectType('debt')"
             >
@@ -34,15 +27,6 @@
                 falls too low the vault is liquidated and. In this process the collateral along with the vault’s debt
                 is transferred to the Protocol. Part of the collateral is then auctioned off to cover the outstanding
                 debt and a penalty fee.
-            </TextBlock>
-            <TextBlock v-show="selectedType == 'surplus'" title="System surplus auctions">
-                If the Maker Protocol is successfully governed, surplus DAI is accrued. Once this surplus hits a
-                certain threshold the Protocol will discharge it by buying and burning
-                <Explain text="Maker tokens (MKR)">
-                    <a href="https://makerdao.com/en/whitepaper/#the-maker-protocol">MKR</a> is a token on the Ethereum
-                    blockchain that has governance rights over the Maker smart contracts
-                </Explain>
-                . This process is facilitated by surplus auctions.
             </TextBlock>
             <TextBlock v-show="selectedType == 'debt'" title="System debt auctions">
                 If liquidations are not adequate in order to maintain Maker Protocol’s solvency meaning that overall

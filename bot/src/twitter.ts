@@ -1,7 +1,8 @@
-import TwitterApi from 'twitter-api-v2';
+import { TwitterApi, TwitterApiV2Settings } from 'twitter-api-v2';
 import type { TwitterApiTokens } from 'twitter-api-v2';
 import { isDev, enforceEnvVariables } from './utils';
 
+TwitterApiV2Settings.debug = isDev;
 let twitterClient: TwitterApi | undefined;
 
 export const setupTwitter = function (): void {
@@ -38,9 +39,9 @@ export const sendNotification = async function (message: string) {
         return;
     }
     try {
-        const result = await twitterClient.v1.tweet(message);
-        console.info(`twitter: https://twitter.com/anyuser/status/${result.id_str}`);
+        const result = await twitterClient.v2.tweet(message);
+        console.info(`twitter: https://twitter.com/anyuser/status/${result.data.id}`);
     } catch (error) {
-        console.error('twitter: tweet error', error);
+        console.error('twitter: tweeting failed:', error);
     }
 };

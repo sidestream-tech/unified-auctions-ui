@@ -34,9 +34,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -57,9 +54,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
@@ -82,9 +76,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -105,9 +96,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
@@ -147,9 +135,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: [],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -170,9 +155,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: [],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
@@ -195,9 +177,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: [],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -218,9 +197,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITHOUT_NEXT_PRICE,
@@ -243,9 +219,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -266,9 +239,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
@@ -291,9 +261,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -315,9 +282,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -338,9 +302,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
 
@@ -364,9 +325,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -387,9 +345,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITHOUT_NEXT_PRICE,
@@ -412,9 +367,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -435,9 +387,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITHOUT_NEXT_PRICE,
@@ -460,9 +409,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITHOUT_NEXT_PRICE,
     },
@@ -483,9 +429,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
@@ -508,9 +451,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -531,9 +471,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
@@ -556,9 +493,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -579,9 +513,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
@@ -604,9 +535,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
             },
-            '1inch': {
-                callee: 'OneInchCallee',
-            },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,
     },
@@ -627,9 +555,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
                 route: ['ETH'],
-            },
-            '1inch': {
-                callee: 'OneInchCallee',
             },
         },
         oracle: CONFIG_WITH_NEXT_PRICE,

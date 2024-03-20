@@ -84,16 +84,6 @@ export default Vue.extend({
                     filters: ['collateral'],
                 },
                 {
-                    title: 'Surplus auctions portal',
-                    description:
-                        'Web tool that supports participation in surplus auctions by bidding on Dai with own MKR',
-                    links: {
-                        source: 'https://github.com/sidestream-tech/unified-auctions-ui',
-                        participate: '/surplus',
-                    },
-                    filters: ['surplus'],
-                },
-                {
                     title: 'Debt auctions portal',
                     description:
                         'Web tool that supports participation in debt auctions by bidding on MKR with own Dai',
@@ -120,15 +110,6 @@ export default Vue.extend({
                         source: 'https://github.com/makerdao/liquidations-portal',
                     },
                     filters: ['collateral'],
-                },
-                {
-                    title: 'Maker Auction (surplus)',
-                    description:
-                        'Web tool that supports participation in surplus auctions by bidding on Dai with own MKR',
-                    links: {
-                        source: 'https://github.com/makerdao/auctions-ui',
-                    },
-                    filters: ['surplus'],
                 },
                 {
                     title: 'Maker Auction (debt)',
@@ -158,7 +139,7 @@ export default Vue.extend({
                     links: {
                         source: 'https://github.com/makerdao/auction-keeper',
                     },
-                    filters: ['collateral', 'surplus', 'debt'],
+                    filters: ['collateral', 'debt'],
                 },
                 {
                     title: 'MakerBurn',
@@ -168,7 +149,7 @@ export default Vue.extend({
                     links: {
                         analytics: 'https://makerburn.com/',
                     },
-                    filters: ['collateral', 'surplus', 'debt'],
+                    filters: ['collateral', 'debt'],
                 },
                 {
                     title: 'Blockanalytica',
@@ -196,7 +177,7 @@ export default Vue.extend({
                     links: {
                         analytics: 'https://daistats.com/#/auctions',
                     },
-                    filters: ['collateral', 'surplus', 'debt'],
+                    filters: ['collateral', 'debt'],
                 },
                 {
                     title: 'MakerDai Twitter Bot',

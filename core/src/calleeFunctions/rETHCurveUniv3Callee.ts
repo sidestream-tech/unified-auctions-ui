@@ -24,7 +24,7 @@ const getCalleeData = async function (
     if (!preloadedPools) {
         throw new Error(`Can not encode route for the "${collateral.ilk}" without preloaded pools`);
     }
-    const route = await encodePools(network, preloadedPools);
+    const route = await encodePools(network, preloadedPools.slice(1));
     const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];
