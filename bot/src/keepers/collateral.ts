@@ -53,15 +53,19 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     // check auction's gross profit
     if (!auctionTransaction.transactionGrossProfit || auctionTransaction.transactionGrossProfit.isLessThan(0)) {
         if (auctionTransaction.transactionGrossProfit) {
-            const profit = `${auctionTransaction.transactionGrossProfit.toFixed(0)} DAI`;
+            const grossProfit = `${auctionTransaction.transactionGrossProfit.toFixed(0)} DAI`;
             console.info(
-                `collateral keeper: auction "${auction.id}" is not yet executable (current gross profit: ${profit})`
+                `collateral keeper: auction "${auction.id}" is not yet executable (current gross profit: ${grossProfit})`
             );
         } else {
             console.info(`collateral keeper: auction "${auction.id}" is not tradable`);
         }
         return;
     }
+    const grossProfit = `${auctionTransaction.transactionGrossProfit.toFixed(0)} DAI`;
+    console.info(
+        `collateral keeper: auction "${auction.id}" gross profit is ${grossProfit}, moving on to check net profit`
+    );
 
     // check auction's net profit – profit without transaction fees
     if (
