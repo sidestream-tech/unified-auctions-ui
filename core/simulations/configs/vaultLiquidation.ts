@@ -11,7 +11,7 @@ import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
 import getProvider from '../../src/provider';
 
-import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
+import fetchAuctionsByCollateralType, { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { setCollateralDebtCeilingToGlobal } from '../../helpers/hardhat/contractParametrization';
 
@@ -29,6 +29,8 @@ const simulation: Simulation = {
                     'Select the collateral symbol to add to the VAT.',
                     getAllCollateralTypes()
                 );
+                await addDaiToBalance();
+                await addMkrToBalance();
                 return {
                     collateralType,
                 };
@@ -43,7 +45,7 @@ const simulation: Simulation = {
                 await setCollateralDebtCeilingToGlobal(context.collateralType);
                 const latestVaultId = await createVaultWithCollateral(
                     context.collateralType,
-                    collateralOwned.multipliedBy(1_000)
+                    collateralOwned.multipliedBy(1)
                 );
                 console.info(`Created Vault id: ${latestVaultId}`);
 
@@ -76,24 +78,26 @@ const simulation: Simulation = {
                     TEST_NETWORK,
                     context.collateralType
                 );
-                const INITIAL_WARP_PARTS = 12;
-                const warpSeconds = Math.floor(auctionLifetime / INITIAL_WARP_PARTS);
-                console.info(`Initial warp of 1/${INITIAL_WARP_PARTS} of an auction time: ${warpSeconds} seconds`);
+                const INITIAL_WARP_PARTS = 1 / 13;
+                const warpSeconds = Math.floor(auctionLifetime * INITIAL_WARP_PARTS);
+                console.info(`Initial warp of ${INITIAL_WARP_PARTS} of an auction time: ${warpSeconds} seconds`);
                 await warpTime(warpSeconds, 1);
                 const provider = await getProvider(TEST_NETWORK);
                 const STEP_SECONDS = 30;
                 while (true) {
+                    const initialAuctions = await fetchAuctionsByCollateralType(TEST_NETWORK, context.collateralType);
+                    if (!initialAuctions[0] || !initialAuctions[0].isActive) {
+                        console.info('No active auctions are found, exiting the "evm_mine" loop');
+                        break;
+                    }
                     console.info(`Gradually skipping time, one block every ${STEP_SECONDS} seconds`);
-                    await provider.send('evm_mine', []);
-                    await new Promise(resolve => setTimeout(resolve, STEP_SECONDS * 1000));
+                    try {
+                        await provider.send('evm_mine', []);
+                        await new Promise(resolve => setTimeout(resolve, STEP_SECONDS * 1000));
+                    } catch (error) {
+                        console.error('evm_mine failed with', error);
+                    }
                 }
-            },
-        },
-        {
-            title: 'Add DAI and MKR to the wallet',
-            entry: async () => {
-                await addDaiToBalance();
-                await addMkrToBalance();
             },
         },
     ],
