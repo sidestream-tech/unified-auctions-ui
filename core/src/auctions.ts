@@ -136,31 +136,38 @@ export const enrichAuctionWithMarketDataRecords = async function (
     network: string,
     useAutoRouter = false
 ): Promise<AuctionTransaction> {
+    console.time('enrichAuctionWithMarketDataRecords');
     if (!auction.isActive || !auction.approximateUnitPrice || auction.isFinished) {
         return auction;
     }
     try {
         const collateralToCoverDebt = await calculateCollateralToCoverDebt(network, auction);
+        console.timeLog('enrichAuctionWithMarketDataRecords', 'calculateCollateralToCoverDebt');
         const exchangeFees = await getDefaultMarketFee(network);
+        console.timeLog('enrichAuctionWithMarketDataRecords', 'getDefaultMarketFee');
         const marketDataRecords = await getMarketDataRecords(
             network,
             auction.collateralSymbol,
             collateralToCoverDebt,
             useAutoRouter
         );
+        console.timeLog('enrichAuctionWithMarketDataRecords', 'getMarketDataRecords');
         const enrichedMarketDataRecords = await enrichMarketDataRecordsWithValues(
             auction,
             marketDataRecords,
             exchangeFees,
             collateralToCoverDebt
         );
+        console.timeLog('enrichAuctionWithMarketDataRecords', 'enrichMarketDataRecordsWithValues');
         const suggestedMarketId = await getBestMarketId(enrichedMarketDataRecords);
+        console.timeLog('enrichAuctionWithMarketDataRecords', 'getBestMarketId');
         const marketUnitPrice = enrichedMarketDataRecords[suggestedMarketId].marketUnitPrice;
         const marketUnitPriceToUnitPriceRatio =
             enrichedMarketDataRecords[suggestedMarketId].marketUnitPriceToUnitPriceRatio;
         const transactionGrossProfit = enrichedMarketDataRecords[suggestedMarketId].transactionGrossProfit;
         const transactionGrossProfitDate = enrichedMarketDataRecords[suggestedMarketId].transactionGrossProfitDate;
         const transactionNetProfit = enrichedMarketDataRecords[suggestedMarketId].transactionNetProfit;
+        console.timeEnd('enrichAuctionWithMarketDataRecords');
         return {
             ...auction,
             collateralToCoverDebt,
@@ -253,17 +260,23 @@ export const enrichAuction = async function (
     auction: AuctionInitialInfo
 ): Promise<AuctionTransaction> {
     // enrich them with statuses
+    console.time('enrichAuction');
     const auctionWithStatus = await enrichAuctionWithActualNumbers(network, auction);
+    console.timeLog('enrichAuction', 'enrichAuctionWithActualNumbers');
 
     // enrich them with price drop
     const auctionWithPriceDrop = await enrichAuctionWithPriceDrop(auctionWithStatus);
+    console.timeLog('enrichAuction', 'enrichAuctionWithPriceDrop');
 
     // enrich with profit and fee calculation
     const fees = await getApproximateTransactionFees(network);
+    console.timeLog('enrichAuction', 'getApproximateTransactionFees');
     const auctionWithFees = await enrichAuctionWithTransactionFees(auctionWithPriceDrop, fees, network);
+    console.timeLog('enrichAuction', 'enrichAuctionWithTransactionFees');
 
     // enrich them with market data
     const auctionWithMarketDataRecords = await enrichAuctionWithMarketDataRecords(auctionWithFees, network);
+    console.timeLog('enrichAuction', 'enrichAuctionWithMarketDataRecords');
 
     if (auction.debtDAI.isEqualTo(0)) {
         return {
@@ -272,6 +285,7 @@ export const enrichAuction = async function (
             isActive: false,
         };
     }
+    console.timeEnd('enrichAuction');
     return auctionWithMarketDataRecords;
 };
 
