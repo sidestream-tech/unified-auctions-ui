@@ -37,10 +37,10 @@ jobs:
         context: ./
         target: development
         platforms: linux/amd64
-        build-args: |
-          PRODUCTION_DOMAIN=null.sidestream.tech
-          RPC_URL=key-not-provided
-          CONTACT_EMAIL=development@sidestream.tech
+        # build-args: |
+        #   PRODUCTION_DOMAIN=null.sidestream.tech
+        #   RPC_URL=key-not-provided
+        #   CONTACT_EMAIL=development@sidestream.tech
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
         push: true
