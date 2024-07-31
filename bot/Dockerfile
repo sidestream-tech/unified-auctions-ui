@@ -1,7 +1,7 @@
 # see https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact
 ARG NODE_VERSION=node:16.9.1
 
-FROM segment/chamber:2.10.7 AS chamber
+# FROM segment/chamber:2.10.7 AS chamber
 
 FROM $NODE_VERSION AS dependency-base
 
@@ -29,12 +29,12 @@ COPY ./bot /bot
 
 FROM $NODE_VERSION AS development
 
-COPY --from=chamber /chamber /bin/chamber
+# COPY --from=chamber /chamber /bin/chamber
 COPY --from=dependency-base /core /core
 COPY --from=dependency-base /bot /bot
 
-WORKDIR /bot
-CMD chamber exec $SECRET_CHAMBER_PATH -- npm run dev
+# WORKDIR /bot
+# CMD chamber exec $SECRET_CHAMBER_PATH -- npm run dev
 
 FROM dependency-base AS production-base
 
@@ -43,7 +43,7 @@ RUN npm run build
 
 FROM $NODE_VERSION AS production
 
-COPY --from=chamber /chamber /bin/chamber
+# COPY --from=chamber /chamber /bin/chamber
 COPY --from=production-base /core /core
 COPY --from=production-base /bot /bot
 
@@ -52,4 +52,5 @@ ENV NUXT_HOST=0.0.0.0
 
 # start the app
 WORKDIR /bot
-CMD chamber exec $SECRET_CHAMBER_PATH -- npm start
+# CMD chamber exec $SECRET_CHAMBER_PATH -- npm start
+CMD ["npm", "start"]
