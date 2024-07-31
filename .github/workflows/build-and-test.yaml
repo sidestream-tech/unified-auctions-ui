@@ -32,7 +32,7 @@ jobs:
       run: echo "git_hash_short=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_OUTPUT
 
     - name: build and push frontend
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v6
       with:
         file: frontend/Dockerfile
         context: ./
@@ -88,7 +88,7 @@ jobs:
       run: echo "git_hash_short=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_OUTPUT
     
     - name: build and push core
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v6
       with:
         file: core/Dockerfile
         context: ./
@@ -142,7 +142,7 @@ jobs:
       run: echo "git_hash_short=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_OUTPUT
     
     - name: build and push hardhat
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v6
       with:
         file: core/Dockerfile
         context: ./
@@ -183,7 +183,7 @@ jobs:
       run: echo "git_hash_short=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_OUTPUT
     
     - name: build and push bot
-      uses: docker/build-push-action@v3
+      uses: docker/build-push-action@v6
       with:
         file: bot/Dockerfile
         context: ./
