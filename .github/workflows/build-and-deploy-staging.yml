@@ -1,7 +1,8 @@
 name: Deploy Auctions UI staging
 
 on:
-  pull_request:
+    push:
+      branches: [ main ]
 
 jobs:
   build-frontend:
@@ -133,20 +134,6 @@ jobs:
           cmd: yq -i '(.image.tag ="${{ github.sha }}") | (.commitShortSHA ="${{ github.sha }}") | (.releaseTag ="${{ github.ref_name }}")' $VALUES_FILE
         env:
           VALUES_FILE: "k8s-projects/auctions-ui/staging/values-bot.yml"
-
-        # - name: Update Auctions-UI Value File for hardhat
-        #   uses: mikefarah/yq@master
-        #   with:
-        #     cmd: yq -i '(.image.tag ="${{ github.sha }}") | (.commitShortSHA ="${{ github.sha }}") | (.releaseTag ="${{ github.ref_name }}")' $VALUES_FILE
-        #   env:
-        #     VALUES_FILE: "k8s-projects/auctions-ui/staging/values-hardhat.yml"
-
-        # - name: Update Auctions-UI Value File for core
-        #   uses: mikefarah/yq@master
-        #   with:
-        #     cmd: yq -i '(.image.tag ="${{ github.sha }}") | (.commitShortSHA ="${{ github.sha }}") | (.releaseTag ="${{ github.ref_name }}")' $VALUES_FILE
-        #   env:
-        #     VALUES_FILE: "k8s-projects/auctions-ui/staging/values-core.yml"
 
       - name: Commit & Push changes
         uses: actions-js/push@master

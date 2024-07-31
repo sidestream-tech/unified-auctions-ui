@@ -1,8 +1,7 @@
 name: build and test
 
 on:
-  push:
-    branches: [ main ]
+  pull_request:
 
 jobs:
   build-frontend:
@@ -38,10 +37,6 @@ jobs:
         context: ./
         target: development
         platforms: linux/amd64
-        # build-args: |
-        #   PRODUCTION_DOMAIN=null.sidestream.tech
-        #   RPC_URL=key-not-provided
-        #   CONTACT_EMAIL=development@sidestream.tech
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
         push: true
@@ -71,14 +66,14 @@ jobs:
         password: ${{ secrets.GH_WORKFLOW_TOKEN }}
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: eu-central-1
         role-to-assume: arn:aws:iam::802385070966:role/GithubActionsSSMRole
         role-session-name: AuctionsUiSession
 
     - name: Get secrets from parameterstore
-      uses: dkershner6/aws-ssm-getparameters-action@v1
+      uses: dkershner6/aws-ssm-getparameters-action@v2
       with:
         parameterPairs: "auction-ui/localhost/hardhat/remote_rpc_url = REMOTE_RPC_URL, auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/rpc_url = RPC_URL"
         withDecryption: "true"
@@ -94,8 +89,6 @@ jobs:
         context: ./
         target: development
         platforms: linux/amd64
-        build-args: |
-          REMOTE_RPC_URL=${{ secrets.REMOTE_RPC_URL }}
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/core:${{ github.sha }}
         push: true
@@ -125,16 +118,16 @@ jobs:
         password: ${{ secrets.GH_WORKFLOW_TOKEN }}
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-region: eu-central-1
         role-to-assume: arn:aws:iam::802385070966:role/GithubActionsSSMRole
         role-session-name: AuctionsUiSession
 
     - name: Get secrets by name and by ARN
-      uses: dkershner6/aws-ssm-getparameters-action@v1
+      uses: dkershner6/aws-ssm-getparameters-action@v2
       with:
-        parameterPairs: "auction-ui/localhost/hardhat/remote_rpc_url = REMOTE_RPC_URL"
+        parameterPairs: "/auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/rpc_url = REMOTE_RPC_URL"
         withDecryption: "true"
 
     - name: Set outputs
@@ -149,7 +142,7 @@ jobs:
         target: hardhat
         platforms: linux/amd64
         build-args: |
-          REMOTE_RPC_URL=${{ secrets.REMOTE_RPC_URL }}
+          REMOTE_RPC_URL=${{ env.REMOTE_RPC_URL }}
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/core-hardhat:${{ github.sha }}
         push: true
