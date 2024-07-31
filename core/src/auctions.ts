@@ -82,12 +82,11 @@ export const enrichMarketDataRecordsWithValues = async function (
     exchangeFees: ExchangeFees,
     amount: BigNumber = new BigNumber(1)
 ): Promise<Record<string, MarketData>> {
-    const exchangeFeePerUnitDAI = exchangeFees.exchangeFeeDAI.dividedBy(amount);
     let enrichedMarketDataRecords = {};
     for (const marketId in marketDataRecords) {
         let marketData = marketDataRecords[marketId];
         // enrich with values dependent on marketUnitPrice
-        let marketUnitPrice = marketData.marketUnitPrice;
+        const marketUnitPrice = marketData.marketUnitPrice;
         if (marketUnitPrice.isNaN()) {
             enrichedMarketDataRecords = {
                 ...enrichedMarketDataRecords,
@@ -95,7 +94,6 @@ export const enrichMarketDataRecordsWithValues = async function (
             };
             continue;
         }
-        marketUnitPrice = marketUnitPrice.plus(exchangeFeePerUnitDAI);
         marketData = {
             ...marketData,
             marketUnitPrice,

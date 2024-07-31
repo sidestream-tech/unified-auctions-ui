@@ -295,7 +295,6 @@ export const actions = {
     setup({ commit, dispatch }: ActionContext<State, State>): void {
         commit('reset');
         dispatch('refetch');
-        dispatch('surplus/setup', undefined, { root: true });
         dispatch('debt/setup', undefined, { root: true });
     },
 };

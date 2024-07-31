@@ -1,4 +1,4 @@
-import type { AuctionInitialInfo, SurplusAuctionActive, DebtAuctionActive } from 'auctions-core/src/types';
+import type { AuctionInitialInfo, DebtAuctionActive } from 'auctions-core/src/types';
 import { formatToAutomaticDecimalPointsString } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import { sendNotification } from './twitter';
 
@@ -7,13 +7,6 @@ const generateNotificationTextCollateral = function (auction: AuctionInitialInfo
     const formattedString = formatToAutomaticDecimalPointsString(auction.collateralAmount);
 
     return `Collateral auction with ${formattedString} ${auction.collateralSymbol} just started. Follow the link to participate: ${url}`;
-};
-
-const generateNotificationTextSurplus = function (auction: SurplusAuctionActive): string {
-    const url = `${process.env.FRONTEND_ORIGIN}/surplus/?network=${auction.network}&auction=${auction.id}`;
-    return `Surplus auction with ${formatToAutomaticDecimalPointsString(
-        auction.receiveAmountDAI
-    )} DAI just started. Follow the link to participate: ${url}`;
 };
 
 const generateNotificationTextDebt = function (auction: DebtAuctionActive): string {
@@ -28,12 +21,6 @@ const generateNotificationTextDebt = function (auction: DebtAuctionActive): stri
 export const notifyCollateral = async function (auction: AuctionInitialInfo) {
     const text = generateNotificationTextCollateral(auction);
     console.info(`Collateral auction notification: "${text}"`);
-    await sendNotification(text);
-};
-
-export const notifySurplus = async function (auction: SurplusAuctionActive) {
-    const text = generateNotificationTextSurplus(auction);
-    console.info(`Surplus auction notification: "${text}"`);
     await sendNotification(text);
 };
 

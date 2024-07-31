@@ -9,9 +9,11 @@ import createVaultWithCollateral, {
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
+import getProvider from '../../src/provider';
 
-import { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
+import fetchAuctionsByCollateralType, { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
+import { setCollateralDebtCeilingToGlobal } from '../../helpers/hardhat/contractParametrization';
 
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
 
@@ -23,8 +25,10 @@ const simulation: Simulation = {
             entry: async () => {
                 const number = await promptToGetBlockNumber();
                 await resetNetworkAndSetupWallet(number);
+                await addDaiToBalance();
+                await addMkrToBalance();
                 const collateralType = await promptToSelectOneOption(
-                    'Select the collateral symbol to add to the VAT.',
+                    'Select the collateral type',
                     getAllCollateralTypes()
                 );
                 return {
@@ -33,34 +37,29 @@ const simulation: Simulation = {
             },
         },
         {
-            title: 'Create the vault',
+            title: 'Create underwater vault',
             entry: async context => {
                 await adjustLimitsAndRates(context.collateralType);
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
-                const latestVaultId = await createVaultWithCollateral(context.collateralType, collateralOwned);
+                await setCollateralDebtCeilingToGlobal(context.collateralType);
+                const latestVaultId = await createVaultWithCollateral(
+                    context.collateralType,
+                    collateralOwned.multipliedBy(1)
+                );
                 console.info(`Created Vault id: ${latestVaultId}`);
-                return { ...context, latestVaultId };
-            },
-        },
-        {
-            title: 'Skip time',
-            entry: async context => {
+
+                console.info(`Skipping ${TWO_YEARS_IN_MINUTES} minutes...`);
                 await warpTime(TWO_YEARS_IN_MINUTES, 60);
-                return context;
-            },
-        },
-        {
-            title: 'Collect stability fees',
-            entry: async context => {
-                const collateralType = context.collateralType;
-                const latestVaultId = context.latestVaultId;
+
+                console.info(`Collecting stability fees...`);
                 const vaultBefore = await fetchVault(TEST_NETWORK, latestVaultId);
-                console.info(`stability fees before ${vaultBefore.stabilityFeeRate}`);
-                await collectStabilityFees(TEST_NETWORK, collateralType);
+                console.info(`Stability fee before ${vaultBefore.stabilityFeeRate}`);
+                await collectStabilityFees(TEST_NETWORK, context.collateralType);
                 const vaultAfter = await fetchVault(TEST_NETWORK, latestVaultId);
-                console.info(`stability fees after ${vaultAfter.stabilityFeeRate}`);
-                return context;
+                console.info(`Stability fee after ${vaultAfter.stabilityFeeRate}`);
+
+                return { ...context, latestVaultId };
             },
         },
         {
@@ -79,20 +78,26 @@ const simulation: Simulation = {
                     TEST_NETWORK,
                     context.collateralType
                 );
-                const warpSeconds = Math.floor(auctionLifetime / 2);
-                if (!warpSeconds) {
-                    throw new Error('Auction lifetime is too short to warp time.');
-                }
-                console.info(`Skipping time: ${warpSeconds} seconds`);
+                const INITIAL_WARP_PARTS = 1 / 13;
+                const warpSeconds = Math.floor(auctionLifetime * INITIAL_WARP_PARTS);
+                console.info(`Initial warp of ${INITIAL_WARP_PARTS} of an auction time: ${warpSeconds} seconds`);
                 await warpTime(warpSeconds, 1);
-                return context;
-            },
-        },
-        {
-            title: 'Add DAI and MKR to the wallet',
-            entry: async () => {
-                await addDaiToBalance();
-                await addMkrToBalance();
+                const provider = await getProvider(TEST_NETWORK);
+                const STEP_SECONDS = 30;
+                while (true) {
+                    const initialAuctions = await fetchAuctionsByCollateralType(TEST_NETWORK, context.collateralType);
+                    if (!initialAuctions[0] || !initialAuctions[0].isActive) {
+                        console.info('No active auctions are found, exiting the "evm_mine" loop');
+                        break;
+                    }
+                    console.info(`Gradually skipping time, one block every ${STEP_SECONDS} seconds`);
+                    try {
+                        await provider.send('evm_mine', []);
+                        await new Promise(resolve => setTimeout(resolve, STEP_SECONDS * 1000));
+                    } catch (error) {
+                        console.error('evm_mine failed with', error);
+                    }
+                }
             },
         },
     ],
