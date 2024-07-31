@@ -258,6 +258,7 @@ jobs:
   core-integration-test:
     needs: [build-core, build-hardhat]
     name: core-integration-test
+    permissions: write-all
     runs-on: ubuntu-latest
     container: 
       image: ghcr.io/sidestream-tech/unified-auctions-ui/core:${{ github.sha }}
