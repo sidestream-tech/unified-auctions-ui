@@ -1,8 +1,7 @@
 name: Deploy Auctions UI staging
 
 on:
-  push:
-    branches: [ main ]
+  pull_request:
 
 jobs:
   build-frontend:
@@ -37,10 +36,6 @@ jobs:
         file: frontend/Dockerfile
         context: ./
         platforms: linux/amd64
-        build-args: |
-          PRODUCTION_DOMAIN=null.sidestream.tech
-          RPC_URL=key-not-provided
-          CONTACT_EMAIL=development@sidestream.tech
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
         push: true
