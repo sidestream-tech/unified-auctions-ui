@@ -273,15 +273,29 @@ jobs:
           password: ${{ secrets.GH_WORKFLOW_TOKEN }}
         ports:
           - 8545:8545
-
+          
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: eu-central-1
+          role-to-assume: arn:aws:iam::802385070966:role/GithubActionsSSMRole
+          role-session-name: AuctionsUiSession
 
-    - name: core-integration-test
-      run: |
-        cd core
-        npm ci
-        npm run test
-      env:
-        LOCAL_RPC_URL: "http://hardhat-service:8545"
+      - name: Get secrets by name and by ARN
+        uses: dkershner6/aws-ssm-getparameters-action@v2
+        with:
+          parameterPairs: "/auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/rpc_url = REMOTE_RPC_URL"
+          withDecryption: "true"
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: core-integration-test
+        run: |
+          cd core
+          npm ci
+          npm run test
+        env:
+          LOCAL_RPC_URL: "http://hardhat-service:8545"
+          REMOTE_RPC_URL: ${{ env.RPC_URL }}
