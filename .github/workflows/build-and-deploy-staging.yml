@@ -26,6 +26,19 @@ jobs:
         username: ${{ secrets.GH_WORKFLOW_USER }}
         password: ${{ secrets.GH_WORKFLOW_TOKEN }}
 
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: eu-central-1
+        role-to-assume: arn:aws:iam::802385070966:role/GithubActionsSSMRole
+        role-session-name: AuctionsUiSession
+  
+    - name: Get secrets from parameterstore
+      uses: dkershner6/aws-ssm-getparameters-action@v2
+      with:
+        parameterPairs: "/auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/rpc_url = RPC_URL"
+        withDecryption: "true"
+
     - name: Set outputs
       id: vars
       run: echo "git_hash_short=$(git rev-parse --short ${GITHUB_SHA})" >> $GITHUB_OUTPUT
@@ -38,6 +51,8 @@ jobs:
         platforms: linux/amd64
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
+        build-args: |
+          RPC_URL=${{ env.RPC_URL }}
         push: true
         cache-from: type=gha
         cache-to: type=gha,mode=max

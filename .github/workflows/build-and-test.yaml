@@ -80,7 +80,7 @@ jobs:
     - name: Get secrets from parameterstore
       uses: dkershner6/aws-ssm-getparameters-action@v1
       with:
-        parameterPairs: "auction-ui/localhost/hardhat/remote_rpc_url = REMOTE_RPC_URL"
+        parameterPairs: "auction-ui/localhost/hardhat/remote_rpc_url = REMOTE_RPC_URL, auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/rpc_url = RPC_URL"
         withDecryption: "true"
 
     - name: Set outputs
