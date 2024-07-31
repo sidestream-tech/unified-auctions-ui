@@ -36,7 +36,7 @@ jobs:
     - name: Get secrets from parameterstore
       uses: dkershner6/aws-ssm-getparameters-action@v2
       with:
-        parameterPairs: "/auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/rpc_url = RPC_URL"
+        parameterPairs: "/auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/rpc_url = RPC_URL, /auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/contact_email = CONTACT_EMAIL, /auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/frontend_origin = FRONTEND_ORIGIN, /auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/infura_project_id = INFURA_POJECT_ID, /auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/heapio_id = HEAPIO_ID, /auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/production_domain = PRODUCTION_DOMAIN, /auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/staging_banner_url = STAGING_BANNER_URL"
         withDecryption: "true"
 
     - name: Set outputs
@@ -53,6 +53,11 @@ jobs:
           ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
         build-args: |
           RPC_URL=${{ env.RPC_URL }}
+          PRODUCTION_DOMAIN=${{ env.PRODUCTION_DOMAIN }}
+          CONTACT_EMAIL=${{ env.CONTACT_EMAIL }}
+          STAGING_BANNER_URL=${{ env.STAGING_BANNER_URL }}
+          HEAPIO_ID=${{ env.HEAPIO_ID }}
+          FRONTEND_ORIGIN=${{ env.FRONTEND_ORIGIN }}
         push: true
         cache-from: type=gha
         cache-to: type=gha,mode=max
