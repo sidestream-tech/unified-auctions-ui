@@ -288,3 +288,4 @@ jobs:
           npm run test
         env:
           LOCAL_RPC_URL: "http://hardhat-service:8545"
+          REMOTE_RPC_URL: ${{ secrets.REMOTE_RPC_URL }}
