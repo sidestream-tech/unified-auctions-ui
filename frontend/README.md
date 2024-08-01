@@ -38,3 +38,9 @@ $ npm run test
 - `HEAPIO_ID`: (optional) [HeapIO analytics](https://heapanalytics.com/) Project's Environment ID. Required for tracking analytics.
 - `FRONTEND_ORIGIN`: (optional, default empty) – public url of the frontend, eg `https://unified-auctions.makerdao.com`. Used to correctly specify open graph meta tags
 - `ENABLE_FILE_PROTOCOL`: (optional, default `false`) – By setting this variable to `true`, `npm run generate` will set [vue router mode](https://v3.router.vuejs.org/api/#mode) to `hash` and produce html that can be opened without http server, via `file://` protocol
+
+Notes: 
+- Env variables are accessible via the `secret` command under `auction-ui/${environment}/frontend`
+- In order to provide environment variables to the frontend inside the container, they have to be available at _build time_. For this:
+1) modify `build-and-deploy-(staging|production).yml` file, `parameterPairs` variable to include comma-separated key-value pairs like `/auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/rpc_url = RPC_URL`
+2) modify `build-and-deploy-(staging|production).yml` file, `build-args` variable to include newline-separated key-value pairs like `RPC_URL=${{ env.RPC_URL }}`

@@ -47,7 +47,10 @@ $ npm run start
     -   `FRONTEND_ORIGIN`: (required) The auction UI origin for the tweet (valid
         example: `https://auctions.makerdao.network`)
 
-Note: env variables are accessible via the `secret` command under `auction-ui/${environment}/bot`.
+Notes:
+- Env variables are accessible via the `secret` command under `auction-ui/${environment}/bot`
+- In order to provide environment variables to the bot inside the CI, they have to be available at _runtime_. For this:
+1) modify `https://github.com/sidestream-tech/k8s-projects/blob/main/auctions-ui/staging/values-bot.yml` file, `externalSecrets` variable to include name and path to value like `- name: rpc_url` with `ssmPath: /auction-ui/main.auction-ui.k8s.sidestream.tech/bot/rpc_url` on the next line
 
 ## Development Setup
 
