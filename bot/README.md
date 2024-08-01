@@ -27,6 +27,11 @@ $ npm run start
 
 ## Environment variables
 
+Notes:
+- Env variables are accessible via the `secret` command under `auction-ui/${environment}/bot`
+- In order to provide environment variables to the bot inside the CI, they have to be available at _runtime_. For this:
+1) modify `https://github.com/sidestream-tech/k8s-projects/blob/main/auctions-ui/staging/values-bot.yml` file, `externalSecrets` variable to include name and path to value like `- name: rpc_url` with `ssmPath: /auction-ui/main.auction-ui.k8s.sidestream.tech/bot/rpc_url` on the next line
+
 -   `RPC_URL`: (required) Etherium RPC url used for fetching data from the blockchain and participating in the auctions
 -   `SUPPORTED_AUCTION_TYPES`: (optional, default `COLLATERAL, SURPLUS, DEBT`) a comma-separated list of auction types the bot will interact with
 -   `WHITELISTED_COLLATERALS`: (optional) a comma-separated list of collaterals the bot will fetch. Example: `MATIC-A, UNI-A`

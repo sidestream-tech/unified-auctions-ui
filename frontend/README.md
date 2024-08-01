@@ -27,6 +27,12 @@ $ npm run test
 
 ### Environment variables
 
+Notes: 
+- Env variables are accessible via the `secret` command under `auction-ui/${environment}/frontend`
+- In order to provide environment variables to the frontend inside the container, they have to be available at _build time_. For this:
+1) modify `build-and-deploy-(staging|production).yml` file, `parameterPairs` variable to include comma-separated key-value pairs like `/auction-ui/main.auction-ui.k8s.sidestream.tech/frontend/rpc_url = RPC_URL`
+2) modify `build-and-deploy-(staging|production).yml` file, `build-args` variable to include newline-separated key-value pairs like `RPC_URL=${{ env.RPC_URL }}`
+
 - `RPC_URL`: (required) Etherium RPC url used for fetching data from the blockchain
     - In case [infura](https://infura.io/) url is used, we automatically add list of default networks
 - `DEMO_MODE`: (optional) When set to true the page will only show a "Coming soon" screen. Can be used for production while the page is not ready yet.

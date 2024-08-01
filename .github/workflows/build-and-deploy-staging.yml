@@ -143,4 +143,3 @@ jobs:
           branch: main
           message: "[ArgoCD]: ${{ github.workflow }} to `${{ steps.short-sha.outputs.sha }}` :rocket:"
           directory: k8s-projects
-        
