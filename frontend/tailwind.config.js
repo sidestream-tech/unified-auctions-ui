@@ -13,7 +13,7 @@ module.exports = {
                 gray: colors.trueGray,
                 primary: {
                     light: '#c2b5ff',
-                    DEFAULT: '#a392ff',
+                    DEFAULT: '#9988F5',
                     dark: '#6a54e6',
                 },
                 dark: {
