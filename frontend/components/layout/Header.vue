@@ -1,8 +1,23 @@
 <template>
     <div>
+        <!-- Sky banner -->
+        <div class="w-full p-2 text-center bg-banner-red">
+            <h1 class="text-white text-xl">
+                MakerDAO is now Sky — the next evolution of DeFi. Explore
+                <a class="underline" href="https://sky.money/" target="_blank">Sky.money</a> and get rewarded for
+                saving without giving up control.
+            </h1>
+        </div>
         <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
-        <ProductionBannerElectron v-if="productionBannerUrl" :url="productionBannerUrl" />
-        <header class="bg-primary dark:bg-primary-dark">
+        <header
+            class="
+                bg-gradient-to-r
+                from-primary
+                via-primary-light
+                to-primary
+                dark:from-primary-dark dark:via-primary dark:to-primary-dark
+            "
+        >
             <nav class="flex items-center py-2 px-4 md:px-10">
                 <HeaderLogo :network="network" :page-name="pageName" />
 
@@ -55,8 +70,8 @@
 import Vue, { PropType } from 'vue';
 import { NetworkConfig } from 'auctions-core/src/types';
 import StagingBanner from './StagingBanner.vue';
-import ProductionBannerElectron from './ProductionBannerElectron.vue';
 import HeaderLogo from './HeaderLogo.vue';
+
 import BaseSwitch from '~/components/common/inputs/BaseSwitch.vue';
 import NetworkSelector from '~/components/layout/NetworkSelector.vue';
 import WalletSelector from '~/components/layout/WalletSelector.vue';
@@ -71,7 +86,6 @@ export default Vue.extend({
         BaseSwitch,
         NetworkSelector,
         WalletSelector,
-        ProductionBannerElectron,
     },
     props: {
         type: {
@@ -80,7 +94,7 @@ export default Vue.extend({
         },
         isExplanationsShown: {
             type: Boolean,
-            required: true,
+            required: false,
         },
         network: {
             type: String,
@@ -107,10 +121,6 @@ export default Vue.extend({
             default: false,
         },
         stagingBannerUrl: {
-            type: String,
-            default: undefined,
-        },
-        productionBannerUrl: {
             type: String,
             default: undefined,
         },
