@@ -41,7 +41,7 @@ export default Vue.extend({
         },
         isExplanationsShown: {
             type: Boolean,
-            default: true,
+            default: false,
         },
         collateralStatuses: {
             type: Array as Vue.PropType<CollateralStatus[]>,

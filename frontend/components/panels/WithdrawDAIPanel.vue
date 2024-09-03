@@ -80,7 +80,7 @@ export default Vue.extend({
         },
         isExplanationsShown: {
             type: Boolean,
-            default: true,
+            default: false,
         },
         state: {
             type: String as Vue.PropType<surplusOrVaultState>,

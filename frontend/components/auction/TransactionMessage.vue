@@ -61,7 +61,7 @@ export default Vue.extend({
         },
         isExplanationsShown: {
             type: Boolean,
-            default: true,
+            default: false,
         },
         showDifferentWalletInfo: {
             type: Boolean,

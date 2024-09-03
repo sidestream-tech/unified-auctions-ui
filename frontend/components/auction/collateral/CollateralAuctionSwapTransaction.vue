@@ -158,7 +158,7 @@ export default Vue.extend({
         },
         isExplanationsShown: {
             type: Boolean,
-            default: true,
+            default: false,
         },
         isAutoroutingEnabled: {
             type: Boolean,

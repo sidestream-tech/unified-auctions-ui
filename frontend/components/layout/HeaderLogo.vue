@@ -1,6 +1,6 @@
 <template>
     <div class="flex items-center">
-        <nuxt-link :to="rootUrl" class="hidden md:block text-gray-700 hover:text-gray-600 no-underline">
+        <nuxt-link :to="rootUrl" class="hidden md:block text-white hover:text-gray-600 no-underline">
             <branding-icon class="h-12 w-12" />
         </nuxt-link>
         <Select :options="options" :value="pageName" title="Unified Auctions" class="md:ml-2 mb-0">
