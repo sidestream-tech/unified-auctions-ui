@@ -10,7 +10,7 @@ interface State {
 }
 
 export const state = (): State => ({
-    isExplanationsShown: true,
+    isExplanationsShown: false,
     isDarkMode: undefined,
     rpcUrlRecords: {},
 });
