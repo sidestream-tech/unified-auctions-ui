@@ -8,16 +8,12 @@
                 <div class="text-2xl text-gray-600">Last updated on {{ lastUpdatedDate }}</div>
             </div>
         </div>
-        <div
-            class="absolute inset-0 select-none bg-center bg-cover filter dark:invert"
-            :style="{ backgroundImage: `url(${backgroundImage})` }"
-        />
+        <div class="absolute inset-0 select-none bg-center bg-cover filter ComingSoonBackground" />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import backgroundImage from '~/assets/images/background-image.jpg';
 
 export default Vue.extend({
     name: 'ComingSoon',
@@ -26,11 +22,6 @@ export default Vue.extend({
             type: Number,
             required: true,
         },
-    },
-    data() {
-        return {
-            backgroundImage,
-        };
     },
     computed: {
         lastUpdatedDate(): string {
@@ -45,3 +36,12 @@ export default Vue.extend({
     },
 });
 </script>
+
+<style scoped>
+.ComingSoonBackground {
+    background-image: url('~/assets/images/background-image.jpg');
+}
+.dark .ComingSoonBackground {
+    background-image: url('~/assets/images/background-image-dark.jpg');
+}
+</style>

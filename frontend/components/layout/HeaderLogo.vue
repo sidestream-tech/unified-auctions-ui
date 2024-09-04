@@ -5,7 +5,7 @@
         </nuxt-link>
         <Select :options="options" :value="pageName" title="Unified Auctions" class="md:ml-2 mb-0">
             <template #text-prefix>
-                <branding-icon class="md:hidden h-12" />
+                <branding-mono-icon class="md:hidden h-12" />
             </template>
         </Select>
     </div>
@@ -16,10 +16,11 @@ import Vue from 'vue';
 import Select from '../common/inputs/Select.vue';
 import { generateLink } from '../../helpers/generateLink';
 import BrandingIcon from '~/assets/icons/logo.svg';
+import BrandingMonoIcon from '~/assets/icons/logo-mono.svg';
 
 export default Vue.extend({
     name: 'HeaderLogo',
-    components: { Select, BrandingIcon },
+    components: { Select, BrandingIcon, BrandingMonoIcon },
     props: {
         network: {
             type: String,
