@@ -5,6 +5,7 @@
             :value="network"
             :options="options"
             title="Select Network"
+            class="text-white"
             @input="updateNetworkOrChangeUrl($event)"
         >
             <template #text-prefix>

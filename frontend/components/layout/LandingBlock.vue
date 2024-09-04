@@ -43,7 +43,7 @@ export default Vue.extend({
 }
 .ButtonBase {
     @apply rounded-full border-2;
-    @apply text-gray-500 dark:text-gray-100 !important;
+    @apply text-primary dark:text-gray-100 !important;
 }
 .SecondaryButton {
     @apply ButtonBase hover:border-primary dark:bg-gray-600 dark:border-gray-600 dark:text-white dark:hover:bg-gray-500;

@@ -22,7 +22,7 @@
                 <slot name="text-prefix" />
                 <span class="hidden md:block">
                     <slot v-if="selectLink" name="title">
-                        <nuxt-link :to="selectLink" class="text-gray-700 hover:text-gray-600">
+                        <nuxt-link :to="selectLink" class="text-white hover:text-primary-light">
                             {{ selectTitle }}
                         </nuxt-link>
                     </slot>

@@ -212,7 +212,7 @@ export default Vue.extend({
 }
 .CollateralTable >>> .ant-table-tbody td,
 .CollateralTable >>> .ant-table-thead th {
-    @apply border-b-2 border-r-2 border-gray-300 dark:border-gray-600;
+    @apply border-r-2 border-gray-300 dark:border-gray-600;
 }
 
 .CollateralTable >>> .ant-table-tbody td:first-child,

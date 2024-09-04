@@ -2,14 +2,14 @@
     <div>
         <!-- Sky banner -->
         <div class="w-full p-2 text-center bg-banner-red">
-            <h1 class="text-white text-xl">
+            <h1 class="text-white">
                 MakerDAO is now Sky — the next evolution of DeFi. Explore
                 <a class="underline" href="https://sky.money/" target="_blank">Sky.money</a> and get rewarded for
                 saving without giving up control.
             </h1>
         </div>
         <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
-        <header class="bg-gradient-to-b from-gray-100 to-primary dark:from-gray-300 dark:to-primary-dark">
+        <header class="bg-gradient-to-b from-primary to-primary-purple dark:from-primary-dark dark:to-primary">
             <nav class="flex items-center py-2 px-4 md:px-10">
                 <HeaderLogo :network="network" :page-name="pageName" />
 
@@ -23,7 +23,7 @@
                             class="mt-px"
                             @update:isChecked="$emit('update:isExplanationsShown', $event)"
                         />
-                        <span class="text-gray-700">Explanations</span>
+                        <span class="text-white">Explanations</span>
                     </label>
 
                     <div class="flex space-x-4">
