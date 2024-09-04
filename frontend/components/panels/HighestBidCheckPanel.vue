@@ -88,7 +88,7 @@ export default Vue.extend({
         },
         isExplanationsShown: {
             type: Boolean,
-            default: false,
+            default: true,
         },
     },
     computed: {

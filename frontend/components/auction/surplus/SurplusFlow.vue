@@ -162,7 +162,7 @@ export default Vue.extend({
         },
         isExplanationsShown: {
             type: Boolean,
-            default: false,
+            default: true,
         },
         daiVatBalance: {
             type: Object as Vue.PropType<BigNumber>,

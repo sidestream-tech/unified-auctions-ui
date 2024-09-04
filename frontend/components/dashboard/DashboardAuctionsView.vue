@@ -61,7 +61,7 @@ export default Vue.extend({
     props: {
         isExplanationsShown: {
             type: Boolean,
-            default: false,
+            default: true,
         },
         collaterals: {
             type: Array as Vue.PropType<CollateralRow[]>,

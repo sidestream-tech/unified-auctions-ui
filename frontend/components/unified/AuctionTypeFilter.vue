@@ -50,7 +50,7 @@ export default Vue.extend({
     props: {
         isExplanationsShown: {
             type: Boolean,
-            default: false,
+            default: true,
         },
     },
     data() {

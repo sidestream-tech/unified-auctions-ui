@@ -54,7 +54,7 @@ export default Vue.extend({
         },
         isExplanationsShown: {
             type: Boolean,
-            default: false,
+            default: true,
         },
         walletAddress: {
             type: String,
