@@ -13,9 +13,9 @@
             class="
                 bg-gradient-to-r
                 from-primary
-                via-primary-light
-                to-primary
-                dark:from-primary-dark dark:via-primary dark:to-primary-dark
+                via-blue-200
+                to-primary-light
+                dark:from-primary-dark dark:via-indigo-400 dark:to-primary-dark
             "
         >
             <nav class="flex items-center py-2 px-4 md:px-10">
