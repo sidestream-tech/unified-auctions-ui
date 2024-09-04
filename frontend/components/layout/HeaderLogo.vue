@@ -1,11 +1,11 @@
 <template>
     <div class="flex items-center">
-        <nuxt-link :to="rootUrl" class="hidden md:block text-gray-700 hover:text-gray-600 no-underline">
-            <branding-icon class="h-12 w-12" />
+        <nuxt-link :to="rootUrl" class="hidden md:block white hover:text-gray-600 no-underline">
+            <branding-icon class="h-12" />
         </nuxt-link>
         <Select :options="options" :value="pageName" title="Unified Auctions" class="md:ml-2 mb-0">
             <template #text-prefix>
-                <branding-icon class="md:hidden h-12 w-12" />
+                <branding-icon class="md:hidden h-12" />
             </template>
         </Select>
     </div>

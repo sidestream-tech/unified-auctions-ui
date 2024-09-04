@@ -9,15 +9,7 @@
             </h1>
         </div>
         <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
-        <header
-            class="
-                bg-gradient-to-r
-                from-primary
-                via-blue-200
-                to-primary-light
-                dark:from-primary-dark dark:via-indigo-400 dark:to-primary-dark
-            "
-        >
+        <header class="bg-gradient-to-b from-gray-100 to-primary dark:from-gray-300 dark:to-primary-dark">
             <nav class="flex items-center py-2 px-4 md:px-10">
                 <HeaderLogo :network="network" :page-name="pageName" />
 
@@ -94,7 +86,7 @@ export default Vue.extend({
         },
         isExplanationsShown: {
             type: Boolean,
-            required: false,
+            required: true,
         },
         network: {
             type: String,
@@ -121,6 +113,10 @@ export default Vue.extend({
             default: false,
         },
         stagingBannerUrl: {
+            type: String,
+            default: undefined,
+        },
+        productionBannerUrl: {
             type: String,
             default: undefined,
         },

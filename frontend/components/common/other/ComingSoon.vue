@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import backgroundImage from '~/assets/images/background-image.png';
+import backgroundImage from '~/assets/images/background-image.jpg';
 
 export default Vue.extend({
     name: 'ComingSoon',
