@@ -186,7 +186,7 @@ export default Vue.extend({
             return this.auctionActionState[this.selectedAuctionId] || undefined;
         },
         doShowBanner(): boolean {
-            return !!process.env.STAGING_BANNER_URL;
+            return !!process.env.STAGING_BANNER_URL || !!process.env.PRODUCTION_BANNER_URL;
         },
         walletDai(): BigNumber | undefined {
             return this.walletBalances?.walletDAI || undefined;

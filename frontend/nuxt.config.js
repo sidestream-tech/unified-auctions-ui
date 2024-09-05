@@ -23,6 +23,7 @@ export default {
         CONTACT_EMAIL: process.env.CONTACT_EMAIL || undefined,
         GITHUB_URL: pkg.repository.url,
         STAGING_BANNER_URL: process.env.STAGING_BANNER_URL || undefined,
+        PRODUCTION_BANNER_URL: process.env.PRODUCTION_BANNER_URL || undefined,
         HEAPIO_ID: process.env.HEAPIO_ID || undefined,
         APPLICATION_VERSION: uuidv4(), // hardcoded this during build
     },

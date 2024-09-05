@@ -22,7 +22,7 @@ export default Vue.extend({
             },
         },
         doShowHeader(): boolean {
-            return !!process.env.STAGING_BANNER_URL;
+            return !!process.env.STAGING_BANNER_URL || !!process.env.PRODUCTION_BANNER_URL;
         },
     },
 });
