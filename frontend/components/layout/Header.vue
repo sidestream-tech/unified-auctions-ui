@@ -116,10 +116,6 @@ export default Vue.extend({
             type: String,
             default: undefined,
         },
-        productionBannerUrl: {
-            type: String,
-            default: undefined,
-        },
         networks: {
             type: Array as PropType<NetworkConfig[]>,
             default: () => [] as NetworkConfig[],

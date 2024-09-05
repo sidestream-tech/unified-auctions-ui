@@ -12,7 +12,6 @@
             :has-accepted-terms="hasAcceptedTerms"
             :staging-banner-url="stagingBannerURL"
             :networks="networks"
-            :production-banner-url="productionBannerURL"
             :is-changing-network="isChangingNetwork"
             @changeWalletType="changeWalletType"
             @changeRpcUrl="isRpcUrlConfigurationModalShown = true"
@@ -139,9 +138,6 @@ export default Vue.extend({
         },
         pageName(): string {
             return this.$route?.name || '';
-        },
-        productionBannerURL() {
-            return process.env.PRODUCTION_BANNER_URL;
         },
         headerType(): string {
             return (

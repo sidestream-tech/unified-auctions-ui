@@ -160,7 +160,7 @@ const features: FeatureList[] = [
         ],
     },
     {
-        title: `Twitter Bot`,
+        title: `X Bot`,
         url: `https://x.com/sidestream_labs`,
         items: [
             {
