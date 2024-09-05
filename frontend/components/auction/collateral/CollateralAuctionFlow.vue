@@ -217,7 +217,7 @@ export default Vue.extend({
             return null;
         },
         doShowBanner(): boolean {
-            return !!process.env.STAGING_BANNER_URL || !!process.env.PRODUCTION_BANNER_URL;
+            return !!process.env.STAGING_BANNER_URL;
         },
         collateralVatBalance(): BigNumber | undefined {
             if (!this.collateralVatBalanceStore || !this.selectedAuction) {
