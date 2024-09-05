@@ -1,10 +1,7 @@
 <template>
     <div class="HeightFix flex flex-col w-full h-full items-center">
         <LandingBlock v-if="isExplanationsShown" class="LandingBlock">
-            <h1 class="text-gray-800 dark:text-gray-100">
-                Maker Protocol <br />
-                Unified Auctions
-            </h1>
+            <h1 class="text-gray-800 dark:text-gray-100">Unified Auctions</h1>
         </LandingBlock>
         <div class="flex flex-col w-full items-center space-y-4 md:space-y-8 mt-4 md:mt-8 mb-4 px-4">
             <TextBlock v-if="isExplanationsShown" title="Different auction types" class="max-w-screen-sm">
