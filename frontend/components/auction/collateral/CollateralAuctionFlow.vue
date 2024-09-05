@@ -1,5 +1,5 @@
 <template>
-    <div :class="doShowBanner ? 'SplitLayoutBannerPrependedContainer' : 'SplitLayoutContainer'">
+    <div>
         <SplitLayout :step.sync="step">
             <template #step0>
                 <div v-if="isExplanationsShown" class="h-1/2">
@@ -216,9 +216,6 @@ export default Vue.extend({
             }
             return null;
         },
-        doShowBanner(): boolean {
-            return !!process.env.STAGING_BANNER_URL || !!process.env.PRODUCTION_BANNER_URL;
-        },
         collateralVatBalance(): BigNumber | undefined {
             if (!this.collateralVatBalanceStore || !this.selectedAuction) {
                 return;
@@ -269,15 +266,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.SplitLayoutContainer {
-    height: calc(100vh - 4rem);
-}
-
-.SplitLayoutBannerPrependedContainer {
-    margin-top: 2.3rem;
-    height: calc(100vh - 6.3rem);
-}
-
 .MainTextContainer {
     min-height: calc(100vh - 10rem);
 }

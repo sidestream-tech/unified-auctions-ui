@@ -1,7 +1,7 @@
 <template>
     <div :class="isDarkMode && 'dark bg-gray-900'">
         <Header
-            class="sticky top-0 z-50 w-full h-16"
+            class="sticky top-0 z-50 w-full h-fit"
             :is-explanations-shown.sync="isExplanationsShown"
             :type="headerType"
             :page-name="pageName"

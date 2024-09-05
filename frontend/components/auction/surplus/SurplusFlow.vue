@@ -1,5 +1,5 @@
 <template>
-    <div :class="doShowBanner ? 'SplitLayoutBannerPrependedContainer' : 'SplitLayoutContainer'">
+    <div>
         <SplitLayout :step.sync="step">
             <template #step0>
                 <div v-if="isExplanationsShown" class="h-1/2">
@@ -190,9 +190,6 @@ export default Vue.extend({
         selectedAuctionActionState(): string | undefined {
             return this.auctionActionState[this.selectedAuctionId] || undefined;
         },
-        doShowBanner(): boolean {
-            return !!process.env.STAGING_BANNER_URL || !!process.env.PRODUCTION_BANNER_URL;
-        },
         walletMKR(): BigNumber | undefined {
             return this.walletBalances?.walletMKR || undefined;
         },
@@ -233,15 +230,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.SplitLayoutContainer {
-    height: calc(100vh - 4rem);
-}
-
-.SplitLayoutBannerPrependedContainer {
-    margin-top: 2.3rem;
-    height: calc(100vh - 6.3rem);
-}
-
 .SurplusTextContainer {
     min-height: calc(100vh - 10rem);
 }

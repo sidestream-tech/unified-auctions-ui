@@ -1,5 +1,5 @@
 <template>
-    <div :class="doShowHeader ? 'SplitLayoutBannerPrependedContainer' : 'SplitLayoutContainer'">
+    <div>
         <SplitLayout :step.sync="step">
             <template #step0>
                 <div v-if="isExplanationsShown" class="h-1/2">
@@ -140,9 +140,6 @@ export default Vue.extend({
                 ) || null
             );
         },
-        doShowHeader(): boolean {
-            return !!process.env.STAGING_BANNER_URL || !!process.env.PRODUCTION_BANNER_URL;
-        },
     },
     watch: {
         selectedVaultId: {
@@ -179,15 +176,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.SplitLayoutContainer {
-    height: calc(100vh - 4rem);
-}
-
-.SplitLayoutBannerPrependedContainer {
-    margin-top: 2.3rem;
-    height: calc(100vh - 6.3rem);
-}
-
 .MainTextContainer {
     min-height: calc(100vh - 10rem);
 }
