@@ -186,10 +186,10 @@ export default Vue.extend({
                     filters: [],
                 },
                 {
-                    title: 'SAS Collateral Auction Twitter Bot',
+                    title: 'Collateral Auction Twitter Bot',
                     description: `Tweets about collateral auctions and facilitates access to auction participation`,
                     links: {
-                        profile: 'https://twitter.com/MakerDAO_SAS',
+                        profile: 'https://x.com/sidestream_labs',
                     },
                     filters: ['collateral'],
                 },
