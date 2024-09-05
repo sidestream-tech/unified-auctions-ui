@@ -12,16 +12,20 @@ module.exports = {
             colors: {
                 gray: colors.trueGray,
                 primary: {
-                    light: '#8dd7cf',
-                    DEFAULT: '#1AAB9B',
-                    dark: '#169184',
+                    purple: '#A273FF',
+                    light: '#968cf3',
+                    DEFAULT: '#4331E9',
+                    dark: '#2A197D',
                 },
                 dark: {
-                    DEFAULT: '#111E1E',
-                    light: '#12302e',
-                    dark: '#081615',
+                    DEFAULT: '#1a142a',
+                    light: '#2c2440',
+                    dark: '#0f0a17',
                 },
                 orange: colors.orange,
+                banner: {
+                    red: '#b30000',
+                },
             },
         },
     },

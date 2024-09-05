@@ -1,8 +1,7 @@
 <template>
     <div :class="isDarkMode && 'dark bg-gray-900'">
-        <ElectronUpdateBannerContainer />
         <Header
-            class="sticky top-0 z-50 w-full h-16"
+            class="sticky top-0 z-50 w-full h-fit"
             :is-explanations-shown.sync="isExplanationsShown"
             :type="headerType"
             :page-name="pageName"
@@ -12,8 +11,8 @@
             :is-wallet-loading="isWalletLoading"
             :has-accepted-terms="hasAcceptedTerms"
             :staging-banner-url="stagingBannerURL"
-            :production-banner-url="productionBannerURL"
             :networks="networks"
+            :production-banner-url="productionBannerURL"
             :is-changing-network="isChangingNetwork"
             @changeWalletType="changeWalletType"
             @changeRpcUrl="isRpcUrlConfigurationModalShown = true"
@@ -68,7 +67,6 @@ import WalletModalContainer from '~/containers/WalletModalContainer.vue';
 import ManageCollateralModalContainer from '~/containers/ManageCollateralModalContainer.vue';
 import TermsModal from '~/components/modals/TermsModal.vue';
 import Analytics from '~/components/common/other/Analytics.vue';
-import ElectronUpdateBannerContainer from '~/containers/ElectronUpdateBannerContainer.vue';
 
 export default Vue.extend({
     components: {
@@ -81,7 +79,6 @@ export default Vue.extend({
         WalletSelectModal,
         ManageCollateralModalContainer,
         Analytics,
-        ElectronUpdateBannerContainer,
     },
     computed: {
         ...mapGetters('wallet', {
@@ -140,11 +137,11 @@ export default Vue.extend({
         stagingBannerURL() {
             return process.env.STAGING_BANNER_URL;
         },
-        productionBannerURL() {
-            return process.env.PRODUCTION_BANNER_URL;
-        },
         pageName(): string {
             return this.$route?.name || '';
+        },
+        productionBannerURL() {
+            return process.env.PRODUCTION_BANNER_URL;
         },
         headerType(): string {
             return (

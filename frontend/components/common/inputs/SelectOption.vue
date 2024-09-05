@@ -15,7 +15,7 @@
         <div
             v-if="!option.href"
             :key="option.value"
-            class="w-full flex hover:bg-primary px-4 py-2 cursor-pointer items-center"
+            class="w-full flex hover:bg-primary px-4 py-2 cursor-pointer items-center hover:text-white"
             :class="option.classes"
             @click="$emit('input', option.value)"
         >

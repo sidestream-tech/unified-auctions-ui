@@ -43,7 +43,7 @@ export default Vue.extend({
 
 <style scoped>
 .Primary {
-    @apply bg-primary-light border-2 border-primary hover:text-primary text-gray-700;
+    @apply bg-primary-light border-2 border-primary hover:text-white text-gray-700;
 }
 
 .Secondary {

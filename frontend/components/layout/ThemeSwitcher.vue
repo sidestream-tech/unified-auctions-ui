@@ -1,5 +1,8 @@
 <template>
-    <div class="flex items-center space-x-2 cursor-pointer pt-1 md:pt-0" @click="$emit('update', !darkMode)">
+    <div
+        class="flex items-center space-x-2 cursor-pointer pt-1 md:pt-0 text-white"
+        @click="$emit('update', !darkMode)"
+    >
         <sun-icon v-if="darkMode" class="h-8 w-8 md:h-4 md:w-4" />
         <moon-icon v-else class="h-8 w-8 md:h-4 md:w-4" />
     </div>

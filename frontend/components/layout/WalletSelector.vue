@@ -3,6 +3,7 @@
         v-if="walletAddress || isLoading"
         :options="menuOptions"
         :title="walletAddress"
+        class="text-white"
         @input="determineMenuAction"
     >
         <template #text-prefix>
@@ -24,6 +25,7 @@
         title="Connect a Wallet"
         :options="wallets"
         :visible="isModalOpen"
+        class="text-white"
         @update:visible="$emit('update:isModalOpen', $event)"
         @input="$emit('changeWalletType', $event)"
     >

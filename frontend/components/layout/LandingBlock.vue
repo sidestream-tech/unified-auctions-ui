@@ -16,17 +16,13 @@
                 <slot />
             </div>
         </div>
-        <div
-            class="absolute inset-0 select-none bg-center bg-cover filter dark:invert"
-            :style="{ backgroundImage: `url(${backgroundImage})` }"
-        />
+        <div class="absolute inset-0 select-none bg-center bg-cover filter LadingBlockBackground" />
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import Button from '~/components/common/inputs/BaseButton.vue';
-import backgroundImage from '~/assets/images/background-image.jpg';
 
 export default Vue.extend({
     components: {
@@ -38,11 +34,6 @@ export default Vue.extend({
             default: 'Collateral auctions',
         },
     },
-    data() {
-        return {
-            backgroundImage,
-        };
-    },
 });
 </script>
 
@@ -52,7 +43,7 @@ export default Vue.extend({
 }
 .ButtonBase {
     @apply rounded-full border-2;
-    @apply text-gray-500 dark:text-gray-100 !important;
+    @apply text-primary dark:text-gray-100 !important;
 }
 .SecondaryButton {
     @apply ButtonBase hover:border-primary dark:bg-gray-600 dark:border-gray-600 dark:text-white dark:hover:bg-gray-500;
@@ -64,5 +55,11 @@ export default Vue.extend({
 }
 .LandingTitle {
     @apply text-4xl font-bold text-gray-800 dark:text-gray-100 px-4;
+}
+.LadingBlockBackground {
+    background-image: url('~/assets/images/background-image.jpg');
+}
+.dark .LadingBlockBackground {
+    background-image: url('~/assets/images/background-image-dark.jpg');
 }
 </style>
