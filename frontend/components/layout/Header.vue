@@ -1,5 +1,6 @@
 <template>
     <div>
+        <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
         <!-- Sky banner -->
         <div class="w-full p-2 text-center bg-banner-red">
             <h1 class="text-white">
@@ -8,7 +9,6 @@
                 saving without giving up control.
             </h1>
         </div>
-        <StagingBanner v-if="stagingBannerUrl" :url="stagingBannerUrl" />
         <header class="bg-gradient-to-b from-primary to-primary-purple dark:from-primary-dark dark:to-primary">
             <nav class="flex items-center py-2 px-4 md:px-10">
                 <HeaderLogo :network="network" :page-name="pageName" />
@@ -113,10 +113,6 @@ export default Vue.extend({
             default: false,
         },
         stagingBannerUrl: {
-            type: String,
-            default: undefined,
-        },
-        productionBannerUrl: {
             type: String,
             default: undefined,
         },

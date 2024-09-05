@@ -160,8 +160,8 @@ const features: FeatureList[] = [
         ],
     },
     {
-        title: `Twitter Bot`,
-        url: `https://twitter.com/MakerDAO_SAS`,
+        title: `X Bot`,
+        url: `https://x.com/sidestream_labs`,
         items: [
             {
                 text: `The bot informs via a tweet about each new started collateral auction`,

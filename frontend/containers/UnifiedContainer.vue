@@ -1,5 +1,5 @@
 <template>
-    <div :class="doShowHeader ? 'UnifiedHeaderPrependedContainer' : 'UnifiedContainer'">
+    <div>
         <UnifiedAuctionsView :is-explanations-shown.sync="isExplanationsShown" />
     </div>
 </template>
@@ -21,20 +21,6 @@ export default Vue.extend({
                 this.$store.dispatch('preferences/setExplanationsAction', newIsExplanationsShown);
             },
         },
-        doShowHeader(): boolean {
-            return !!process.env.STAGING_BANNER_URL || !!process.env.PRODUCTION_BANNER_URL;
-        },
     },
 });
 </script>
-
-<style scoped>
-.UnifiedContainer {
-    min-height: calc(100vh - 9.8rem);
-}
-
-.UnifiedHeaderPrependedContainer {
-    margin-top: 2.3rem;
-    min-height: calc(100vh - 12.1rem);
-}
-</style>

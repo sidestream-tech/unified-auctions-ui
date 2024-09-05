@@ -1,8 +1,8 @@
 <template>
     <div class="LandingBlock">
-        <div v-if="!$slots.default" class="flex flex-col items-center w-full z-10">
-            <div class="LandingTitle pt-6">{{ title }}</div>
-            <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 my-8">
+        <div v-if="!$slots.default" class="flex flex-col items-center w-full z-10 py-12">
+            <div class="LandingTitle">{{ title }}</div>
+            <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 mt-8">
                 <Button class="SecondaryButton mx-3" @click="$emit('explanations', false)"
                     >I already know how it works</Button
                 >
