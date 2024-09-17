@@ -109,34 +109,12 @@ export default Vue.extend({
                     filters: ['collateral'],
                 },
                 {
-                    title: 'Maker Auction (debt)',
-                    description:
-                        'Web tool that supports participation in debt auctions by bidding on MKR with own Dai',
+                    title: 'Collateral Auction Twitter Bot',
+                    description: `Tweets about collateral auctions and facilitates access to auction participation`,
                     links: {
-                        source: 'https://github.com/makerdao/auctions-ui',
-                    },
-                    filters: ['debt'],
-                },
-                {
-                    title: 'Auction Demo Keeper',
-                    description: `
-                    Node.js-based reference implementation for a keeper that
-                    participates in collateral auctions via swap transactions`,
-                    links: {
-                        source: 'https://github.com/makerdao/auction-demo-keeper',
+                        profile: 'https://x.com/sidestream_labs',
                     },
                     filters: ['collateral'],
-                },
-                {
-                    title: 'Auction Keeper',
-                    description: `
-                    Python-based implementation of a bot that is capable to participate in
-                    all different auction types (collateral auction, surplus auctions, debt auctions)
-                    as well as as a bot to start auctions based on undercollateralized vaults`,
-                    links: {
-                        source: 'https://github.com/makerdao/auction-keeper',
-                    },
-                    filters: ['collateral', 'debt'],
                 },
                 {
                     title: 'MakerBurn',
@@ -147,51 +125,6 @@ export default Vue.extend({
                         analytics: 'https://makerburn.com/',
                     },
                     filters: ['collateral', 'debt'],
-                },
-                {
-                    title: 'Blockanalytica',
-                    description: 'Shows detailed information on auction activity including participation metrics',
-                    links: {
-                        analytics: 'https://maker.blockanalitica.com/auctions/',
-                    },
-                    filters: ['collateral'],
-                },
-                {
-                    title: 'Daiauctions',
-                    description: `
-                    Shows current auction parameters on general and collateral level as well as the status
-                    of auctions that have been started in the last few days`,
-                    links: {
-                        analytics: 'https://daiauctions.com/#',
-                    },
-                    filters: ['collateral'],
-                },
-                {
-                    title: 'Daistats',
-                    description: `
-                    Provides overview on different auction related parameters like number of surplus,
-                    debt and collateral auctions`,
-                    links: {
-                        analytics: 'https://daistats.com/#/auctions',
-                    },
-                    filters: ['collateral', 'debt'],
-                },
-                {
-                    title: 'MakerDai Twitter Bot',
-                    description:
-                        'Tweets about mints/burns, liquidations and other significant changes in the Maker Protocol',
-                    links: {
-                        profile: 'https://twitter.com/MakerDaiBot',
-                    },
-                    filters: [],
-                },
-                {
-                    title: 'Collateral Auction Twitter Bot',
-                    description: `Tweets about collateral auctions and facilitates access to auction participation`,
-                    links: {
-                        profile: 'https://x.com/sidestream_labs',
-                    },
-                    filters: ['collateral'],
                 },
             ],
         };
