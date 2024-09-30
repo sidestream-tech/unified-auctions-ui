@@ -78,7 +78,7 @@ const simulation: Simulation = {
                     TEST_NETWORK,
                     context.collateralType
                 );
-                const INITIAL_WARP_PARTS = 1 / 13;
+                const INITIAL_WARP_PARTS = 1 / 12;
                 const warpSeconds = Math.floor(auctionLifetime * INITIAL_WARP_PARTS);
                 console.info(`Initial warp of ${INITIAL_WARP_PARTS} of an auction time: ${warpSeconds} seconds`);
                 await warpTime(warpSeconds, 1);

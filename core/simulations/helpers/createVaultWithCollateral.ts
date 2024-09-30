@@ -61,11 +61,12 @@ const setAndCheckCollateralInVat = async (collateralType: CollateralType, collat
 };
 
 const checkAndWithdrawCollateralFromVat = async (collateralConfig: CollateralConfig, collateralOwned: BigNumber) => {
+    const joinName = getJoinNameByCollateralType(collateralConfig.ilk);
+    if (!joinName) {
+        throw new Error('checkAndWithdrawCollateralFromVat: there is no vat collateral for joinless collateral');
+    }
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
-    const addressJoin = await getContractAddressByName(
-        TEST_NETWORK,
-        getJoinNameByCollateralType(collateralConfig.ilk)
-    );
+    const addressJoin = await getContractAddressByName(TEST_NETWORK, joinName);
     const joinBalance = await fetchERC20TokenBalance(
         TEST_NETWORK,
         tokenContractAddress,
@@ -164,11 +165,12 @@ export const checkAvailableDebtForAmountAndMinUnitPrice = async (
 };
 
 const giveJoinContractAllowance = async (collateralConfig: CollateralConfig, amount?: BigNumber) => {
+    const joinName = getJoinNameByCollateralType(collateralConfig.ilk);
+    if (!joinName) {
+        throw new Error('giveJoinContractAllowance: joinless contract allowance can not be given');
+    }
     const tokenContractAddress = await getContractAddressByName(TEST_NETWORK, collateralConfig.symbol);
-    const addressJoin = await getContractAddressByName(
-        TEST_NETWORK,
-        getJoinNameByCollateralType(collateralConfig.ilk)
-    );
+    const addressJoin = await getContractAddressByName(TEST_NETWORK, joinName);
     const contract = await getErc20Contract(TEST_NETWORK, tokenContractAddress, true);
     const amountRaw = amount ? amount.shiftedBy(collateralConfig.decimals).toFixed(0) : MAX.toFixed(0);
     await contract.approve(addressJoin, amountRaw);
@@ -209,15 +211,17 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
     }
     await ensureWalletBalance(collateralConfig, collateralOwned);
 
-    const joinContractAddress = await getContractAddressByName(
-        TEST_NETWORK,
-        getJoinNameByCollateralType(collateralType)
-    );
-    const proxyTarget = await detectProxyTarget(TEST_NETWORK, joinContractAddress);
-    if (!proxyTarget) {
-        return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
+    const joinName = getJoinNameByCollateralType(collateralType);
+    if (joinName) {
+        const joinContractAddress = await getContractAddressByName(TEST_NETWORK, joinName);
+        const proxyTarget = await detectProxyTarget(TEST_NETWORK, joinContractAddress);
+        if (!proxyTarget) {
+            return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
+        }
+        return await createProxiedVaultWithCollateral(collateralType, collateralOwned);
+    } else {
+        throw new Error('createVaultWithCollateral: joinless vault creation is not yet implemented');
     }
-    return await createProxiedVaultWithCollateral(collateralType, collateralOwned);
 };
 
 export const adjustLimitsAndRates = async (collateralType: CollateralType) => {

@@ -85,7 +85,7 @@ export const getContractInterfaceByName = async function (contractName: string):
     if (contractName.startsWith('MCD_CLIP_CALC_')) {
         return MCD_CLIP_CALC;
     }
-    if (contractName.startsWith('MCD_CLIP_')) {
+    if (contractName.startsWith('MCD_CLIP_') || contractName.endsWith('_CLIP')) {
         return MCD_CLIP;
     }
     if (contractName.startsWith('PROXY_ACTIONS_')) {

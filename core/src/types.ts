@@ -150,7 +150,7 @@ export declare interface ValueSlotAddressAndOffset {
 
 export declare interface CollateralAddresses {
     token: string;
-    join: string;
+    join?: string;
     pip: string;
     clip: string;
     calc: string;
