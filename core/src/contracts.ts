@@ -6,6 +6,7 @@ import getSigner from './signer';
 import BigNumber from '../src/bignumber';
 import { RAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 import { fetchContractAddressByNetwork } from './addresses';
+import { getCollateralConfigByType } from './constants/COLLATERALS';
 import MCD_DAI from './abis/MCD_DAI.json';
 import MCD_VAT from './abis/MCD_VAT.json';
 import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
@@ -37,13 +38,13 @@ import MCD_PAUSE from './abis/MCD_PAUSE.json';
 const ERC20_SYMBOL_CALL_CACHE_TIME_MS = 1000 * 60 * 60 * 24; // 1 day
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
-    const suffix = collateralType.toUpperCase().replace('-', '_');
-    return `MCD_CLIP_${suffix}`;
+    const config = getCollateralConfigByType(collateralType);
+    return config.contracts.clip;
 };
 
-export const getJoinNameByCollateralType = function (collateralType: string): string {
-    const suffix = collateralType.toUpperCase().replace('-', '_');
-    return `MCD_JOIN_${suffix}`;
+export const getJoinNameByCollateralType = function (collateralType: string): string | undefined {
+    const config = getCollateralConfigByType(collateralType);
+    return config.contracts.join;
 };
 
 export const getContractAddressByName = async function (network: string, contractName: string): Promise<string> {
@@ -101,12 +102,6 @@ const _getContract = async function (network: string, contractName: string, useS
     return contract;
 };
 
-export const getErc20Contract = async function (network: string, contractAddress: string, useSigner = false) {
-    const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
-    const contract = await new ethers.Contract(contractAddress, ERC20, signerOrProvider);
-    return contract;
-};
-
 const getContract = memoizee(_getContract, {
     promise: true,
     length: 3,
@@ -134,6 +129,12 @@ export const getContractValue = async function (
         WAD: WAD_NUMBER_OF_DIGITS,
     }[options.decimalUnits];
     return new BigNumber(variableHex._hex).shiftedBy(-decimals);
+};
+
+export const getErc20Contract = async function (network: string, contractAddress: string, useSigner = false) {
+    const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
+    const contract = await new ethers.Contract(contractAddress, ERC20, signerOrProvider);
+    return contract;
 };
 
 const _getErc20SymbolByAddress = async function (network: string, address: string): Promise<string> {

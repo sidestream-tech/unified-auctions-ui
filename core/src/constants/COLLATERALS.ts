@@ -21,6 +21,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'AAVE-A',
         symbol: 'AAVE',
         decimals: 18,
+        contracts: {
+            token: 'AAVE',
+            pip: 'PIP_AAVE',
+            join: 'MCD_JOIN_AAVE_A',
+            clip: 'MCD_CLIP_AAVE_A',
+            calc: 'MCD_CLIP_CALC_AAVE_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -42,6 +49,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'BAL-A',
         symbol: 'BAL',
         decimals: 18,
+        contracts: {
+            token: 'BAL',
+            pip: 'PIP_BAL',
+            join: 'MCD_JOIN_BAL_A',
+            clip: 'MCD_CLIP_BAL_A',
+            calc: 'MCD_CLIP_CALC_BAL_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -63,6 +77,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'BAT-A',
         symbol: 'BAT',
         decimals: 18,
+        contracts: {
+            token: 'BAT',
+            pip: 'PIP_BAT',
+            join: 'MCD_JOIN_BAT_A',
+            clip: 'MCD_CLIP_BAT_A',
+            calc: 'MCD_CLIP_CALC_BAT_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -84,6 +105,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'COMP-A',
         symbol: 'COMP',
         decimals: 18,
+        contracts: {
+            token: 'COMP',
+            pip: 'PIP_COMP',
+            join: 'MCD_JOIN_COMP_A',
+            clip: 'MCD_CLIP_COMP_A',
+            calc: 'MCD_CLIP_CALC_COMP_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -105,6 +133,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'GNO-A',
         symbol: 'GNO',
         decimals: 18,
+        contracts: {
+            token: 'GNO',
+            pip: 'PIP_GNO',
+            join: 'MCD_JOIN_GNO_A',
+            clip: 'MCD_CLIP_GNO_A',
+            calc: 'MCD_CLIP_CALC_GNO_A',
+        },
         exchanges: {
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
@@ -122,6 +157,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'ETH-A',
         symbol: 'ETH',
         decimals: 18,
+        contracts: {
+            token: 'ETH',
+            pip: 'PIP_ETH',
+            join: 'MCD_JOIN_ETH_A',
+            clip: 'MCD_CLIP_ETH_A',
+            calc: 'MCD_CLIP_CALC_ETH_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -143,6 +185,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'ETH-B',
         symbol: 'ETH',
         decimals: 18,
+        contracts: {
+            token: 'ETH',
+            pip: 'PIP_ETH',
+            join: 'MCD_JOIN_ETH_B',
+            clip: 'MCD_CLIP_ETH_B',
+            calc: 'MCD_CLIP_CALC_ETH_B',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -164,6 +213,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'ETH-C',
         symbol: 'ETH',
         decimals: 18,
+        contracts: {
+            token: 'ETH',
+            pip: 'PIP_ETH',
+            join: 'MCD_JOIN_ETH_C',
+            clip: 'MCD_CLIP_ETH_C',
+            calc: 'MCD_CLIP_CALC_ETH_C',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -185,6 +241,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'GUSD-A',
         symbol: 'GUSD',
         decimals: 2,
+        contracts: {
+            token: 'GUSD',
+            pip: 'PIP_GUSD',
+            join: 'MCD_JOIN_GUSD_A',
+            clip: 'MCD_CLIP_GUSD_A',
+            calc: 'MCD_CLIP_CALC_GUSD_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -206,6 +269,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'KNC-A',
         symbol: 'KNC',
         decimals: 18,
+        contracts: {
+            token: 'KNC',
+            pip: 'PIP_KNC',
+            join: 'MCD_JOIN_KNC_A',
+            clip: 'MCD_CLIP_KNC_A',
+            calc: 'MCD_CLIP_CALC_KNC_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -227,6 +297,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'LINK-A',
         symbol: 'LINK',
         decimals: 18,
+        contracts: {
+            token: 'LINK',
+            pip: 'PIP_LINK',
+            join: 'MCD_JOIN_LINK_A',
+            clip: 'MCD_CLIP_LINK_A',
+            calc: 'MCD_CLIP_CALC_LINK_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -248,6 +325,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'LRC-A',
         symbol: 'LRC',
         decimals: 18,
+        contracts: {
+            token: 'LRC',
+            pip: 'PIP_LRC',
+            join: 'MCD_JOIN_LRC_A',
+            clip: 'MCD_CLIP_LRC_A',
+            calc: 'MCD_CLIP_CALC_LRC_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -269,6 +353,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'MANA-A',
         symbol: 'MANA',
         decimals: 18,
+        contracts: {
+            token: 'MANA',
+            pip: 'PIP_MANA',
+            join: 'MCD_JOIN_MANA_A',
+            clip: 'MCD_CLIP_MANA_A',
+            calc: 'MCD_CLIP_CALC_MANA_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -290,6 +381,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'PAXUSD-A',
         symbol: 'PAXUSD',
         decimals: 18,
+        contracts: {
+            token: 'PAXUSD',
+            pip: 'PIP_PAXUSD',
+            join: 'MCD_JOIN_PAXUSD_A',
+            clip: 'MCD_CLIP_PAXUSD_A',
+            calc: 'MCD_CLIP_CALC_PAXUSD_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -312,6 +410,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'RENBTC-A',
         symbol: 'RENBTC',
         decimals: 8,
+        contracts: {
+            token: 'RENBTC',
+            pip: 'PIP_RENBTC',
+            join: 'MCD_JOIN_RENBTC_A',
+            clip: 'MCD_CLIP_RENBTC_A',
+            calc: 'MCD_CLIP_CALC_RENBTC_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -333,6 +438,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'TUSD-A',
         symbol: 'TUSD',
         decimals: 18,
+        contracts: {
+            token: 'TUSD',
+            pip: 'PIP_TUSD',
+            join: 'MCD_JOIN_TUSD_A',
+            clip: 'MCD_CLIP_TUSD_A',
+            calc: 'MCD_CLIP_CALC_TUSD_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -354,6 +466,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNI-A',
         symbol: 'UNI',
         decimals: 18,
+        contracts: {
+            token: 'UNI',
+            pip: 'PIP_UNI',
+            join: 'MCD_JOIN_UNI_A',
+            clip: 'MCD_CLIP_UNI_A',
+            calc: 'MCD_CLIP_CALC_UNI_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -375,6 +494,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'USDC-A',
         symbol: 'USDC',
         decimals: 6,
+        contracts: {
+            token: 'USDC',
+            pip: 'PIP_USDC',
+            join: 'MCD_JOIN_USDC_A',
+            clip: 'MCD_CLIP_USDC_A',
+            calc: 'MCD_CLIP_CALC_USDC_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -396,6 +522,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'USDC-B',
         symbol: 'USDC',
         decimals: 6,
+        contracts: {
+            token: 'USDC',
+            pip: 'PIP_USDC',
+            join: 'MCD_JOIN_USDC_A',
+            clip: 'MCD_CLIP_USDC_B',
+            calc: 'MCD_CLIP_CALC_USDC_B',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -417,6 +550,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'USDT-A',
         symbol: 'USDT',
         decimals: 6,
+        contracts: {
+            token: 'USDT',
+            pip: 'PIP_USDT',
+            join: 'MCD_JOIN_USDT_A',
+            clip: 'MCD_CLIP_USDT_A',
+            calc: 'MCD_CLIP_CALC_USDT_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -438,6 +578,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WBTC-A',
         symbol: 'WBTC',
         decimals: 8,
+        contracts: {
+            token: 'WBTC',
+            pip: 'PIP_WBTC',
+            join: 'MCD_JOIN_WBTC_A',
+            clip: 'MCD_CLIP_WBTC_A',
+            calc: 'MCD_CLIP_CALC_WBTC_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -459,6 +606,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WBTC-B',
         symbol: 'WBTC',
         decimals: 8,
+        contracts: {
+            token: 'WBTC',
+            pip: 'PIP_WBTC',
+            join: 'MCD_JOIN_WBTC_B',
+            clip: 'MCD_CLIP_WBTC_B',
+            calc: 'MCD_CLIP_CALC_WBTC_B',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -480,6 +634,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WBTC-C',
         symbol: 'WBTC',
         decimals: 8,
+        contracts: {
+            token: 'WBTC',
+            pip: 'PIP_WBTC',
+            join: 'MCD_JOIN_WBTC_C',
+            clip: 'MCD_CLIP_WBTC_C',
+            calc: 'MCD_CLIP_CALC_WBTC_C',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -501,6 +662,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'YFI-A',
         symbol: 'YFI',
         decimals: 18,
+        contracts: {
+            token: 'YFI',
+            pip: 'PIP_YFI',
+            join: 'MCD_JOIN_YFI_A',
+            clip: 'MCD_CLIP_YFI_A',
+            calc: 'MCD_CLIP_CALC_YFI_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -522,6 +690,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'ZRX-A',
         symbol: 'ZRX',
         decimals: 18,
+        contracts: {
+            token: 'ZRX',
+            pip: 'PIP_ZRX',
+            join: 'MCD_JOIN_ZRX_A',
+            clip: 'MCD_CLIP_ZRX_A',
+            calc: 'MCD_CLIP_CALC_ZRX_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -543,6 +718,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'MATIC-A',
         symbol: 'MATIC',
         decimals: 18,
+        contracts: {
+            token: 'MATIC',
+            pip: 'PIP_MATIC',
+            join: 'MCD_JOIN_MATIC_A',
+            clip: 'MCD_CLIP_MATIC_A',
+            calc: 'MCD_CLIP_CALC_MATIC_A',
+        },
         exchanges: {
             'Uniswap V3 Autorouter': {
                 callee: 'UniswapV3Callee',
@@ -564,6 +746,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WSTETH-A',
         symbol: 'WSTETH',
         decimals: 18,
+        contracts: {
+            token: 'WSTETH',
+            pip: 'PIP_WSTETH',
+            join: 'MCD_JOIN_WSTETH_A',
+            clip: 'MCD_CLIP_WSTETH_A',
+            calc: 'MCD_CLIP_CALC_WSTETH_A',
+        },
         exchanges: {
             'Curve wstETH V3': {
                 callee: 'WstETHCurveUniv3Callee',
@@ -577,6 +766,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'WSTETH-B',
         symbol: 'WSTETH',
         decimals: 18,
+        contracts: {
+            token: 'WSTETH',
+            pip: 'PIP_WSTETH',
+            join: 'MCD_JOIN_WSTETH_B',
+            clip: 'MCD_CLIP_WSTETH_B',
+            calc: 'MCD_CLIP_CALC_WSTETH_B',
+        },
         exchanges: {
             'Curve wstETH V3': {
                 callee: 'WstETHCurveUniv3Callee',
@@ -590,6 +786,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'CRVV1ETHSTETH-A',
         symbol: 'CRVV1ETHSTETH',
         decimals: 18,
+        contracts: {
+            token: 'CRVV1ETHSTETH',
+            pip: 'PIP_CRVV1ETHSTETH',
+            join: 'MCD_JOIN_CRVV1ETHSTETH_A',
+            clip: 'MCD_CLIP_CRVV1ETHSTETH_A',
+            calc: 'MCD_CLIP_CALC_CRVV1ETHSTETH_A',
+        },
         exchanges: {
             'Curve Token V3': {
                 callee: 'CurveLpTokenUniv3Callee',
@@ -603,6 +806,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2DAIETH-A',
         symbol: 'UNIV2DAIETH',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2DAIETH',
+            pip: 'PIP_UNIV2DAIETH',
+            join: 'MCD_JOIN_UNIV2DAIETH_A',
+            clip: 'MCD_CLIP_UNIV2DAIETH_A',
+            calc: 'MCD_CLIP_CALC_UNIV2DAIETH_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -617,6 +827,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2USDCETH-A',
         symbol: 'UNIV2USDCETH',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2USDCETH',
+            pip: 'PIP_UNIV2USDCETH',
+            join: 'MCD_JOIN_UNIV2USDCETH_A',
+            clip: 'MCD_CLIP_UNIV2USDCETH_A',
+            calc: 'MCD_CLIP_CALC_UNIV2USDCETH_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -631,6 +848,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2ETHUSDT-A',
         symbol: 'UNIV2ETHUSDT',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2ETHUSDT',
+            pip: 'PIP_UNIV2ETHUSDT',
+            join: 'MCD_JOIN_UNIV2ETHUSDT_A',
+            clip: 'MCD_CLIP_UNIV2ETHUSDT_A',
+            calc: 'MCD_CLIP_CALC_UNIV2ETHUSDT_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -645,6 +869,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2WBTCDAI-A',
         symbol: 'UNIV2WBTCDAI',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2WBTCDAI',
+            pip: 'PIP_UNIV2WBTCDAI',
+            join: 'MCD_JOIN_UNIV2WBTCDAI_A',
+            clip: 'MCD_CLIP_UNIV2WBTCDAI_A',
+            calc: 'MCD_CLIP_CALC_UNIV2WBTCDAI_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -659,6 +890,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2WBTCETH-A',
         symbol: 'UNIV2WBTCETH',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2WBTCETH',
+            pip: 'PIP_UNIV2WBTCETH',
+            join: 'MCD_JOIN_UNIV2WBTCETH_A',
+            clip: 'MCD_CLIP_UNIV2WBTCETH_A',
+            calc: 'MCD_CLIP_CALC_UNIV2WBTCETH_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -673,6 +911,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2LINKETH-A',
         symbol: 'UNIV2LINKETH',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2LINKETH',
+            pip: 'PIP_UNIV2LINKETH',
+            join: 'MCD_JOIN_UNIV2LINKETH_A',
+            clip: 'MCD_CLIP_UNIV2LINKETH_A',
+            calc: 'MCD_CLIP_CALC_UNIV2LINKETH_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -687,6 +932,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2UNIETH-A',
         symbol: 'UNIV2UNIETH',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2UNIETH',
+            pip: 'PIP_UNIV2UNIETH',
+            join: 'MCD_JOIN_UNIV2UNIETH_A',
+            clip: 'MCD_CLIP_UNIV2UNIETH_A',
+            calc: 'MCD_CLIP_CALC_UNIV2UNIETH_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -701,6 +953,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2AAVEETH-A',
         symbol: 'UNIV2AAVEETH',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2AAVEETH',
+            pip: 'PIP_UNIV2AAVEETH',
+            join: 'MCD_JOIN_UNIV2AAVEETH_A',
+            clip: 'MCD_CLIP_UNIV2AAVEETH_A',
+            calc: 'MCD_CLIP_CALC_UNIV2AAVEETH_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -715,6 +974,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2DAIUSDT-A',
         symbol: 'UNIV2DAIUSDT',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2DAIUSDT',
+            pip: 'PIP_UNIV2DAIUSDT',
+            join: 'MCD_JOIN_UNIV2DAIUSDT_A',
+            clip: 'MCD_CLIP_UNIV2DAIUSDT_A',
+            calc: 'MCD_CLIP_CALC_UNIV2DAIUSDT_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -729,6 +995,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'UNIV2DAIUSDC-A',
         symbol: 'UNIV2DAIUSDC',
         decimals: 18,
+        contracts: {
+            token: 'UNIV2DAIUSDC',
+            pip: 'PIP_UNIV2DAIUSDC',
+            join: 'MCD_JOIN_UNIV2DAIUSDC_A',
+            clip: 'MCD_CLIP_UNIV2DAIUSDC_A',
+            calc: 'MCD_CLIP_CALC_UNIV2DAIUSDC_A',
+        },
         exchanges: {
             'Uniswap Token V2': {
                 callee: 'UniswapV2LpTokenCalleeDai',
@@ -743,6 +1016,13 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'RETH-A',
         symbol: 'RETH',
         decimals: 18,
+        contracts: {
+            token: 'RETH',
+            pip: 'PIP_RETH',
+            join: 'MCD_JOIN_RETH_A',
+            clip: 'MCD_CLIP_RETH_A',
+            calc: 'MCD_CLIP_CALC_RETH_A',
+        },
         exchanges: {
             'Curve rETH V3': {
                 callee: 'rETHCurveUniv3Callee',

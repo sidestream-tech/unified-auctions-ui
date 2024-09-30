@@ -148,6 +148,14 @@ export declare interface ValueSlotAddressAndOffset {
     offset: number;
 }
 
+export declare interface CollateralAddresses {
+    token: string;
+    join: string;
+    pip: string;
+    clip: string;
+    calc: string;
+}
+
 export type CalleeConfig =
     | RegularCalleeConfig
     | AutoRouterCalleeConfig
@@ -160,6 +168,7 @@ export declare interface CollateralConfig {
     decimals: number;
     exchanges: Record<string, CalleeConfig>;
     oracle: CollateralPriceSourceConfig;
+    contracts: CollateralAddresses;
 }
 
 interface OracleConfigBase {
