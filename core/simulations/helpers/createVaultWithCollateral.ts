@@ -8,9 +8,10 @@ import {
     openVault,
     fetchVaultCollateralParameters,
     openVaultWithProxiedContractAndDrawDebt,
+    collectStabilityFees,
 } from '../../src/vaults';
 import { HARDHAT_PUBLIC_KEY, TEST_NETWORK } from '../../helpers/constants';
-import {
+import getContract, {
     getContractValue,
     getContractAddressByName,
     getErc20Contract,
@@ -23,7 +24,7 @@ import {
     fetchCollateralInVat,
     withdrawCollateralFromVat,
 } from '../../src/wallet';
-import { MAX } from '../../src/constants/UNITS';
+import { MAX, WAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
 import { CollateralConfig, CollateralType } from '../../src/types';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
 import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardhat/erc20';
@@ -36,6 +37,7 @@ import {
 } from '../../helpers/hardhat/contractParametrization';
 import { overwriteStabilityFeeAccumulationRate } from '../../helpers/hardhat/overwrites';
 import detectProxyTarget from '../../helpers/detectProxyTarget';
+import getSigner from '../../src/signer';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
     'GNO-A',
@@ -199,6 +201,33 @@ const createDefaultVaultWithCollateral = async (collateralType: CollateralType, 
     return vaultId;
 };
 
+const createLockstakeVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    const walletAddress = await (await getSigner(TEST_NETWORK)).getAddress();
+    const engine = await getContract(TEST_NETWORK, 'LOCKSTAKE_ENGINE', true);
+    const vaultIndex = 1;
+    const refId = 0;
+
+    // Open engine vault
+    await engine.open(vaultIndex);
+
+    // Lock
+    const collateralOwnedInt = collateralOwned.shiftedBy(collateralConfig.decimals).toFixed(0);
+    const mkr = await getContract(TEST_NETWORK, 'MCD_GOV', true);
+    await mkr['approve(address,uint256)'](engine.address, collateralOwnedInt);
+    await engine.lock(walletAddress, vaultIndex, collateralOwnedInt, refId);
+
+    // Draw
+    await collectStabilityFees(TEST_NETWORK, collateralType);
+    const { minUnitPrice, stabilityFeeRate } = await fetchVaultCollateralParameters(TEST_NETWORK, collateralType);
+    const drawnDebtExact = collateralOwned.multipliedBy(minUnitPrice).dividedBy(stabilityFeeRate);
+    const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
+    const drawnDebtInt = drawnDebt.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
+    await engine.draw(walletAddress, vaultIndex, walletAddress, drawnDebtInt);
+
+    return vaultIndex;
+};
+
 const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
     const [balanceSlot, languageFormat] = await determineBalanceSlot(collateralType);
@@ -212,16 +241,15 @@ const createVaultWithCollateral = async (collateralType: CollateralType, collate
     await ensureWalletBalance(collateralConfig, collateralOwned);
 
     const joinName = getJoinNameByCollateralType(collateralType);
-    if (joinName) {
-        const joinContractAddress = await getContractAddressByName(TEST_NETWORK, joinName);
-        const proxyTarget = await detectProxyTarget(TEST_NETWORK, joinContractAddress);
-        if (!proxyTarget) {
-            return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
-        }
-        return await createProxiedVaultWithCollateral(collateralType, collateralOwned);
-    } else {
-        throw new Error('createVaultWithCollateral: joinless vault creation is not yet implemented');
+    if (!joinName) {
+        return await createLockstakeVaultWithCollateral(collateralType, collateralOwned);
     }
+    const joinContractAddress = await getContractAddressByName(TEST_NETWORK, joinName);
+    const proxyTarget = await detectProxyTarget(TEST_NETWORK, joinContractAddress);
+    if (!proxyTarget) {
+        return await createDefaultVaultWithCollateral(collateralType, collateralOwned);
+    }
+    return await createProxiedVaultWithCollateral(collateralType, collateralOwned);
 };
 
 export const adjustLimitsAndRates = async (collateralType: CollateralType) => {
