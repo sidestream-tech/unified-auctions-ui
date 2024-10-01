@@ -198,17 +198,17 @@ const createDefaultVaultWithCollateral = async (collateralType: CollateralType, 
         collateralOwned
     );
     await putCollateralIntoVaultAndWithdrawDai(vaultId, roundedCollateralOwned);
-    return vaultId;
+    return { vaultIndex: vaultId, vaultAddress: vault.address };
 };
 
 const createLockstakeVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
     const walletAddress = await (await getSigner(TEST_NETWORK)).getAddress();
-    const engine = await getContract(TEST_NETWORK, 'LOCKSTAKE_ENGINE', true);
     const vaultIndex = 1;
     const refId = 0;
 
     // Open engine vault
+    const engine = await getContract(TEST_NETWORK, 'LOCKSTAKE_ENGINE', true);
     await engine.open(vaultIndex);
 
     // Lock
@@ -225,7 +225,10 @@ const createLockstakeVaultWithCollateral = async (collateralType: CollateralType
     const drawnDebtInt = drawnDebt.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
     await engine.draw(walletAddress, vaultIndex, walletAddress, drawnDebtInt);
 
-    return vaultIndex;
+    // Get vault address
+    const vaultAddress = await engine.ownerUrns(walletAddress, vaultIndex);
+
+    return { vaultIndex, vaultAddress };
 };
 
 const createVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {

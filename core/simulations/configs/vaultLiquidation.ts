@@ -14,6 +14,8 @@ import getProvider from '../../src/provider';
 import fetchAuctionsByCollateralType, { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { setCollateralDebtCeilingToGlobal } from '../../helpers/hardhat/contractParametrization';
+// import { getCurrentOraclePriceByCollateralType } from '../../src/oracles';
+// import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
 
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
 
@@ -43,31 +45,43 @@ const simulation: Simulation = {
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
                 await setCollateralDebtCeilingToGlobal(context.collateralType);
-                const latestVaultId = await createVaultWithCollateral(
+                const { vaultIndex, vaultAddress } = await createVaultWithCollateral(
                     context.collateralType,
                     collateralOwned.multipliedBy(1)
                 );
-                console.info(`Created Vault id: ${latestVaultId}`);
+                console.info(`Created Vault id: ${vaultIndex} and address ${vaultAddress}`);
 
                 console.info(`Skipping ${TWO_YEARS_IN_MINUTES} minutes...`);
                 await warpTime(TWO_YEARS_IN_MINUTES, 60);
 
                 console.info(`Collecting stability fees...`);
-                const vaultBefore = await fetchVault(TEST_NETWORK, latestVaultId);
+                const vaultBefore = await fetchVault(TEST_NETWORK, vaultIndex);
                 console.info(`Stability fee before ${vaultBefore.stabilityFeeRate}`);
                 await collectStabilityFees(TEST_NETWORK, context.collateralType);
-                const vaultAfter = await fetchVault(TEST_NETWORK, latestVaultId);
+                const vaultAfter = await fetchVault(TEST_NETWORK, vaultIndex);
                 console.info(`Stability fee after ${vaultAfter.stabilityFeeRate}`);
 
-                return { ...context, latestVaultId };
+                // // overwrite oracle price
+                // const initialOraclePrice = await getCurrentOraclePriceByCollateralType(
+                //     TEST_NETWORK,
+                //     context.collateralType
+                // );
+                // console.info(`Initial oracle price is ${initialOraclePrice.toFixed()} DAI`);
+                // await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, initialOraclePrice.div(2));
+                // const newOraclePrice = await getCurrentOraclePriceByCollateralType(
+                //     TEST_NETWORK,
+                //     context.collateralType
+                // );
+                // console.info(`New oracle price is ${newOraclePrice.toFixed()} DAI`);
+                // await collectStabilityFees(TEST_NETWORK, context.collateralType);
+
+                return { ...context, vaultIndex, vaultAddress };
             },
         },
         {
             title: 'Liquidate the vault',
             entry: async context => {
-                const liquidatedId = context.latestVaultId;
-                const vault = await fetchVault(TEST_NETWORK, liquidatedId);
-                await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
+                await liquidateVault(TEST_NETWORK, context.collateralType, context.vaultAddress);
                 return context;
             },
         },

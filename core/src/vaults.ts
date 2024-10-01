@@ -428,8 +428,9 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
             'NewCdpRegistered(address,address,uint256)',
             new ethers.utils.Interface(CDP_REGISTRY)
         );
-        const vaultId = events[0].args.cdp.toNumber();
-        return vaultId;
+        const vaultIndex = events[0].args.cdp.toNumber();
+        const vault = await fetchVault(network, vaultIndex);
+        return { vaultIndex, vaultAddress: vault.address };
     } else {
         throw new Error('openVaultWithProxiedContractAndDrawDebt: joinless vault creation is not yet implemented');
     }
