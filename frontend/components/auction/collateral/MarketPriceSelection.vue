@@ -138,8 +138,7 @@ export default Vue.extend({
             if (!pools || !pools?.length) {
                 return '';
             }
-            const fullRoute = [...pools.map(pool => pool.routes[0]), 'DAI'];
-            return fullRoute.join(' → ');
+            return pools.map(pool => pool.routes[0]).join(' → ');
         },
         getRouteFromMarketData(marketData: MarketData) {
             if (!marketData) {

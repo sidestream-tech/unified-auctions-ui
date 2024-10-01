@@ -32,7 +32,7 @@ The process of adding new collaterals depends on the token type used. This is du
     5. Add new exchange file to the [`calleeFunctions` folder](./src/calleeFunctions)
         - The file should be named using the name from `1.`
         - The file should export `CalleeFunctions`
-        - The file should be imported in the [`calleeFunctions/index.ts`](./src/calleeFunctions/index.ts)
+    6. Import exchange file inside [`calleeFunctions/index.ts`](./src/calleeFunctions/index.ts) and export under `allCalleeFunctions`
 3. Adding price oracle configurations for the token:
     1. Get the source code of the price oracle contract:
        - read value `ilks(collateralType)` from [`Spot` contract](https://etherscan.io/address/0x65c79fcb50ca1594b025960e539ed7a9a6d434a3#code) via "Read Contract" tabl - and receive the address of the oracle for the specified collateral. The linked conract is responsible for updating the unit prices for collaterals.

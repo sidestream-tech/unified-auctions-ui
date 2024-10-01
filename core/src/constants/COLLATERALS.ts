@@ -35,11 +35,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['AAVE', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['AAVE', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -63,11 +63,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['BAL', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['BAL', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -91,11 +91,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['BAL', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['BAL', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -119,11 +119,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['COMP', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['COMP', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -143,11 +143,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         exchanges: {
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['GNO', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['GNO', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -171,11 +171,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: [],
+                route: ['ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: [],
+                route: ['ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -199,11 +199,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: [],
+                route: ['ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: [],
+                route: ['ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -227,11 +227,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: [],
+                route: ['ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: [],
+                route: ['ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -255,11 +255,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['GUSD', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['GUSD', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITHOUT_DELAY,
@@ -283,11 +283,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['KNC', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['KNC', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -311,11 +311,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['LINK', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['LINK', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -339,11 +339,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['LRC', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['LRC', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -367,11 +367,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['MANA', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['MANA', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -395,11 +395,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['PAXUSD', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['PAXUSD', 'ETH', 'DAI'],
             },
         },
 
@@ -424,11 +424,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['RENBTC', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['RENBTC', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -452,11 +452,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['TUSD', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['TUSD', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITHOUT_DELAY,
@@ -480,11 +480,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['UNI', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['UNI', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -508,11 +508,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['USDC', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['USDC', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITHOUT_DELAY,
@@ -536,11 +536,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['USDC', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['USDC', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITHOUT_DELAY,
@@ -564,11 +564,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['USDT', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['USDT', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -592,11 +592,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['WBTC', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['WBTC', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -620,11 +620,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['WBTC', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['WBTC', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -648,11 +648,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['WBTC', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['WBTC', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -676,11 +676,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['YFI', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['YFI', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -704,11 +704,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['ZRX', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['ZRX', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -732,11 +732,11 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
             'Uniswap V3': {
                 callee: 'UniswapV3Callee',
-                route: ['ETH'],
+                route: ['MATIC', 'ETH', 'DAI'],
             },
             'Uniswap V2': {
                 callee: 'UniswapV2CalleeDai',
-                route: ['ETH'],
+                route: ['MATIC', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -756,7 +756,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         exchanges: {
             'Curve wstETH V3': {
                 callee: 'WstETHCurveUniv3Callee',
-                route: [],
+                route: ['WSTETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -776,7 +776,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         exchanges: {
             'Curve wstETH V3': {
                 callee: 'WstETHCurveUniv3Callee',
-                route: [],
+                route: ['WSTETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -796,7 +796,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         exchanges: {
             'Curve Token V3': {
                 callee: 'CurveLpTokenUniv3Callee',
-                route: ['ETH'],
+                route: ['ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -1026,7 +1026,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         exchanges: {
             'Curve rETH V3': {
                 callee: 'rETHCurveUniv3Callee',
-                route: ['ETH'],
+                route: ['RETH', 'ETH', 'DAI'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
@@ -1036,14 +1036,19 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         ilk: 'LOCKSTAKE',
         symbol: 'MCD_GOV',
         decimals: 18,
-        exchanges: {},
-        oracle: ORACLE_WITH_DELAY,
         contracts: {
             token: 'MCD_GOV',
             pip: 'PIP_MKR',
             clip: 'LOCKSTAKE_CLIP',
             calc: 'LOCKSTAKE_CLIP_CALC',
         },
+        exchanges: {
+            'Uniswap V2': {
+                callee: 'UniswapV2LockstakeCallee',
+                route: ['MCD_GOV', 'DAI'],
+            },
+        },
+        oracle: ORACLE_WITH_DELAY,
     },
 };
 
