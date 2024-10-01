@@ -1,7 +1,7 @@
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
 import { addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
-import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
+import { collectStabilityFees, liquidateVault } from '../../src/vaults';
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
     adjustLimitsAndRates,
@@ -14,8 +14,8 @@ import getProvider from '../../src/provider';
 import fetchAuctionsByCollateralType, { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { setCollateralDebtCeilingToGlobal } from '../../helpers/hardhat/contractParametrization';
-// import { getCurrentOraclePriceByCollateralType } from '../../src/oracles';
-// import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
+import { getCurrentOraclePriceByCollateralType } from '../../src/oracles';
+import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
 
 const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
 
@@ -54,26 +54,19 @@ const simulation: Simulation = {
                 console.info(`Skipping ${TWO_YEARS_IN_MINUTES} minutes...`);
                 await warpTime(TWO_YEARS_IN_MINUTES, 60);
 
-                console.info(`Collecting stability fees...`);
-                const vaultBefore = await fetchVault(TEST_NETWORK, vaultIndex);
-                console.info(`Stability fee before ${vaultBefore.stabilityFeeRate}`);
+                // overwrite oracle price
+                const initialOraclePrice = await getCurrentOraclePriceByCollateralType(
+                    TEST_NETWORK,
+                    context.collateralType
+                );
+                console.info(`Initial oracle price is ${initialOraclePrice.toFixed()} DAI`);
+                await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, initialOraclePrice.times(0.5));
+                const newOraclePrice = await getCurrentOraclePriceByCollateralType(
+                    TEST_NETWORK,
+                    context.collateralType
+                );
+                console.info(`New oracle price is ${newOraclePrice.toFixed()} DAI`);
                 await collectStabilityFees(TEST_NETWORK, context.collateralType);
-                const vaultAfter = await fetchVault(TEST_NETWORK, vaultIndex);
-                console.info(`Stability fee after ${vaultAfter.stabilityFeeRate}`);
-
-                // // overwrite oracle price
-                // const initialOraclePrice = await getCurrentOraclePriceByCollateralType(
-                //     TEST_NETWORK,
-                //     context.collateralType
-                // );
-                // console.info(`Initial oracle price is ${initialOraclePrice.toFixed()} DAI`);
-                // await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, initialOraclePrice.div(2));
-                // const newOraclePrice = await getCurrentOraclePriceByCollateralType(
-                //     TEST_NETWORK,
-                //     context.collateralType
-                // );
-                // console.info(`New oracle price is ${newOraclePrice.toFixed()} DAI`);
-                // await collectStabilityFees(TEST_NETWORK, context.collateralType);
 
                 return { ...context, vaultIndex, vaultAddress };
             },

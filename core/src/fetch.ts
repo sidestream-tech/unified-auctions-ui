@@ -41,8 +41,8 @@ export const fetchAuctionStatus = async function (
     collateralType: string,
     auctionIndex: number
 ): Promise<AuctionStatus> {
-    const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
-    const statusData = await contract.getStatus(convertNumberTo32Bytes(auctionIndex));
+    const clipper = await getContract(network, getClipperNameByCollateralType(collateralType));
+    const statusData = await clipper.getStatus(convertNumberTo32Bytes(auctionIndex));
     const unitPrice = new BigNumber(statusData.price._hex).div(RAY);
     const collateralAmount = new BigNumber(statusData.lot._hex).div(WAD);
     const debtDAI = new BigNumber(statusData.tab._hex).div(RAD);
@@ -67,9 +67,6 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
     if (startUnixTimestamp === 0) {
         throw new Error('No active auction found with this id');
     }
-    const startTimestamp = new BigNumber(auctionData.tic._hex).times(1000).toNumber();
-    const endDate = new Date(startTimestamp + maximumAuctionDurationInSeconds * 1000);
-    const fetchedAt = new Date();
     return {
         network,
         id: `${collateralType}:${auctionIndex}`,
@@ -80,12 +77,12 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
         initialPrice: new BigNumber(auctionData.top._hex).div(RAY),
         vaultAddress: auctionData.usr,
         debtDAI: new BigNumber(auctionData.tab._hex).div(RAD),
-        startDate: new Date(startTimestamp),
-        endDate,
+        startDate: new Date(startUnixTimestamp * 1000),
+        endDate: new Date((startUnixTimestamp + maximumAuctionDurationInSeconds) * 1000),
         isActive: true,
         isFinished: false,
         isRestarting: false,
-        fetchedAt,
+        fetchedAt: new Date(),
     };
 };
 

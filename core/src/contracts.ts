@@ -35,6 +35,7 @@ import PROXY_FACTORY from './abis/PROXY_FACTORY.json';
 import PROXY_ACTIONS from './abis/PROXY_ACTIONS.json';
 import MCD_PAUSE from './abis/MCD_PAUSE.json';
 import LOCKSTAKE_ENGINE from './abis/LOCKSTAKE_ENGINE.json';
+import LOCKSTAKE_CLIP from './abis/LOCKSTAKE_CLIP.json';
 
 const ERC20_SYMBOL_CALL_CACHE_TIME_MS = 1000 * 60 * 60 * 24; // 1 day
 
@@ -77,6 +78,7 @@ export const getContractInterfaceByName = async function (contractName: string):
         PROXY_FACTORY,
         MCD_PAUSE,
         LOCKSTAKE_ENGINE,
+        LOCKSTAKE_CLIP,
     };
     if (Object.keys(ABIs).includes(contractName)) {
         return ABIs[contractName];
@@ -87,7 +89,7 @@ export const getContractInterfaceByName = async function (contractName: string):
     if (contractName.startsWith('MCD_CLIP_CALC_')) {
         return MCD_CLIP_CALC;
     }
-    if (contractName.startsWith('MCD_CLIP_') || contractName.endsWith('_CLIP')) {
+    if (contractName.startsWith('MCD_CLIP_')) {
         return MCD_CLIP;
     }
     if (contractName.startsWith('PROXY_ACTIONS_')) {
