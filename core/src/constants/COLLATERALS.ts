@@ -1,18 +1,18 @@
 import type { CollateralConfig, OracleCurrentAndNextPrices, OracleCurrentPriceOnly } from '../types';
 
-export const ORACLE_WITH_NEXT_PRICE: OracleCurrentAndNextPrices = {
+export const ORACLE_WITH_DELAY: OracleCurrentAndNextPrices = {
     type: 'CurrentAndNextPrice',
-    currentPriceSlotAddress: '0x3',
-    nextPriceSlotAddress: '0x4',
     hasDelay: true,
+    currentPriceSlotAddress: '0x3',
     slotPriceValueBeginsAtPosition: 34,
+    nextPriceSlotAddress: '0x4',
 };
-export const ORACLE_WITHOUT_NEXT_PRICE: OracleCurrentPriceOnly = {
+export const ORACLE_WITHOUT_DELAY: OracleCurrentPriceOnly = {
     type: 'CurrentPriceOnly',
-    currentPriceSlotAddress: '0x2',
     hasDelay: false,
-    currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
+    currentPriceSlotAddress: '0x2',
     slotPriceValueBeginsAtPosition: 0,
+    currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
 };
 
 const COLLATERALS: Record<string, CollateralConfig> = {
@@ -42,7 +42,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'BAL-A': {
         title: 'Balancer',
@@ -70,7 +70,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'BAT-A': {
         title: 'Basic Attention Token',
@@ -98,7 +98,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'COMP-A': {
         title: 'Compound',
@@ -126,7 +126,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'GNO-A': {
         title: 'Gnosis Token',
@@ -150,7 +150,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'ETH-A': {
         title: 'Ether',
@@ -178,7 +178,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: [],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'ETH-B': {
         title: 'Ether',
@@ -206,7 +206,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: [],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'ETH-C': {
         title: 'Ether',
@@ -234,7 +234,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: [],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'GUSD-A': {
         title: 'Gemini Dollar',
@@ -262,7 +262,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITHOUT_NEXT_PRICE,
+        oracle: ORACLE_WITHOUT_DELAY,
     },
     'KNC-A': {
         title: 'Kyber Network Crystal',
@@ -290,7 +290,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'LINK-A': {
         title: 'Chainlink',
@@ -318,7 +318,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'LRC-A': {
         title: 'Loopring',
@@ -346,7 +346,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'MANA-A': {
         title: 'Decentraland',
@@ -374,7 +374,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'PAXUSD-A': {
         title: 'Paxos Standard',
@@ -403,7 +403,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
 
-        oracle: ORACLE_WITHOUT_NEXT_PRICE,
+        oracle: ORACLE_WITHOUT_DELAY,
     },
     'RENBTC-A': {
         title: 'renBTC',
@@ -431,7 +431,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'TUSD-A': {
         title: 'True USD',
@@ -459,7 +459,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITHOUT_NEXT_PRICE,
+        oracle: ORACLE_WITHOUT_DELAY,
     },
     'UNI-A': {
         title: 'Uniswap',
@@ -487,7 +487,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'USDC-A': {
         title: 'USD Coin',
@@ -515,7 +515,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITHOUT_NEXT_PRICE,
+        oracle: ORACLE_WITHOUT_DELAY,
     },
     'USDC-B': {
         title: 'USD Coin',
@@ -543,7 +543,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITHOUT_NEXT_PRICE,
+        oracle: ORACLE_WITHOUT_DELAY,
     },
     'USDT-A': {
         title: 'Tether USD',
@@ -571,7 +571,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'WBTC-A': {
         title: 'Wrapped Bitcoin',
@@ -599,7 +599,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'WBTC-B': {
         title: 'Wrapped BTC',
@@ -627,7 +627,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'WBTC-C': {
         title: 'Wrapped BTC',
@@ -655,7 +655,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'YFI-A': {
         title: 'yearn.finance',
@@ -683,7 +683,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'ZRX-A': {
         title: '0x',
@@ -711,7 +711,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'MATIC-A': {
         title: 'Matic',
@@ -739,7 +739,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'WSTETH-A': {
         title: 'Lido wstETH',
@@ -759,7 +759,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: [],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'WSTETH-B': {
         title: 'Lido wstETH',
@@ -779,7 +779,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: [],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'CRVV1ETHSTETH-A': {
         title: 'Curve stETH',
@@ -799,7 +799,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2DAIETH-A': {
         title: 'UNIV2DAIETH LP',
@@ -820,7 +820,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'ETH',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2USDCETH-A': {
         title: 'UNIV2USDCETH LP',
@@ -841,7 +841,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'ETH',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2ETHUSDT-A': {
         title: 'UNIV2ETHUSDT LP',
@@ -862,7 +862,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'USDT',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2WBTCDAI-A': {
         title: 'UNIV2WBTCDAI LP',
@@ -883,7 +883,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'DAI',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2WBTCETH-A': {
         title: 'UNIV2WBTCETH LP',
@@ -904,7 +904,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'ETH',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2LINKETH-A': {
         title: 'UNIV2LINKETH LP',
@@ -925,7 +925,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'ETH',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2UNIETH-A': {
         title: 'UNIV2UNIETH LP',
@@ -946,7 +946,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'ETH',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2AAVEETH-A': {
         title: 'UNIV2AAVEETH LP',
@@ -967,7 +967,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'ETH',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2DAIUSDT-A': {
         title: 'UNIV2DAIUSDT LP',
@@ -988,7 +988,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'USDT',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'UNIV2DAIUSDC-A': {
         title: 'UNIV2DAIUSDC LP',
@@ -1009,7 +1009,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 token1: 'USDC',
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     'RETH-A': {
         title: 'Rocket Pool ETH',
@@ -1029,7 +1029,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['ETH'],
             },
         },
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
     },
     LOCKSTAKE: {
         title: 'Lockstake MKR',
@@ -1037,7 +1037,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'MCD_GOV',
         decimals: 18,
         exchanges: {},
-        oracle: ORACLE_WITH_NEXT_PRICE,
+        oracle: ORACLE_WITH_DELAY,
         contracts: {
             token: 'MCD_GOV',
             pip: 'PIP_MKR',
