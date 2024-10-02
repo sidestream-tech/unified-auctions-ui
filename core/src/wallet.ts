@@ -103,8 +103,11 @@ export const withdrawCollateralFromVat = async function (
     const withdrawalAmount = amount || (await fetchCollateralVatBalance(network, walletAddress, collateralType));
     const decimals = COLLATERALS[collateralType].decimals;
     const withdrawalAmountRounded = withdrawalAmount.shiftedBy(decimals).toFixed(0, BigNumber.ROUND_DOWN);
-    const contractName = getJoinNameByCollateralType(collateralType);
-    await executeTransaction(network, contractName, 'exit', [walletAddress, withdrawalAmountRounded], {
+    const joinName = getJoinNameByCollateralType(collateralType);
+    if (!joinName) {
+        throw new Error(`Collateral "${collateralType}" does not store tokens inside vat`);
+    }
+    await executeTransaction(network, joinName, 'exit', [walletAddress, withdrawalAmountRounded], {
         notifier,
         confirmTransaction: true,
     });
@@ -120,8 +123,11 @@ export const depositCollateralToVat = async function (
     console.info(`Deposit ${amount.toFixed(2)} ${collateralType} to the VAT`);
     const collateralConfig = getCollateralConfigByType(collateralType);
     const depositRounded = amount.shiftedBy(collateralConfig.decimals).toFixed(0, BigNumber.ROUND_DOWN);
-    const contractName = getJoinNameByCollateralType(collateralType);
-    await executeTransaction(network, contractName, 'join', [walletAddress, depositRounded], {
+    const joinName = getJoinNameByCollateralType(collateralType);
+    if (!joinName) {
+        throw new Error(`Collateral "${collateralType}" can not deposit tokens into vat`);
+    }
+    await executeTransaction(network, joinName, 'join', [walletAddress, depositRounded], {
         notifier,
         confirmTransaction: true,
     });

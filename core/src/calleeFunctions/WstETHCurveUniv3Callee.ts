@@ -13,7 +13,11 @@ const getCalleeData = async function (
     _marketId: string,
     profitAddress: string
 ): Promise<string> {
-    const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
+    const joinName = getJoinNameByCollateralType(collateral.ilk);
+    if (!joinName) {
+        throw new Error(`Collateral "${collateral.ilk}" does not have join contract`);
+    }
+    const joinAdapterAddress = await getContractAddressByName(network, joinName);
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'uint24', 'address'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [

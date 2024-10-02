@@ -131,8 +131,8 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     // display profit
     const postVatBalanceDai = await fetchVATbalanceDAI(network, walletAddress);
     const postErcBalanceDai = await fetchBalanceDAI(network, walletAddress);
-    console.info(`DAI VAT profit from the transaction: ${postVatBalanceDai.minus(preVatBalanceDai).toFixed()}`);
-    console.info(`DAI ERC profit from the transaction: ${postErcBalanceDai.minus(preErcBalanceDai).toFixed()}`);
+    console.info(`DAI VAT   profit from the transaction: ${postVatBalanceDai.minus(preVatBalanceDai).toFixed()}`);
+    console.info(`DAI ERC20 profit from the transaction: ${postErcBalanceDai.minus(preErcBalanceDai).toFixed()}`);
 };
 
 const participateInAuction = async function (network: string, auction: AuctionInitialInfo) {

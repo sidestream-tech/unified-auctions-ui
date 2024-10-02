@@ -50,10 +50,10 @@ const simulation: Simulation = {
                 console.info(`New ${collateralType} oracle price is ${oraclePrice.toFixed()} DAI`);
                 // create and liquidate vault
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(collateralType);
-                const vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
+                const { vaultIndex } = await createVaultWithCollateral(collateralType, collateralOwned);
                 await warpTime(60 * 24 * 30, 60);
                 await collectStabilityFees(TEST_NETWORK, collateralType);
-                const vault = await fetchVault(TEST_NETWORK, vaultId);
+                const vault = await fetchVault(TEST_NETWORK, vaultIndex);
                 await liquidateVault(TEST_NETWORK, vault.collateralType, vault.address);
             },
         },

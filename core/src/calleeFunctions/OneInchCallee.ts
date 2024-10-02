@@ -20,7 +20,11 @@ const getCalleeData = async function (
     if (!oneInchParams) {
         throw new Error(`getCalleeData called with invalid txData`);
     }
-    const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
+    const joinName = getJoinNameByCollateralType(collateral.ilk);
+    if (!joinName) {
+        throw new Error(`Collateral "${collateral.ilk}" does not have join contract`);
+    }
+    const joinAdapterAddress = await getContractAddressByName(network, joinName);
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'address', 'address', 'bytes'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [

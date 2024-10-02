@@ -1,7 +1,7 @@
 import type { Contract } from 'ethers';
 import { ethers } from 'ethers';
 import memoizee from 'memoizee';
-import COLLATERALS, { getAllCollateralTypes } from './constants/COLLATERALS';
+import COLLATERALS, { getAllCollateralTypes, getCollateralConfigByType } from './constants/COLLATERALS';
 import getProvider from './provider';
 import CHAINLOG from './abis/CHAINLOG.json';
 
@@ -48,8 +48,8 @@ export const isCollateralSymbolSupported = async function (
 };
 
 export const isCollateralTypeSupported = async function (network: string, collateralType: string): Promise<boolean> {
-    const suffix = collateralType.toUpperCase().replace('-', '_');
-    const clipContractName = `MCD_CLIP_${suffix}`;
+    const collateralConfig = getCollateralConfigByType(collateralType);
+    const clipContractName = collateralConfig.contracts.clip;
     try {
         const collateralAddress = await fetchContractAddressByNetwork(network, clipContractName);
         return !!collateralAddress;

@@ -84,7 +84,8 @@ export declare interface RegularCalleeConfig {
         | 'WstETHCurveUniv3Callee'
         | 'CurveLpTokenUniv3Callee'
         | 'UniswapV3Callee'
-        | 'rETHCurveUniv3Callee';
+        | 'rETHCurveUniv3Callee'
+        | 'UniswapV2LockstakeCallee';
     route: string[];
 }
 
@@ -148,6 +149,14 @@ export declare interface ValueSlotAddressAndOffset {
     offset: number;
 }
 
+export declare interface CollateralAddresses {
+    token: string;
+    join?: string;
+    pip: string;
+    clip: string;
+    calc: string;
+}
+
 export type CalleeConfig =
     | RegularCalleeConfig
     | AutoRouterCalleeConfig
@@ -160,6 +169,7 @@ export declare interface CollateralConfig {
     decimals: number;
     exchanges: Record<string, CalleeConfig>;
     oracle: CollateralPriceSourceConfig;
+    contracts: CollateralAddresses;
 }
 
 interface OracleConfigBase {
@@ -198,6 +208,7 @@ export declare interface CalleeAddresses {
     UniswapV3Callee?: string;
     rETHCurveUniv3Callee?: string;
     OneInchCallee?: string;
+    UniswapV2LockstakeCallee?: string;
 }
 
 export type CalleeNames = keyof CalleeAddresses;

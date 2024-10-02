@@ -6,6 +6,7 @@ import getSigner from './signer';
 import BigNumber from '../src/bignumber';
 import { RAD_NUMBER_OF_DIGITS, RAY_NUMBER_OF_DIGITS, WAD_NUMBER_OF_DIGITS } from '../src/constants/UNITS';
 import { fetchContractAddressByNetwork } from './addresses';
+import { getCollateralConfigByType } from './constants/COLLATERALS';
 import MCD_DAI from './abis/MCD_DAI.json';
 import MCD_VAT from './abis/MCD_VAT.json';
 import MCD_JOIN_DAI from './abis/MCD_JOIN_DAI.json';
@@ -33,17 +34,19 @@ import MCD_ADM from './abis/MCD_ADM.json';
 import PROXY_FACTORY from './abis/PROXY_FACTORY.json';
 import PROXY_ACTIONS from './abis/PROXY_ACTIONS.json';
 import MCD_PAUSE from './abis/MCD_PAUSE.json';
+import LOCKSTAKE_ENGINE from './abis/LOCKSTAKE_ENGINE.json';
+import LOCKSTAKE_CLIP from './abis/LOCKSTAKE_CLIP.json';
 
 const ERC20_SYMBOL_CALL_CACHE_TIME_MS = 1000 * 60 * 60 * 24; // 1 day
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
-    const suffix = collateralType.toUpperCase().replace('-', '_');
-    return `MCD_CLIP_${suffix}`;
+    const config = getCollateralConfigByType(collateralType);
+    return config.contracts.clip;
 };
 
-export const getJoinNameByCollateralType = function (collateralType: string): string {
-    const suffix = collateralType.toUpperCase().replace('-', '_');
-    return `MCD_JOIN_${suffix}`;
+export const getJoinNameByCollateralType = function (collateralType: string): string | undefined {
+    const config = getCollateralConfigByType(collateralType);
+    return config.contracts.join;
 };
 
 export const getContractAddressByName = async function (network: string, contractName: string): Promise<string> {
@@ -74,6 +77,8 @@ export const getContractInterfaceByName = async function (contractName: string):
         MCD_ADM,
         PROXY_FACTORY,
         MCD_PAUSE,
+        LOCKSTAKE_ENGINE,
+        LOCKSTAKE_CLIP,
     };
     if (Object.keys(ABIs).includes(contractName)) {
         return ABIs[contractName];
@@ -81,7 +86,7 @@ export const getContractInterfaceByName = async function (contractName: string):
     if (contractName.startsWith('MCD_JOIN_')) {
         return MCD_JOIN;
     }
-    if (contractName.startsWith('MCD_CLIP_CALC_')) {
+    if (contractName.startsWith('MCD_CLIP_CALC_') || contractName.endsWith('_CLIP_CALC')) {
         return MCD_CLIP_CALC;
     }
     if (contractName.startsWith('MCD_CLIP_')) {
@@ -98,12 +103,6 @@ const _getContract = async function (network: string, contractName: string, useS
     const contractInterface = await getContractInterfaceByName(contractName);
     const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
     const contract = await new ethers.Contract(contractAddress, contractInterface, signerOrProvider);
-    return contract;
-};
-
-export const getErc20Contract = async function (network: string, contractAddress: string, useSigner = false) {
-    const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
-    const contract = await new ethers.Contract(contractAddress, ERC20, signerOrProvider);
     return contract;
 };
 
@@ -134,6 +133,12 @@ export const getContractValue = async function (
         WAD: WAD_NUMBER_OF_DIGITS,
     }[options.decimalUnits];
     return new BigNumber(variableHex._hex).shiftedBy(-decimals);
+};
+
+export const getErc20Contract = async function (network: string, contractAddress: string, useSigner = false) {
+    const signerOrProvider = useSigner ? await getSigner(network) : await getProvider(network);
+    const contract = await new ethers.Contract(contractAddress, ERC20, signerOrProvider);
+    return contract;
 };
 
 const _getErc20SymbolByAddress = async function (network: string, address: string): Promise<string> {

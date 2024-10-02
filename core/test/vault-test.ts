@@ -436,7 +436,7 @@ describe(`Collateral vault simulation liquidation `, () => {
             }
             let vaultId: number;
             try {
-                vaultId = await createVaultWithCollateral(collateralType, collateralOwned);
+                vaultId = (await createVaultWithCollateral(collateralType, collateralOwned)).vaultIndex;
             } catch (e) {
                 if (e instanceof Error && e.message === 'Could not borrow dai because debt ceiling is exceeded.') {
                     return;
