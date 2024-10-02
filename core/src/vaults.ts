@@ -103,9 +103,9 @@ export const fetchVaultCollateralParameters = async (
     network: string,
     collateralType: CollateralType
 ): Promise<VaultCollateralParameters> => {
-    const contract = await getContract(network, 'MCD_VAT');
+    const vat = await getContract(network, 'MCD_VAT');
     const typeHex = ethers.utils.formatBytes32String(collateralType);
-    const { rate, spot } = await contract.ilks(typeHex);
+    const { rate, spot } = await vat.ilks(typeHex);
     return {
         stabilityFeeRate: new BigNumber(rate._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS),
         minUnitPrice: new BigNumber(spot._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS),
@@ -117,9 +117,9 @@ export const fetchVaultAmount = async (
     collateralType: CollateralType,
     vaultAddress: string
 ): Promise<VaultAmount> => {
-    const contract = await getContract(network, 'MCD_VAT');
+    const vat = await getContract(network, 'MCD_VAT');
     const typeHex = ethers.utils.formatBytes32String(collateralType);
-    const { ink, art } = await contract.urns(typeHex, vaultAddress);
+    const { ink, art } = await vat.urns(typeHex, vaultAddress);
     return {
         initialDebtDai: new BigNumber(art._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS),
         collateralAmount: new BigNumber(ink._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS),

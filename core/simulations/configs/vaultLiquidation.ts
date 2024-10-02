@@ -8,16 +8,15 @@ import createVaultWithCollateral, {
     calculateMinCollateralAmountToOpenVault,
 } from '../helpers/createVaultWithCollateral';
 import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
-import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
+import { promptToGetNumber, promptToGetBlockNumber } from '../helpers/promptToGetNumber';
 import getProvider from '../../src/provider';
-
 import fetchAuctionsByCollateralType, { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
 import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { setCollateralDebtCeilingToGlobal } from '../../helpers/hardhat/contractParametrization';
 import { getCurrentOraclePriceByCollateralType } from '../../src/oracles';
 import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
-
-const TWO_YEARS_IN_MINUTES = 60 * 24 * 30 * 12 * 2;
+import BigNumber from 'bignumber.js';
+import { enrichAuction } from '../../src/auctions';
 
 const simulation: Simulation = {
     title: 'Create collateral auction',
@@ -41,6 +40,14 @@ const simulation: Simulation = {
         {
             title: 'Create underwater vault',
             entry: async context => {
+                // set oracle price
+                await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, new BigNumber(1000));
+                const initialOraclePrice = await getCurrentOraclePriceByCollateralType(
+                    TEST_NETWORK,
+                    context.collateralType
+                );
+                console.info(`Initial oracle price is ${initialOraclePrice.toFixed()} DAI`);
+
                 await adjustLimitsAndRates(context.collateralType);
                 const collateralOwned = await calculateMinCollateralAmountToOpenVault(context.collateralType);
                 console.info(`Minimum collateral amount to open vault: ${collateralOwned.toFixed()}`);
@@ -49,16 +56,9 @@ const simulation: Simulation = {
                     context.collateralType,
                     collateralOwned.multipliedBy(1)
                 );
-                console.info(`Created Vault id: ${vaultIndex} and address ${vaultAddress}`);
+                console.info(`Created Vault with id ${vaultIndex} and address ${vaultAddress}`);
 
-                console.info(`Skipping ${TWO_YEARS_IN_MINUTES} minutes...`);
-                await warpTime(TWO_YEARS_IN_MINUTES, 60);
-
-                // overwrite oracle price
-                const initialOraclePrice = await getCurrentOraclePriceByCollateralType(
-                    TEST_NETWORK,
-                    context.collateralType
-                );
+                // drop oracle price
                 console.info(`Initial oracle price is ${initialOraclePrice.toFixed()} DAI`);
                 await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, initialOraclePrice.times(0.5));
                 const newOraclePrice = await getCurrentOraclePriceByCollateralType(
@@ -68,13 +68,14 @@ const simulation: Simulation = {
                 console.info(`New oracle price is ${newOraclePrice.toFixed()} DAI`);
                 await collectStabilityFees(TEST_NETWORK, context.collateralType);
 
-                return { ...context, vaultIndex, vaultAddress };
+                return { ...context, vaultIndex, vaultAddress, initialOraclePrice };
             },
         },
         {
             title: 'Liquidate the vault',
             entry: async context => {
                 await liquidateVault(TEST_NETWORK, context.collateralType, context.vaultAddress);
+                await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, context.initialOraclePrice);
                 return context;
             },
         },
@@ -85,25 +86,36 @@ const simulation: Simulation = {
                     TEST_NETWORK,
                     context.collateralType
                 );
-                const INITIAL_WARP_PARTS = 1 / 12;
-                const warpSeconds = Math.floor(auctionLifetime * INITIAL_WARP_PARTS);
-                console.info(`Initial warp of ${INITIAL_WARP_PARTS} of an auction time: ${warpSeconds} seconds`);
-                await warpTime(warpSeconds, 1);
+                let proposedSecondsToWarp = Math.floor(auctionLifetime / 12);
                 const provider = await getProvider(TEST_NETWORK);
-                const STEP_SECONDS = 30;
                 while (true) {
+                    proposedSecondsToWarp = await promptToGetNumber({
+                        title: 'Number of seconds to warp',
+                        initial: proposedSecondsToWarp,
+                        max: auctionLifetime,
+                    });
+                    if (proposedSecondsToWarp === 0) {
+                        try {
+                            await provider.send('evm_mine', []);
+                            console.info(`Mined one block without skipping any time`);
+                        } catch (error) {
+                            console.error('evm_mine failed with', error);
+                        }
+                    } else {
+                        await warpTime(proposedSecondsToWarp, 1);
+                        console.info(`Skipped ${proposedSecondsToWarp} seconds`);
+                    }
                     const initialAuctions = await fetchAuctionsByCollateralType(TEST_NETWORK, context.collateralType);
-                    if (!initialAuctions[0] || !initialAuctions[0].isActive) {
+                    if (!initialAuctions[0]) {
                         console.info('No active auctions are found, exiting the "evm_mine" loop');
                         break;
                     }
-                    console.info(`Gradually skipping time, one block every ${STEP_SECONDS} seconds`);
-                    try {
-                        await provider.send('evm_mine', []);
-                        await new Promise(resolve => setTimeout(resolve, STEP_SECONDS * 1000));
-                    } catch (error) {
-                        console.error('evm_mine failed with', error);
+                    const auction = await enrichAuction(TEST_NETWORK, initialAuctions[0]);
+                    if (!auction?.isActive) {
+                        console.info('No active auctions are found, exiting the "evm_mine" loop');
+                        break;
                     }
+                    console.info(`One active auction is still present: ${auction.id}`);
                 }
             },
         },
