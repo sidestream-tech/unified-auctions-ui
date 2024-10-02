@@ -11,12 +11,15 @@ import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 import { promptToGetNumber, promptToGetBlockNumber } from '../helpers/promptToGetNumber';
 import getProvider from '../../src/provider';
 import fetchAuctionsByCollateralType, { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
-import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
+import { getAllCollateralTypes, getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import { setCollateralDebtCeilingToGlobal } from '../../helpers/hardhat/contractParametrization';
 import { getCurrentOraclePriceByCollateralType } from '../../src/oracles';
 import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
 import BigNumber from 'bignumber.js';
 import { enrichAuction } from '../../src/auctions';
+import { overwriteUintValue } from '../../helpers/hardhat/slotOverwrite';
+import getContract from '../../src/contracts';
+import { RAY } from '../../src/constants/UNITS';
 
 const simulation: Simulation = {
     title: 'Create collateral auction',
@@ -41,7 +44,7 @@ const simulation: Simulation = {
             title: 'Create underwater vault',
             entry: async context => {
                 // set oracle price
-                await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, new BigNumber(1000));
+                await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, new BigNumber(10));
                 const initialOraclePrice = await getCurrentOraclePriceByCollateralType(
                     TEST_NETWORK,
                     context.collateralType
@@ -74,8 +77,17 @@ const simulation: Simulation = {
         {
             title: 'Liquidate the vault',
             entry: async context => {
+                const collateralConfig = getCollateralConfigByType(context.collateralType);
+                try {
+                    // overwrite calc.tau (linear auction price reduction duration)
+                    await overwriteUintValue(collateralConfig.contracts.calc, '0x1', new BigNumber(3000));
+                } catch {}
+                try {
+                    // overwrite clip.buf (initial auction price multiplier)
+                    await overwriteUintValue(collateralConfig.contracts.clip, '0x5', RAY.dividedBy(10));
+                } catch {}
+                // liquidate
                 await liquidateVault(TEST_NETWORK, context.collateralType, context.vaultAddress);
-                await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, context.initialOraclePrice);
                 return context;
             },
         },
