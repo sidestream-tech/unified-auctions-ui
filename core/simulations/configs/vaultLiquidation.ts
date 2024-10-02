@@ -18,7 +18,6 @@ import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
 import BigNumber from 'bignumber.js';
 import { enrichAuction } from '../../src/auctions';
 import { overwriteUintValue } from '../../helpers/hardhat/slotOverwrite';
-import getContract from '../../src/contracts';
 import { RAY } from '../../src/constants/UNITS';
 
 const simulation: Simulation = {
@@ -44,7 +43,7 @@ const simulation: Simulation = {
             title: 'Create underwater vault',
             entry: async context => {
                 // set oracle price
-                await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, new BigNumber(10));
+                await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, new BigNumber(1000));
                 const initialOraclePrice = await getCurrentOraclePriceByCollateralType(
                     TEST_NETWORK,
                     context.collateralType
