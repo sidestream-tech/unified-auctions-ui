@@ -9,6 +9,7 @@
                 <LinkButton v-if="profileUrl" type="secondary" :link="profileUrl">view profile</LinkButton>
                 <LinkButton v-if="analyticsUrl" type="secondary" :link="analyticsUrl">view analytics</LinkButton>
                 <LinkButton v-if="participateUrl" :link="participateUrl">participate</LinkButton>
+                <LinkButton v-if="viewUrl" type="secondary" :link="viewUrl">view</LinkButton>
             </div>
         </div>
         <div v-if="isExplanationsShown" class="text-gray-700 dark:text-gray-200 mt-2">
@@ -47,6 +48,10 @@ export default Vue.extend({
             default: null,
         },
         profileUrl: {
+            type: String,
+            default: null,
+        },
+        viewUrl: {
             type: String,
             default: null,
         },
