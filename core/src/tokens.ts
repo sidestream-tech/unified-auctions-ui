@@ -22,7 +22,13 @@ export const getTokenDecimalsBySymbol = function (symbol: string): number {
     if (tokenName === 'DAI') {
         return DAI_NUMBER_OF_DIGITS;
     }
+    if (tokenName === 'USDS') {
+        return DAI_NUMBER_OF_DIGITS;
+    }
     if (tokenName === 'MKR') {
+        return MKR_NUMBER_OF_DIGITS;
+    }
+    if (tokenName === 'SKY') {
         return MKR_NUMBER_OF_DIGITS;
     }
     const collateral = getCollateralConfigBySymbol(tokenName);

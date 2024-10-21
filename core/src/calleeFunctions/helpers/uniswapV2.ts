@@ -124,7 +124,7 @@ export const getRegularTokenExchangeRateBySymbol = async function (
     const completeExchangePath = getCompleteExchangePathBySymbol(symbol, marketId);
     const pairs = splitArrayIntoPairs(completeExchangePath);
     const uniswapPairs = await Promise.all(pairs.map(pair => getUniswapPairBySymbols(network, pair[0], pair[1])));
-    const exchangeToken = await getUniswapTokenBySymbol(network, symbol);
+    const exchangeToken = await getUniswapTokenBySymbol(network, completeExchangePath[0]);
     const uniswapRoute = new Route(uniswapPairs, exchangeToken);
     const uniswapTrade = new Trade(
         uniswapRoute,

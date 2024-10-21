@@ -33,8 +33,12 @@ const getMarketPrice = async function (
     if (marketData.callee !== 'UniswapV2LockstakeCallee') {
         throw new Error(`Can not get market price for the "${collateral.ilk}"`);
     }
+    let price = await getRegularTokenExchangeRateBySymbol(network, collateral.symbol, marketId, amount);
+    if (marketData.route[0] === 'SKY') {
+        price = price.multipliedBy(24_000);
+    }
     return {
-        price: await getRegularTokenExchangeRateBySymbol(network, collateral.symbol, marketId, amount),
+        price,
         pools: await routeToPool(network, marketData.route, collateral.symbol),
     };
 };

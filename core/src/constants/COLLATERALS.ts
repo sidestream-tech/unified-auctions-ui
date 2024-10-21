@@ -1086,7 +1086,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         exchanges: {
             'Uniswap V2': {
                 callee: 'UniswapV2LockstakeCallee',
-                route: ['MCD_GOV', 'DAI'],
+                route: ['SKY', 'USDS'],
             },
         },
         oracle: ORACLE_WITH_DELAY,
