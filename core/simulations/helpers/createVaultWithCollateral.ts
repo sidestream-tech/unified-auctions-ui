@@ -99,7 +99,7 @@ const ensureWalletBalance = async (collateralConfig: CollateralConfig, collatera
             `Unexpected wallet balance. Expected ${collateralOwned.toFixed()}, Actual ${balance.toFixed()}`
         );
     }
-    console.info(`Wallet has ${collateralOwned.toFixed()} ${collateralConfig.symbol}`);
+    console.info(`Wallet has ${collateralOwned.toFixed()} ${collateralConfig.tokenName}`);
 };
 
 const putCollateralIntoVaultAndWithdrawDai = async (vaultId: number, collateralOwned: BigNumber) => {
