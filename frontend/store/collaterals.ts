@@ -22,6 +22,7 @@ const getInitialState = (): State => ({
             ({
                 ilk: collateral.ilk,
                 symbol: collateral.symbol,
+                tokenName: collateral.tokenName,
             } as CollateralRow)
     ),
     collateralStatusesStorage: {},
@@ -131,6 +132,7 @@ export const actions = {
         commit('setCollateralStatus', {
             type: collateral.ilk,
             symbol: collateral.symbol,
+            tokenName: collateral.tokenName,
         });
     },
     async fetchCollateralStatus(
@@ -152,12 +154,14 @@ export const actions = {
             commit('setCollateralStatus', {
                 type: collateral.ilk,
                 symbol: collateral.symbol,
+                tokenName: collateral.tokenName,
                 address: tokenAddress,
             });
         } catch {
             commit('setCollateralStatus', {
                 type: collateral.ilk,
                 symbol: collateral.symbol,
+                tokenName: collateral.tokenName,
                 address: null,
             });
         }

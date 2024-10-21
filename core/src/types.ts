@@ -268,6 +268,7 @@ export declare interface WalletBalances {
 export declare interface CollateralStatus {
     type: string;
     symbol: string;
+    tokenName: string;
     isAuthorized: boolean;
     isAuthorizing: boolean;
     isDepositingOrWithdrawing: boolean;
