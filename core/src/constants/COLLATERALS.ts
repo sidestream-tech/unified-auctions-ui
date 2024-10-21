@@ -1071,9 +1071,9 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         oracle: ORACLE_WITH_DELAY,
     },
-    LOCKSTAKE: {
+    'LSE-MKR-A': {
         title: 'Lockstake MKR',
-        ilk: 'LOCKSTAKE',
+        ilk: 'LSE-MKR-A',
         symbol: 'MCD_GOV',
         tokenName: 'MKR',
         decimals: 18,
