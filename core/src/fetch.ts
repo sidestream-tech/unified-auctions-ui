@@ -64,6 +64,7 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
     const contract = await getContract(network, getClipperNameByCollateralType(collateralType));
     const auctionData = await contract.sales(auctionIndex);
     const startUnixTimestamp = new BigNumber(auctionData.tic._hex).toNumber();
+    const collateralConfig = getCollateralConfigByType(collateralType);
     if (startUnixTimestamp === 0) {
         throw new Error('No active auction found with this id');
     }
@@ -72,7 +73,8 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
         id: `${collateralType}:${auctionIndex}`,
         index: auctionIndex,
         collateralType,
-        collateralSymbol: getCollateralConfigByType(collateralType).symbol,
+        collateralSymbol: collateralConfig.symbol,
+        tokenName: collateralConfig.tokenName,
         collateralAmount: new BigNumber(auctionData.lot._hex).div(WAD),
         initialPrice: new BigNumber(auctionData.top._hex).div(RAY),
         vaultAddress: auctionData.usr,

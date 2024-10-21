@@ -20,6 +20,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'AAVE',
         ilk: 'AAVE-A',
         symbol: 'AAVE',
+        tokenName: 'AAVE',
         decimals: 18,
         contracts: {
             token: 'AAVE',
@@ -48,6 +49,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Balancer',
         ilk: 'BAL-A',
         symbol: 'BAL',
+        tokenName: 'BAL',
         decimals: 18,
         contracts: {
             token: 'BAL',
@@ -76,6 +78,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Basic Attention Token',
         ilk: 'BAT-A',
         symbol: 'BAT',
+        tokenName: 'BAT',
         decimals: 18,
         contracts: {
             token: 'BAT',
@@ -104,6 +107,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Compound',
         ilk: 'COMP-A',
         symbol: 'COMP',
+        tokenName: 'COMP',
         decimals: 18,
         contracts: {
             token: 'COMP',
@@ -132,6 +136,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Gnosis Token',
         ilk: 'GNO-A',
         symbol: 'GNO',
+        tokenName: 'GNO',
         decimals: 18,
         contracts: {
             token: 'GNO',
@@ -156,6 +161,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Ether',
         ilk: 'ETH-A',
         symbol: 'ETH',
+        tokenName: 'ETH',
         decimals: 18,
         contracts: {
             token: 'ETH',
@@ -184,6 +190,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Ether',
         ilk: 'ETH-B',
         symbol: 'ETH',
+        tokenName: 'ETH',
         decimals: 18,
         contracts: {
             token: 'ETH',
@@ -212,6 +219,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Ether',
         ilk: 'ETH-C',
         symbol: 'ETH',
+        tokenName: 'ETH',
         decimals: 18,
         contracts: {
             token: 'ETH',
@@ -240,6 +248,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Gemini Dollar',
         ilk: 'GUSD-A',
         symbol: 'GUSD',
+        tokenName: 'GUSD',
         decimals: 2,
         contracts: {
             token: 'GUSD',
@@ -268,6 +277,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Kyber Network Crystal',
         ilk: 'KNC-A',
         symbol: 'KNC',
+        tokenName: 'KNC',
         decimals: 18,
         contracts: {
             token: 'KNC',
@@ -296,6 +306,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Chainlink',
         ilk: 'LINK-A',
         symbol: 'LINK',
+        tokenName: 'LINK',
         decimals: 18,
         contracts: {
             token: 'LINK',
@@ -324,6 +335,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Loopring',
         ilk: 'LRC-A',
         symbol: 'LRC',
+        tokenName: 'LRC',
         decimals: 18,
         contracts: {
             token: 'LRC',
@@ -352,6 +364,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Decentraland',
         ilk: 'MANA-A',
         symbol: 'MANA',
+        tokenName: 'MANA',
         decimals: 18,
         contracts: {
             token: 'MANA',
@@ -380,6 +393,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Paxos Standard',
         ilk: 'PAXUSD-A',
         symbol: 'PAXUSD',
+        tokenName: 'PAXUSD',
         decimals: 18,
         contracts: {
             token: 'PAXUSD',
@@ -409,6 +423,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'renBTC',
         ilk: 'RENBTC-A',
         symbol: 'RENBTC',
+        tokenName: 'RENBTC',
         decimals: 8,
         contracts: {
             token: 'RENBTC',
@@ -437,6 +452,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'True USD',
         ilk: 'TUSD-A',
         symbol: 'TUSD',
+        tokenName: 'TUSD',
         decimals: 18,
         contracts: {
             token: 'TUSD',
@@ -465,6 +481,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Uniswap',
         ilk: 'UNI-A',
         symbol: 'UNI',
+        tokenName: 'UNI',
         decimals: 18,
         contracts: {
             token: 'UNI',
@@ -493,6 +510,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'USD Coin',
         ilk: 'USDC-A',
         symbol: 'USDC',
+        tokenName: 'USDC',
         decimals: 6,
         contracts: {
             token: 'USDC',
@@ -521,6 +539,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'USD Coin',
         ilk: 'USDC-B',
         symbol: 'USDC',
+        tokenName: 'USDC',
         decimals: 6,
         contracts: {
             token: 'USDC',
@@ -549,6 +568,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Tether USD',
         ilk: 'USDT-A',
         symbol: 'USDT',
+        tokenName: 'USDT',
         decimals: 6,
         contracts: {
             token: 'USDT',
@@ -577,6 +597,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Wrapped Bitcoin',
         ilk: 'WBTC-A',
         symbol: 'WBTC',
+        tokenName: 'WBTC',
         decimals: 8,
         contracts: {
             token: 'WBTC',
@@ -605,6 +626,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Wrapped BTC',
         ilk: 'WBTC-B',
         symbol: 'WBTC',
+        tokenName: 'WBTC',
         decimals: 8,
         contracts: {
             token: 'WBTC',
@@ -633,6 +655,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Wrapped BTC',
         ilk: 'WBTC-C',
         symbol: 'WBTC',
+        tokenName: 'WBTC',
         decimals: 8,
         contracts: {
             token: 'WBTC',
@@ -661,6 +684,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'yearn.finance',
         ilk: 'YFI-A',
         symbol: 'YFI',
+        tokenName: 'YFI',
         decimals: 18,
         contracts: {
             token: 'YFI',
@@ -689,6 +713,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: '0x',
         ilk: 'ZRX-A',
         symbol: 'ZRX',
+        tokenName: 'ZRX',
         decimals: 18,
         contracts: {
             token: 'ZRX',
@@ -717,6 +742,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Matic',
         ilk: 'MATIC-A',
         symbol: 'MATIC',
+        tokenName: 'MATIC',
         decimals: 18,
         contracts: {
             token: 'MATIC',
@@ -745,6 +771,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Lido wstETH',
         ilk: 'WSTETH-A',
         symbol: 'WSTETH',
+        tokenName: 'WSTETH',
         decimals: 18,
         contracts: {
             token: 'WSTETH',
@@ -765,6 +792,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Lido wstETH',
         ilk: 'WSTETH-B',
         symbol: 'WSTETH',
+        tokenName: 'WSTETH',
         decimals: 18,
         contracts: {
             token: 'WSTETH',
@@ -785,6 +813,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Curve stETH',
         ilk: 'CRVV1ETHSTETH-A',
         symbol: 'CRVV1ETHSTETH',
+        tokenName: 'CRVV1ETHSTETH',
         decimals: 18,
         contracts: {
             token: 'CRVV1ETHSTETH',
@@ -805,6 +834,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2DAIETH LP',
         ilk: 'UNIV2DAIETH-A',
         symbol: 'UNIV2DAIETH',
+        tokenName: 'UNIV2DAIETH',
         decimals: 18,
         contracts: {
             token: 'UNIV2DAIETH',
@@ -826,6 +856,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2USDCETH LP',
         ilk: 'UNIV2USDCETH-A',
         symbol: 'UNIV2USDCETH',
+        tokenName: 'UNIV2USDCETH',
         decimals: 18,
         contracts: {
             token: 'UNIV2USDCETH',
@@ -847,6 +878,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2ETHUSDT LP',
         ilk: 'UNIV2ETHUSDT-A',
         symbol: 'UNIV2ETHUSDT',
+        tokenName: 'UNIV2ETHUSDT',
         decimals: 18,
         contracts: {
             token: 'UNIV2ETHUSDT',
@@ -868,6 +900,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2WBTCDAI LP',
         ilk: 'UNIV2WBTCDAI-A',
         symbol: 'UNIV2WBTCDAI',
+        tokenName: 'UNIV2WBTCDAI',
         decimals: 18,
         contracts: {
             token: 'UNIV2WBTCDAI',
@@ -889,6 +922,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2WBTCETH LP',
         ilk: 'UNIV2WBTCETH-A',
         symbol: 'UNIV2WBTCETH',
+        tokenName: 'UNIV2WBTCETH',
         decimals: 18,
         contracts: {
             token: 'UNIV2WBTCETH',
@@ -910,6 +944,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2LINKETH LP',
         ilk: 'UNIV2LINKETH-A',
         symbol: 'UNIV2LINKETH',
+        tokenName: 'UNIV2LINKETH',
         decimals: 18,
         contracts: {
             token: 'UNIV2LINKETH',
@@ -931,6 +966,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2UNIETH LP',
         ilk: 'UNIV2UNIETH-A',
         symbol: 'UNIV2UNIETH',
+        tokenName: 'UNIV2UNIETH',
         decimals: 18,
         contracts: {
             token: 'UNIV2UNIETH',
@@ -952,6 +988,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2AAVEETH LP',
         ilk: 'UNIV2AAVEETH-A',
         symbol: 'UNIV2AAVEETH',
+        tokenName: 'UNIV2AAVEETH',
         decimals: 18,
         contracts: {
             token: 'UNIV2AAVEETH',
@@ -973,6 +1010,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2DAIUSDT LP',
         ilk: 'UNIV2DAIUSDT-A',
         symbol: 'UNIV2DAIUSDT',
+        tokenName: 'UNIV2DAIUSDT',
         decimals: 18,
         contracts: {
             token: 'UNIV2DAIUSDT',
@@ -994,6 +1032,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'UNIV2DAIUSDC LP',
         ilk: 'UNIV2DAIUSDC-A',
         symbol: 'UNIV2DAIUSDC',
+        tokenName: 'UNIV2DAIUSDC',
         decimals: 18,
         contracts: {
             token: 'UNIV2DAIUSDC',
@@ -1015,6 +1054,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Rocket Pool ETH',
         ilk: 'RETH-A',
         symbol: 'RETH',
+        tokenName: 'RETH',
         decimals: 18,
         contracts: {
             token: 'RETH',
@@ -1035,6 +1075,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         title: 'Lockstake MKR',
         ilk: 'LOCKSTAKE',
         symbol: 'MCD_GOV',
+        tokenName: 'MKR',
         decimals: 18,
         contracts: {
             token: 'MCD_GOV',

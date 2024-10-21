@@ -15,7 +15,7 @@
                 <tr v-for="collateralStatus of sortedCollaterals" :key="collateralStatus.type" class="Body">
                     <td>
                         <div class="flex items-center gap-2">
-                            <CurrencyIcon :currency-symbol="collateralStatus.symbol" />
+                            <CurrencyIcon :currency-symbol="collateralStatus.tokenName" />
                             {{ collateralStatus.type }}
                         </div>
                     </td>

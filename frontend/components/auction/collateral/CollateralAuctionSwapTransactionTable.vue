@@ -9,7 +9,7 @@
             <div class="RightInfo">
                 <FormatCurrency
                     :value="auctionTransaction.collateralAmount"
-                    :currency="auctionTransaction.collateralSymbol"
+                    :currency="auctionTransaction.tokenName"
                 />
             </div>
         </div>
@@ -18,7 +18,7 @@
             <div class="RightInfo">
                 <PriceDropAnimation :auction="auctionTransaction" class="mr-1" />
                 <FormatCurrency :value="auctionTransaction.approximateUnitPrice" currency="DAI" /> per
-                <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                <span class="uppercase">{{ auctionTransaction.tokenName }}</span>
             </div>
         </div>
         <MarketPriceSelection

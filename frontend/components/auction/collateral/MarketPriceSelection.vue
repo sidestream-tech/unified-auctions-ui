@@ -9,7 +9,7 @@
             </button>
             <div v-show="!isExpanded">
                 <FormatCurrency :value="marketUnitPrice" currency="DAI" /> per
-                <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                <span class="uppercase">{{ auctionTransaction.tokenName }}</span>
             </div>
         </div>
         <CollapseTransition>
@@ -32,7 +32,7 @@
                                     </button>
                                     <span class="pl-1">
                                         <FormatCurrency :value="marketData.marketUnitPrice" currency="DAI" /> per
-                                        <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                                        <span class="uppercase">{{ auctionTransaction.tokenName }}</span>
                                     </span>
                                 </div>
                                 <div v-else class="flex justify-end">
