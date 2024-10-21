@@ -138,7 +138,9 @@ export default Vue.extend({
             if (!pools || !pools?.length) {
                 return '';
             }
-            return pools.map(pool => pool.routes[0]).join(' → ');
+            const route = pools.map(pool => pool.routes[0]);
+            route.push(pools[pools.length - 1].routes[1]);
+            return route.join(' → ');
         },
         getRouteFromMarketData(marketData: MarketData) {
             if (!marketData) {
