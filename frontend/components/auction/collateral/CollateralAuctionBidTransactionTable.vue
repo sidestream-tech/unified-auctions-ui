@@ -11,7 +11,7 @@
             <div>
                 <FormatCurrency
                     :value="auctionTransaction.collateralAmount"
-                    :currency="auctionTransaction.collateralSymbol"
+                    :currency="auctionTransaction.tokenName"
                 />
             </div>
         </div>
@@ -21,7 +21,7 @@
                 <template v-if="auctionTransaction.isActive">
                     <PriceDropAnimation :auction="auctionTransaction" class="mr-1" />
                     <FormatCurrency :value="auctionTransaction.approximateUnitPrice" currency="DAI" /> per
-                    <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                    <span class="uppercase">{{ auctionTransaction.tokenName }}</span>
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -94,11 +94,11 @@
                 <format-currency
                     v-if="amountToReceive && isActive && !isBidAmountNaN"
                     :value="amountToReceive"
-                    :currency="auctionTransaction.collateralSymbol"
+                    :currency="auctionTransaction.tokenName"
                 />
                 <div v-else>
                     <span class="opacity-50">Unknown</span>
-                    <span class="font-bold">{{ auctionTransaction.collateralSymbol }}</span>
+                    <span class="font-bold">{{ auctionTransaction.tokenName }}</span>
                 </div>
             </div>
         </div>
