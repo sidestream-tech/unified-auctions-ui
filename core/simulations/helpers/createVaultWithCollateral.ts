@@ -204,11 +204,11 @@ const createDefaultVaultWithCollateral = async (collateralType: CollateralType, 
 const createLockstakeVaultWithCollateral = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
     const walletAddress = await (await getSigner(TEST_NETWORK)).getAddress();
-    const vaultIndex = 1;
     const refId = 0;
 
     // Open engine vault
     const engine = await getContract(TEST_NETWORK, 'LOCKSTAKE_ENGINE', true);
+    const vaultIndex = parseInt(await engine.ownerUrnsCount(walletAddress));
     await engine.open(vaultIndex);
 
     // Lock
