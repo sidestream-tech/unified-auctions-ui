@@ -32,19 +32,12 @@ The process of adding new collaterals depends on the token type used. This is du
     5. Add new exchange file to the [`calleeFunctions` folder](./src/calleeFunctions)
         - The file should be named using the name from `1.`
         - The file should export `CalleeFunctions`
-        - The file should be imported in the [`calleeFunctions/index.ts`](./src/calleeFunctions/index.ts)
-3. Adding price oracle configurations for the token:
-    1. Get the source code of the price oracle contract:
-       - read value `ilks(collateralType)` from [`Spot` contract](https://etherscan.io/address/0x65c79fcb50ca1594b025960e539ed7a9a6d434a3#code) via "Read Contract" tabl - and receive the address of the oracle for the specified collateral. The linked conract is responsible for updating the unit prices for collaterals.
-    2. Read the contract and determine the slot address of the variable:
-       - Generally a slot number can be determined by counting definition of variables in the contract source code, but there are exceptions, [please read the docs on the solidity version the contract was compiled with](https://docs.soliditylang.org/en/v0.8.13/internals/layout_in_storage.html)
-       - Experimenting with blockchain fork (e.g. hardhat) helps: try to fetch the value you're looking for / overwrite it / ... and validate that it's correct via some public method or comparing against your expectation. See section [Overwriting values of price oracles](./README.md#overwriting-values-of-price-oracles)
-    3. Extend collateral config with the proper slot addresses.
-    4. If needed, add the oracle type to `types` file if the existing types are not sufficient to cover for the set of values you need.
-4. Run `npm run collateral:onboard` to run the script that helps to choose the oracle config.
-    - when the script outputs the json with the config, add it to the `oracle` key of the collateral configuration in `COLLATERALS.ts`
-    - if the script terminates with an error, please submit the report to the repository at https://github.com/sidestream-tech/unified-auctions-ui via an issue so that the support could be added.
-    - Read more about the collateral oracle configurations at `./README.md#collateral-oracle-configs`
+    6. Import exchange file inside [`calleeFunctions/index.ts`](./src/calleeFunctions/index.ts) and export under `allCalleeFunctions`
+
+3. Adding price oracle configurations for the new collateral type:
+
+    1. Get the source code of the price oracle contract. Read value `ilks(collateralType)` from the [`MCD_SPOT` contract](https://etherscan.io/address/0x65c79fcb50ca1594b025960e539ed7a9a6d434a3#code) via "Read Contract" tab and get the address of the oracle for the specified collateral. The linked conract is responsible for updating the unit prices for collaterals
+    2. If the contract resembles OSM ([Oracle Security Module](https://github.com/makerdao/osm)) `ORACLE_WITH_DELAY` needs to be used, otherwise `ORACLE_WITHOUT_DELAY`
 
 ### Onboarding not yet deployed collateral
 

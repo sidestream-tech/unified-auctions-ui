@@ -6,7 +6,7 @@ const generateNotificationTextCollateral = function (auction: AuctionInitialInfo
     const url = `${process.env.FRONTEND_ORIGIN}/collateral/?network=${auction.network}&auction=${auction.id}`;
     const formattedString = formatToAutomaticDecimalPointsString(auction.collateralAmount);
 
-    return `Collateral auction with ${formattedString} ${auction.collateralSymbol} just started. Follow the link to participate: ${url}`;
+    return `Collateral auction with ${formattedString} ${auction.tokenName} just started. Follow the link to participate: ${url}`;
 };
 
 const generateNotificationTextDebt = function (auction: DebtAuctionActive): string {

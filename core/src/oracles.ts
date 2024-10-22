@@ -18,7 +18,7 @@ const CACHE_EXPIRY_MS = 60 * 1000;
 
 export const getOracleAddressByCollateralType = async function (network: string, collateralType: string) {
     const collateralConfig = getCollateralConfigByType(collateralType);
-    return await getContractAddressByName(network, `PIP_${collateralConfig.symbol}`);
+    return await getContractAddressByName(network, collateralConfig.contracts.pip);
 };
 
 const getOraclePriceSameSlotValidity = async (

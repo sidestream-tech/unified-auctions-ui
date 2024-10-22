@@ -6,12 +6,13 @@ import getProvider from './provider';
 import MCD_CLIP_CALC from './abis/MCD_CLIP_CALC.json';
 import { RAY_NUMBER_OF_DIGITS } from './constants/UNITS';
 import { fetchContractAddressByNetwork, getSupportedCollateralTypes } from './addresses';
+import { getCollateralConfigByType } from './constants/COLLATERALS';
 
 const PARAMS_CACHE = 24 * 60 * 60 * 1000;
 
 const getCalcAddressByCollateralType = async function (network: string, collateralType: string): Promise<string> {
-    const suffix = collateralType.replace('-', '_');
-    const calcAddress = await fetchContractAddressByNetwork(network, `MCD_CLIP_CALC_${suffix}`);
+    const config = getCollateralConfigByType(collateralType);
+    const calcAddress = await fetchContractAddressByNetwork(network, config.contracts.calc);
     if (!calcAddress) {
         throw new Error(`"${collateralType}" contract is not found on the "${network}" network`);
     }

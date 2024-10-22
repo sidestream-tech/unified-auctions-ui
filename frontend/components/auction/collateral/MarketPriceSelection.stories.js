@@ -12,7 +12,7 @@ const common = {
         auctionTransaction: fakeAuctionTransaction,
         marketId: '',
     }),
-    template: `<MarketPriceSelection :auction-transaction="auctionTransaction" :market-id.sync="marketId" />`,
+    template: `<MarketPriceSelection :auction-transaction="auctionTransaction" :market-id.sync="marketId" profit-token="DAI" />`,
 };
 
 storiesOf('Auction/Collateral/MarketPriceSelection', module).add('Default', () => ({ ...common }));

@@ -87,7 +87,7 @@ export default Vue.extend({
         collateralSymbol(): string {
             try {
                 const collateral = getCollateralConfigByType(this.collateralType);
-                return collateral.symbol;
+                return collateral.tokenName;
             } catch {
                 return '';
             }

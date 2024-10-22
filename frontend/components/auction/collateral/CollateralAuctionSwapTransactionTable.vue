@@ -9,7 +9,7 @@
             <div class="RightInfo">
                 <FormatCurrency
                     :value="auctionTransaction.collateralAmount"
-                    :currency="auctionTransaction.collateralSymbol"
+                    :currency="auctionTransaction.tokenName"
                 />
             </div>
         </div>
@@ -17,14 +17,15 @@
             <div>Auction Price</div>
             <div class="RightInfo">
                 <PriceDropAnimation :auction="auctionTransaction" class="mr-1" />
-                <FormatCurrency :value="auctionTransaction.approximateUnitPrice" currency="DAI" /> per
-                <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                <FormatCurrency :value="auctionTransaction.approximateUnitPrice" :currency="profitToken" /> per
+                <span class="uppercase">{{ auctionTransaction.tokenName }}</span>
             </div>
         </div>
         <MarketPriceSelection
             :auction-transaction="auctionTransaction"
             :market-id.sync="currentMarketId"
             :is-autorouting-enabled="isAutoroutingEnabled"
+            :profit-token="profitToken"
             @update:toggleAutoRouterLoad="toggleAutoRouterLoad"
         />
         <div class="flex w-full justify-between">
@@ -49,7 +50,7 @@
                     v-if="transactionGrossProfit"
                     show-sign
                     :value="transactionGrossProfit"
-                    currency="DAI"
+                    :currency="profitToken"
                 />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -71,7 +72,7 @@
                 <FormatCurrency
                     v-if="auctionTransaction.combinedSwapFeesDAI"
                     :value="auctionTransaction.combinedSwapFeesDAI * -1"
-                    currency="DAI"
+                    :currency="profitToken"
                 />
                 <span v-else class="opacity-50">Unknown</span>
             </div>
@@ -83,7 +84,7 @@
                     v-if="transactionNetProfit"
                     show-sign
                     :value="transactionNetProfit"
-                    currency="DAI"
+                    :currency="profitToken"
                     class="font-extrabold"
                 />
                 <span v-else class="opacity-50">Unknown</span>
@@ -133,6 +134,12 @@ export default Vue.extend({
         };
     },
     computed: {
+        profitToken(): string {
+            const marketId = this.currentMarketId || this.auctionTransaction.suggestedMarketId;
+            const route = this.auctionTransaction.marketDataRecords[marketId].route || [];
+            const profitToken = route[route.length - 1];
+            return profitToken || 'DAI';
+        },
         marketUnitPriceToUnitPriceRatio(): BigNumber | undefined {
             if (!this.currentMarketId || !this.auctionTransaction.marketDataRecords) {
                 return this.auctionTransaction.marketUnitPriceToUnitPriceRatio;

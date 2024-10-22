@@ -27,10 +27,7 @@
                         <tr>
                             <td>Auction Amount</td>
                             <td>
-                                <format-currency
-                                    :value="auction.collateralAmount"
-                                    :currency="auction.collateralSymbol"
-                                />
+                                <format-currency :value="auction.collateralAmount" :currency="auction.tokenName" />
                             </td>
                         </tr>
                         <tr>
@@ -39,7 +36,7 @@
                                 <template v-if="auction.isActive">
                                     <format-currency :value="auction.approximateUnitPrice" currency="DAI" />
                                     per
-                                    <format-currency :currency="auction.collateralSymbol" />
+                                    <format-currency :currency="auction.tokenName" />
                                     <PriceDropAnimation :auction="auction" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
@@ -50,7 +47,7 @@
                             <td>
                                 <template v-if="auction.isActive && auction.marketUnitPrice">
                                     <format-currency :value="auction.marketUnitPrice" currency="DAI" /> per
-                                    <format-currency :currency="auction.collateralSymbol" />
+                                    <format-currency :currency="auction.tokenName" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
                             </td>
@@ -119,7 +116,7 @@
                                     <format-currency
                                         v-else
                                         :value="auction.collateralToCoverDebt"
-                                        :currency="auction.collateralSymbol"
+                                        :currency="auction.tokenName"
                                     />
                                 </td>
                             </tr>
@@ -170,14 +167,14 @@
                     <template v-if="!error">
                         The auctioned vault
                         <format-address type="address" :value="auction.vaultAddress" shorten disable /> contains
-                        <format-currency :value="auction.collateralAmount" :currency="auction.collateralSymbol" />.
+                        <format-currency :value="auction.collateralAmount" :currency="auction.tokenName" />.
                         <span v-if="auction.isActive || auction.isFinished">
                             Currently, it is sold for <format-currency :value="auction.totalPrice" currency="DAI" />.
                             This equals <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> per
-                            <format-currency :currency="auction.collateralSymbol" />, or approximately
+                            <format-currency :currency="auction.tokenName" />, or approximately
                             <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you buy
-                            <format-currency :currency="auction.collateralSymbol" /> on another exchange platform such
-                            as Uniswap.
+                            <format-currency :currency="auction.tokenName" /> on another exchange platform such as
+                            Uniswap.
                         </span>
                         <span v-else>
                             This auction requires to be restarted in order to determine prices properly.
@@ -187,7 +184,7 @@
                         This auction was finished at {{ auction.endDate.toUTCString() }} at a closing auction price of
                         <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> (meaning
                         <format-currency :value="auction.approximateUnitPrice" currency="DAI" />
-                        per <format-currency :currency="auction.collateralSymbol" /> on average) after
+                        per <format-currency :currency="auction.tokenName" /> on average) after
                         <TimeTill :date="auction.endDate" />.
                     </template>
                 </TextBlock>
@@ -379,7 +376,7 @@ export default Vue.extend({
                 typeof this.auction?.marketUnitPriceToUnitPriceRatio === 'undefined'
             ) {
                 return `Swap transaction is not possible,
-                because we can't get value of ${this.auction?.collateralSymbol} on UniSwap`;
+                because we can't get value of ${this.auction?.tokenName} on UniSwap`;
             }
             return null;
         },

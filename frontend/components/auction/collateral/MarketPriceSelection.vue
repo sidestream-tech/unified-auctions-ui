@@ -8,8 +8,8 @@
                 <span class="text-gray-300">({{ suggestionOrSelection }})</span>
             </button>
             <div v-show="!isExpanded">
-                <FormatCurrency :value="marketUnitPrice" currency="DAI" /> per
-                <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                <FormatCurrency :value="marketUnitPrice" :currency="profitToken" /> per
+                <span class="uppercase">{{ auctionTransaction.tokenName }}</span>
             </div>
         </div>
         <CollapseTransition>
@@ -31,8 +31,9 @@
                                         <span v-else class="text-green-500">Select</span>
                                     </button>
                                     <span class="pl-1">
-                                        <FormatCurrency :value="marketData.marketUnitPrice" currency="DAI" /> per
-                                        <span class="uppercase">{{ auctionTransaction.collateralSymbol }}</span>
+                                        <FormatCurrency :value="marketData.marketUnitPrice" :currency="profitToken" />
+                                        per
+                                        <span class="uppercase">{{ auctionTransaction.tokenName }}</span>
                                     </span>
                                 </div>
                                 <div v-else class="flex justify-end">
@@ -87,6 +88,10 @@ export default Vue.extend({
             type: Object as Vue.PropType<AuctionTransaction>,
             required: true,
         },
+        profitToken: {
+            type: String,
+            required: true,
+        },
         marketId: {
             type: String,
             default: '',
@@ -138,8 +143,9 @@ export default Vue.extend({
             if (!pools || !pools?.length) {
                 return '';
             }
-            const fullRoute = [...pools.map(pool => pool.routes[0]), 'DAI'];
-            return fullRoute.join(' → ');
+            const route = pools.map(pool => pool.routes[0]);
+            route.push(pools[pools.length - 1].routes[1]);
+            return route.join(' → ');
         },
         getRouteFromMarketData(marketData: MarketData) {
             if (!marketData) {

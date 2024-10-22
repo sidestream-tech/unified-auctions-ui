@@ -115,6 +115,7 @@ export const generateFakeAuction = function () {
         index,
         collateralType: collateralObject.ilk,
         collateralSymbol: collateralObject.symbol,
+        tokenName: collateralObject.tokenName,
         collateralAmount,
         totalPrice,
         debtDAI,

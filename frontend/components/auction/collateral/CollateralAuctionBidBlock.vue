@@ -20,7 +20,7 @@
                     Bid <format-currency :value="transactionBidAmount" currency="DAI" /> for
                     <format-currency
                         :value="amountToReceive || auctionTransaction.collateralAmount"
-                        :currency="auctionTransaction.collateralSymbol"
+                        :currency="auctionTransaction.tokenName"
                     />
                 </span>
             </BaseButton>

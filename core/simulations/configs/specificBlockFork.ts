@@ -1,6 +1,6 @@
 import { addDaiToBalance, addMkrToBalance } from '../../helpers/hardhat/balance';
 import { warpTime, resetNetworkAndSetupWallet } from '../../helpers/hardhat/network';
-import promptToGetBlockNumber from '../helpers/promptToGetBlockNumber';
+import { promptToGetBlockNumber } from '../helpers/promptToGetNumber';
 import { Simulation } from '../types';
 
 const simulation: Simulation = {

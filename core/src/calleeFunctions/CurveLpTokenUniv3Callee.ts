@@ -23,9 +23,13 @@ const getCalleeData = async function (
     if (!preloadedPools) {
         throw new Error(`Can not encode route for the "${collateral.ilk}" without preloaded pools`);
     }
+    const joinName = getJoinNameByCollateralType(collateral.ilk);
+    if (!joinName) {
+        throw new Error(`Collateral "${collateral.ilk}" does not have join contract`);
+    }
+    const joinAdapterAddress = await getContractAddressByName(network, joinName);
     const route = await encodePools(network, preloadedPools);
     const curveData = [CURVE_POOL_ADDRESS, CURVE_COIN_INDEX];
-    const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
     const minProfit = 1;
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address', 'tuple(address,uint256)'];
     return ethers.utils.defaultAbiCoder.encode(typesArray, [

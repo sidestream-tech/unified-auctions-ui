@@ -21,12 +21,14 @@ const getCalleeConfig = function (collateral: CollateralConfig, _marketId: strin
     // TODO: remove _marketId from the all uniswapV2 functions, since they have to always use 'Uniswap V2' config
     const marketData = collateral.exchanges['Uniswap V2'];
     const isUniswapTokenNonAutoRouted =
-        (marketData?.callee === 'UniswapV2CalleeDai' || marketData?.callee === 'UniswapV3Callee') &&
+        (marketData?.callee === 'UniswapV2CalleeDai' ||
+            marketData?.callee === 'UniswapV3Callee' ||
+            marketData?.callee === 'UniswapV2LockstakeCallee') &&
         !('automaticRouter' in marketData);
     if (isUniswapTokenNonAutoRouted) {
         return marketData;
     }
-    throw new Error(`"${collateral.symbol}" is not an UniSwap token`);
+    throw new Error(`"${collateral.symbol}" is not an Uniswap token`);
 };
 
 export const getCompleteExchangePathBySymbol = function (symbol: string, marketId: string, useExchangeRoute = true) {
@@ -35,7 +37,7 @@ export const getCompleteExchangePathBySymbol = function (symbol: string, marketI
         return ['DAI'];
     }
     const collateral = getCollateralConfigBySymbol(symbol);
-    return !useExchangeRoute ? [symbol, 'DAI'] : [symbol, ...getCalleeConfig(collateral, marketId).route, 'DAI'];
+    return !useExchangeRoute ? [symbol, 'DAI'] : getCalleeConfig(collateral, marketId).route;
 };
 
 export const getUniswapRouteAddressesBySymbol = async function (
@@ -122,7 +124,7 @@ export const getRegularTokenExchangeRateBySymbol = async function (
     const completeExchangePath = getCompleteExchangePathBySymbol(symbol, marketId);
     const pairs = splitArrayIntoPairs(completeExchangePath);
     const uniswapPairs = await Promise.all(pairs.map(pair => getUniswapPairBySymbols(network, pair[0], pair[1])));
-    const exchangeToken = await getUniswapTokenBySymbol(network, symbol);
+    const exchangeToken = await getUniswapTokenBySymbol(network, completeExchangePath[0]);
     const uniswapRoute = new Route(uniswapPairs, exchangeToken);
     const uniswapTrade = new Trade(
         uniswapRoute,

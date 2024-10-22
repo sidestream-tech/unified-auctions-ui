@@ -8,12 +8,12 @@
         :pagination="{ pageSize: collateralAmount, hideOnSinglePage: true }"
     >
         <div slot="icon" slot-scope="record" class="Element">
-            <CurrencyIcon :currency-symbol="record.symbol" />
+            <CurrencyIcon :currency-symbol="record.tokenName" />
         </div>
         <div slot="ilk" slot-scope="ilk" class="Element">
             {{ ilk }}
         </div>
-        <div slot="symbol" slot-scope="symbol" class="Element">{{ symbol }}</div>
+        <div slot="symbol" slot-scope="tokenName" class="Element">{{ tokenName }}</div>
         <div slot="token" slot-scope="tokenAddress, record" class="Element" :class="{ Loading: isLoading(record) }">
             <div v-if="isLoading(record)" class="flex items-center">
                 <LoadingIcon class="h-3 w-3 animate animate-spin fill-current dark:text-gray-300 mr-2" />
@@ -144,7 +144,7 @@ export default Vue.extend({
                 },
                 {
                     title: 'Currency',
-                    dataIndex: 'symbol',
+                    dataIndex: 'tokenName',
                     scopedSlots: { customRender: 'symbol' },
                 },
                 {

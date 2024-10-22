@@ -18,12 +18,16 @@ const getCalleeData = async function (
     if (marketData?.callee !== 'UniswapV3Callee') {
         throw new Error(`getCalleeData called with invalid collateral type "${collateral.ilk}"`);
     }
+    const joinName = getJoinNameByCollateralType(collateral.ilk);
+    if (!joinName) {
+        throw new Error(`collateral "${collateral.ilk}" does not have join contract`);
+    }
     const preloadedPools = !!params && 'pools' in params ? params.pools : undefined;
     const pools = preloadedPools || (await getPools(network, collateral, marketId));
     if (!pools) {
         throw new Error(`getCalleeData called with invalid pools`);
     }
-    const joinAdapterAddress = await getContractAddressByName(network, getJoinNameByCollateralType(collateral.ilk));
+    const joinAdapterAddress = await getContractAddressByName(network, joinName);
     const minProfit = 1;
     const uniswapV3pools = await encodePools(network, pools);
     const typesArray = ['address', 'address', 'uint256', 'bytes', 'address'];

@@ -16,8 +16,8 @@ export const routeToPool = async (
     uniswapFees?: number[]
 ): Promise<Pool[]> => {
     const fees = uniswapFees || Array.from({ length: route.length + 2 }, () => 3000);
-    const fullRoute = [collateralSymbol, ...route, 'DAI'];
-    const routeSteps = getRouteSteps(fullRoute, fees);
+    collateralSymbol;
+    const routeSteps = getRouteSteps(route, fees);
     return await Promise.all(
         routeSteps.map(async step => ({
             addresses: await Promise.all(

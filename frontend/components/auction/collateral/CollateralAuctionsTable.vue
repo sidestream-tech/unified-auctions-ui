@@ -15,13 +15,13 @@
             class="AuctionsTable relative overflow-visible"
         >
             <div slot="collateralAmount" slot-scope="collateralAmount, record" class="flex items-center space-x-2">
-                <currency-icon :currency-symbol="record.collateralSymbol" />
-                <format-currency :value="collateralAmount" :currency="record.collateralSymbol" />
+                <currency-icon :currency-symbol="record.tokenName" />
+                <format-currency :value="collateralAmount" :currency="record.tokenName" />
             </div>
             <div slot="approximateUnitPrice" slot-scope="approximateUnitPrice, record">
                 <template v-if="record.isActive && !record.isFinished">
                     <format-currency :value="approximateUnitPrice" currency="DAI" /> per
-                    <format-currency :currency="record.collateralSymbol" />
+                    <format-currency :currency="record.tokenName" />
                 </template>
                 <span v-else class="opacity-50">Unknown</span>
             </div>

@@ -103,9 +103,9 @@ export const fetchVaultCollateralParameters = async (
     network: string,
     collateralType: CollateralType
 ): Promise<VaultCollateralParameters> => {
-    const contract = await getContract(network, 'MCD_VAT');
+    const vat = await getContract(network, 'MCD_VAT');
     const typeHex = ethers.utils.formatBytes32String(collateralType);
-    const { rate, spot } = await contract.ilks(typeHex);
+    const { rate, spot } = await vat.ilks(typeHex);
     return {
         stabilityFeeRate: new BigNumber(rate._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS),
         minUnitPrice: new BigNumber(spot._hex).shiftedBy(-RAY_NUMBER_OF_DIGITS),
@@ -117,9 +117,9 @@ export const fetchVaultAmount = async (
     collateralType: CollateralType,
     vaultAddress: string
 ): Promise<VaultAmount> => {
-    const contract = await getContract(network, 'MCD_VAT');
+    const vat = await getContract(network, 'MCD_VAT');
     const typeHex = ethers.utils.formatBytes32String(collateralType);
-    const { ink, art } = await contract.urns(typeHex, vaultAddress);
+    const { ink, art } = await vat.urns(typeHex, vaultAddress);
     return {
         initialDebtDai: new BigNumber(art._hex).shiftedBy(-DAI_NUMBER_OF_DIGITS),
         collateralAmount: new BigNumber(ink._hex).shiftedBy(-WAD_NUMBER_OF_DIGITS),
@@ -401,36 +401,39 @@ export const openVaultWithProxiedContractAndDrawDebt = async (
     const proxyAddress = existingProxyAddress
         ? existingProxyAddress
         : await createProxyAndGiveAllowance(network, collateralType, collateralAmount);
-
     const signer = await getSigner(network);
     const proxyContract = new ethers.Contract(proxyAddress, DS_PROXY, signer);
     const method = getMethodSignature('openLockGemAndDraw(address,address,address,bytes32,uint256,uint256)');
     const jugContractAddress = await getContractAddressByName(network, 'MCD_JUG');
-    const joinContractCollateralAddress = await getContractAddressByName(
-        network,
-        getJoinNameByCollateralType(collateralType)
-    );
     const joinContractDaiAddress = await getContractAddressByName(network, 'MCD_JOIN_DAI');
-    const args = [
-        jugContractAddress,
-        joinContractCollateralAddress,
-        joinContractDaiAddress,
-        ethers.utils.formatBytes32String(collateralType),
-        collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
-        debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0),
-    ];
-    const typesArray = ['address', 'address', 'address', 'bytes32', 'uint256', 'uint256'];
-    const encodedArgs = ethers.utils.defaultAbiCoder.encode(typesArray, args);
-    const transactionData = method + encodedArgs.substring(2);
-    const target = (await getContract(network, `PROXY_ACTIONS_${proxyType}`)).address;
-    const transaction = await proxyContract['execute(address,bytes)'](target, transactionData);
-    const events = await extractEventFromTransaction(
-        transaction,
-        'NewCdpRegistered(address,address,uint256)',
-        new ethers.utils.Interface(CDP_REGISTRY)
-    );
-    const vaultId = events[0].args.cdp.toNumber();
-    return vaultId;
+    const joinName = getJoinNameByCollateralType(collateralType);
+    if (joinName) {
+        const joinContractCollateralAddress = await getContractAddressByName(network, joinName);
+        const encodedArgs = ethers.utils.defaultAbiCoder.encode(
+            ['address', 'address', 'address', 'bytes32', 'uint256', 'uint256'],
+            [
+                jugContractAddress,
+                joinContractCollateralAddress,
+                joinContractDaiAddress,
+                ethers.utils.formatBytes32String(collateralType),
+                collateralAmount.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0),
+                debtAmountDai.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0),
+            ]
+        );
+        const transactionData = method + encodedArgs.substring(2);
+        const target = (await getContract(network, `PROXY_ACTIONS_${proxyType}`)).address;
+        const transaction = await proxyContract['execute(address,bytes)'](target, transactionData);
+        const events = await extractEventFromTransaction(
+            transaction,
+            'NewCdpRegistered(address,address,uint256)',
+            new ethers.utils.Interface(CDP_REGISTRY)
+        );
+        const vaultIndex = events[0].args.cdp.toNumber();
+        const vault = await fetchVault(network, vaultIndex);
+        return { vaultIndex, vaultAddress: vault.address };
+    } else {
+        throw new Error('openVaultWithProxiedContractAndDrawDebt: joinless vault creation is not yet implemented');
+    }
 };
 
 export const openVault = async (network: string, ownerAddress: string, collateralType: CollateralType) => {
