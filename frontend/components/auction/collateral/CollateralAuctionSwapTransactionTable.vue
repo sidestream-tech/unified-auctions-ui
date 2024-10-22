@@ -138,7 +138,7 @@ export default Vue.extend({
             const marketId = this.currentMarketId || this.auctionTransaction.suggestedMarketId;
             const route = this.auctionTransaction.marketDataRecords[marketId].route || [];
             const profitToken = route[route.length - 1];
-            return profitToken;
+            return profitToken || 'DAI';
         },
         marketUnitPriceToUnitPriceRatio(): BigNumber | undefined {
             if (!this.currentMarketId || !this.auctionTransaction.marketDataRecords) {
