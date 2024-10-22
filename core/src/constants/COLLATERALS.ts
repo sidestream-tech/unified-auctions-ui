@@ -535,6 +535,35 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         },
         oracle: ORACLE_WITHOUT_DELAY,
     },
+    'USDC-B': {
+        title: 'USD Coin',
+        ilk: 'USDC-B',
+        symbol: 'USDC',
+        tokenName: 'USDC',
+        decimals: 6,
+        contracts: {
+            token: 'USDC',
+            pip: 'PIP_USDC',
+            join: 'MCD_JOIN_USDC_A',
+            clip: 'MCD_CLIP_USDC_B',
+            calc: 'MCD_CLIP_CALC_USDC_B',
+        },
+        exchanges: {
+            'Uniswap V3 Autorouter': {
+                callee: 'UniswapV3Callee',
+                automaticRouter: true,
+            },
+            'Uniswap V3': {
+                callee: 'UniswapV3Callee',
+                route: ['USDC', 'ETH', 'DAI'],
+            },
+            'Uniswap V2': {
+                callee: 'UniswapV2CalleeDai',
+                route: ['USDC', 'ETH', 'DAI'],
+            },
+        },
+        oracle: ORACLE_WITHOUT_DELAY,
+    },
     'USDT-A': {
         title: 'Tether USD',
         ilk: 'USDT-A',

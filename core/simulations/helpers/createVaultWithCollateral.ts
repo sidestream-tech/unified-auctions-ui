@@ -41,6 +41,10 @@ import getSigner from '../../src/signer';
 
 const UNSUPPORTED_COLLATERAL_TYPES = [
     'GNO-A',
+    'GUSD-A',
+    'USDC-A',
+    'USDC-B',
+    'RENBTC-A',
     'RETH-A', // [temporary] this collateral is not yet deployed, tested via different flow
     'TUSD-A', // [proxy] this collateral has a proxy-token contract and fallback solution does not work since JOIN contract does not have sufficient funds
 ];
