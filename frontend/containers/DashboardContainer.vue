@@ -2,6 +2,7 @@
     <div class="DashboardContainer">
         <DashboardAuctionsView
             :collaterals="collaterals"
+            :off-boarded-collaterals="offBoardedCollaterals"
             :callees="callees"
             :base-fee-per-gas="baseFeePerGas"
             :gas-parameters="gasParameters"
@@ -14,12 +15,18 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters } from 'vuex';
+import type { CollateralRow } from 'auctions-core/src/types';
 import { getCalleesByNetworkType } from 'auctions-core/src/constants/CALLEES';
 import DashboardAuctionsView from '~/components/dashboard/DashboardAuctionsView.vue';
 
 export default Vue.extend({
     components: {
         DashboardAuctionsView,
+    },
+    data() {
+        return {
+            offBoardedCollaterals: [],
+        };
     },
     computed: {
         ...mapGetters('collaterals', {
@@ -55,6 +62,20 @@ export default Vue.extend({
                 this.$store.dispatch('gas/setup');
                 this.$store.dispatch('collaterals/setup');
             }
+        },
+        collaterals: {
+            handler(newCollaterals: CollateralRow[]) {
+                if (newCollaterals) {
+                    newCollaterals.forEach(async collateral => {
+                        if (await this.$store.dispatch('collaterals/isCollateralOffboarded', collateral.ilk)) {
+                            if (!this.offBoardedCollaterals.includes(collateral.ilk)) {
+                                this.offBoardedCollaterals.push(collateral.ilk);
+                            }
+                        }
+                    });
+                }
+            },
+            immediate: true,
         },
     },
 });
