@@ -17,13 +17,10 @@ import BigNumber from 'bignumber.js';
 import { random } from 'lodash';
 
 const generateFakeVaultBase = function (): VaultBase {
-    const id = faker.datatype.number();
     const address = faker.finance.ethereumAddress();
     const collateralType = faker.helpers.randomize(Object.keys(COLLATERALS));
     const network = 'mainnet';
-
     return {
-        id,
         address,
         collateralType,
         network,
