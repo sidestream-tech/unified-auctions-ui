@@ -68,7 +68,7 @@
                 v-if="vaultTransactions && vaultTransactions.length !== 0"
                 :vault-transactions="vaultTransactions"
                 :show-more-rows="isExplanationsShown"
-                :selected-vault-id="selectedVaultId"
+                :selected-vault-address="selectedVaultAddress"
                 :last-updated="lastUpdated"
             />
         </div>
@@ -103,8 +103,8 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        selectedVaultId: {
-            type: Number,
+        selectedVaultAddress: {
+            type: String,
             default: null,
         },
         isExplanationsShown: {

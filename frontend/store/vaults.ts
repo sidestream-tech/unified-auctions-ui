@@ -81,9 +81,9 @@ export const actions = {
         refetchIntervalId = setInterval(() => dispatch('updateSelectedVault'), REFETCH_INTERVAL);
     },
     async updateSelectedVault({ rootState, dispatch }: ActionContext<State, any>) {
-        const selectedVaultId = rootState.route.query.vault;
-        if (selectedVaultId) {
-            await dispatch('fetchVault', selectedVaultId);
+        const selectedVaultAddress = rootState.route.query.vault;
+        if (selectedVaultAddress) {
+            await dispatch('fetchVault', selectedVaultAddress);
         }
     },
     async fetchVault({ commit, rootGetters }: ActionContext<State, State>, vaultAddress: string) {

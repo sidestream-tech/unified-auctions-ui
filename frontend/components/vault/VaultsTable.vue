@@ -6,7 +6,7 @@
             :columns="columns"
             :pagination="{ pageSize: numberOfRowsPerPage, hideOnSinglePage: true }"
             :row-class-name="getRowClassNames"
-            :row-key="record => record.id"
+            :row-key="record => record.address"
             :custom-row="customRowEvents"
             :get-popup-container="() => $el"
             :locale="{ emptyText: 'There are currently no vaults at risk.' }"
@@ -114,8 +114,8 @@ export default Vue.extend({
             type: Array as PropType<VaultTransaction[]>,
             default: () => [],
         },
-        selectedVaultId: {
-            type: Number,
+        selectedVaultAddress: {
+            type: String,
             default: null,
         },
         showMoreRows: {
@@ -150,9 +150,9 @@ export default Vue.extend({
             }));
             return [
                 {
-                    title: 'Index',
-                    dataIndex: 'id',
-                    sorter: compareBy('id'),
+                    title: 'Address',
+                    dataIndex: 'address',
+                    sorter: compareBy('address'),
                 },
                 {
                     title: 'Collateral amount',
@@ -211,7 +211,7 @@ export default Vue.extend({
         },
         getRowClassNames(vault: VaultTransaction) {
             const classes = [];
-            if (this.selectedVaultId === vault.id) {
+            if (this.selectedVaultAddress === vault.address) {
                 classes.push('selected-row');
             }
             if (!this.getIsVaultFinished(vault)) {

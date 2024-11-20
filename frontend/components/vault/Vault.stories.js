@@ -16,7 +16,7 @@ const common = {
     data() {
         return {
             vault: fakeVaultNotLiquidatedTransaction,
-            vaultId: fakeVaultLiquidatedTransaction.id.toString(),
+            vaultAddress: fakeVaultLiquidatedTransaction.address,
         };
     },
     methods: {
@@ -27,25 +27,25 @@ const common = {
 storiesOf('Vault/Vault', module)
     .add('Default', () => ({
         ...common,
-        template: `<Vault :vaultTransaction="vault" :vaultId='vaultId' @liquidate="liquidate" />`,
+        template: `<Vault :vaultTransaction="vault" :vaultAddress='vaultAddress' @liquidate="liquidate" />`,
     }))
     .add('Finished', () => ({
         ...common,
         data() {
             return {
                 vault: fakeVaultLiquidatedTransaction,
-                vaultId: fakeVaultLiquidatedTransaction.id.toString(),
+                vaultAddress: fakeVaultLiquidatedTransaction.address,
             };
         },
-        template: `<Vault :vaultTransaction="vault" :vaultId='vaultId' @liquidate="liquidate" />`,
+        template: `<Vault :vaultTransaction="vault" :vaultAddress='vaultAddress' @liquidate="liquidate" />`,
     }))
     .add('Fetching', () => ({
         ...common,
-        template: `<Vault :are-vaults-fetching='true' :vaultId='vaultId' />`,
+        template: `<Vault :are-vaults-fetching='true' :vaultAddress='vaultAddress' />`,
     }))
     .add('Not found', () => ({
         ...common,
-        template: `<Vault :vaultId='vaultId' />`,
+        template: `<Vault :vaultAddress='vaultAddress' />`,
     }))
     .add('Invalid Date', () => ({
         ...common,
@@ -55,8 +55,8 @@ storiesOf('Vault/Vault', module)
                     ...fakeVaultNotLiquidatedTransaction,
                     nextPriceChange: 'Invalid Date',
                 },
-                vaultId: fakeVaultLiquidatedTransaction.id.toString(),
+                vaultAddress: fakeVaultLiquidatedTransaction.address,
             };
         },
-        template: `<Vault :vaultTransaction="vault" :vaultId='vaultId' @liquidate="liquidate" />`,
+        template: `<Vault :vaultTransaction="vault" :vaultAddress='vaultAddress' @liquidate="liquidate" />`,
     }));

@@ -10,7 +10,7 @@ const common = {
     components: { VaultsTable },
     data: () => ({
         vaultTransactions: fakeVaultTransaction,
-        selectedVaultId: randomSelectedVault.id,
+        selectedVaultAddress: randomSelectedVault.address,
         lastUpdated: new Date(faker.date.recent()),
         isLoading: false,
     }),
@@ -20,7 +20,7 @@ storiesOf('Vault/VaultsTable', module)
     .add('Plain', () => ({
         ...common,
         template:
-            '<VaultsTable :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" :last-updated="lastUpdated" />',
+            '<VaultsTable :vaultTransactions="vaultTransactions" :selectedVaultAddress="selectedVaultAddress" :last-updated="lastUpdated" />',
     }))
     .add('Reset Updated Timer', () => ({
         ...common,
@@ -34,7 +34,7 @@ storiesOf('Vault/VaultsTable', module)
             }, 10 * 1000);
         },
         template:
-            '<VaultsTable :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" :last-updated="lastUpdated" :is-loading="isLoading" />',
+            '<VaultsTable :vaultTransactions="vaultTransactions" :selectedVaultAddress="selectedVaultAddress" :last-updated="lastUpdated" :is-loading="isLoading" />',
     }))
     .add('Fetching With Vaults', () => ({
         ...common,
@@ -56,5 +56,5 @@ storiesOf('Vault/VaultsTable', module)
     .add('Expert Mode', () => ({
         ...common,
         template:
-            '<VaultsTable :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" show-more-rows :last-updated="lastUpdated" />',
+            '<VaultsTable :vaultTransactions="vaultTransactions" :selectedVaultAddress="selectedVaultAddress" show-more-rows :last-updated="lastUpdated" />',
     }));

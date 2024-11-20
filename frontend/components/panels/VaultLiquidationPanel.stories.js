@@ -10,7 +10,7 @@ const common = {
     components: { VaultLiquidationPanel },
     data() {
         return {
-            vaultId: vaultTransaction.id,
+            vaultAddress: vaultTransaction.address,
             vaultState: vaultTransaction.state,
             network: vaultTransaction.network,
             walletAddress: faker.finance.ethereumAddress(),

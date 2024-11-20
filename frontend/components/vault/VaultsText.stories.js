@@ -10,7 +10,7 @@ const common = {
     components: { VaultsText },
     data: () => ({
         vaultTransactions: fakeVaults,
-        selectedVaultId: randomSelectedVault.id,
+        selectedVaultAddress: randomSelectedVault.address,
     }),
 };
 
@@ -21,12 +21,12 @@ storiesOf('Vault/VaultsText', module)
     }))
     .add('With vaults', () => ({
         ...common,
-        template: '<VaultsText :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" />',
+        template: '<VaultsText :vaultTransactions="vaultTransactions" :selectedVaultAddress="selectedVaultAddress" />',
     }))
     .add('Fetching with Vaults', () => ({
         ...common,
         template:
-            '<VaultsText :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" :isVaultsLoading="true" />',
+            '<VaultsText :vaultTransactions="vaultTransactions" :selectedVaultAddress="selectedVaultAddress" :isVaultsLoading="true" />',
     }))
     .add('Fetching without Vaults', () => ({
         ...common,
@@ -39,7 +39,7 @@ storiesOf('Vault/VaultsText', module)
     .add('Expert Mode', () => ({
         ...common,
         template:
-            '<VaultsText :vaultTransactions="vaultTransactions" :selectedVaultId="selectedVaultId" :isExplanationsShown="false" />',
+            '<VaultsText :vaultTransactions="vaultTransactions" :selectedVaultAddress="selectedVaultAddress" :isExplanationsShown="false" />',
     }))
     .add('No props', () => ({
         ...common,
