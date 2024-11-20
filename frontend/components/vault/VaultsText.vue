@@ -40,23 +40,24 @@
             :class="{ 'max-w-4xl': isExplanationsShown, 'md:px-10': !isExplanationsShown }"
         >
             <Alert type="info" show-icon>
-                <div slot="message" class="font-bold">Specific vault id is required</div>
+                <div slot="message" class="font-bold">Specific vault address is required</div>
                 <template slot="description">
                     <TextBlock>
-                        Please provide a specific vault id to see its state. To find vaults that are currently at risk
-                        and can be liquidated, please follow to the
-                        <a href="https://maker.blockanalitica.com/vaults-at-risk/" target="_blank">blockanalitica</a>
-                        page.
+                        Please provide a specific Sky vault address to see its state and be able to liquidate it. To
+                        find currently active vaults please check relevant BlockAnalitica pages:
+                        <a href="https://info.sky.money/collateral/core/cdps" target="_blank">Core Vaults</a>,
+                        <a href="https://info.sky.money/collateral/seal-engine/cdps" target="_blank"
+                            >Seal Engine Vaults</a
+                        >.
                     </TextBlock>
                 </template>
             </Alert>
             <div>
                 <div style="margin-bottom: 16px" class="mt-4">
                     <Input
-                        v-model="inputVaultId"
-                        type="number"
+                        v-model="inputVaultAddress"
                         size="large"
-                        placeholder="Enter a vault id"
+                        placeholder="Enter vault address"
                         onkeydown="return event.keyCode !== 69 && event.keyCode !== 188"
                     >
                         <nuxt-link slot="addonAfter" :to="vaultInputLink"> View vault </nuxt-link>
@@ -121,12 +122,15 @@ export default Vue.extend({
     },
     data() {
         return {
-            inputVaultId: 28187,
+            inputVaultAddress: '',
         };
     },
     computed: {
         vaultInputLink(): string {
-            const searchParams = new URLSearchParams({ network: this.network, vault: this.inputVaultId.toString() });
+            const searchParams = new URLSearchParams({
+                network: this.network,
+                vault: this.inputVaultAddress,
+            });
             return `/vaults?${searchParams.toString()}`;
         },
         vaultsReadyToBeLiquidated(): number {

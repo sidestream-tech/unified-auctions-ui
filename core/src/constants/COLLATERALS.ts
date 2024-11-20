@@ -22,6 +22,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'AAVE',
         tokenName: 'AAVE',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'AAVE',
             pip: 'PIP_AAVE',
@@ -51,6 +52,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'BAL',
         tokenName: 'BAL',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'BAL',
             pip: 'PIP_BAL',
@@ -80,6 +82,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'BAT',
         tokenName: 'BAT',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'BAT',
             pip: 'PIP_BAT',
@@ -109,6 +112,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'COMP',
         tokenName: 'COMP',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'COMP',
             pip: 'PIP_COMP',
@@ -138,6 +142,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'GNO',
         tokenName: 'GNO',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'GNO',
             pip: 'PIP_GNO',
@@ -163,6 +168,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         tokenName: 'ETH',
         decimals: 18,
+        isActive: true,
         contracts: {
             token: 'ETH',
             pip: 'PIP_ETH',
@@ -192,6 +198,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         tokenName: 'ETH',
         decimals: 18,
+        isActive: true,
         contracts: {
             token: 'ETH',
             pip: 'PIP_ETH',
@@ -221,6 +228,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         tokenName: 'ETH',
         decimals: 18,
+        isActive: true,
         contracts: {
             token: 'ETH',
             pip: 'PIP_ETH',
@@ -250,6 +258,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'GUSD',
         tokenName: 'GUSD',
         decimals: 2,
+        isActive: false,
         contracts: {
             token: 'GUSD',
             pip: 'PIP_GUSD',
@@ -279,6 +288,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'KNC',
         tokenName: 'KNC',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'KNC',
             pip: 'PIP_KNC',
@@ -308,6 +318,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'LINK',
         tokenName: 'LINK',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'LINK',
             pip: 'PIP_LINK',
@@ -337,6 +348,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'LRC',
         tokenName: 'LRC',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'LRC',
             pip: 'PIP_LRC',
@@ -366,6 +378,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'MANA',
         tokenName: 'MANA',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'MANA',
             pip: 'PIP_MANA',
@@ -395,6 +408,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'PAXUSD',
         tokenName: 'PAXUSD',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'PAXUSD',
             pip: 'PIP_PAXUSD',
@@ -425,6 +439,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'RENBTC',
         tokenName: 'RENBTC',
         decimals: 8,
+        isActive: false,
         contracts: {
             token: 'RENBTC',
             pip: 'PIP_RENBTC',
@@ -454,6 +469,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'TUSD',
         tokenName: 'TUSD',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'TUSD',
             pip: 'PIP_TUSD',
@@ -483,6 +499,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNI',
         tokenName: 'UNI',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNI',
             pip: 'PIP_UNI',
@@ -512,6 +529,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDC',
         tokenName: 'USDC',
         decimals: 6,
+        isActive: false,
         contracts: {
             token: 'USDC',
             pip: 'PIP_USDC',
@@ -541,6 +559,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDC',
         tokenName: 'USDC',
         decimals: 6,
+        isActive: false,
         contracts: {
             token: 'USDC',
             pip: 'PIP_USDC',
@@ -570,6 +589,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDT',
         tokenName: 'USDT',
         decimals: 6,
+        isActive: false,
         contracts: {
             token: 'USDT',
             pip: 'PIP_USDT',
@@ -599,6 +619,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         tokenName: 'WBTC',
         decimals: 8,
+        isActive: true,
         contracts: {
             token: 'WBTC',
             pip: 'PIP_WBTC',
@@ -628,6 +649,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         tokenName: 'WBTC',
         decimals: 8,
+        isActive: true,
         contracts: {
             token: 'WBTC',
             pip: 'PIP_WBTC',
@@ -657,6 +679,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         tokenName: 'WBTC',
         decimals: 8,
+        isActive: true,
         contracts: {
             token: 'WBTC',
             pip: 'PIP_WBTC',
@@ -686,6 +709,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'YFI',
         tokenName: 'YFI',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'YFI',
             pip: 'PIP_YFI',
@@ -715,6 +739,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ZRX',
         tokenName: 'ZRX',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'ZRX',
             pip: 'PIP_ZRX',
@@ -744,6 +769,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'MATIC',
         tokenName: 'MATIC',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'MATIC',
             pip: 'PIP_MATIC',
@@ -773,6 +799,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WSTETH',
         tokenName: 'WSTETH',
         decimals: 18,
+        isActive: true,
         contracts: {
             token: 'WSTETH',
             pip: 'PIP_WSTETH',
@@ -794,6 +821,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WSTETH',
         tokenName: 'WSTETH',
         decimals: 18,
+        isActive: true,
         contracts: {
             token: 'WSTETH',
             pip: 'PIP_WSTETH',
@@ -815,6 +843,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'CRVV1ETHSTETH',
         tokenName: 'CRVV1ETHSTETH',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'CRVV1ETHSTETH',
             pip: 'PIP_CRVV1ETHSTETH',
@@ -836,6 +865,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2DAIETH',
         tokenName: 'UNIV2DAIETH',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2DAIETH',
             pip: 'PIP_UNIV2DAIETH',
@@ -858,6 +888,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2USDCETH',
         tokenName: 'UNIV2USDCETH',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2USDCETH',
             pip: 'PIP_UNIV2USDCETH',
@@ -880,6 +911,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2ETHUSDT',
         tokenName: 'UNIV2ETHUSDT',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2ETHUSDT',
             pip: 'PIP_UNIV2ETHUSDT',
@@ -902,6 +934,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2WBTCDAI',
         tokenName: 'UNIV2WBTCDAI',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2WBTCDAI',
             pip: 'PIP_UNIV2WBTCDAI',
@@ -924,6 +957,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2WBTCETH',
         tokenName: 'UNIV2WBTCETH',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2WBTCETH',
             pip: 'PIP_UNIV2WBTCETH',
@@ -946,6 +980,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2LINKETH',
         tokenName: 'UNIV2LINKETH',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2LINKETH',
             pip: 'PIP_UNIV2LINKETH',
@@ -968,6 +1003,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2UNIETH',
         tokenName: 'UNIV2UNIETH',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2UNIETH',
             pip: 'PIP_UNIV2UNIETH',
@@ -990,6 +1026,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2AAVEETH',
         tokenName: 'UNIV2AAVEETH',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2AAVEETH',
             pip: 'PIP_UNIV2AAVEETH',
@@ -1012,6 +1049,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2DAIUSDT',
         tokenName: 'UNIV2DAIUSDT',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2DAIUSDT',
             pip: 'PIP_UNIV2DAIUSDT',
@@ -1034,6 +1072,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2DAIUSDC',
         tokenName: 'UNIV2DAIUSDC',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'UNIV2DAIUSDC',
             pip: 'PIP_UNIV2DAIUSDC',
@@ -1056,6 +1095,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'RETH',
         tokenName: 'RETH',
         decimals: 18,
+        isActive: false,
         contracts: {
             token: 'RETH',
             pip: 'PIP_RETH',
@@ -1077,6 +1117,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'MCD_GOV',
         tokenName: 'MKR',
         decimals: 18,
+        isActive: true,
         contracts: {
             token: 'MCD_GOV',
             pip: 'PIP_MKR',
@@ -1116,6 +1157,12 @@ export const getAllCollateralSymbols = function (): string[] {
 
 export const getAllCollateralTypes = function (): string[] {
     return Object.keys(COLLATERALS).sort();
+};
+
+export const getActiveCollateralTypes = function (): string[] {
+    return Object.values(COLLATERALS)
+        .filter(config => config.isActive)
+        .map(config => config.ilk);
 };
 
 export default COLLATERALS;

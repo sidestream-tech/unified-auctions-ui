@@ -39,7 +39,6 @@ const compareVaultTransactionsNotLiquidated = (
     expect(expected.liquidationRatio.toFixed()).to.eq(actual.liquidationRatio.toFixed());
     expect(expected.collateralizationRatio.toFixed()).to.eq(actual.collateralizationRatio.toFixed());
     expect(expected.proximityToLiquidation.toFixed()).to.eq(actual.proximityToLiquidation.toFixed());
-    expect(expected.id).to.eq(actual.id);
     expect(expected.incentiveCombinedDai.toFixed()).to.eq(actual.incentiveCombinedDai.toFixed());
     expect(expected.incentiveRelativeDai.toFixed()).to.eq(actual.incentiveRelativeDai.toFixed());
     expect(expected.incentiveConstantDai.toFixed()).to.eq(actual.incentiveConstantDai.toFixed());
@@ -87,7 +86,6 @@ describe('Vaults', () => {
             proximityToLiquidation: new BigNumber('0.547552318511616565008415094516004867207418444'),
             liquidationPenaltyRatio: new BigNumber('1.13'),
             minimalAuctionedDai: new BigNumber('15000'),
-            id: 22025,
 
             incentiveCombinedDai: new BigNumber('34051.78882788199615657274955'),
             incentiveRelativeDai: new BigNumber('33751.78882788199615657274955'),
@@ -146,7 +144,6 @@ describe('Vaults', () => {
             proximityToLiquidation: new BigNumber('-0.000993196126304112564617120755317536277614422'),
             liquidationPenaltyRatio: new BigNumber('1.13'),
             minimalAuctionedDai: new BigNumber('5000'),
-            id: 27435,
 
             incentiveCombinedDai: new BigNumber('310.00197961786050681518163'),
             incentiveRelativeDai: new BigNumber('10.00197961786050681518163'),

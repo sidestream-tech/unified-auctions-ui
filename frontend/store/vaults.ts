@@ -1,6 +1,6 @@
 import { Vault, VaultTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
-import { getVaultTransaction, fetchVault, liquidateVault } from 'auctions-core/src/vaults';
+import { getVaultTransaction, liquidateVault, fetchVaultByAddress } from 'auctions-core/src/vaults';
 import { ActionContext } from 'vuex';
 import notifier from '~/lib/notifier';
 
@@ -8,7 +8,7 @@ const REFETCH_INTERVAL = 30 * 1000;
 let refetchIntervalId: ReturnType<typeof setInterval> | undefined;
 
 interface State {
-    vaultTransactions: Record<Vault['id'], VaultTransaction>;
+    vaultTransactions: Record<Vault['address'], VaultTransaction>;
     vaultErrors: Record<string, string | undefined>;
     areVaultsLoading: boolean;
     isVaultBeingLiquidated: boolean;
@@ -46,14 +46,14 @@ export const getters = {
     isVaultLiquidationDone(state: State) {
         return state.isVaultLiquidationDone;
     },
-    getVaultById: (state: State) => (id: number) => {
-        return state.vaultTransactions[id];
+    getVaultByAddress: (state: State) => (address: string) => {
+        return state.vaultTransactions[address];
     },
 };
 export const mutations = {
     setVault(state: State, vaultTransaction: VaultTransaction) {
         state.lastUpdated = new Date();
-        Vue.set(state.vaultTransactions, vaultTransaction.id, vaultTransaction);
+        Vue.set(state.vaultTransactions, vaultTransaction.address, vaultTransaction);
     },
     setAreVaultsLoading(state: State, isLoading: boolean) {
         state.areVaultsLoading = isLoading;
@@ -86,29 +86,29 @@ export const actions = {
             await dispatch('fetchVault', selectedVaultId);
         }
     },
-    async fetchVault({ commit, rootGetters }: ActionContext<State, State>, vaultId: number) {
+    async fetchVault({ commit, rootGetters }: ActionContext<State, State>, vaultAddress: string) {
         const network = rootGetters['network/getMakerNetwork'];
         if (!network) {
             return;
         }
         commit('setAreVaultsLoading', true);
         try {
-            const vault = await fetchVault(network, vaultId);
+            const vault = await fetchVaultByAddress(network, vaultAddress);
             const vaultTransaction = await getVaultTransaction(network, vault);
             commit('setVault', vaultTransaction);
         } catch (e) {
-            console.error(`Failed to fetch vault ${vaultId}: ${e}`);
-            commit('setVaultError', { vaultId, error: e });
+            console.error(`Failed to fetch vault ${vaultAddress}: ${e}`);
+            commit('setVaultError', { vaultAddress, error: e });
         } finally {
             commit('setAreVaultsLoading', false);
         }
     },
     async liquidateVault(
         { rootGetters, commit, getters, dispatch }: ActionContext<State, State>,
-        { vaultId, walletAddress }: { vaultId: number; walletAddress?: string }
+        { vaultAddress, walletAddress }: { vaultAddress: string; walletAddress?: string }
     ) {
         const network = rootGetters['network/getMakerNetwork'];
-        const vaultTransaction: VaultTransaction = getters.getVaultById(vaultId);
+        const vaultTransaction: VaultTransaction = getters.getVaultByAddress(vaultAddress);
         commit('setIsVaultBeingLiquidated', true);
         try {
             await liquidateVault(
@@ -118,11 +118,11 @@ export const actions = {
                 walletAddress,
                 notifier
             );
-            await dispatch('fetchVault', vaultId);
+            await dispatch('fetchVault', vaultAddress);
             commit('setIsVaultLiquidationDone', true);
         } catch (e) {
             commit('setIsVaultLiquidationDone', false);
-            console.error(`Failed to liquidate vault ${vaultId}: ${e}`);
+            console.error(`Failed to liquidate vault ${vaultAddress}: ${e}`);
         } finally {
             commit('setIsVaultBeingLiquidated', false);
         }

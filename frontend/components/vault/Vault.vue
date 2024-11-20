@@ -1,5 +1,8 @@
 <template>
-    <TextBlock :title="`Vault #${vaultId}`">
+    <TextBlock>
+        <template #title>
+            <span>Vault &nbsp;<FormatAddress shorten disable :value="vaultAddress" /></span>
+        </template>
         <div class="my-3">
             <Alert v-if="vaultError && vaultError.showBanner" :message="vaultError.error" type="error" />
         </div>
@@ -221,7 +224,7 @@ export default Vue.extend({
         LoadingIcon,
     },
     props: {
-        vaultId: {
+        vaultAddress: {
             type: String,
             required: true,
         },

@@ -27,7 +27,7 @@
                 :is-loading="isLiquidating"
                 @click="$emit('liquidate', walletAddress)"
             >
-                Liquidate vault #{{ vaultId }}
+                <span>Liquidate vault&nbsp;<FormatAddress shorten :value="vaultAddress" /></span>
             </BaseButton>
         </div>
     </BasePanel>
@@ -40,6 +40,7 @@ import ExecuteWithOtherWalletModal from '../modals/ExecuteWithOtherWalletModal.v
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import BasePanel from '~/components/common/other/BasePanel.vue';
+import FormatAddress from '~/components/common/formatters/FormatAddress.vue';
 
 export default Vue.extend({
     name: 'VaultLiquidationPanel',
@@ -48,10 +49,11 @@ export default Vue.extend({
         BaseButton,
         BasePanel,
         TextBlock,
+        FormatAddress,
     },
     props: {
-        vaultId: {
-            type: [Number, String],
+        vaultAddress: {
+            type: String,
             required: true,
         },
         network: {

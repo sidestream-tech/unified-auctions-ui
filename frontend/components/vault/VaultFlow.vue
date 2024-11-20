@@ -12,9 +12,9 @@
             <template #step1>
                 <div>
                     <Vault
-                        v-if="selectedVaultId"
+                        v-if="selectedVaultAddress"
                         class="mt-6 mb-8 mx-8"
-                        :vault-id="selectedVaultId"
+                        :vault-address="selectedVaultAddress"
                         :vault-transaction="selectedVaultTransaction"
                         :error="vaultsError"
                         :are-vaults-fetching="areVaultsFetching"
@@ -80,7 +80,7 @@ export default Vue.extend({
             type: String,
             default: null,
         },
-        selectedVaultId: {
+        selectedVaultAddress: {
             type: String,
             default: null,
         },
@@ -136,16 +136,16 @@ export default Vue.extend({
         selectedVaultTransaction(): VaultTransaction | null {
             return (
                 this.vaultTransactions.find(
-                    vaultTransaction => vaultTransaction.id.toString() === this.selectedVaultId
+                    vaultTransaction => vaultTransaction.address.toString() === this.selectedVaultAddress
                 ) || null
             );
         },
     },
     watch: {
-        selectedVaultId: {
+        selectedVaultAddress: {
             immediate: true,
-            handler(newSelectedVaultId) {
-                if (!newSelectedVaultId) {
+            handler(newSelectedVaultAddress) {
+                if (!newSelectedVaultAddress) {
                     this.step = 0;
                 } else {
                     this.step = 1;
@@ -156,7 +156,7 @@ export default Vue.extend({
             immediate: true,
             handler(newStep) {
                 if (newStep === 0) {
-                    this.$emit('update:selectedVaultId', null);
+                    this.$emit('update:selectedVaultAddress', null);
                 }
             },
         },

@@ -169,6 +169,7 @@ export declare interface CollateralConfig {
     symbol: string;
     tokenName: string;
     decimals: number;
+    isActive: boolean;
     exchanges: Record<string, CalleeConfig>;
     oracle: CollateralPriceSourceConfig;
     contracts: CollateralAddresses;
@@ -405,7 +406,6 @@ export declare interface VaultCollateralParameters {
 }
 
 export declare interface VaultBase {
-    id: number;
     address: string;
     collateralType: CollateralType;
     network: string;
