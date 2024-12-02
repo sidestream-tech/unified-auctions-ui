@@ -33,10 +33,11 @@ import { getMethodSignature } from '../helpers/hex';
 import extractEventFromTransaction from './helpers/extractEventFromTransaction';
 import CDP_REGISTRY from './abis/CDP_REGISTRY.json';
 import { createProxyAndGiveAllowance } from './proxy';
+import { getActiveCollateralTypes } from './constants/COLLATERALS';
 
 const CACHE_EXPIRY_MS = 60 * 1000;
 
-const _fetchVaultProxyAddress = async (network: string, proxyOwnerAddress: string) => {
+const fetchVaultProxyAddress = async (network: string, proxyOwnerAddress: string) => {
     const contract = await getContract(network, 'MCD_CROPPER');
     const eventFilter = {
         address: contract.address,
@@ -49,11 +50,6 @@ const _fetchVaultProxyAddress = async (network: string, proxyOwnerAddress: strin
     const vaultAddressHex32 = events[0].topics[2];
     return ethers.utils.hexValue(vaultAddressHex32);
 };
-
-const fetchVaultProxyAddress = memoizee(_fetchVaultProxyAddress, {
-    promise: true,
-    length: 2,
-});
 
 const _fetchVaultAddress = async (network: string, id: number) => {
     const cdpManager = await getContract(network, 'CDP_MANAGER');
@@ -81,7 +77,6 @@ const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> 
     const collateralTypeHex = await cdpManager.ilks(id);
     const collateralType = ethers.utils.parseBytes32String(collateralTypeHex);
     return {
-        id,
         address,
         collateralType,
         network,
@@ -89,6 +84,31 @@ const _fetchVaultBase = async (network: string, id: number): Promise<VaultBase> 
 };
 
 export const fetchVaultBase = memoizee(_fetchVaultBase, {
+    promise: true,
+    length: 2,
+});
+
+const _fetchVaultBaseByAddress = async (network: string, vaultAddress: string): Promise<VaultBase> => {
+    let collateralType;
+    const aciveCollateralTypes = getActiveCollateralTypes();
+    for (const aciveCollateralType of aciveCollateralTypes) {
+        const { collateralAmount } = await fetchVaultAmount(network, aciveCollateralType, vaultAddress);
+        if (collateralAmount.isGreaterThan(0)) {
+            collateralType = aciveCollateralType;
+            break;
+        }
+    }
+    if (!collateralType) {
+        throw new Error(`Vault ${vaultAddress} not found across active vaults`);
+    }
+    return {
+        address: vaultAddress,
+        collateralType,
+        network,
+    };
+};
+
+const fetchVaultBaseByAddress = memoizee(_fetchVaultBaseByAddress, {
     promise: true,
     length: 2,
 });
@@ -171,8 +191,28 @@ export const fetchCollateralLiquidationLimitsAndLiquidatorAddress = memoizee(
     }
 );
 
-export const fetchVault = async (network: string, index: number): Promise<Vault> => {
-    const vaultBase = await fetchVaultBase(network, index);
+export const fetchVault = async (network: string, vaultId: number): Promise<Vault> => {
+    const vaultBase = await fetchVaultBase(network, vaultId);
+    const vaultCollateralParameters = await fetchVaultCollateralParameters(network, vaultBase.collateralType);
+    const vaultAmount = await fetchVaultAmount(network, vaultBase.collateralType, vaultBase.address);
+    const globalLiquidationLimits = await fetchGlobalLiquidationLimits(network);
+    const { currentCollateralDebtDai, maximumCollateralDebtDai, liquidationPenaltyRatio, minimalAuctionedDai } =
+        await fetchCollateralLiquidationLimitsAndLiquidatorAddress(network, vaultBase.collateralType);
+    return {
+        ...vaultBase,
+        ...vaultCollateralParameters,
+        ...vaultAmount,
+        ...globalLiquidationLimits,
+        lastSyncedAt: new Date(),
+        currentCollateralDebtDai,
+        maximumCollateralDebtDai,
+        liquidationPenaltyRatio,
+        minimalAuctionedDai,
+    };
+};
+
+export const fetchVaultByAddress = async (network: string, vaultAddress: string): Promise<Vault> => {
+    const vaultBase = await fetchVaultBaseByAddress(network, vaultAddress);
     const vaultCollateralParameters = await fetchVaultCollateralParameters(network, vaultBase.collateralType);
     const vaultAmount = await fetchVaultAmount(network, vaultBase.collateralType, vaultBase.address);
     const globalLiquidationLimits = await fetchGlobalLiquidationLimits(network);

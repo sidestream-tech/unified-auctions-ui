@@ -17,7 +17,7 @@ const common = {
     data() {
         return {
             vaultTransactions,
-            selectedVaultId: vaultTransactions[1].id.toString(),
+            selectedVaultAddress: vaultTransactions[1].address,
 
             vaultTransaction: generateFakeVaultNotLiquidatedTransaction(),
             liquidationLimits: generateFakeLiquidationLimits(),
@@ -99,7 +99,7 @@ storiesOf('Vault/VaultFlow', module)
         data() {
             return {
                 ...common.data(),
-                selectedVaultId: vaultTransactions[0].id.toString(),
+                selectedVaultAddress: vaultTransactions[0].address,
             };
         },
     }))
@@ -108,7 +108,7 @@ storiesOf('Vault/VaultFlow', module)
         data() {
             return {
                 ...common.data(),
-                selectedVaultId: vaultTransactions[0].id.toString(),
+                selectedVaultAddress: vaultTransactions[0].address,
                 isExplanationsShown: false,
             };
         },

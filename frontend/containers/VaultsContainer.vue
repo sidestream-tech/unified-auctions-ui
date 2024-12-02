@@ -4,7 +4,7 @@
             :vault-transactions="vaultTransactions"
             :are-vaults-fetching="areVaultsLoading"
             :is-liquidating="isVaultBeingLiquidated"
-            :selected-vault-id.sync="selectedVaultId"
+            :selected-vault-address.sync="selectedVaultAddress"
             :is-connecting-wallet="isWalletLoading"
             :dai-vat-balance="daiVatBalance"
             :is-authorizing="isAuthorizing"
@@ -63,7 +63,7 @@ export default Vue.extend({
             isLiquidated: 'isVaultLiquidationDone',
             lastUpdated: 'getLastUpdated',
         }),
-        selectedVaultId: {
+        selectedVaultAddress: {
             get(): string | null {
                 const vaultsGetParameter = this.$route.query.vault;
                 if (Array.isArray(vaultsGetParameter)) {
@@ -92,7 +92,7 @@ export default Vue.extend({
         },
     },
     watch: {
-        selectedVaultId: {
+        selectedVaultAddress: {
             immediate: true,
             handler(): void {
                 this.fetchSelectedVault();
@@ -111,7 +111,7 @@ export default Vue.extend({
         },
         liquidate(walletAddress: string): void {
             this.$store.dispatch('vaults/liquidateVault', {
-                vaultId: this.selectedVaultId,
+                vaultAddress: this.selectedVaultAddress,
                 walletAddress,
             });
         },

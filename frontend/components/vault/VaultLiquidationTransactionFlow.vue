@@ -66,7 +66,7 @@
                 @refreshLimits="$emit('refreshLimits')"
             />
             <VaultLiquidationPanel
-                :vault-id="vaultTransaction.id"
+                :vault-address="vaultTransaction.address"
                 :network="vaultTransaction.network"
                 :vault-state="vaultTransaction.state"
                 :wallet-address="walletAddress"
