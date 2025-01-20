@@ -1,7 +1,8 @@
 name: build and test
 
 on:
-  pull_request:
+  release:
+    types: [released]
 
 jobs:
   build-frontend:
