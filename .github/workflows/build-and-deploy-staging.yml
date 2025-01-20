@@ -59,8 +59,8 @@ jobs:
           HEAPIO_ID=${{ env.HEAPIO_ID }}
           FRONTEND_ORIGIN=${{ env.FRONTEND_ORIGIN }}
         push: true
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        # cache-from: type=gha
+        # cache-to: type=gha,mode=max
 
   build-bot:
     name: build bot
