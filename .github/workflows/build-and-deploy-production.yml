@@ -1,7 +1,7 @@
 name: Deploy Auctions UI production
 
-on: 
-  release: 
+on:
+  release:
     types: [released]
 
 jobs:
@@ -51,7 +51,7 @@ jobs:
         context: ./
         platforms: linux/amd64
         tags: |
-          ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
+          ghcr.io/sidestream-tech/unified-auctions-ui/frontend-prod:${{ github.sha }}
         build-args: |
           RPC_URL=${{ env.RPC_URL }}
           PRODUCTION_DOMAIN=${{ env.PRODUCTION_DOMAIN }}
@@ -60,8 +60,6 @@ jobs:
           HEAPIO_ID=${{ env.HEAPIO_ID }}
           FRONTEND_ORIGIN=${{ env.FRONTEND_ORIGIN }}
         push: true
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
 
   build-bot:
     name: build bot
@@ -96,10 +94,8 @@ jobs:
         context: ./
         platforms: linux/amd64
         tags: |
-          ghcr.io/sidestream-tech/unified-auctions-ui/bot:${{ github.sha }}
+          ghcr.io/sidestream-tech/unified-auctions-ui/bot-prod:${{ github.sha }}
         push: true
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
 
   deploy:
     name: deploy production to cluster
