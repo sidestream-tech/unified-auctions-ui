@@ -1,7 +1,9 @@
 name: Deploy Auctions UI production
 
 on:
-  pull_request:
+  push:
+    tags:
+      - '*'
 
 jobs:
   build-frontend:
@@ -59,8 +61,6 @@ jobs:
           HEAPIO_ID=${{ env.HEAPIO_ID }}
           FRONTEND_ORIGIN=${{ env.FRONTEND_ORIGIN }}
         push: true
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
 
   build-bot:
     name: build bot
@@ -97,48 +97,46 @@ jobs:
         tags: |
           ghcr.io/sidestream-tech/unified-auctions-ui/bot:${{ github.sha }}
         push: true
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
 
-  # deploy:
-  #   name: deploy production to cluster
-  #   needs:
-  #     - build-frontend
-  #     - build-bot
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout k8s-projects Repo
-  #       uses: actions/checkout@v4
-  #       with:
-  #         repository: sidestream-tech/k8s-projects
-  #         token: ${{ secrets.GH_WORKFLOW_TOKEN }}
-  #         path: k8s-projects
-  #         ref: main
+  deploy:
+    name: deploy production to cluster
+    needs:
+      - build-frontend
+      - build-bot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout k8s-projects Repo
+        uses: actions/checkout@v4
+        with:
+          repository: sidestream-tech/k8s-projects
+          token: ${{ secrets.GH_WORKFLOW_TOKEN }}
+          path: k8s-projects
+          ref: main
 
-  #     - uses: benjlevesque/short-sha@v2.2
-  #       id: short-sha
-  #       with:
-  #         length: 6
+      - uses: benjlevesque/short-sha@v2.2
+        id: short-sha
+        with:
+          length: 6
 
-  #     - name: Update Auctions-UI Value File for frontend
-  #       uses: mikefarah/yq@master
-  #       with:
-  #         cmd: yq -i '(.image.tag ="${{ github.sha }}") | (.commitShortSHA ="${{ github.sha }}") | (.releaseTag ="${{ github.ref_name }}")' $VALUES_FILE
-  #       env:
-  #         VALUES_FILE: "k8s-projects/auctions-ui/production/values-frontend.yml"
+      - name: Update Auctions-UI Value File for frontend
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '(.image.tag ="${{ github.sha }}") | (.commitShortSHA ="${{ github.sha }}") | (.releaseTag ="${{ github.ref_name }}")' $VALUES_FILE
+        env:
+          VALUES_FILE: "k8s-projects/auctions-ui/production/values-frontend.yml"
 
-  #     - name: Update Auctions-UI Value File for bot
-  #       uses: mikefarah/yq@master
-  #       with:
-  #         cmd: yq -i '(.image.tag ="${{ github.sha }}") | (.commitShortSHA ="${{ github.sha }}") | (.releaseTag ="${{ github.ref_name }}")' $VALUES_FILE
-  #       env:
-  #         VALUES_FILE: "k8s-projects/auctions-ui/production/values-bot.yml"
+      - name: Update Auctions-UI Value File for bot
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '(.image.tag ="${{ github.sha }}") | (.commitShortSHA ="${{ github.sha }}") | (.releaseTag ="${{ github.ref_name }}")' $VALUES_FILE
+        env:
+          VALUES_FILE: "k8s-projects/auctions-ui/production/values-bot.yml"
 
-  #     - name: Commit & Push changes
-  #       uses: actions-js/push@master
-  #       with:
-  #         github_token: ${{ secrets.GH_WORKFLOW_TOKEN }}
-  #         repository: sidestream-tech/k8s-projects
-  #         branch: main
-  #         message: "[ArgoCD]: ${{ github.workflow }} to `${{ steps.short-sha.outputs.sha }}` :rocket:"
-  #         directory: k8s-projects
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GH_WORKFLOW_TOKEN }}
+          repository: sidestream-tech/k8s-projects
+          branch: main
+          message: "[ArgoCD]: ${{ github.workflow }} to `${{ steps.short-sha.outputs.sha }}` :rocket:"
+          directory: k8s-projects
