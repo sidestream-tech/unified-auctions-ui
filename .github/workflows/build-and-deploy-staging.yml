@@ -53,7 +53,7 @@ jobs:
         tags: |
           ghcr.io/sidestream-tech/auctions-ui-staging/frontend:${{ github.sha }}
         build-args: |
-          RPC_URL=${{ secrets.TEST_RPC_URL }}
+          RPC_URL=${{ env.RPC_URL }}
           PRODUCTION_DOMAIN=${{ env.PRODUCTION_DOMAIN }}
           CONTACT_EMAIL=${{ env.CONTACT_EMAIL }}
           STAGING_BANNER_URL=${{ env.STAGING_BANNER_URL }}
