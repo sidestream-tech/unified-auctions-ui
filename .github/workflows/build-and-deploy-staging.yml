@@ -51,7 +51,7 @@ jobs:
         context: ./
         platforms: linux/amd64
         tags: |
-          ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
+          ghcr.io/sidestream-tech/auctions-ui-staging/frontend:${{ github.sha }}
         build-args: |
           RPC_URL=${{ secrets.TEST_RPC_URL }}
           PRODUCTION_DOMAIN=${{ env.PRODUCTION_DOMAIN }}
@@ -94,7 +94,7 @@ jobs:
         context: ./
         platforms: linux/amd64
         tags: |
-          ghcr.io/sidestream-tech/unified-auctions-ui/bot:${{ github.sha }}
+          ghcr.io/sidestream-tech/auctions-ui-staging/bot:${{ github.sha }}
         push: true
 
   deploy:
