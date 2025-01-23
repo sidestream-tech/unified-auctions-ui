@@ -75,11 +75,11 @@ export default Vue.extend({
     @apply inline-flex items-center p-0 h-auto leading-4;
 }
 
-.Link span {
+.Link >>> span {
     @apply text-primary underline overflow-auto transition-colors;
 }
 
-.Link:hover span {
+.Link:hover >>> span {
     @apply text-primary-light no-underline;
 }
 </style>
