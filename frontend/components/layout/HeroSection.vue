@@ -1,7 +1,18 @@
 <template>
     <div class="HeroSection">
         <LandingCard class="relative flex flex-col gap-y-8 py-24">
-            <h2 class="max-w-xl md:max-w-3xl text-5xl font-semibold text-balance whitespace-pre-line sm:text-7xl">
+            <h2
+                class="
+                    max-w-xl
+                    md:max-w-3xl
+                    text-5xl
+                    font-semibold
+                    text-balance
+                    whitespace-pre-line
+                    sm:text-7xl
+                    dark:text-gray-100
+                "
+            >
                 {{
                     `The unified platform 
                     to participate in the 
