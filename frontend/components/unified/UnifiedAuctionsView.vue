@@ -9,11 +9,18 @@
                     :title="tool.title"
                     :content="tool.description"
                 >
-                    <div class="flex justify-end gap-2">
-                        <LinkButton v-if="tool.links.source" type="secondary" :link="tool.links.source">
+                    <div class="flex flex-wrap justify-end gap-2">
+                        <LinkButton
+                            v-if="tool.links.source"
+                            type="secondary"
+                            class="AuctionCardButton"
+                            :link="tool.links.source"
+                        >
                             Run your own bot
                         </LinkButton>
-                        <LinkButton type="primary" :link="tool.links.participate">Participate via Ul</LinkButton>
+                        <LinkButton type="primary" class="AuctionCardButton" :link="tool.links.participate">
+                            Participate via Ul
+                        </LinkButton>
                     </div>
                 </AuctionCard>
             </div>
@@ -188,5 +195,9 @@ export default Vue.extend({
 
 .ToolList:hover {
     @apply ring-2 ring-inset ring-primary-purple dark:ring-primary;
+}
+
+.AuctionCardButton {
+    min-width: 150px;
 }
 </style>
