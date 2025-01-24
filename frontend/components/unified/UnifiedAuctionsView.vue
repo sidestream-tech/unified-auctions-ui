@@ -9,7 +9,7 @@
                     :title="tool.title"
                     :content="tool.description"
                 >
-                    <div class="flex items-end gap-2">
+                    <div class="flex justify-end gap-2">
                         <LinkButton v-if="tool.links.source" type="secondary" :link="tool.links.source">
                             Run your own bot
                         </LinkButton>
