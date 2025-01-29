@@ -76,6 +76,6 @@ export default Vue.extend({
 
 <style scoped>
 .HomeContainer {
-    @apply relative w-full;
+    @apply relative w-full bg-primary-light dark:bg-dark;
 }
 </style>

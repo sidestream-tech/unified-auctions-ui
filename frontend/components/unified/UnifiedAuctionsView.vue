@@ -2,45 +2,61 @@
     <div class="HeightFix w-full h-full space-y-20 pb-20">
         <HeroSection class="HeroSection" />
         <LandingCard>
-            <div class="w-full grid sm:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-max">
-                <AuctionCard
+            <div class="w-full grid sm:grid-cols-2 xl:grid-cols-3 gap-5 auto-rows-max">
+                <div
                     v-for="tool in toolList"
                     :key="tool.title"
-                    :title="tool.title"
-                    :content="tool.description"
+                    class="
+                        w-full
+                        flex flex-col
+                        overflow-hidden
+                        px-6
+                        py-5
+                        rounded-lg
+                        transition
+                        duration-300
+                        bg-white bg-opacity-60
+                        dark:bg-dark dark:bg-opacity-60
+                        hover:bg-opacity-100
+                        dark:hover:bg-opacity-80
+                    "
                 >
-                    <div class="flex flex-wrap justify-end gap-2">
-                        <LinkButton
-                            v-if="tool.links.source"
-                            type="secondary"
-                            class="AuctionCardButton"
-                            :link="tool.links.source"
-                        >
-                            Run your own bot
-                        </LinkButton>
-                        <LinkButton type="primary" class="AuctionCardButton" :link="tool.links.participate">
-                            Participate via Ul
-                        </LinkButton>
+                    <div class="pb-4">
+                        <h3 class="font-semibold text-xl dark:text-white">{{ tool.title }}</h3>
                     </div>
-                </AuctionCard>
+                    <div class="flex flex-col flex-grow justify-between gap-y-6 text-gray-700 dark:text-gray-100">
+                        <p>{{ tool.description }}</p>
+                        <div class="flex flex-wrap justify-end gap-2">
+                            <LinkButton
+                                v-if="tool.links.source"
+                                type="secondary"
+                                class="AuctionCardButton"
+                                :link="tool.links.source"
+                            >
+                                Run your own bot
+                            </LinkButton>
+                            <LinkButton type="primary" class="AuctionCardButton" :link="tool.links.participate">
+                                Participate via UI
+                            </LinkButton>
+                        </div>
+                    </div>
+                </div>
             </div>
         </LandingCard>
-        <LandingCard class="flex flex-col gap-y-6">
-            <h2 class="font-semibold text-xl dark:text-gray-200">Other existing auction tools</h2>
+        <LandingCard class="flex flex-col gap-y-4">
+            <h2 class="font-semibold text-2xl text-white dark:text-gray-200">Other auction tools</h2>
             <div
                 class="
                     divide-y divide-gray-200
                     overflow-hidden
                     rounded-lg
-                    bg-gray-200
-                    dark:bg-gray-600
                     sm:grid sm:grid-cols-2 sm:gap-px sm:auto-rows-fr sm:divide-y-0
                 "
             >
                 <div v-for="(tool, toolIndex) in legacyToolList" :key="tool.title" :class="getToolClass(toolIndex)">
                     <div>
                         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-200 flex gap-2">
-                            <a :href="tool.links.source" class="focus:outline-none">
+                            <a :href="tool.links.source" target="_blank" class="focus:outline-none">
                                 <!-- Extend touch target to entire panel -->
                                 <span class="absolute inset-0" aria-hidden="true" />
                                 {{ tool.title }}
@@ -59,7 +75,6 @@
 import Vue from 'vue';
 import HeroSection from '~/components/layout/HeroSection.vue';
 import LandingCard from '~/components/layout/LandingCard.vue';
-import AuctionCard from '~/components/layout/AuctionCard.vue';
 import LinkButton from '~/components/common/inputs/LinkButton.vue';
 import ExternalLink from '~/assets/icons/external-link.svg';
 
@@ -67,7 +82,6 @@ export default Vue.extend({
     components: {
         HeroSection,
         LandingCard,
-        AuctionCard,
         LinkButton,
         ExternalLink,
     },
@@ -82,32 +96,28 @@ export default Vue.extend({
             filter: '',
             toolList: [
                 {
-                    title: 'Collateral auctions portal',
+                    title: 'Collateral auctions',
                     description:
-                        'Web tool that supports participation in collateral auctions without capital requirements or by bidding with own Dai',
+                        'Web tool that supports participation in collateral auctions without capital requirements or by bidding with own DAI',
                     links: {
-                        source: 'https://github.com/sidestream-tech/unified-auctions-ui',
+                        source: 'https://github.com/sidestream-tech/unified-auctions-ui/tree/main/bot#readme',
                         participate: '/collateral',
                     },
-                    filters: ['collateral'],
                 },
                 {
                     title: 'Debt auctions portal',
                     description:
-                        'Web tool that supports participation in debt auctions by bidding on MKR with own Dai',
+                        'Web tool that supports participation in debt auctions by bidding on MKR with own DAI',
                     links: {
                         participate: '/debt',
                     },
-                    filters: ['debt'],
                 },
                 {
                     title: 'Vault liquidations portal',
-                    description:
-                        'Web tool that supports liquidation of vaults that are no longer collaterlised enough',
+                    description: 'Web tool that supports liquidation of vaults that are not collaterlised enough',
                     links: {
                         participate: '/vaults',
                     },
-                    filters: ['collateral'],
                 },
             ],
             legacyToolList: [
@@ -117,17 +127,15 @@ export default Vue.extend({
                     links: {
                         source: 'https://info.sky.money/liquidations',
                     },
-                    filters: ['collateral'],
                 },
                 {
-                    title: 'Legacy liquidation analytics',
+                    title: 'Liquidation analytics on Makerburn',
                     description: `
                     Shows various statistics on current state of the system like current Dai supply,
                     as well as collateral parameters and information on past liquidations`,
                     links: {
                         source: 'https://makerburn.com/#/liquidations',
                     },
-                    filters: ['collateral', 'debt'],
                 },
                 {
                     title: 'Source code of the exchange callees',
@@ -135,22 +143,21 @@ export default Vue.extend({
                     links: {
                         source: 'https://github.com/makerdao/exchange-callees',
                     },
-                    filters: ['collateral', 'debt'],
                 },
                 {
-                    title: 'Source code of the legacy collateral auctions UI',
+                    title: 'Source code of the legacy liquidations-portal UI',
                     description: 'Web tool that support participation in collateral auctions by bidding with own Dai',
                     links: {
                         source: 'https://github.com/makerdao/liquidations-portal',
                     },
-                    filters: ['collateral'],
                 },
             ],
         };
     },
     methods: {
         getToolClass(toolIndex: number) {
-            const baseClass = 'ToolList group relative bg-white dark:bg-gray-800 p-6';
+            const baseClass =
+                'ToolList p-6 group relative bg-white bg-opacity-60 dark:bg-dark dark:bg-opacity-60 transition duration-300';
             const roundedClasses = [
                 toolIndex === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
                 toolIndex === 1 ? 'sm:rounded-tr-lg' : '',
@@ -176,25 +183,8 @@ export default Vue.extend({
     min-height: 75vh;
 }
 
-.Tool {
-    transition: all 0.6s;
-}
-
-.Tool-List-enter {
-    opacity: 0;
-    transform: translateY(-50px);
-}
-
-.Tool-List-leave-to {
-    opacity: 0;
-}
-
-.Tool-List-leave-active {
-    position: absolute;
-}
-
 .ToolList:hover {
-    @apply ring-2 ring-inset ring-primary-purple dark:ring-primary;
+    @apply bg-opacity-100;
 }
 
 .AuctionCardButton {

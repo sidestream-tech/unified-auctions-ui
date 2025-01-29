@@ -1,16 +1,17 @@
 <template>
     <div class="HeroSection">
-        <LandingCard class="relative flex flex-col gap-y-8 py-24">
+        <LandingCard class="relative flex flex-col py-5">
             <h2
                 class="
                     max-w-xl
                     md:max-w-3xl
                     text-5xl
+                    sm:text-7xl
                     font-semibold
                     text-balance
                     whitespace-pre-line
-                    sm:text-7xl
-                    dark:text-gray-100
+                    text-white
+                    dark:text-gray-200
                 "
             >
                 {{
@@ -36,11 +37,5 @@ export default Vue.extend({
 <style scoped>
 .HeroSection {
     @apply w-full h-full;
-}
-.HeroBackground {
-    background-image: url('~/assets/images/background-image.jpg');
-}
-.dark .HeroBackground {
-    background-image: url('~/assets/images/background-image-dark.jpg');
 }
 </style>
