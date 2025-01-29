@@ -26,17 +26,10 @@
                     </div>
                     <div class="flex flex-col flex-grow justify-between gap-y-6 text-gray-700 dark:text-gray-100">
                         <p>{{ tool.description }}</p>
-                        <div class="flex flex-wrap justify-end gap-2">
-                            <LinkButton
-                                v-if="tool.links.source"
-                                type="secondary"
-                                class="AuctionCardButton"
-                                :link="tool.links.source"
-                            >
+                        <div class="flex flex-row-reverse flex-wrap justify-between gap-1 -mx-1">
+                            <LinkButton type="primary" :link="tool.links.participate">Participate via UI </LinkButton>
+                            <LinkButton v-if="tool.links.source" type="secondary" :link="tool.links.source">
                                 Run your own bot
-                            </LinkButton>
-                            <LinkButton type="primary" class="AuctionCardButton" :link="tool.links.participate">
-                                Participate via UI
                             </LinkButton>
                         </div>
                     </div>
@@ -185,9 +178,5 @@ export default Vue.extend({
 
 .ToolList:hover {
     @apply bg-opacity-100;
-}
-
-.AuctionCardButton {
-    min-width: 150px;
 }
 </style>

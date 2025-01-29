@@ -5,8 +5,8 @@
             :class="{ Primary: type === 'primary', Secondary: type === 'secondary' }"
             class="rounded-full"
         >
-            <div class="flex items-center px-2 my-0.5">
-                <slot /> <ExternalLink class="w-5 h-5 ml-0.5 -mr-0.5 fill-current" />
+            <div class="flex items-center px-4 my-1.5 font-semibold">
+                <slot /> <ExternalLink v-if="!isLocalLink" class="w-5 h-5 ml-0.5 -mr-0.5 fill-current" />
             </div>
         </button>
     </component>
@@ -42,11 +42,13 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-.Primary {
-    @apply bg-primary-light border-2 border-primary hover:text-white text-gray-700;
+button {
+    @apply text-gray-700 dark:text-gray-200 transition duration-300;
 }
-
+.Primary {
+    @apply bg-primary-light bg-opacity-80 hover:bg-opacity-100;
+}
 .Secondary {
-    @apply border-2 border-gray-300 text-gray-700 hover:text-gray-400 dark:text-gray-200 dark:hover:text-gray-400;
+    @apply bg-gray-200 dark:bg-opacity-60 bg-opacity-80 hover:bg-opacity-100;
 }
 </style>
