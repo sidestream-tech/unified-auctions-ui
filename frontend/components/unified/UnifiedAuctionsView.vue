@@ -26,11 +26,11 @@
                     </div>
                     <div class="flex flex-col flex-grow justify-between gap-y-6 text-gray-700 dark:text-gray-100">
                         <p>{{ tool.description }}</p>
-                        <div class="flex flex-row-reverse flex-wrap justify-between gap-1 -mx-1">
-                            <LinkButton type="primary" :link="tool.links.participate">Participate via UI </LinkButton>
+                        <div class="flex flex-row flex-wrap justify-end gap-2 -mx-1">
                             <LinkButton v-if="tool.links.source" type="secondary" :link="tool.links.source">
                                 Run your own bot
                             </LinkButton>
+                            <LinkButton type="primary" :link="tool.links.participate">Participate via UI </LinkButton>
                         </div>
                     </div>
                 </div>
@@ -49,12 +49,11 @@
                 <div v-for="(tool, toolIndex) in legacyToolList" :key="tool.title" :class="getToolClass(toolIndex)">
                     <div>
                         <h3 class="text-base font-semibold text-gray-900 dark:text-gray-200 flex gap-2">
-                            <a :href="tool.links.source" target="_blank" class="focus:outline-none">
+                            <LinkButton type="link" :link="tool.links.source" class="focus:outline-none">
                                 <!-- Extend touch target to entire panel -->
                                 <span class="absolute inset-0" aria-hidden="true" />
                                 {{ tool.title }}
-                            </a>
-                            <ExternalLink class="w-5 h-5 ml-0.5 -mr-0.5 fill-current" />
+                            </LinkButton>
                         </h3>
                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-100">{{ tool.description }}</p>
                     </div>
@@ -69,14 +68,12 @@ import Vue from 'vue';
 import HeroSection from '~/components/layout/HeroSection.vue';
 import LandingCard from '~/components/layout/LandingCard.vue';
 import LinkButton from '~/components/common/inputs/LinkButton.vue';
-import ExternalLink from '~/assets/icons/external-link.svg';
 
 export default Vue.extend({
     components: {
         HeroSection,
         LandingCard,
         LinkButton,
-        ExternalLink,
     },
     props: {
         isExplanationsShown: {
@@ -98,7 +95,7 @@ export default Vue.extend({
                     },
                 },
                 {
-                    title: 'Debt auctions portal',
+                    title: 'Debt auctions',
                     description:
                         'Web tool that supports participation in debt auctions by bidding on MKR with own DAI',
                     links: {
@@ -106,7 +103,7 @@ export default Vue.extend({
                     },
                 },
                 {
-                    title: 'Vault liquidations portal',
+                    title: 'Vault liquidations',
                     description: 'Web tool that supports liquidation of vaults that are not collaterlised enough',
                     links: {
                         participate: '/vaults',

@@ -1,13 +1,8 @@
 <template>
     <component :is="isLocalLink ? 'nuxt-link' : 'a'" :href="link" :to="link" :target="linkTarget">
-        <button
-            :type="type"
-            :class="{ Primary: type === 'primary', Secondary: type === 'secondary' }"
-            class="rounded-full"
-        >
-            <div class="flex items-center px-4 my-1.5 font-semibold">
-                <slot /> <ExternalLink v-if="!isLocalLink" class="w-5 h-5 ml-0.5 -mr-0.5 fill-current" />
-            </div>
+        <button :class="type" class="rounded-full flex items-center px-4 py-1.5 font-semibold text-left">
+            <slot class="flex-1" />
+            <ExternalLink v-if="!isLocalLink" class="w-5 h-5 ml-0.5 -mr-0.5 fill-current flex-shrink-0" />
         </button>
     </component>
 </template>
@@ -45,10 +40,13 @@ export default Vue.extend({
 button {
     @apply text-gray-700 dark:text-gray-200 transition duration-300;
 }
-.Primary {
+button.primary {
     @apply bg-primary-light bg-opacity-80 hover:bg-opacity-100;
 }
-.Secondary {
+button.secondary {
     @apply bg-gray-200 dark:bg-opacity-60 bg-opacity-80 hover:bg-opacity-100;
+}
+button.link {
+    @apply p-0 m-0;
 }
 </style>
