@@ -15,9 +15,9 @@
                 "
             >
                 {{
-                    `The unified platform 
-                    to participate in the 
-                    Sky protocol auctions`
+                    `The unified platform
+                    to participate
+                    in Sky auctions`
                 }}
             </h2>
         </LandingCard>
