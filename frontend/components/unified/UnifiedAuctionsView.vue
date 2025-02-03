@@ -112,16 +112,22 @@ export default Vue.extend({
             ],
             legacyToolList: [
                 {
+                    title: 'Real-time feed with active actions',
+                    description: 'X.com account that automatically tweets whenever there is new Sky auction',
+                    links: {
+                        source: 'https://x.com/sidestream_labs',
+                    },
+                },
+                {
                     title: 'Collateral liquidation analytics',
-                    description: '',
+                    description: 'Official, the most up-to-date Sky analytics maintained by Block Analitica',
                     links: {
                         source: 'https://info.sky.money/liquidations',
                     },
                 },
                 {
                     title: 'Liquidation analytics on Makerburn',
-                    description: `
-                    Shows various statistics on current state of the system like current Dai supply,
+                    description: `The page with various statistics on current state of the system,
                     as well as collateral parameters and information on past liquidations`,
                     links: {
                         source: 'https://makerburn.com/#/liquidations',
@@ -129,16 +135,10 @@ export default Vue.extend({
                 },
                 {
                     title: 'Source code of the exchange callees',
-                    description: '',
+                    description: `Exchange callees are the contracts required to participate in the collateral auctions
+                    without own Dai, using "flash loan" mechanics`,
                     links: {
                         source: 'https://github.com/makerdao/exchange-callees',
-                    },
-                },
-                {
-                    title: 'Source code of the legacy liquidations-portal UI',
-                    description: 'Web tool that support participation in collateral auctions by bidding with own Dai',
-                    links: {
-                        source: 'https://github.com/makerdao/liquidations-portal',
                     },
                 },
             ],
