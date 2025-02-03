@@ -3,6 +3,7 @@ kubernetes
 reverse-proxy
 .drone.yml
 screenshot.jpg
+screenshot.png
 **/Dockerfile
 **/.env
 
