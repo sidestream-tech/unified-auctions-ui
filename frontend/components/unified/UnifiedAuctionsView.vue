@@ -113,7 +113,7 @@ export default Vue.extend({
             legacyToolList: [
                 {
                     title: 'Real-time feed with active actions',
-                    description: 'X.com account that automatically tweets whenever there is new Sky auction',
+                    description: 'X.com account that automatically tweets whenever there is a new Sky auction',
                     links: {
                         source: 'https://x.com/sidestream_labs',
                     },
