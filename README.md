@@ -1,4 +1,4 @@
-![Screenshot of the application](./screenshot.jpg)
+![Screenshot of the application](./screenshot.png)
 
 # Unified Auctions UI
 

@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-col w-full items-center min-h-screen">
         <div class="max-w-screen-sm text-gray-900 dark:text-gray-300 p-8">
-            <span> This page has been deprecated </span>
+            <span> This auction type has been deprecated. </span>
             <span>
                 Note: surplus auctions are deprecated since the introduction of
                 <a

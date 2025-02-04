@@ -42,16 +42,14 @@ export default Vue.extend({
     @apply relative flex h-full text-center items-center w-full;
 }
 .ButtonBase {
-    @apply rounded-full border-2;
-    @apply text-primary dark:text-gray-100 !important;
-}
-.SecondaryButton {
-    @apply ButtonBase hover:border-primary dark:bg-gray-600 dark:border-gray-600 dark:text-white dark:hover:bg-gray-500;
-    @apply border-gray-500 hover:border-primary hover:bg-white hover:text-primary focus:text-primary !important;
+    @apply border-none rounded-full flex items-center px-4 py-1.5 font-semibold text-left;
+    @apply text-gray-700 dark:text-gray-200 transition duration-300 !important;
 }
 .PrimaryButton {
-    @apply ButtonBase bg-primary-light border-primary focus:bg-primary-light dark:bg-primary-dark dark:border-primary-dark dark:text-white dark:hover:bg-primary;
-    @apply hover:bg-white hover:border-primary hover:text-primary focus:text-primary !important;
+    @apply ButtonBase bg-primary-light bg-opacity-80 hover:bg-opacity-100;
+}
+.SecondaryButton {
+    @apply ButtonBase bg-gray-200 dark:bg-opacity-60 bg-opacity-80 hover:bg-opacity-100;
 }
 .LandingTitle {
     @apply text-4xl font-bold text-gray-800 dark:text-gray-100 px-4;
