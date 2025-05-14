@@ -1114,15 +1114,16 @@ const COLLATERALS: Record<string, CollateralConfig> = {
     'LSE-MKR-A': {
         title: 'Lockstake MKR',
         ilk: 'LSE-MKR-A',
-        symbol: 'MCD_GOV',
+        symbol: 'MKR',
         tokenName: 'MKR',
         decimals: 18,
         isActive: true,
         contracts: {
-            token: 'MCD_GOV',
+            token: 'MKR',
             pip: 'PIP_MKR',
-            clip: 'LOCKSTAKE_CLIP',
-            calc: 'LOCKSTAKE_CLIP_CALC',
+            clip: 'LOCKSTAKE_CLIP_OLD_V1',
+            calc: 'LOCKSTAKE_CLIP_CALC_OLD_V1',
+            engine: `LOCKSTAKE_ENGINE_OLD_V1`,
         },
         exchanges: {
             'Uniswap V2': {
