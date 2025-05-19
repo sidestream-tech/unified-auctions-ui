@@ -5,7 +5,7 @@ import BigNumber from '../src/bignumber';
 import { resetNetwork } from '../helpers/hardhat/network';
 import { LOCAL_RPC_URL } from '../helpers/constants';
 
-const HARDHAT_FORK_BLOCK_NUMBER = 14078339;
+const HARDHAT_FORK_BLOCK_NUMBER = 22518357;
 
 describe('Market Price & Conversions', () => {
     before(async () => {
@@ -16,6 +16,6 @@ describe('Market Price & Conversions', () => {
     });
     it('gets MKR-DAI exchange rate with Uniswap v3', async () => {
         const rate = await convertMkrToDai('custom', new BigNumber(1));
-        expect(rate.toString()).to.equal('1731.669387321259063176');
+        expect('1603.731281061474261483').to.equal(rate.toString());
     });
 });
