@@ -29,6 +29,7 @@ export const _fetchContractAddressByNetwork = async function (network: string, c
         const encodedContractName = ethers.utils.formatBytes32String(contractName);
         return await chainLogContract.getAddress(encodedContractName);
     } catch (error) {
+        console.error(`No contract address found for "${contractName}"`, error);
         throw new Error(`No contract address found for "${contractName}"`);
     }
 };

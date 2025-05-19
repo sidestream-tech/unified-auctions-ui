@@ -221,7 +221,7 @@ const createLockstakeVaultWithCollateral = async (collateralType: CollateralType
 
     // Lock
     const collateralOwnedInt = collateralOwned.shiftedBy(collateralConfig.decimals).toFixed(0);
-    const mkr = await getContract(TEST_NETWORK, 'MCD_GOV', true);
+    const mkr = await getContract(TEST_NETWORK, collateralConfig.contracts.token, true);
     await mkr['approve(address,uint256)'](engine.address, collateralOwnedInt);
     await engine.lock(walletAddress, vaultIndex, collateralOwnedInt, refId);
 

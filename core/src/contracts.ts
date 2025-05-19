@@ -64,6 +64,7 @@ export const getContractInterfaceByName = async function (contractName: string):
         WSTETH,
         MCD_JOIN_DAI,
         MCD_GOV,
+        MKR: MCD_GOV,
         ETH: WETH,
         UNISWAP,
         CDP_MANAGER,

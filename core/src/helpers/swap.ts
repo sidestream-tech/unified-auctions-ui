@@ -18,7 +18,7 @@ export const swapToMKR = async function (
     const contractWeth = await getContract(network, 'ETH', true);
     const WETH_ADDRESS = contractWeth.address;
     const UNISWAP_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
-    const MKR_ADDRESS = (await getContract(network, 'MCD_GOV')).address;
+    const MKR_ADDRESS = (await getContract(network, 'MKR')).address;
 
     // Allow operations with the uniswap to swap from weth
     await executeTransaction(
