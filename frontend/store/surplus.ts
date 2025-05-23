@@ -5,7 +5,7 @@ import type {
     SurplusAuctionCollected,
     SurplusAuctionTransaction,
 } from 'auctions-core/src/types';
-import { ActionContext } from 'vuex';
+import type { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import {
     bidToSurplusAuction,

@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { ActionContext } from 'vuex';
+import type { ActionContext } from 'vuex';
 
 const appVersion = process.env.APPLICATION_VERSION ?? 'default';
 

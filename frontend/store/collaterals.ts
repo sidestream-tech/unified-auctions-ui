@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { ActionContext } from 'vuex';
+import type { ActionContext } from 'vuex';
 import type { CollateralRow, CollateralStatus } from 'auctions-core/src/types';
 import COLLATERALS, {
     getAllCollateralTypes,

@@ -1,4 +1,4 @@
-import { ActionContext } from 'vuex';
+import type { ActionContext } from 'vuex';
 
 interface State {
     rpcUrlConfigurationModal: boolean;

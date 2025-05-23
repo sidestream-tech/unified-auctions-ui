@@ -1,4 +1,4 @@
-import { ActionContext } from 'vuex';
+import type { ActionContext } from 'vuex';
 import type { GasParameters, TransactionFees } from 'auctions-core/src/types';
 import { getBaseFeePerGas, getGasParametersForTransaction } from 'auctions-core/src/gas';
 import BigNumber from 'bignumber.js';

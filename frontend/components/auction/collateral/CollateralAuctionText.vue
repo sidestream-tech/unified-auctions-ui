@@ -92,7 +92,8 @@
     </div>
 </template>
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
+import type { PropType } from 'vue';
 import type { Auction } from 'auctions-core/src/types';
 import WhatIsMakerProtocol from '~/components/common/other/WhatIsMakerProtocol.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';

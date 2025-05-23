@@ -1,6 +1,6 @@
 import type { Auction, AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
 import Vue from 'vue';
-import { ActionContext } from 'vuex';
+import type { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import {
     fetchAllAuctions,

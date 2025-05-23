@@ -1,7 +1,7 @@
 import { Vault, VaultTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { getVaultTransaction, liquidateVault, fetchVaultByAddress } from 'auctions-core/src/vaults';
-import { ActionContext } from 'vuex';
+import type { ActionContext } from 'vuex';
 import notifier from '~/lib/notifier';
 
 const REFETCH_INTERVAL = 30 * 1000;

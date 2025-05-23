@@ -66,7 +66,8 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
+import type { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
 import { VaultTransaction, VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import { compareAsc } from 'date-fns';

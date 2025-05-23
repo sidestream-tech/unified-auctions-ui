@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import type { DebtAuction, DebtAuctionActionStates, DebtAuctionTransaction } from 'auctions-core/src/types';
-import { ActionContext } from 'vuex';
+import type { ActionContext } from 'vuex';
 import BigNumber from 'bignumber.js';
 import { getTokenAddressByNetworkAndSymbol } from 'auctions-core/src/tokens';
 import {
