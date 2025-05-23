@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import { set } from 'vue';
 import type { ActionContext } from 'vuex';
 import type { CollateralRow, CollateralStatus } from 'auctions-core/src/types';
 import COLLATERALS, {
@@ -61,13 +61,13 @@ export const mutations = {
     },
     updateCollateral(state: State, updatedCollateral: CollateralRow) {
         const collateralIndex = state.collaterals.findIndex(collateral => collateral.ilk === updatedCollateral.ilk);
-        Vue.set(state.collaterals, collateralIndex, {
+        set(state.collaterals, collateralIndex, {
             ...state.collaterals[collateralIndex],
             ...updatedCollateral,
         });
     },
     setCollateralStatus(state: State, collateralStatus: CollateralStatus) {
-        Vue.set(state.collateralStatusesStorage, collateralStatus.type, collateralStatus);
+        set(state.collateralStatusesStorage, collateralStatus.type, collateralStatus);
     },
     reset(state: State) {
         Object.assign(state, getInitialState());

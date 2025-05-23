@@ -36,7 +36,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapActions, mapGetters } from 'vuex';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import DebtFlow from '~/components/auction/debt/DebtFlow.vue';
 
 export default Vue.extend({

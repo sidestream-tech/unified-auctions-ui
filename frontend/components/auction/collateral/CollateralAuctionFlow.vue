@@ -92,7 +92,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TakeEvent } from 'auctions-core/src/types';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import SplitLayout from '~/components/layout/SplitLayout.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';
 import CollateralAuctionText from '~/components/auction/collateral/CollateralAuctionText.vue';

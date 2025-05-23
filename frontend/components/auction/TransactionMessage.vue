@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import FormatAddress from '~/components/common/formatters/FormatAddress.vue';

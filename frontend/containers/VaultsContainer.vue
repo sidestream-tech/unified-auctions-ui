@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { mapGetters } from 'vuex';
 import VaultFlow from '~/components/vault/VaultFlow.vue';
 

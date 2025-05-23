@@ -71,7 +71,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { CompensationAuctionActionStates, DebtAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import DebtAuction from '~/components/auction/debt/DebtAuction.vue';
 import DebtAuctionTransactionFlow from '~/components/auction/debt/DebtAuctionTransactionFlow.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';

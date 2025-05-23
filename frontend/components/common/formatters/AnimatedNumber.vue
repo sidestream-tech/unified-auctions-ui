@@ -11,7 +11,7 @@
 import Vue from 'vue';
 import { Popover } from 'ant-design-vue';
 import AnimatedNumber from 'animated-number-vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import {
     isValidNumber,
     isValueSmallButNotZero,

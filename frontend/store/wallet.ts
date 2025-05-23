@@ -1,8 +1,8 @@
 import type { WalletBalances } from 'auctions-core/src/types';
-import Vue from 'vue';
+import { set } from 'vue';
 import type { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import {
     fetchWalletBalances,
     depositToVAT,
@@ -123,7 +123,7 @@ export const mutations = {
         { collateralType, balance }: { collateralType: string; balance: BigNumber }
     ): void {
         state.collateralVatBalanceStore[collateralType] = balance;
-        Vue.set(state.collateralVatBalanceStore, collateralType, balance);
+        set(state.collateralVatBalanceStore, collateralType, balance);
     },
     reset(state: State) {
         const initialState = getInitialState();

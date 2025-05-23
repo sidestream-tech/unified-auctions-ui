@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import { set } from 'vue';
 import type { ActionContext } from 'vuex';
 
 const appVersion = process.env.APPLICATION_VERSION ?? 'default';
@@ -41,7 +41,7 @@ export const mutations = {
         state.isDarkMode = isDarkMode;
     },
     setRpcUrl(state: State, rpcUrl: string | undefined): void {
-        Vue.set(state.rpcUrlRecords, appVersion, rpcUrl);
+        set(state.rpcUrlRecords, appVersion, rpcUrl);
     },
 };
 

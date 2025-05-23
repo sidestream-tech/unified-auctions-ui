@@ -41,7 +41,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { DebtAuction } from 'auctions-core/src/types';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import BasePanel from '~/components/common/other/BasePanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';

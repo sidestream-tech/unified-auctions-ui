@@ -1,5 +1,5 @@
 import type { ActionContext } from 'vuex';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import {
     getWalletAuthorizationStatus,
     authorizeWallet,

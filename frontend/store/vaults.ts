@@ -1,5 +1,5 @@
 import { Vault, VaultTransaction } from 'auctions-core/src/types';
-import Vue from 'vue';
+import { set } from 'vue';
 import { getVaultTransaction, liquidateVault, fetchVaultByAddress } from 'auctions-core/src/vaults';
 import type { ActionContext } from 'vuex';
 import notifier from '~/lib/notifier';
@@ -53,13 +53,13 @@ export const getters = {
 export const mutations = {
     setVault(state: State, vaultTransaction: VaultTransaction) {
         state.lastUpdated = new Date();
-        Vue.set(state.vaultTransactions, vaultTransaction.address, vaultTransaction);
+        set(state.vaultTransactions, vaultTransaction.address, vaultTransaction);
     },
     setAreVaultsLoading(state: State, isLoading: boolean) {
         state.areVaultsLoading = isLoading;
     },
     setVaultError(state: State, { vaultId, error }: { vaultId: string; error: string }) {
-        Vue.set(state.vaultErrors, vaultId, error);
+        set(state.vaultErrors, vaultId, error);
     },
     setIsVaultBeingLiquidated(state: State, isLoading: boolean) {
         state.isVaultBeingLiquidated = isLoading;

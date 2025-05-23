@@ -72,7 +72,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { CompensationAuctionActionStates, SurplusAuctionTransaction, WalletBalances } from 'auctions-core/src/types';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import SurplusAuction from '~/components/auction/surplus/SurplusAuction.vue';
 import SurplusAuctionTransactionFlow from '~/components/auction/surplus/SurplusAuctionTransactionFlow.vue';
 import LandingBlock from '~/components/layout/LandingBlock.vue';

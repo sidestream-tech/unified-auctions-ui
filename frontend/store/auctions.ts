@@ -1,5 +1,5 @@
 import type { Auction, AuctionTransaction, TakeEvent } from 'auctions-core/src/types';
-import Vue from 'vue';
+import { set } from 'vue';
 import type { ActionContext } from 'vuex';
 import { message } from 'ant-design-vue';
 import {
@@ -125,10 +125,10 @@ export const mutations = {
         };
     },
     setAuction(state: State, auction: AuctionTransaction) {
-        Vue.set(state.auctionStorage, auction.id, auction);
+        set(state.auctionStorage, auction.id, auction);
     },
     setTakeEvents(state: State, { id, events }: { id: string; events: TakeEvent[] }) {
-        Vue.set(state.takeEventStorage, id, events);
+        set(state.takeEventStorage, id, events);
     },
     setAuctionFinish(state: State, { id, transactionAddress }: { id: string; transactionAddress: string }) {
         state.auctionStorage[id].transactionAddress = transactionAddress;
@@ -164,10 +164,10 @@ export const mutations = {
         state.error = error;
     },
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
-        Vue.set(state.auctionErrors, auctionId, error);
+        set(state.auctionErrors, auctionId, error);
     },
     setAuctionAutoRouterState(state: State, { id, useAutoRouter }: { id: string; useAutoRouter: boolean }) {
-        Vue.set(state.auctionAutoRouterStates, id, useAutoRouter);
+        set(state.auctionAutoRouterStates, id, useAutoRouter);
     },
     reset(state: State) {
         Object.assign(state, getInitialState());
