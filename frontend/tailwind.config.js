@@ -1,4 +1,3 @@
-const colors = require('tailwindcss/colors');
 /*
  ** TailwindCSS Configuration File
  **
@@ -10,7 +9,20 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                gray: colors.trueGray,
+                gray: {
+                    50: '#f9fafb',
+                    100: '#f3f4f6',
+                    200: '#e5e7eb',
+                    300: '#d1d5db',
+                    400: '#9ca3af',
+                    500: '#6b7280',
+                    600: '#4b5563',
+                    700: '#374151',
+                    800: '#1f2937',
+                    900: '#111827',
+                    950: '#030712',
+                    DEFAULT: '#3762A0',
+                },
                 primary: {
                     purple: '#A273FF',
                     light: '#968cf3',
@@ -22,7 +34,7 @@ module.exports = {
                     light: '#2c2440',
                     dark: '#0f0a17',
                 },
-                orange: colors.orange,
+                orange: '#f97316',
                 banner: {
                     red: '#b30000',
                 },
@@ -38,10 +50,6 @@ module.exports = {
             margin: ['dark'],
         },
     },
-    purge: {
-        // Learn more on https://tailwindcss.com/docs/controlling-file-size/#removing-unused-css
-        enabled: process.env.NODE_ENV === 'production',
-        content: ['components/**/*.vue', 'layouts/**/*.vue', 'pages/**/*.vue', 'plugins/**/*.js', 'nuxt.config.js'],
-    },
+    content: ['components/**/*.vue', 'layouts/**/*.vue', 'pages/**/*.vue', 'plugins/**/*.js', 'nuxt.config.js'],
     darkMode: 'class',
 };
