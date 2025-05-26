@@ -102,7 +102,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { Alert } from 'ant-design-vue';
 import WalletConnectionCheckPanel from '~/components/panels/WalletConnectionCheckPanel.vue';
 import WalletAuthorizationCheckPanel from '~/components/panels/WalletAuthorizationCheckPanel.vue';

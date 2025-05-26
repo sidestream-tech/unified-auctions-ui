@@ -1,4 +1,5 @@
-import { intervalToDuration, formatDistance, Duration, differenceInDays } from 'date-fns';
+import { intervalToDuration, formatDistance, differenceInDays } from 'date-fns';
+import type { Duration } from 'date-fns';
 
 const formatDuration = function (duration: Duration): string {
     // formats duration into `1y 2m 3d 4h 5m 6s` format

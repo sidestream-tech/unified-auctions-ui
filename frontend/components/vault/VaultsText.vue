@@ -75,7 +75,8 @@
     </div>
 </template>
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
+import type { PropType } from 'vue';
 import type { VaultTransaction } from 'auctions-core/src/types';
 import { Alert, Input } from 'ant-design-vue';
 import VaultsTable from './VaultsTable.vue';

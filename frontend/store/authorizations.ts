@@ -1,5 +1,5 @@
-import { ActionContext } from 'vuex';
-import BigNumber from 'bignumber.js';
+import type { ActionContext } from 'vuex';
+import { BigNumber } from 'bignumber.js';
 import {
     getWalletAuthorizationStatus,
     authorizeWallet,
@@ -156,7 +156,8 @@ export const actions = {
             return isAuthorized;
         } catch (error) {
             commit('setIsWalletAuthorizationDone', false);
-            console.error(`Wallet authorization status error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Wallet authorization status error: ${errorMessage}`);
             await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
             await dispatch('fetchWalletAuthorizationStatus');
         } finally {
@@ -177,7 +178,8 @@ export const actions = {
             return isAuthorized;
         } catch (error) {
             commit('setIsDebtAuctionAuthorizationDone', false);
-            console.error(`Wallet authorization status error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Wallet authorization status error: ${errorMessage}`);
             await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
             await dispatch('fetchDebtAuctionAuthorizationStatus');
         } finally {
@@ -193,7 +195,8 @@ export const actions = {
             await authorizeWallet(network, walletAddress, false, notifier);
             await dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
-            console.error(`Wallet authorization error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Wallet authorization error: ${errorMessage}`);
         } finally {
             commit('setIsWalletAuthorizationLoading', false);
         }
@@ -206,7 +209,8 @@ export const actions = {
             await authorizeWallet(network, walletAddress, true, notifier);
             await dispatch('fetchWalletAuthorizationStatus');
         } catch (error) {
-            console.error(`Wallet authorization error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Wallet authorization error: ${errorMessage}`);
         } finally {
             commit('setIsWalletAuthorizationLoading', false);
         }
@@ -231,7 +235,8 @@ export const actions = {
             }
             return isAuthorized;
         } catch (error) {
-            console.error(`Collateral ${collateralType} authorization status error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Collateral ${collateralType} authorization status error: ${errorMessage}`);
             await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } finally {
@@ -246,7 +251,8 @@ export const actions = {
             await authorizeDebtAuction(network, walletAddress, false, notifier);
             await dispatch('fetchDebtAuctionAuthorizationStatus');
         } catch (error) {
-            console.error(`Debt auction authorization error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Debt auction authorization error: ${errorMessage}`);
         } finally {
             commit('setIsDebtAuctionAuthorizationLoading', false);
         }
@@ -259,7 +265,8 @@ export const actions = {
             await authorizeCollateral(network, walletAddress, collateralType, false, notifier);
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
-            console.error(`Collateral authorization error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Collateral authorization error: ${errorMessage}`);
         } finally {
             commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: false });
         }
@@ -275,7 +282,8 @@ export const actions = {
             await authorizeCollateral(network, walletAddress, collateralType, true, notifier);
             await dispatch('fetchCollateralAuthorizationStatus', collateralType);
         } catch (error) {
-            console.error(`Collateral authorization error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Collateral authorization error: ${errorMessage}`);
         } finally {
             commit('setIsCollateralAuthorizationLoading', { collateralType, isLoading: false });
         }
@@ -291,7 +299,8 @@ export const actions = {
             await setAllowanceAmountDAI(network, walletAddress, amount, notifier);
             await dispatch('fetchAllowanceAmount');
         } catch (error) {
-            console.error(`Setting allowance amount error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Setting allowance amount error: ${errorMessage}`);
         } finally {
             commit('setIsAllowanceAmountLoading', false);
         }
@@ -308,7 +317,8 @@ export const actions = {
             const allowanceAmount = await fetchAllowanceAmountDAI(network, walletAddress);
             commit('setAllowanceAmount', allowanceAmount);
         } catch (error) {
-            console.error(`Fetching allowance amount error: ${error.message}`);
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.error(`Fetching allowance amount error: ${errorMessage}`);
             await delay(AUTHORIZATION_STATUS_RETRY_DELAY);
             await dispatch('fetchAllowanceAmount');
         } finally {

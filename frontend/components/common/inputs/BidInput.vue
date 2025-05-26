@@ -16,7 +16,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Tooltip } from 'ant-design-vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import BaseValueInput from '~/components/common/inputs/BaseValueInput.vue';
 
 export default Vue.extend({

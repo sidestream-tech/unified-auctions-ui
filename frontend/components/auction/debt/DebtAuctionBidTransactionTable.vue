@@ -87,7 +87,7 @@
 <script lang="ts">
 import type { DebtAuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import BidInput from '~/components/common/inputs/BidInput.vue';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';

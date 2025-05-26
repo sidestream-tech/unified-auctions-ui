@@ -1,5 +1,5 @@
 import { message } from 'ant-design-vue';
-import { ActionContext } from 'vuex';
+import type { ActionContext } from 'vuex';
 import { getNetworkTypeByChainId } from 'auctions-core/src/network';
 import { getChainIdFromRpcUrl, setupRpcUrlAndGetNetworks } from 'auctions-core/src/rpc';
 import { NetworkConfig } from 'auctions-core/src/types';

@@ -74,7 +74,8 @@
 
 <script lang="ts">
 import type { Auction } from 'auctions-core/src/types';
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
+import type { PropType } from 'vue';
 import { Table } from 'ant-design-vue';
 import { compareAsc } from 'date-fns';
 import Loading from '~/components/common/other/Loading.vue';

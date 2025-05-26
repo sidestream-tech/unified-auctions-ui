@@ -43,7 +43,7 @@
 <script lang="ts">
 import type { CollateralRow, CalleeAddresses, GasParameters, TransactionFees } from 'auctions-core/src/types';
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import CollateralTable from '~/components/dashboard/CollateralTable.vue';
 import CalleeTable from '~/components/dashboard/CalleeTable.vue';
 import GasTable from '~/components/dashboard/GasTable.vue';

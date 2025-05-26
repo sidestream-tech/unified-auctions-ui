@@ -51,7 +51,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { VaultTransaction } from 'auctions-core/src/types';
 import VaultsText from './VaultsText.vue';
 import Vault from './Vault.vue';

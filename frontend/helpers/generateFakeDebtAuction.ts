@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import faker from 'faker';
 import { random } from 'lodash';
 import { DebtAuction, DebtAuctionCollected, DebtAuctionStates, DebtAuctionTransaction } from 'auctions-core/src/types';

@@ -4,7 +4,7 @@ import {
     SurplusAuctionStates,
     SurplusAuctionTransaction,
 } from 'auctions-core/src/types';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import faker from 'faker';
 import { random } from 'lodash';
 import {

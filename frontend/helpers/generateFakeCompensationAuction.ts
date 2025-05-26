@@ -1,6 +1,6 @@
 import { CompensationAuctionBase, CompensationAuctionTransactionFees } from 'auctions-core/src/types';
 import faker from 'faker';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 
 const NETWORKS = ['mainnet', 'goerli'];
 

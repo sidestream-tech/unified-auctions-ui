@@ -20,14 +20,8 @@
         "listEmittedFiles": true,
         "listFiles": false,
         "pretty": true,
-        "lib": [
-            "es2019",
-            "dom"
-        ],
-        "typeRoots": [
-            "node_modules/@types",
-            "src/**/*"
-        ]
+        "lib": ["es2019", "dom"],
+        "typeRoots": ["node_modules/@types", "src/**/*"]
     },
     "include": [
         "src/**/*.ts",
@@ -39,11 +33,7 @@
         "./helpers/**/*.ts",
         "./bytecode/**/*.json"
     ],
-    "exclude": [
-        "node_modules"
-    ],
-    "files": [
-        "./hardhat.config.ts"
-    ],
+    "exclude": ["node_modules"],
+    "files": ["./hardhat.config.ts"],
     "references": []
 }

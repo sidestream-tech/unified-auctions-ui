@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { Tooltip } from 'ant-design-vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 

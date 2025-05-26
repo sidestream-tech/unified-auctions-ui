@@ -94,7 +94,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import PriceDropAnimation from '~/components/auction/collateral/PriceDropAnimation.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';
 import MarketPriceSelection from '~/components/auction/collateral/MarketPriceSelection.vue';

@@ -105,7 +105,7 @@
 <script lang="ts">
 import type { CollateralRow } from 'auctions-core/src/types';
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { Table, Popover } from 'ant-design-vue';
 import CurrencyIcon from '~/components/common/other/CurrencyIcon.vue';
 import FormatCurrency from '~/components/common/formatters/FormatCurrency.vue';

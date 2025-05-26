@@ -30,7 +30,8 @@
 
 <script lang="ts">
 import { Modal, Alert } from 'ant-design-vue';
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
+import type { PropType } from 'vue';
 
 export default Vue.extend({
     name: 'ChangePageNetworkModal',

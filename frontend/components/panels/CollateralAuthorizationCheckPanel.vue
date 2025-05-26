@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import BasePanel from '~/components/common/other/BasePanel.vue';
 import TextBlock from '~/components/common/other/TextBlock.vue';

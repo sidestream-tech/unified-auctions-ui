@@ -6,20 +6,7 @@
                 <div
                     v-for="tool in toolList"
                     :key="tool.title"
-                    class="
-                        w-full
-                        flex flex-col
-                        overflow-hidden
-                        px-6
-                        py-5
-                        rounded-lg
-                        transition
-                        duration-300
-                        bg-white bg-opacity-60
-                        dark:bg-dark dark:bg-opacity-60
-                        hover:bg-opacity-100
-                        dark:hover:bg-opacity-80
-                    "
+                    class="w-full flex flex-col overflow-hidden px-6 py-5 rounded-lg transition duration-300 bg-white bg-opacity-60 dark:bg-dark dark:bg-opacity-60 hover:bg-opacity-100 dark:hover:bg-opacity-80"
                 >
                     <div class="pb-4">
                         <h3 class="font-semibold text-xl dark:text-white">{{ tool.title }}</h3>
@@ -39,12 +26,7 @@
         <LandingCard class="flex flex-col gap-y-4">
             <h2 class="font-semibold text-2xl text-white dark:text-gray-200">Other auction tools</h2>
             <div
-                class="
-                    divide-y divide-gray-200
-                    overflow-hidden
-                    rounded-lg
-                    sm:grid sm:grid-cols-2 sm:gap-px sm:auto-rows-fr sm:divide-y-0
-                "
+                class="divide-y divide-gray-200 overflow-hidden rounded-lg sm:grid sm:grid-cols-2 sm:gap-px sm:auto-rows-fr sm:divide-y-0"
             >
                 <div v-for="(tool, toolIndex) in legacyToolList" :key="tool.title" :class="getToolClass(toolIndex)">
                     <div>

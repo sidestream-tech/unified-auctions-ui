@@ -91,8 +91,16 @@ export default {
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {
+        transpile: ['superstruct'],
+
         // Webpack config
         extend: config => {
+            config.module.rules.push({
+                test: /\.mjs$/,
+                include: /node_modules/,
+                type: 'javascript/auto',
+            });
+
             // remove svg from the standard nuxt loader
             const svgRule = config.module.rules.find(rule => rule.test.test('.svg'));
             svgRule.test = /\.(png|jpe?g|gif|webp)$/;

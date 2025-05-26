@@ -115,7 +115,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { VaultTransactionNotLiquidated } from 'auctions-core/src/types';
 import { formatToAutomaticDecimalPoints } from 'auctions-core/src/helpers/formatToAutomaticDecimalPoints';
 import TextBlock from '~/components/common/other/TextBlock.vue';

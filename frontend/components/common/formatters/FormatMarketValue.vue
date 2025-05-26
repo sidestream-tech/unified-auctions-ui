@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import AnimatedNumber from '~/components/common/formatters/AnimatedNumber.vue';
 
 export default Vue.extend({
