@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js and NPM
         uses: actions/setup-node@v1
         with:
-          node-version: 16.9.1
+          node-version: 22.9.0
 
       - name: Get version from tag
         id: get_version
