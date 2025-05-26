@@ -45,7 +45,8 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
+import type { PropType } from 'vue';
 import { SurplusAuctionTransaction } from 'auctions-core/src/types';
 import SurplusAuctionsTable from '~/components/auction/surplus/SurplusAuctionsTable.vue';
 import WhatIsMakerProtocol from '~/components/common/other/WhatIsMakerProtocol.vue';

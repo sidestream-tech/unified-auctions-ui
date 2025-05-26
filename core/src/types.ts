@@ -156,6 +156,7 @@ export declare interface CollateralAddresses {
     pip: string;
     clip: string;
     calc: string;
+    engine?: string;
 }
 
 export type CalleeConfig =

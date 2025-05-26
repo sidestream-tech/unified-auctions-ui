@@ -11,6 +11,7 @@ module.exports = {
     globals: {
         process: 'readonly',
     },
+    ignorePatterns: ['*.json'],
     rules: {
         'prettier/prettier': 'warn',
         'prefer-const': ['warn'],

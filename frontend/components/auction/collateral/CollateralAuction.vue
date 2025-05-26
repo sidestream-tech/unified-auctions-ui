@@ -150,14 +150,7 @@
                 <div v-if="error" class="Disable" />
             </div>
             <button
-                class="
-                    w-full
-                    border-2 border-gray-300
-                    p-1
-                    border-t-0
-                    text-center text-gray-400
-                    dark:border-gray-600 dark:text-gray-600
-                "
+                class="w-full border-2 border-gray-300 p-1 border-t-0 text-center text-gray-400 dark:border-gray-600 dark:text-gray-600"
                 @click="toggleExpandable"
             >
                 {{ isTableExpanded ? 'Hide additional info' : 'Show additional info' }}

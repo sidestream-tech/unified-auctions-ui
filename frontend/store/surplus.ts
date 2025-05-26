@@ -1,12 +1,12 @@
-import Vue from 'vue';
+import { set } from 'vue';
 import type {
     CompensationAuctionActionStates,
     SurplusAuction,
     SurplusAuctionCollected,
     SurplusAuctionTransaction,
 } from 'auctions-core/src/types';
-import { ActionContext } from 'vuex';
-import BigNumber from 'bignumber.js';
+import type { ActionContext } from 'vuex';
+import { BigNumber } from 'bignumber.js';
 import {
     bidToSurplusAuction,
     collectSurplusAuction,
@@ -91,12 +91,12 @@ export const mutations = {
         let auctionIdsToBeModified = Object.values(state.auctionStorage).map(a => a.id);
         // update or create existing auctions
         for (const auction of auctions) {
-            Vue.set(state.auctionStorage, auction.id, auction);
+            set(state.auctionStorage, auction.id, auction);
             auctionIdsToBeModified = auctionIdsToBeModified.filter(id => id !== auction.id);
         }
         // set others as collected
         for (const collectedAuctionId of auctionIdsToBeModified) {
-            Vue.set(state.auctionStorage, collectedAuctionId, {
+            set(state.auctionStorage, collectedAuctionId, {
                 id: collectedAuctionId,
                 state: 'collected',
                 fetchedAt: new Date(),
@@ -104,7 +104,7 @@ export const mutations = {
         }
     },
     addAuctionToStorage(state: State, auction: SurplusAuction) {
-        Vue.set(state.auctionStorage, auction.id, auction);
+        set(state.auctionStorage, auction.id, auction);
     },
     setAllowance(state: State, allowance: BigNumber) {
         state.allowanceAmount = allowance;
@@ -125,10 +125,10 @@ export const mutations = {
         state: State,
         { auctionId, value }: { auctionId: number; value: CompensationAuctionActionStates }
     ) {
-        Vue.set(state.auctionStates, auctionId, value);
+        set(state.auctionStates, auctionId, value);
     },
     setErrorByAuctionId(state: State, { auctionId, error }: { auctionId: string; error: string }) {
-        Vue.set(state.auctionErrors, auctionId, error);
+        set(state.auctionErrors, auctionId, error);
     },
     setTokenAddress(state: State, tokenAddress: string) {
         state.tokenAddress = tokenAddress;

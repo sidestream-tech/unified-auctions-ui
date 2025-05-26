@@ -91,7 +91,7 @@
 import type { AuctionTransaction } from 'auctions-core/src/types';
 import Vue from 'vue';
 import { Alert } from 'ant-design-vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { calculateTransactionCollateralOutcome } from 'auctions-core/src/price';
 import CollateralAuctionBidTransactionTable from './CollateralAuctionBidTransactionTable.vue';
 import CollateralAuctionBidBlock from './CollateralAuctionBidBlock.vue';

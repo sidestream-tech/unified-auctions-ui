@@ -83,7 +83,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import type { SurplusAuctionTransaction } from 'auctions-core/src/types';
 import SurplusAuctionState from '~/components/auction/surplus/SurplusAuctionState.vue';
 import BidInput from '~/components/common/inputs/BidInput.vue';

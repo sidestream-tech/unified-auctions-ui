@@ -13,7 +13,7 @@ import {
 } from 'auctions-core/src/types';
 import faker from 'faker';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { random } from 'lodash';
 
 const generateFakeVaultBase = function (): VaultBase {

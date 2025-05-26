@@ -11,7 +11,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { AuctionTransaction } from 'auctions-core/src/types';
 import TimeTill from '~/components/common/formatters/TimeTill.vue';
 

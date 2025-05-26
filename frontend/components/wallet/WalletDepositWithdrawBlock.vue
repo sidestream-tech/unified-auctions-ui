@@ -86,7 +86,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { Radio } from 'ant-design-vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import TextBlock from '~/components/common/other/TextBlock.vue';
 import BaseButton from '~/components/common/inputs/BaseButton.vue';
 import BaseValueInput from '~/components/common/inputs/BaseValueInput.vue';

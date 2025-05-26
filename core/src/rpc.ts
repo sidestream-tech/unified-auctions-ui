@@ -15,7 +15,8 @@ export const getChainIdFromRpcUrl = async function (rpcUrl: string): Promise<str
         const provider = new ethers.providers.StaticJsonRpcProvider({ url: rpcUrl });
         const networkInfo = await provider.getNetwork();
         return formatToHexWithoutPad(networkInfo.chainId);
-    } catch {
+    } catch (error) {
+        console.error(`Cannot verify RPC URL`, rpcUrl, error);
         throw new Error(`Cannot verify RPC URL`);
     }
 };

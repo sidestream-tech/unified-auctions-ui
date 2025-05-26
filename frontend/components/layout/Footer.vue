@@ -1,14 +1,7 @@
 <template>
     <footer class="Footer">
         <ul
-            class="
-                flex flex-col
-                md:flex-row
-                items-center
-                space-y-2 space-x-0
-                md:space-y-0 md:space-x-10
-                justify-center
-            "
+            class="flex flex-col md:flex-row items-center space-y-2 space-x-0 md:space-y-0 md:space-x-10 justify-center"
         >
             <li>
                 <a class="FooterLink" :href="termsAndConditionsURL" target="_blank">Terms & Conditions</a>

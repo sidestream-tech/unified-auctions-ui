@@ -81,7 +81,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { Alert, Button } from 'ant-design-vue';
 import { LiquidationLimits, VaultTransaction } from 'auctions-core/dist/src/types';
 import TransactionFeesTable from '../auction/TransactionFeesTable.vue';

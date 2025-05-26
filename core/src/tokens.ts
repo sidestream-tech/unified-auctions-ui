@@ -7,9 +7,6 @@ export const getTokenAddressByNetworkAndSymbol = async function (network: string
     if (tokenName === 'DAI') {
         tokenName = 'MCD_DAI';
     }
-    if (tokenName === 'MKR') {
-        tokenName = 'MCD_GOV';
-    }
     const address = await fetchContractAddressByNetwork(network, tokenName);
     if (!address) {
         throw new Error(`"${symbol}" token is not found on the "${network}" network`);

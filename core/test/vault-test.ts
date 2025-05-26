@@ -65,7 +65,7 @@ describe('Vaults', () => {
         await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
     });
     it('Fetches not liquidatable vault', async () => {
-        await resetNetwork(15502000);
+        await resetNetwork(22518357);
 
         const vault = await fetchVault(TEST_NETWORK, 22025);
         const vaultTransactionLiquidatable = (await getVaultTransaction(
@@ -79,46 +79,45 @@ describe('Vaults', () => {
             network: TEST_NETWORK,
 
             lastSyncedAt: new Date(),
-            nextPriceChange: new Date('2022-09-09T10:00:00.000Z'),
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
 
             liquidationRatio: new BigNumber('1.45'),
-            collateralizationRatio: new BigNumber('3.204790430641710905476031355953603471763531393'),
-            proximityToLiquidation: new BigNumber('0.547552318511616565008415094516004867207418444'),
+            collateralizationRatio: new BigNumber('3.119394374327050451814720542969680729781434867'),
+            proximityToLiquidation: new BigNumber('0.535166180995370388689502120284703432907797604'),
             liquidationPenaltyRatio: new BigNumber('1.13'),
-            minimalAuctionedDai: new BigNumber('15000'),
+            minimalAuctionedDai: new BigNumber('7500'),
 
-            incentiveCombinedDai: new BigNumber('34051.78882788199615657274955'),
-            incentiveRelativeDai: new BigNumber('33751.78882788199615657274955'),
-            incentiveConstantDai: new BigNumber('300'),
-            grossProfitDai: new BigNumber('34051.78882788199615657274955'),
+            incentiveCombinedDai: new BigNumber('32315.96853585008538876687671736803390629848798944710115'),
+            incentiveRelativeDai: new BigNumber('32065.96853585008538876687671736803390629848798944710115'),
+            incentiveConstantDai: new BigNumber('250'),
+            grossProfitDai: new BigNumber('32315.96853585008538876687671736803390629848798944710115'),
             netProfitDai: new BigNumber('34050.658282683546927424640855005903328826'),
-            stabilityFeeRate: new BigNumber('1.077990181020998014318011624'),
-            minUnitPrice: new BigNumber('1180.834957655172413793103448275'),
-            maximumProtocolDebtDai: new BigNumber('100000000'),
+            stabilityFeeRate: new BigNumber('1.247428405453575654454846861'),
+            minUnitPrice: new BigNumber('1691.947816431034482758620689655'),
+            maximumProtocolDebtDai: new BigNumber('150000000'),
             currentProtocolDebtDai: new BigNumber(0),
             currentCollateralDebtDai: new BigNumber(0),
-            maximumCollateralDebtDai: new BigNumber(65000000),
+            maximumCollateralDebtDai: new BigNumber(40000000),
             transactionFeeLiquidationEth: new BigNumber('0.000669987000446658'),
             transactionFeeLiquidationDai: new BigNumber('1.130545198449229148108694994096671174'),
-            debtDai: new BigNumber('32198315.88349647029073587039891649505768393987481484'),
-            collateralAmount: new BigNumber('60266.446946772373610407'),
-            currentUnitPrice: new BigNumber('1712.2106886'),
-            nextUnitPrice: new BigNumber('1712.2106886'),
-            initialDebtDai: new BigNumber('29868839.670692031996967035'),
+            debtDai: new BigNumber('78957678.997723451728972900108270616663609801471554399'),
+            collateralAmount: new BigNumber('100394.446946772373610407'),
+            currentUnitPrice: new BigNumber('2453.324333825'),
+            nextUnitPrice: new BigNumber('2472.675'),
+            initialDebtDai: new BigNumber('63296361.260118782725493659'),
         };
         compareVaultTransactionsNotLiquidated(expectedObject, vaultTransactionLiquidatable);
     });
     it('Fetches liquidated vault', async () => {
-        await resetNetwork(14955398);
-
+        await resetNetwork(22518357);
         const vault = await fetchVault(TEST_NETWORK, 7370);
         const vaultTransaction = (await getVaultTransaction(TEST_NETWORK, vault)) as VaultTransactionLiquidated;
         expect(vaultTransaction.state).to.eq('liquidated');
-        expect(vaultTransaction.pastLiquidations[0].auctionId).to.eq('ETH-A:726');
+        expect(vaultTransaction.pastLiquidations[0].auctionId).to.eq('ETH-A:860');
         expect(vaultTransaction.pastLiquidations[0].transactionHash).to.eq(
-            '0x3f66c60e348c8df6da2ed4474e212be13401a865bca4a35d046be44fc2f3f1b9'
+            '0xf8345ac015aa0d6e7c98fe7d3e08bd3eb2ba8cab116efa1173194d2c5bddffb7'
         );
-        expect(vaultTransaction.pastLiquidations[0].liquidationDate.toISOString()).to.eq('2022-06-13T10:04:52.000Z');
+        expect(vaultTransaction.pastLiquidations[0].liquidationDate.toISOString()).to.eq('2024-08-05T02:00:11.000Z');
     });
     it('Fetches non-liquidated vault', async () => {
         await resetNetwork(14955381);
@@ -152,7 +151,7 @@ describe('Vaults', () => {
             netProfitDai: new BigNumber('308.871434419411277667072935005903328826'),
             stabilityFeeRate: new BigNumber('1.013829372344109723319869134'),
             minUnitPrice: new BigNumber('721.804640220588235294117647058'),
-            maximumProtocolDebtDai: new BigNumber('100000000'),
+            maximumProtocolDebtDai: new BigNumber('150000000'),
             currentProtocolDebtDai: new BigNumber(0),
             currentCollateralDebtDai: new BigNumber('105882.900090330108539882708255451806124201305822084'),
             maximumCollateralDebtDai: new BigNumber(35000000),
@@ -202,151 +201,51 @@ describe('Vaults', () => {
 describe('Sound values are extracted', () => {
     before(async () => {
         await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
-        await resetNetwork(21019453);
+        await resetNetwork(22518357);
     });
     const expectedReturn: Record<
         CollateralType,
         { nextUnitPrice: string; currentUnitPrice: string; nextPriceChange: Date }
     > = {
-        'AAVE-A': {
-            nextUnitPrice: '150.79237464128204',
-            currentUnitPrice: '150.79237464128204',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
-        'BAL-A': {
-            currentUnitPrice: '11.721140147069267',
-            nextUnitPrice: '11.721140147069267',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
-        'BAT-A': {
-            nextUnitPrice: '0.73',
-            currentUnitPrice: '0.73',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
-        'COMP-A': {
-            nextUnitPrice: '124.5640565401381',
-            currentUnitPrice: '124.5640565401381',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
         'ETH-A': {
-            nextUnitPrice: '1712.2106886',
-            currentUnitPrice: '1712.2106886',
-            nextPriceChange: new Date('2022-09-09T10:00:00.000Z'),
+            nextUnitPrice: '2472.675',
+            currentUnitPrice: '2453.324333825',
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
         'ETH-B': {
-            nextUnitPrice: '2643.19',
-            currentUnitPrice: '2643.19',
-            nextPriceChange: new Date('2024-10-22T07:00:00.000Z'),
+            nextUnitPrice: '2472.675',
+            currentUnitPrice: '2453.324333825',
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
         'ETH-C': {
             nextUnitPrice: '1208.0159951',
             currentUnitPrice: '1227.067888375',
             nextPriceChange: new Date('2022-06-13T11:00:00.000Z'),
         },
-        'GUSD-A': {
-            nextUnitPrice: 'NaN',
-            currentUnitPrice: '1',
-            nextPriceChange: new Date(NaN),
-        },
-        'KNC-A': {
-            nextUnitPrice: '1.8601360490999999',
-            currentUnitPrice: '1.8601360490999999',
-            nextPriceChange: new Date('2023-04-06T19:00:00.000Z'),
-        },
-        'LINK-A': {
-            nextUnitPrice: '14.56509',
-            currentUnitPrice: '7.2',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
-        'LRC-A': {
-            nextUnitPrice: '0.8117493344000001',
-            currentUnitPrice: '0.8117493344000001',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
-        'MANA-A': {
-            nextUnitPrice: '0.36741132408456323',
-            currentUnitPrice: '0.36741132408456323',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
-        'PAXUSD-A': {
-            nextUnitPrice: 'NaN',
-            currentUnitPrice: '1',
-            nextPriceChange: new Date(NaN),
-        },
-        'RENBTC-A': {
-            nextUnitPrice: '66992.455',
-            currentUnitPrice: '66992.455',
-            nextPriceChange: new Date('2024-10-22T07:00:00.000Z'),
-        },
-        'TUSD-A': {
-            nextUnitPrice: 'NaN',
-            currentUnitPrice: '1',
-            nextPriceChange: new Date(NaN),
-        },
-        'UNI-A': {
-            nextUnitPrice: '5.845563067104212',
-            currentUnitPrice: '5.845563067104212',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
-        'USDC-A': {
-            nextUnitPrice: 'NaN',
-            currentUnitPrice: '1',
-            nextPriceChange: new Date(NaN),
-        },
-        'USDC-B': {
-            nextUnitPrice: 'NaN',
-            currentUnitPrice: '1',
-            nextPriceChange: new Date(NaN),
-        },
-        'USDT-A': {
-            nextUnitPrice: '1.000413775900346',
-            currentUnitPrice: '1.000413775900346',
-            nextPriceChange: new Date('2023-04-06T19:00:00.000Z'),
-        },
         'WBTC-A': {
-            nextUnitPrice: '66992.455',
-            currentUnitPrice: '66992.455',
-            nextPriceChange: new Date('2024-10-22T07:00:00.000Z'),
+            nextUnitPrice: '104984.67',
+            currentUnitPrice: '104247.995',
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
         'WBTC-B': {
-            nextUnitPrice: '66992.455',
-            currentUnitPrice: '66992.455',
-            nextPriceChange: new Date('2024-10-22T07:00:00.000Z'),
+            nextUnitPrice: '104984.67',
+            currentUnitPrice: '104247.995',
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
         'WBTC-C': {
-            nextUnitPrice: '66992.455',
-            currentUnitPrice: '66992.455',
-            nextPriceChange: new Date('2024-10-22T07:00:00.000Z'),
-        },
-        'YFI-A': {
-            nextUnitPrice: '6274.912194791102',
-            currentUnitPrice: '6274.912194791102',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
-        'ZRX-A': {
-            nextUnitPrice: '0.54008',
-            currentUnitPrice: '0.54008',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
-        },
-        'MATIC-A': {
-            nextUnitPrice: '0.6834569949358978',
-            currentUnitPrice: '0.6834569949358978',
-            nextPriceChange: new Date('2024-01-30T01:00:00.000Z'),
+            nextUnitPrice: '104984.67',
+            currentUnitPrice: '104247.995',
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
         'WSTETH-A': {
-            nextUnitPrice: '3095.153407214590908078',
-            currentUnitPrice: '3095.153407214590908078',
-            nextPriceChange: new Date('2024-10-22T07:00:00.000Z'),
+            nextUnitPrice: '3000.874746327222097081',
+            currentUnitPrice: '2949.13312498745934791',
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
         'WSTETH-B': {
-            nextUnitPrice: '3095.153407214590908078',
-            currentUnitPrice: '3095.153407214590908078',
-            nextPriceChange: new Date('2024-10-22T07:00:00.000Z'),
-        },
-        'CRVV1ETHSTETH-A': {
-            nextUnitPrice: '2949.792480904069309162',
-            currentUnitPrice: '2898.680178316106908798',
-            nextPriceChange: new Date('2024-10-21T16:00:11.000Z'),
+            nextUnitPrice: '3000.874746327222097081',
+            currentUnitPrice: '2949.13312498745934791',
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
         'UNIV2DAIETH-A': {
             nextUnitPrice: '180.027413016904332609',
@@ -394,14 +293,14 @@ describe('Sound values are extracted', () => {
             nextPriceChange: new Date('2023-04-06T18:44:23.000Z'),
         },
         'UNIV2DAIUSDC-A': {
-            nextUnitPrice: '2265919.675663883138436151',
-            currentUnitPrice: '2265919.675663883138436151',
-            nextPriceChange: new Date('2024-10-22T06:53:35.000Z'),
+            nextUnitPrice: '2268266.41366025603013961',
+            currentUnitPrice: '2268266.41366025603013961',
+            nextPriceChange: new Date('2025-05-19T17:49:11.000Z'),
         },
         'LSE-MKR-A': {
-            nextUnitPrice: '1177.52796',
-            currentUnitPrice: '1177.52796',
-            nextPriceChange: new Date('2024-10-22T07:00:00.000Z'),
+            nextUnitPrice: '1708.675',
+            currentUnitPrice: '1692.1',
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
     };
     for (const type of getLiquidatableCollateralTypes()) {
@@ -423,7 +322,7 @@ describe('Sound values are extracted', () => {
 describe(`Collateral vault simulation liquidation `, () => {
     before(async () => {
         await createWalletForRpc();
-        await resetNetwork(21019453); // TODO: remove hardcoded block number and investigate `Dog/not-unsafe` error
+        await resetNetwork(22518357); // TODO: remove hardcoded block number and investigate `Dog/not-unsafe` error
     });
     for (const collateralType of getLiquidatableCollateralTypes()) {
         it(`runs the simulaton for ${collateralType}`, async () => {

@@ -41,7 +41,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { mapGetters, mapActions } from 'vuex';
 import { Auction } from 'auctions-core/src/types';
 import CollateralAuctionFlow from '~/components/auction/collateral/CollateralAuctionFlow.vue';

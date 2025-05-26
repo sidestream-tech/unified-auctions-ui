@@ -1,5 +1,5 @@
 import faker from 'faker';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import type { CollateralRow, CollateralStatus } from 'auctions-core/src/types';
 

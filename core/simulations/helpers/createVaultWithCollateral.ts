@@ -210,14 +210,18 @@ const createLockstakeVaultWithCollateral = async (collateralType: CollateralType
     const walletAddress = await (await getSigner(TEST_NETWORK)).getAddress();
     const refId = 0;
 
+    if (!collateralConfig.contracts.engine) {
+        throw new Error('Missing "engine" chainlog key in the collateral config');
+    }
+
     // Open engine vault
-    const engine = await getContract(TEST_NETWORK, 'LOCKSTAKE_ENGINE', true);
+    const engine = await getContract(TEST_NETWORK, collateralConfig.contracts.engine, true);
     const vaultIndex = parseInt(await engine.ownerUrnsCount(walletAddress));
     await engine.open(vaultIndex);
 
     // Lock
     const collateralOwnedInt = collateralOwned.shiftedBy(collateralConfig.decimals).toFixed(0);
-    const mkr = await getContract(TEST_NETWORK, 'MCD_GOV', true);
+    const mkr = await getContract(TEST_NETWORK, collateralConfig.contracts.token, true);
     await mkr['approve(address,uint256)'](engine.address, collateralOwnedInt);
     await engine.lock(walletAddress, vaultIndex, collateralOwnedInt, refId);
 

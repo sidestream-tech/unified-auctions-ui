@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": ">=16.0.0",
-    "npm": ">=7.0.0"
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
   },
   "scripts": {
     "preinstall": "cd ../core && npm i && npm run build",
@@ -30,13 +30,13 @@
   "dependencies": {
     "@nuxtjs/dotenv": "^1.4.1",
     "auctions-core": "file:../core",
-    "bignumber.js": "^9.0.1",
+    "bignumber.js": "9.0.1",
     "core-js": "^3.15.2",
-    "nuxt": "^2.15.8",
+    "nuxt": "^2.18.1",
     "twitter-api-v2": "^1.15.1"
   },
   "devDependencies": {
-    "@nuxt/types": "^2.15.8",
+    "@nuxt/types": "^2.18.1",
     "@nuxt/typescript-build": "^2.1.0",
     "@nuxtjs/eslint-config-typescript": "^5.0.0",
     "@nuxtjs/eslint-module": "^3.0.2",

@@ -22,8 +22,8 @@ export const addMkrToBalance = async (
     mkrAmount: BigNumber = new BigNumber(10 ** 6),
     walletAddress: string = HARDHAT_PUBLIC_KEY
 ) => {
-    const mkrContract = await getContract(TEST_NETWORK, 'MCD_GOV', false);
-    await overwriteUintMapping('MCD_GOV', '0x1', walletAddress, mkrAmount.shiftedBy(MKR_NUMBER_OF_DIGITS));
+    const mkrContract = await getContract(TEST_NETWORK, 'MKR', false);
+    await overwriteUintMapping('MKR', '0x1', walletAddress, mkrAmount.shiftedBy(MKR_NUMBER_OF_DIGITS));
     const mkrBalanceHex = await mkrContract.balanceOf(walletAddress);
     const mkrBalance = new BigNumber(mkrBalanceHex._hex).shiftedBy(-MKR_NUMBER_OF_DIGITS);
     console.info(`New MKR balance: ${mkrBalance}`);

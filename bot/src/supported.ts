@@ -15,7 +15,7 @@ export const setupSupportedAuctionTypes = function () {
     } else {
         const supportedAuctionTypes = getSupportedAuctionTypes();
         for (const auctionType of supportedAuctionTypes) {
-            if (!ALL_SUPPORTED_AUCTION_TYPES.includes(auctionType as typeof ALL_SUPPORTED_AUCTION_TYPES[number])) {
+            if (!ALL_SUPPORTED_AUCTION_TYPES.includes(auctionType as (typeof ALL_SUPPORTED_AUCTION_TYPES)[number])) {
                 throw new Error(`SUPPORTED_AUCTION_TYPES env variable contains invalid auction type "${auctionType}"`);
             }
         }

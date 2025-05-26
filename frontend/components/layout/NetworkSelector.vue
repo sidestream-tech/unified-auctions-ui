@@ -20,7 +20,8 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
+import Vue from 'vue';
+import type { PropType } from 'vue';
 import { Icon } from 'ant-design-vue';
 import { NetworkConfig } from 'auctions-core/src/types';
 import Select from '~/components/common/inputs/Select.vue';

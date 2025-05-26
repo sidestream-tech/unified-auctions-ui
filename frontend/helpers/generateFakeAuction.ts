@@ -1,6 +1,6 @@
 import faker from 'faker';
 import { random } from 'lodash';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import COLLATERALS from 'auctions-core/src/constants/COLLATERALS';
 import { AuctionTransaction, MarketData } from '~/../core/src/types';
 
