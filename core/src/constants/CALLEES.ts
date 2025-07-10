@@ -11,7 +11,7 @@ const CALLEES: Record<string, CalleeAddresses | undefined> = {
         UniswapV3Callee: '0xdB9C76109d102d2A1E645dCa3a7E671EBfd8e11A',
         rETHCurveUniv3Callee: '0x7cdAb0fE16efb1EFE89e53B141347D7F299d6610',
         OneInchCallee: '0x19c916CDAFB41FAdd4CEd3dCf412e0302291563A',
-        UniswapV2LockstakeCallee: '0xf68424845e4Af5b771356d504965A3c9257805f3',
+        UniswapV2LockstakeCallee: '0x047b6a135fae4344c70da9dd60baa57c5b8073a0',
     },
     '0x5': {
         UniswapV2CalleeDai: '0x6d9139ac89ad2263f138633de20e47bcae253938',
