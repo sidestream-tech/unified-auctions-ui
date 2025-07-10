@@ -1,7 +1,7 @@
 import { AuctionInitialInfo } from 'auctions-core/src/types';
 import { bidWithCallee, enrichAuction } from 'auctions-core/src/auctions';
 import getSigner from 'auctions-core/src/signer';
-import { fetchVATbalanceDAI, fetchBalanceDAI } from 'auctions-core/src/wallet';
+import { fetchVATbalanceDAI, fetchBalanceDAI, fetchBalanceUSDS } from 'auctions-core/src/wallet';
 import { KEEPER_COLLATERAL_MINIMUM_NET_PROFIT_DAI } from '../variables';
 import { checkAndAuthorizeCollateral, checkAndAuthorizeWallet } from '../authorisation';
 import { setupWallet } from '../signer';
@@ -115,6 +115,7 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     // save previous balances
     const preVatBalanceDai = await fetchVATbalanceDAI(network, walletAddress);
     const preErcBalanceDai = await fetchBalanceDAI(network, walletAddress);
+    const preErcBalanceUsds = await fetchBalanceUSDS(network, walletAddress);
 
     // bid on the Auction
     console.info(`collateral keeper: auction "${auctionTransaction.id}": attempting swap execution`);
@@ -131,8 +132,10 @@ const checkAndParticipateIfPossible = async function (network: string, auction: 
     // display profit
     const postVatBalanceDai = await fetchVATbalanceDAI(network, walletAddress);
     const postErcBalanceDai = await fetchBalanceDAI(network, walletAddress);
-    console.info(`DAI VAT   profit from the transaction: ${postVatBalanceDai.minus(preVatBalanceDai).toFixed()}`);
-    console.info(`DAI ERC20 profit from the transaction: ${postErcBalanceDai.minus(preErcBalanceDai).toFixed()}`);
+    const postErcBalanceUsds = await fetchBalanceUSDS(network, walletAddress);
+    console.info(`DAI  VAT   profit from the transaction: ${postVatBalanceDai.minus(preVatBalanceDai).toFixed()}`);
+    console.info(`DAI  ERC20 profit from the transaction: ${postErcBalanceDai.minus(preErcBalanceDai).toFixed()}`);
+    console.info(`USDS ERC20 profit from the transaction: ${postErcBalanceUsds.minus(preErcBalanceUsds).toFixed()}`);
 };
 
 const participateInAuction = async function (network: string, auction: AuctionInitialInfo) {

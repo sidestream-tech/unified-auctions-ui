@@ -56,6 +56,7 @@ export const getContractAddressByName = async function (network: string, contrac
 export const getContractInterfaceByName = async function (contractName: string): Promise<ContractInterface> {
     const ABIs: Record<string, ContractInterface> = {
         MCD_DAI,
+        USDS: MCD_DAI,
         MCD_VOW,
         MCD_VAT,
         MCD_DOG,
