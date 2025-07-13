@@ -42,8 +42,6 @@ const simulation: Simulation = {
         {
             title: 'Create underwater vault',
             entry: async context => {
-                // set oracle price
-                await overwriteCurrentOraclePrice(TEST_NETWORK, context.collateralType, new BigNumber(1000));
                 const initialOraclePrice = await getCurrentOraclePriceByCollateralType(
                     TEST_NETWORK,
                     context.collateralType
