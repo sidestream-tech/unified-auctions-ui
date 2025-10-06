@@ -80,7 +80,7 @@ const simulation: Simulation = {
                     await overwriteUintValue(collateralConfig.contracts.calc, '0x1', new BigNumber(3000));
                 } catch {}
 
-                if (context.contracts.join) {
+                if (collateralConfig.contracts.join) {
                     try {
                         // overwrite clip.buf (initial auction price multiplier)
                         await overwriteUintValue(collateralConfig.contracts.clip, '0x5', RAY.dividedBy(50));
