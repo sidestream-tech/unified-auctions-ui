@@ -83,6 +83,11 @@ const simulation: Simulation = {
                     // overwrite clip.buf (initial auction price multiplier)
                     await overwriteUintValue(collateralConfig.contracts.clip, '0x5', RAY.dividedBy(50));
                 } catch {}
+                try {
+                    // overwrite clip.stopped (no circuit breaker)
+                    await overwriteUintValue(collateralConfig.contracts.clip, '0x10', new BigNumber(0));
+                } catch {}
+
                 // liquidate
                 await liquidateVault(TEST_NETWORK, context.collateralType, context.vaultAddress);
                 return context;

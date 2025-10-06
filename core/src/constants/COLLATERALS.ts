@@ -352,13 +352,35 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'MKR',
         tokenName: 'MKR',
         decimals: 18,
-        isActive: true,
+        isActive: false,
         contracts: {
             token: 'MKR',
             pip: 'PIP_MKR',
             clip: 'LOCKSTAKE_CLIP_OLD_V1',
             calc: 'LOCKSTAKE_CLIP_CALC_OLD_V1',
-            engine: `LOCKSTAKE_ENGINE_OLD_V1`,
+            engine: 'LOCKSTAKE_ENGINE_OLD_V1',
+        },
+        exchanges: {
+            'Uniswap V2': {
+                callee: 'UniswapV2LockstakeCalleeOldV1',
+                route: ['SKY', 'USDS'],
+            },
+        },
+        oracle: ORACLE_WITH_DELAY,
+    },
+    'LSEV2-SKY-A': {
+        title: 'Lockstake SKY',
+        ilk: 'LSEV2-SKY-A',
+        symbol: 'SKY',
+        tokenName: 'SKY',
+        decimals: 18,
+        isActive: true,
+        contracts: {
+            token: 'SKY',
+            pip: 'PIP_SKY',
+            clip: 'LOCKSTAKE_CLIP',
+            calc: 'LOCKSTAKE_CLIP_CALC',
+            engine: 'LOCKSTAKE_ENGINE',
         },
         exchanges: {
             'Uniswap V2': {

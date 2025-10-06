@@ -36,6 +36,9 @@ import PROXY_ACTIONS from './abis/PROXY_ACTIONS.json';
 import MCD_PAUSE from './abis/MCD_PAUSE.json';
 import LOCKSTAKE_ENGINE_OLD_V1 from './abis/LOCKSTAKE_ENGINE_OLD_V1.json';
 import LOCKSTAKE_CLIP_OLD_V1 from './abis/LOCKSTAKE_CLIP_OLD_V1.json';
+import LOCKSTAKE_ENGINE from './abis/LOCKSTAKE_ENGINE.json';
+import LOCKSTAKE_CLIP from './abis/LOCKSTAKE_CLIP.json';
+import SKY from './abis/SKY.json';
 
 const ERC20_SYMBOL_CALL_CACHE_TIME_MS = 1000 * 60 * 60 * 24; // 1 day
 
@@ -81,6 +84,9 @@ export const getContractInterfaceByName = async function (contractName: string):
         MCD_PAUSE,
         LOCKSTAKE_ENGINE_OLD_V1,
         LOCKSTAKE_CLIP_OLD_V1,
+        LOCKSTAKE_ENGINE,
+        LOCKSTAKE_CLIP,
+        SKY,
     };
     if (Object.keys(ABIs).includes(contractName)) {
         return ABIs[contractName];
