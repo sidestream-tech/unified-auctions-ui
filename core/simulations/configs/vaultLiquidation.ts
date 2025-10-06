@@ -79,14 +79,18 @@ const simulation: Simulation = {
                     // overwrite calc.tau (linear auction price reduction duration)
                     await overwriteUintValue(collateralConfig.contracts.calc, '0x1', new BigNumber(3000));
                 } catch {}
-                try {
-                    // overwrite clip.buf (initial auction price multiplier)
-                    await overwriteUintValue(collateralConfig.contracts.clip, '0x5', RAY.dividedBy(50));
-                } catch {}
-                try {
-                    // overwrite clip.stopped (no circuit breaker)
-                    await overwriteUintValue(collateralConfig.contracts.clip, '0x10', new BigNumber(0));
-                } catch {}
+
+                if (context.contracts.join) {
+                    try {
+                        // overwrite clip.buf (initial auction price multiplier)
+                        await overwriteUintValue(collateralConfig.contracts.clip, '0x5', RAY.dividedBy(50));
+                    } catch {}
+                } else {
+                    try {
+                        // overwrite clip.stopped (no circuit breaker)
+                        await overwriteUintValue(collateralConfig.contracts.clip, '0x10', new BigNumber(0));
+                    } catch {}
+                }
 
                 // liquidate
                 await liquidateVault(TEST_NETWORK, context.collateralType, context.vaultAddress);

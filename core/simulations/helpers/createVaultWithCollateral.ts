@@ -231,7 +231,8 @@ const createLockstakeVaultWithCollateral = async (collateralType: CollateralType
     const drawnDebtExact = collateralOwned.multipliedBy(minUnitPrice).dividedBy(stabilityFeeRate);
     const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
     const drawnDebtInt = drawnDebt.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
-    await engine.draw(walletAddress, vaultIndex, walletAddress, drawnDebtInt);
+    // Gas estimate is often too low, so we set a high gas limit to avoid out-of-gas errors
+    await engine.draw(walletAddress, vaultIndex, walletAddress, drawnDebtInt, { gasLimit: 10000000 });
 
     // Get vault address
     const vaultAddress = await engine.ownerUrns(walletAddress, vaultIndex);
