@@ -38,6 +38,13 @@ The process of adding new collaterals depends on the token type used. This is du
 
     1. Get the source code of the price oracle contract. Read value `ilks(collateralType)` from the [`MCD_SPOT` contract](https://etherscan.io/address/0x65c79fcb50ca1594b025960e539ed7a9a6d434a3#code) via "Read Contract" tab and get the address of the oracle for the specified collateral. The linked conract is responsible for updating the unit prices for collaterals
     2. If the contract resembles OSM ([Oracle Security Module](https://github.com/makerdao/osm)) `ORACLE_WITH_DELAY` needs to be used, otherwise `ORACLE_WITHOUT_DELAY`
+ 
+4. Adding ABIs for added contracts 
+
+    1. Add ABIs to [`src/abis`](./src/abis/)
+    2. Import and add ABIs to `getContractInterfaceByName` in [`src/contracts.ts`](./src/contracts.ts)
+
+5. Add related test in `./test`
 
 ### Onboarding not yet deployed collateral
 
