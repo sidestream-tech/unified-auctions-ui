@@ -177,6 +177,7 @@ export declare interface CollateralConfig {
     exchanges: Record<string, CalleeConfig>;
     oracle: CollateralPriceSourceConfig;
     contracts: CollateralAddresses;
+    fakeField: string;
 }
 
 interface OracleConfigBase {
