@@ -34,7 +34,10 @@
                             <td>Auction Price</td>
                             <td>
                                 <template v-if="auction.isActive">
-                                    <format-currency :value="auction.approximateUnitPrice" currency="DAI" />
+                                    <format-currency
+                                        :value="auction.approximateUnitPrice"
+                                        :currency="auction.debtType"
+                                    />
                                     per
                                     <format-currency :currency="auction.tokenName" />
                                     <PriceDropAnimation :auction="auction" />
@@ -46,7 +49,8 @@
                             <td>Price On Uniswap</td>
                             <td>
                                 <template v-if="auction.isActive && auction.marketUnitPrice">
-                                    <format-currency :value="auction.marketUnitPrice" currency="DAI" /> per
+                                    <format-currency :value="auction.marketUnitPrice" :currency="auction.debtType" />
+                                    per
                                     <format-currency :currency="auction.tokenName" />
                                 </template>
                                 <span v-else class="opacity-50">Unknown</span>
@@ -162,8 +166,9 @@
                         <format-address type="address" :value="auction.vaultAddress" shorten disable /> contains
                         <format-currency :value="auction.collateralAmount" :currency="auction.tokenName" />.
                         <span v-if="auction.isActive || auction.isFinished">
-                            Currently, it is sold for <format-currency :value="auction.totalPrice" currency="DAI" />.
-                            This equals <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> per
+                            Currently, it is sold for
+                            <format-currency :value="auction.totalPrice" :currency="auction.debtType" />. This equals
+                            <format-currency :value="auction.approximateUnitPrice" :currency="auction.debtType" /> per
                             <format-currency :currency="auction.tokenName" />, or approximately
                             <format-market-value :value="auction.marketUnitPriceToUnitPriceRatio" /> than if you buy
                             <format-currency :currency="auction.tokenName" /> on another exchange platform such as
@@ -175,8 +180,8 @@
                     </template>
                     <template v-else>
                         This auction was finished at {{ auction.endDate.toUTCString() }} at a closing auction price of
-                        <format-currency :value="auction.approximateUnitPrice" currency="DAI" /> (meaning
-                        <format-currency :value="auction.approximateUnitPrice" currency="DAI" />
+                        <format-currency :value="auction.approximateUnitPrice" :currency="auction.debtType" /> (meaning
+                        <format-currency :value="auction.approximateUnitPrice" :currency="auction.debtType" />
                         per <format-currency :currency="auction.tokenName" /> on average) after
                         <TimeTill :date="auction.endDate" />.
                     </template>
