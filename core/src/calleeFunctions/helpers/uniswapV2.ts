@@ -23,6 +23,7 @@ const getCalleeConfig = function (collateral: CollateralConfig, _marketId: strin
     const isUniswapTokenNonAutoRouted =
         (marketData?.callee === 'UniswapV2CalleeDai' ||
             marketData?.callee === 'UniswapV3Callee' ||
+            marketData?.callee === 'UniswapV2LockstakeCalleeOldV1' ||
             marketData?.callee === 'UniswapV2LockstakeCallee') &&
         !('automaticRouter' in marketData);
     if (isUniswapTokenNonAutoRouted) {

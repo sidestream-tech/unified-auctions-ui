@@ -79,6 +79,7 @@ export const fetchAuctionByCollateralTypeAndAuctionIndex = async function (
         initialPrice: new BigNumber(auctionData.top._hex).div(RAY),
         vaultAddress: auctionData.usr,
         debtDAI: new BigNumber(auctionData.tab._hex).div(RAD),
+        debtType: collateralConfig.debtType,
         startDate: new Date(startUnixTimestamp * 1000),
         endDate: new Date((startUnixTimestamp + maximumAuctionDurationInSeconds) * 1000),
         isActive: true,

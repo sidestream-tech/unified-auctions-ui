@@ -221,8 +221,8 @@ const createLockstakeVaultWithCollateral = async (collateralType: CollateralType
 
     // Lock
     const collateralOwnedInt = collateralOwned.shiftedBy(collateralConfig.decimals).toFixed(0);
-    const mkr = await getContract(TEST_NETWORK, collateralConfig.contracts.token, true);
-    await mkr['approve(address,uint256)'](engine.address, collateralOwnedInt);
+    const gem = await getContract(TEST_NETWORK, collateralConfig.contracts.token, true);
+    await gem['approve(address,uint256)'](engine.address, collateralOwnedInt);
     await engine.lock(walletAddress, vaultIndex, collateralOwnedInt, refId);
 
     // Draw
@@ -231,7 +231,8 @@ const createLockstakeVaultWithCollateral = async (collateralType: CollateralType
     const drawnDebtExact = collateralOwned.multipliedBy(minUnitPrice).dividedBy(stabilityFeeRate);
     const drawnDebt = roundDownToFirstSignificantDecimal(drawnDebtExact);
     const drawnDebtInt = drawnDebt.shiftedBy(WAD_NUMBER_OF_DIGITS).toFixed(0);
-    await engine.draw(walletAddress, vaultIndex, walletAddress, drawnDebtInt);
+    // Gas estimate is often too low, so we set a high gas limit to avoid out-of-gas errors
+    await engine.draw(walletAddress, vaultIndex, walletAddress, drawnDebtInt, { gasLimit: 10000000 });
 
     // Get vault address
     const vaultAddress = await engine.ownerUrns(walletAddress, vaultIndex);

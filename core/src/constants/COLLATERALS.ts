@@ -22,6 +22,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         tokenName: 'ETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'ETH',
@@ -52,6 +53,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         tokenName: 'ETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'ETH',
@@ -82,6 +84,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         tokenName: 'ETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'ETH',
@@ -112,6 +115,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDC',
         tokenName: 'USDC',
         decimals: 6,
+        debtType: 'DAI',
         isActive: false,
         contracts: {
             token: 'USDC',
@@ -142,6 +146,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDC',
         tokenName: 'USDC',
         decimals: 6,
+        debtType: 'DAI',
         isActive: false,
         contracts: {
             token: 'USDC',
@@ -172,6 +177,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         tokenName: 'WBTC',
         decimals: 8,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WBTC',
@@ -202,6 +208,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         tokenName: 'WBTC',
         decimals: 8,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WBTC',
@@ -232,6 +239,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         tokenName: 'WBTC',
         decimals: 8,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WBTC',
@@ -262,6 +270,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WSTETH',
         tokenName: 'WSTETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WSTETH',
@@ -284,6 +293,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WSTETH',
         tokenName: 'WSTETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WSTETH',
@@ -306,6 +316,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2USDCETH',
         tokenName: 'UNIV2USDCETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: false,
         contracts: {
             token: 'UNIV2USDCETH',
@@ -329,6 +340,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2DAIUSDC',
         tokenName: 'UNIV2DAIUSDC',
         decimals: 18,
+        debtType: 'DAI',
         isActive: false,
         contracts: {
             token: 'UNIV2DAIUSDC',
@@ -352,13 +364,37 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'MKR',
         tokenName: 'MKR',
         decimals: 18,
-        isActive: true,
+        debtType: 'USDS',
+        isActive: false,
         contracts: {
             token: 'MKR',
             pip: 'PIP_MKR',
             clip: 'LOCKSTAKE_CLIP_OLD_V1',
             calc: 'LOCKSTAKE_CLIP_CALC_OLD_V1',
-            engine: `LOCKSTAKE_ENGINE_OLD_V1`,
+            engine: 'LOCKSTAKE_ENGINE_OLD_V1',
+        },
+        exchanges: {
+            'Uniswap V2': {
+                callee: 'UniswapV2LockstakeCalleeOldV1',
+                route: ['SKY', 'USDS'],
+            },
+        },
+        oracle: ORACLE_WITH_DELAY,
+    },
+    'LSEV2-SKY-A': {
+        title: 'Lockstake SKY',
+        ilk: 'LSEV2-SKY-A',
+        symbol: 'SKY',
+        tokenName: 'SKY',
+        decimals: 18,
+        debtType: 'USDS',
+        isActive: true,
+        contracts: {
+            token: 'SKY',
+            pip: 'PIP_SKY',
+            clip: 'LOCKSTAKE_CLIP',
+            calc: 'LOCKSTAKE_CLIP_CALC',
+            engine: 'LOCKSTAKE_ENGINE',
         },
         exchanges: {
             'Uniswap V2': {

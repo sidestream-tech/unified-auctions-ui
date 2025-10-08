@@ -1,12 +1,17 @@
 <template>
-    <cryptoicon :symbol="icon" :size="size" :color="color" generic />
+    <SkyToken v-if="icon === 'SKY'" :style="{ width: size + 'px', height: size + 'px' }" />
+    <cryptoicon v-else :symbol="icon" :size="size" :color="color" generic />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import Sky from '~/assets/icons/sky.svg';
 
 export default Vue.extend({
     name: 'CurrencyIcon',
+    components: {
+        SkyToken: Sky,
+    },
     props: {
         currencySymbol: {
             type: String,

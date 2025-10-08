@@ -302,6 +302,11 @@ describe('Sound values are extracted', () => {
             currentUnitPrice: '1692.1',
             nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
+        'LSEV2-SKY-A': {
+            nextUnitPrice: '0.071233644025',
+            currentUnitPrice: '0.07057974925',
+            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
+        },
     };
     for (const type of getLiquidatableCollateralTypes()) {
         it(`can reach ${type} oracle`, async () => {

@@ -14,6 +14,7 @@ export declare interface AuctionInitialInfo {
     collateralSymbol: string;
     tokenName: string;
     collateralAmount: BigNumber;
+    debtType: 'DAI' | 'USDS';
     debtDAI: BigNumber;
     startDate: Date;
     endDate: Date;
@@ -86,6 +87,7 @@ export declare interface RegularCalleeConfig {
         | 'CurveLpTokenUniv3Callee'
         | 'UniswapV3Callee'
         | 'rETHCurveUniv3Callee'
+        | 'UniswapV2LockstakeCalleeOldV1'
         | 'UniswapV2LockstakeCallee';
     route: string[];
 }
@@ -170,6 +172,7 @@ export declare interface CollateralConfig {
     symbol: string;
     tokenName: string;
     decimals: number;
+    debtType: 'DAI' | 'USDS';
     isActive: boolean;
     exchanges: Record<string, CalleeConfig>;
     oracle: CollateralPriceSourceConfig;
@@ -212,6 +215,7 @@ export declare interface CalleeAddresses {
     UniswapV3Callee?: string;
     rETHCurveUniv3Callee?: string;
     OneInchCallee?: string;
+    UniswapV2LockstakeCalleeOldV1?: string;
     UniswapV2LockstakeCallee?: string;
 }
 
