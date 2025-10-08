@@ -46,7 +46,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'ETH-B': {
         title: 'Ether',
@@ -78,7 +77,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'ETH-C': {
         title: 'Ether',
@@ -110,7 +108,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'USDC-A': {
         title: 'USD Coin',
@@ -142,7 +139,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITHOUT_DELAY,
-        fakeField: 'test',
     },
     'USDC-B': {
         title: 'USD Coin',
@@ -174,7 +170,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITHOUT_DELAY,
-        fakeField: 'test',
     },
     'WBTC-A': {
         title: 'Wrapped Bitcoin',
@@ -206,7 +201,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'WBTC-B': {
         title: 'Wrapped BTC',
@@ -238,7 +232,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'WBTC-C': {
         title: 'Wrapped BTC',
@@ -270,7 +263,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'WSTETH-A': {
         title: 'Lido wstETH',
@@ -294,7 +286,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'WSTETH-B': {
         title: 'Lido wstETH',
@@ -318,7 +309,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'UNIV2USDCETH-A': {
         title: 'UNIV2USDCETH LP',
@@ -343,7 +333,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'UNIV2DAIUSDC-A': {
         title: 'UNIV2DAIUSDC LP',
@@ -368,7 +357,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'LSE-MKR-A': {
         title: 'Lockstake MKR',
@@ -392,7 +380,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
     'LSEV2-SKY-A': {
         title: 'Lockstake SKY',
@@ -416,7 +403,6 @@ const COLLATERALS: Record<string, CollateralConfig> = {
             },
         },
         oracle: ORACLE_WITH_DELAY,
-        fakeField: 'test',
     },
 };
 
