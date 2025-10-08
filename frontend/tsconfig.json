@@ -28,7 +28,8 @@
         "types": [
             "@nuxt/types",
             "@types/node"
-        ]
+        ],
+        "skipLibCheck": true
     },
     "include": [
         "package.json",
@@ -43,5 +44,5 @@
         {
             "path": "../core"
         }
-    ]
+    ],
 }

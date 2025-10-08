@@ -214,9 +214,9 @@ jobs:
         cd /core
         npm run build
 
-  frontend-lint-test:
+  frontend-lint-typecheck-test:
     needs: [build-frontend]
-    name: frontend-lint-test
+    name: frontend-lint-type-test
     runs-on: ubuntu-latest
     container: 
       image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
@@ -232,6 +232,11 @@ jobs:
       run: |
         cd /frontend
         npm run lint
+
+    - name: typecheck
+      run: |
+        cd /frontend
+        npm run typecheck
 
     - name: test
       run: |
