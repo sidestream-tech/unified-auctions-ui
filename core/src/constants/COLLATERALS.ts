@@ -22,6 +22,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         tokenName: 'ETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'ETH',
@@ -52,6 +53,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         tokenName: 'ETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'ETH',
@@ -82,6 +84,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'ETH',
         tokenName: 'ETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'ETH',
@@ -112,6 +115,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDC',
         tokenName: 'USDC',
         decimals: 6,
+        debtType: 'DAI',
         isActive: false,
         contracts: {
             token: 'USDC',
@@ -142,6 +146,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'USDC',
         tokenName: 'USDC',
         decimals: 6,
+        debtType: 'DAI',
         isActive: false,
         contracts: {
             token: 'USDC',
@@ -172,6 +177,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         tokenName: 'WBTC',
         decimals: 8,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WBTC',
@@ -202,6 +208,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         tokenName: 'WBTC',
         decimals: 8,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WBTC',
@@ -232,6 +239,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WBTC',
         tokenName: 'WBTC',
         decimals: 8,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WBTC',
@@ -262,6 +270,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WSTETH',
         tokenName: 'WSTETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WSTETH',
@@ -284,6 +293,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'WSTETH',
         tokenName: 'WSTETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: true,
         contracts: {
             token: 'WSTETH',
@@ -306,6 +316,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2USDCETH',
         tokenName: 'UNIV2USDCETH',
         decimals: 18,
+        debtType: 'DAI',
         isActive: false,
         contracts: {
             token: 'UNIV2USDCETH',
@@ -329,6 +340,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'UNIV2DAIUSDC',
         tokenName: 'UNIV2DAIUSDC',
         decimals: 18,
+        debtType: 'DAI',
         isActive: false,
         contracts: {
             token: 'UNIV2DAIUSDC',
@@ -352,6 +364,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'MKR',
         tokenName: 'MKR',
         decimals: 18,
+        debtType: 'USDS',
         isActive: false,
         contracts: {
             token: 'MKR',
@@ -374,6 +387,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         symbol: 'SKY',
         tokenName: 'SKY',
         decimals: 18,
+        debtType: 'USDS',
         isActive: true,
         contracts: {
             token: 'SKY',

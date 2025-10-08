@@ -14,6 +14,7 @@ export declare interface AuctionInitialInfo {
     collateralSymbol: string;
     tokenName: string;
     collateralAmount: BigNumber;
+    debtType: 'DAI' | 'USDS';
     debtDAI: BigNumber;
     startDate: Date;
     endDate: Date;
@@ -171,6 +172,7 @@ export declare interface CollateralConfig {
     symbol: string;
     tokenName: string;
     decimals: number;
+    debtType: 'DAI' | 'USDS';
     isActive: boolean;
     exchanges: Record<string, CalleeConfig>;
     oracle: CollateralPriceSourceConfig;

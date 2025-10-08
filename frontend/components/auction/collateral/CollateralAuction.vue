@@ -99,7 +99,7 @@
                             <tr class="bg-gray-100 dark:bg-gray-800">
                                 <td>Auction Debt</td>
                                 <td>
-                                    <format-currency :value="auction.debtDAI" currency="DAI" />
+                                    <format-currency :value="auction.debtDAI" :currency="auction.debtType" />
                                 </td>
                             </tr>
                             <tr class="bg-gray-100 dark:bg-gray-800">
