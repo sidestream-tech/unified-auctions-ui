@@ -119,6 +119,7 @@ export const generateFakeAuction = function () {
         collateralAmount,
         totalPrice,
         debtDAI,
+        debtType: collateralObject.debtType,
         initialPrice: approximateUnitPrice,
         endDate: faker.date.future(),
         marketUnitPriceToUnitPriceRatio,
