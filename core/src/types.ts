@@ -195,7 +195,13 @@ export declare interface OracleCurrentPriceOnly extends OracleConfigBase {
     currentPriceValiditySlotAndOffset: ValueSlotAddressAndOffset;
 }
 
-export type CollateralPriceSourceConfig = OracleCurrentAndNextPrices | OracleCurrentPriceOnly;
+export declare interface OracleWrapper {
+    type: 'Wrapper';
+    capSlotAddress: string;
+    oracle: OracleCurrentAndNextPrices | OracleCurrentPriceOnly;
+}
+
+export type CollateralPriceSourceConfig = OracleCurrentAndNextPrices | OracleCurrentPriceOnly | OracleWrapper;
 
 export declare interface NetworkConfig {
     chainId: string;

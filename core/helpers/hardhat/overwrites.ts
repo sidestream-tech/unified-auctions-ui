@@ -6,19 +6,34 @@ import executeTransaction from '../../src/execute';
 import createStructCoder from '../../src/helpers/createStructCoder';
 import { getOracleAddressByCollateralType } from '../../src/oracles';
 import { overwriteUintMapping, overwriteUintValueInAddress } from './slotOverwrite';
+import { getOracleWrapperOsmByAddress } from '../../src/contracts';
+import getProvider from '../../src/provider';
 
 const STABILITY_FEE_ACCUMULATION_RATE_SLOT = '0x1';
 
 export const overwriteCurrentOraclePrice = async (network: string, collateralType: string, amount: BigNumber) => {
     const collateralConfig = getCollateralConfigByType(collateralType);
-    const oracleAddress = await getOracleAddressByCollateralType(network, collateralType);
-    const amoutInteger = amount.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0);
-    const valueWithValidity = createStructCoder().encode(['uint128', 'uint128'], ['1', amoutInteger]);
-    await overwriteUintValueInAddress(
-        oracleAddress,
-        collateralConfig.oracle.currentPriceSlotAddress,
-        valueWithValidity
-    );
+    const oracleOrWrapperAddress = await getOracleAddressByCollateralType(network, collateralType);
+
+    const amountInteger = amount.shiftedBy(DAI_NUMBER_OF_DIGITS).toFixed(0);
+    const valueWithValidity = createStructCoder().encode(['uint128', 'uint128'], ['1', amountInteger]);
+
+    let osmAddress;
+    let oracleConfig;
+    if (collateralConfig.oracle.type === 'Wrapper') {
+        await overwriteUintValueInAddress(
+            oracleOrWrapperAddress,
+            collateralConfig.oracle.capSlotAddress,
+            valueWithValidity
+        );
+        osmAddress = await getOracleWrapperOsmByAddress(oracleOrWrapperAddress, await getProvider(network));
+        oracleConfig = collateralConfig.oracle.oracle;
+    } else {
+        osmAddress = oracleOrWrapperAddress;
+        oracleConfig = collateralConfig.oracle;
+    }
+
+    await overwriteUintValueInAddress(osmAddress, oracleConfig.currentPriceSlotAddress, valueWithValidity);
     await executeTransaction(network, 'MCD_SPOT', 'poke', [ethers.utils.formatBytes32String(collateralType)]);
 };
 
