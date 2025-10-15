@@ -11,7 +11,7 @@ import promptToSelectOneOption from '../helpers/promptToSelectOneOption';
 import { promptToGetNumber, promptToGetBlockNumber } from '../helpers/promptToGetNumber';
 import getProvider from '../../src/provider';
 import fetchAuctionsByCollateralType, { fetchMaximumAuctionDurationInSeconds } from '../../src/fetch';
-import { getAllActiveCollateralTypes, getCollateralConfigByType } from '../../src/constants/COLLATERALS';
+import { getAllCollateralTypes, getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import { setCollateralDebtCeilingToGlobal } from '../../helpers/hardhat/contractParametrization';
 import { getCurrentOraclePriceByCollateralType } from '../../src/oracles';
 import { overwriteCurrentOraclePrice } from '../../helpers/hardhat/overwrites';
@@ -32,7 +32,7 @@ const simulation: Simulation = {
                 await addMkrToBalance();
                 const collateralType = await promptToSelectOneOption(
                     'Select the collateral type',
-                    getAllActiveCollateralTypes()
+                    getAllCollateralTypes()
                 );
                 return {
                     collateralType,

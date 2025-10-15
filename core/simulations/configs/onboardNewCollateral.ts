@@ -2,7 +2,7 @@ import BigNumber from '../../src/bignumber';
 import { warpTime } from '../../helpers/hardhat/network';
 import { addDaiToBalance } from '../../helpers/hardhat/balance';
 import { Simulation } from '../types';
-import { getAllActiveCollateralTypes } from '../../src/constants/COLLATERALS';
+import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { collectStabilityFees, fetchVault, liquidateVault } from '../../src/vaults';
 import { TEST_NETWORK } from '../../helpers/constants';
 import createVaultWithCollateral, {
@@ -42,7 +42,7 @@ const simulation: Simulation = {
             entry: async () => {
                 const collateralType = await promptToSelectOneOption(
                     'Select the collateral symbol to add to the VAT',
-                    getAllActiveCollateralTypes()
+                    getAllCollateralTypes()
                 );
                 // overwrite oracle price
                 await overwriteCurrentOraclePrice(TEST_NETWORK, collateralType, new BigNumber(1000));

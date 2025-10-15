@@ -1,7 +1,7 @@
 import type { Contract } from 'ethers';
 import { ethers } from 'ethers';
 import memoizee from 'memoizee';
-import COLLATERALS, { getAllActiveCollateralTypes, getCollateralConfigByType } from './constants/COLLATERALS';
+import COLLATERALS, { getAllCollateralTypes, getCollateralConfigByType } from './constants/COLLATERALS';
 import getProvider from './provider';
 import CHAINLOG from './abis/CHAINLOG.json';
 
@@ -60,7 +60,7 @@ export const isCollateralTypeSupported = async function (network: string, collat
 };
 
 export const getSupportedCollateralTypes = async function (network: string): Promise<string[]> {
-    const allCollateralTypes = getAllActiveCollateralTypes();
+    const allCollateralTypes = getAllCollateralTypes();
     const supportedCollateralsPromises = allCollateralTypes.map(async collateralType => {
         if (await isCollateralTypeSupported(network, collateralType)) {
             return collateralType;
@@ -73,7 +73,7 @@ export const getSupportedCollateralTypes = async function (network: string): Pro
 export const checkAllSupportedCollaterals = async function (network: string): Promise<void> {
     const errors = [];
     const successes = [];
-    for (const collateral of getAllActiveCollateralTypes()) {
+    for (const collateral of getAllCollateralTypes()) {
         const isSupported = await isCollateralSymbolSupported(network, COLLATERALS[collateral].symbol);
 
         if (isSupported) {
