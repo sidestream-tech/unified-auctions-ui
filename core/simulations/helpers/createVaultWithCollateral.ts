@@ -28,7 +28,6 @@ import { MAX, WAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
 import { CollateralConfig, CollateralType } from '../../src/types';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
 import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardhat/erc20';
-import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { grantAdminPrivelegeForContract } from '../../helpers/hardhat/slotOverwrite';
 import {
     allowAllActionsInClipperContract,

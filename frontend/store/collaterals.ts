@@ -2,7 +2,7 @@ import { set } from 'vue';
 import type { ActionContext } from 'vuex';
 import type { CollateralRow, CollateralStatus } from 'auctions-core/src/types';
 import COLLATERALS, {
-    getAllCollateralTypes,
+    getAllActiveCollateralTypes,
     getCollateralConfigByType,
 } from 'auctions-core/src/constants/COLLATERALS';
 import { getMarketPrice } from 'auctions-core/src/calleeFunctions';
@@ -120,10 +120,10 @@ export const actions = {
         if (!network) {
             return;
         }
-        for (const collateralType of getAllCollateralTypes()) {
+        for (const collateralType of getAllActiveCollateralTypes()) {
             dispatch('resetCollateralStatus', collateralType);
         }
-        for (const collateralType of getAllCollateralTypes()) {
+        for (const collateralType of getAllActiveCollateralTypes()) {
             dispatch('fetchCollateralStatus', collateralType);
         }
     },

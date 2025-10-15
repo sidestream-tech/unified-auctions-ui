@@ -438,10 +438,6 @@ export const getAllCollateralSymbols = function (): string[] {
     return Array.from(new Set(collateralSymbols)).sort();
 };
 
-export const getAllCollateralTypes = function (): string[] {
-    return Object.keys(COLLATERALS).sort();
-};
-
 export const getAllActiveCollateralTypes = function (): string[] {
     const allActiveCollaterals = [];
     for (const [key, config] of Object.entries(COLLATERALS)) {
