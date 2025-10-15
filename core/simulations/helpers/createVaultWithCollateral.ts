@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import BigNumber from '../../src/bignumber';
 import { setCollateralInVat } from '../../helpers/hardhat/balance';
-import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
+import { getAllActiveCollateralTypes, getCollateralConfigByType } from '../../src/constants/COLLATERALS';
 import {
     changeVaultContents,
     fetchVault,
@@ -50,7 +50,9 @@ const UNSUPPORTED_COLLATERAL_TYPES = [
 ];
 
 export const getLiquidatableCollateralTypes = () => {
-    return getAllCollateralTypes().filter(collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType));
+    return getAllActiveCollateralTypes().filter(
+        collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType)
+    );
 };
 
 const setAndCheckCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {
