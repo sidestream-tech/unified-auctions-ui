@@ -442,16 +442,6 @@ export const getAllCollateralTypes = function (): string[] {
     return Object.keys(COLLATERALS).sort();
 };
 
-export const getAllActiveCollateralTypes = function (): string[] {
-    const allActiveCollaterals = [];
-    for (const [key, config] of Object.entries(COLLATERALS)) {
-        if (config.isActive) {
-            allActiveCollaterals.push(key);
-        }
-    }
-    return allActiveCollaterals.sort();
-};
-
 export const getActiveCollateralTypes = function (): string[] {
     return Object.values(COLLATERALS)
         .filter(config => config.isActive)
