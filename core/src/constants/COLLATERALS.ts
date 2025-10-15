@@ -1,4 +1,9 @@
-import type { CollateralConfig, OracleCurrentAndNextPrices, OracleCurrentPriceOnly, OracleWrapper } from '../types';
+import type {
+    CollateralConfig,
+    OracleCurrentAndNextPrices,
+    OracleCurrentPriceOnly,
+    OracleCappedWrapper,
+} from '../types';
 
 export const ORACLE_WITH_DELAY: OracleCurrentAndNextPrices = {
     type: 'CurrentAndNextPrice',
@@ -15,8 +20,8 @@ export const ORACLE_WITHOUT_DELAY: OracleCurrentPriceOnly = {
     currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
 };
 
-export const ORACLE_WITH_DELAY_WRAPPER: OracleWrapper = {
-    type: 'Wrapper',
+export const ORACLE_WITH_DELAY_WRAPPER: OracleCappedWrapper = {
+    type: 'CappedWrapper',
     capSlotAddress: '0x2',
     oracle: ORACLE_WITH_DELAY,
 };

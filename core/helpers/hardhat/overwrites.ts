@@ -20,7 +20,7 @@ export const overwriteCurrentOraclePrice = async (network: string, collateralTyp
 
     let osmAddress;
     let oracleConfig;
-    if (collateralConfig.oracle.type === 'Wrapper') {
+    if (collateralConfig.oracle.type === 'CappedWrapper') {
         await overwriteUintValueInAddress(
             oracleOrWrapperAddress,
             collateralConfig.oracle.capSlotAddress,

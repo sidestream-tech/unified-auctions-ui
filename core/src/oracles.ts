@@ -5,7 +5,7 @@ import {
     OraclePrices,
     OracleCurrentPriceOnly,
     OracleCurrentAndNextPrices,
-    OracleWrapper,
+    OracleCappedWrapper,
     CollateralType,
 } from './types';
 import BigNumber from './bignumber';
@@ -57,7 +57,11 @@ const nextPriceExtractors: Record<CollateralPriceSourceConfig['type'], CallableF
             oracleAddress
         );
     },
-    Wrapper: async (oracle: OracleWrapper, provider: ethers.providers.JsonRpcProvider, oracleAddress: string) => {
+    CappedWrapper: async (
+        oracle: OracleCappedWrapper,
+        provider: ethers.providers.JsonRpcProvider,
+        oracleAddress: string
+    ) => {
         const osmAddress = await getOracleWrapperOsmByAddress(oracleAddress, provider);
         return await nextPriceExtractors[oracle.oracle.type](oracle.oracle, provider, osmAddress);
     },
@@ -110,7 +114,11 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Callab
             oracleAddress
         );
     },
-    Wrapper: async (oracle: OracleWrapper, provider: ethers.providers.JsonRpcProvider, oracleAddress: string) => {
+    CappedWrapper: async (
+        oracle: OracleCappedWrapper,
+        provider: ethers.providers.JsonRpcProvider,
+        oracleAddress: string
+    ) => {
         const osmAddress = await getOracleWrapperOsmByAddress(oracleAddress, provider);
         return await currentPriceExtractors[oracle.oracle.type](oracle.oracle, provider, osmAddress);
     },
@@ -146,7 +154,7 @@ export const getNextOraclePriceChange = async (
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
 ) => {
-    if (config.type === 'Wrapper') {
+    if (config.type === 'CappedWrapper') {
         const hasDelay = config.oracle.hasDelay;
         if (!hasDelay) {
             return new Date(NaN);
