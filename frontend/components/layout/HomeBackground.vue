@@ -1,6 +1,6 @@
 <template>
     <div class="HomeContainer">
-        <div class="relative z-10">
+        <div class="flex flex-col flex-grow z-10 relative">
             <slot />
         </div>
 
@@ -76,6 +76,6 @@ export default Vue.extend({
 
 <style scoped>
 .HomeContainer {
-    @apply relative w-full bg-primary-light dark:bg-dark;
+    @apply relative w-full bg-primary-light dark:bg-dark min-h-[calc(100vh-48px)] flex flex-col;
 }
 </style>
