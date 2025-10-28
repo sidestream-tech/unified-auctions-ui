@@ -229,6 +229,6 @@ export default Vue.extend({
 
 <style scoped>
 .DebtTextContainer {
-    min-height: calc(100vh - 10rem);
+    min-height: calc(100vh - 8.8rem);
 }
 </style>
