@@ -76,6 +76,6 @@ export default Vue.extend({
 
 <style scoped>
 .HomeContainer {
-    @apply relative w-full bg-primary-light dark:bg-dark min-h-[calc(100vh-48px)] flex flex-col;
+    @apply relative w-full bg-primary-light dark:bg-dark min-h-[calc(100vh-3rem)] flex flex-col;
 }
 </style>
