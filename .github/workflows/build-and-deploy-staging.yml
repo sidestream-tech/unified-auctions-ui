@@ -2,7 +2,7 @@ name: Deploy Auctions UI staging
 
 on:
   push:
-    branches: [ main, ci/staging-blacksmith-multiarch ]
+    branches: [ main]
 
 jobs:
   build-frontend:
@@ -155,7 +155,6 @@ jobs:
 
   deploy:
     name: deploy staging to cluster
-    if: false
     needs:
       - merge-frontend
       - merge-bot
