@@ -2,7 +2,7 @@ name: Deploy Auctions UI staging
 
 on:
   push:
-    branches: [ main]
+    branches: [ main ]
 
 jobs:
   build-frontend:
