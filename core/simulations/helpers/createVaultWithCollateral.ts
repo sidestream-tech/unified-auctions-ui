@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import BigNumber from '../../src/bignumber';
 import { setCollateralInVat } from '../../helpers/hardhat/balance';
-import { getCollateralConfigByType } from '../../src/constants/COLLATERALS';
+import { getCollateralConfigByType, getActiveCollateralTypes } from '../../src/constants/COLLATERALS';
 import {
     changeVaultContents,
     fetchVault,
@@ -28,7 +28,6 @@ import { MAX, WAD_NUMBER_OF_DIGITS } from '../../src/constants/UNITS';
 import { CollateralConfig, CollateralType } from '../../src/types';
 import { roundDownToFirstSignificantDecimal, roundUpToFirstSignificantDecimal } from '../../helpers/hex';
 import { determineBalanceSlot, setCollateralInWallet } from '../../helpers/hardhat/erc20';
-import { getAllCollateralTypes } from '../../src/constants/COLLATERALS';
 import { grantAdminPrivelegeForContract } from '../../helpers/hardhat/slotOverwrite';
 import {
     allowAllActionsInClipperContract,
@@ -50,7 +49,7 @@ const UNSUPPORTED_COLLATERAL_TYPES = [
 ];
 
 export const getLiquidatableCollateralTypes = () => {
-    return getAllCollateralTypes().filter(collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType));
+    return getActiveCollateralTypes().filter(collateralType => !UNSUPPORTED_COLLATERAL_TYPES.includes(collateralType));
 };
 
 const setAndCheckCollateralInVat = async (collateralType: CollateralType, collateralOwned: BigNumber) => {

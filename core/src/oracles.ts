@@ -1,11 +1,11 @@
-import { getContractAddressByName, getContractInterfaceByName } from './contracts';
+import { getContractAddressByName, getContractInterfaceByName, getOracleWrapperOsmByAddress } from './contracts';
 import getProvider from './provider';
 import {
-    CollateralConfig,
     CollateralPriceSourceConfig,
     OraclePrices,
     OracleCurrentPriceOnly,
     OracleCurrentAndNextPrices,
+    OracleCappedWrapper,
     CollateralType,
 } from './types';
 import BigNumber from './bignumber';
@@ -43,22 +43,37 @@ const getOraclePriceSameSlotValidity = async (
     return new BigNumber(NaN);
 };
 
-const getNextOraclePrice = async (
+const nextPriceExtractors: Record<CollateralPriceSourceConfig['type'], CallableFunction> = {
+    CurrentPriceOnly: () => new BigNumber(NaN),
+    CurrentAndNextPrice: async (
+        oracle: OracleCurrentAndNextPrices,
+        provider: ethers.providers.JsonRpcProvider,
+        oracleAddress: string
+    ) => {
+        return await getOraclePriceSameSlotValidity(
+            oracle.nextPriceSlotAddress,
+            oracle.slotPriceValueBeginsAtPosition,
+            provider,
+            oracleAddress
+        );
+    },
+    CappedWrapper: async (
+        oracle: OracleCappedWrapper,
+        provider: ethers.providers.JsonRpcProvider,
+        oracleAddress: string
+    ) => {
+        const osmAddress = await getOracleWrapperOsmByAddress(oracleAddress, provider);
+        return await nextPriceExtractors[oracle.oracle.type](oracle.oracle, provider, osmAddress);
+    },
+};
+
+function getNextOraclePrice(
     oracle: CollateralPriceSourceConfig,
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
-): Promise<BigNumber> => {
-    // Determine if the next price can be fetched from the contract.
-    if (oracle.type !== 'CurrentAndNextPrice') {
-        return new BigNumber(NaN);
-    }
-    return await getOraclePriceSameSlotValidity(
-        oracle.nextPriceSlotAddress,
-        oracle.slotPriceValueBeginsAtPosition,
-        provider,
-        oracleAddress
-    );
-};
+) {
+    return nextPriceExtractors[oracle.type](oracle, provider, oracleAddress);
+}
 
 const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], CallableFunction> = {
     CurrentPriceOnly: async (
@@ -99,8 +114,17 @@ const currentPriceExtractors: Record<CollateralPriceSourceConfig['type'], Callab
             oracleAddress
         );
     },
+    CappedWrapper: async (
+        oracle: OracleCappedWrapper,
+        provider: ethers.providers.JsonRpcProvider,
+        oracleAddress: string
+    ) => {
+        const osmAddress = await getOracleWrapperOsmByAddress(oracleAddress, provider);
+        return await currentPriceExtractors[oracle.oracle.type](oracle.oracle, provider, osmAddress);
+    },
 };
-export const getCurrentOraclePrice = async (
+
+const getCurrentOraclePrice = async (
     oracle: CollateralPriceSourceConfig,
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
@@ -108,13 +132,13 @@ export const getCurrentOraclePrice = async (
     return currentPriceExtractors[oracle.type](oracle, provider, oracleAddress);
 };
 
-const getNextOraclePriceChange = async (
-    collateralConfig: CollateralConfig,
+const calculateNextOraclePriceChange = async (
+    hasDelay: boolean,
     provider: ethers.providers.JsonRpcProvider,
     oracleAddress: string
 ) => {
     let nextPriceChange: Date = new Date(NaN);
-    if (collateralConfig.oracle.hasDelay) {
+    if (hasDelay) {
         const osmContractInterface = await getContractInterfaceByName('OSM');
         const osmContract = new ethers.Contract(oracleAddress, osmContractInterface, provider);
         const lastPriceUpdateAsHex = (await osmContract.zzz())._hex;
@@ -123,6 +147,23 @@ const getNextOraclePriceChange = async (
         nextPriceChange = new Date((lastPriceUpdateTimestampInSeconds + priceUpdateFrequencyInSeconds) * 1000);
     }
     return nextPriceChange;
+};
+
+export const getNextOraclePriceChange = async (
+    config: CollateralPriceSourceConfig,
+    provider: ethers.providers.JsonRpcProvider,
+    oracleAddress: string
+) => {
+    if (config.type === 'CappedWrapper') {
+        const hasDelay = config.oracle.hasDelay;
+        if (!hasDelay) {
+            return new Date(NaN);
+        }
+
+        const osmAddress = await getOracleWrapperOsmByAddress(oracleAddress, provider);
+        return await calculateNextOraclePriceChange(hasDelay, provider, osmAddress);
+    }
+    return await calculateNextOraclePriceChange(config.hasDelay, provider, oracleAddress);
 };
 
 export const getCurrentOraclePriceByCollateralType = async function (network: string, collateralType: string) {
@@ -143,7 +184,7 @@ const _getOsmPrices = async (
 
     const nextUnitCollateralPrice = await getNextOraclePrice(collateralConfig.oracle, provider, oracleAddress);
     const currentUnitCollateralPrice = await getCurrentOraclePrice(collateralConfig.oracle, provider, oracleAddress);
-    const nextPriceChange = await getNextOraclePriceChange(collateralConfig, provider, oracleAddress);
+    const nextPriceChange = await getNextOraclePriceChange(collateralConfig.oracle, provider, oracleAddress);
 
     return {
         currentUnitPrice: currentUnitCollateralPrice,
