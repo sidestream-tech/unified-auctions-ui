@@ -1,9 +1,7 @@
 <template>
-    <HomeBackground class="flex flex-col relative">
-        <div>
-            <UnifiedContainer class="flex-grow" />
-            <Footer type="unified" />
-        </div>
+    <HomeBackground>
+        <UnifiedContainer class="flex-grow" />
+        <Footer type="unified" />
     </HomeBackground>
 </template>
 

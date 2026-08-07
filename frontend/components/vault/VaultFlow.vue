@@ -177,6 +177,6 @@ export default Vue.extend({
 
 <style scoped>
 .MainTextContainer {
-    min-height: calc(100vh - 10rem);
+    min-height: calc(100vh - 8.8rem);
 }
 </style>
