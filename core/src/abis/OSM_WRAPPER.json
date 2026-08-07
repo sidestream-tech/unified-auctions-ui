@@ -1,0 +1,9 @@
+[
+    {
+        "inputs": [],
+        "name": "osm",
+        "outputs": [{ "internalType": "contract OsmLike", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
