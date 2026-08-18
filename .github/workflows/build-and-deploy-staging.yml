@@ -8,7 +8,10 @@ jobs:
   build-frontend:
     name: build frontend ${{ matrix.platform }}
     runs-on: ${{ matrix.runner }}
-    permissions: write-all
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -31,8 +34,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -67,7 +70,9 @@ jobs:
   merge-frontend:
     name: merge and push frontend manifest
     runs-on: blacksmith
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
     needs: build-frontend
 
     steps:
@@ -75,8 +80,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Docker Builder
       uses: useblacksmith/setup-docker-builder@v1
@@ -92,7 +97,9 @@ jobs:
   build-bot:
     name: build bot ${{ matrix.platform }}
     runs-on: ${{ matrix.runner }}
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -115,8 +122,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: build and push bot
       uses: useblacksmith/build-push-action@v2
@@ -131,7 +138,9 @@ jobs:
   merge-bot:
     name: merge and push bot manifest
     runs-on: blacksmith
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
     needs: build-bot
 
     steps:
@@ -139,8 +148,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Docker Builder
       uses: useblacksmith/setup-docker-builder@v1
@@ -159,12 +168,25 @@ jobs:
       - merge-frontend
       - merge-bot
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
+      # Cross-repo write: mint a 1h installation token of the sidestream-ci
+      # GitHub App scoped to k8s-projects instead of using a long-lived PAT.
+      - name: Mint k8s-projects token
+        uses: actions/create-github-app-token@v2
+        id: app
+        with:
+          app-id: ${{ vars.CI_APP_ID }}
+          private-key: ${{ secrets.CI_APP_PRIVATE_KEY }}
+          owner: sidestream-tech
+          repositories: k8s-projects
+
       - name: Checkout k8s-projects Repo
         uses: actions/checkout@v4
         with:
           repository: sidestream-tech/k8s-projects
-          token: ${{ secrets.GH_WORKFLOW_TOKEN }}
+          token: ${{ steps.app.outputs.token }}
           path: k8s-projects
           ref: main
 
@@ -190,8 +212,10 @@ jobs:
       - name: Commit & Push changes
         uses: actions-js/push@v1.5
         with:
-          github_token: ${{ secrets.GH_WORKFLOW_TOKEN }}
+          github_token: ${{ steps.app.outputs.token }}
           repository: sidestream-tech/k8s-projects
           branch: main
           message: "[ArgoCD]: ${{ github.workflow }} to `${{ steps.short-sha.outputs.sha }}` :rocket:"
           directory: k8s-projects
+          author_name: sidestream-ci[bot]
+          author_email: 318191924+sidestream-ci[bot]@users.noreply.github.com

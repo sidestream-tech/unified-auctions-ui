@@ -7,7 +7,9 @@ jobs:
   build-frontend:
     name: build frontend
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
 
     steps:
     - name: Checkout
@@ -23,8 +25,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set outputs
       id: vars
@@ -46,7 +48,10 @@ jobs:
   build-core:
     name: build core
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
 
     steps:
     - name: Checkout
@@ -62,8 +67,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -100,7 +105,10 @@ jobs:
   build-hardhat:
     name: build hardhat
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
 
     steps:
     - name: Checkout
@@ -116,8 +124,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -154,7 +162,9 @@ jobs:
   build-bot:
     name: build bot
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
 
     steps:
     - name: Checkout
@@ -170,8 +180,8 @@ jobs:
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Set outputs
       id: vars
@@ -197,8 +207,8 @@ jobs:
     container: 
       image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
       credentials:
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
     - name: Checkout
@@ -221,8 +231,8 @@ jobs:
     container: 
       image: ghcr.io/sidestream-tech/unified-auctions-ui/frontend:${{ github.sha }}
       credentials:
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
     - name: Checkout
@@ -245,8 +255,8 @@ jobs:
     container: 
       image: ghcr.io/sidestream-tech/unified-auctions-ui/bot:${{ github.sha }}
       credentials:
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
     - name: Checkout
@@ -260,20 +270,23 @@ jobs:
   core-integration-test:
     needs: [build-core, build-hardhat]
     name: core-integration-test
-    permissions: write-all
+    # container/service images are pulled from ghcr with the job token
+    permissions:
+      contents: read
+      packages: read
     runs-on: ubuntu-latest
     container: 
       image: ghcr.io/sidestream-tech/unified-auctions-ui/core:${{ github.sha }}
       credentials:
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     services:
       hardhat-service:
         image: ghcr.io/sidestream-tech/unified-auctions-ui/core-hardhat:${{ github.sha }}
         credentials:
-          username: ${{ secrets.GH_WORKFLOW_USER }}
-          password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
         ports:
           - 8545:8545
           
