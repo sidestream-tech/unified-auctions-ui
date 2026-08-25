@@ -8,7 +8,10 @@ jobs:
   build-frontend:
     name: build frontend ${{ matrix.platform }}
     runs-on: ${{ matrix.runner }}
-    permissions: write-all
+    permissions:
+      id-token: write
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -22,33 +25,33 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
     - name: Setup Docker Builder
-      uses: useblacksmith/setup-docker-builder@v1
+      uses: useblacksmith/setup-docker-builder@9309da73a81f66976a6d750572e221508b1e2682 # v1.12.0
 
     - name: Login to GitHub Packages
-      uses: docker/login-action@v3
+      uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
       with:
         aws-region: eu-central-1
         role-to-assume: arn:aws:iam::802385070966:role/GithubActionsSSMRole
         role-session-name: AuctionsUiSession
 
     - name: Get secrets from parameterstore
-      uses: dkershner6/aws-ssm-getparameters-action@v2
+      uses: dkershner6/aws-ssm-getparameters-action@4fcb4872421f387a6c43058473acc1b22443fe13 # v2.0.3
       with:
         parameterPairs: "/auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/rpc_url = RPC_URL, /auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/contact_email = CONTACT_EMAIL, /auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/frontend_origin = FRONTEND_ORIGIN, /auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/infura_project_id = INFURA_POJECT_ID, /auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/heapio_id = HEAPIO_ID, /auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/production_domain = PRODUCTION_DOMAIN, /auction-ui/production.auction-ui.k8s.sidestream.tech/frontend/staging_banner_url = STAGING_BANNER_URL"
         withDecryption: "true"
 
     - name: build and push frontend
-      uses: useblacksmith/build-push-action@v2
+      uses: useblacksmith/build-push-action@9b0579bbec7a6cad2f171596c57e7ac1e7658850 # v2.3.0
       with:
         file: frontend/Dockerfile
         context: ./
@@ -67,19 +70,21 @@ jobs:
   merge-frontend:
     name: merge and push frontend manifest
     runs-on: blacksmith
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
     needs: build-frontend
 
     steps:
     - name: Login to GitHub Packages
-      uses: docker/login-action@v3
+      uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Docker Builder
-      uses: useblacksmith/setup-docker-builder@v1
+      uses: useblacksmith/setup-docker-builder@9309da73a81f66976a6d750572e221508b1e2682 # v1.12.0
 
     - name: Create and push multi-arch manifest
       run: |
@@ -91,7 +96,9 @@ jobs:
   build-bot:
     name: build bot ${{ matrix.platform }}
     runs-on: ${{ matrix.runner }}
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -105,20 +112,20 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
     - name: Setup Docker Builder
-      uses: useblacksmith/setup-docker-builder@v1
+      uses: useblacksmith/setup-docker-builder@9309da73a81f66976a6d750572e221508b1e2682 # v1.12.0
 
     - name: Login to GitHub Packages
-      uses: docker/login-action@v3
+      uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: build and push bot
-      uses: useblacksmith/build-push-action@v2
+      uses: useblacksmith/build-push-action@9b0579bbec7a6cad2f171596c57e7ac1e7658850 # v2.3.0
       with:
         file: bot/Dockerfile
         context: ./
@@ -130,19 +137,21 @@ jobs:
   merge-bot:
     name: merge and push bot manifest
     runs-on: blacksmith
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
     needs: build-bot
 
     steps:
     - name: Login to GitHub Packages
-      uses: docker/login-action@v3
+      uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
       with:
         registry: ghcr.io
-        username: ${{ secrets.GH_WORKFLOW_USER }}
-        password: ${{ secrets.GH_WORKFLOW_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup Docker Builder
-      uses: useblacksmith/setup-docker-builder@v1
+      uses: useblacksmith/setup-docker-builder@9309da73a81f66976a6d750572e221508b1e2682 # v1.12.0
 
     - name: Create and push multi-arch manifest
       run: |
@@ -157,39 +166,54 @@ jobs:
       - merge-frontend
       - merge-bot
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
+      # Cross-repo write: mint a 1h installation token of the sidestream-ci
+      # GitHub App scoped to k8s-projects instead of using a long-lived PAT.
+      - name: Mint k8s-projects token
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2.2.2
+        id: app
+        with:
+          app-id: ${{ vars.CI_APP_ID }}
+          private-key: ${{ secrets.CI_APP_PRIVATE_KEY }}
+          owner: sidestream-tech
+          repositories: k8s-projects
+
       - name: Checkout k8s-projects Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           repository: sidestream-tech/k8s-projects
-          token: ${{ secrets.GH_WORKFLOW_TOKEN }}
+          token: ${{ steps.app.outputs.token }}
           path: k8s-projects
           ref: main
 
-      - uses: benjlevesque/short-sha@v2.2
+      - uses: benjlevesque/short-sha@599815c8ee942a9616c92bcfb4f947a3b670ab0b # v3.0
         id: short-sha
         with:
           length: 6
 
       - name: Update Auctions-UI Value File for frontend
-        uses: mikefarah/yq@master
+        uses: mikefarah/yq@751d8ad57b84f1794661bc70c0afb92a22ad7b3c # v4.53.2
         with:
           cmd: yq -i '(.image.tag ="${{ github.sha }}") | (.commitShortSHA ="${{ github.sha }}") | (.releaseTag ="${{ github.ref_name }}")' $VALUES_FILE
         env:
           VALUES_FILE: "k8s-projects/auctions-ui/production/values-frontend.yml"
 
       - name: Update Auctions-UI Value File for bot
-        uses: mikefarah/yq@master
+        uses: mikefarah/yq@751d8ad57b84f1794661bc70c0afb92a22ad7b3c # v4.53.2
         with:
           cmd: yq -i '(.image.tag ="${{ github.sha }}") | (.commitShortSHA ="${{ github.sha }}") | (.releaseTag ="${{ github.ref_name }}")' $VALUES_FILE
         env:
           VALUES_FILE: "k8s-projects/auctions-ui/production/values-bot.yml"
 
       - name: Commit & Push changes
-        uses: actions-js/push@master
+        uses: actions-js/push@5a7cbd780d82c0c937b5977586e641b2fd94acc5 # v1.5
         with:
-          github_token: ${{ secrets.GH_WORKFLOW_TOKEN }}
+          github_token: ${{ steps.app.outputs.token }}
           repository: sidestream-tech/k8s-projects
           branch: main
           message: "[ArgoCD]: ${{ github.workflow }} to `${{ steps.short-sha.outputs.sha }}` :rocket:"
           directory: k8s-projects
+          author_name: sidestream-ci[bot]
+          author_email: 318191924+sidestream-ci[bot]@users.noreply.github.com
