@@ -38,9 +38,11 @@ import LOCKSTAKE_ENGINE_OLD_V1 from './abis/LOCKSTAKE_ENGINE_OLD_V1.json';
 import LOCKSTAKE_CLIP_OLD_V1 from './abis/LOCKSTAKE_CLIP_OLD_V1.json';
 import LOCKSTAKE_ENGINE from './abis/LOCKSTAKE_ENGINE.json';
 import LOCKSTAKE_CLIP from './abis/LOCKSTAKE_CLIP.json';
+import OSM_WRAPPER from './abis/OSM_WRAPPER.json';
 import SKY from './abis/SKY.json';
 
 const ERC20_SYMBOL_CALL_CACHE_TIME_MS = 1000 * 60 * 60 * 24; // 1 day
+const ORACLE_WRAPPER_OSM_CACHE_TIME_MS = 1000 * 60 * 60 * 24; // 1 day
 
 export const getClipperNameByCollateralType = function (collateralType: string): string {
     const config = getCollateralConfigByType(collateralType);
@@ -74,6 +76,7 @@ export const getContractInterfaceByName = async function (contractName: string):
         CDP_MANAGER,
         OSM_MOM,
         OSM,
+        OSM_WRAPPER,
         MEDIAN_PRICE_FEED,
         MCD_SPOT,
         MCD_JUG,
@@ -158,6 +161,20 @@ export const getErc20SymbolByAddress = memoizee(_getErc20SymbolByAddress, {
     promise: true,
     length: 2,
     maxAge: ERC20_SYMBOL_CALL_CACHE_TIME_MS,
+});
+
+const _getOracleWrapperOsmByAddress = async function (
+    contractAddress: string,
+    provider: ethers.providers.JsonRpcProvider
+) {
+    const contract = new ethers.Contract(contractAddress, OSM_WRAPPER, provider);
+    return await contract.osm();
+};
+
+export const getOracleWrapperOsmByAddress = memoizee(_getOracleWrapperOsmByAddress, {
+    promise: true,
+    length: 2,
+    maxAge: ORACLE_WRAPPER_OSM_CACHE_TIME_MS,
 });
 
 export default getContract;
