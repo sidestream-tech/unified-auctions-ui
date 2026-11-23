@@ -52,7 +52,7 @@ ENV FRONTEND_ORIGIN=${FRONTEND_ORIGIN}
 WORKDIR /frontend
 RUN npm run generate
 
-FROM nginx:stable-alpine AS production
+FROM nginx:1.30.7-alpine AS production
 
 COPY --from=production-base /frontend/dist /usr/share/nginx/html
 
