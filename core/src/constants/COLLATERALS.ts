@@ -1,4 +1,9 @@
-import type { CollateralConfig, OracleCurrentAndNextPrices, OracleCurrentPriceOnly } from '../types';
+import type {
+    CollateralConfig,
+    OracleCurrentAndNextPrices,
+    OracleCurrentPriceOnly,
+    OracleCappedWrapper,
+} from '../types';
 
 export const ORACLE_WITH_DELAY: OracleCurrentAndNextPrices = {
     type: 'CurrentAndNextPrice',
@@ -13,6 +18,12 @@ export const ORACLE_WITHOUT_DELAY: OracleCurrentPriceOnly = {
     currentPriceSlotAddress: '0x2',
     slotPriceValueBeginsAtPosition: 0,
     currentPriceValiditySlotAndOffset: { slot: '0x1', offset: 25 },
+};
+
+export const ORACLE_WITH_DELAY_WRAPPER: OracleCappedWrapper = {
+    type: 'CappedWrapper',
+    capSlotAddress: '0x2',
+    oracle: ORACLE_WITH_DELAY,
 };
 
 const COLLATERALS: Record<string, CollateralConfig> = {
@@ -391,7 +402,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
         isActive: true,
         contracts: {
             token: 'SKY',
-            pip: 'PIP_SKY',
+            pip: 'LOCKSTAKE_ORACLE',
             clip: 'LOCKSTAKE_CLIP',
             calc: 'LOCKSTAKE_CLIP_CALC',
             engine: 'LOCKSTAKE_ENGINE',
@@ -402,7 +413,7 @@ const COLLATERALS: Record<string, CollateralConfig> = {
                 route: ['SKY', 'USDS'],
             },
         },
-        oracle: ORACLE_WITH_DELAY,
+        oracle: ORACLE_WITH_DELAY_WRAPPER,
     },
 };
 

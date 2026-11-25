@@ -11,7 +11,7 @@ const CHAINLOG_CACHE = 24 * 60 * 60 * 1000;
 
 const getChainLogContract = async function (network: string): Promise<Contract> {
     const provider = await getProvider(network);
-    return await new ethers.Contract(CHAINLOG_ADDRESS, CHAINLOG, provider);
+    return new ethers.Contract(CHAINLOG_ADDRESS, CHAINLOG, provider);
 };
 
 export const fetchContractsNamesByNetwork = async function (network: string): Promise<string[]> {

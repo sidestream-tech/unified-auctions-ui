@@ -201,7 +201,7 @@ describe('Vaults', () => {
 describe('Sound values are extracted', () => {
     before(async () => {
         await setupRpcUrlAndGetNetworks(LOCAL_RPC_URL);
-        await resetNetwork(22518357);
+        await resetNetwork(23534264);
     });
     const expectedReturn: Record<
         CollateralType,
@@ -213,9 +213,9 @@ describe('Sound values are extracted', () => {
             nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
         },
         'ETH-B': {
-            nextUnitPrice: '2472.675',
-            currentUnitPrice: '2453.324333825',
-            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
+            nextUnitPrice: '4465.440323',
+            currentUnitPrice: '4465.440323',
+            nextPriceChange: new Date('2025-10-08T17:00:00.000Z'),
         },
         'ETH-C': {
             nextUnitPrice: '1208.0159951',
@@ -223,89 +223,34 @@ describe('Sound values are extracted', () => {
             nextPriceChange: new Date('2022-06-13T11:00:00.000Z'),
         },
         'WBTC-A': {
-            nextUnitPrice: '104984.67',
-            currentUnitPrice: '104247.995',
-            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
+            nextUnitPrice: '122232.95',
+            currentUnitPrice: '123217.615',
+            nextPriceChange: new Date('2025-10-08T17:00:00.000Z'),
         },
         'WBTC-B': {
-            nextUnitPrice: '104984.67',
-            currentUnitPrice: '104247.995',
-            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
+            nextUnitPrice: '122232.95',
+            currentUnitPrice: '123217.615',
+            nextPriceChange: new Date('2025-10-08T17:00:00.000Z'),
         },
         'WBTC-C': {
-            nextUnitPrice: '104984.67',
-            currentUnitPrice: '104247.995',
-            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
+            nextUnitPrice: '122232.95',
+            currentUnitPrice: '123217.615',
+            nextPriceChange: new Date('2025-10-08T17:00:00.000Z'),
         },
         'WSTETH-A': {
-            nextUnitPrice: '3000.874746327222097081',
-            currentUnitPrice: '2949.13312498745934791',
-            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
+            nextUnitPrice: '5437.602278511105162773',
+            currentUnitPrice: '5437.602278511105162773',
+            nextPriceChange: new Date('2025-10-08T17:00:00.000Z'),
         },
         'WSTETH-B': {
-            nextUnitPrice: '3000.874746327222097081',
-            currentUnitPrice: '2949.13312498745934791',
-            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
-        },
-        'UNIV2DAIETH-A': {
-            nextUnitPrice: '180.027413016904332609',
-            currentUnitPrice: '156.864657339046759104',
-            nextPriceChange: new Date('2024-01-30T01:43:59.000Z'),
-        },
-        'UNIV2USDCETH-A': {
-            nextUnitPrice: '217940294.382329574841183087',
-            currentUnitPrice: '188666866.181749331159918865',
-            nextPriceChange: new Date('2024-01-30T01:43:59.000Z'),
-        },
-        'UNIV2ETHUSDT-A': {
-            nextUnitPrice: '197722335.963263628773031269',
-            currentUnitPrice: '228116379.650719357480121186',
-            nextPriceChange: new Date('2023-04-06T18:44:23.000Z'),
-        },
-        'UNIV2WBTCDAI-A': {
-            nextUnitPrice: '47113092.314935817960683604',
-            currentUnitPrice: '37716763.676534507210426868',
-            nextPriceChange: new Date('2024-01-30T01:43:59.000Z'),
-        },
-        'UNIV2WBTCETH-A': {
-            nextUnitPrice: '2517374355.748241170169672756',
-            currentUnitPrice: '1794044631.240253383841931772',
-            nextPriceChange: new Date('2024-01-30T01:43:59.000Z'),
-        },
-        'UNIV2LINKETH-A': {
-            nextUnitPrice: '632.725670378659259608',
-            currentUnitPrice: '375.213195603332086751',
-            nextPriceChange: new Date('2024-01-30T01:43:59.000Z'),
-        },
-        'UNIV2UNIETH-A': {
-            nextUnitPrice: '546.022046787969721817',
-            currentUnitPrice: '478.806858210117892322',
-            nextPriceChange: new Date('2024-01-30T01:43:59.000Z'),
-        },
-        'UNIV2AAVEETH-A': {
-            nextUnitPrice: '1435.896796202841677092',
-            currentUnitPrice: '2503.767176345875098159',
-            nextPriceChange: new Date('2023-04-06T18:44:23.000Z'),
-        },
-        'UNIV2DAIUSDT-A': {
-            nextUnitPrice: '2333803.165539906895807342',
-            currentUnitPrice: '2274141.032812901837192665',
-            nextPriceChange: new Date('2023-04-06T18:44:23.000Z'),
-        },
-        'UNIV2DAIUSDC-A': {
-            nextUnitPrice: '2268266.41366025603013961',
-            currentUnitPrice: '2268266.41366025603013961',
-            nextPriceChange: new Date('2025-05-19T17:49:11.000Z'),
-        },
-        'LSE-MKR-A': {
-            nextUnitPrice: '1708.675',
-            currentUnitPrice: '1692.1',
-            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
+            nextUnitPrice: '5437.602278511105162773',
+            currentUnitPrice: '5437.602278511105162773',
+            nextPriceChange: new Date('2025-10-08T17:00:00.000Z'),
         },
         'LSEV2-SKY-A': {
-            nextUnitPrice: '0.071233644025',
-            currentUnitPrice: '0.07057974925',
-            nextPriceChange: new Date('2025-05-19T18:00:00.000Z'),
+            nextUnitPrice: '0.066977415950298487',
+            currentUnitPrice: '0.066977415950298487',
+            nextPriceChange: new Date('2025-10-08T17:00:00.000Z'),
         },
     };
     for (const type of getLiquidatableCollateralTypes()) {
@@ -327,7 +272,7 @@ describe('Sound values are extracted', () => {
 describe(`Collateral vault simulation liquidation `, () => {
     before(async () => {
         await createWalletForRpc();
-        await resetNetwork(22518357); // TODO: remove hardcoded block number and investigate `Dog/not-unsafe` error
+        await resetNetwork(23534264); // TODO: remove hardcoded block number and investigate `Dog/not-unsafe` error
     });
     for (const collateralType of getLiquidatableCollateralTypes()) {
         it(`runs the simulaton for ${collateralType}`, async () => {
